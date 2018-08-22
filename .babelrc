@@ -1,12 +1,13 @@
 {
   "presets": ["es2015", "stage-2", "react"],
   "plugins": [
-    "transform-class-properties"
+    "transform-class-properties",
+    "transform-object-rest-spread",
   ],
   "env": {
     "development": {
       "plugins": [
-        ["transform-object-rest-spread"],
+        ["transform-react-jsx-source"],
         ["react-intl", {
           "messagesDir": "./build/messages/"
         }]

@@ -132,6 +132,62 @@ def _media_info_worker(media_topic_data):
     return media_topic_data
 
 
+@app.route('/api/topics/<topics_id>/media/media_links.csv', methods=['GET'])
+@flask_login.login_required
+def get_topic_media_links_csv(topics_id):
+    user_mc = user_admin_mediacloud_client()
+    topic = user_mc.topic(topics_id)
+    #page through results for timespand
+    props = TOPIC_MEDIA_CSV_PROPS
+    return stream_media_link_list_csv(user_mediacloud_key(), topic['name'] + '-stories', topics_id)
+
+def stream_media_link_list_csv(user_key, filename, topics_id, **kwargs):
+
+    all_stories = []
+    params=kwargs.copy()
+
+    merged_args = {
+        'snapshots_id': request.args['snapshotId'],
+        'timespans_id': request.args['timespanId'],
+        'foci_id': request.args['focusId'] if 'foci_id' in request.args else None,
+    }
+    params.update(merged_args)
+    if 'q' in params:
+        params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
+    params['limit'] = 1000  # an arbitrary value to let us page through with big topics
+
+    timestamped_filename = csv.safe_filename(filename)
+    headers = {
+        "Content-Disposition": "attachment;filename=" + timestamped_filename
+    }
+    return Response(_topic_media_link_list_by_page_as_csv_row(user_key, topics_id, TOPIC_MEDIA_CSV_PROPS, **params),
+                    mimetype='text/csv; charset=utf-8', headers=headers)
+
+
+# generator you can use to handle a long list of stories row by row (one row per story)
+def _topic_media_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
+    local_mc = user_admin_mediacloud_client(user_key)
+
+    yield u','.join(props) + u'\n'  # first send the column names
+    all_media = []
+    more_media = True
+    link_id =0
+    while more_pages:
+        media_link_page = apicache.topic_media_link_list_by_page(user_mediacloud_key(), topics_id, **params)
+        media_list = media_link_page['media']
+
+        all_media = all_media + media_list
+
+        #stories_info_list = local_mc.topicMediaList(topics_id, media_id=media_ids)
+        if 'next' in media_link_page['link_ids']:
+            link_id = media_link_page['link_ids']['next']
+        else:
+            more_pages = False
+            for s in media_link_page['links']:
+                cleaned_media_info = csv.dict2row(TOPIC_MEDIA_CSV_PROPS, s['source_info'])
+                row_string = u','.join(cleaned_media_info) + u'\n'
+                yield row_string
+
 def _stream_media_list_csv(user_mc_key, filename, topics_id, **kwargs):
     # Helper method to stream a list of media back to the client as a csv.  Any args you pass in will be
     # simply be passed on to a call to topicMediaList.

@@ -304,7 +304,6 @@ def stream_story_link_list_csv(user_key, filename, topics_id, **kwargs):
         params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
     params['limit'] = 1000  # an arbitrary value to let us page through with big topics
 
-    # TODO - what are the correct props for this download in particular?
     props = [
         'stories_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',
         'inlink_count','outlink_count'

@@ -1,11 +1,11 @@
 import logging
 import json
-from flask import jsonify, request
+from flask import jsonify, request, Response
 import flask_login
 
 from server import app, TOOL_API_KEY
 from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS
-from server.auth import user_mediacloud_key, user_admin_mediacloud_client, is_user_logged_in
+from server.auth import user_mediacloud_key, user_mediacloud_client, user_admin_mediacloud_client, is_user_logged_in
 from server.util import csv
 from server.views.topics import validated_sort, TOPIC_MEDIA_CSV_PROPS
 from server.views.topics.splitstories import stream_topic_split_story_counts_csv
@@ -135,13 +135,13 @@ def _media_info_worker(media_topic_data):
 @app.route('/api/topics/<topics_id>/media/media_links.csv', methods=['GET'])
 @flask_login.login_required
 def get_topic_media_links_csv(topics_id):
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
     topic = user_mc.topic(topics_id)
+
     #page through results for timespand
-    props = TOPIC_MEDIA_CSV_PROPS
     return stream_media_link_list_csv(user_mediacloud_key(), topic['name'] + '-stories', topics_id)
 
-def stream_media_link_list_csv(user_key, filename, topics_id, **kwargs):
+def stream_media_link_list_csv(user_mc_key, filename, topics_id, **kwargs):
 
     all_stories = []
     params=kwargs.copy()
@@ -160,32 +160,47 @@ def stream_media_link_list_csv(user_key, filename, topics_id, **kwargs):
     headers = {
         "Content-Disposition": "attachment;filename=" + timestamped_filename
     }
-    return Response(_topic_media_link_list_by_page_as_csv_row(user_key, topics_id, TOPIC_MEDIA_CSV_PROPS, **params),
+    return Response(_topic_media_link_list_by_page_as_csv_row(user_mc_key, topics_id, TOPIC_MEDIA_CSV_PROPS, **params),
                     mimetype='text/csv; charset=utf-8', headers=headers)
 
 
 # generator you can use to handle a long list of stories row by row (one row per story)
-def _topic_media_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
-    local_mc = user_admin_mediacloud_client(user_key)
-
+def _topic_media_link_list_by_page_as_csv_row(user_mc_key, topics_id, props, **kwargs):
+    local_mc = user_admin_mediacloud_client(user_mc_key) #having issues with calling apicache call.. so trying directly
     yield u','.join(props) + u'\n'  # first send the column names
     all_media = []
     more_media = True
     link_id =0
-    while more_pages:
-        media_link_page = apicache.topic_media_link_list_by_page(user_mediacloud_key(), topics_id, **params)
-        media_list = media_link_page['media']
+    params = kwargs
+    params['limit'] = 1000  # an arbitrary value to let us page through with big pages
+    while more_media:
+        media_link_page = apicache.topic_media_link_list_by_page(TOOL_API_KEY, topics_id, link_ids=link_id, **kwargs)
+        media_list = media_link_page['links']
 
-        all_media = all_media + media_list
+        media_src_ids = [str(s['source_media_id']) for s in media_link_page['links']]
+        media_ref_ids = [str(s['ref_media_id']) for s in media_link_page['links']]
+        media_src_ids = media_src_ids + media_ref_ids
+# user_mc_key isn't working
+        #
 
-        #stories_info_list = local_mc.topicMediaList(topics_id, media_id=media_ids)
+        for m in media_link_page['links']:
+            q = "media_id:{}".format(m['ref_media_id'])
+            params['q'] = q
+            media_info = local_mc.topicMediaList(topics_id, **params)
+            for m_info in media_info['media']:
+                if m['source_media_id'] == m_info['media_id']:
+                    m['source_info'] = m_info
+                if m['ref_media_id'] == m_info['media_id']:
+                    m['ref_info'] = m_info
+
         if 'next' in media_link_page['link_ids']:
             link_id = media_link_page['link_ids']['next']
         else:
-            more_pages = False
+            more_media = False
             for s in media_link_page['links']:
-                cleaned_media_info = csv.dict2row(TOPIC_MEDIA_CSV_PROPS, s['source_info'])
-                row_string = u','.join(cleaned_media_info) + u'\n'
+                cleaned_source_info = csv.dict2row(TOPIC_MEDIA_CSV_PROPS, s['source_info'])
+                cleaned_ref_info = csv.dict2row(TOPIC_MEDIA_CSV_PROPS, s['ref_info'])
+                row_string = u','.join(cleaned_source_info) + ',' + u','.join(cleaned_ref_info) + u'\n'
                 yield row_string
 
 def _stream_media_list_csv(user_mc_key, filename, topics_id, **kwargs):

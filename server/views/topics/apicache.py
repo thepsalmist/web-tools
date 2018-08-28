@@ -44,7 +44,7 @@ def _cached_topic_media_list_with_metadata(user_mc_key, topics_id, **kwargs):
     if user_mc_key == TOOL_API_KEY:
         local_mc = mc
     else:
-        local_mc = user_mediacloud_client()
+        local_mc = user_admin_mediacloud_client()
     return local_mc.topicMediaList(topics_id, **kwargs)
 
 

@@ -322,7 +322,13 @@ def stream_story_link_list_csv(user_key, filename, topics_id, **kwargs):
 # generator you can use to handle a long list of stories row by row (one row per story)
 def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
     local_mc = user_admin_mediacloud_client(user_key)
-    yield u','.join(props) + u'\n'  # first send the column names
+    spec_props = [
+        'source_stories_id', 'source_publish_date', 'source_title', 'source_url', 'source_language', 'source_ap_syndicated',
+        'source_inlink_count', 'source_outlink_count', 'ref_stories_id', 'ref_publish_date', 'ref_title', 'ref_url', 'ref_language',
+        'ref_ap_syndicated', 'ref_inlink_count', 'ref_outlink_count'
+        # 'media_pub_country', 'media_pub_state', 'media_language', 'media_about_country', 'media_media_type'
+    ]
+    yield u','.join(spec_props) + u'\n'  # first send the column names
     link_id = 0
     more_pages = True
     while more_pages:
@@ -333,17 +339,26 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
         story_src_ids = story_src_ids + story_ref_ids
 
         # TODO there is a cached topic story list... but paging is different...
-        storiesInfoList = local_mc.topicStoryList(topics_id, stories_id=story_src_ids)
+        stories_info_list = local_mc.topicStoryList(topics_id, stories_id=story_src_ids)
         # get all source and ref story link ids and fetch them with topicStoryList
+    #storyid- to story id
+        #s has ref and source
+        for s in story_link_page['links']:
+            for s_info in stories_info_list['stories']:
+                if s['source_stories_id'] == s_info['stories_id']:
+                    s['source_info'] = s_info
+                if s['ref_stories_id'] == s_info['stories_id']:
+                    s['ref_info'] = s_info
 
         if 'next' in story_link_page['link_ids']:
             link_id = story_link_page['link_ids']['next']
         else:
             more_pages = False
-        for s in storiesInfoList['stories']:
-            cleaned_row = csv.dict2row(props, s)
-            row_string = u','.join(cleaned_row) + u'\n'
-            yield row_string
+            for s in story_link_page['links']:
+                cleaned_source_info = csv.dict2row(props, s['source_info'])
+                cleaned_ref_info = csv.dict2row(props, s['ref_info'])
+                row_string = u','.join(cleaned_source_info) + ',' + u','.join(cleaned_ref_info) + u'\n'
+                yield row_string
 
 
 # generator you can use to handle a long list of stories row by row (one row per story)

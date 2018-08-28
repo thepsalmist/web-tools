@@ -338,11 +338,8 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
         story_ref_ids = [str(s['ref_stories_id']) for s in story_link_page['links']]
         story_src_ids = story_src_ids + story_ref_ids
 
-        # TODO there is a cached topic story list... but paging is different...
         stories_info_list = local_mc.topicStoryList(topics_id, stories_id=story_src_ids)
-        # get all source and ref story link ids and fetch them with topicStoryList
-    #storyid- to story id
-        #s has ref and source
+
         for s in story_link_page['links']:
             for s_info in stories_info_list['stories']:
                 if s['source_stories_id'] == s_info['stories_id']:

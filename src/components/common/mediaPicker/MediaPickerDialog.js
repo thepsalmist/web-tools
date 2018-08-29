@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import Modal from '@material-ui/core/Modal';
+import DialogContent from '@material-ui/core/DialogContent';
 import messages from '../../../resources/messages';
 import PickedMediaContainer from './PickedMediaContainer';
 import MediaPickerResultsContainer from './MediaPickerResultsContainer';
@@ -31,6 +33,7 @@ class MediaPickerDialog extends React.Component {
     const { initMedia, handleInitialSelectionOfMedia } = this.props;
     if (initMedia && initMedia.length > 0) { // expects an array of media from caller
       handleInitialSelectionOfMedia(initMedia); // go fill the store's selectedMedia list
+      window.scrollTo(0, 0);
     }
   }
   componentWillReceiveProps(nextProps) {
@@ -41,6 +44,7 @@ class MediaPickerDialog extends React.Component {
         handleInitialSelectionOfMedia(nextProps.initMedia);
       }
     }
+    window.scrollTo(0, 0);
   }
   componentWillUnmount() {
     const { reset } = this.props;
@@ -52,7 +56,7 @@ class MediaPickerDialog extends React.Component {
       evt.preventDefault();
     }
     this.setState({ open: true });
-    document.body.style.overflow = 'hidden';
+    // document.body.style.overflow = 'hidden';
     if (setQueryFormChildDialogOpen) { // way to tell parent that a dialog is open - focus issue stuff
       setQueryFormChildDialogOpen(true);
     }
@@ -62,7 +66,6 @@ class MediaPickerDialog extends React.Component {
   handleRemoveDialogClose = (confirm) => {
     const { onConfirmSelection, selectedMedia, setQueryFormChildDialogOpen } = this.props;
     this.setState({ open: false });
-    document.body.style.overflow = 'auto';
     if (confirm) {
       onConfirmSelection(selectedMedia); // passed in from containing element
     }
@@ -77,29 +80,30 @@ class MediaPickerDialog extends React.Component {
     let modalContent = null;
     if (this.state.open) {
       modalContent = (
-        <div className="select-media-dialog-wrapper">
-          <div
-            className="select-media-dialog-modal"
+        <div>
+          <Modal
             title={formatMessage(localMessages.selectMediaTitle)}
             open={this.state.open}
+            onClose={() => this.handleRemoveDialogClose(true)}
           >
-            <div className="select-media-dialog-inner">
-              <div className="select-media-sidebar">
-                <PickedMediaContainer selectedMedia={selectedMedia} />
-                <AppButton
-                  className="select-media-ok-button"
-                  label={formatMessage(messages.ok)}
-                  onTouchTap={() => this.handleRemoveDialogClose(true)}
-                  type="submit"
-                  primary
-                />
+            <DialogContent className="select-media-dialog-wrapper">
+              <div className="select-media-dialog-inner">
+                <div className="select-media-sidebar">
+                  <PickedMediaContainer selectedMedia={selectedMedia} />
+                  <AppButton
+                    className="select-media-ok-button"
+                    label={formatMessage(messages.ok)}
+                    onTouchTap={() => this.handleRemoveDialogClose(true)}
+                    type="submit"
+                    primary
+                  />
+                </div>
+                <div className="select-media-content">
+                  <MediaPickerResultsContainer timestamp={lookupTimestamp} selectedMediaQueryType={PICK_FEATURED} selectedMedia={selectedMedia} handleSelection={handleSelection} />
+                </div>
               </div>
-              <div className="select-media-content">
-                <MediaPickerResultsContainer timestamp={lookupTimestamp} selectedMediaQueryType={PICK_FEATURED} selectedMedia={selectedMedia} handleSelection={handleSelection} />
-              </div>
-            </div>
-          </div>
-          <div className="backdrop" onTouchTap={() => this.handleRemoveDialogClose(false)} />
+            </DialogContent>
+          </Modal>
         </div>
       );
     }

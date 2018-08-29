@@ -25,7 +25,7 @@ const localMessages = {
     defaultMessage: '<p>We can provide basic information about stories like the media source, date of publication, and URL.  However, due to copyright restrictions we cannot provide you with the original full text of the stories. Download the CSV results to see all the metadata we have about the stories.</p>',
   },
   downloadCsv: { id: 'explorer.stories.downloadCsv', defaultMessage: 'Download all { name } stories as a CSV' },
-  showMetadata: { id: 'explorer.stories.showMetadata', defaultMessage: 'Show this story\'s metadata.' },
+  showMetadata: { id: 'explorer.stories.showMetadata', defaultMessage: 'Info' },
 };
 
 class QuerySampleStoriesResultsContainer extends React.Component {
@@ -50,7 +50,7 @@ class QuerySampleStoriesResultsContainer extends React.Component {
     const { results, queries, selectedTabIndex, tabSelector, internalItemSelected } = this.props;
     const showMoreInfoColHdr = <th />;
     const showMoreInfoCol = story => (
-      <td><AppButton color="secondary" variant="outlined" onClick={() => this.onStorySelection(story)} >More Info</AppButton></td>
+      <td><AppButton color="secondary" variant="outlined" onClick={() => this.onStorySelection(story)} ><FormattedMessage {...localMessages.showMetadata} /></AppButton></td>
     );
     return (
       <div>

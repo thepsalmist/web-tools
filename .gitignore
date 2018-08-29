@@ -28,3 +28,4 @@ config/test.config.js
 react-codemod
 config/app.config
 *.ipynb
+src/components/explorer/results/drilldowns/WordInContextDrillDownContainer.js

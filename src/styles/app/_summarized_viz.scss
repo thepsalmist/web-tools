@@ -30,5 +30,11 @@
     margin-top: 20px;
   }
 
+  &.wide {
+    .summary {
+      padding-left: 0px;
+    }
+  }
+
 }
 

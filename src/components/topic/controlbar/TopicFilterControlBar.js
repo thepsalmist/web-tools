@@ -18,6 +18,7 @@ import { asyncContainerize } from '../../common/hocs/AsyncContainer';
 import ModifyTopicDialog from './ModifyTopicDialog';
 import { LEVEL_WARNING } from '../../common/Notice';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
+import AboutTopicDialog from './AboutTopicDialog';
 
 const REMOVE_FOCUS = 0;
 
@@ -85,6 +86,7 @@ class TopicFilterControlBar extends React.Component {
                   <HomeButton />
                   <b><FormattedMessage {...localMessages.topicHomepage} /></b>
                 </LinkWithFilters>
+                <AboutTopicDialog />
                 <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
                   <ModifyTopicDialog
                     topicId={topicId}

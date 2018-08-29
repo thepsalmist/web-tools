@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import AppButton from '../../common/AppButton';
-import composeSummarizedVisualization from './SummarizedVizualization';
+import withSummary from '../../common/hocs/SummarizedVizualization';
 import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import { DownloadButton } from '../../common/IconButton';
@@ -167,7 +167,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 export default
   injectIntl(
     connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      composeSummarizedVisualization(localMessages.title, localMessages.helpIntro, localMessages.helpDetails)(
+      withSummary(localMessages.title, localMessages.helpIntro, localMessages.helpDetails)(
         withAsyncFetch(
           withQueryResults(
             withLoginRequired(

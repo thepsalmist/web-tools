@@ -32,7 +32,7 @@ class TopicStoryMetadataStatsContainer extends React.Component {
     }
     return (
       <StatBar
-        columnWidth={6}
+        columnWidth={3}
         stats={[
           { message: localMessages.englishCount,
             data: formatNumber(englishCounts.count / geocodedCounts.total, { style: 'percent', maximumFractionDigits: 0 }) },

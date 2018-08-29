@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import ActionMenu from '../../common/ActionMenu';
-import composeSummarizedVisualization from './SummarizedVizualization';
+import withSummary from '../../common/hocs/SummarizedVizualization';
 import { postToDownloadUrl, downloadExplorerSvg } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import WordSpace from '../../vis/WordSpace';
@@ -91,7 +91,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 export default
   injectIntl(
     connect(mapStateToProps, mapDispatchToProps)(
-      composeSummarizedVisualization(localMessages.title, localMessages.descriptionIntro, messages.wordSpaceLayoutHelp)(
+      withSummary(localMessages.title, localMessages.descriptionIntro, messages.wordSpaceLayoutHelp)(
         withAsyncFetch(
           withQueryResults(
             QueryWordSpaceResultsContainer

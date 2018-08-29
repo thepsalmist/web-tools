@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import composeSummarizedVisualization from './SummarizedVizualization';
+import withSummary from '../../common/hocs/SummarizedVizualization';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 import ActionMenu from '../../common/ActionMenu';
 import BubbleRowChart from '../../vis/BubbleRowChart';
@@ -145,7 +145,7 @@ const mapDispatchToProps = () => ({
 export default
   injectIntl(
     connect(mapStateToProps, mapDispatchToProps)(
-      composeSummarizedVisualization(localMessages.title, localMessages.helpIntro, [localMessages.helpDetails, messages.countsVsPercentageHelp])(
+      withSummary(localMessages.title, localMessages.helpIntro, [localMessages.helpDetails, messages.countsVsPercentageHelp])(
         withAsyncFetch(
           QueryTotalAttentionResultsContainer
         )

@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import composeSummarizedVisualization from './SummarizedVizualization';
+import withSummary from '../../common/hocs/SummarizedVizualization';
 import withQueryResults from './QueryResultsSelector';
 import GeoChart from '../../vis/GeoChart';
 import { fetchDemoQueryGeo, fetchQueryGeo, resetGeo } from '../../../actions/explorerActions';
@@ -157,7 +157,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 export default
   injectIntl(
     connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      composeSummarizedVisualization(localMessages.title, localMessages.help, [messages.heatMapHelpText])(
+      withSummary(localMessages.title, localMessages.help, [messages.heatMapHelpText])(
         withAsyncFetch(
           withQueryResults(
             QueryGeoResultsContainer

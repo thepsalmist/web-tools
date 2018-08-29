@@ -1,22 +1,25 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
+import { FormattedHTMLMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
+import MenuItem from 'material-ui/MenuItem';
+import ActionMenu from '../../common/ActionMenu';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import { fetchTopicEntitiesOrgs, filterByQuery } from '../../../actions/topicActions';
-import DataCard from '../../common/DataCard';
+import Permissioned from '../../common/Permissioned';
+import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
+import withSummary from '../../common/hocs/SummarizedVizualization';
 import EntitiesTable from '../../common/EntitiesTable';
 import { filtersAsUrlParams, filteredLocation } from '../../util/location';
 import { DownloadButton } from '../../common/IconButton';
 import messages from '../../../resources/messages';
-import withHelp from '../../common/hocs/HelpfulContainer';
 
 const COVERAGE_REQUIRED = 0.7;
 const NUMBER_TO_SHOW = 10;
 
 const localMessages = {
-  title: { id: 'topic.snapshot.topOrgs.title', defaultMessage: 'Top {number} Organizations' },
+  title: { id: 'topic.snapshot.topOrgs.title', defaultMessage: `Top ${NUMBER_TO_SHOW} Organizations` },
   notEnoughData: { id: 'topic.snapshot.topOrgs.notEnoughData',
     defaultMessage: '<i>Sorry, but only {pct} of the stories have been processed to add the organizations they mention.  We can\'t gaurantee the accuracy of partial results, so we don\'t show a table of results here.  If you are really curious, you can download the CSV using the link in the top-right of this box, but don\'t trust those numbers as fully accurate. Email us if you want us to process this topic to add the organizations mentioned.</i>',
   },
@@ -44,7 +47,7 @@ class TopOrgsContainer extends React.Component {
     }
   }
   render() {
-    const { coverage, entities, helpButton } = this.props;
+    const { coverage, entities } = this.props;
     const { formatNumber, formatMessage } = this.props.intl;
     let content = null;
     const coverageRatio = coverage.counts / coverage.total;
@@ -63,16 +66,21 @@ class TopOrgsContainer extends React.Component {
       );
     }
     return (
-      <DataCard>
-        <div className="actions">
-          <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.downloadCsv} />
-        </div>
-        <h2>
-          <FormattedMessage {...localMessages.title} values={{ number: NUMBER_TO_SHOW }} />
-          {helpButton}
-        </h2>
+      <React.Fragment>
         {content}
-      </DataCard>
+        <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
+          <div className="actions">
+            <ActionMenu actionTextMsg={messages.downloadOptions}>
+              <MenuItem
+                className="action-icon-menu-item"
+                primaryText={formatMessage(messages.downloadCSV)}
+                rightIcon={<DownloadButton />}
+                onClick={this.downloadCsv}
+              />
+            </ActionMenu>
+          </div>
+        </Permissioned>
+      </React.Fragment>
     );
   }
 }
@@ -81,7 +89,6 @@ TopOrgsContainer.propTypes = {
   // from compositional chain
   location: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
-  helpButton: PropTypes.node.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
@@ -127,7 +134,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 export default
   injectIntl(
     connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(messages.entityHelpTitle, messages.entityHelpContent)(
+      withSummary(localMessages.title, messages.entityHelpContent)(
         withAsyncFetch(
           TopOrgsContainer
         )

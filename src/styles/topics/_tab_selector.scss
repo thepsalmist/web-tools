@@ -1,0 +1,14 @@
+@import '../constants';
+
+.topic-summary {
+
+  .tab-selector {
+    margin-top: 50px;
+  }
+
+  .tabbed-content-wrapper {
+    background-color: $material-grey100 !important;
+    padding-bottom: 100px;
+  }
+
+}

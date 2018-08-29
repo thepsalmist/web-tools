@@ -4,16 +4,11 @@
   position: relative;
   color: $white !important;
 
-  label {
-    color: $white !important;
-    font-size: 12px;
+  .focus-selector {
+      svg {
+          fill: $white !important;
+      }
   }
-
-    .focus-selector {
-        svg {
-            fill: $white !important;
-        }
-    }
 
   .selected-focus-details {
     position: absolute;

@@ -4,7 +4,8 @@ import { injectIntl } from 'react-intl';
 import TextField from '@material-ui/core/TextField';
 
 const localMessages = {
-  pickQuery: { id: 'query.pick', defaultMessage: 'Story Search (press enter to apply)' },
+  label: { id: 'topic.queryFilter.label', defaultMessage: 'Story Filter' },
+  placeholder: { id: 'topic.queryFilter.placeholder', defaultMessage: '(enter a boolean query and press return)' },
 };
 
 class QuerySelector extends React.Component {
@@ -66,12 +67,12 @@ class QuerySelector extends React.Component {
     return (
       <div className="query-selector-wrapper">
         <TextField
-          label={formatMessage(localMessages.pickQuery)}
-          style={{ color: 'rgb(224,224,224)', opacity: 0.8 }}
+          label={formatMessage(localMessages.label)}
+          placeholder={formatMessage(localMessages.placeholder)}
+          InputLabelProps={{ shrink: true }}
           value={this.state.value ? this.state.value : ''}
           onKeyDown={this.handleMenuItemKeyDown}
           fullWidth
-          id="topic-filter-query"
           onChange={this.handleChange}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}

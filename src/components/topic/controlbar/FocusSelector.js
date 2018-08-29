@@ -1,12 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { REMOVE_FOCUS } from './TopicFilterControlBar';
 import messages from '../../../resources/messages';
+
+const localMessages = {
+  pickFocus: { id: 'topic.focusFilter.pick', defaultMessage: 'Subtopic' },
+  removeFocus: { id: 'topic.focusFilter.pick', defaultMessage: 'Don\'t use any Subtopic' },
+};
 
 class FocusSelector extends React.Component {
 
@@ -44,10 +49,9 @@ class FocusSelector extends React.Component {
     // default to none
     return (
       <div className="focus-selector-wrapper">
-        <InputLabel htmlFor="name-readonly">Name</InputLabel>
+        <InputLabel><FormattedMessage {...localMessages.pickFocus} /></InputLabel>
         <Select
-          label={formatMessage(messages.focusPick)}
-          style={{ color: 'rgb(224,224,224)', opacity: 0.8 }}
+          label={formatMessage(localMessages.pickFocus)}
           className="focus-selector"
           value={selectedId || ''}
           fullWidth
@@ -64,7 +68,7 @@ class FocusSelector extends React.Component {
           <MenuItem
             value={REMOVE_FOCUS}
           >
-            <ListItemText>{formatMessage(messages.removeFocus)}</ListItemText>
+            <ListItemText>{formatMessage(localMessages.removeFocus)}</ListItemText>
           </MenuItem>
         </Select>
         {detailsContent}

@@ -51,16 +51,15 @@
         }
       }
     }
+
     .filter {
       background-color: $material-grey800;;
       .filter-selector {
         color: $white !important;
-        .snapshot-selector, .focus-selector {
-          input > {
-            underline: $white !important;
-          }
-          div {
-          }
+        padding: 10px 0px;
+        label {
+          color: $white !important;
+          font-size: 12px;
         }
       }
     }

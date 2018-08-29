@@ -82,7 +82,12 @@ function reallyInitializeApp(routes) {
       },
       MuiTypography: {
         title: {
-          fontFamily: 'Lato, sans',
+          fontFamily: 'Lato, Helvetica, sans',
+        },
+      },
+      MuiInputLabel: {
+        root: {
+          fontFamily: 'Lato, Helvetica, sans',
         },
       },
       zIndex: {

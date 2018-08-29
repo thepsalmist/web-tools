@@ -28,7 +28,7 @@ const localMessages = {
   filterTopic: { id: 'topic.filter', defaultMessage: 'Filter this Topic' },
   startedSpider: { id: 'topic.startedSpider', defaultMessage: 'Started a new spidering job for this topic' },
   summaryMessage: { id: 'snapshot.required', defaultMessage: 'You have made some changes that you can only see if you generate a new Snapshot. <a href="{url}">Generate one now</a>.' },
-  topicHomepage: { id: 'topic.homepage', defaultMessage: 'Topic Homepage' },
+  topicHomepage: { id: 'topic.homepage', defaultMessage: 'Topic Summary' },
   jumpToExplorer: { id: 'topic.controlBar.jumpToExplorer', defaultMessage: 'Query on Explorer' },
 };
 

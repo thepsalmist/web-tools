@@ -194,9 +194,6 @@ const messages = {
   topicFavorited: { id: 'topics.favorited', defaultMessage: 'Starred this topic.' },
   topicUnfavorited: { id: 'topics.unfavorited', defaultMessage: 'Unstarred this topic.' },
 
-  focusPick: { id: 'focus.pick', defaultMessage: 'Pick a Subtopic' },
-  removeFocus: { id: 'focus.pick', defaultMessage: 'Don\'t use any Subtopic' },
-
   menuOpenTooltip: { id: 'menu.open.tooltip', defaultMessage: 'Open Main Menu' },
   menuTitle: { id: 'menu.title', defaultMessage: 'Main Menu' },
   menuAbout: { id: 'menu.about', defaultMessage: 'About' },

@@ -4,8 +4,6 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { schemeCategory10 } from 'd3';
 import { push } from 'react-router-redux';
-import MenuItem from 'material-ui/MenuItem';
-import ActionMenu from '../../common/ActionMenu';
 import { fetchTopicNytLabelCounts, filterByQuery } from '../../../actions/topicActions';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
@@ -13,10 +11,8 @@ import BubbleRowChart from '../../vis/BubbleRowChart';
 import { downloadSvg } from '../../util/svg';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
-import { topicDownloadFilename } from '../../util/topicUtil';
 import messages from '../../../resources/messages';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
-import { DownloadButton } from '../../common/IconButton';
 import { filtersAsUrlParams, filteredLocation } from '../../util/location';
 import { WarningNotice } from '../../common/Notice';
 
@@ -62,7 +58,7 @@ class NytLabelSummaryContainer extends React.Component {
     }
   }
   render() {
-    const { data, coverage, topicName, filters } = this.props;
+    const { data, coverage } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
     const coverageRatio = coverage.total !== undefined && coverage.total > 0 ? coverage.count / coverage.total : 0;
     let content;

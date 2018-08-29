@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -52,8 +52,7 @@ class StoriesSummaryContainer extends React.Component {
     notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
   }
   render() {
-    const { stories, sort, topicId, filters, handleFocusSelected, user, showTweetCounts } = this.props;
-    const exploreUrl = `/topics/${topicId}/stories`;
+    const { stories, sort, topicId, handleFocusSelected, user, showTweetCounts } = this.props;
     const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
     return (
       <React.Fragment>

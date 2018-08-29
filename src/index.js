@@ -74,6 +74,7 @@ function reallyInitializeApp(routes) {
       MuiInput: {
         input: {
           padding: '8px 0px',
+          fontFamily: 'Lato, Helvetica, sans',
         },
       },
       MuiModal: {

@@ -20,15 +20,15 @@ const localMessages = {
   mainTitle: { id: 'explorer.queryBuilder.maintitle', defaultMessage: 'Create Query' },
   addButton: { id: 'explorer.queryBuilder.saveAll', defaultMessage: 'Search' },
   feedback: { id: 'explorer.queryBuilder.feedback', defaultMessage: 'We saved your new source' },
-  query: { id: 'explorer.queryBuilder.query', defaultMessage: '1. Enter search terms' },
+  query: { id: 'explorer.queryBuilder.query', defaultMessage: 'Enter search terms' },
   queryDesc: { id: 'explorer.queryBuilder.query.desc', defaultMessage: 'Media Cloud will return stories that match your search query. We use standard boolean search syntax.' },
   queryDescLink: { id: 'explorer.queryBuilder.query.descLink', defaultMessage: 'Learn more about writing boolean search queries.' },
-  selectSandC: { id: 'explorer.queryBuilder.selectSAndC', defaultMessage: '2. Select your media' },
-  selectSandCDesc: { id: 'explorer.queryBuilder.selectSAndCDesc', defaultMessage: 'Choose individual sources or collections to be searched.' },
+  selectSandC: { id: 'explorer.queryBuilder.selectSAndC', defaultMessage: 'Select your media' },
+  selectSandCDesc: { id: 'explorer.queryBuilder.selectSAndCDesc', defaultMessage: 'Choose individual sources or collections to be searched. Our system includes collections for a large range of countries, in multiple languages.' },
   selectSandCDescLink: { id: 'explorer.queryBuilder.selectSAndCDescLink', defaultMessage: 'Learn more about choosing media.' },
   SandC: { id: 'explorer.queryBuilder.sAndC', defaultMessage: 'Media' },
   color: { id: 'explorer.queryBuilder.color', defaultMessage: 'Choose a color' },
-  dates: { id: 'explorer.queryBuilder.dates', defaultMessage: '3. Enter dates' },
+  dates: { id: 'explorer.queryBuilder.dates', defaultMessage: 'Enter dates' },
   datesDesc: { id: 'explorer.queryBuilder.datesDesc', defaultMessage: 'Our database goes back to 2011, however for the most accurate and comprehensive results, we recommend staying within one year of the current date.' },
   dateTo: { id: 'explorer.queryBuilder.dateTo', defaultMessage: 'to' },
   queryHelpTitle: { id: 'explorer.queryBuilder.queryHelp.title', defaultMessage: 'Building Query Strings' },
@@ -90,15 +90,17 @@ class QueryForm extends React.Component {
         <div className="query-form-wrapper">
           <Grid>
             <Row>
-              <Col lg={5}>
+              <Col lg={4}>
                 <div className="q-field-wrapper">
-                  <CopyAllComponent label={formatMessage(localMessages.query)} title={formatMessage(localMessages.copyQueryKeywordTitle)} msg={formatMessage(localMessages.copyQueryKeywordMsg)} onOk={() => handleCopyAll(KEYWORD)} />
-                  <br />
-                  <FormattedMessage {...localMessages.queryDesc} />
-                  <QueryHelpDialog
-                    trigger={formatMessage(localMessages.queryDescLink)}
-                    title={formatMessage(localMessages.query)}
-                  />
+                  <div className="media-field-label query-field-label">
+                    <span className="query-field-number">1</span>
+                    <CopyAllComponent
+                      label={formatMessage(localMessages.query)}
+                      title={formatMessage(localMessages.copyQueryKeywordTitle)}
+                      msg={formatMessage(localMessages.copyQueryKeywordMsg)}
+                      onOk={() => handleCopyAll(KEYWORD)}
+                    />
+                  </div>
                   <Field
                     className="query-field"
                     name="q"
@@ -112,16 +114,26 @@ class QueryForm extends React.Component {
                     component={renderTextFieldWithFocus}
                   />
                 </div>
-              </Col>
-              <Col lg={1} />
-              <Col lg={6}>
-                <div className="media-field-wrapper">
-                  <CopyAllComponent label={mediaLabel} title={formatMessage(localMessages.copyQueryMediaTitle)} msg={formatMessage(localMessages.copyQueryMediaMsg)} onOk={() => handleCopyAll(MEDIA)} />
-                  <br />
-                  <FormattedMessage {...localMessages.selectSandCDesc} />
-                  <MediaHelpDialog
-                    trigger={formatMessage(localMessages.selectSandCDescLink)}
+                <div className="query-field-desc">
+                  <FormattedMessage {...localMessages.queryDesc} />
+                  &nbsp;
+                  <QueryHelpDialog
+                    trigger={formatMessage(localMessages.queryDescLink)}
+                    title={formatMessage(localMessages.query)}
                   />
+                </div>
+              </Col>
+              <Col lg={4}>
+                <div className="media-field-wrapper">
+                  <div className="media-field-label query-field-label">
+                    <span className="query-field-number">2</span>
+                    <CopyAllComponent
+                      label={mediaLabel}
+                      title={formatMessage(localMessages.copyQueryMediaTitle)}
+                      msg={formatMessage(localMessages.copyQueryMediaMsg)}
+                      onOk={() => handleCopyAll(MEDIA)}
+                    />
+                  </div>
                   <SourceCollectionsFieldList
                     className="query-field"
                     form="queryForm"
@@ -133,12 +145,22 @@ class QueryForm extends React.Component {
                     showWarningIfEmpty
                   />
                   {mediaPicker}
+                  <div className="query-field-desc">
+                    <FormattedMessage {...localMessages.selectSandCDesc} />
+                    &nbsp;
+                    <MediaHelpDialog trigger={formatMessage(localMessages.selectSandCDescLink)} />
+                  </div>
                 </div>
-                <div>
-                  <CopyAllComponent label={formatMessage(localMessages.dates)} title={formatMessage(localMessages.copyQueryDatesTitle)} msg={formatMessage(localMessages.copyQueryDatesMsg)} onOk={() => handleCopyAll(DATES)} />
-                  <br />
-                  <FormattedMessage {...localMessages.datesDesc} />
-                  <br />
+              </Col>
+              <Col lg={4}>
+                <div className="dates-field-label query-field-label">
+                  <span className="query-field-number">3</span>
+                  <CopyAllComponent
+                    label={formatMessage(localMessages.dates)}
+                    title={formatMessage(localMessages.copyQueryDatesTitle)}
+                    msg={formatMessage(localMessages.copyQueryDatesMsg)}
+                    onOk={() => handleCopyAll(DATES)}
+                  />
                 </div>
                 <div className="dates-field-wrapper">
                   <Field
@@ -163,6 +185,7 @@ class QueryForm extends React.Component {
                     onChange={onDateChange}
                   />
                 </div>
+                <div className="query-field-desc"><FormattedMessage {...localMessages.datesDesc} /></div>
               </Col>
             </Row>
           </Grid>

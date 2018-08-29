@@ -2,10 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import MenuItem from '@material-ui/core/MenuItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import { Row, Col } from 'react-flexbox-grid/lib';
-import ActionMenu from '../../../common/ActionMenu';
+import { CloseButton } from '../../../common/IconButton';
 import { resetStory } from '../../../../actions/storyActions';
 import withHelp from '../../../common/hocs/HelpfulContainer';
 import DataCard from '../../../common/DataCard';
@@ -13,7 +11,6 @@ import StoryEntitiesContainer from '../../../common/story/StoryEntitiesContainer
 import StoryNytThemesContainer from '../../../common/story/StoryNytThemesContainer';
 import messages from '../../../../resources/messages';
 import { urlToSource } from '../../../../lib/urlUtil';
-import { ACTION_MENU_ITEM_CLASS } from '../../../../lib/explorerUtil';
 import { TAG_SET_NYT_THEMES } from '../../../../lib/tagUtil';
 import { trimToMaxLength } from '../../../../lib/stringUtil';
 import StatBar from '../../../common/statbar/StatBar';
@@ -49,24 +46,9 @@ class SelectedStoryDrillDownContainer extends React.Component {
           <DataCard className="query-story-drill-down">
             <Row>
               <Col lg={12}>
-                <ActionMenu>
-                  <MenuItem
-                    className={ACTION_MENU_ITEM_CLASS}
-                    onTouchTap={handleClose}
-                  >
-                    <ListItemText>
-                      <FormattedMessage {...localMessages.close} />
-                    </ListItemText>
-                  </MenuItem>
-                  <MenuItem
-                    className={ACTION_MENU_ITEM_CLASS}
-                    onTouchTap={() => this.openNewPage(storyInfo.url)}
-                  >
-                    <ListItemText>
-                      <FormattedMessage {...localMessages.readThisStory} />
-                    </ListItemText>
-                  </MenuItem>
-                </ActionMenu>
+                <div className="actions">
+                  <CloseButton onClick={handleClose} />
+                </div>
                 <h2>
                   <FormattedMessage {...localMessages.title} />
                   <a href={storyInfo.url} target="_blank" rel="noopener noreferrer">{trimToMaxLength(storyInfo.title, 80)}</a>

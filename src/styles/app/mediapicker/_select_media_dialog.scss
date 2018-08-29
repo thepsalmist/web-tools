@@ -19,8 +19,8 @@ div [data-reactroot] {
   width: 70% !important;
   position: absolute;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  left: 30%;
+  transform: translate(-30%, -50%);
   height: 70%;
 
   .select-media-dialog-inner {
@@ -56,6 +56,17 @@ div [data-reactroot] {
         padding: 30px;
         max-height: 222px;
         overflow: scroll;
+
+        .media-widget {
+          padding: 10px;
+          border: 1px solid #eee;
+          border-bottom: 0;
+          
+          .icon-button {
+            float: right!important;
+            margin-top: -17px;
+          }
+        }
       }
 
       .select-media-ok-button {
@@ -96,7 +107,6 @@ div [data-reactroot] {
           margin-bottom: 10px;
         }
       }
-
     }
 
   }

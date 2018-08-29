@@ -84,7 +84,7 @@ class MediaPickerDialog extends React.Component {
           <Modal
             title={formatMessage(localMessages.selectMediaTitle)}
             open={this.state.open}
-            onClose={() => this.handleRemoveDialogClose(true)}
+            onClose={() => this.handleRemoveDialogClose(false)}
           >
             <DialogContent className="select-media-dialog-wrapper">
               <div className="select-media-dialog-inner">

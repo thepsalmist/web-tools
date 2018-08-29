@@ -184,8 +184,9 @@ def _topic_media_link_list_by_page_as_csv_row(user_mc_key, topics_id, props, **k
         #
 
         for m in media_link_page['links']:
-            q = "media_id:{}".format(m['ref_media_id'])
+            q = "media_id:{[61164, 4434, 18380]}"
             params['q'] = q
+            # TODO - CSB this currently doesn't work the way we need it to. waiting for hal to respond
             media_info = local_mc.topicMediaList(topics_id, **params)
             for m_info in media_info['media']:
                 if m['source_media_id'] == m_info['media_id']:

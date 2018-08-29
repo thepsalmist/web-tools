@@ -116,9 +116,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(uploadSourceListFromTemplate({ file: csvFile }))
       .then((results) => {
         if (results.status === 'Error') {
-          updateFeedback({ open: true, message: ownProps.intl.formatMessage({ id: 'collection.upload.error', defaultMessage: results.message }) });
+          updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage({ id: 'collection.upload.error', defaultMessage: results.message }) });
         } else if (results.status === 'Success') {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
         }
       });
   },

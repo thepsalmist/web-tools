@@ -8,6 +8,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import MediaTable from '../MediaTable';
 import { fetchTopicInfluentialMedia, sortTopicInfluentialMedia } from '../../../actions/topicActions';
 import { DownloadButton } from '../../common/IconButton';
+import TopicSourceSearchContainer from '../search/TopicSourceSearchContainer';
 import messages from '../../../resources/messages';
 import DataCard from '../../common/DataCard';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
@@ -46,6 +47,7 @@ class InfluentialMediaContainer extends React.Component {
         <Row>
           <Col lg={12} md={12} sm={12}>
             <Helmet><title>{titleHandler()}</title></Helmet>
+            <TopicSourceSearchContainer showSearch />
             <DataCard border={false}>
               <div className="actions">
                 <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.downloadCsv} />

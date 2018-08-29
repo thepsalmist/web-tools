@@ -135,11 +135,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       .then((result) => {
         if (!hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {  // only apply checks to non-admins
           if (result.count > MAX_RECOMMENDED_STORIES) {
-            dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
+            dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
           } else if (result.count < MAX_RECOMMENDED_STORIES && result.count > WARNING_LIMIT_RECOMMENDED_STORIES) {
-            dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
+            dispatch(updateFeedback({ classes: 'warning-notice', open: true, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
           } else if (result.count < MIN_RECOMMENDED_STORIES) {
             dispatch(updateFeedback({
+              classes: 'error-notice',
               open: true,
               message: ownProps.intl.formatMessage(localMessages.notEnoughStories),
             }));

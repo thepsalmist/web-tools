@@ -81,7 +81,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
             if (results.length === 1) {
               const focusSavedMessage = ownProps.intl.formatMessage(localMessages.booleanFocusSaved);
               dispatch(setTopicNeedsNewSnapshot(true));           // user feedback
-              dispatch(updateFeedback({ open: true, message: focusSavedMessage }));  // user feedback
+              dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage }));  // user feedback
               dispatch(push(`/topics/${topicId}/snapshot/foci`)); // go back to focus management page
               dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
             } else {
@@ -94,7 +94,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           .then(() => {
             const focusSavedMessage = ownProps.intl.formatMessage(localMessages.retweetFocusSaved);
             dispatch(setTopicNeedsNewSnapshot(true));           // user feedback
-            dispatch(updateFeedback({ open: true, message: focusSavedMessage }));  // user feedback
+            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage }));  // user feedback
             dispatch(push(`/topics/${topicId}/snapshot/foci`)); // go back to focus management page
             dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
           });
@@ -104,7 +104,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           .then(() => {
             const focusSavedMessage = ownProps.intl.formatMessage(localMessages.topCountriesFocusSaved);
             dispatch(setTopicNeedsNewSnapshot(true));           // user feedback
-            dispatch(updateFeedback({ open: true, message: focusSavedMessage }));  // user feedback
+            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage }));  // user feedback
             dispatch(push(`/topics/${topicId}/snapshot/foci`)); // go back to focus management page
             dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
           });
@@ -114,7 +114,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           .then(() => {
             const focusSavedMessage = ownProps.intl.formatMessage(localMessages.nytFocusSaved);
             dispatch(setTopicNeedsNewSnapshot(true));           // user feedback
-            dispatch(updateFeedback({ open: true, message: focusSavedMessage }));  // user feedback
+            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage }));  // user feedback
             dispatch(push(`/topics/${topicId}/snapshot/foci`)); // go back to focus management page
             dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
           });
@@ -124,7 +124,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           .then(() => {
             const focusSavedMessage = ownProps.intl.formatMessage(localMessages.mediaTypeFocusSaved);
             dispatch(setTopicNeedsNewSnapshot(true));           // user feedback
-            dispatch(updateFeedback({ open: true, message: focusSavedMessage }));  // user feedback
+            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage }));  // user feedback
             dispatch(push(`/topics/${topicId}/snapshot/foci`)); // go back to focus management page
             dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
           });

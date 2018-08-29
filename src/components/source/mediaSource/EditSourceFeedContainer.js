@@ -108,7 +108,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       .then((result) => {
         if (result.feed !== undefined) {
           // let them know it worked
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
           // need to fetch it again because something may have changed
           dispatch(fetchSourceFeed(ownProps.params.mediaId, ownProps.params.feedId))
             .then(() =>

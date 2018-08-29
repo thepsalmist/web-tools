@@ -45,8 +45,11 @@
     .filter {
       background-color: $material-grey800;;
       .filter-selector {
-
+        color: $white !important;
         .snapshot-selector, .focus-selector {
+          input > {
+            underline: $white !important;
+          }
           div {
           }
         }

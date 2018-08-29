@@ -13,6 +13,7 @@
     }
     .media-widget {
       padding: 10px;
+      font-size: 16px;
       border: 1px solid $material-grey200;
       border-bottom: 0px;
       cursor: pointer;
@@ -22,10 +23,11 @@
       }
       .icon-button {
         float: right !important;
-        margin-top: -17px;
+        margin-top: -21px;
       }
     }
     .add-media {
+      margin-bottom: 8px;
       border: 1px solid $material-grey200;
       border-top: 0px;
       padding: 10px;
@@ -35,46 +37,71 @@
   span.copy-all a {
     font-weight: bold;
     cursor: pointer;
+    margin-bottom: 5px;
   }
 }
 
 .query-form {
 
   label {
-    font-size: 14px;
+    font-size: 18px;
     font-weight: bold;
     display: inline-block;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     &.inline {
       display: inline-block;
       margin-right: 10px;
     }
   }
 
+  .query-field-label {
+    margin-bottom: 8px;
+    .copy-all {
+      display: inline-block;
+    }
+  }
+
+  .query-field-number {
+    display: inline-block;
+    padding: 5px;
+    font-size: 12px;
+    background-color: $explorer-primary;
+    border-radius: 50%;
+    margin-right: 5px;
+    color: white;
+    width: 15px;
+    text-align: center;
+    vertical-align: top;
+  }
+
+  .query-field-desc {
+    color: $material-grey500;
+  }
+
   .q-field-wrapper {
-    margin-bottom: 15px;
+    margin-bottom: 8px;
   }
   .color-field-wrapper {
   }
   .media-field-wrapper {
-    margin-bottom: 15px;
+    margin-bottom: 8px;
   }
   .dates-field-wrapper {
     .start-date-wrapper {
       width: 108px !important;
+      margin-top: 0px;
       vertical-align: top;
     }
     .date-for-wrapper {
-      padding: 12px;
+      padding: 0px 10px;
+      margin-top: 0px;
       display: inline-block;
-      border-bottom: 1px solid $material-grey200;
-      border-top: 1px solid $material-grey200;
-      padding-top: 14px;
-      line-height: 22px;
+      line-height: 41px;
       vertical-align: top;
     }
     .end-date-wrapper {
       width: 108px !important;
+      margin-top: 0px;
       vertical-align: top;
     }
   }
@@ -82,10 +109,12 @@
   .query-field {
     border: 1px solid $material-grey200 !important;
     textarea {
-      margin: 12px !important;
+      margin-left: 10px;
+      padding-top: 8px;
+      padding-bottom: 8px;
     }
     input {
-      margin-left: 12px !important;
+      margin-left: 10px;
     }
   }
 

@@ -99,14 +99,14 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         dispatch(favoriteSource(id, isFav))
           .then(() => {
             const msg = (isFav) ? localMessages.sourceFavorited : localMessages.sourceUnfavorited;
-            dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(msg) }));
+            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(msg) }));
           });
         break;
       case 'collection':
         dispatch(favoriteCollection(id, isFav))
           .then(() => {
             const msg = (isFav) ? localMessages.collectionFavorited : localMessages.collectionUnfavorited;
-            dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(msg) }));
+            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(msg) }));
           });
         break;
       default:

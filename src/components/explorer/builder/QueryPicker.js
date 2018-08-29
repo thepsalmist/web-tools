@@ -258,7 +258,7 @@ class QueryPicker extends React.Component {
                   style={{ marginTop: 30 }}
                   type="submit"
                   label={formatMessage(messages.search)}
-                  primary
+                  color="primary"
                   onTouchTap={this.saveAndSearch}
                 />
               </Col>
@@ -416,6 +416,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           dispatch(loadUserSearches());
         } else {
           dispatch(updateFeedback({
+            classes: 'error-notice',
             open: true,
             message: ownProps.intl.formatMessage(localMessages.deleteFailed),
           }));

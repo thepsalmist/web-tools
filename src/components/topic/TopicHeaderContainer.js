@@ -64,7 +64,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(setTopicFavorite(id, isFav))
       .then(() => {
         const msg = (isFav) ? localMessages.topicFavorited : localMessages.topicUnfavorited;
-        dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(msg) }));
+        dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(msg) }));
       });
   },
 });

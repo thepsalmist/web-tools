@@ -5,3 +5,4 @@ export * from './system/metadataActions';
 export * from './system/mediaPickerActions';
 export * from './system/recentNewsActions';
 export * from './system/favoriteActions';
+export * from './system/searchActions';

@@ -26,6 +26,7 @@ const withCsvDownloadNotifyContainer = (ChildComponent) => {
     notifyOfCsvDownload: (urlToDetails) => {  // can handle case with no URL to show for details about the download
       const htmlMessage = ownProps.intl.formatMessage(messages.currentlyDownloadingCsv);
       dispatch(updateFeedback({
+        classes: 'info-notice',
         open: true,
         message: htmlMessage,
         action: (urlToDetails) ? ownProps.intl.formatHTMLMessage(messages.learnMoreAboutColumnsCsv) : undefined,

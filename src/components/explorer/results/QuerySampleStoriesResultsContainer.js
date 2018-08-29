@@ -1,15 +1,19 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import MenuItem from 'material-ui/MenuItem';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import AppButton from '../../common/AppButton';
 import withSummary from '../../common/hocs/SummarizedVizualization';
+import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import StoryTable from '../../common/StoryTable';
 import { fetchQuerySampleStories, fetchDemoQuerySampleStories, resetSampleStories } from '../../../actions/explorerActions';
-import { selectStory, resetStory } from '../../../actions/storyActions';
+import { selectStory, resetStory, fetchStory } from '../../../actions/storyActions';
 import { postToDownloadUrl } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
@@ -21,43 +25,59 @@ const localMessages = {
     defaultMessage: '<p>We can provide basic information about stories like the media source, date of publication, and URL.  However, due to copyright restrictions we cannot provide you with the original full text of the stories. Download the CSV results to see all the metadata we have about the stories.</p>',
   },
   downloadCsv: { id: 'explorer.stories.downloadCsv', defaultMessage: 'Download all { name } stories as a CSV' },
+  showMetadata: { id: 'explorer.stories.showMetadata', defaultMessage: 'Show this story\'s metadata.' },
 };
 
 class QuerySampleStoriesResultsContainer extends React.Component {
   onStorySelection = (selectedStory) => {
-    const { handleStorySelection, selectedQuery } = this.props;
-    handleStorySelection(selectedQuery, selectedStory);
+    const { handleStorySelection, selectedQuery, isLoggedIn, onShowLoginDialog } = this.props;
+    if (isLoggedIn) {
+      handleStorySelection(selectedQuery, selectedStory);
+    } else {
+      onShowLoginDialog();
+    }
   }
 
   downloadCsv = (query) => {
     postToDownloadUrl('/api/explorer/stories/samples.csv', query);
   }
 
+  gotoStory = (url) => {
+    window.open(url, '_blank');
+    // handleStorySelection: (query, story)?
+  }
   render() {
     const { results, queries, selectedTabIndex, tabSelector, internalItemSelected } = this.props;
-    const { formatMessage } = this.props.intl;
-// why isn't this re-rendering if selectedStory has changed?
+    const showMoreInfoColHdr = <th />;
+    const showMoreInfoCol = story => (
+      <td><AppButton color="secondary" variant="outlined" onClick={() => this.onStorySelection(story)} >More Info</AppButton></td>
+    );
     return (
       <div>
         {tabSelector}
         <StoryTable
           className="story-table"
           stories={results[selectedTabIndex] ? results[selectedTabIndex].slice(0, 10) : []}
-          onChangeFocusSelection={story => this.onStorySelection(story)}
+          onChangeFocusSelection={story => this.gotoStory(story.url)}
+          onMoreInfo={story => this.onStorySelection(story)}
           maxTitleLength={90}
           selectedStory={internalItemSelected}
+          extraheaderColumns={showMoreInfoColHdr}
+          extraColumns={story => showMoreInfoCol(story)}
         />
         <div className="actions">
           <ActionMenu actionTextMsg={messages.downloadOptions}>
-            {queries.map((q, idx) =>
-              <MenuItem
-                key={idx}
-                className="action-icon-menu-item"
-                primaryText={formatMessage(localMessages.downloadCsv, { name: q.label })}
-                rightIcon={<DownloadButton />}
-                onTouchTap={() => this.downloadCsv(q)}
-              />
-            )}
+            <MenuItem
+              className="action-icon-menu-item"
+              onClick={() => this.downloadCsv(queries[selectedTabIndex])}
+            >
+              <ListItemText>
+                <FormattedMessage {...localMessages.downloadCsv} values={{ name: queries[selectedTabIndex].label }} />
+              </ListItemText>
+              <ListItemIcon>
+                <DownloadButton />
+              </ListItemIcon>
+            </MenuItem>
           </ActionMenu>
         </div>
       </div>
@@ -69,9 +89,9 @@ QuerySampleStoriesResultsContainer.propTypes = {
   lastSearchTime: PropTypes.number.isRequired,
   queries: PropTypes.array.isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
-  location: PropTypes.object.isRequired,
-  // from composition
+  // from hocs
   intl: PropTypes.object.isRequired,
+  onShowLoginDialog: PropTypes.func.isRequired,
   // from dispatch
   fetchData: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
@@ -126,7 +146,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
   },
   handleStorySelection: (query, story) => {
-    dispatch(selectStory(story));
+    // we should select and fetch since that's the pattern, even if we have the story info
+    dispatch(selectStory(story.stories_id));
+    dispatch(fetchStory(story.stories_id));
   },
 });
 
@@ -148,7 +170,9 @@ export default
       withSummary(localMessages.title, localMessages.helpIntro, localMessages.helpDetails)(
         withAsyncFetch(
           withQueryResults(
-            QuerySampleStoriesResultsContainer
+            withLoginRequired(
+              QuerySampleStoriesResultsContainer
+            )
           )
         )
       )

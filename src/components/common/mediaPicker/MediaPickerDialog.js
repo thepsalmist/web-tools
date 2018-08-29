@@ -18,7 +18,7 @@ const localMessages = {
   helpTitle: { id: 'system.mediaPicker.select.help.title', defaultMessage: 'About Media' },
   selectMediaTitle: { id: 'system.mediaPicker.selectMediaTitle', defaultMessage: 'Select Media' },
   searchByName: { id: 'system.mediaPicker.select.searchby.name', defaultMessage: 'Search by Name/URL' },
-  addMedia: { id: 'system.mediaPicker.select.addMedia', defaultMessage: 'Add Media' },
+  addMedia: { id: 'system.mediaPicker.select.addMedia', defaultMessage: 'Change/add media sources and collections' },
 };
 
 class MediaPickerDialog extends React.Component {
@@ -111,7 +111,9 @@ class MediaPickerDialog extends React.Component {
           tooltip={formatMessage(localMessages.addMedia)}
         />
         {modalContent}
-        <FormattedMessage {...localMessages.addMedia} />
+        <div className="add-media-label">
+          <FormattedMessage {...localMessages.addMedia} />
+        </div>
       </div>
     );
   }

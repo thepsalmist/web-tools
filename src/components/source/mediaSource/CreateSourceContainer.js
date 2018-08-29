@@ -81,7 +81,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         let resultMediaId = null;
         switch (result.status) {
           case CREATE_SOURCE_STATUS_NEW:
-            dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.savedNew) }));
+            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.savedNew) }));
             // need to fetch it again because something may have changed
             resultMediaId = result.media_id;
             dispatch(fetchSourceDetails(resultMediaId))
@@ -89,7 +89,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
                 dispatch(push(`/sources/${resultMediaId}`)));
             break;
           case CREATE_SOURCE_STATUS_EXISTING:
-            dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.updatedExisting) }));
+            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.updatedExisting) }));
             resultMediaId = result.media_id;
             dispatch(push(`/sources/${resultMediaId}`));
             break;
@@ -97,7 +97,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           default:
             // let them know it didn't work
             const message = ownProps.intl.formatMessage(localMessages.saveFailed);
-            dispatch(updateFeedback({ open: true, message }));
+            dispatch(updateFeedback({ classes: 'error-notice', open: true, message }));
             break;
         }
       });

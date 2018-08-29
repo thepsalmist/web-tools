@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import MenuItem from 'material-ui/MenuItem';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import ActionMenu from '../../../common/ActionMenu';
 import { resetStory } from '../../../../actions/storyActions';
@@ -12,12 +13,13 @@ import StoryEntitiesContainer from '../../../common/story/StoryEntitiesContainer
 import StoryNytThemesContainer from '../../../common/story/StoryNytThemesContainer';
 import messages from '../../../../resources/messages';
 import { urlToSource } from '../../../../lib/urlUtil';
+import { ACTION_MENU_ITEM_CLASS } from '../../../../lib/explorerUtil';
 import { TAG_SET_NYT_THEMES } from '../../../../lib/tagUtil';
 import { trimToMaxLength } from '../../../../lib/stringUtil';
 import StatBar from '../../../common/statbar/StatBar';
 
 const localMessages = {
-  title: { id: 'word.inContext.title', defaultMessage: 'Details for: {title}' },
+  title: { id: 'word.inContext.title', defaultMessage: 'Story Details: ' },
   helpTitle: { id: 'word.inContext.help.title', defaultMessage: 'About Word in Context' },
   helpText: { id: 'word.inContext.help.text',
     defaultMessage: '<p>It is helpful to look at how a word is used, in addition to the fact that it is used.  While a word cloud can tell you what words are used, this interactive visualization can help you explore the use of a word in context.</p>',
@@ -38,7 +40,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
   }
   render() {
     const { selectedStory, storyInfo, handleClose, helpButton } = this.props;
-    const { formatMessage, formatDate } = this.props.intl;
+    const { formatDate } = this.props.intl;
 
     let content = null;
     if (selectedStory) {
@@ -49,18 +51,25 @@ class SelectedStoryDrillDownContainer extends React.Component {
               <Col lg={12}>
                 <ActionMenu>
                   <MenuItem
-                    className="action-icon-menu-item"
-                    primaryText={formatMessage(localMessages.close)}
+                    className={ACTION_MENU_ITEM_CLASS}
                     onTouchTap={handleClose}
-                  />
+                  >
+                    <ListItemText>
+                      <FormattedMessage {...localMessages.close} />
+                    </ListItemText>
+                  </MenuItem>
                   <MenuItem
-                    className="action-icon-menu-item"
-                    primaryText={formatMessage(localMessages.readThisStory)}
+                    className={ACTION_MENU_ITEM_CLASS}
                     onTouchTap={() => this.openNewPage(storyInfo.url)}
-                  />
+                  >
+                    <ListItemText>
+                      <FormattedMessage {...localMessages.readThisStory} />
+                    </ListItemText>
+                  </MenuItem>
                 </ActionMenu>
                 <h2>
-                  <FormattedMessage {...localMessages.title} values={{ title: trimToMaxLength(storyInfo.title, 80) }} />
+                  <FormattedMessage {...localMessages.title} />
+                  <a href={storyInfo.url} target="_blank" rel="noopener noreferrer">{trimToMaxLength(storyInfo.title, 80)}</a>
                   {helpButton}
                 </h2>
               </Col>

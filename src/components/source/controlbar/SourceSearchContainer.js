@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import AutoComplete from 'material-ui/AutoComplete';
-import MenuItem from 'material-ui/MenuItem';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { SearchButton } from '../../common/IconButton';
 import { FETCH_ONGOING, FETCH_SUCCEEDED } from '../../../lib/fetchConstants';
@@ -96,17 +97,19 @@ class SourceSearchContainer extends React.Component {
           onClick={() => this.handleClick(item)}
           onKeyDown={this.handleMenuItemKeyDown.bind(this, item)}
           id={`searchResult${item.media_id || item.tags_id}`}
-          primaryText={(item.name.length > MAX_SUGGESTION_CHARS) ? `${item.name.substr(0, MAX_SUGGESTION_CHARS)}...` : item.name}
-        />
+        >
+          <ListItemText>{(item.name.length > MAX_SUGGESTION_CHARS) ? `${item.name.substr(0, MAX_SUGGESTION_CHARS)}...` : item.name}</ListItemText>
+        </MenuItem>
       );
       if (disableStaticCollections && item.is_static === 1) {
         menuItemValue = (
           <MenuItem
             id={`searchResult${item.media_id || item.tags_id}`}
-            primaryText={(item.name.length > MAX_SUGGESTION_CHARS) ? `${item.name.substr(0, MAX_SUGGESTION_CHARS)}...` : `${item.name} is static and cannot be added`}
             style={{ color: '#aaaaaa' }}
             disabled
-          />
+          >
+            <ListItemText>{(item.name.length > MAX_SUGGESTION_CHARS) ? `${item.name.substr(0, MAX_SUGGESTION_CHARS)}...` : `${item.name} is static and cannot be added`}</ListItemText>
+          </MenuItem>
         );
       }
       return ({
@@ -156,7 +159,7 @@ class SourceSearchContainer extends React.Component {
         <SearchButton />
         <div className="fetching">{fetchingStatus}</div>
         <AutoComplete
-          hintText={formatMessage(localMessages.searchHint)}
+          label={formatMessage(localMessages.searchHint)}
           fullWidth
           openOnFocus
           searchText={this.state.lastSearchString}
@@ -175,6 +178,7 @@ class SourceSearchContainer extends React.Component {
 
 SourceSearchContainer.propTypes = {
   intl: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
   // from parent
   searchSources: PropTypes.bool,      // include source results?
   searchCollections: PropTypes.bool,  // include collection results?
@@ -226,6 +230,7 @@ SourceSearchContainer.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
 };
+
 
 export default
   injectIntl(

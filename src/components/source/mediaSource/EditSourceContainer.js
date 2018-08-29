@@ -108,7 +108,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           // need to fetch it again because something may have changed
           dispatch(fetchSourceDetails(ownProps.params.sourceId))
             .then(() => {
-              dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+              dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
               dispatch(push(`/sources/${ownProps.params.sourceId}`));
             });
         }

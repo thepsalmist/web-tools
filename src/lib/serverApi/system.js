@@ -53,3 +53,6 @@ export function metadataValuesForCountryOfFocus(id) {
   return createApiPromise(`api/metadata/${id}/values`);
 }
 
+export function sourceSystemSearch(searchStr) {
+  return createApiPromise(`/api/sources/search/${searchStr}`);
+}

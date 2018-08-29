@@ -93,7 +93,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       .then(() => {
         dispatch(fetchCollectionDetails(ownProps.params.collectionId))
         .then(() => {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
           return dispatch(push(`/collections/${ownProps.params.collectionId}`));
         });
       });

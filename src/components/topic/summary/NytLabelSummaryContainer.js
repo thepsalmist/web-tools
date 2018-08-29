@@ -15,6 +15,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { topicDownloadFilename } from '../../util/topicUtil';
 import messages from '../../../resources/messages';
+import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 import { DownloadButton } from '../../common/IconButton';
 import { filtersAsUrlParams, filteredLocation } from '../../util/location';
 import { WarningNotice } from '../../common/Notice';
@@ -105,20 +106,11 @@ class NytLabelSummaryContainer extends React.Component {
           />
           <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
             <div className="actions">
-              <ActionMenu actionTextMsg={messages.downloadOptions}>
-                <MenuItem
-                  className="action-icon-menu-item"
-                  primaryText={formatMessage(messages.downloadCSV)}
-                  rightIcon={<DownloadButton />}
-                  onClick={this.downloadCsv}
-                />
-                <MenuItem
-                  className="action-icon-menu-item"
-                  primaryText={formatMessage(messages.downloadSVG)}
-                  rightIcon={<DownloadButton />}
-                  onClick={() => downloadSvg(`${topicDownloadFilename(topicName, filters)}-themes`, BUBBLE_CHART_DOM_ID)}
-                />
-              </ActionMenu>
+              <SVGAndCSVMenu
+                downloadCsv={() => this.downloadCsv}
+                downloadSvg={() => downloadSvg(BUBBLE_CHART_DOM_ID)}
+                label={formatMessage(messages.topicName)}
+              />
             </div>
           </Permissioned>
         </React.Fragment>

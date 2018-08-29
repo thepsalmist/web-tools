@@ -42,3 +42,15 @@
   }
 
 }
+
+.info-notice > div {
+    background-color: $material-green500;
+  }
+
+.warning-notice > div {
+  background-color: $material-orange500;
+}
+
+.error-notice > div {
+  background-color: $material-red500;
+}

@@ -60,6 +60,7 @@ class ManageSourcesContainer extends React.Component {
             <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
               <div className="action-buttons">
                 <AppButton
+                  color="primary"
                   className="source-scrape-feeds-button"
                   label={formatMessage(localMessages.scrapeAll)}
                   onClick={this.onScrapeAll}
@@ -87,26 +88,28 @@ class ManageSourcesContainer extends React.Component {
                   {sources.map((source, idx) => {
                     const scrapeButton = (
                       <AppButton
+                        color="secondary"
+                        variant="outlined"
                         className="source-scrape-feeds-button"
                         label={formatMessage(messages.scrapeForFeeds)}
                         onClick={() => scrapeFeeds(source.media_id)}
                       />
                     );
                     let scrapeContent;
-                    const lastScrapeUpdatedDate = formatDate(jobStatusDateToMoment(source.latest_scrape_job.last_updated));
-                    if (source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_QUEUED) {
+                    const lastScrapeUpdatedDate = source.latest_scrape_job ? formatDate(jobStatusDateToMoment(source.latest_scrape_job.last_updated)) : 'n/a';
+                    if (source && source.latest_scrape_job && source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_QUEUED) {
                       scrapeContent = (
                         <span>
                           <FormattedMessage {...localMessages.lastScrapeQueuedSince} values={{ date: lastScrapeUpdatedDate }} />
                         </span>
                       );
-                    } else if (source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_RUNNING) {
+                    } else if (source && source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_RUNNING) {
                       scrapeContent = (
                         <span>
                           <FormattedMessage {...localMessages.lastScrapeRunningSince} values={{ date: lastScrapeUpdatedDate }} />
                         </span>
                       );
-                    } else if (source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_COMPLETED) {
+                    } else if (source && source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_COMPLETED) {
                       scrapeContent = (
                         <span>
                           {scrapeButton}
@@ -114,7 +117,7 @@ class ManageSourcesContainer extends React.Component {
                           <FormattedMessage {...localMessages.lastScrapeWorkedOn} values={{ date: lastScrapeUpdatedDate }} />
                         </span>
                       );
-                    } else if (source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_ERROR) {
+                    } else if (source && source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_ERROR) {
                       scrapeContent = (
                         <span>
                           {scrapeButton}
@@ -189,17 +192,17 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       .then((results) => {
         if ((results.job_state.state === SOURCE_SCRAPE_STATE_QUEUED) ||
           (results.job_state.state === SOURCE_SCRAPE_STATE_RUNNING)) {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(messages.sourceScraping) }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(messages.sourceScraping) }));
           // update the page so the user sees the new scrape status
           window.location.reload();
         } else {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(messages.sourceScrapeFailed) }));
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(messages.sourceScrapeFailed) }));
         }
       });
   },
   scrapeAllFeeds: (mediaIdList) => {
     mediaIdList.forEach(mediaId => dispatch(scrapeSourceFeeds(mediaId)));
-    dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.startedScrapingAll) }));
+    dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.startedScrapingAll) }));
   },
 });
 

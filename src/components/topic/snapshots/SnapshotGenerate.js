@@ -62,12 +62,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       .then((results) => {
         if ((results.job_state.state === SOURCE_SCRAPE_STATE_QUEUED) ||
           (results.job_state.state === SOURCE_SCRAPE_STATE_RUNNING)) {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(messages.snapshotGenerating) }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(messages.snapshotGenerating) }));
           dispatch(fetchTopicSummary(ownProps.params.topicId))  // update the topic so that we see the msg that a new snapshot is being generated up top
             .then(() => dispatch(push(`/topics/${ownProps.params.topicId}/summary`)));
         } else {
           // was completed far too quickly, or was an error
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.snapshotFailed) }));
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.snapshotFailed) }));
         }
       })
   ),

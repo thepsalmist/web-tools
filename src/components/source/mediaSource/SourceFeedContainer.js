@@ -65,7 +65,7 @@ class SourceFeedContainer extends React.Component {
               <AppButton
                 className="source-scrape-feeds-button"
                 label={formatMessage(messages.scrapeForFeeds)}
-                primary
+                color="primary"
                 onClick={scrapeFeeds}
               />
             </Permissioned>
@@ -130,12 +130,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       .then((results) => {
         if ((results.job_state.state === SOURCE_SCRAPE_STATE_QUEUED) ||
           (results.job_state.state === SOURCE_SCRAPE_STATE_RUNNING)) {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(messages.sourceScraping) }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(messages.sourceScraping) }));
           // update the source so the user sees the new scrape status
           dispatch(fetchSourceDetails(ownProps.params.sourceId))
             .then(() => dispatch(push(`/sources/${ownProps.params.sourceId}`)));
         } else {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(messages.sourceScrapeFailed) }));
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(messages.sourceScrapeFailed) }));
         }
       });
   },

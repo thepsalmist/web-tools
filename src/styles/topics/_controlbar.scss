@@ -5,10 +5,12 @@
   &.controlbar-topic {
     background-color: $white !important;
 
-    .app-icon-help {
-      background-color: $topics-primary;
-      path, circle {
-        fill: white;
+    .about-topic {
+      .app-icon-help {
+        background-color: $topics-primary;
+        path, circle {
+          fill: white;
+        }
       }
     }
 

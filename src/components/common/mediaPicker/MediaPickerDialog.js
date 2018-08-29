@@ -30,22 +30,11 @@ class MediaPickerDialog extends React.Component {
   };
 
   componentWillMount() { // only called on intial parent load -eg not when dialog pops up
-    const { initMedia, handleInitialSelectionOfMedia } = this.props;
-    if (initMedia && initMedia.length > 0) { // expects an array of media from caller
-      handleInitialSelectionOfMedia(initMedia); // go fill the store's selectedMedia list
-      if (this.state.open) {
-        window.scrollTo(0, 0);
-      }
+    if (this.state.open) {
+      window.scrollTo(0, 0);
     }
   }
-  componentWillReceiveProps(nextProps) {
-    // select the media so we fill the reducer with the previously selected media
-    const { initMedia, handleInitialSelectionOfMedia } = this.props;
-    if (JSON.stringify(initMedia) !== JSON.stringify(nextProps.initMedia)) {
-      if (nextProps.initMedia) { // expects an array of media from caller
-        handleInitialSelectionOfMedia(nextProps.initMedia);
-      }
-    }
+  componentWillReceiveProps() {
     if (this.state.open) {
       window.scrollTo(0, 0);
     }
@@ -54,12 +43,11 @@ class MediaPickerDialog extends React.Component {
     const { reset } = this.props;
     reset();
   }
-  handleModifyClick = (evt) => {
-    const { setQueryFormChildDialogOpen } = this.props;
-    if (evt) {
-      evt.preventDefault();
-    }
+  handleModifyClick = (initMedia) => {
+    const { setQueryFormChildDialogOpen, handleInitialSelectionOfMedia } = this.props;
     this.setState({ open: true });
+    handleInitialSelectionOfMedia(initMedia); // push into selectedMedia in store
+
     // document.body.style.overflow = 'hidden';
     if (setQueryFormChildDialogOpen) { // way to tell parent that a dialog is open - focus issue stuff
       setQueryFormChildDialogOpen(true);
@@ -68,18 +56,19 @@ class MediaPickerDialog extends React.Component {
   };
 
   handleRemoveDialogClose = (confirm) => {
-    const { onConfirmSelection, selectedMedia, setQueryFormChildDialogOpen } = this.props;
+    const { onConfirmSelection, selectedMedia, setQueryFormChildDialogOpen, reset } = this.props;
     this.setState({ open: false });
     if (confirm) {
       onConfirmSelection(selectedMedia); // passed in from containing element
     }
+    reset();
     if (setQueryFormChildDialogOpen) {
       setQueryFormChildDialogOpen(false);
     }
   };
 
   render() {
-    const { selectedMedia, handleSelection, lookupTimestamp } = this.props;
+    const { initMedia, selectedMedia, handleSelection, lookupTimestamp } = this.props;
     const { formatMessage } = this.props.intl;
     let modalContent = null;
     if (this.state.open) {
@@ -115,7 +104,7 @@ class MediaPickerDialog extends React.Component {
     return (
       <div className="add-media">
         <AddQueryButton
-          onClick={this.handleModifyClick}
+          onClick={() => this.handleModifyClick(initMedia)}
           tooltip={formatMessage(localMessages.addMedia)}
         />
         {modalContent}

@@ -34,6 +34,7 @@ class WordsSummaryContainer extends React.Component {
     const urlDownload = `/api/topics/${topicInfo.topics_id}/words.csv?${filtersAsUrlParams(filters)}`;
     return (
       <EditableWordCloudDataCard
+        width={630}
         words={this.props.words}
         initSampleSize={initSampleSize}
         downloadUrl={urlDownload}

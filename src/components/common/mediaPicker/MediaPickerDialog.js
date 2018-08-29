@@ -91,7 +91,7 @@ class MediaPickerDialog extends React.Component {
                   label={formatMessage(messages.ok)}
                   onTouchTap={() => this.handleRemoveDialogClose(true)}
                   type="submit"
-                  color="primary"
+                  primary
                 />
               </div>
               <div className="select-media-content">

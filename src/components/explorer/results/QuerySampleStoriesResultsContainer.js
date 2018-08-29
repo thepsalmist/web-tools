@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import AppButton from '../../common/AppButton';
 import composeSummarizedVisualization from './SummarizedVizualization';
 import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
@@ -24,6 +25,7 @@ const localMessages = {
     defaultMessage: '<p>We can provide basic information about stories like the media source, date of publication, and URL.  However, due to copyright restrictions we cannot provide you with the original full text of the stories. Download the CSV results to see all the metadata we have about the stories.</p>',
   },
   downloadCsv: { id: 'explorer.stories.downloadCsv', defaultMessage: 'Download all { name } stories as a CSV' },
+  showMetadata: { id: 'explorer.stories.showMetadata', defaultMessage: 'Show this story\'s metadata.' },
 };
 
 class QuerySampleStoriesResultsContainer extends React.Component {
@@ -40,17 +42,28 @@ class QuerySampleStoriesResultsContainer extends React.Component {
     postToDownloadUrl('/api/explorer/stories/samples.csv', query);
   }
 
+  gotoStory = (url) => {
+    window.open(url, '_blank');
+    // handleStorySelection: (query, story)?
+  }
   render() {
     const { results, queries, selectedTabIndex, tabSelector, internalItemSelected } = this.props;
+    const showMoreInfoColHdr = <th />;
+    const showMoreInfoCol = story => (
+      <td><AppButton color="secondary" variant="outlined" onClick={() => this.onStorySelection(story)} >More Info</AppButton></td>
+    );
     return (
       <div>
         {tabSelector}
         <StoryTable
           className="story-table"
           stories={results[selectedTabIndex] ? results[selectedTabIndex].slice(0, 10) : []}
-          onChangeFocusSelection={story => this.onStorySelection(story)}
+          onChangeFocusSelection={story => this.gotoStory(story.url)}
+          onMoreInfo={story => this.onStorySelection(story)}
           maxTitleLength={90}
           selectedStory={internalItemSelected}
+          extraheaderColumns={showMoreInfoColHdr}
+          extraColumns={story => showMoreInfoCol(story)}
         />
         <div className="actions">
           <ActionMenu actionTextMsg={messages.downloadOptions}>

@@ -5,6 +5,7 @@ import { injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
 import SimpleSourceSearchContainer from '../../common/SimpleSourceSearchContainer';
+import { urlToTopicMapper } from '../../../lib/urlUtil';
 
 const TopicSourceSearchContainer = props => (
   <div className="controlbar controlbar-sources">
@@ -18,7 +19,7 @@ const TopicSourceSearchContainer = props => (
                 searchSources
                 maxSources={12}
                 onMediaSourceSelected={props.handleMediaSourceSelected}
-                goToThisUrl={props.handleUrlCallback(props.topicId)}
+                goToThisUrl={mediaItem => props.handleUrlCallback(props.topicId, mediaItem)}
               />
             )}
           </Col>
@@ -55,7 +56,9 @@ const mapDispatchToProps = dispatch => ({
   handleAdvancedSearchSelected: (item) => {
     dispatch(push(`/media/${item.id}`));
   },
-  handleUrlCallback: (topicId, mediaItem) => `topics/${topicId}/media/${mediaItem}`, // this may or may not work depending if the source is within the topic
+  handleUrlCallback: (topicId, mediaItem) => {
+    window.location = urlToTopicMapper(`topics/${topicId}/media/${mediaItem}`);
+  }, // this may or may not work depending if the source is within the topic
 });
 
 export default

@@ -47,7 +47,7 @@ class InfluentialMediaContainer extends React.Component {
         <Row>
           <Col lg={12} md={12} sm={12}>
             <Helmet><title>{titleHandler()}</title></Helmet>
-            <TopicSourceSearchContainer showSearch />
+            <TopicSourceSearchContainer topicId={topicId} showSearch />
             <DataCard border={false}>
               <div className="actions">
                 <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.downloadCsv} />

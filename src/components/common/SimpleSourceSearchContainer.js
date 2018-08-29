@@ -38,7 +38,7 @@ class SourceSearchContainer extends React.Component {
   handleClick = (menuItem) => {
     const { goToThisUrl } = this.props;
     if (menuItem.item) {
-      window.location = goToThisUrl(menuItem.item.media_id);
+      goToThisUrl(menuItem.item.media_id);
     }
     // something like const topicMediaUrl = filteredLinkTo(`/topics/${topics_id}/media`, filters);
     // dispatch(push(topicSummaryUrl));

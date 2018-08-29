@@ -18,6 +18,7 @@ const TopicSourceSearchContainer = props => (
                 searchSources
                 maxSources={12}
                 onMediaSourceSelected={props.handleMediaSourceSelected}
+                goToThisUrl={props.handleUrlCallback(props.topicId)}
               />
             )}
           </Col>
@@ -31,12 +32,14 @@ TopicSourceSearchContainer.propTypes = {
   // from parent
   children: PropTypes.node,
   showSearch: PropTypes.bool,
+  topicId: PropTypes.number.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
   // from dispatch
   handleMediaSourceSelected: PropTypes.func.isRequired,
   handleCollectionSelected: PropTypes.func.isRequired,
   handleAdvancedSearchSelected: PropTypes.func.isRequired,
+  handleUrlCallback: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = () => ({
@@ -52,6 +55,7 @@ const mapDispatchToProps = dispatch => ({
   handleAdvancedSearchSelected: (item) => {
     dispatch(push(`/media/${item.id}`));
   },
+  handleUrlCallback: (topicId, mediaItem) => `topics/${topicId}/media/${mediaItem}`, // this may or may not work depending if the source is within the topic
 });
 
 export default

@@ -8,7 +8,6 @@ import AutoComplete from 'material-ui/AutoComplete';
 import LoadingSpinner from './LoadingSpinner';
 import { SearchButton } from './IconButton';
 import { FETCH_ONGOING } from '../../lib/fetchConstants';
-import { urlToTopicMapper } from '../../lib/urlUtil';
 import { fetchSystemSourceSearch, resetSystemSourceSearch } from '../../actions/systemActions';
 
 const MAX_SUGGESTION_CHARS = 70;
@@ -37,9 +36,9 @@ class SourceSearchContainer extends React.Component {
   }
 
   handleClick = (menuItem) => {
-    const topicIdDummy = '2113';
-    if (menuItem.item) { // TODO: handle url generically
-      window.location = urlToTopicMapper(`/topics/${topicIdDummy}/media/${menuItem.item.media_id}/`);
+    const { goToThisUrl } = this.props;
+    if (menuItem.item) {
+      window.location = goToThisUrl(menuItem.item.media_id);
     }
     // something like const topicMediaUrl = filteredLinkTo(`/topics/${topics_id}/media`, filters);
     // dispatch(push(topicSummaryUrl));
@@ -146,6 +145,7 @@ SourceSearchContainer.propTypes = {
   sourceResults: PropTypes.array.isRequired,
   // from dispatch
   search: PropTypes.func.isRequired,
+  goToThisUrl: PropTypes.func,
 };
 
 const mapStateToProps = state => ({

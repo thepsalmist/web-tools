@@ -33,7 +33,9 @@ class MediaPickerDialog extends React.Component {
     const { initMedia, handleInitialSelectionOfMedia } = this.props;
     if (initMedia && initMedia.length > 0) { // expects an array of media from caller
       handleInitialSelectionOfMedia(initMedia); // go fill the store's selectedMedia list
-      window.scrollTo(0, 0);
+      if (this.state.open) {
+        window.scrollTo(0, 0);
+      }
     }
   }
   componentWillReceiveProps(nextProps) {
@@ -44,7 +46,9 @@ class MediaPickerDialog extends React.Component {
         handleInitialSelectionOfMedia(nextProps.initMedia);
       }
     }
-    window.scrollTo(0, 0);
+    if (this.state.open) {
+      window.scrollTo(0, 0);
+    }
   }
   componentWillUnmount() {
     const { reset } = this.props;

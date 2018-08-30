@@ -9,7 +9,7 @@ import { urlToTopicMapper } from '../../../lib/urlUtil';
 
 const TopicSourceSearchContainer = props => (
   <div className="controlbar controlbar-sources">
-    <div className="main">
+    <div className="topic-search">
       <Grid>
         <Row>
           {props.children}

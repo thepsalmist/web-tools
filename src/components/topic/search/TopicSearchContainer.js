@@ -106,7 +106,7 @@ class TopicSearchContainer extends React.Component {
         <SearchButton />
         <div className="fetching">{fetchingStatus}</div>
         <AutoComplete
-          label={formatMessage(localMessages.searchHint)}
+          hintText={formatMessage(localMessages.searchHint)}
           fullWidth
           openOnFocus
           searchText={this.state.lastSearchString}

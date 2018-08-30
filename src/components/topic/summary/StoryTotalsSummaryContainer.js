@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import MenuItem from 'material-ui/MenuItem';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
@@ -69,10 +71,11 @@ class StoryTotalsSummaryContainer extends React.Component {
             <ActionMenu actionTextMsg={messages.downloadOptions}>
               <MenuItem
                 className="action-icon-menu-item"
-                primaryText={formatMessage(messages.downloadSVG)}
-                rightIcon={<DownloadButton />}
                 onClick={() => downloadSvg(`${topicDownloadFilename(topicName, filters)}-filtered-story-count`, BUBBLE_CHART_DOM_ID)}
-              />
+              >
+                <ListItemText><FormattedMessage {...messages.downloadSVG} /></ListItemText>
+                <ListItemIcon><DownloadButton /></ListItemIcon>
+              </MenuItem>
             </ActionMenu>
           </div>
         </Permissioned>

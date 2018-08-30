@@ -2,7 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import Dialog from 'material-ui/Dialog';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogActions from '@material-ui/core/DialogActions';
 import Link from 'react-router/lib/Link';
 import messages from '../../../resources/messages';
 import AppButton from '../../common/AppButton';
@@ -49,12 +52,14 @@ class AboutTopicDialog extends React.Component {
           <b><FormattedMessage {...localMessages.aboutTopic} /></b>
         </Link>
         <Dialog
-          title={formatMessage(localMessages.aboutTopic)}
-          actions={dialogActions}
           open={this.state.open}
-          onRequestClose={this.handleRemoveDialogClose}
+          onClose={this.handleRemoveDialogClose}
         >
-          <TopicInfo topic={topicInfo} />
+          <DialogTitle><FormattedMessage {...localMessages.aboutTopic} /></DialogTitle>
+          <DialogContent>
+            <TopicInfo topic={topicInfo} />
+          </DialogContent>
+          <DialogActions>{dialogActions}</DialogActions>
         </Dialog>
       </div>
     );

@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import MenuItem from 'material-ui/MenuItem';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
@@ -47,7 +49,6 @@ class MediaSummaryContainer extends React.Component {
   }
   render() {
     const { media, sort, topicId, user } = this.props;
-    const { formatMessage } = this.props.intl;
     const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
     return (
       <React.Fragment>
@@ -62,10 +63,11 @@ class MediaSummaryContainer extends React.Component {
           <ActionMenu actionTextMsg={messages.downloadOptions}>
             <MenuItem
               className="action-icon-menu-item"
-              primaryText={formatMessage(messages.downloadCSV)}
-              rightIcon={<DownloadButton />}
               onClick={this.downloadCsv}
-            />
+            >
+              <ListItemText><FormattedMessage {...messages.downloadCSV} /></ListItemText>
+              <ListItemIcon><DownloadButton /></ListItemIcon>
+            </MenuItem>
           </ActionMenu>
         </Permissioned>
       </React.Fragment>

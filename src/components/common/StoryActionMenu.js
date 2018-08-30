@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import IconMenu from 'material-ui/IconMenu';
-import IconButton from 'material-ui/IconButton';
+import Menu from '@material-ui/core/Menu';
+import IconButton from '@material-ui/core/IconButton';
 import MoreOptionsIcon from './icons/MoreOptionsIcon';
 import CloseIcon from './icons/CloseIcon';
 import { getBrandDarkColor, getBrandDarkerColor } from '../../styles/colors';
@@ -66,7 +66,7 @@ class ActionMenu extends React.Component {
 
     // support text or icon-driven menus
     const menuContent = (
-      <IconMenu
+      <Menu
         open={this.state.isPopupOpen}
         iconButtonElement={icon}
         onRequestChange={() => this.handlePopupOpenClick(event)}
@@ -74,7 +74,7 @@ class ActionMenu extends React.Component {
         targetOrigin={{ horizontal: 'right', vertical: 'top' }}
       >
         {children}
-      </IconMenu>
+      </Menu>
     );
     return (
       <div className="action-icon-menu">

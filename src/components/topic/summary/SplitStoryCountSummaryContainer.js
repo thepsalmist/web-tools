@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
-import MenuItem from 'material-ui/MenuItem';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
@@ -36,7 +38,6 @@ class SplitStoryCountSummaryContainer extends React.Component {
   }
   render() {
     const { total, counts } = this.props;
-    const { formatMessage } = this.props.intl;
     return (
       <React.Fragment>
         <AttentionOverTimeChart
@@ -51,10 +52,11 @@ class SplitStoryCountSummaryContainer extends React.Component {
             <ActionMenu actionTextMsg={messages.downloadOptions}>
               <MenuItem
                 className="action-icon-menu-item"
-                primaryText={formatMessage(localMessages.downloadCsv)}
-                rightIcon={<DownloadButton />}
                 onClick={this.downloadCsv}
-              />
+              >
+                <ListItemText><FormattedMessage {...localMessages.downloadCsv} /></ListItemText>
+                <ListItemIcon><DownloadButton /></ListItemIcon>
+              </MenuItem>
             </ActionMenu>
           </div>
         </Permissioned>

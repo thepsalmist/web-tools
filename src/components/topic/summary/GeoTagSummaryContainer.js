@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedHTMLMessage, injectIntl } from 'react-intl';
+import { FormattedHTMLMessage, FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import MenuItem from 'material-ui/MenuItem';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import GeoChart from '../../vis/GeoChart';
@@ -40,7 +42,7 @@ class GeoTagSummaryContainer extends React.Component {
   }
   render() {
     const { data, coverage } = this.props;
-    const { formatMessage, formatNumber } = this.props.intl;
+    const { formatNumber } = this.props.intl;
     const coverageRatio = coverage.count / coverage.total;
     let content;
     if (coverageRatio > COVERAGE_REQUIRED) {
@@ -63,10 +65,11 @@ class GeoTagSummaryContainer extends React.Component {
             <ActionMenu actionTextMsg={messages.downloadOptions}>
               <MenuItem
                 className="action-icon-menu-item"
-                primaryText={formatMessage(messages.downloadCSV)}
-                rightIcon={<DownloadButton />}
                 onClick={this.downloadCsv}
-              />
+              >
+                <ListItemText><FormattedMessage {...messages.downloadCSV} /></ListItemText>
+                <ListItemIcon><DownloadButton /></ListItemIcon>
+              </MenuItem>
             </ActionMenu>
           </div>
         </Permissioned>

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { schemeCategory10 } from 'd3';
 import { push } from 'react-router-redux';
 import { fetchTopicNytLabelCounts, filterByQuery } from '../../../actions/topicActions';
+import ActionMenu from '../../common/ActionMenu';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import BubbleRowChart from '../../vis/BubbleRowChart';
@@ -102,11 +103,13 @@ class NytLabelSummaryContainer extends React.Component {
           />
           <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
             <div className="actions">
-              <SVGAndCSVMenu
-                downloadCsv={() => this.downloadCsv}
-                downloadSvg={() => downloadSvg(BUBBLE_CHART_DOM_ID)}
-                label={formatMessage(messages.topicName)}
-              />
+              <ActionMenu actionTextMsg={messages.downloadOptions}>
+                <SVGAndCSVMenu
+                  downloadCsv={() => this.downloadCsv}
+                  downloadSvg={() => downloadSvg(BUBBLE_CHART_DOM_ID)}
+                  label={formatMessage(messages.topicName)}
+                />
+              </ActionMenu>
             </div>
           </Permissioned>
         </React.Fragment>

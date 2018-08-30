@@ -26,7 +26,6 @@ const GenerateSnapshotForm = (props) => {
             component={renderTextField}
             label={localMessages.noteLabel}
             fullWidth
-            hintText={localMessages.noteHint}
           />
         </Col>
       </Row>
@@ -37,7 +36,7 @@ const GenerateSnapshotForm = (props) => {
             type="submit"
             label={formatMessage(localMessages.generate)}
             disabled={submitting}
-            primary
+            color="primary"
           />
         </Col>
       </Row>

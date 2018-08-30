@@ -64,7 +64,6 @@ class ModifyTopicDialog extends React.Component {
           open={this.state.open}
           onClose={this.handleRemoveDialogClose}
           className={'modify-topic-dialog'}
-          autoDetectWindowHeight={false}
         >
           <DialogTitle>
             {formatMessage(localMessages.modifyTopic)}

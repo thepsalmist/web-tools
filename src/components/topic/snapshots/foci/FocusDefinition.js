@@ -75,12 +75,12 @@ class FocusDefinition extends React.Component {
           <DialogTitle>
             {formatMessage(localMessages.deleteConfirmTitle)}
           </DialogTitle>
-          <DialogActions>
-            {dialogActions}
-          </DialogActions>
           <DialogContent>
             <FormattedMessage {...localMessages.deleteConfirmDescription} />
           </DialogContent>
+          <DialogActions>
+            {dialogActions}
+          </DialogActions>
         </Dialog>
       </div>
     );

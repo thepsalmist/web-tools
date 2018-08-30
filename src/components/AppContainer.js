@@ -91,7 +91,6 @@ class AppContainer extends React.Component {
           className={feedback.classes ? feedback.classes : 'info_notice'}
           open={this.state.open}
           onClose={this.handleClose}
-          onRequestClose={this.handleClose}
           message={feedback.message}
           action={feedback.action}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}

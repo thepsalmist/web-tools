@@ -25,6 +25,7 @@ const localMessages = {
   notEnoughData: { id: 'topic.snapshot.topOrgs.notEnoughData',
     defaultMessage: '<i>Sorry, but only {pct} of the stories have been processed to add the organizations they mention.  We can\'t gaurantee the accuracy of partial results, so we don\'t show a table of results here.  If you are really curious, you can download the CSV using the link in the top-right of this box, but don\'t trust those numbers as fully accurate. Email us if you want us to process this topic to add the organizations mentioned.</i>',
   },
+  downloadCSV: { id: 'topic.snapshot.topOrgs.downloadCSV', defaultMessage: `Download Top ${NUMBER_TO_SHOW} Organizations CSV` },
 };
 
 class TopOrgsContainer extends React.Component {
@@ -77,7 +78,7 @@ class TopOrgsContainer extends React.Component {
                 className="action-icon-menu-item"
                 onClick={this.downloadCsv}
               >
-                <ListItemText><FormattedMessage {...messages.downloadCSV} /></ListItemText>
+                <ListItemText><FormattedMessage {...localMessages.downloadCSV} values={{ NUMBER_TO_SHOW }} /></ListItemText>
                 <ListItemIcon><DownloadButton /></ListItemIcon>
               </MenuItem>
             </ActionMenu>

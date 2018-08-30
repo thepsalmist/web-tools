@@ -23,6 +23,7 @@ const localMessages = {
   description: { id: 'topic.summary.topMedia.help.text',
     defaultMessage: '<p>This table shows you the media that wrote about this Topic the most.</p><p>This table has one row for each Media Source.  The column currently being used to sort the results has a little down arrow next to it.  Click one of the green column headers to change how it is sorted.  Here is a summary of the columns:</p><ul><li>Name: the name of the Media Source; click to see details about this source\'s content within this Topic</li><li>Media Inlinks: how many unique other Media Sources have links to this content from this Media Source in the Topic</li><li>Outlinks: the number of links in this Media Source to other stories</li><li>Facebook Shares: the number of times stories from this Media Source were shared on Facebook</li></ul><p>Click the download button in the top right to download a CSV of the full list of stories</p>',
   },
+  downloadCSV: { id: 'topic.summary.topMedia.downloadCSV', defaultMessage: 'Download Top Media CSV' },
 };
 
 const NUM_TO_SHOW = 10;
@@ -65,7 +66,7 @@ class MediaSummaryContainer extends React.Component {
               className="action-icon-menu-item"
               onClick={this.downloadCsv}
             >
-              <ListItemText><FormattedMessage {...messages.downloadCSV} /></ListItemText>
+              <ListItemText><FormattedMessage {...localMessages.downloadCSV} /></ListItemText>
               <ListItemIcon><DownloadButton /></ListItemIcon>
             </MenuItem>
           </ActionMenu>

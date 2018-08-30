@@ -107,7 +107,7 @@ class NytLabelSummaryContainer extends React.Component {
                 <SVGAndCSVMenu
                   downloadCsv={() => this.downloadCsv}
                   downloadSvg={() => downloadSvg(BUBBLE_CHART_DOM_ID)}
-                  label={formatMessage(messages.topicName)}
+                  label={formatMessage(localMessages.title)}
                 />
               </ActionMenu>
             </div>

@@ -23,6 +23,7 @@ const localMessages = {
     defaultMessage: '<p>The "word space" shows you how words are used within the stories that are part of this topic. It can give you a sense of the differing sub-conversations that exist in the entire corpus. Words used more appear bigger and darker, like a standard word cloud.  Rollover a word to highlight other words that are used in similar contexts.  Words that are closer together within the cone that appears have a high probability of showing up in similar contexts (though not necessarily together). Words that are further apart have a low probability of showing up in the same context. <A href="https://mediacloud.org/news/2018/5/23/word-spaces-visualizing-word2vec-to-support-media-analysis">Read our recent blog post for details.</a></p>',
   },
   noTopicW2VData: { id: 'topic.summary.wordspace.nodata', defaultMessage: 'Sorry, the topic model does not exist.' },
+  downloadSVG: { id: 'topic.summary.words.space.downloadSvg', defaultMessage: 'Download Topic Word Space SVG' },
 };
 const WORD_SPACE_DOM_ID = 'topic-summary-word-space';
 
@@ -52,7 +53,7 @@ class TopicWordSpaceContainer extends React.Component {
                   className="action-icon-menu-item"
                   onClick={() => downloadSvg(`${topicDownloadFilename(topicName, filters)}-sampled-word-space`, WORD_SPACE_DOM_ID)}
                 >
-                  <ListItemText><FormattedMessage {...messages.downloadSVG} /></ListItemText>
+                  <ListItemText><FormattedMessage {...localMessages.downloadSVG} /></ListItemText>
                   <ListItemIcon><DownloadButton /></ListItemIcon>
                 </MenuItem>
               </ActionMenu>

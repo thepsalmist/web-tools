@@ -20,7 +20,7 @@ import { LEVEL_WARNING } from '../../common/Notice';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 import AboutTopicDialog from './AboutTopicDialog';
 
-const REMOVE_FOCUS = 0;
+export const REMOVE_FOCUS = 0;
 
 const localMessages = {
   editPermissions: { id: 'topic.editPermissions', defaultMessage: 'Edit Topic Permissions' },

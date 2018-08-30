@@ -5,17 +5,15 @@
   color: $white !important;
 
   .focus-selector {
+      .selected-focus-details {
+        position: absolute;
+        color: rgb(224, 224, 224) !important;
+        font-family: inherit !important;
+        font-size: inherit !important;
+      }
       svg {
           fill: $white !important;
       }
-  }
-
-  .selected-focus-details {
-    position: absolute;
-    top: 17px;
-    left: 82px;
-    color: rgb(224, 224, 224) !important; 
-    font-size: 13px;
   }
   
 }

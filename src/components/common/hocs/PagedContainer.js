@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FormattedMessage } from 'react-intl';
 import Button from '@material-ui/core/Button';
 import messages from '../../../resources/messages';
 
@@ -15,11 +16,11 @@ function withPaging(ComposedContainer) {
     const { formatMessage } = props.intl;
     let previousButton = null;
     if ((links !== undefined) && {}.hasOwnProperty.call(links, 'previous')) {
-      previousButton = <Button variant="outlined" label={formatMessage(messages.previousPage)} color="primary" onClick={previousPage}>formatMessage(messages.previousPage)</Button>;
+      previousButton = <Button variant="outlined" label={formatMessage(messages.previousPage)} color="primary" onClick={previousPage}><FormattedMessage {...messages.previousPage} /></Button>;
     }
     let nextButton = null;
     if ((links !== undefined) && {}.hasOwnProperty.call(links, 'next')) {
-      nextButton = <Button variant="contained" label={formatMessage(messages.nextPage)} color="primary" onClick={nextPage}>formatMessage(messages.nextPage)</Button>;
+      nextButton = <Button variant="contained" label={formatMessage(messages.nextPage)} color="primary" onClick={nextPage}><FormattedMessage {...messages.nextPage} /></Button>;
     }
     return <ComposedContainer {...props} nextButton={nextButton} previousButton={previousButton} />;
   };

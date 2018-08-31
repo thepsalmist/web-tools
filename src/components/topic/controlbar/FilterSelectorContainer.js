@@ -78,13 +78,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleSnapshotSelected: (snapshot) => {
+  handleSnapshotSelected: (snapshotId) => {
     const newLocation = filteredLocation(ownProps.location, {
-      snapshots_id: snapshot.snapshots_id,
+      snapshots_id: snapshotId,
       timespanId: null,
       focusId: null,
     });
-    dispatch(filterBySnapshot(snapshot.snapshots_id));
+    dispatch(filterBySnapshot(snapshotId));
     dispatch(push(newLocation));
   },
 });

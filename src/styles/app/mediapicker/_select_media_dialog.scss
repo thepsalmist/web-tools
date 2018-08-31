@@ -4,6 +4,22 @@ div [data-reactroot] {
   z-index: 10001 !important;
 }
 
+.media-widget {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid $material-grey200;
+  border-bottom: 0px;
+  cursor: pointer;
+  color: $explorer-primary;
+  &:last-child {
+    border-bottom: 1px solid $material-grey200;
+  }
+  .icon-button {
+    float: right !important;
+    margin-top: -21px;
+  }
+}
+
 .add-media {
 
   .add-media-label {
@@ -16,12 +32,13 @@ div [data-reactroot] {
 
 .select-media-dialog-wrapper {
   background-color: white;
-  width: 70% !important;
+  width: 90%;
   position: absolute;
   top: 50%;
+  padding: 0px !important;
   left: 30%;
   transform: translate(-30%, -50%);
-  height: 70%;
+  height: 90%;
 
   .select-media-dialog-inner {
 
@@ -58,15 +75,8 @@ div [data-reactroot] {
         overflow: scroll;
 
         .media-widget {
-          padding: 10px;
-          border: 1px solid #eee;
-          border-bottom: 0;
-          
-          .icon-button {
-            float: right!important;
-            margin-top: -17px;
-          }
         }
+
       }
 
       .select-media-ok-button {

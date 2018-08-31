@@ -11,21 +11,6 @@
       max-height: 280px;
       overflow-y: scroll;
     }
-    .media-widget {
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid $material-grey200;
-      border-bottom: 0px;
-      cursor: pointer;
-      color: $explorer-primary;
-      &:last-child {
-        border-bottom: 1px solid $material-grey200;
-      }
-      .icon-button {
-        float: right !important;
-        margin-top: -21px;
-      }
-    }
     .add-media {
       margin-bottom: 8px;
       border: 1px solid $material-grey200;

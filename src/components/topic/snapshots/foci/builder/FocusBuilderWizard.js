@@ -46,22 +46,21 @@ class FocusBuilderWizard extends React.Component {
       FocusForm4ConfirmContainer,
     ];
     const CurrentStepComponent = steps[currentStep];
-    const stepLabelStyle = { height: 45 };
     return (
       <div className="focus-builder-wizard">
         <BackLinkingControlBar message={localMessages.backToFociManager} linkTo={`/topics/${topicId}/snapshot/foci`} >
           <Stepper activeStep={currentStep}>
             <Step>
-              <StepLabel style={stepLabelStyle}><FormattedMessage {...localMessages.step0Name} /></StepLabel>
+              <StepLabel><FormattedMessage {...localMessages.step0Name} /></StepLabel>
             </Step>
             <Step>
-              <StepLabel style={stepLabelStyle}><FormattedMessage {...localMessages.step1Name} /></StepLabel>
+              <StepLabel><FormattedMessage {...localMessages.step1Name} /></StepLabel>
             </Step>
             <Step>
-              <StepLabel style={stepLabelStyle}><FormattedMessage {...localMessages.step2Name} /></StepLabel>
+              <StepLabel><FormattedMessage {...localMessages.step2Name} /></StepLabel>
             </Step>
             <Step>
-              <StepLabel style={stepLabelStyle}><FormattedMessage {...localMessages.step3Name} /></StepLabel>
+              <StepLabel><FormattedMessage {...localMessages.step3Name} /></StepLabel>
             </Step>
           </Stepper>
         </BackLinkingControlBar>

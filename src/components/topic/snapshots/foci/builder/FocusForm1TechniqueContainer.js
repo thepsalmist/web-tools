@@ -39,7 +39,7 @@ const FocusForm1TechniqueContainer = (props) => {
               disabled={(currentFocalTechnique === undefined) || submitting}
               type="submit"
               label={formatMessage(messages.next)}
-              color="primary"
+              primary
             >
               {formatMessage(messages.next)}
             </AppButton>

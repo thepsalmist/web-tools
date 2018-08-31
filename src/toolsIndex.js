@@ -15,9 +15,10 @@ setVersion('3.4.0');
 setAppName(APP_TOOLS);
 
 setAppColors({
-  light: 'rgb(189,189,189)',
-  dark: 'rgb(97,97,97)',
-  darker: 'rgb(33,33,33)',
+  light: '#BDBDBD',
+  dark: '#616161',
+  darker: '#1F1F1F',
+  main: '#616161',
 });
 
 initializeApp(routes);

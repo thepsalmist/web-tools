@@ -6,12 +6,6 @@
     background-color: $tools-primary;
   }
 
-  .app-button {
-    &.hovering :hover {
-      background-color: $tools-darker !important;
-    }
-  }
-
   .app-icon-button {
     &.hovering :hover {
       background-color: $tools-darker !important;

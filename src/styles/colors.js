@@ -4,6 +4,7 @@ let appColors = {
   darker: '#330000',
   main: '#991000',
 };
+
 export function setAppColors(newAppColors) {
   appColors = newAppColors;
 }

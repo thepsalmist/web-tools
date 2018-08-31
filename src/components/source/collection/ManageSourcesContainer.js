@@ -18,6 +18,7 @@ import { parseSolrShortDate, jobStatusDateToMoment } from '../../../lib/dateUtil
 
 const localMessages = {
   title: { id: 'collection.manageSources.title', defaultMessage: 'Review Sources' },
+  scrape: { id: 'collection.manageSources.scrape', defaultMessage: 'Scrape' }, // using this so we have a smaller button
   scrapeAll: { id: 'collection.manageSources.scrapeAll', defaultMessage: 'Scrape all For New Feeds' },
   inLast90Days: { id: 'collection.manageSources.column.last90', defaultMessage: '90 Day Story Count' },
   startedScrapingAll: { id: 'collection.manageSources.startedScrapingAll', defaultMessage: 'Started scraping all sources for RSS feeds' },
@@ -91,7 +92,7 @@ class ManageSourcesContainer extends React.Component {
                         color="secondary"
                         variant="outlined"
                         className="source-scrape-feeds-button"
-                        label={formatMessage(messages.scrapeForFeeds)}
+                        label={formatMessage(localMessages.scrape)}
                         onClick={() => scrapeFeeds(source.media_id)}
                       />
                     );

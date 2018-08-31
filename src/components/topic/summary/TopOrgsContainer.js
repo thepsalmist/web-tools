@@ -53,7 +53,7 @@ class TopOrgsContainer extends React.Component {
     const { coverage, entities } = this.props;
     const { formatNumber } = this.props.intl;
     let content = null;
-    const coverageRatio = coverage.counts / coverage.total;
+    const coverageRatio = coverage.count / coverage.total;
     if (coverageRatio > COVERAGE_REQUIRED) {
       content = <EntitiesTable entities={entities.slice(0, NUMBER_TO_SHOW)} onClick={(...args) => this.handleEntityClick(args)} />;
     } else {
@@ -108,7 +108,7 @@ TopOrgsContainer.propTypes = {
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.summary.topEntitiesOrgs.fetchStatus,
-  coverage: state.topics.selected.summary.topEntitiesOrgs,
+  coverage: state.topics.selected.summary.topEntitiesOrgs.coverage,
   entities: state.topics.selected.summary.topEntitiesOrgs.entities,
 });
 

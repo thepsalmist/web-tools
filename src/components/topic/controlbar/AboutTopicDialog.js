@@ -36,12 +36,6 @@ class AboutTopicDialog extends React.Component {
   render() {
     const { topicInfo } = this.props;
     const { formatMessage } = this.props.intl;
-    const dialogActions = [
-      <AppButton
-        label={formatMessage(messages.ok)}
-        onTouchTap={this.handleRemoveDialogClose}
-      />,
-    ];
     return (
       <div className="about-topic">
         <HelpButton
@@ -59,7 +53,13 @@ class AboutTopicDialog extends React.Component {
           <DialogContent>
             <TopicInfo topic={topicInfo} />
           </DialogContent>
-          <DialogActions>{dialogActions}</DialogActions>
+          <DialogActions>
+            <AppButton
+              label={formatMessage(messages.ok)}
+              onTouchTap={this.handleRemoveDialogClose}
+              key={0}
+            />
+          </DialogActions>
         </Dialog>
       </div>
     );

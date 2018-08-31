@@ -135,7 +135,7 @@ NytLabelSummaryContainer.propTypes = {
   location: PropTypes.object.isRequired,
   filters: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
-  topicName: PropTypes.number.isRequired,
+  topicName: PropTypes.string.isRequired,
   // from composition chain
   intl: PropTypes.object.isRequired,
   // from state

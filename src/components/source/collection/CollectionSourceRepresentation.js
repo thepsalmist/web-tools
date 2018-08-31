@@ -116,7 +116,7 @@ CollectionSourceRepresentation.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   sources: PropTypes.array.isRequired,
   // from parent
-  collection: PropTypes.number.isRequired,
+  collection: PropTypes.object.isRequired,
   // from dispatch
   asyncFetch: PropTypes.func.isRequired,
   navToSource: PropTypes.func.isRequired,

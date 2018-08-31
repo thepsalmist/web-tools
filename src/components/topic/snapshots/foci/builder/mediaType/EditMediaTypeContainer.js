@@ -49,7 +49,7 @@ const EditMediaTypeContainer = (props) => {
             <br />
             <AppButton color="secondary" variant="outlined" onClick={onPreviousStep} label={formatMessage(messages.previous)} />
             &nbsp; &nbsp;
-            <AppButton type="submit" label={formatMessage(messages.next)} color="primary" />
+            <AppButton type="submit" label={formatMessage(messages.next)} primary />
           </Col>
         </Row>
       </form>

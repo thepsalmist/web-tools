@@ -1,8 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import Dialog from '@material-ui/core/Dialog';
-import Button from '@material-ui/core/Button';
 import { injectIntl } from 'react-intl';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import AppButton from './AppButton';
 
 class ConfirmationDialog extends React.Component {
 
@@ -19,14 +22,11 @@ class ConfirmationDialog extends React.Component {
   render() {
     const { open, title, children, okText } = this.props;
     const actions = [
-      <Button
-        variant="outlined"
+      <AppButton
         label="Cancel"
-        primary
         onTouchTap={this.handleCancel}
       />,
-      <Button
-        variant="outlined"
+      <AppButton
         label={okText}
         primary
         keyboardFocused
@@ -36,14 +36,16 @@ class ConfirmationDialog extends React.Component {
     return (
       <div>
         <Dialog
-          title={title}
-          actions={actions}
           modal={false}
           className="app-dialog"
           open={open}
-          onRequestClose={this.handleCancel}
+          onClose={this.handleCancel}
         >
-          {children}
+          <DialogTitle>{title}</DialogTitle>
+          <DialogContent>
+            {children}
+          </DialogContent>
+          <DialogActions>{actions}</DialogActions>
         </Dialog>
       </div>
     );

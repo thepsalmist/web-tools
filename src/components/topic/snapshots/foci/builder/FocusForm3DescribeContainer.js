@@ -131,7 +131,7 @@ const FocusForm3DescribeContainer = (props) => {
           <Col lg={12}>
             <AppButton variant="outlined" color="secondary" label={formatMessage(messages.previous)} onClick={() => goToStep(1)} />
             &nbsp; &nbsp;
-            <AppButton type="submit" label={formatMessage(messages.next)} color="primary" />
+            <AppButton type="submit" label={formatMessage(messages.next)} primary />
           </Col>
         </Row>
       </form>

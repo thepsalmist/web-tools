@@ -29,7 +29,7 @@ const localMessages = {
   SandC: { id: 'explorer.queryBuilder.sAndC', defaultMessage: 'Media' },
   color: { id: 'explorer.queryBuilder.color', defaultMessage: 'Choose a color' },
   dates: { id: 'explorer.queryBuilder.dates', defaultMessage: 'Enter dates' },
-  datesDesc: { id: 'explorer.queryBuilder.datesDesc', defaultMessage: 'Our database goes back to 2011, however for the most accurate and comprehensive results, we recommend staying within one year of the current date.' },
+  datesDesc: { id: 'explorer.queryBuilder.datesDesc', defaultMessage: 'Our database goes back to 2011, however the start date for different sources and collections can vary. Click on a source or collecton to learn more about when we added it.' },
   dateTo: { id: 'explorer.queryBuilder.dateTo', defaultMessage: 'to' },
   queryHelpTitle: { id: 'explorer.queryBuilder.queryHelp.title', defaultMessage: 'Building Query Strings' },
   queryHelpContent: { id: 'explorer.queryBuilder.queryHelp.content', defaultMessage: '<p>You can write boolean queries to search against out database. To search for a single word, just enter that word:</p><code>gender</code><p>You can also use boolean and phrase searches like this:</p><code>"gender equality" OR "gender equity"</code>' },

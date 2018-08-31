@@ -106,8 +106,6 @@ AppContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from state
   feedback: PropTypes.object.isRequired,
-  // from dispatch
-  handleSnackBarRequestClose: PropTypes.func.isRequired,
   // from parent
   name: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,

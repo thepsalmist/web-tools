@@ -12,12 +12,9 @@ export const FETCH_SOURCE_SPLIT_STORY_COUNT = 'FETCH_SOURCE_SPLIT_STORY_COUNT';
 export const FETCH_SOURCE_GEO = 'FETCH_SOURCE_GEO';
 export const CREATE_NEW_SOURCE = 'CREATE_NEW_SOURCE';
 export const UPDATE_SOURCE = 'UPDATE_SOURCE';
-export const SET_FAVORITE_SOURCE = 'SET_FAVORITE_SOURCE';
 export const SCRAPE_SOURCE_FEEDS = 'SCRAPE_SOURCE_FEEDS';
 export const FETCH_SOURCE_STATS = 'FETCH_SOURCE_STATS';
 export const FETCH_SOURCE_WITH_NAME_EXISTS = 'FETCH_SOURCE_WITH_NAME_EXISTS';
-
-export const favoriteSource = createAsyncAction(SET_FAVORITE_SOURCE, api.favoriteSource);
 
 export const selectSource = createAction(SELECT_SOURCE, id => id);
 

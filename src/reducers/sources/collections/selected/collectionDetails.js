@@ -1,4 +1,5 @@
-import { FETCH_COLLECTION_DETAILS, SET_FAVORITE_COLLECTION } from '../../../../actions/sourceActions';
+import { FETCH_COLLECTION_DETAILS } from '../../../../actions/sourceActions';
+import { SET_FAVORITE_COLLECTION } from '../../../../actions/systemActions';
 import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 
 const collectionDetails = createAsyncReducer({

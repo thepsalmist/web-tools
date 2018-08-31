@@ -15,6 +15,7 @@ import { WarningNotice } from '../../common/Notice';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_MEDIA_EDIT, PERMISSION_ADMIN } from '../../../lib/auth';
 import QueryHelpDialog from '../../common/help/QueryHelpDialog';
+import messages from '../../../resources/messages';
 
 const localMessages = {
   basics: { id: 'topic.form.section.basics', defaultMessage: 'Basics' },
@@ -133,7 +134,10 @@ const TopicDetailForm = (props) => {
             label={formatMessage(localMessages.seedQuery)}
             helpertext={formatMessage(localMessages.seedQueryError)}
           />
-          <small><b><QueryHelpDialog /></b> <FormattedMessage {...localMessages.seedQueryDescription} /></small>
+          <small>
+            <b><QueryHelpDialog trigger={formatMessage(messages.queryHelpLink)} /></b>
+            <FormattedMessage {...localMessages.seedQueryDescription} />
+          </small>
           {queryWarning}
         </Col>
       </Row>

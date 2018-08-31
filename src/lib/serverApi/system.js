@@ -29,12 +29,20 @@ export function fetchRecentNews() {
   return createApiPromise('/api/release-notes');
 }
 
+export function fetchFavoriteSources() {
+  return createApiPromise('/api/favorites/sources');
+}
+
+export function fetchFavoriteCollections() {
+  return createApiPromise('/api/favorites/collections');
+}
+
 export function favoriteSource(mediaId, favorite) {
   return createPostingApiPromise(`/api/sources/${mediaId}/favorite`, { favorite: (favorite) ? 1 : 0 });
 }
 
-export function favoriteCollection(id, favorite) {
-  return createPostingApiPromise(`/api/collections/${id}/favorite`, { favorite: (favorite) ? 1 : 0 }, 'put');
+export function favoriteCollection(collectionId, favorite) {
+  return createPostingApiPromise(`/api/collections/${collectionId}/favorite`, { favorite: (favorite) ? 1 : 0 }, 'put');
 }
 
 export function metadataValuesForCountry(id) {

@@ -40,19 +40,21 @@
 
     .app-icon-filled-star {
       svg {
+        margin-top: -2px;
         color: rgb(255,255,255) !important;
         fill: rgb(255,255,255) !important;
-        width: 18px;
+        width: 13px;
       }
     }
 
     .app-icon-empty-star {
       svg {
+        margin-top: -2px;
         color: rgb(255,255,255) !important;
         path {
           fill: rgb(255,255,255) !important;
         }
-        width: 18px;
+        width: 13px;
       }
     }
 

@@ -4,7 +4,6 @@ import { Helmet } from 'react-helmet';
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import Snackbar from '@material-ui/core/Snackbar';
-// polyfill for Safari :-(
 import intl from 'intl';  // eslint-disable-line
 import intlEn from 'intl/locale-data/jsonp/en.js';  // eslint-disable-line
 import { Row } from 'react-flexbox-grid/lib';
@@ -34,11 +33,13 @@ class AppContainer extends React.Component {
     }
   }
   handleClose = () => {
+    const { handleSnackBarRequestClose } = this.props;
     this.setState({ open: false });
+    handleSnackBarRequestClose();
   };
 
   render() {
-    const { children, feedback, handleSnackBarRequestClose, name } = this.props;
+    const { children, feedback, name } = this.props;
     const { formatMessage } = this.props.intl;
 
     let content = children;
@@ -95,8 +96,7 @@ class AppContainer extends React.Component {
           action={feedback.action}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           // onClick={feedback.onActionClick}
-          autoHideDuration={8000}
-          onRequest={handleSnackBarRequestClose}
+          autoHideDuration={5000}
         />
       </div>
     );

@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import TextField from '@material-ui/core/TextField';
+import FormControl from '@material-ui/core/FormControl';
+import Input from '@material-ui/core/Input';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -167,7 +168,7 @@ class QueryPickerItem extends React.Component {
       >
         {headerInfo}
         <Dialog
-          modal={false}
+          modal="false"
           open={this.state.labelChangeDialogOpen}
           onClose={this.handleLabelClose}
         >
@@ -176,18 +177,21 @@ class QueryPickerItem extends React.Component {
             <p>
               <FormattedMessage {...localMessages.queryDialog} />
             </p>
-            <TextField
+            <FormControl
               className="query-picker-editable-name"
               id="labelInDialog"
               name="labelInDialog"
               defaultValue={fullQuery}
               maxLength={QUERY_LABEL_CHARACTER_LIMIT}
-              onChange={(e, val) => {
-                this.updateLabelInDialog(val);
+              onChange={(event) => {
+                this.updateLabelInDialog(event.target.value);
               }}
-              inputRef={focusUsernameInputField}
-              hintText={query.label || formatMessage(localMessages.searchHint)}
-            />
+            >
+              <Input
+                inputRef={focusUsernameInputField}
+                placeholder={query.label || formatMessage(localMessages.searchHint)}
+              />
+            </FormControl>
           </DialogContent>
           <DialogActions>
             <AppButton
@@ -200,7 +204,6 @@ class QueryPickerItem extends React.Component {
             <AppButton
               label={formatMessage(messages.rename)}
               primary
-              keyboardFocused
               onClick={() => this.handleLabelChangeAndClose(query)}
               key="picker-ok"
             />,

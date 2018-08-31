@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { GithubPicker } from 'react-color';
+import ListItemText from '@material-ui/core/ListItemText';
 
 const localMessages = {
   choose: { id: 'explorer.colorpicker', defaultMessage: 'Choose A Color' },
@@ -31,16 +32,30 @@ class ColorPicker extends React.Component {
 
 
     let colorPicker = null;
-    if (this.state.displayColorPicker) {
-      colorPicker = <GithubPicker triangle="hide" color={color} onChange={this.handleClose} colors={['#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE', '#004DCF', '#5300EB']} />;
-    } else {
-      colorPicker = (
-        <div>
-          { showLabel ? <a tabIndex="0" role="button" onClick={this.handleClick}><FormattedMessage {...localMessages.choose} /></a> : '' }
+    if (!showLabel) {
+      if (this.state.displayColorPicker === false) {
+        colorPicker = (
           <button
             onClick={this.handleClick}
             style={{ cursor: 'pointer', width: 10, height: 10, borderRadius: 10, backgroundColor: `${color}`, display: 'inline-block' }}
           />
+        );
+      } else {
+        colorPicker = (
+          <div>
+            <button
+              onClick={this.handleClick}
+              style={{ cursor: 'pointer', width: 10, height: 10, borderRadius: 10, backgroundColor: `${color}`, display: 'inline-block' }}
+            />
+            <GithubPicker triangle="hide" color={color} onChange={this.handleClose} colors={['#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE', '#004DCF', '#5300EB']} />
+          </div>
+        );
+      }
+    } else {
+      colorPicker = (
+        <div>
+          <ListItemText><FormattedMessage {...localMessages.choose} /></ListItemText>
+          <GithubPicker triangle="hide" color={color} onChange={this.handleClose} colors={['#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE', '#004DCF', '#5300EB']} />
         </div>
       );
     }

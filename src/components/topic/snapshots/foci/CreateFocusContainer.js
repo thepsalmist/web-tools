@@ -14,7 +14,7 @@ const DEFAULT_SELECTED_NUMBER = 5;
 
 const localMessages = {
   booleanFocusSaved: { id: 'focus.create.booleanSaved', defaultMessage: 'We saved your new Subtopic.' },
-  retweetFocusSaved: { id: 'focus.create.retweetSaved', defaultMessage: 'We created a new set of Subtopics based on our parisan retweet measure.' },
+  retweetFocusSaved: { id: 'focus.create.retweetSaved', defaultMessage: 'We created a new set of Subtopics based on our partisan retweet measure.' },
   focusNotSaved: { id: 'focus.create.notSaved', defaultMessage: 'That didn\'t work for some reason!' },
   invalid: { id: 'focus.create.invalid', defaultMessage: 'Sorry - the data has an unknown subtopic technique. It failed!' },
   duplicateName: { id: 'focus.create.invalid', defaultMessage: 'Duplicate name. Choose a unique focal set name.' },

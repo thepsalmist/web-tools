@@ -57,13 +57,6 @@ class QueryResultsContainer extends React.Component {
           />
         </Col>
         <Col lg={12} xs={12}>
-          <QueryThemesResultsContainer
-            lastSearchTime={lastSearchTime}
-            queries={queries}
-            isLoggedIn={isLoggedIn}
-          />
-        </Col>
-        <Col lg={12} xs={12}>
           <QuerySampleStoriesResultsContainer
             lastSearchTime={lastSearchTime}
             queries={queries}
@@ -119,6 +112,13 @@ class QueryResultsContainer extends React.Component {
             />
           </Col>
         )}
+        <Col lg={12} xs={12}>
+          <QueryThemesResultsContainer
+            lastSearchTime={lastSearchTime}
+            queries={queries}
+            isLoggedIn={isLoggedIn}
+          />
+        </Col>
       </Row>
     );
     const peoplePlacesSection = (

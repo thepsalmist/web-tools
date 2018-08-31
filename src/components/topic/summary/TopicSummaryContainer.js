@@ -95,14 +95,6 @@ class TopicSummaryContainer extends React.Component {
                   <SplitStoryCountSummaryContainer topicId={topicId} filters={filters} />
                 </Col>
               </Row>
-              <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-                {filteredStoryCountContent}
-                <Row>
-                  <Col lg={12}>
-                    <NytLabelSummaryContainer topicId={topicId} filters={filters} topicName={topicInfo.name} location={location} />
-                  </Col>
-                </Row>
-              </Permissioned>
             </React.Fragment>
           );
           break;
@@ -118,6 +110,14 @@ class TopicSummaryContainer extends React.Component {
                   <TopicWordSpaceContainer topicId={topicId} topicName={topicInfo.name} filters={filters} />
                 </Col>
               </Row>
+              <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
+                {filteredStoryCountContent}
+                <Row>
+                  <Col lg={12}>
+                    <NytLabelSummaryContainer topicId={topicId} filters={filters} topicName={topicInfo.name} location={location} />
+                  </Col>
+                </Row>
+              </Permissioned>
             </React.Fragment>
           );
           break;

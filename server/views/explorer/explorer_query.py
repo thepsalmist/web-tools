@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 import logging
 from flask import jsonify, request
 import flask_login
-from server import app, mc, db
-from server.auth import user_admin_mediacloud_client, user_name, user_has_auth_role, \
-    is_user_logged_in, ROLE_MEDIA_EDIT
+from server import app, mc
+from server.auth import user_admin_mediacloud_client, user_has_auth_role, is_user_logged_in, ROLE_MEDIA_EDIT
 from server.util.request import form_fields_required, api_error_handler, arguments_required
 from server.views.explorer import read_sample_searches
 from operator import itemgetter
@@ -75,32 +73,6 @@ def api_explorer_demo_collections_by_ids():
         # info['tag_set'] = _tag_set_info(mc, info['tag_sets_id'])
             coll_list.append(info)
     return jsonify(coll_list)
-
-
-@app.route('/api/explorer/save-searches', methods=['GET'])
-@flask_login.login_required
-@arguments_required('queryName', 'timestamp', 'queryParams')
-def save_user_search():
-    username = user_name()
-    db.add_item_to_users_list(username, 'searches', request.args)
-    return jsonify({'savedQuery': request.args['queryName']})
-
-
-@app.route('/api/explorer/load-user-searches', methods=['GET'])
-@flask_login.login_required
-def load_user_searches():
-    username = user_name()
-    search_list = db.get_users_lists(username, 'searches')
-    return jsonify({'list': search_list})
-
-
-@app.route('/api/explorer/delete-search', methods=['GET'])
-@flask_login.login_required
-@arguments_required('queryName', 'timestamp', 'queryParams')
-def delete_user_search():
-    username = user_name()
-    result = db.remove_item_from_users_list(username, 'searches', {'timestamp': int(request.args['timestamp'])})
-    return jsonify({'success': result.raw_result })
 
 
 # TODO use this or the other collection list retrieval?

@@ -33,7 +33,8 @@ class AppDatabase:
             'favoriteTopics': [],
             'favoriteSources': [],
             'favoriteCollections': [],
-            'savedQueries': []
+            'savedQueries': [],  # holdover from Dashboard
+            'searches': [],
         })
 
     def find_by_username(self, username):

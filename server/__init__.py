@@ -218,3 +218,4 @@ if (server_app == SERVER_APP_EXPLORER) or is_dev_mode():
     import server.views.explorer.story_counts
     import server.views.explorer.geo
     import server.views.explorer.tags
+    import server.views.explorer.saved_searches

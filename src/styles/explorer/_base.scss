@@ -2,13 +2,6 @@
 
 .app-explorer {
 
-  a {
-    color: $explorer-primary;
-    :hover {
-      cursor: pointer;
-    }
-  }
-
   .app-icon-filled-star > svg {
     fill: $explorer-primary;
   }
@@ -24,4 +17,9 @@
     }
   }
 
+}
+
+/* important for this to outside of app-container for modals and such */
+a {
+  color: $explorer-primary;
 }

@@ -6,10 +6,6 @@
     background-color: $tools-primary;
   }
 
-  a {
-    color: $tools-primary;
-  }
-
   .app-button {
     &.hovering :hover {
       background-color: $tools-darker !important;
@@ -24,3 +20,7 @@
 
 }
 
+/* important for this to outside of app-container for modals and such */
+a {
+  color: $tools-primary;
+}

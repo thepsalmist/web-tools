@@ -6,12 +6,12 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import ColorPicker from '../../common/ColorPicker';
-import messages from '../../../resources/messages';
 import { QUERY_LABEL_CHARACTER_LIMIT, ACTION_MENU_ITEM_CLASS } from '../../../lib/explorerUtil';
 import { defaultMenuOriginProps } from '../../util/uiUtil';
 
 const localMessages = {
   title: { id: 'explorer.querypicker.title', defaultMessage: 'Rename Query' },
+  delete: { id: 'explorer.querypicker.delete', defaultMessage: 'Delete Query' },
 };
 
 class QueryPickerLoggedInHeader extends React.Component {
@@ -35,14 +35,14 @@ class QueryPickerLoggedInHeader extends React.Component {
     if (isDeletable()) { // if this is not the only QueryPickerItem
       menuChildren = (
         <div>
-          <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => onLabelEditRequest()}><FormattedMessage {...localMessages.title} /></MenuItem>
-          <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => onDelete(query)}><FormattedMessage {...messages.delete} /></MenuItem>
+          <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onLabelEditRequest(); this.handleClose(); }}><FormattedMessage {...localMessages.title} /></MenuItem>
+          <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onDelete(query); this.handleClose(); }}><FormattedMessage {...localMessages.delete} /></MenuItem>
         </div>
       );
     } else {
       menuChildren = (
         <div>
-          <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => onLabelEditRequest()}><FormattedMessage {...localMessages.title} /></MenuItem>
+          <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onLabelEditRequest(); this.handleClose(); }}><FormattedMessage {...localMessages.title} /></MenuItem>
         </div>
       );
     }
@@ -64,7 +64,7 @@ class QueryPickerLoggedInHeader extends React.Component {
               <ColorPicker
                 name="color"
                 color={query.color}
-                onChange={e => onColorChange(e.value)}
+                onChange={(e) => { onColorChange(e.value); this.handleClose(); }}
                 showLabel
               />
             </MenuItem>
@@ -80,7 +80,7 @@ class QueryPickerLoggedInHeader extends React.Component {
           <div>
             <ColorPicker
               color={query.color}
-              onChange={e => onColorChange(e.value)}
+              onChange={(e) => { onColorChange(e.value); this.handleClose(); }}
             />&nbsp;
             <span
               className="query-picker-name"

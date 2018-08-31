@@ -33,7 +33,9 @@ class SelectedStoryDrillDownContainer extends React.Component {
   }
   componentDidUpdate() {
     const rootNode = this.rootRef.current;
-    rootNode.scrollIntoView();
+    if (rootNode) {
+      rootNode.scrollIntoView();
+    }
   }
   openNewPage = (url) => {
     window.open(url, '_blank');

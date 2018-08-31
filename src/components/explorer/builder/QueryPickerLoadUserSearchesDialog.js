@@ -65,7 +65,7 @@ class QueryPickerLoadUserSearchesDialog extends React.Component {
             const searchDate = getDateFromTimestamp(search.timestamp);
             const needsUpdating = searchDate < STORY_SEARCH_RELEASE_DATE;
             return (
-              <Row>
+              <Row key={idx}>
                 <Col lg={12}>
                   <div key={idx} className="query-picker-save-search-item">
                     <DeleteButton className="delete-search" onClick={() => this.onDeleteRequest(search)} />

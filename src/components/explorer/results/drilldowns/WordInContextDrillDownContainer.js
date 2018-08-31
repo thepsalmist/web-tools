@@ -27,6 +27,10 @@ const localMessages = {
 };
 
 class WordInContextDrillDownContainer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.rootRef = React.createRef();
+  }
   state = {
     imageUri: null,
   }
@@ -41,6 +45,10 @@ class WordInContextDrillDownContainer extends React.Component {
     const { selectedWord, fragments } = this.props;
     return (nextProps.selectedWord !== selectedWord) ||
       (nextProps.fragments !== fragments);
+  }
+  componentDidUpdate() {
+    const rootNode = this.rootRef.current;
+    rootNode.scrollIntoView();
   }
   getUniqueDomId = () => 'word-in-context-';
   handleDownloadSvg = () => {
@@ -58,7 +66,7 @@ class WordInContextDrillDownContainer extends React.Component {
     let content = null;
     if (selectedWord) {
       content = (
-        <div className="drill-down">
+        <div className="drill-down" ref={this.rootRef}>
           <DataCard className="query-word-drill-down">
             <ActionMenu>
               <MenuItem

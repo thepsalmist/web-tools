@@ -23,9 +23,17 @@ const localMessages = {
 };
 
 class SelectedStoryDrillDownContainer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.rootRef = React.createRef();
+  }
   shouldComponentUpdate(nextProps) {
     const { selectedStory, lastSearchTime } = this.props;
     return (nextProps.lastSearchTime !== lastSearchTime || nextProps.selectedStory !== selectedStory);
+  }
+  componentDidUpdate() {
+    const rootNode = this.rootRef.current;
+    rootNode.scrollIntoView();
   }
   openNewPage = (url) => {
     window.open(url, '_blank');
@@ -37,7 +45,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
     let content = null;
     if (selectedStory) {
       content = (
-        <div className="drill-down">
+        <div className="drill-down" ref={this.rootRef}>
           <DataCard className="query-story-drill-down">
             <Row>
               <Col lg={12}>

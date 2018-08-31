@@ -124,7 +124,8 @@ export function storyPubDateToMoment(solrDateString, strict = true) {
 }
 
 export function storyPubDateToTimestamp(solrDateString, strict = true) {
-  return storyPubDateToMoment(solrDateString, strict).valueOf();
+  // important to trim this so we remove fractinoal seconds, which don't parse correctly
+  return storyPubDateToMoment(solrDateString.substring(0, 19), strict).valueOf();
 }
 
 function gapDateToMomemt(gapDateString, strict = true) {

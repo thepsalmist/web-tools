@@ -274,6 +274,8 @@ const messages = {
   languageHelpContent: { id: 'source.details.language.help.content', defaultMessage: '<p>We automatically guess the langauge of stories in our system. This language is the one most used by this source based on the automatic detection.</p>' },
   geoHelpDetailedContent: { id: 'source.details.geo.title', defaultMessage: '<p>This is the country this source writes about most.</p>' },
 
+  queryHelpLink: { id: 'explorer.queryBuilder.query.descLink', defaultMessage: 'Learn more about writing boolean search queries.' },
+
 };
 
 export default messages;

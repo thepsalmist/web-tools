@@ -24,14 +24,6 @@ class SimpleDialog extends React.Component {
   render() {
     const { trigger, children, title } = this.props;
     const { formatMessage } = this.props.intl;
-    const dialogActions = [
-      <Button
-        variant="outlined"
-        label={formatMessage(messages.ok)}
-        onClick={this.handleClose}
-      ><FormattedMessage {...messages.ok} />
-      </Button>,
-    ];
     return (
       <span>
         <a role="button" tabIndex="0" onClick={this.handleClickOpen}>{trigger}</a>
@@ -44,7 +36,15 @@ class SimpleDialog extends React.Component {
           <DialogContent>
             {children}
           </DialogContent>
-          <DialogActions>{dialogActions}</DialogActions>
+          <DialogActions>
+            <Button
+              variant="outlined"
+              label={formatMessage(messages.ok)}
+              onClick={this.handleClose}
+            >
+              <FormattedMessage {...messages.ok} />
+            </Button>,
+          </DialogActions>
         </Dialog>
       </span>
     );

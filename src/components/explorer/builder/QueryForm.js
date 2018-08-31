@@ -15,6 +15,7 @@ import SavedSearchControls from './SavedSearchControls';
 import { emptyString, validDate } from '../../../lib/formValidators';
 import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil';
 import { KEYWORD, MEDIA, DATES } from '../../../lib/explorerUtil';
+import messages from '../../../resources/messages';
 
 const localMessages = {
   mainTitle: { id: 'explorer.queryBuilder.maintitle', defaultMessage: 'Create Query' },
@@ -22,7 +23,6 @@ const localMessages = {
   feedback: { id: 'explorer.queryBuilder.feedback', defaultMessage: 'We saved your new source' },
   query: { id: 'explorer.queryBuilder.query', defaultMessage: 'Enter search terms' },
   queryDesc: { id: 'explorer.queryBuilder.query.desc', defaultMessage: 'Media Cloud will return stories that match your search query. We use standard boolean search syntax.' },
-  queryDescLink: { id: 'explorer.queryBuilder.query.descLink', defaultMessage: 'Learn more about writing boolean search queries.' },
   selectSandC: { id: 'explorer.queryBuilder.selectSAndC', defaultMessage: 'Select your media' },
   selectSandCDesc: { id: 'explorer.queryBuilder.selectSAndCDesc', defaultMessage: 'Choose individual sources or collections to be searched. Our system includes collections for a large range of countries, in multiple languages.' },
   selectSandCDescLink: { id: 'explorer.queryBuilder.selectSAndCDescLink', defaultMessage: 'Learn more about choosing media.' },
@@ -117,10 +117,7 @@ class QueryForm extends React.Component {
                 <div className="query-field-desc">
                   <FormattedMessage {...localMessages.queryDesc} />
                   &nbsp;
-                  <QueryHelpDialog
-                    trigger={formatMessage(localMessages.queryDescLink)}
-                    title={formatMessage(localMessages.query)}
-                  />
+                  <QueryHelpDialog trigger={formatMessage(messages.queryHelpLink)} />
                 </div>
               </Col>
               <Col lg={4}>

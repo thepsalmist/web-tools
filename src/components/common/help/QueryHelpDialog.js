@@ -41,7 +41,6 @@ const QueryHelpDialog = (props) => {
 QueryHelpDialog.propTypes = {
   intl: PropTypes.object.isRequired,
   trigger: PropTypes.string.isRequired,
-  title: PropTypes.string,
 };
 
 export default

@@ -250,7 +250,7 @@ class QueryPicker extends React.Component {
             <Row>
               <Col lg={10}>
                 <div className="query-help-info">
-                  <QueryHelpDialog />
+                  <QueryHelpDialog trigger={formatMessage(messages.queryHelpLink)} />
                 </div>
               </Col>
               <Col lg={1}>

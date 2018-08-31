@@ -11,7 +11,6 @@ import NavToolbar from './common/header/NavToolbar';
 import ErrorBoundary from './common/ErrorBoundary';
 import messages from '../resources/messages';
 import { getVersion } from '../config';
-import { updateFeedback } from '../actions/appActions';
 import { ErrorNotice } from './common/Notice';
 import { assetUrl } from '../lib/assetUtil';
 import AppNoticesContainer from './common/header/AppNoticesContainer';
@@ -33,9 +32,7 @@ class AppContainer extends React.Component {
     }
   }
   handleClose = () => {
-    const { handleSnackBarRequestClose } = this.props;
     this.setState({ open: false });
-    handleSnackBarRequestClose();
   };
 
   render() {
@@ -127,15 +124,9 @@ const mapStateToProps = state => ({
   feedback: state.app.feedback,
 });
 
-const mapDispatchToProps = dispatch => ({
-  handleSnackBarRequestClose: () => {
-    dispatch(updateFeedback({ open: false, message: '' }));
-  },
-});
-
 export default
   injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
+    connect(mapStateToProps)(
       AppContainer
     )
   );

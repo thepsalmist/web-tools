@@ -107,7 +107,7 @@ def create_app():
     my_app.config['SENTRY_USER_ATTRS'] = ['email']
     try:
         sentry_dsn = config.get('SENTRY_DSN')
-        Sentry(my_app, dsn=sentry_dsn, name=server_app)
+        Sentry(my_app, dsn=sentry_dsn)
     except ConfigException as e:
         logger.warn(e)
     # set up webpack

@@ -19,6 +19,7 @@ import TopicUnderConstruction from './TopicUnderConstruction';
 import TopicHeaderContainer from './TopicHeaderContainer';
 import Permissioned from '../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../lib/auth';
+import messages from '../../resources/messages';
 
 const localMessages = {
   needsSnapshotWarning: { id: 'needSnapshot.warning', defaultMessage: 'You\'ve made changes to your Topic that require a new snapshot to be generated!' },
@@ -120,7 +121,7 @@ class TopicContainer extends React.Component {
     return (
       <div className="topic-container">
         <div>
-          <Helmet><title>{topicInfo.name}</title></Helmet>
+          <Helmet><title>{`${topicInfo.name} | ${formatMessage(messages.topicsToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
           <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} filters={filters} />
           {contentToShow}
         </div>

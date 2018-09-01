@@ -10,7 +10,7 @@
           "note": "Lots of polish to all the buttons, text, etc. widgets that we use."
         },
         {
-          "apps": [ "Topics" ],
+          "apps": [ "topics" ],
           "type": "Feature",
           "note": "The topic summary page is split into categories like Explorer now."
         },

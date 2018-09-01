@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -37,7 +36,6 @@ class AppContainer extends React.Component {
 
   render() {
     const { children, feedback, name } = this.props;
-    const { formatMessage } = this.props.intl;
 
     let content = children;
     if (document.appConfig.online === false) {
@@ -58,7 +56,6 @@ class AppContainer extends React.Component {
 
     return (
       <div className={`app-contiainer app-${name}`}>
-        <Helmet><title>{formatMessage(messages.suiteName)}</title></Helmet>
         <AppNoticesContainer />
         <header>
           <NavToolbar />

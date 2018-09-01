@@ -25,9 +25,6 @@ const FocusSetSelectorContainer = (props) => {
   if (focalSets.length > 0) {
     content = (
       <React.Fragment>
-        <p>
-          <FormattedMessage {...localMessages.pick} />
-        </p>
         <Select
           value={selectedFocalSetId !== NO_FOCAL_SET_SELECTED ? selectedFocalSetId : focalSets[0].focal_sets_id}
           onChange={onFocalSetSelected}

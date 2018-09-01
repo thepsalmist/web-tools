@@ -12,9 +12,9 @@ const localMessages = {
 
 class SnapshotSelector extends React.Component {
 
-  handleSnapshotSelected = (evt, index, value) => {
+  handleSnapshotSelected = (snapshotsId) => {
     const { onSnapshotSelected, snapshots } = this.props;
-    onSnapshotSelected(snapshots.find(s => s.snapshots_id === value));
+    onSnapshotSelected(snapshots.find(s => s.snapshots_id === snapshotsId));
   }
 
   render() {
@@ -34,7 +34,7 @@ class SnapshotSelector extends React.Component {
           underline={{ color: 'rgb(255,255,255)', opacity: 0.8 }}
           value={selectedId}
           fullWidth
-          onChange={this.handleSnapshotSelected}
+          onChange={event => this.handleSnapshotSelected(event.target.value)}
         >
           {snapshots.map((snapshot) => {
             const formattedDateStr = formatDate(snapshot.snapshotDate, { month: 'short', year: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' });

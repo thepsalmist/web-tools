@@ -27,7 +27,7 @@ class FociWordComparison extends React.Component {
           selectedFocalSetId={this.state.focalSetId}
           topicId={topicId}
           hideNoneOption
-          onFocalSetSelected={(evt, idx, focalSetId) => this.setState({ focalSetId })}
+          onFocalSetSelected={evt => this.setState({ focalSetId: evt.target.value })}
         />
         <AppButton
           onClick={() => {

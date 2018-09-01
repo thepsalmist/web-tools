@@ -12,9 +12,9 @@ const localMessages = {
 
 class SnapshotSelector extends React.Component {
 
-  handleSnapshotSelected = (evt, index, value) => {
+  handleSnapshotSelected = (snapshotsId) => {
     const { onSnapshotSelected, snapshots } = this.props;
-    onSnapshotSelected(snapshots.find(s => s.snapshots_id === value));
+    onSnapshotSelected(snapshots.find(s => s.snapshots_id === snapshotsId));
   }
 
   render() {

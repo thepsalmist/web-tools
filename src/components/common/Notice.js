@@ -6,6 +6,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 export const LEVEL_INFO = 'info';
 export const LEVEL_WARNING = 'warning';
 export const LEVEL_ERROR = 'error';
+export const LEVEL_DETAIL = 'detail';
 
 const localMessages = {
   details: { id: 'errors.internal.details', defaultMessage: 'details' },
@@ -61,6 +62,8 @@ function composeNotice(level) {
 }
 
 export const InfoNotice = composeNotice(LEVEL_INFO);
+
+export const DetailNotice = composeNotice(LEVEL_DETAIL);
 
 export const WarningNotice = composeNotice(LEVEL_WARNING);
 

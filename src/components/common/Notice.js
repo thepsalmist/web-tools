@@ -6,7 +6,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 export const LEVEL_INFO = 'info';
 export const LEVEL_WARNING = 'warning';
 export const LEVEL_ERROR = 'error';
-export const LEVEL_DETAIL = 'detail';
+export const LEVEL_DETAIL = 'info_outline';
 
 const localMessages = {
   details: { id: 'errors.internal.details', defaultMessage: 'details' },

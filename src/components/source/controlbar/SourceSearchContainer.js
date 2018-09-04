@@ -44,14 +44,14 @@ class SourceSearchContainer extends React.Component {
     return maxCollections || DEFAULT_MAX_COLLECTIONS_TO_SHOW;
   }
 
-  handleClick = (item) => {
+  handleClick = (searchResult) => {
     const { onMediaSourceSelected, onCollectionSelected, onAdvancedSearchSelected } = this.props;
-    if (item) {
-      if (item.item.type === 'mediaSource') {
-        if (onMediaSourceSelected) onMediaSourceSelected(item);
-      } else if (item.item.type === 'collection') {
-        if (onCollectionSelected) onCollectionSelected(item);
-      } else if (item.text === ADVANCED_SEARCH_ITEM_VALUE) {
+    if (searchResult) {
+      if (searchResult.item.type === 'mediaSource') {
+        if (onMediaSourceSelected) onMediaSourceSelected(searchResult.item);
+      } else if (searchResult.item.type === 'collection') {
+        if (onCollectionSelected) onCollectionSelected(searchResult.item);
+      } else if (searchResult.text === ADVANCED_SEARCH_ITEM_VALUE) {
         if (onAdvancedSearchSelected) onAdvancedSearchSelected('');
       }
     }
@@ -70,10 +70,10 @@ class SourceSearchContainer extends React.Component {
     }
   }
 
-  handleMenuItemKeyDown = (item, event) => {
+  handleMenuItemKeyDown = (searchResult, event) => {
     switch (event.key) {
       case 'Enter':
-        this.handleClick(item);
+        this.handleClick(searchResult);
         break;
       default: break;
     }

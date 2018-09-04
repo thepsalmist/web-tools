@@ -68,7 +68,7 @@ function reallyInitializeApp(routes) {
         },
         label: {
           fontFamily: 'Lato, sans',
-          fontWeight: 200,
+          fontWeight: 300,
         },
       },
       MuiInput: {

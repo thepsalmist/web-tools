@@ -47,11 +47,11 @@ class SourceSearchContainer extends React.Component {
   handleClick = (item) => {
     const { onMediaSourceSelected, onCollectionSelected, onAdvancedSearchSelected } = this.props;
     if (item) {
-      if (item.type === 'mediaSource') {
+      if (item.item.type === 'mediaSource') {
         if (onMediaSourceSelected) onMediaSourceSelected(item);
-      } else if (item.type === 'collection') {
+      } else if (item.item.type === 'collection') {
         if (onCollectionSelected) onCollectionSelected(item);
-      } else if (item === ADVANCED_SEARCH_ITEM_VALUE) {
+      } else if (item.text === ADVANCED_SEARCH_ITEM_VALUE) {
         if (onAdvancedSearchSelected) onAdvancedSearchSelected('');
       }
     }
@@ -115,6 +115,7 @@ class SourceSearchContainer extends React.Component {
       return ({
         text: item.name,
         value: menuItemValue,
+        item,
       });
     });
 
@@ -141,12 +142,13 @@ class SourceSearchContainer extends React.Component {
     });
   }
 
-  handleNewRequest = (searchString, index) => {
+  handleNewRequest = (item, index) => {
     const { search } = this.props;
     if (index === -1) { // they pressed enter in the text field
-      search(searchString);
+      search(item.text);
     }
-    // else: they clicked an item and it will take care of things itself
+    // we want to send the user to the media url. The handleClick is no longer triggered in new/old material-ui setup
+    this.handleClick(item);
   }
 
   render() {

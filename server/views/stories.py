@@ -34,14 +34,16 @@ def story_info(stories_id):
     story["media"] = user_mc.media(story["media_id"])
     return jsonify({'info': story})
 
+
 @app.route('/api/stories/<stories_id>/raw.html', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
 def story_raw(stories_id):
     admin_mc = user_admin_mediacloud_client()
-    story={}
-    story['raw_first_download_file'] = admin_mc.story(stories_id, raw_1st_download=True)
-    return jsonify({'story': story})
+    story = admin_mc.story(stories_id, raw_1st_download=True)
+    text = story['raw_first_download_file']
+    return text
+
 
 @app.route('/api/stories/<stories_id>/entities', methods=['GET'])
 @flask_login.login_required

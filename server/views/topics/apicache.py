@@ -5,7 +5,7 @@ from datetime import datetime
 from server import mc, TOOL_API_KEY
 from server.views import WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_UI_NUM_WORDS
 from server.cache import cache, key_generator
-from server.util.tags import STORY_UNDATEABLE_TAG
+from server.util.tags import STORY_UNDATEABLE_TAG, is_bad_theme
 import server.util.wordembeddings as wordembeddings
 from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_mediacloud_key, is_user_logged_in
 from server.util.request import filters_from_args
@@ -357,6 +357,10 @@ def _cached_topic_tag_counts(user_mc_key, topics_id, tag_sets_id, sample_size, q
     # we don't need ot use topics_id here because the timespans_id is in the query argument
     tag_counts = user_mc.storyTagCount(query, tag_sets_id=tag_sets_id)
     # add in the pct so we can show relative values within the sample
+    for t in tag_counts:
+        if (is_bad_theme(t['tags_id'])):
+            tag_counts.remove(t)
+
     return tag_counts
 
 

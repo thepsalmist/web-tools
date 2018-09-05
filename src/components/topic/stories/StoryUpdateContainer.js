@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
@@ -8,13 +8,13 @@ import { fetchMetadataValuesForPrimaryLanguage } from '../../../actions/systemAc
 import { selectStory, fetchStory, updateStory } from '../../../actions/storyActions';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import StoryDetailForm from './StoryDetailForm';
-import messages from '../../../resources/messages';
 import { updateFeedback } from '../../../actions/appActions';
 import { TAG_SET_PRIMARY_LANGUAGE } from '../../../lib/tagUtil';
 
 
 const localMessages = {
-  feedback: { id: 'story.details.feedback', defaultMessage: 'Story Updates saved' },
+  title: { id: 'story.details.edit.title', defaultMessage: 'Edit Story Details' },
+  feedback: { id: 'story.details.edit.feedback', defaultMessage: 'Story Updates saved' },
 };
 class StoryUpdateContainer extends React.Component {
 
@@ -50,8 +50,6 @@ class StoryUpdateContainer extends React.Component {
 
   render() {
     const { story, storiesId, onSave, tags } = this.props;
-    const { formatMessage } = this.props.intl;
-    const titleHandler = `${formatMessage(messages.storyTitle)}: ${story.title}`;
     const lang = tags.map(c => c.tag).sort((f1, f2) => { // alphabetical
       // const f1Name = f1.toUpperCase();
       // const f2Name = f2.toUpperCase();
@@ -63,7 +61,9 @@ class StoryUpdateContainer extends React.Component {
       <div>
         <Grid>
           <Row>
-            <h2>{titleHandler}</h2>
+            <Col lg={12}>
+              <h1><FormattedMessage {...localMessages.title} /></h1>
+            </Col>
           </Row>
           <Row>
             <Col lg={6} xs={12} >

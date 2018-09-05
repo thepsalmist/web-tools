@@ -32,7 +32,7 @@ const StoryDetailForm = (props) => {
             component={renderTextField}
             fullWidth
             label={formatMessage(messages.storyTitle)}
-            hintText={formatMessage(messages.storyTitle)}
+            placeholder={formatMessage(messages.storyTitle)}
           />
         </Col>
       </Row>
@@ -43,7 +43,7 @@ const StoryDetailForm = (props) => {
             component={renderTextField}
             fullWidth
             label={formatMessage(messages.storyDescription)}
-            hintText={formatMessage(messages.storyDescription)}
+            placeholder={formatMessage(messages.storyDescription)}
           />
         </Col>
       </Row>
@@ -55,7 +55,7 @@ const StoryDetailForm = (props) => {
             type="inline"
             fullWidth
             label={formatMessage(messages.storyUrl)}
-            hintText={formatMessage(messages.storyUrl)}
+            placeholder={formatMessage(messages.storyUrl)}
           />
         </Col>
       </Row>
@@ -67,7 +67,7 @@ const StoryDetailForm = (props) => {
             type="inline"
             fullWidth
             label={formatMessage(messages.language)}
-            hintText={formatMessage(messages.language)}
+            placeholder={formatMessage(messages.language)}
           >
             {language.map(t => <MenuItem key={t} value={t} primaryText={t} />)}
           </Field>
@@ -81,7 +81,7 @@ const StoryDetailForm = (props) => {
             type="inline"
             fullWidth
             label={formatMessage(messages.storyDate)}
-            hintText={formatMessage(messages.storyDate)}
+            placeholder={formatMessage(messages.storyDate)}
           />
         </Col>
       </Row>
@@ -93,7 +93,7 @@ const StoryDetailForm = (props) => {
             type="inline"
             fullWidth
             label={formatMessage(messages.storyCustomDate)}
-            hintText={formatMessage(messages.storyCustomDate)}
+            placeholder={formatMessage(messages.storyCustomDate)}
           />
         </Col>
       </Row>
@@ -105,7 +105,7 @@ const StoryDetailForm = (props) => {
             type="inline"
             fullWidth
             label={formatMessage(messages.storyUndateable)}
-            hintText={formatMessage(messages.storyUndateable)}
+            placeholder={formatMessage(messages.storyUndateable)}
           />
         </Col>
       </Row>

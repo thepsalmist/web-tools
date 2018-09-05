@@ -8,7 +8,7 @@ import server.util.csv as csv
 from server import app
 from server.views import TAG_COUNT_SAMPLE_SIZE, TAG_COUNT_DOWNLOAD_LENGTH
 from server.util.request import api_error_handler
-from server.util.tags import CLIFF_PEOPLE, CLIFF_ORGS, NYT_LABELS_TAG_SET_ID
+from server.util.tags import CLIFF_PEOPLE, CLIFF_ORGS, NYT_LABELS_TAG_SET_ID, is_bad_theme
 from server.views.explorer import parse_as_sample, parse_query_with_args_and_sample_search, parse_query_with_keywords, \
     load_sample_searches, file_name_for_download
 import server.views.explorer.apicache as apicache
@@ -85,6 +85,7 @@ def explorer_entities_csv(tag_sets_id):
 def top_themes():
     solr_q, solr_fq = parse_query_with_keywords(request.args)
     results = apicache.top_tags_with_coverage(solr_q, solr_fq, NYT_LABELS_TAG_SET_ID)
+
     return jsonify(results)
 
 

@@ -7,10 +7,13 @@ import messages from '../../resources/messages';
 
 const SourcesApp = (props) => {
   const { formatMessage } = props.intl;
-  const titleHandler = parentTitle => `${formatMessage(messages.sourcesToolName)} | ${parentTitle}`;
   return (
     <div>
-      <Helmet><title>{titleHandler()}</title></Helmet>
+      <Helmet>
+        <title>
+          {`${formatMessage(messages.sourcesToolName)} | ${formatMessage(messages.suiteName)}`}
+        </title>
+      </Helmet>
       <AppContainer
         name="sources"
         title={formatMessage(messages.sourcesToolName)}

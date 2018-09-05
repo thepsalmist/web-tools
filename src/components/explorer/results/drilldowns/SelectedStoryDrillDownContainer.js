@@ -12,6 +12,7 @@ import messages from '../../../../resources/messages';
 import { urlToSource } from '../../../../lib/urlUtil';
 import { TAG_SET_NYT_THEMES } from '../../../../lib/tagUtil';
 import { trimToMaxLength } from '../../../../lib/stringUtil';
+import { storyPubDateToTimestamp } from '../../../../lib/dateUtil';
 import StatBar from '../../../common/statbar/StatBar';
 
 const localMessages = {
@@ -73,7 +74,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
                       ),
                     },
                     { message: messages.storyDate,
-                      data: formatDate(storyInfo.publish_date),
+                      data: formatDate(storyPubDateToTimestamp(storyInfo.publish_date)),
                     },
                     { message: messages.language,
                       data: storyInfo.language ? storyInfo.language : '?',

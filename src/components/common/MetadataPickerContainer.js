@@ -70,18 +70,21 @@ const MetadataPickerContainer = (props) => {
         }
       }*/
       content = (
-        <Field
-          className="metadata-picker"
-          // searchText={initialText}
-          name={name}
-          component={renderAutoComplete}
-          label={formatMessage(localMessages.hintText, { label })}
-          openOnFocus
-          fullWidth
-          dataSource={tags}
-          dataSourceConfig={{ text: 'label', value: 'tags_id' }}
-          maxSearchResults={10}
-        />
+        <div>
+          <Field
+            className="metadata-picker"
+            // searchText={initialText}
+            name={name}
+            component={renderAutoComplete}
+            label={formatMessage(localMessages.hintText, { label })}
+            hintText={formatMessage(localMessages.hintText, { label })}
+            openOnFocus
+            fullWidth
+            dataSource={tags}
+            dataSourceConfig={{ text: 'label', value: 'tags_id' }}
+            maxSearchResults={10}
+          />
+        </div>
       );
       break;
     default:

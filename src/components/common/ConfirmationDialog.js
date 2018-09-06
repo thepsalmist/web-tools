@@ -8,7 +8,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import AppButton from './AppButton';
 
 class ConfirmationDialog extends React.Component {
-
   handleOk = () => {
     const { onOk } = this.props;
     onOk();

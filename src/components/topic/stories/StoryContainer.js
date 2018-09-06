@@ -35,7 +35,7 @@ import AppButton from '../../common/AppButton';
 import { urlToTopicMapper } from '../../../lib/urlUtil';
 import { filteredLinkTo } from '../../util/location';
 
-const MAX_STORY_TITLE_LENGTH = 70;  // story titles longer than this will be trimmed and ellipses added
+const MAX_STORY_TITLE_LENGTH = 70; // story titles longer than this will be trimmed and ellipses added
 
 const localMessages = {
   mainTitle: { id: 'story.details.mainTitle', defaultMessage: 'Story: {title} | {topicName} | Topic Manager | Media Cloud' },
@@ -51,7 +51,6 @@ const localMessages = {
 };
 
 class StoryContainer extends React.Component {
-
   state = {
     open: false,
   };
@@ -187,7 +186,7 @@ class StoryContainer extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col lg={12} >
+            <Col lg={12}>
               <StoryEntitiesContainer storyId={storiesId} />
             </Col>
           </Row>
@@ -195,12 +194,11 @@ class StoryContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 StoryContainer.propTypes = {
   // from context
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   intl: PropTypes.object.isRequired,
   // from parent
   // from dispatch
@@ -253,10 +251,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        StoryContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      StoryContainer
     )
-  );
+  )
+);

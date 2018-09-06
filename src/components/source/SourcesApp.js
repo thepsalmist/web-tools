@@ -30,7 +30,4 @@ SourcesApp.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    SourcesApp
-  );
+export default injectIntl(SourcesApp);

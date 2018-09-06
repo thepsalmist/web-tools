@@ -1,5 +1,6 @@
 import moment from 'moment';
-import { FETCH_TOPIC_STORY_INFO, SELECT_STORY } from '../../../../actions/topicActions';
+import { FETCH_TOPIC_STORY_INFO } from '../../../../actions/topicActions';
+import { SELECT_STORY } from '../../../../actions/storyActions';
 import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 import { TAG_SET_DATE_GUESS_METHOD, TAG_SET_EXTRACTOR_VERSION, TAG_SET_GEOCODER_VERSION, TAG_SET_NYT_THEMES_VERSION }
   from '../../../../lib/tagUtil';

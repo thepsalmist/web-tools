@@ -21,7 +21,6 @@ const localMessages = {
 };
 
 class FocusBuilderWizard extends React.Component {
-
   componentWillMount = () => {
     const { startStep, goToStep } = this.props;
     goToStep(startStep || 0);
@@ -48,7 +47,7 @@ class FocusBuilderWizard extends React.Component {
     const CurrentStepComponent = steps[currentStep];
     return (
       <div className="focus-builder-wizard">
-        <BackLinkingControlBar message={localMessages.backToFociManager} linkTo={`/topics/${topicId}/snapshot/foci`} >
+        <BackLinkingControlBar message={localMessages.backToFociManager} linkTo={`/topics/${topicId}/snapshot/foci`}>
           <Stepper activeStep={currentStep}>
             <Step>
               <StepLabel><FormattedMessage {...localMessages.step0Name} /></StepLabel>
@@ -68,7 +67,6 @@ class FocusBuilderWizard extends React.Component {
       </div>
     );
   }
-
 }
 
 FocusBuilderWizard.propTypes = {
@@ -99,8 +97,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      FocusBuilderWizard
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    FocusBuilderWizard
+  )
+);

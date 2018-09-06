@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import AppMenu from '../../common/header/AppMenu';
+import AppMenu from './AppMenu';
 import { urlToExplorer } from '../../../lib/urlUtil';
 import { getAppName } from '../../../config';
 
@@ -47,8 +47,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      ExplorerAppMenu
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    ExplorerAppMenu
+  )
+);

@@ -1,3 +1,5 @@
+/* eslint indent: 0 */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
@@ -14,7 +16,7 @@ function drawViz(wrapperElement, {
   const width = containerWidth - horizontalPadding;
   const height = 48;
   const node = d3.select(wrapperElement)
-    .html('')   // important to empty it out first
+    .html('') // important to empty it out first
     .append('svg:svg'); // then add in the SVG wrapper we will be rendering to
   const dateRange = [startDate, endDate];
   const xScale = d3.scaleUtc().domain(dateRange).range([0, width - (horizontalPadding * 2)]);
@@ -76,7 +78,6 @@ function drawViz(wrapperElement, {
 }
 
 class VisualTimespanSelector extends React.Component {
-
   constructor(props) {
     super(props);
     this.chartWrapperRef = React.createRef();
@@ -95,7 +96,6 @@ class VisualTimespanSelector extends React.Component {
       <div className="visual-timespan-selector-wrapper" ref={this.chartWrapperRef} />
     );
   }
-
 }
 
 VisualTimespanSelector.propTypes = {

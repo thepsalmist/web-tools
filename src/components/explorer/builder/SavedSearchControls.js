@@ -24,10 +24,8 @@ const SavedSearchControls = (props) => {
         setQueryFormChildDialogOpen={setQueryFormChildDialogOpen}
       />
     </div>
-
   );
 };
-
 
 SavedSearchControls.propTypes = {
   // from parent
@@ -47,7 +45,4 @@ SavedSearchControls.propTypes = {
 };
 
 
-export default
-  injectIntl(
-    SavedSearchControls
-  );
+export default injectIntl(SavedSearchControls);

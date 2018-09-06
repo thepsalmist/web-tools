@@ -7,7 +7,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
 import messages from '../../../resources/messages';
-import AppMenu from '../../common/header/AppMenu';
+import AppMenu from './AppMenu';
 import { urlToSourceManager } from '../../../lib/urlUtil';
 import { getAppName } from '../../../config';
 import { getUserRoles, hasPermissions, PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
@@ -122,8 +122,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      SourcesAppMenu
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    SourcesAppMenu
+  )
+);

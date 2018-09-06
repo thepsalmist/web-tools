@@ -13,8 +13,9 @@ const MediaTypeSummary = (props) => {
     <div className="focus-create-cofirm-media-type">
       <p><FormattedMessage {...localMessages.intro} values={{ count: counts.length }} /></p>
       <ul>
-        {counts.map((t, idx) => <li key={idx}>{t.label}</li>
-        )}
+        {counts.map((t, idx) => (
+          <li key={idx}>{t.label}</li>
+        ))}
       </ul>
     </div>
   );
@@ -35,8 +36,8 @@ const mapStateToProps = state => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps)(
-      MediaTypeSummary
-    )
-  );
+injectIntl(
+  connect(mapStateToProps)(
+    MediaTypeSummary
+  )
+);

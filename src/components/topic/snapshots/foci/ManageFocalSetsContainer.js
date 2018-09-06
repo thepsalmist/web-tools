@@ -29,7 +29,6 @@ const localMessages = {
 };
 
 class ManageFocalSetsContainer extends React.Component {
-
   state = {
     removeDialogOpen: false,
     idToRemove: null,
@@ -87,7 +86,7 @@ class ManageFocalSetsContainer extends React.Component {
           <Row>
             <Col lg={10} xs={12}>
               <div className="focal-set-definition-list">
-                {focalSetDefinitions.map(focalSetDef =>
+                {focalSetDefinitions.map(focalSetDef => (
                   <FocalSetDefinitionSummary
                     key={focalSetDef.focal_set_definitions_id}
                     focalSetDefinition={focalSetDef}
@@ -95,7 +94,7 @@ class ManageFocalSetsContainer extends React.Component {
                     onFocusDefinitionDelete={this.handleFocusDefinitionDelete}
                     topicId={topicId}
                   />
-                )}
+                ))}
               </div>
             </Col>
           </Row>
@@ -113,7 +112,6 @@ class ManageFocalSetsContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 ManageFocalSetsContainer.propTypes = {
@@ -173,23 +171,21 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
     handleFocalSetDefinitionDelete: (focalSetDefinitionId) => {
       dispatchProps.removeFocalSetDefinition(stateProps.topicId, focalSetDefinitionId,
         ownProps.intl.formatMessage(localMessages.removeFocalSetSucceeded),
-        ownProps.intl.formatMessage(localMessages.removeFocalSetFailed)
-      );
+        ownProps.intl.formatMessage(localMessages.removeFocalSetFailed));
     },
     handleFocusDefinitionDelete: (focusDefinitionId) => {
       dispatchProps.removeFocusDefinition(stateProps.topicId, focusDefinitionId,
         ownProps.intl.formatMessage(localMessages.removeFocusSucceeded),
-        ownProps.intl.formatMessage(localMessages.removeFocusFailed)
-      );
+        ownProps.intl.formatMessage(localMessages.removeFocusFailed));
     },
   });
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        ManageFocalSetsContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      ManageFocalSetsContainer
     )
-  );
+  )
+);

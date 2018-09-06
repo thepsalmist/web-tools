@@ -30,7 +30,4 @@ ExplorerApp.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    ExplorerApp
-  );
+export default injectIntl(ExplorerApp);

@@ -14,12 +14,11 @@ const localMessages = {
 };
 
 class Word2VecTimespanPlayerContainer extends React.Component {
-
   componentWillReceiveProps(nextProps) {
     const { fetchData, filters } = this.props;
-    if ((nextProps.filters.snapshotId !== filters.snapshotId) ||
-        (nextProps.filters.focusId !== filters.focusId) ||
-        (nextProps.filters.q !== filters.q)) {
+    if ((nextProps.filters.snapshotId !== filters.snapshotId)
+      || (nextProps.filters.focusId !== filters.focusId)
+      || (nextProps.filters.q !== filters.q)) {
       fetchData(nextProps);
     }
   }
@@ -35,8 +34,8 @@ class Word2VecTimespanPlayerContainer extends React.Component {
           <DataCard>
             <h2><FormattedMessage {...localMessages.title} /></h2>
             <Word2VecTimespanPlayer
-              xProperty={'w2v_x'}
-              yProperty={'w2v_y'}
+              xProperty="w2v_x"
+              yProperty="w2v_y"
               initialTimespan={selectedTimespan}
               timespanEmbeddings={timespanEmbeddings}
             />
@@ -86,10 +85,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        Word2VecTimespanPlayerContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      Word2VecTimespanPlayerContainer
     )
-  );
+  )
+);

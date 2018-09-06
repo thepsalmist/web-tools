@@ -50,13 +50,13 @@ const topicRoutes = (
 
     <Route path="/topics/status" component={TopicStatusDashboardContainer} onEnter={requireAuth} />
 
-    <Route path="/topics/:topicId" component={TopicContainer} onEnter={requireAuth} >
+    <Route path="/topics/:topicId" component={TopicContainer} onEnter={requireAuth}>
 
       <Route path="edit" component={EditTopicContainer} onEnter={requireAuth} />
 
       <Route path="permissions" component={TopicPermissionsContainer} onEnter={requireAuth} />
 
-      <Route path="/topics/:topicId/filtered" component={FilteredTopicContainer} onEnter={requireAuth} >
+      <Route path="/topics/:topicId/filtered" component={FilteredTopicContainer} onEnter={requireAuth}>
         <Route path="/topics/:topicId/summary" component={TopicSummaryContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/media" component={InfluentialMediaContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/media/:mediaId" component={MediaContainer} onEnter={requireAuth} />
@@ -71,7 +71,7 @@ const topicRoutes = (
         <Route path="/topics/:topicId/link-map" component={LinkMapContainer} onEnter={requireAuth} />
       </Route>
 
-      <Route path="/topics/:topicId/snapshot" component={SnapshotBuilder} >
+      <Route path="/topics/:topicId/snapshot" component={SnapshotBuilder}>
         <Route path="generate" component={SnapshotGenerate} />
         <Route path="foci" component={ManageFocalSetsContainer} />
         <Route path="foci/create" component={CreateFocusContainer} />

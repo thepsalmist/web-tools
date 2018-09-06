@@ -25,8 +25,9 @@ class SourceSearchResultsContainer extends React.Component {
   state = {
     showAdvancedOptions: false,
   }
+
   toggleAdvancedOptions = () => {
-    this.setState({ showAdvancedOptions: !this.state.showAdvancedOptions });
+    this.setState(prevState => ({ showAdvancedOptions: !prevState.showAdvancedOptions }));
   }
 
   updateMediaQuery(values) {
@@ -126,7 +127,8 @@ const mapStateToProps = state => ({
   selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : 0,
   selectedMediaQueryKeyword: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.mediaKeyword : null,
   sourceResults: state.system.mediaPicker.sourceQueryResults,
-  formQuery: formSelector(state,
+  formQuery: formSelector(
+    state,
     'advanced-media-picker-search.publicationCountry',
     'advanced-media-picker-search.publicationState',
     'advanced-media-picker-search.primaryLanguage',
@@ -151,9 +153,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      SourceSearchResultsContainer
-    )
-  );
-
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    SourceSearchResultsContainer
+  )
+);

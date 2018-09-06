@@ -26,7 +26,7 @@ const StoryTable = (props) => {
           </tr>
           {stories.map((story, idx) => {
             const domain = storyDomainName(story);
-            let dateToShow = null;  // need to handle undateable stories
+            let dateToShow = null; // need to handle undateable stories
             let dateStyle = '';
             const title = maxTitleLength !== undefined ? `${trimToMaxLength(story.title, maxTitleLength)}` : story.title;
             const isSelected = selectedStory === story.stories_id ? ' selected' : ' ';
@@ -43,7 +43,7 @@ const StoryTable = (props) => {
             return (
               <tr key={`${story.stories_id}${idx}`} className={(idx % 2 === 0) ? `even${isSelected}` : `odd${isSelected}`}>
                 <td>
-                  <a tabIndex="0" role="button" onClick={() => onChangeFocusSelection(story)}>{title}</a>
+                  <a tabIndex="0" role="button" href="#" onClick={() => onChangeFocusSelection(story)}>{title}</a>
                 </td>
                 <td>
                   <a href={story.media_url} rel="noopener noreferrer" target="_blank">
@@ -57,8 +57,7 @@ const StoryTable = (props) => {
                 {extraColumns && extraColumns(story, idx)}
               </tr>
             );
-          }
-          )}
+          })}
         </tbody>
       </table>
     </div>

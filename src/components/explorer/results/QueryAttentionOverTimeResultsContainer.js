@@ -33,7 +33,6 @@ const VIEW_REGULAR = 'VIEW_REGULAR';
 
 class QueryAttentionOverTimeResultsContainer extends React.Component {
   state = {
-    clickedQuery: null,
     view: VIEW_REGULAR, // which view to show (see view constants above)
   }
 
@@ -44,7 +43,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
   handleDataPointClick = (date0, date1, evt, origin) => {
     const { isLoggedIn, selectDataPoint, queries, onShowLoginDialog } = this.props;
     if (isLoggedIn) {
-      const name = origin.series.name;
+      const { name } = origin.series;
       const currentQueryOfInterest = queries.filter(qry => qry.label === name)[0];
       const dayGap = 1; // TODO: harcoded for now because we are always showing daily results
       // date calculations for span/range
@@ -57,7 +56,6 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
         collections: currentQueryOfInterest.collections.map(c => c.tags_id),
       };
       clickedQuery.end_date = solrFormat(oneDayLater(date1), true);
-      this.setState({ clickedQuery });
       selectDataPoint(clickedQuery);
     } else {
       onShowLoginDialog();
@@ -80,7 +78,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
     let series = [];
     if (safeResults && safeResults.length > 0) {
       series = [
-        ...safeResults.map((query, idx) => {    // add series for all the results
+        ...safeResults.map((query, idx) => { // add series for all the results
           if (query.counts || query.normalizedCounts) {
             let data;
             if (this.state.view === VIEW_NORMALIZED) {
@@ -109,7 +107,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
         />
         <div className="actions">
           <ActionMenu actionTextMsg={messages.downloadOptions}>
-            {safeResults.map((q, idx) =>
+            {safeResults.map((q, idx) => (
               <MenuItem
                 key={idx}
                 className={ACTION_MENU_ITEM_CLASS}
@@ -122,7 +120,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
                   <DownloadButton />
                 </ListItemIcon>
               </MenuItem>
-            )}
+            ))}
           </ActionMenu>
           <ActionMenu actionTextMsg={messages.viewOptions}>
             <MenuItem
@@ -223,16 +221,16 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withSummary(localMessages.lineChartTitle, localMessages.descriptionIntro, [localMessages.descriptionDetail, messages.countsVsPercentageHelp])(
-        withAsyncFetch(
-          withQueryResults(
-            withLoginRequired(
-              QueryAttentionOverTimeResultsContainer
-            )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withSummary(localMessages.lineChartTitle, localMessages.descriptionIntro, [localMessages.descriptionDetail, messages.countsVsPercentageHelp])(
+      withAsyncFetch(
+        withQueryResults(
+          withLoginRequired(
+            QueryAttentionOverTimeResultsContainer
           )
         )
       )
     )
-  );
+  )
+);

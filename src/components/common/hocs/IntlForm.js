@@ -38,7 +38,7 @@ function withIntlForm(Component) {
       }
       return (
         <TextField
-          className={`form-field-text${asyncValidating ? 'async-validating' : ''}`}
+          className={`form-field-text ${asyncValidating ? 'async-validating' : ''}`}
           {...input}
           {...intlCustom}
           error={Boolean(touched && error)}
@@ -50,6 +50,7 @@ function withIntlForm(Component) {
         />
       );
     };
+
     renderTextFieldWithFocus = ({ input, saveRef, meta: { touched, error }, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
       if (intlCustom.helpertext !== undefined) {
@@ -69,7 +70,7 @@ function withIntlForm(Component) {
 
     renderCheckbox = ({ input, label, disabled }) => (
       <FormControlLabel
-        control={
+        control={(
           <Checkbox
             name={input.name}
             className="form-field-checkbox"
@@ -78,7 +79,7 @@ function withIntlForm(Component) {
             onChange={input.onChange}
             disabled={this.intlIfObject(disabled)}
           />
-        }
+        )}
         label={this.intlIfObject(label)}
       />
     );
@@ -120,7 +121,6 @@ function withIntlForm(Component) {
       );
     }
 
-
     render() {
       const helpers = {
         renderTextField: this.renderTextField,
@@ -133,7 +133,6 @@ function withIntlForm(Component) {
         <Component {...this.props} {...helpers} />
       );
     }
-
   }
 
   IntlFormForm.propTypes = {

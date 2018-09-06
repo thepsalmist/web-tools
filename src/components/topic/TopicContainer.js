@@ -46,6 +46,7 @@ class TopicContainer extends React.Component {
       addAppNotice({ level: LEVEL_WARNING, message: formatMessage(localMessages.needsSnapshotWarning) });
     }
   }
+
   componentWillReceiveProps(nextProps) {
     const { topicId, topicInfo, asyncFetch, needsNewSnapshot, addAppNotice } = this.props;
     const { formatMessage } = this.props.intl;
@@ -64,10 +65,12 @@ class TopicContainer extends React.Component {
       }
     }
   }
+
   filtersAreSet() {
     const { filters, topicId } = this.props;
     return ((topicId !== null) && (filters.snapshotId !== null) && (filters.timespanId !== null));
   }
+
   render() {
     const { children, goToUrl, topicInfo, topicId, snapshotCount, handleSpiderRequest, filters, needsNewSnapshot } = this.props;
     const { formatMessage } = this.props.intl;
@@ -168,8 +171,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   asyncFetch: () => {
     dispatch(selectTopic(ownProps.params.topicId));
     // select any filters that are serialized on the url
-    const query = ownProps.location.query;
-    const snapshotId = ownProps.location.query.snapshotId;
+    const { query } = ownProps.location;
+    const { snapshotId } = query;
     if (snapshotId) {
       dispatch(filterBySnapshot(query.snapshotId));
     }
@@ -317,10 +320,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-        withAsyncFetch(
-          TopicContainer
-        )
-      )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      TopicContainer
+    )
+  )
+);

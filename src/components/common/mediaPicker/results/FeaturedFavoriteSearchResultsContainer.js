@@ -19,16 +19,17 @@ class FeaturedFavoriteSearchResultsContainer extends React.Component {
   componentWillMount() {
     this.correlateSelection(this.props);
   }
+
   componentWillReceiveProps(nextProps) {
     // PICK_FEATURED
     if (nextProps.selectedMediaQueryType !== this.props.selectedMediaQueryType) {
       this.updateMediaQuery({ type: nextProps.selectedMediaQueryType });
     }
-    if (nextProps.selectedMedia !== this.props.selectedMedia ||
+    if (nextProps.selectedMedia !== this.props.selectedMedia
       // if the results have changed from a keyword entry, we need to update the UI
-      (nextProps.featured && nextProps.featured.lastFetchSuccess !== this.props.featured.lastFetchSuccess) ||
-      (nextProps.favoritedCollections && nextProps.favoritedCollections.lastFetchSuccess !== this.props.favoritedCollections.lastFetchSuccess) ||
-      (nextProps.favoritedSources && nextProps.favoritedSources.lastFetchSuccess !== this.props.favoritedSources.lastFetchSuccess)) {
+      || (nextProps.featured && nextProps.featured.lastFetchSuccess !== this.props.featured.lastFetchSuccess)
+      || (nextProps.favoritedCollections && nextProps.favoritedCollections.lastFetchSuccess !== this.props.favoritedCollections.lastFetchSuccess)
+      || (nextProps.favoritedSources && nextProps.favoritedSources.lastFetchSuccess !== this.props.favoritedSources.lastFetchSuccess)) {
       this.correlateSelection(nextProps);
     }
   }
@@ -36,17 +37,17 @@ class FeaturedFavoriteSearchResultsContainer extends React.Component {
   correlateSelection(whichProps) {
     let whichList = [];
 
-    if ((whichProps.favoritedCollections.list && whichProps.favoritedCollections.list.length > 0) ||
-      (whichProps.favoritedSources.list && whichProps.favoritedSources.list.length > 0)) {
+    if ((whichProps.favoritedCollections.list && whichProps.favoritedCollections.list.length > 0)
+      || (whichProps.favoritedSources.list && whichProps.favoritedSources.list.length > 0)) {
       whichList = whichProps.favoritedCollections.list;
       whichList = whichList.concat(whichProps.favoritedSources.list);
     }
     whichList = whichList.concat(whichProps.featured.list);
 
     // if selected media has changed, update current results
-    if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0 &&
+    if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0
       // we can't be sure we have received results yet
-      whichList && whichList.length > 0) {
+      && whichList && whichList.length > 0) {
       // sync up selectedMedia and push to result sets.
       whichList.map((m) => {
         const mediaIndex = whichProps.selectedMedia.findIndex(q => q.id === m.id);
@@ -60,11 +61,13 @@ class FeaturedFavoriteSearchResultsContainer extends React.Component {
     }
     return 0;
   }
+
   updateMediaQuery(values) {
     const { updateMediaQuerySelection, selectedMediaQueryType } = this.props;
     const updatedQueryObj = Object.assign({}, values, { type: selectedMediaQueryType });
     updateMediaQuerySelection(updatedQueryObj);
   }
+
   render() {
     const { selectedMediaQueryType, featured, favoritedCollections, favoritedSources, handleToggleAndSelectMedia, fetchStatus, displayResults } = this.props;
     const queryResults = {
@@ -137,10 +140,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        FeaturedFavoriteSearchResultsContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      FeaturedFavoriteSearchResultsContainer
     )
-  );
+  )
+);

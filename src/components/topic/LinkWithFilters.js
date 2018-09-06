@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { filteredLinkTo } from '../util/location';
 
-/**
+/*
  * Use to include filters in a topic-related link by default.  Treat this as a drop-in
  * replacement for the react-router Link tag.
- **/
+ */
 const LinkWithFilters = (props) => {
   const { to, style, children, existingFilters, filters } = props;
   let updatedFilters;
@@ -27,7 +27,7 @@ LinkWithFilters.propTypes = {
   children: PropTypes.node.isRequired,
   to: PropTypes.string.isRequired,
   style: PropTypes.object,
-  filters: PropTypes.object,  // use this to override
+  filters: PropTypes.object, // use this to override
   // from state
   existingFilters: PropTypes.object.isRequired,
 };
@@ -37,6 +37,6 @@ const mapStateToProps = state => ({
 });
 
 export default
-  connect(mapStateToProps)(
-    LinkWithFilters
-  );
+connect(mapStateToProps)(
+  LinkWithFilters
+);

@@ -11,7 +11,6 @@ const FocusSelectorContainer = (props) => {
       selectedId={(selectedFocus) ? selectedFocus.foci_id : null}
       foci={foci}
       onFocusSelected={onFocusSelected}
-      location={location}
     />
   );
 };
@@ -35,8 +34,8 @@ const mapStateToProps = state => ({
 });
 
 export default
-  connect(mapStateToProps)(
-    injectIntl(
-      FocusSelectorContainer
-    )
-  );
+connect(mapStateToProps)(
+  injectIntl(
+    FocusSelectorContainer
+  )
+);

@@ -149,12 +149,12 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-          FocusForm4ConfirmContainer
-        )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+        FocusForm4ConfirmContainer
       )
     )
-  );
+  )
+);

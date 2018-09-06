@@ -10,7 +10,6 @@ const localMessages = {
 };
 
 class TimespanPeriodSelector extends React.Component {
-
   linkToPeriod = (name, msg) => (
     <a
       href={`#see-${name}-timespans"`}
@@ -46,6 +45,6 @@ TimespanPeriodSelector.propTypes = {
 };
 
 export default
-  injectIntl(
-    TimespanPeriodSelector
-  );
+injectIntl(
+  TimespanPeriodSelector
+);

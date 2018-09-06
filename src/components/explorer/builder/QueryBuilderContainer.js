@@ -22,8 +22,8 @@ QueryBuilderContainer.propTypes = {
 
 
 export default
-  injectIntl(
-    connect()(
-      QueryBuilderContainer
-    )
-  );
+injectIntl(
+  connect()(
+    QueryBuilderContainer
+  )
+);

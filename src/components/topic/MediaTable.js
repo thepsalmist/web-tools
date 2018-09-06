@@ -9,7 +9,6 @@ import { googleFavIconUrl } from '../../lib/urlUtil';
 const ICON_STYLE = { margin: 0, padding: 0, width: 12, height: 12 };
 
 class MediaTable extends React.Component {
-
   sortableHeader = (sortKey, textMsg) => {
     const { onChangeSort, sortedBy } = this.props;
     const { formatMessage } = this.props.intl;
@@ -60,8 +59,8 @@ class MediaTable extends React.Component {
               <th><FormattedMessage {...messages.pubState} /></th>
               <th><FormattedMessage {...messages.countryOfFocus} /></th>
             </tr>
-            {media.map((m, idx) =>
-              (<tr key={m.media_id} className={(idx % 2 === 0) ? 'even' : 'odd'}>
+            {media.map((m, idx) => (
+              <tr key={m.media_id} className={(idx % 2 === 0) ? 'even' : 'odd'}>
                 <td>
                   <img src={googleFavIconUrl(m.url)} alt={m.name} />
                 </td>
@@ -79,14 +78,13 @@ class MediaTable extends React.Component {
                 <td>{m.metadata.pub_country ? m.metadata.pub_country.label : '?'}</td>
                 <td>{m.metadata.pub_state ? m.metadata.pub_state.label : '?'}</td>
                 <td>{m.metadata.about_country ? m.metadata.about_country.label : '?'}</td>
-              </tr>)
-            )}
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
     );
   }
-
 }
 
 MediaTable.propTypes = {

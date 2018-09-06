@@ -19,6 +19,7 @@ class CountryCollectionSearchResultsContainer extends React.Component {
     const updatedQueryObj = Object.assign({}, values, { type: selectedMediaQueryType });
     updateMediaQuerySelection(updatedQueryObj);
   }
+
   render() {
     const { selectedMediaQueryType, selectedMediaQueryKeyword, collectionResults, handleToggleAndSelectMedia, fetchCountryStatus } = this.props;
     return (
@@ -70,9 +71,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      CountryCollectionSearchResultsContainer
-    )
-  );
-
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    CountryCollectionSearchResultsContainer
+  )
+);

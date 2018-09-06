@@ -100,18 +100,16 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordCloudTopicWord2VecLayoutHelp])(
-        withSampleSize(
-          withAsyncFetch(
-            withCsvDownloadNotifyContainer(
-              WordWordsContainer
-            )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordCloudTopicWord2VecLayoutHelp])(
+      withSampleSize(
+        withAsyncFetch(
+          withCsvDownloadNotifyContainer(
+            WordWordsContainer
           )
         )
       )
     )
-  );
-
-// lightweight wrapper around OrderedWordCloud
+  )
+);

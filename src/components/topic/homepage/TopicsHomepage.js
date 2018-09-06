@@ -41,7 +41,7 @@ const TopicsHomepage = (props) => {
     content = (
       <div>
 
-        <Helmet><title>{'Home | Topic Mapper | Media Cloud'}</title></Helmet>
+        <Helmet><title>{`${formatMessage(localMessages.homeTitle)} | ${formatMessage(messages.topicsToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
 
         <div className="controlbar">
           <div className="main">
@@ -127,8 +127,8 @@ const mapStateToProps = state => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps)(
-      TopicsHomepage
-    )
-  );
+injectIntl(
+  connect(mapStateToProps)(
+    TopicsHomepage
+  )
+);

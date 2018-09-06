@@ -93,7 +93,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       feedurl: (values.feedurl) || null,
       reason: (values.reason) || null,
     };
-    if ('collections' in values) {  // the collections are a FieldArray on the form
+    if ('collections' in values) { // the collections are a FieldArray on the form
       infoToSave['collections[]'] = values.collections.map(s => s.id);
     } else {
       infoToSave['collections[]'] = [];
@@ -111,12 +111,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        connect(mapStateToProps, mapDispatchToProps)(
-         SuggestSourceContainer
-        )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      connect(mapStateToProps, mapDispatchToProps)(
+        SuggestSourceContainer
       )
     )
-  );
+  )
+);

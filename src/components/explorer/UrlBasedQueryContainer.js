@@ -10,7 +10,6 @@ import { LEVEL_ERROR } from '../common/Notice';
 import { addNotice } from '../../actions/appActions';
 import { selectBySearchParams, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo,
   fetchQuerySourcesByIds, fetchQueryCollectionsByIds, demoQuerySourcesByIds, demoQueryCollectionsByIds } from '../../actions/explorerActions';
-// import { FETCH_INVALID, FETCH_SUCCEEDED } from '../../lib/fetchConstants';
 import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, generateQueryParamString, decodeQueryParamString } from '../../lib/explorerUtil';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../lib/dateUtil';
 import { notEmptyString } from '../../lib/formValidators';
@@ -30,6 +29,7 @@ function composeUrlBasedQueryContainer() {
       state = {
         queryInStore: false,
       };
+
       componentWillMount() {
         const { location } = this.props;
         // if from homepage, allow automagic, if from URL, do not...
@@ -37,6 +37,7 @@ function composeUrlBasedQueryContainer() {
         this.setState({ queryInStore: false }); // if/def automagic here
         this.updateQueriesFromLocation(location, autoMagic);
       }
+
       componentWillReceiveProps(nextProps) {
         const { location, lastSearchTime, updateUrl, isLoggedIn } = this.props;
         // console.log('new props');
@@ -46,12 +47,12 @@ function composeUrlBasedQueryContainer() {
           // console.log('  url change');
           this.updateQueriesFromLocation(location);
         // if we don't have all the data in the store yet
-        } else if (this.state.queryInStore === false) {   // make sure to only do this once
+        } else if (this.state.queryInStore === false) { // make sure to only do this once
           // console.log('  waiting for media info from server');
           // mark the whole thing as ready once any sources and collections have been set
           if (this.isAllMediaDetailsReady()) {
             // console.log('  got media info from server, ready!');
-            this.setState({ queryInStore: true });  // mark that the parsing process has finished
+            this.setState({ queryInStore: true }); // mark that the parsing process has finished
           }
           if (nextProps.queries.filter(q => q.sources.length > 0).length === 0 && nextProps.queries.filter(q => q.collections.length > 0).length === 0) {
             this.setState({ queryInStore: true });
@@ -63,18 +64,19 @@ function composeUrlBasedQueryContainer() {
           // console.log('  other change');
         }
       }
+
       updateQueriesFromLocation(location, autoName) {
         // regular searches are in a queryParam, but samples by id are part of the path
         const url = location.pathname;
         const lastPathPart = url.slice(url.lastIndexOf('/') + 1, url.length);
         const sampleNumber = parseInt(lastPathPart, 10);
-        if (!isNaN(sampleNumber)) {
+        if (!Number.isNaN(sampleNumber)) {
           this.updateQueriesFromSampleId(sampleNumber);
         } else {
           // this is a crazy fix to make embedded quotes work by forcing us to escape them all... partially because
           // react-router decided to decode url components, partially because the JSON parser isn't that clever
           const text = location.query.q;
-          const pattern = /:"([^,]*)"[,}]/g;  // gotta end with , or } here to support demo case (})
+          const pattern = /:"([^,]*)"[,}]/g; // gotta end with , or } here to support demo case (})
           let match = pattern.exec(text);
           let cleanedText = '';
           let lastSpot = 0;
@@ -90,12 +92,14 @@ function composeUrlBasedQueryContainer() {
           this.updateQueriesFromString(cleanedText, autoName);
         }
       }
+
       updateQueriesFromSampleId(sampleNumber) {
         const { saveQueriesFromParsedUrl, samples, isLoggedIn } = this.props;
         const queriesFromUrl = samples[sampleNumber].queries;
         // push the queries in to the store
         saveQueriesFromParsedUrl(queriesFromUrl, isLoggedIn);
       }
+
       updateQueriesFromString(queryAsJsonStr, autoNaming) {
         const { addAppNotice, saveQueriesFromParsedUrl, isLoggedIn } = this.props;
         const { formatMessage } = this.props.intl;
@@ -110,7 +114,7 @@ function composeUrlBasedQueryContainer() {
 
         let extraDefaults = {};
         // add in an index, label, and color if they are not there
-        if (!isLoggedIn) {  // and demo mode needs some extra stuff too
+        if (!isLoggedIn) { // and demo mode needs some extra stuff too
           const dateObj = getDateRange(PAST_MONTH);
           extraDefaults = {
             sources: [],
@@ -129,25 +133,27 @@ function composeUrlBasedQueryContainer() {
           collections: query.collections ? query.collections.map(s => ({ id: s, tags_id: s })) : undefined,
           q: query.q,
           color: query.color ? query.color : schemeCategory10[index % 10],
-          index,  // redo index to be zero-based on reload of query
+          index, // redo index to be zero-based on reload of query
           ...extraDefaults, // for demo mode
         }));
         // push the queries in to the store
         saveQueriesFromParsedUrl(queriesFromUrl, isLoggedIn);
       }
+
       isAllMediaDetailsReady() {
         // we will only render the wrapped component once all the details of the sources and collections
         // have been fetched from the server and put in the right place on each query
         const { queries } = this.props;
         if (queries.length === 0) return false; // need to bail if no queries (ie. first page mount)
-        const queryCollectionStatus = queries.map(q => q.collections.length === 0 ||
-          q.collections.reduce((combined, c) => combined && c.tag_sets_id !== undefined, true));
+        const queryCollectionStatus = queries.map(q => q.collections.length === 0
+          || q.collections.reduce((combined, c) => combined && c.tag_sets_id !== undefined, true));
         const collectionsAreReady = queryCollectionStatus.reduce((combined, q) => combined && q, true);
-        const querySourceStatus = queries.map(q => q.sources.length === 0 ||
-          q.sources.reduce((combined, s) => combined && s.name !== undefined, true));
+        const querySourceStatus = queries.map(q => q.sources.length === 0
+          || q.sources.reduce((combined, s) => combined && s.name !== undefined, true));
         const sourcesAreReady = querySourceStatus.reduce((combined, q) => combined && q, true);
         return collectionsAreReady && sourcesAreReady;
       }
+
       render() {
         let content;
         if (this.state.queryInStore) {
@@ -203,24 +209,24 @@ function composeUrlBasedQueryContainer() {
           if (q.sources && q.sources.length > 0) {
             queryInfo.sources = q.sources.map(src => src.media_id || src.id || src); // the latter in case of sample search
             dispatch(sourceDetailsAction(queryInfo))
-            .then((results) => {
-              queryInfo.sources = results;
-              dispatch(updateQuerySourceLookupInfo(queryInfo)); // updates the query and the selected query
-            });
+              .then((results) => {
+                queryInfo.sources = results;
+                dispatch(updateQuerySourceLookupInfo(queryInfo)); // updates the query and the selected query
+              });
           }
           const collectionDetailsAction = isLoggedIn ? fetchQueryCollectionsByIds : demoQueryCollectionsByIds;
           if (q.collections && q.collections.length > 0) {
             queryInfo.collections = q.collections.map(coll => coll.tags_id || coll.id || coll); // the latter in case of sample search
             dispatch(collectionDetailsAction(queryInfo))
-            .then((results) => {
-              queryInfo.collections = results;
-              dispatch(updateQueryCollectionLookupInfo(queryInfo)); // updates the query and the selected query
-            });
+              .then((results) => {
+                queryInfo.collections = results;
+                dispatch(updateQueryCollectionLookupInfo(queryInfo)); // updates the query and the selected query
+              });
           }
         });
       },
       asyncFetch: () => {
-        dispatch(fetchSampleSearches());   // inefficient: we need the sample searches loaded just in case
+        dispatch(fetchSampleSearches()); // inefficient: we need the sample searches loaded just in case
       },
       updateUrl: (queries, isLoggedIn) => {
         const unDeletedQueries = queries.filter(q => q.deleted !== true);

@@ -22,27 +22,26 @@ const ExplorerMarketingFeatureList = () => (
     <MarketingFeatureItem
       titleMsg={localMessages.globalCollectionsTitle}
       contentMsg={localMessages.globalCollectionsDescription}
-      imageName={'global-collections-2x.png'}
+      imageName="global-collections-2x.png"
       imageOnLeft
     />
     <MarketingFeatureItem
       titleMsg={localMessages.attentionTitle}
       contentMsg={localMessages.attentionDescription}
-      imageName={'attention-2x.png'}
+      imageName="attention-2x.png"
     />
     <MarketingFeatureItem
       titleMsg={localMessages.framingTitle}
       contentMsg={localMessages.framingDescription}
-      imageName={'framing-2x.png'}
+      imageName="framing-2x.png"
       imageOnLeft
     />
     <MarketingFeatureItem
       titleMsg={localMessages.mapTitle}
       contentMsg={localMessages.mapDescription}
-      imageName={'mapping-2x.png'}
+      imageName="mapping-2x.png"
     />
   </div>
 );
 
-export default
-  ExplorerMarketingFeatureList;
+export default ExplorerMarketingFeatureList;

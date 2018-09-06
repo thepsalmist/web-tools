@@ -21,7 +21,6 @@ const localMessages = {
 };
 
 class TopicPermissionsContainer extends React.Component {
-
   componentWillReceiveProps(nextProps) {
     const { topicId, fetchData } = this.props;
     if ((nextProps.topicId !== topicId)) {
@@ -54,7 +53,7 @@ class TopicPermissionsContainer extends React.Component {
                 <p><FormattedMessage {...localMessages.existingIntro} /></p>
               </Col>
             </Row>
-            { permissions.map((p, index) =>
+            { permissions.map((p, index) => (
               <PermissionForm
                 form={`updatePermissionForm${index}`}
                 key={p.email}
@@ -63,7 +62,7 @@ class TopicPermissionsContainer extends React.Component {
                 showDeleteButton
                 onDelete={handleDelete}
               />
-            )}
+            ))}
           </Grid>
         </div>
       </div>
@@ -130,10 +129,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        TopicPermissionsContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      TopicPermissionsContainer
     )
-  );
+  )
+);

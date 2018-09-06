@@ -7,18 +7,17 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import AppButton from '../AppButton';
 
 class AppMenu extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = { open: false, iconDown: true };
   }
 
   toggleMenu = (event) => {
-    this.setState({
-      open: !this.state.open,
+    this.setState(prevState => ({
+      open: !prevState.open,
       anchorEl: event.currentTarget,
-      iconDown: !this.state.iconDown,
-    });
+      iconDown: !prevState.iconDown,
+    }));
   };
 
   close = () => this.setState({ open: false, iconDown: true });
@@ -27,6 +26,7 @@ class AppMenu extends React.Component {
   flatten = list => list.reduce(
     (a, b) => a.concat(Array.isArray(b) ? this.flatten(b) : b), []
   );
+
   render() {
     const { titleMsg, showMenu, onTitleClick, menuComponent } = this.props;
     const { formatMessage } = this.props.intl;
@@ -102,6 +102,6 @@ AppMenu.propTypes = {
 };
 
 export default
-  injectIntl(
-    AppMenu
-  );
+injectIntl(
+  AppMenu
+);

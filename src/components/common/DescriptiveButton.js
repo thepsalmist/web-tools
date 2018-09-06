@@ -1,9 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-/**
- *
- */
 const DescriptiveButton = (props) => {
   const { imageUrl, label, svgIcon, description, onClick, className, id } = props;
   let visualContent = null;

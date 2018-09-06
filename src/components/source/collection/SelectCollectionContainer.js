@@ -23,7 +23,6 @@ const localMessages = {
 };
 
 class SelectCollectionContainer extends React.Component {
-
   componentWillReceiveProps(nextProps) {
     const { collectionId, fetchData } = this.props;
     if ((nextProps.collectionId !== collectionId)) {
@@ -53,20 +52,20 @@ class SelectCollectionContainer extends React.Component {
         <Helmet><title>{titleHandler()}</title></Helmet>
         <SourceMgrHeaderContainer />
         <SourceControlBar>
-          <a href="search-in-explorer" onClick={this.searchInExplorer} >
+          <a href="search-in-explorer" onClick={this.searchInExplorer}>
             <ExploreButton color="primary" useBackgroundColor />
             <FormattedMessage {...localMessages.searchNow} />
           </a>
           <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
-            <Link to={`/collections/${collection.tags_id}/edit`} >
+            <Link to={`/collections/${collection.tags_id}/edit`}>
               <EditButton color="primary" useBackgroundColor />
               <FormattedMessage {...localMessages.editCollection} />
             </Link>
-            <Link to={`/collections/${collection.tags_id}/manage-source-list`} >
+            <Link to={`/collections/${collection.tags_id}/manage-source-list`}>
               <ExploreButton color="primary" />
               <FormattedMessage {...localMessages.manageSources} />
             </Link>
-            <Link to={`/collections/${collection.tags_id}/content-history`} >
+            <Link to={`/collections/${collection.tags_id}/content-history`}>
               <ExploreButton color="primary" />
               <FormattedMessage {...localMessages.contentHistory} />
             </Link>
@@ -78,7 +77,6 @@ class SelectCollectionContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 SelectCollectionContainer.propTypes = {
@@ -89,7 +87,7 @@ SelectCollectionContainer.propTypes = {
   removeCollectionId: PropTypes.func.isRequired,
   // from context
   location: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   collectionId: PropTypes.number.isRequired,
   children: PropTypes.node.isRequired,
   // from state
@@ -119,10 +117,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        SelectCollectionContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      SelectCollectionContainer
     )
-  );
+  )
+);

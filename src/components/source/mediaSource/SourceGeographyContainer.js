@@ -26,6 +26,7 @@ class SourceGeographyContainer extends React.Component {
     const url = `/api/sources/${source.media_id}/geography/geography.csv`;
     window.location = url;
   }
+
   handleCountryClick= (event, geo) => {
     const { source } = this.props;
     const countryName = geo.name;
@@ -36,6 +37,7 @@ class SourceGeographyContainer extends React.Component {
       [source.media_id], [], startDate, endDate);
     window.open(url, '_blank');
   }
+
   render() {
     const { intro, geolist, helpButton } = this.props;
     const { formatMessage } = this.props.intl;
@@ -83,12 +85,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-       withHelp(localMessages.helpTitle, [localMessages.intro, messages.heatMapHelpText])(
-        withAsyncFetch(
-          SourceGeographyContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withHelp(localMessages.helpTitle, [localMessages.intro, messages.heatMapHelpText])(
+      withAsyncFetch(
+        SourceGeographyContainer
       )
     )
-  );
+  )
+);

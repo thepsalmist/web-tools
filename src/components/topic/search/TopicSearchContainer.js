@@ -20,12 +20,10 @@ const localMessages = {
 };
 
 class TopicSearchContainer extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       lastSearchString: '',
-      lastKeypress: 0,
       searchTimeout: null,
     };
   }
@@ -54,7 +52,7 @@ class TopicSearchContainer extends React.Component {
     clearTimeout(this.state.searchTimeout); // cancel any pending searches
     this.setState({
       lastSearchString: searchString,
-      searchTimeout: setTimeout(this.fireSearchIfNeeded, DELAY_BEFORE_SEARCH_MS),  // schedule a search for when they stop typing
+      searchTimeout: setTimeout(this.fireSearchIfNeeded, DELAY_BEFORE_SEARCH_MS), // schedule a search for when they stop typing
     });
   }
 
@@ -149,8 +147,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      TopicSearchContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    TopicSearchContainer
+  )
+);

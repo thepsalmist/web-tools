@@ -34,6 +34,6 @@ NamedEntitiesTable.propTypes = {
 };
 
 export default
-  injectIntl(
-    NamedEntitiesTable
-  );
+injectIntl(
+  NamedEntitiesTable
+);

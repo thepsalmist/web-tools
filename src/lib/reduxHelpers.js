@@ -2,7 +2,7 @@ import { resolve, reject } from 'redux-simple-promise';
 import * as fetchConstants from './fetchConstants';
 import { addNotice } from '../actions/appActions';
 import { LEVEL_ERROR } from '../components/common/Notice';
-import { logout } from '../lib/auth';
+import { logout } from './auth';
 
 // TODO: replace this with normalizr? https://github.com/gaearon/normalizr
 export function arrayToDict(arr, keyPropertyName) {
@@ -44,7 +44,7 @@ export function createAsyncAction(type, fetcher) {
     type,
     payload: {
       promise: fetcher(...args),
-      args,  // tack on arguments pass in so we can access them directly in a reducer
+      args, // tack on arguments pass in so we can access them directly in a reducer
       uid: Math.random(), // track this request with a random id, to avoid race conditions in reducer
     },
   });
@@ -106,18 +106,18 @@ export function createAsyncReducer(handlers) {
     desiredInitialState = handlers.initialState;
   }
   const initialState = {
-    fetchStatus: fetchConstants.FETCH_INVALID,  // invalid, succeeded, or failed
+    fetchStatus: fetchConstants.FETCH_INVALID, // invalid, succeeded, or failed
     lastFetchSuccess: null, // null or a Date object of the last successful fetch
     fetchUid: null, // set this to a random id so we know which request is returning async, to avoid race conditions
     ...desiredInitialState,
   };
   // set up any async reducer handlers the user passed in
-  const reducers = {  // set up some smart defaults for normal behaviour
+  const reducers = { // set up some smart defaults for normal behaviour
     handleFetch: () => ({}),
     handleSuccess: payload => ({ ...payload }),
     handleFailure: () => ({}),
   };
-  Object.keys(reducers).forEach((key) => {   // override defaults with custom methods passed in
+  Object.keys(reducers).forEach((key) => { // override defaults with custom methods passed in
     if (key in handlers) {
       reducers[key] = handlers[key];
     }
@@ -184,29 +184,29 @@ export function createAsyncReducer(handlers) {
  */
 export function errorReportingMiddleware({ dispatch }) {
   return next => (action) => {
-    let message = null;
+    let messageToShow = null;
     if (action.type.endsWith('_RESOLVED') || action.type.endsWith('_REJECTED')) {
       if ((typeof action.payload === 'object') && ('status' in action.payload)) {
         if (action.payload.status === 401) {
           // unauthorized - ie. needs to login so delete cookies by going to logout
           if ((action.type !== 'LOGIN_WITH_PASSWORD_RESOLVED') && (action.type !== 'LOGIN_WITH_COOKIE_RESOLVED')) { // unless they are trying to login (cause that would be dumb)
-            message = action.payload.message;
+            messageToShow = action.payload.message;
             logout();
           }
         } else if (action.payload.status !== 200) {
           if ((action.type !== 'LOGIN_WITH_PASSWORD_RESOLVED') && (action.type !== 'LOGIN_WITH_COOKIE_RESOLVED')) { // unless they are trying to login (cause that would be dumb)
-            message = 'Sorry, we had an error';
+            messageToShow = 'Sorry, we had an error';
             if ('message' in action.payload) {
-              message = action.payload.message;
+              messageToShow = action.payload.message;
             }
           }
         }
       }
     }
-    if (message) {
-      dispatch(addNotice({ level: LEVEL_ERROR, message }));
+    if (messageToShow) {
+      dispatch(addNotice({ level: LEVEL_ERROR, messageToShow }));
     }
-    return next(action);  // Call the next dispatch method in the middleware chain.
+    return next(action); // Call the next dispatch method in the middleware chain.
   };
 }
 
@@ -225,13 +225,13 @@ export function createIndexedAsyncReducer(handlers) {
     results: [],
     fetchStatus: fetchConstants.FETCH_INVALID,
     fetchStatuses: [], // array of fetchStatus
-    fetchUids: [],  // array of unique ids for each fetch in the list
+    fetchUids: [], // array of unique ids for each fetch in the list
     ...desiredInitialState,
   };
   // set up any async reducer handlers the user passed in
-  const reducers = {  // set up some smart defaults for normal behaviour
+  const reducers = { // set up some smart defaults for normal behaviour
     handleFetch: (payload, state, args) => {
-      const index = args[0].index;
+      const { index } = args[0];
       if (index === undefined) {
         const error = { error: 'You need to pass the indexedAsyncReducer an index to use!' };
         throw error;
@@ -247,7 +247,7 @@ export function createIndexedAsyncReducer(handlers) {
       });
     },
     handleSuccess: (payload, state, args) => {
-      const index = args[0].index;
+      const { index } = args[0];
       const updatedResults = [...state.results];
       const updatedFetchStatuses = [...state.fetchStatuses];
       updatedFetchStatuses[index] = fetchConstants.FETCH_SUCCEEDED;
@@ -263,7 +263,7 @@ export function createIndexedAsyncReducer(handlers) {
       });
     },
     handleFailure: (payload, state, args) => {
-      const index = args[0].index;
+      const { index } = args[0];
       const updatedFetchStatuses = [...state.fetchStatuses];
       updatedFetchStatuses[index] = fetchConstants.FETCH_FAILED;
       return Object.assign({}, state, {

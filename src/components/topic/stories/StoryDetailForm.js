@@ -159,10 +159,10 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        StoryDetailForm
-      ),
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      StoryDetailForm
     ),
-  );
+  ),
+);

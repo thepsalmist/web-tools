@@ -24,12 +24,10 @@ const localMessages = {
 };
 
 class SourceSearchContainer extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       lastSearchString: '',
-      lastKeypress: 0,
       searchTimeout: null,
     };
   }
@@ -84,7 +82,7 @@ class SourceSearchContainer extends React.Component {
       disableStaticCollections } = this.props;
     const { formatMessage } = this.props.intl;
     let results = [];
-    // if (!fetchesSucceeded) return [];  // can't wait for both, because collections results are too slow :-(
+    // if (!fetchesSucceeded) return []; // can't wait for both, because collections results are too slow :-(
     if (searchSources || searchSources === undefined) { // sources always return first, so so them first so list isn't jumpy
       results = results.concat(sourceResults.slice(0, this.getMaxSourcesToShow()));
     }
@@ -138,7 +136,7 @@ class SourceSearchContainer extends React.Component {
     clearTimeout(this.state.searchTimeout); // cancel any pending searches
     this.setState({
       lastSearchString: searchString,
-      searchTimeout: setTimeout(this.fireSearchIfNeeded, DELAY_BEFORE_SEARCH_MS),  // schedule a search for when they stop typing
+      searchTimeout: setTimeout(this.fireSearchIfNeeded, DELAY_BEFORE_SEARCH_MS), // schedule a search for when they stop typing
     });
   }
 
@@ -175,16 +173,15 @@ class SourceSearchContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 SourceSearchContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   // from parent
-  searchSources: PropTypes.bool,      // include source results?
-  searchCollections: PropTypes.bool,  // include collection results?
-  searchStaticCollections: PropTypes.bool,  // inclue static collecton results?
+  searchSources: PropTypes.bool, // include source results?
+  searchCollections: PropTypes.bool, // include collection results?
+  searchStaticCollections: PropTypes.bool, // inclue static collecton results?
   onMediaSourceSelected: PropTypes.func,
   onCollectionSelected: PropTypes.func,
   onAdvancedSearchSelected: PropTypes.func,
@@ -201,10 +198,10 @@ SourceSearchContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchesOngoing: (state.sources.search.simple.sources.fetchStatus === FETCH_ONGOING) ||
-              (state.sources.search.simple.collections.fetchStatus === FETCH_ONGOING),
-  fetchesSucceeded: (state.sources.search.simple.sources.fetchStatus === FETCH_SUCCEEDED) &&
-              (state.sources.search.simple.collections.fetchStatus === FETCH_SUCCEEDED),
+  fetchesOngoing: (state.sources.search.simple.sources.fetchStatus === FETCH_ONGOING)
+  || (state.sources.search.simple.collections.fetchStatus === FETCH_ONGOING),
+  fetchesSucceeded: (state.sources.search.simple.sources.fetchStatus === FETCH_SUCCEEDED)
+  && (state.sources.search.simple.collections.fetchStatus === FETCH_SUCCEEDED),
   sourceResults: state.sources.search.simple.sources.list,
   collectionResults: state.sources.search.simple.collections.list,
 });
@@ -235,8 +232,8 @@ SourceSearchContainer.propTypes = {
 
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      SourceSearchContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    SourceSearchContainer
+  )
+);

@@ -8,7 +8,6 @@ import DataCard from './DataCard';
 import EntitiesTable from './EntitiesTable';
 import { DownloadButton } from './IconButton';
 import messages from '../../resources/messages';
-// import { generateParamStr } from '../../../lib/apiUtil';
 
 const localMessages = {
   title: { id: 'entities.topStories.coverage.title', defaultMessage: 'Top Organizations' },
@@ -21,6 +20,7 @@ class TopOrgsContainer extends React.Component {
       fetchData(nextProps.queries);
     }
   }
+
   handleEntityClick = (tagId) => {
     const { queries, updateQueryFilter } = this.props;
     const queryFragment = `tags_id_stories: ${tagId}`;
@@ -30,6 +30,7 @@ class TopOrgsContainer extends React.Component {
       updateQueryFilter(queryFragment);
     }
   }
+
   render() {
     const { count, entities } = this.props;
     const { formatMessage } = this.props.intl;
@@ -79,15 +80,6 @@ const mapDispatchToProps = dispatch => ({
   fetchData: (queryParams) => {
     dispatch(fetchTopEntitiesOrgs(queryParams));
   },
-  /* updateQueryFilter: (newQueryFilter) => {
-    /* const newFilters = {
-      ...ownProps.filters,
-      q: newQueryFilter,
-    };
-    const newLocation = filteredLocation(ownProps.location, newFilters);
-    dispatch(push(newLocation));
-    dispatch(filterByQuery(newQueryFilter));
-  }, */
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
@@ -99,10 +91,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        TopOrgsContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      TopOrgsContainer
     )
-  );
+  )
+);

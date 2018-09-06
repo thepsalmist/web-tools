@@ -55,8 +55,4 @@ QueryPickerLoggedInHeader.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-
-export default
-  injectIntl(
-    QueryPickerLoggedInHeader
-  );
+export default injectIntl(QueryPickerLoggedInHeader);

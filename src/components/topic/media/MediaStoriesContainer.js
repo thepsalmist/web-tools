@@ -24,15 +24,16 @@ const localMessages = {
 class MediaStoriesContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { fetchData, filters, sort } = this.props;
-    if ((nextProps.filters !== filters) ||
-      (nextProps.sort !== sort)) {
+    if ((nextProps.filters !== filters) || (nextProps.sort !== sort)) {
       fetchData(nextProps);
     }
   }
+
   onChangeSort = (newSort) => {
     const { sortData } = this.props;
     sortData(newSort);
   }
+
   downloadCsv = () => {
     const { mediaId, topicId, filters, notifyOfCsvDownload } = this.props;
     const filtersAsParams = filtersAsUrlParams(filters);
@@ -40,6 +41,7 @@ class MediaStoriesContainer extends React.Component {
     window.location = url;
     notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
   }
+
   render() {
     const { inlinkedStories, showTweetCounts, topicId, helpButton, handleFocusSelected } = this.props;
     const { formatMessage } = this.props.intl;
@@ -122,14 +124,14 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpIntro, messages.storiesTableHelpText])(
-        withAsyncFetch(
-          withCsvDownloadNotifyContainer(
-            MediaStoriesContainer
-          )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpIntro, messages.storiesTableHelpText])(
+      withAsyncFetch(
+        withCsvDownloadNotifyContainer(
+          MediaStoriesContainer
         )
       )
     )
-  );
+  )
+);

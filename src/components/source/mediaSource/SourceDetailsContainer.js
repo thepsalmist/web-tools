@@ -49,7 +49,6 @@ class SourceDetailsContainer extends React.Component {
     selectedViewIndex: 0,
   };
 
-
   render() {
     const { source } = this.props;
     const { formatMessage, formatDate } = this.props.intl;
@@ -93,7 +92,7 @@ class SourceDetailsContainer extends React.Component {
           <span>
             <SourceStatInfo sourceId={source.media_id} />
             <Row>
-              <Col lg={6} md={6} sm={12} >
+              <Col lg={6} md={6} sm={12}>
                 <SourceMetadataStatBar source={source} columnWidth={6} />
               </Col>
               <Col lg={6} md={6} sm={12}>
@@ -154,7 +153,7 @@ class SourceDetailsContainer extends React.Component {
                 }}
               />
               &nbsp;
-              <Link to={`/sources/${source.media_id}/feeds`} >
+              <Link to={`/sources/${source.media_id}/feeds`}>
                 <FormattedMessage {...localMessages.feedLink} />
               </Link>
               {feedScrapeMsg}
@@ -177,13 +176,12 @@ class SourceDetailsContainer extends React.Component {
       </Grid>
     );
   }
-
 }
 
 SourceDetailsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from context
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   sourceId: PropTypes.number.isRequired,
   // from state
   source: PropTypes.object,
@@ -195,8 +193,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps)(
-      SourceDetailsContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps)(
+    SourceDetailsContainer
+  )
+);

@@ -27,6 +27,7 @@ class QueryGeoResultsContainer extends React.Component {
   downloadCsv = (query) => {
     postToDownloadUrl('/api/explorer/geography/geography.csv', query);
   }
+
   render() {
     const { results, intl, queries, handleCountryClick, selectedTabIndex, tabSelector } = this.props;
     const { formatNumber } = intl;
@@ -36,7 +37,7 @@ class QueryGeoResultsContainer extends React.Component {
       const data = results[selectedTabIndex].results.map(item => ({ ...item, value: item.pct }));
       content = (
         <div>
-          {results[selectedTabIndex] &&
+          {results[selectedTabIndex] && (
             <GeoChart
               data={data}
               countryMaxColorScale={queries[selectedTabIndex].color}
@@ -44,7 +45,7 @@ class QueryGeoResultsContainer extends React.Component {
               onCountryClick={handleCountryClick}
               backgroundColor="#f5f5f5"
             />
-          }
+          )}
         </div>
       );
     } else {
@@ -79,7 +80,6 @@ class QueryGeoResultsContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 QueryGeoResultsContainer.propTypes = {
@@ -155,14 +155,14 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withSummary(localMessages.title, localMessages.help, [messages.heatMapHelpText])(
-        withAsyncFetch(
-          withQueryResults(
-            QueryGeoResultsContainer
-          )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withSummary(localMessages.title, localMessages.help, [messages.heatMapHelpText])(
+      withAsyncFetch(
+        withQueryResults(
+          QueryGeoResultsContainer
         )
       )
     )
-  );
+  )
+);

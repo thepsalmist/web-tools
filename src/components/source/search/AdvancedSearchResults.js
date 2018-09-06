@@ -8,7 +8,10 @@ import AppButton from '../../common/AppButton';
 import { ExploreButton } from '../../common/IconButton';
 import messages from '../../../resources/messages';
 import FilledStarIcon from '../../common/icons/FilledStarIcon';
-import { ADD_ALL_THIS_PAGE, REMOVE_ALL, ADD_ALL_PAGES } from './AdvancedSearchResultsContainer';
+
+export const ADD_ALL_THIS_PAGE = 1;
+export const REMOVE_ALL = 0;
+export const ADD_ALL_PAGES = 2;
 
 const localMessages = {
   title: { id: 'sourceCollectionList.title', defaultMessage: 'Search Results' },
@@ -81,7 +84,7 @@ const AdvancedSearchResults = (props) => {
         <div className="search-results-list">
           <Row>
             {queriedCollections.map(collection => (
-              <Col lg={12} key={`clxn_${collection.tags_id}`} >
+              <Col lg={12} key={`clxn_${collection.tags_id}`}>
                 <div className={`search-result search-result-collection ${collection.selected ? 'search-result-selected' : ''}`} name={`src_${collection.tags_id}`}>
                   <div className="search-result-checkbox">
                     <Checkbox
@@ -107,10 +110,9 @@ const AdvancedSearchResults = (props) => {
                   </div>
                 </div>
               </Col>
-              )
-            )}
+            ))}
             {queriedSources.map(source => (
-              <Col lg={12} key={`src_${source.media_id}`} >
+              <Col lg={12} key={`src_${source.media_id}`}>
                 <div className={`search-result search-result-source ${source.selected ? 'search-result-selected' : ''}`} name={`src_${source.media_id}`}>
                   <div className="search-result-checkbox">
                     <Checkbox

@@ -12,7 +12,6 @@ const localMessages = {
 };
 
 class FocalSetDefinitionSummary extends React.Component {
-
   handleDelete = (event) => {
     const { focalSetDefinition, onDelete } = this.props;
     event.preventDefault();
@@ -32,10 +31,12 @@ class FocalSetDefinitionSummary extends React.Component {
             <p>
               {focalSetDefinition.description}
               <br />
-              <small><FormattedMessage
-                {...localMessages.summary}
-                values={{ count: focalSetDefinition.focus_definitions.length, technique: focalSetDefinition.focal_technique }}
-              /></small>
+              <small>
+                <FormattedMessage
+                  {...localMessages.summary}
+                  values={{ count: focalSetDefinition.focus_definitions.length, technique: focalSetDefinition.focal_technique }}
+                />
+              </small>
             </p>
           </Col>
           <Col lg={3} md={3} sm={4} xs={12}>
@@ -66,7 +67,6 @@ class FocalSetDefinitionSummary extends React.Component {
       </div>
     );
   }
-
 }
 
 FocalSetDefinitionSummary.propTypes = {
@@ -80,6 +80,6 @@ FocalSetDefinitionSummary.propTypes = {
 };
 
 export default
-  injectIntl(
-    FocalSetDefinitionSummary
-  );
+injectIntl(
+  FocalSetDefinitionSummary
+);

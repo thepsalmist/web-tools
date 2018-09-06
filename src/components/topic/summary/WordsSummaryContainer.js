@@ -29,6 +29,7 @@ class WordsSummaryContainer extends React.Component {
       fetchData(nextProps);
     }
   }
+
   render() {
     const { topicInfo, initSampleSize, onViewSampleSizeClick, filters, handleWordCloudClick } = this.props;
     const urlDownload = `/api/topics/${topicInfo.topics_id}/words.csv?${filtersAsUrlParams(filters)}`;
@@ -107,16 +108,16 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withSampleSize(
-        withSummary(messages.topWords, localMessages.descriptionIntro, [messages.wordcloudHelpText, messages.wordCloudTopicWord2VecLayoutHelp])(
-          withAsyncFetch(
-            withCsvDownloadNotifyContainer(
-              WordsSummaryContainer
-            )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withSampleSize(
+      withSummary(messages.topWords, localMessages.descriptionIntro, [messages.wordcloudHelpText, messages.wordCloudTopicWord2VecLayoutHelp])(
+        withAsyncFetch(
+          withCsvDownloadNotifyContainer(
+            WordsSummaryContainer
           )
         )
       )
     )
-  );
+  )
+);

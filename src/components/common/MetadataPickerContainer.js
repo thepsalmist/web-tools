@@ -33,7 +33,7 @@ const MetadataPickerContainer = (props) => {
             label={label}
           >
             <MenuItem className="header-primary-menu" value={null} />
-            {tags.map(t =>
+            {tags.map(t => (
               <MenuItem
                 className="header-primary-menu"
                 key={t.tags_id}
@@ -43,13 +43,14 @@ const MetadataPickerContainer = (props) => {
                   <br /><span className="header-primary-description">{t.description}</span>
                 </div>
               </MenuItem>
-            )}
+            ))}
           </Field>
         );
       } else {
         content = (
           <Field
-            fullWidth name={name}
+            fullWidth
+            name={name}
             component={renderSelect}
             disabled={disabled}
             label={label}
@@ -62,13 +63,15 @@ const MetadataPickerContainer = (props) => {
       break;
     case MODE_AUTOCOMPLETE:
       // commented out because the initialvalues are interfering with the display of the selected values
-      /* let initialText = '';
+      /*
+      let initialText = '';
       if ((initialValues) && (initialValues[name]) && (tags.length > 0)) {
         const matchingItem = tags.find(t => t.tags_id === initialValues[name]);
         if (matchingItem) {
           initialText = matchingItem.label;
         }
-      }*/
+      }
+      */
       content = (
         <Field
           className="metadata-picker"
@@ -152,10 +155,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withIntlForm(
-      withAsyncFetch(
-        MetadataPickerContainer
-      )
+connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  withIntlForm(
+    withAsyncFetch(
+      MetadataPickerContainer
     )
-  );
+  )
+);

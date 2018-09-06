@@ -38,14 +38,16 @@ const FocusForm3DescribeContainer = (props) => {
   let content;
   switch (formData.focalTechnique) {
     case FOCAL_TECHNIQUE_BOOLEAN_QUERY:
-      content = (<FocusDescriptionForm
-        topicId={topicId}
-        initialValues={initialValues}
-        focalSetDefinitions={focalSetDefinitions}
-        focalTechnique={formData.focalTechnique}
-        currentFocalSetDefinitionId={formData.focalSetDefinitionId}
-        keywords={formData.keywords}
-      />);
+      content = (
+        <FocusDescriptionForm
+          topicId={topicId}
+          initialValues={initialValues}
+          focalSetDefinitions={focalSetDefinitions}
+          focalTechnique={formData.focalTechnique}
+          currentFocalSetDefinitionId={formData.focalSetDefinitionId}
+          keywords={formData.keywords}
+        />
+      );
       break;
     case FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP:
       introContent = (
@@ -201,12 +203,12 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-          FocusForm3DescribeContainer
-        )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+        FocusForm3DescribeContainer
       )
     )
-  );
+  )
+);

@@ -46,6 +46,6 @@ CollectionTable.propTypes = {
 };
 
 export default
-  injectIntl(
-    CollectionTable
-  );
+injectIntl(
+  CollectionTable
+);

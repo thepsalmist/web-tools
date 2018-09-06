@@ -90,22 +90,22 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
     ownProps.change('sourcesAndCollections', selectedMedia); // redux-form change action
   },
-  handleMediaDelete: () => null,   // in create mode we don't need to update the values
+  handleMediaDelete: () => null, // in create mode we don't need to update the values
 });
 
 const reduxFormConfig = {
   form: 'topicForm',
-  destroyOnUnmount: false,  // so the wizard works
+  destroyOnUnmount: false, // so the wizard works
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        connect(mapStateToProps, mapDispatchToProps)(
-          TopicCreate1ConfigureContainer
-        )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      connect(mapStateToProps, mapDispatchToProps)(
+        TopicCreate1ConfigureContainer
       )
     )
-  );
+  )
+);

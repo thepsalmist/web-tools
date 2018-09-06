@@ -46,11 +46,12 @@ class QuerySampleStoriesResultsContainer extends React.Component {
     window.open(url, '_blank');
     // handleStorySelection: (query, story)?
   }
+
   render() {
     const { results, queries, selectedTabIndex, tabSelector, internalItemSelected } = this.props;
     const showMoreInfoColHdr = <th />;
     const showMoreInfoCol = story => (
-      <td><AppButton color="secondary" variant="outlined" onClick={() => this.onStorySelection(story)} ><FormattedMessage {...localMessages.showMetadata} /></AppButton></td>
+      <td><AppButton variant="outlined" onClick={() => this.onStorySelection(story)}><FormattedMessage {...localMessages.showMetadata} /></AppButton></td>
     );
     return (
       <div>
@@ -165,16 +166,16 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withSummary(localMessages.title, localMessages.helpIntro, localMessages.helpDetails)(
-        withAsyncFetch(
-          withQueryResults(
-            withLoginRequired(
-              QuerySampleStoriesResultsContainer
-            )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withSummary(localMessages.title, localMessages.helpIntro, localMessages.helpDetails)(
+      withAsyncFetch(
+        withQueryResults(
+          withLoginRequired(
+            QuerySampleStoriesResultsContainer
           )
         )
       )
     )
-  );
+  )
+);

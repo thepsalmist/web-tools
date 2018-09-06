@@ -22,7 +22,6 @@ const localMessages = {
 };
 
 class TopicBuilderWizard extends React.Component {
-
   componentWillMount = () => {
     const { startStep, goToStep } = this.props;
     goToStep(startStep || 0);
@@ -37,6 +36,7 @@ class TopicBuilderWizard extends React.Component {
       goToStep(stepNumber);
     }
   }
+
   componentWillUnmount = () => {
     const { handleUnmount } = this.props;
     handleUnmount();
@@ -53,7 +53,7 @@ class TopicBuilderWizard extends React.Component {
     const stepLabelStyle = { height: 45 };
     return (
       <div className="topic-builder-wizard">
-        <BackLinkingControlBar message={localMessages.backToTopicManager} linkTo={'/home'} >
+        <BackLinkingControlBar message={localMessages.backToTopicManager} linkTo="/home">
           <Stepper activeStep={currentStep}>
             <Step>
               <StepLabel style={stepLabelStyle}><FormattedMessage {...localMessages.step0Name} /></StepLabel>
@@ -70,7 +70,6 @@ class TopicBuilderWizard extends React.Component {
       </div>
     );
   }
-
 }
 
 TopicBuilderWizard.propTypes = {
@@ -102,17 +101,17 @@ const mapDispatchToProps = dispatch => ({
 
 const reduxFormConfig = {
   form: 'topicForm',
-  destroyOnUnmount: false,  // so the wizard works
+  destroyOnUnmount: false, // so the wizard works
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
 };
 
 export default
-  injectIntl(
-    reduxForm(reduxFormConfig)(
-      withRouter(
-        connect(mapStateToProps, mapDispatchToProps)(
-          TopicBuilderWizard
-        )
+injectIntl(
+  reduxForm(reduxFormConfig)(
+    withRouter(
+      connect(mapStateToProps, mapDispatchToProps)(
+        TopicBuilderWizard
       )
     )
-  );
+  )
+);

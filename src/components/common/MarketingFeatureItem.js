@@ -58,6 +58,6 @@ MarketingFeatureItem.propTypes = {
 };
 
 export default
-  injectIntl(
-    MarketingFeatureItem
-  );
+injectIntl(
+  MarketingFeatureItem
+);

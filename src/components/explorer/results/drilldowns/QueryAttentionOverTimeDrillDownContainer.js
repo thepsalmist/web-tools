@@ -14,27 +14,27 @@ class QueryAttentionOverTimeDrillDownContainer extends React.Component {
     super(props);
     this.rootRef = React.createRef();
   }
-  state = {
-    dateRange: null,
-    clickedQuery: null,
-  }
+
   componentWillReceiveProps(nextProps) {
     const { lastSearchTime, fetchData, dataPoint } = this.props;
-    if ((nextProps.lastSearchTime !== lastSearchTime ||
-      nextProps.dataPoint !== dataPoint) && nextProps.dataPoint !== null) {
+    if ((nextProps.lastSearchTime !== lastSearchTime
+      || nextProps.dataPoint !== dataPoint) && nextProps.dataPoint !== null) {
       fetchData(nextProps.dataPoint);
     }
   }
+
   shouldComponentUpdate(nextProps) {
     const { dataPoint, words, stories } = this.props;
-    return (nextProps.dataPoint !== dataPoint ||
-      nextProps.words !== words ||
-      nextProps.stories !== stories);
+    return (nextProps.dataPoint !== dataPoint
+      || nextProps.words !== words
+      || nextProps.stories !== stories);
   }
+
   componentDidUpdate() {
     const rootNode = this.rootRef.current;
     rootNode.scrollIntoView();
   }
+
   render() {
     const { words, handleClose, stories, dataPoint } = this.props;
 
@@ -126,10 +126,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        QueryAttentionOverTimeDrillDownContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      QueryAttentionOverTimeDrillDownContainer
     )
-  );
+  )
+);

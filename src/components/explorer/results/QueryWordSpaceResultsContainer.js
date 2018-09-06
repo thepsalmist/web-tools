@@ -25,6 +25,7 @@ class QueryWordSpaceResultsContainer extends React.Component {
   handleDownloadCsv = (query) => {
     postToDownloadUrl('/api/explorer/words/wordcount.csv', query);
   }
+
   render() {
     const { results, queries, selectedTabIndex, tabSelector } = this.props;
     const domId = `${WORD_SPACE_DOM_ID}-${selectedTabIndex}`;
@@ -89,14 +90,14 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withSummary(localMessages.title, localMessages.descriptionIntro, messages.wordSpaceLayoutHelp)(
-        withAsyncFetch(
-          withQueryResults(
-            QueryWordSpaceResultsContainer
-          )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withSummary(localMessages.title, localMessages.descriptionIntro, messages.wordSpaceLayoutHelp)(
+      withAsyncFetch(
+        withQueryResults(
+          QueryWordSpaceResultsContainer
         )
       )
     )
-  );
+  )
+);

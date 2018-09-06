@@ -39,14 +39,10 @@ const localMessages = {
 };
 
 class CollectionMetadataCoverageSummaryContainer extends React.Component {
-
   downloadCsv = () => {
     const { collection } = this.props;
     const url = `/api/collections/${collection.tags_id}/metadatacoverage.csv`;
     window.location = url;
-  }
-
-  handlePieSliceClick = () => {
   }
 
   render() {
@@ -123,7 +119,6 @@ class CollectionMetadataCoverageSummaryContainer extends React.Component {
       </DataCard>
     );
   }
-
 }
 
 CollectionMetadataCoverageSummaryContainer.propTypes = {
@@ -153,12 +148,12 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpText])(
-        withAsyncFetch(
-          CollectionMetadataCoverageSummaryContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpText])(
+      withAsyncFetch(
+        CollectionMetadataCoverageSummaryContainer
       )
     )
-  );
+  )
+);

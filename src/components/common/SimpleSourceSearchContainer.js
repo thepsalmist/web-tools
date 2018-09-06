@@ -20,12 +20,10 @@ const localMessages = {
 };
 
 class SourceSearchContainer extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       lastSearchString: '',
-      lastKeypress: 0,
       searchTimeout: null,
     };
   }
@@ -93,7 +91,7 @@ class SourceSearchContainer extends React.Component {
     clearTimeout(this.state.searchTimeout); // cancel any pending searches
     this.setState({
       lastSearchString: searchString,
-      searchTimeout: setTimeout(this.fireSearchIfNeeded, DELAY_BEFORE_SEARCH_MS),  // schedule a search for when they stop typing
+      searchTimeout: setTimeout(this.fireSearchIfNeeded, DELAY_BEFORE_SEARCH_MS), // schedule a search for when they stop typing
     });
   }
 
@@ -131,14 +129,13 @@ class SourceSearchContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 SourceSearchContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   // from parent
-  searchSources: PropTypes.bool,      // include source results?
+  searchSources: PropTypes.bool, // include source results?
   onMediaSourceSelected: PropTypes.func,
   fetchOngoing: PropTypes.string,
   maxSources: PropTypes.number,
@@ -173,8 +170,8 @@ SourceSearchContainer.propTypes = {
 
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      SourceSearchContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    SourceSearchContainer
+  )
+);

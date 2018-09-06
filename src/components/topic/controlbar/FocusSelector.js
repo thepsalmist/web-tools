@@ -6,8 +6,9 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
-import { REMOVE_FOCUS } from './TopicFilterControlBar';
 import messages from '../../../resources/messages';
+
+export const REMOVE_FOCUS = 0;
 
 const localMessages = {
   pickFocus: { id: 'topic.focusFilter.pick', defaultMessage: 'Subtopic' },
@@ -15,7 +16,6 @@ const localMessages = {
 };
 
 class FocusSelector extends React.Component {
-
   handleFocusChange = (evt) => {
     const { foci, onFocusSelected } = this.props;
     const { formatMessage } = this.props.intl;
@@ -40,13 +40,15 @@ class FocusSelector extends React.Component {
       return 0;
     });
     let detailsContent;
-    /* if ((selectedId) && (selectedId !== REMOVE_FOCUS)) {
+    /*
+    if ((selectedId) && (selectedId !== REMOVE_FOCUS)) {
       detailsContent = (
         <div className="selected-focus-details">
           details
         </div>
       );
-    }*/
+    }
+    */
     // default to none
     return (
       <div className="focus-selector-wrapper">
@@ -58,14 +60,14 @@ class FocusSelector extends React.Component {
           fullWidth
           onChange={this.handleFocusChange}
         >
-          {foci.map(focus =>
+          {foci.map(focus => (
             <MenuItem
               key={focus.foci_id}
               value={focus.foci_id}
             >
               <ListItemText><Typography classes={{ root: 'selected-focus-details' }}>{focusName(focus)}</Typography></ListItemText>
             </MenuItem>
-          )}
+          ))}
           <MenuItem
             value={REMOVE_FOCUS}
           >
@@ -76,7 +78,6 @@ class FocusSelector extends React.Component {
       </div>
     );
   }
-
 }
 
 FocusSelector.propTypes = {
@@ -87,6 +88,6 @@ FocusSelector.propTypes = {
 };
 
 export default
-  injectIntl(
-    FocusSelector
-  );
+injectIntl(
+  FocusSelector
+);

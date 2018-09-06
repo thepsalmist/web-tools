@@ -23,6 +23,7 @@ class TopicWordsPreview extends React.Component {
       fetchData(nextProps.query);
     }
   }
+
   render() {
     const { words } = this.props;
     const { formatMessage } = this.props.intl;
@@ -75,7 +76,7 @@ const mapDispatchToProps = dispatch => ({
     infoForQuery['collections[]'] = [];
     infoForQuery['sources[]'] = [];
 
-    if ('sourcesAndCollections' in query) {  // in FieldArrays on the form
+    if ('sourcesAndCollections' in query) { // in FieldArrays on the form
       infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
       infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
     }
@@ -92,12 +93,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withDescription(localMessages.descriptionIntro, [messages.wordcloudHelpText])(
-        withAsyncFetch(
-          TopicWordsPreview
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withDescription(localMessages.descriptionIntro, [messages.wordcloudHelpText])(
+      withAsyncFetch(
+        TopicWordsPreview
       )
     )
-  );
+  )
+);

@@ -21,7 +21,6 @@ const localMessages = {
 };
 
 class TopicListContainer extends React.Component {
-
   state = {
     selectedViewIndex: 0,
   };
@@ -99,8 +98,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      TopicListContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    TopicListContainer
+  )
+);

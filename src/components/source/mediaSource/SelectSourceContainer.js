@@ -24,7 +24,6 @@ const localMessages = {
 };
 
 class SelectSourceContainer extends React.Component {
-
   componentWillReceiveProps(nextProps) {
     const { sourceId, fetchData } = this.props;
     if ((nextProps.sourceId !== sourceId)) {
@@ -54,8 +53,8 @@ class SelectSourceContainer extends React.Component {
         <Helmet><title>{formatMessage(localMessages.title, { name: source.name })}</title></Helmet>
         <SourceMgrHeaderContainer />
         <SourceControlBar>
-          <a href="search-in-explorer" onClick={this.searchInExplorer} >
-            <ExploreButton color="primary" useBackgroundColor />
+          <a href="search-in-explorer" onClick={this.searchInExplorer}>
+            <ExploreButton useBackgroundColor />
             <FormattedMessage {...localMessages.searchNow} />
           </a>
           <a href={source.url}>
@@ -63,11 +62,11 @@ class SelectSourceContainer extends React.Component {
             <FormattedMessage {...localMessages.visitHomepage} values={{ url: source.url }} />
           </a>
           <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
-            <Link to={`/sources/${source.media_id}/edit`} >
+            <Link to={`/sources/${source.media_id}/edit`}>
               <EditButton />
               <FormattedMessage {...localMessages.editSource} />
             </Link>
-            <Link to={`/sources/${source.media_id}/feeds`} >
+            <Link to={`/sources/${source.media_id}/feeds`}>
               <EditButton />
               <FormattedMessage {...localMessages.editFeeds} />
             </Link>
@@ -79,7 +78,6 @@ class SelectSourceContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 SelectSourceContainer.propTypes = {
@@ -90,7 +88,7 @@ SelectSourceContainer.propTypes = {
   removeSourceId: PropTypes.func.isRequired,
   // from context
   location: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   sourceId: PropTypes.number.isRequired,
   children: PropTypes.node.isRequired,
   // from state
@@ -124,10 +122,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        SelectSourceContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      SelectSourceContainer
     )
-  );
+  )
+);

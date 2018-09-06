@@ -78,7 +78,7 @@ Homepage.propTypes = {
   intl: PropTypes.object.isRequired,
   // from context
   location: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   onKeywordSearch: PropTypes.func.isRequired,
   // from state
   user: PropTypes.object.isRequired,
@@ -114,8 +114,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      Homepage
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    Homepage
+  )
+);

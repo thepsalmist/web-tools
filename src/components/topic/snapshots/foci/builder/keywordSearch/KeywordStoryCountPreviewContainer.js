@@ -28,12 +28,13 @@ class KeywordStoryCountPreviewContainer extends React.Component {
       fetchData(nextProps.keywords);
     }
   }
+
   render() {
     const { counts, helpButton } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
     let content = null;
     if (counts !== null) {
-      const data = [  // format the data for the bubble chart help
+      const data = [ // format the data for the bubble chart help
         {
           value: counts.count,
           fill: getBrandDarkColor(),
@@ -47,12 +48,14 @@ class KeywordStoryCountPreviewContainer extends React.Component {
           rolloverText: `${formatMessage(localMessages.totalLabel)}: ${formatNumber(counts.total)} stories`,
         },
       ];
-      content = (<BubbleRowChart
-        data={data}
-        domId={BUBBLE_CHART_DOM_ID}
-        width={400}
-        padding={30}
-      />);
+      content = (
+        <BubbleRowChart
+          data={data}
+          domId={BUBBLE_CHART_DOM_ID}
+          width={400}
+          padding={30}
+        />
+      );
     }
     return (
       <DataCard>
@@ -101,12 +104,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(localMessages.helpTitle, localMessages.helpText)(
-        withAsyncFetch(
-          KeywordStoryCountPreviewContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(localMessages.helpTitle, localMessages.helpText)(
+      withAsyncFetch(
+        KeywordStoryCountPreviewContainer
       )
     )
-  );
+  )
+);

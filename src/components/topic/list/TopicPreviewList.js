@@ -116,10 +116,9 @@ TopicPreviewList.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-
 export default
-  injectIntl(
-    connect(null)(
-      TopicPreviewList
-    )
-  );
+injectIntl(
+  connect(null)(
+    TopicPreviewList
+  )
+);

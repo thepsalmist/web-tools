@@ -29,14 +29,16 @@ const RetweetStoryCountsPreviewContainer = (props) => {
       aboveTextColor: 'rgb(0,0,0)',
       rolloverText: `${info.label}: ${formatNumber(info.pct, { style: 'percent', maximumFractionDigits: 2 })}`,
     }));
-    content = (<BubbleRowChart
-      data={data}
-      domId={BUBBLE_CHART_DOM_ID}
-      width={700}
-      padding={30}
-      maxBubbleRadius={60}
-      asPercentage
-    />);
+    content = (
+      <BubbleRowChart
+        data={data}
+        domId={BUBBLE_CHART_DOM_ID}
+        width={700}
+        padding={30}
+        maxBubbleRadius={60}
+        asPercentage
+      />
+    );
   }
   return (
     <DataCard>
@@ -73,10 +75,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        RetweetStoryCountsPreviewContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      RetweetStoryCountsPreviewContainer
     )
-  );
+  )
+);

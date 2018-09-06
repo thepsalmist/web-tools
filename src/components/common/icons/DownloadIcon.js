@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 const DownloadIcon = props => (
-  <div className="app-icon app-icon-download" style={{ backgroundColor: props.backgroundColor }} >
-    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="11px" viewBox="0 0 12.338 12.901" enableBackground="new 0 0 12.338 12.901" xmlSpace="preserve" >
+  <div className="app-icon app-icon-download" style={{ backgroundColor: props.backgroundColor }}>
+    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" height="11px" viewBox="0 0 12.338 12.901" enableBackground="new 0 0 12.338 12.901" xmlSpace="preserve">
       <g>
         <g>
           <path fill="#FFFFFF" d="M11.709,12.901H0.629C0.281,12.901,0,12.617,0,12.268V8.641c0-0.35,0.281-0.633,0.629-0.633 c0.347,0,0.629,0.283,0.629,0.633v2.993h9.822V8.641c0-0.35,0.281-0.633,0.628-0.633s0.63,0.283,0.63,0.633v3.627 C12.338,12.617,12.055,12.901,11.709,12.901z" />

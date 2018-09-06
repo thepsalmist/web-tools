@@ -9,7 +9,7 @@ const localMessages = {
   noData: { id: 'wordspace.noData', defaultMessage: 'Not enough data to show.' },
 };
 
-const DEFAULT_LENGTH = 750;  // svg must have square dimensions
+const DEFAULT_LENGTH = 750; // svg must have square dimensions
 const DEFAULT_MARGIN = 80;
 const DEFAULT_MIN_FONT_SIZE = 10;
 const DEFAULT_MAX_FONT_SIZE = 30;
@@ -30,8 +30,8 @@ const MAX_ZOOM_SCALE = 3.5;
 
 function drawViz(wrapperElement, props) {
   const { words, scaleWords, length, margin, minFontSize, maxFontSize, minColor, maxColor,
-          highlightMinColor, highlightMaxColor, highlightFontSizeScale, showTooltips, alreadyNormalized,
-          fullExtent, domId, xProperty, yProperty, cosSimThreshold } = props;
+    highlightMinColor, highlightMaxColor, highlightFontSizeScale, showTooltips, alreadyNormalized,
+    fullExtent, domId, xProperty, yProperty, cosSimThreshold } = props;
   // console.log(words[0].count);
   // console.log(domId);
   const options = {
@@ -128,16 +128,16 @@ function drawViz(wrapperElement, props) {
     .range([options.margin, options.length - options.margin]);
 
   const yScale = d3.scaleLinear()
-   .domain([-maxRadius, maxRadius])
-   .range([options.length - options.margin, options.margin]);
+    .domain([-maxRadius, maxRadius])
+    .range([options.length - options.margin, options.margin]);
 
   const colorScale = d3.scaleLinear()
-                      .domain(options.fullExtent)
-                      .range([options.minColor, options.maxColor]);
+    .domain(options.fullExtent)
+    .range([options.minColor, options.maxColor]);
 
   const highlightColorScale = d3.scaleLinear()
-                        .domain(options.fullExtent)
-                        .range([options.highlightMinColor, options.highlightMaxColor]);
+    .domain(options.fullExtent)
+    .range([options.highlightMinColor, options.highlightMaxColor]);
 
   const scaledRadius = xScale(0) - yScale(maxRadius);
 
@@ -145,7 +145,7 @@ function drawViz(wrapperElement, props) {
 
   // start layout
   const svgNode = d3.select(wrapperElement)
-    .html('')   // important to empty it out first
+    .html('') // important to empty it out first
     .append('svg:svg'); // then add in the SVG wrapper we will be rendering to
 
   svgNode.attr('id', domId)
@@ -159,7 +159,7 @@ function drawViz(wrapperElement, props) {
     .translateExtent([[options.margin, options.margin], [options.length - options.margin, options.length - options.margin]])
     .extent([[options.margin, options.margin], [options.length - options.margin, options.length - options.margin]])
     .on('zoom', () => {
-      const transform = d3.event.transform;
+      const { transform } = d3.event;
 
       // update circles and arc tool-tip
       d3.select('#concentric-circles').attr('transform', transform);
@@ -221,7 +221,7 @@ function drawViz(wrapperElement, props) {
         zoomedIn = true;
       }
     })
-   .append('g');
+    .append('g');
 
   // remove default zoom scroll behavior
   svgNode.on('wheel.zoom', null);
@@ -311,102 +311,101 @@ function drawViz(wrapperElement, props) {
     .selectAll('text')
     .data(sortedWords)
     .enter()
-      .append('text')
-        .attr('text-anchor', 'middle')
-        .text(d => d.term)
-        .attr('x', d => xScale(d[options.xProperty]))
-        .attr('y', d => yScale(d[options.yProperty]))
-        .attr('fill', d => colorScale(d.tfnorm))
-        .attr('font-size', (d) => {
+    .append('text')
+    .attr('text-anchor', 'middle')
+    .text(d => d.term)
+    .attr('x', d => xScale(d[options.xProperty]))
+    .attr('y', d => yScale(d[options.yProperty]))
+    .attr('fill', d => colorScale(d.tfnorm))
+    .attr('font-size', (d) => {
+      const fs = fontSizeComputer(d, options.fullExtent, sizeRange);
+      return `${fs}px`;
+    })
+    .on('mouseover', (d) => {
+      // calculate angle from (x, y) coordinates
+      let currentAngle = Math.atan(Math.abs(d[options.yProperty] / d[options.xProperty])) * (180 / Math.PI);
+      const offset = Math.acos(options.cosSimThreshold) * (180 / Math.PI);
+
+      if (d[options.xProperty] > 0 && d[options.yProperty] > 0) { // 1st quadrant
+        currentAngle = (90.0 - currentAngle) - offset;
+      } else if (d[options.xProperty] > 0 && d[options.yProperty] < 0) { // 2nd quadrant
+        currentAngle = (90.0 + currentAngle) - offset;
+      } else if (d[options.xProperty] < 0 && d[options.yProperty] < 0) { // 3rd quadrant
+        currentAngle = ((-90.0) - currentAngle) - offset;
+      } else if (d[options.xProperty] < 0 && d[options.yProperty] > 0) { // 4th quadrant
+        currentAngle = ((-90.0) + currentAngle) - offset;
+      }
+
+      // rotate and show arc tooltip
+      d3.select('#arc')
+        .attr('transform', `translate(${xScale(0)}, ${yScale(0)}) rotate(${currentAngle})`);
+      d3.select('#arc')
+        .style('opacity', 1);
+
+      // highlight selected word and move to front
+      const { event } = d3;
+      d3.select(event.target)
+        .transition()
+        .duration(DEFAULT_MOUSEOVER_TRANSITION_TIME)
+        .attr('fill', highlightColorScale(d.tfnorm))
+        .attr('font-size', () => {
           const fs = fontSizeComputer(d, options.fullExtent, sizeRange);
+          return `${1.2 * fs}px`;
+        })
+        .attr('font-weight', 'bold');
+      d3.select(event.target).raise();
+
+      // highlight similar words
+      svgNode
+        .selectAll('text')
+        .filter(other => d.similar.map(x => x.term).indexOf(other.term) !== -1 && other.term !== d.term)
+        .transition()
+        .duration(DEFAULT_MOUSEOVER_TRANSITION_TIME)
+        .attr('fill', other => highlightColorScale(other.tfnorm))
+        .attr('font-size', (other) => {
+          const fs = fontSizeComputer(other, options.fullExtent, sizeRange);
+          return `${options.highlightFontSizeScale * fs}px`;
+        })
+        .attr('font-weight', 'bold')
+        .attr('pointer-events', 'none');
+
+      // bring similar words to front
+      svgNode
+        .selectAll('text')
+        .filter(other => d.similar.map(x => x.term).indexOf(other.term) !== -1 && other.term !== d.term)
+        .raise();
+
+      // gray-out non-similar words
+      svgNode
+        .selectAll('text')
+        .filter(other => d.similar.map(x => x.term).indexOf(other.term) === -1 && other.term !== d.term)
+        .transition()
+        .duration(DEFAULT_MOUSEOVER_TRANSITION_TIME)
+        .attr('fill', '#e2e2e2')
+        .attr('pointer-events', 'none');
+    })
+    .on('mouseout', () => {
+      // reset and hide arc tooltip
+      d3.select('#arc')
+        .style('opacity', 0)
+        .attr('transform', `translate(${xScale(0)}, ${yScale(0)}) rotate(0)`);
+
+      // return selected word to normal
+      svgNode
+        .selectAll('text')
+        .transition()
+        .duration(100)
+        .attr('fill', other => colorScale(other.tfnorm))
+        .attr('font-size', (other) => {
+          const fs = fontSizeComputer(other, options.fullExtent, sizeRange);
           return `${fs}px`;
         })
-        .on('mouseover', (d) => {
-          // calculate angle from (x, y) coordinates
-          let currentAngle = Math.atan(Math.abs(d[options.yProperty] / d[options.xProperty])) * (180 / Math.PI);
-          const offset = Math.acos(options.cosSimThreshold) * (180 / Math.PI);
-
-          if (d[options.xProperty] > 0 && d[options.yProperty] > 0) {           // 1st quadrant
-            currentAngle = (90.0 - currentAngle) - offset;
-          } else if (d[options.xProperty] > 0 && d[options.yProperty] < 0) {    // 2nd quadrant
-            currentAngle = (90.0 + currentAngle) - offset;
-          } else if (d[options.xProperty] < 0 && d[options.yProperty] < 0) {    // 3rd quadrant
-            currentAngle = ((-90.0) - currentAngle) - offset;
-          } else if (d[options.xProperty] < 0 && d[options.yProperty] > 0) {    // 4th quadrant
-            currentAngle = ((-90.0) + currentAngle) - offset;
-          }
-
-          // rotate and show arc tooltip
-          d3.select('#arc')
-            .attr('transform', `translate(${xScale(0)}, ${yScale(0)}) rotate(${currentAngle})`);
-          d3.select('#arc')
-            .style('opacity', 1);
-
-          // highlight selected word and move to front
-          const event = d3.event;
-          d3.select(event.target)
-            .transition()
-            .duration(DEFAULT_MOUSEOVER_TRANSITION_TIME)
-            .attr('fill', highlightColorScale(d.tfnorm))
-            .attr('font-size', () => {
-              const fs = fontSizeComputer(d, options.fullExtent, sizeRange);
-              return `${1.2 * fs}px`;
-            })
-            .attr('font-weight', 'bold');
-          d3.select(event.target).raise();
-
-          // highlight similar words
-          svgNode
-            .selectAll('text')
-            .filter(other => d.similar.map(x => x.term).indexOf(other.term) !== -1 && other.term !== d.term)
-            .transition()
-            .duration(DEFAULT_MOUSEOVER_TRANSITION_TIME)
-            .attr('fill', other => highlightColorScale(other.tfnorm))
-            .attr('font-size', (other) => {
-              const fs = fontSizeComputer(other, options.fullExtent, sizeRange);
-              return `${options.highlightFontSizeScale * fs}px`;
-            })
-            .attr('font-weight', 'bold')
-            .attr('pointer-events', 'none');
-
-          // bring similar words to front
-          svgNode
-            .selectAll('text')
-            .filter(other => d.similar.map(x => x.term).indexOf(other.term) !== -1 && other.term !== d.term)
-            .raise();
-
-          // gray-out non-similar words
-          svgNode
-            .selectAll('text')
-            .filter(other => d.similar.map(x => x.term).indexOf(other.term) === -1 && other.term !== d.term)
-            .transition()
-            .duration(DEFAULT_MOUSEOVER_TRANSITION_TIME)
-            .attr('fill', '#e2e2e2')
-            .attr('pointer-events', 'none');
-        })
-        .on('mouseout', () => {
-          // reset and hide arc tooltip
-          d3.select('#arc')
-            .style('opacity', 0)
-            .attr('transform', `translate(${xScale(0)}, ${yScale(0)}) rotate(0)`);
-
-          // return selected word to normal
-          svgNode
-            .selectAll('text')
-            .transition()
-            .duration(100)
-            .attr('fill', other => colorScale(other.tfnorm))
-            .attr('font-size', (other) => {
-              const fs = fontSizeComputer(other, options.fullExtent, sizeRange);
-              return `${fs}px`;
-            })
-            .attr('font-weight', 'normal')
-            .attr('pointer-events', 'auto');
-        });
+        .attr('font-weight', 'normal')
+        .attr('pointer-events', 'auto');
+    });
 }
 
 class WordSpace extends React.Component {
-
   constructor(props) {
     super(props);
     this.chartWrapperRef = React.createRef();
@@ -464,7 +463,4 @@ WordSpace.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    WordSpace
-  );
+export default injectIntl(WordSpace);

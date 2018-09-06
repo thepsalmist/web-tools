@@ -14,9 +14,7 @@ const localMessages = {
   undateableCount: { id: 'topic.summary.storystats.undateableCount', defaultMessage: 'Undateable Stories' },
 };
 
-
 class TopicStoryMetadataStatsContainer extends React.Component {
-
   componentWillReceiveProps(nextProps) {
     const { filters, fetchData } = this.props;
     if ((nextProps.filters !== filters)) {
@@ -52,7 +50,6 @@ class TopicStoryMetadataStatsContainer extends React.Component {
       />
     );
   }
-
 }
 
 TopicStoryMetadataStatsContainer.propTypes = {
@@ -101,10 +98,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        TopicStoryMetadataStatsContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      TopicStoryMetadataStatsContainer
     )
-  );
+  )
+);

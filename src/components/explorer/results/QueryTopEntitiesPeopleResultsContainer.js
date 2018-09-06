@@ -27,6 +27,7 @@ class QueryTopEntitiesPeopleResultsContainer extends React.Component {
   downloadCsv = (query) => {
     postToDownloadUrl(`/api/explorer/tags/${TAG_SET_CLIFF_PEOPLE}/top-tags.csv`, query);
   }
+
   render() {
     const { results, queries, handleEntitySelection, tabSelector, selectedTabIndex } = this.props;
     const { formatNumber } = this.props.intl;
@@ -37,7 +38,7 @@ class QueryTopEntitiesPeopleResultsContainer extends React.Component {
       if (coverageRatio > COVERAGE_REQUIRED) {
         content = (
           <div>
-            {rawData &&
+            {rawData && (
               <EntitiesTable
                 className="explorer-entity"
                 entityColNameMsg={localMessages.person}
@@ -45,7 +46,7 @@ class QueryTopEntitiesPeopleResultsContainer extends React.Component {
                 onClick={e => handleEntitySelection(e, queries[0].searchId)}
                 maxTitleLength={50}
               />
-            }
+            )}
           </div>
         );
       } else {
@@ -155,14 +156,14 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withSummary(localMessages.title, localMessages.helpIntro, [messages.entityHelpDetails])(
-        withAsyncFetch(
-          withQueryResults(
-            QueryTopEntitiesPeopleResultsContainer
-          )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withSummary(localMessages.title, localMessages.helpIntro, [messages.entityHelpDetails])(
+      withAsyncFetch(
+        withQueryResults(
+          QueryTopEntitiesPeopleResultsContainer
         )
       )
     )
-  );
+  )
+);

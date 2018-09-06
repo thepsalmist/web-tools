@@ -120,8 +120,8 @@ const reduxFormConfig = {
 };
 
 export default
-  withIntlForm(
-    reduxForm(reduxFormConfig)(
-      ChangePasswordContainer
-    )
-  );
+withIntlForm(
+  reduxForm(reduxFormConfig)(
+    ChangePasswordContainer
+  )
+);

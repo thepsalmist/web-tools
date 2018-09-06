@@ -17,7 +17,6 @@ const localMessages = {
 };
 
 class AdvancedSearchContainer extends React.Component {
-
   constructor(props) {
     super(props);
     const defaultQueryStr = (props.urlQueryString) ? props.urlQueryString : null;
@@ -80,13 +79,12 @@ class AdvancedSearchContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 AdvancedSearchContainer.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   location: PropTypes.object,
   // from dispatch
   // from url
@@ -98,8 +96,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps)(
-      AdvancedSearchContainer
-    ),
-  );
+injectIntl(
+  connect(mapStateToProps)(
+    AdvancedSearchContainer
+  ),
+);

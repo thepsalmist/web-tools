@@ -28,6 +28,7 @@ class QueryThemesResultsContainer extends React.Component {
   downloadCsv = (query) => {
     postToDownloadUrl(`/api/explorer/tags/${TAG_SET_NYT_THEMES}/top-tags.csv`, query);
   }
+
   render() {
     const { results, queries, handleThemeClicked, selectedTabIndex, tabSelector } = this.props;
     const { formatNumber } = this.props.intl;
@@ -160,14 +161,14 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withSummary(localMessages.title, localMessages.helpIntro, [localMessages.helpDetail, messages.nytThemeHelpDetails])(
-        withAsyncFetch(
-          withQueryResults(
-            QueryThemesResultsContainer
-          )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withSummary(localMessages.title, localMessages.helpIntro, [localMessages.helpDetail, messages.nytThemeHelpDetails])(
+      withAsyncFetch(
+        withQueryResults(
+          QueryThemesResultsContainer
         )
       )
     )
-  );
+  )
+);

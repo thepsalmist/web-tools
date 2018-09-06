@@ -11,31 +11,18 @@ import StoryDetailForm from './StoryDetailForm';
 import { updateFeedback } from '../../../actions/appActions';
 import { TAG_SET_PRIMARY_LANGUAGE } from '../../../lib/tagUtil';
 
-
 const localMessages = {
   title: { id: 'story.details.edit.title', defaultMessage: 'Edit Story Details' },
   feedback: { id: 'story.details.edit.feedback', defaultMessage: 'Story Updates saved' },
 };
+
 class StoryUpdateContainer extends React.Component {
-
-  state = {
-    open: false,
-  };
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.storiesId !== this.props.storiesId) {
       const { fetchData } = this.props;
       fetchData(nextProps.storiesId);
     }
   }
-
-  handleRemoveClick = () => {
-    this.setState({ open: true });
-  };
-
-  handleRemoveDialogClose = () => {
-    this.setState({ open: false });
-  };
 
   handleReadItClick = () => {
     const { story } = this.props;
@@ -66,7 +53,7 @@ class StoryUpdateContainer extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col lg={6} xs={12} >
+            <Col lg={6} xs={12}>
               <StoryDetailForm story={story} initialValues={story} language={lang} storiesId={storiesId} onSave={onSave} buttonLabel="save" />
             </Col>
           </Row>
@@ -74,12 +61,11 @@ class StoryUpdateContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 StoryUpdateContainer.propTypes = {
   // from context
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   intl: PropTypes.object.isRequired,
   // from parent
   // from dispatch
@@ -124,12 +110,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        injectIntl(
-          StoryUpdateContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      injectIntl(
+        StoryUpdateContainer
       )
     )
-  );
+  )
+);

@@ -27,17 +27,13 @@ ChangePasswordContainer.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => ({
-  handlePasswordChange: values =>
-    dispatch(changePassword(values))
-      .then((response) => {
-        if (response.success === 1) {
-          dispatch(push('/user/change-password-success'));
-        }
-        // errors handled by generic handler with message from server
-      }),
+  handlePasswordChange: values => dispatch(changePassword(values))
+    .then((response) => {
+      if (response.success === 1) {
+        dispatch(push('/user/change-password-success'));
+      }
+      // errors handled by generic handler with message from server
+    }),
 });
 
-export default
-  connect(null, mapDispatchToProps)(
-    ChangePasswordContainer
-  );
+export default connect(null, mapDispatchToProps)(ChangePasswordContainer);

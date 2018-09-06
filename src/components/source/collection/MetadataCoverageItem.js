@@ -18,7 +18,7 @@ const MetadataCoverageItem = (props) => {
 
   if (sources) {
     sourcesWithMetadata = sources.map(tagarray => tagarray.media_source_tags)
-    .map(tids => tids.filter(a => (a.tag_sets_id === metadataId))).filter(tf => tf.length > 0);
+      .map(tids => tids.filter(a => (a.tag_sets_id === metadataId))).filter(tf => tf.length > 0);
 
     const sourcesWithout = sources.length - sourcesWithMetadata.length;
     content = (

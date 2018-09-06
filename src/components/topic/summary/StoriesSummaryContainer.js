@@ -35,22 +35,26 @@ class StoriesSummaryContainer extends React.Component {
       fetchData(nextProps);
     }
   }
+
   onChangeSort = (newSort) => {
     const { sortData } = this.props;
     sortData(newSort);
   };
+
   downloadCsvNoFBData = () => {
     const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
     const url = `/api/topics/${topicId}/stories.csv?${filtersAsUrlParams(filters)}&sort=${sort}`;
     window.location = url;
     notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
   }
+
   downloadCsvWithFBData = () => {
     const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
     const url = `/api/topics/${topicId}/stories.csv?${filtersAsUrlParams(filters)}&sort=${sort}&fbData=1`;
     window.location = url;
     notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
   }
+
   render() {
     const { stories, sort, topicId, handleFocusSelected, user, showTweetCounts } = this.props;
     const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
@@ -166,14 +170,14 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withSummary(localMessages.title, localMessages.descriptionIntro, messages.storiesTableHelpText, true)(
-        withAsyncFetch(
-          withCsvDownloadNotifyContainer(
-            StoriesSummaryContainer
-          )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withSummary(localMessages.title, localMessages.descriptionIntro, messages.storiesTableHelpText, true)(
+      withAsyncFetch(
+        withCsvDownloadNotifyContainer(
+          StoriesSummaryContainer
         )
       )
     )
-  );
+  )
+);

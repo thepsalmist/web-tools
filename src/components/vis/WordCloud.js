@@ -42,7 +42,7 @@ function drawViz(wrapperElement, {
   }
   // start layout
   const node = d3.select(wrapperElement)
-    .html('')   // important to empty it out first
+    .html('') // important to empty it out first
     .append('svg:svg'); // then add in the SVG wrapper we will be rendering to;
   const counts = words.map(({ count }) => count);
   const max = d3.max(counts);
@@ -56,31 +56,31 @@ function drawViz(wrapperElement, {
   }));
   // create wordcloud
   d3LayoutCloud().size([options.width, options.height])
-  .words(wordList)
-  .rotate(() => (~~(Math.random() * 1) * 90))
-  .font('Arial')
-  .fontSize(d => d.size)
-  .on('end', (wordsAsData) => {
-    // Black and white
-    // var fill = d3.scale.linear().domain([0,100]).range(['black','white']);
-    // Colors
-    node
-      .attr('width', options.width).attr('height', options.height)
-      .append('g')
-      .attr('transform', `translate(${options.width / 2},${options.height / 2})`)
-      .selectAll('text')
-      .data(wordsAsData)
-      .enter()
+    .words(wordList)
+    .rotate(() => (~~(Math.random() * 1) * 90))
+    .font('Arial')
+    .fontSize(d => d.size)
+    .on('end', (wordsAsData) => {
+      // Black and white
+      // var fill = d3.scale.linear().domain([0,100]).range(['black','white']);
+      // Colors
+      node
+        .attr('width', options.width).attr('height', options.height)
+        .append('g')
+        .attr('transform', `translate(${options.width / 2},${options.height / 2})`)
+        .selectAll('text')
+        .data(wordsAsData)
+        .enter()
         .append('text')
-          .attr('font-family', 'Lato, Helvetica, sans')
-          .attr('font-size', d => `${d.size}px`)
-          .attr('fill', options.textColor)
-          .attr('text-anchor', 'middle')
-          .attr('font-weight', 'bold')
-          .attr('transform', d => `translate(${d.x},${d.y})rotate(${d.rotate})`)
-          .text(d => d.text);
-  })
-  .start();
+        .attr('font-family', 'Lato, Helvetica, sans')
+        .attr('font-size', d => `${d.size}px`)
+        .attr('fill', options.textColor)
+        .attr('text-anchor', 'middle')
+        .attr('font-weight', 'bold')
+        .attr('transform', d => `translate(${d.x},${d.y})rotate(${d.rotate})`)
+        .text(d => d.text);
+    })
+    .start();
   if (onWordClick !== undefined) {
     node.selectAll('text')
       .on('mouseover', (d, index, list) => {
@@ -116,7 +116,6 @@ function drawViz(wrapperElement, {
 }
 
 class WordCloud extends React.Component {
-
   constructor(props) {
     super(props);
     this.chartWrapperRef = React.createRef();
@@ -136,7 +135,6 @@ class WordCloud extends React.Component {
       <div className="editable-word-cloud" ref={this.chartWrapperRef} id={domId} />
     );
   }
-
 }
 
 WordCloud.propTypes = {

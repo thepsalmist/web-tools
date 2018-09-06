@@ -16,7 +16,6 @@ const localMessages = {
 };
 
 class TopicStatusDashboardContainer extends React.Component {
-
   state = {
     selectedTopicState: 'error',
   };
@@ -51,7 +50,6 @@ class TopicStatusDashboardContainer extends React.Component {
       </Grid>
     );
   }
-
 }
 
 TopicStatusDashboardContainer.propTypes = {
@@ -75,10 +73,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        TopicStatusDashboardContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      TopicStatusDashboardContainer
     )
-  );
+  )
+);

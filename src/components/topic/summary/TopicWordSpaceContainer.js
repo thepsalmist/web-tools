@@ -34,6 +34,7 @@ class TopicWordSpaceContainer extends React.Component {
       fetchData(nextProps);
     }
   }
+
   render() {
     const { words, topicName, filters } = this.props;
     return (
@@ -95,12 +96,12 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withSummary(localMessages.title, localMessages.descriptionIntro, [messages.wordCloudTopicWord2VecLayoutHelp])(
-        withAsyncFetch(
-          TopicWordSpaceContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withSummary(localMessages.title, localMessages.descriptionIntro, [messages.wordCloudTopicWord2VecLayoutHelp])(
+      withAsyncFetch(
+        TopicWordSpaceContainer
       )
     )
-  );
+  )
+);

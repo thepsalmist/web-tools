@@ -121,13 +121,12 @@ class CollectionDetailsContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 CollectionDetailsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from context
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   collectionId: PropTypes.number.isRequired,
   // from state
   collection: PropTypes.object,
@@ -141,8 +140,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps)(
-      CollectionDetailsContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps)(
+    CollectionDetailsContainer
+  )
+);

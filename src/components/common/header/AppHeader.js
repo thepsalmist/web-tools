@@ -4,7 +4,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import Link from 'react-router/lib/Link';
 import FavoriteToggler from '../FavoriteToggler';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
-import Permissioned from '../../common/Permissioned';
+import Permissioned from '../Permissioned';
 
 const AppHeader = (props) => {
   const { link, title, isFavorite, onSetFavorited, subTitle } = props;

@@ -16,7 +16,7 @@ setAppName(APP_TOPIC_MAPPER);
 
 setAppColors({
   light: '#58DBCC',
-  dark: '#38BBAC',  // primary
+  dark: '#38BBAC', // primary
   darker: '#189B8C',
   main: '#38BBAC',
 });

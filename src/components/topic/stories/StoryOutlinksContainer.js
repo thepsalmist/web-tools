@@ -22,11 +22,13 @@ class StoryOutlinksContainer extends React.Component {
       fetchData(nextProps.filters);
     }
   }
+
   downloadCsv = () => {
     const { storiesId, topicId, filters } = this.props;
     const url = `/api/topics/${topicId}/stories/${storiesId}/outlinks.csv?timespanId=${filters.timespanId}&q=${filters.q}`;
     window.location = url;
   }
+
   render() {
     const { outlinkedStories, showTweetCounts, topicId, helpButton } = this.props;
     const { formatMessage } = this.props.intl;
@@ -86,12 +88,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpIntro, messages.wordcloudHelpText])(
-        withAsyncFetch(
-          StoryOutlinksContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpIntro, messages.wordcloudHelpText])(
+      withAsyncFetch(
+        StoryOutlinksContainer
       )
     )
-  );
+  )
+);

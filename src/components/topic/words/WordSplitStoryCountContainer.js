@@ -27,11 +27,13 @@ class WordSplitStoryCountContainer extends React.Component {
       fetchData(nextProps.filters, nextProps.stem);
     }
   }
+
   downloadCsv = () => {
     const { topicId, term, filters } = this.props;
     const url = `/api/topics/${topicId}/words/${term}*/split-story/count.csv?${filtersAsUrlParams(filters)}`;
     window.location = url;
   }
+
   render() {
     const { total, counts, helpButton } = this.props;
     const { formatMessage } = this.props.intl;
@@ -57,7 +59,7 @@ WordSplitStoryCountContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   term: PropTypes.string.isRequired,
-  stem: PropTypes.string.isRequired,  // from state
+  stem: PropTypes.string.isRequired, // from state
   filters: PropTypes.object.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
@@ -86,13 +88,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withHelp(localMessages.helpTitle, localMessages.helpText)(
-        withAsyncFetch(
-          WordSplitStoryCountContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withHelp(localMessages.helpTitle, localMessages.helpText)(
+      withAsyncFetch(
+        WordSplitStoryCountContainer
       )
     )
-  );
-
+  )
+);

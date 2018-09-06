@@ -23,6 +23,7 @@ class KeywordStoryPreviewContainer extends React.Component {
       fetchData(nextProps.keywords);
     }
   }
+
   render() {
     const { stories, topicId, helpButton, showTweetCounts } = this.props;
     return (
@@ -77,12 +78,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(localMessages.helpTitle, messages.storiesTableHelpText)(
-        withAsyncFetch(
-          KeywordStoryPreviewContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(localMessages.helpTitle, messages.storiesTableHelpText)(
+      withAsyncFetch(
+        KeywordStoryPreviewContainer
       )
     )
-  );
+  )
+);

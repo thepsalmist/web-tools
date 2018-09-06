@@ -23,12 +23,15 @@ const withTimePeriods = (ChildComponent, hideAllTimeOption = false) => {
       const { handleTimePeriodClick } = this.props;
       handleTimePeriodClick(calculateTimePeriods(timePeriod), timePeriod);
     }
+
     render() {
       const { selectedTimePeriod } = this.props;
       let allTimeOptionContent;
       if (!hideAllTimeOption) {
         allTimeOptionContent = (
           <a
+            href="#"
+            role="button"
             tabIndex="0"
             className={selectedTimePeriod === PAST_ALL ? 'selected' : ''}
             onClick={e => this.saveStateAndTriggerFetch(PAST_ALL, e)}
@@ -40,6 +43,8 @@ const withTimePeriods = (ChildComponent, hideAllTimeOption = false) => {
       const timePeriodControls = (
         <div className="periodic-controls">
           <a
+            href="#"
+            role="button"
             tabIndex="0"
             className={selectedTimePeriod === PAST_WEEK ? 'selected' : ''}
             onClick={e => this.saveStateAndTriggerFetch(PAST_WEEK, e)}
@@ -47,6 +52,8 @@ const withTimePeriods = (ChildComponent, hideAllTimeOption = false) => {
             <FormattedMessage {...localMessages.pastWeek} />
           </a>
           <a
+            href="#"
+            role="button"
             tabIndex="0"
             className={selectedTimePeriod === PAST_MONTH ? 'selected' : ''}
             onClick={e => this.saveStateAndTriggerFetch(PAST_MONTH, e)}
@@ -54,6 +61,8 @@ const withTimePeriods = (ChildComponent, hideAllTimeOption = false) => {
             <FormattedMessage {...localMessages.pastMonth} />
           </a>
           <a
+            href="#"
+            role="button"
             tabIndex="0"
             className={selectedTimePeriod === PAST_YEAR ? 'selected' : ''}
             onClick={e => this.saveStateAndTriggerFetch(PAST_YEAR, e)}

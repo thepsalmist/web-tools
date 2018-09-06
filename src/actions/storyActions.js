@@ -30,4 +30,3 @@ export const fetchStory = createAsyncAction(FETCH_STORY, api.story);
 export const fetchStoryWords = createAsyncAction(FETCH_STORY_WORDS, api.storyWords);
 // pass in topic id and story id
 export const updateStory = createAsyncAction(UPDATE_STORY, api.storyUpdate, params => params);
-

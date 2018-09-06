@@ -26,6 +26,7 @@ class CollectionGeographyContainer extends React.Component {
     const url = `/api/collections/${collectionId}/geography/geography.csv`;
     window.location = url;
   }
+
   handleCountryClick = (event, geo) => {
     const { collectionId, collectionName } = this.props;
     const countryName = geo.name;
@@ -36,6 +37,7 @@ class CollectionGeographyContainer extends React.Component {
       [], [collectionId], startDate, endDate);
     window.open(url, '_blank');
   }
+
   render() {
     const { geolist, intl, helpButton } = this.props;
     const { formatMessage } = intl;
@@ -52,7 +54,6 @@ class CollectionGeographyContainer extends React.Component {
       </DataCard>
     );
   }
-
 }
 
 CollectionGeographyContainer.propTypes = {
@@ -81,12 +82,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withHelp(localMessages.helpTitle, [localMessages.intro, messages.heatMapHelpText])(
-        withAsyncFetch(
-          CollectionGeographyContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withHelp(localMessages.helpTitle, [localMessages.intro, messages.heatMapHelpText])(
+      withAsyncFetch(
+        CollectionGeographyContainer
       )
     )
-  );
+  )
+);

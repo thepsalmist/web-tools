@@ -56,12 +56,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpText])(
-        withAsyncFetch(
-          CollectionSimilarContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpText])(
+      withAsyncFetch(
+        CollectionSimilarContainer
       )
     )
-  );
+  )
+);

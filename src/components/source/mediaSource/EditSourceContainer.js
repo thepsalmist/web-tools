@@ -117,8 +117,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      EditSourceContainer
-    ),
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    EditSourceContainer
+  ),
+);

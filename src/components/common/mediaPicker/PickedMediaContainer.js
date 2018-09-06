@@ -16,21 +16,20 @@ const localMessages = {
 };
 
 class PickedMediaContainer extends React.Component {
-
   updateMediaType = (type) => {
     const { updateMediaSelection } = this.props;
     updateMediaSelection(type);
   };
+
   render() {
     const { selectedMediaQueryType, selectedMedia, handleUnselectMedia } = this.props;
-    const selectedMediaList =
-      selectedMedia.map(obj => (
-        <SourceOrCollectionWidget
-          key={obj.id || obj.tags_id || obj.media_id}
-          object={obj}
-          onDelete={() => handleUnselectMedia(obj)}
-        />
-      ));
+    const selectedMediaList = selectedMedia.map(obj => (
+      <SourceOrCollectionWidget
+        key={obj.id || obj.tags_id || obj.media_id}
+        object={obj}
+        onDelete={() => handleUnselectMedia(obj)}
+      />
+    ));
     const options = [
       { label: localMessages.pickFeatured, value: PICK_FEATURED },
       { label: localMessages.pickCountry, value: PICK_COUNTRY },
@@ -93,8 +92,8 @@ const mapDispatchToProps = dispatch => ({
 
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      PickedMediaContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    PickedMediaContainer
+  )
+);

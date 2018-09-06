@@ -22,6 +22,7 @@ class TopCountriesStoryCountsPreviewContainer extends React.Component {
       fetchData(topicId, nextProps.numCountries);
     }
   }
+
   render() {
     const { counts } = this.props;
     const { formatNumber } = this.props.intl;
@@ -32,12 +33,14 @@ class TopCountriesStoryCountsPreviewContainer extends React.Component {
         fill: mapD3Top10Colors(idx),
         rolloverText: `${info.label}: ${formatNumber(info.count)}`,
       }));
-      content = (<PackedBubbleChart
-        data={data}
-        domId={BUBBLE_CHART_DOM_ID}
-        width={700}
-        padding={30}
-      />);
+      content = (
+        <PackedBubbleChart
+          data={data}
+          domId={BUBBLE_CHART_DOM_ID}
+          width={700}
+          padding={30}
+        />
+      );
     }
     return (
       <DataCard>
@@ -86,10 +89,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        TopCountriesStoryCountsPreviewContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      TopCountriesStoryCountsPreviewContainer
     )
-  );
+  )
+);

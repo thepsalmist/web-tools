@@ -3,10 +3,10 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import withHelp from '../../common/hocs/HelpfulContainer';
+import withAsyncFetch from '../hocs/AsyncContainer';
+import withHelp from '../hocs/HelpfulContainer';
 import { fetchStoryWords } from '../../../actions/topicActions';
-import EditableWordCloudDataCard from '../../common/EditableWordCloudDataCard';
+import EditableWordCloudDataCard from '../EditableWordCloudDataCard';
 import { filteredLinkTo } from '../../util/location';
 import messages from '../../../resources/messages';
 import { generateParamStr } from '../../../lib/apiUtil';
@@ -22,7 +22,6 @@ const localMessages = {
 const WORD_CLOUD_DOM_ID = 'word-cloud';
 
 class StoryWordsContainer extends React.Component {
-
   componentWillReceiveProps(nextProps) {
     const { fetchData, filters } = this.props;
     if (nextProps.filters !== filters) {
@@ -95,12 +94,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordcloudHelpText, messages.wordCloudTopicWord2VecLayoutHelp])(
-        withAsyncFetch(
-          StoryWordsContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordcloudHelpText, messages.wordCloudTopicWord2VecLayoutHelp])(
+      withAsyncFetch(
+        StoryWordsContainer
       )
     )
-  );
+  )
+);

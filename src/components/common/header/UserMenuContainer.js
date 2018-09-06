@@ -10,7 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { PERMISSION_LOGGED_IN, logout } from '../../../lib/auth';
 import Permissioned from '../Permissioned';
 import messages from '../../../resources/messages';
-import { PersonButton } from '../../common/IconButton';
+import { PersonButton } from '../IconButton';
 import { defaultMenuOriginProps } from '../../util/uiUtil';
 
 const styles = {
@@ -22,9 +22,7 @@ const styles = {
   },
 };
 
-/**
- * A permissioned menu of user-related activities, for display on a nav bar or something.
- **/
+// A permissioned menu of user-related activities, for display on a nav bar or something.
 class UserMenuContainer extends React.Component {
   state = {
     anchorEl: null,
@@ -45,7 +43,7 @@ class UserMenuContainer extends React.Component {
     if (user.isLoggedIn) {
       content = (
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-          <PersonButton color={'#FFFFFF'} onClick={this.handleClick} />
+          <PersonButton color="#FFFFFF" onClick={this.handleClick} />
           <Menu
             id="user-menu"
             open={Boolean(this.state.anchorEl)}
@@ -109,10 +107,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withStyles(styles)(
-        UserMenuContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withStyles(styles)(
+      UserMenuContainer
     )
-  );
+  )
+);

@@ -80,15 +80,15 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   onSubmitRecovery: (values) => {
     dispatch(sendRecoverPasswordRequest(values))
-    .then((response) => {
-      if (response.success) {
-        if (response.success === 1) {
-          dispatch(push('/user/request-password-reset-success'));
-        } else {
-          dispatch(addNotice({ message: localMessages.failed, level: LEVEL_ERROR }));
+      .then((response) => {
+        if (response.success) {
+          if (response.success === 1) {
+            dispatch(push('/user/request-password-reset-success'));
+          } else {
+            dispatch(addNotice({ message: localMessages.failed, level: LEVEL_ERROR }));
+          }
         }
-      }
-    });
+      });
   },
 });
 
@@ -107,12 +107,12 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        connect(mapStateToProps, mapDispatchToProps)(
-          RequestPasswordReset
-        )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      connect(mapStateToProps, mapDispatchToProps)(
+        RequestPasswordReset
       )
     )
-  );
+  )
+);

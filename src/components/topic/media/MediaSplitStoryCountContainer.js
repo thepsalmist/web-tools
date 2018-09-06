@@ -26,11 +26,13 @@ class MediaSplitStoryCountContainer extends React.Component {
       fetchData(nextProps);
     }
   }
+
   downloadCsv = () => {
     const { topicId, mediaId, filters } = this.props;
     const url = `/api/topics/${topicId}/media/${mediaId}/split-story/count.csv?snapshotId=${filters.snapshotId}&timespanId=${filters.timespanId}`;
     window.location = url;
   }
+
   render() {
     const { total, counts, helpButton } = this.props;
     const { formatMessage } = this.props.intl;
@@ -88,12 +90,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpText, messages.attentionChartHelpText])(
-        withAsyncFetch(
-          MediaSplitStoryCountContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpText, messages.attentionChartHelpText])(
+      withAsyncFetch(
+        MediaSplitStoryCountContainer
       )
     )
-  );
+  )
+);

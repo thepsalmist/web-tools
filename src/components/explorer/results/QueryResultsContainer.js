@@ -164,7 +164,6 @@ class QueryResultsContainer extends React.Component {
         break;
     }
 
-  // const unDeletedQueries = queries.filter(q => q.deleted !== true);
     return (
       <div className="query-results-container">
         <Grid>
@@ -224,8 +223,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      QueryResultsContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    QueryResultsContainer
+  )
+);

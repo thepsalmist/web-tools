@@ -28,19 +28,23 @@ class SelectedStoryDrillDownContainer extends React.Component {
     super(props);
     this.rootRef = React.createRef();
   }
+
   shouldComponentUpdate(nextProps) {
     const { selectedStory, lastSearchTime } = this.props;
     return (nextProps.lastSearchTime !== lastSearchTime || nextProps.selectedStory !== selectedStory);
   }
+
   componentDidUpdate() {
     const rootNode = this.rootRef.current;
     if (rootNode) {
       rootNode.scrollIntoView();
     }
   }
+
   openNewPage = (url) => {
     window.open(url, '_blank');
   }
+
   render() {
     const { selectedStory, storyInfo, handleClose } = this.props;
     const { formatDate } = this.props.intl;
@@ -140,11 +144,9 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      SelectedStoryDrillDownContainer
-    )
-  );
-
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    SelectedStoryDrillDownContainer
+  )
+);

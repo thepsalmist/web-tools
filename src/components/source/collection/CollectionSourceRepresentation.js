@@ -34,7 +34,6 @@ const SENTENCE_PERCENTAGE_MIN_VALUE = 0.01; // 1 percent threshold
 const TOP_N_LABELS_TO_SHOW = 5; // only the top N bubbles will get a label visible on them (so the text is readable)
 
 class CollectionSourceRepresentation extends React.Component {
-
   downloadCsv = () => {
     const { collection } = this.props;
     const url = `/api/collections/${collection.tags_id}/sources/representation/representation.csv`;
@@ -108,7 +107,6 @@ class CollectionSourceRepresentation extends React.Component {
       </DataCard>
     );
   }
-
 }
 
 CollectionSourceRepresentation.propTypes = {
@@ -140,12 +138,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpText])(
-        withAsyncFetch(
-          CollectionSourceRepresentation
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpText])(
+      withAsyncFetch(
+        CollectionSourceRepresentation
       )
     )
-  );
+  )
+);

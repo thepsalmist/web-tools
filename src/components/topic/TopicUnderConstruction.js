@@ -33,7 +33,4 @@ TopicUnderConstruction.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    TopicUnderConstruction
-  );
+export default injectIntl(TopicUnderConstruction);

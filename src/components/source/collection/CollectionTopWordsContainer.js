@@ -18,7 +18,6 @@ const localMessages = {
 };
 
 class CollectionTopWordsContainer extends React.Component {
-
   fetchWordsByTimePeriod = (dateQuery, timePeriod) => {
     const { fetchData } = this.props;
     fetchData(timePeriod, dateQuery);
@@ -92,12 +91,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(localMessages.helpTitle, [localMessages.intro, messages.wordSpaceLayoutHelp])(
-        withAsyncFetch(
-          CollectionTopWordsContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(localMessages.helpTitle, [localMessages.intro, messages.wordSpaceLayoutHelp])(
+      withAsyncFetch(
+        CollectionTopWordsContainer
       )
     )
-  );
+  )
+);

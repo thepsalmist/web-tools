@@ -27,7 +27,6 @@ const localMessages = {
 };
 
 class FocusDescriptionForm extends React.Component {
-
   componentWillMount() {
     const { change, focalTechnique, keywords } = this.props;
     const { formatMessage } = this.props.intl;
@@ -58,14 +57,14 @@ class FocusDescriptionForm extends React.Component {
             component={renderSelect}
             helpertext={localMessages.pickFocalSet}
           >
-            {focalSetDefinitions.map(focalSetDef =>
+            {focalSetDefinitions.map(focalSetDef => (
               <MenuItem
                 key={focalSetDef.focal_set_definitions_id}
                 value={focalSetDef.focal_set_definitions_id}
               >
                 {focalSetDef.name}
               </MenuItem>
-            )}
+            ))}
             <MenuItem
               key={NEW_FOCAL_SET_PLACEHOLDER_ID}
               value={NEW_FOCAL_SET_PLACEHOLDER_ID}
@@ -113,7 +112,6 @@ class FocusDescriptionForm extends React.Component {
       </div>
     );
   }
-
 }
 
 FocusDescriptionForm.propTypes = {
@@ -145,16 +143,16 @@ function validate(values) {
 
 const reduxFormConfig = {
   form: 'snapshotFocus', // make sure this matches the sub-components and other wizard steps
-  destroyOnUnmount: false,  // so the wizard works
+  destroyOnUnmount: false, // so the wizard works
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
   validate,
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        FocusDescriptionForm
-      )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      FocusDescriptionForm
     )
-  );
+  )
+);

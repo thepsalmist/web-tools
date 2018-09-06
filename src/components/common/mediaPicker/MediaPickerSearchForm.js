@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import TextField from '@material-ui/core/TextField';
 import { Row, Col } from 'react-flexbox-grid/lib';
-import AppButton from '../../common/AppButton';
+import AppButton from '../AppButton';
 
 const localMessages = {
   pickCollections: { id: 'system.mediaPicker.select.pickCollections', defaultMessage: 'Search For Collections' },
@@ -14,7 +14,6 @@ const localMessages = {
 // const formSelector = formValueSelector('queryForm');
 
 class MediaPickerSearchForm extends React.Component {
-
   shouldComponentUpdate = () => false;
 
   focusUsernameInputField = (input) => {
@@ -45,7 +44,7 @@ class MediaPickerSearchForm extends React.Component {
     const { initValues, hintText, children, pristine } = this.props;
     const { formatMessage } = this.props.intl;
 
-    const storedKeyword = initValues.storedKeyword;
+    const { storedKeyword } = initValues;
     if (storedKeyword.mediaKeyword === undefined || storedKeyword.mediaKeyword === null) {
       storedKeyword.mediaKeyword = '';
     }
@@ -88,7 +87,6 @@ MediaPickerSearchForm.propTypes = {
 };
 
 export default
-  injectIntl(
-    MediaPickerSearchForm
-  );
-
+injectIntl(
+  MediaPickerSearchForm
+);

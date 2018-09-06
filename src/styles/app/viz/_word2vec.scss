@@ -1,0 +1,13 @@
+@import '../../_constants';
+
+div.word2vec-chart-tooltip {   
+  position: absolute;
+  padding: 8px;
+  font-family: $font-families;
+  font-size: 14px;
+  font-weight: bold;
+  color: $white;
+  background: $topics-primary;
+  border: 1px solid $material-grey200;
+  pointer-events: none;
+}

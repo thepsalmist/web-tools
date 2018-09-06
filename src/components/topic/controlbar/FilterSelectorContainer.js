@@ -16,7 +16,7 @@ import QuerySelectorContainer from './QuerySelectorContainer';
  */
 const FilterSelectorContainer = (props) => {
   const { filters, topicId, filtersVisible, snapshotId, snapshots, location, handleSnapshotSelected,
-          onFocusSelected, onQuerySelected } = props;
+    onFocusSelected, onQuerySelected } = props;
   return (filtersVisible && (
     <div className="filter">
       <Grid>
@@ -90,8 +90,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      FilterSelectorContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    FilterSelectorContainer
+  )
+);

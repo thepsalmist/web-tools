@@ -5,8 +5,7 @@ import { connect } from 'react-redux';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import { fetchQueryTopWords, fetchDemoQueryTopWords, resetTopWords, selectWord }
-from '../../../actions/explorerActions';
+import { fetchQueryTopWords, fetchDemoQueryTopWords, resetTopWords, selectWord } from '../../../actions/explorerActions';
 import { postToDownloadUrl, slugifiedQueryLabel } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
@@ -23,6 +22,7 @@ class QueryWordsResultsContainer extends React.Component {
   handleDownload = (query, ngramSize, sampleSize) => {
     postToDownloadUrl('/api/explorer/words/wordcount.csv', query, { ngramSize, sample_size: sampleSize });
   }
+
   handleWordClick = (wordDataPoint) => {
     const { handleSelectedWord, selectedQuery, isLoggedIn, onShowLoginDialog } = this.props;
     if (isLoggedIn) {
@@ -31,6 +31,7 @@ class QueryWordsResultsContainer extends React.Component {
       onShowLoginDialog();
     }
   }
+
   render() {
     const { results, queries, tabSelector, selectedQueryIndex, fetchData, internalItemSelected } = this.props;
     const selectedQuery = queries[selectedQueryIndex];
@@ -145,16 +146,16 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withSummary(messages.topWords, localMessages.descriptionIntro, messages.wordcloudHelpText)(
-        withAsyncFetch(
-          withQueryResults(
-            withLoginRequired(
-              QueryWordsResultsContainer
-            )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withSummary(messages.topWords, localMessages.descriptionIntro, messages.wordcloudHelpText)(
+      withAsyncFetch(
+        withQueryResults(
+          withLoginRequired(
+            QueryWordsResultsContainer
           )
         )
       )
     )
-  );
+  )
+);

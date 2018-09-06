@@ -13,7 +13,6 @@ const localMessages = {
 };
 
 class AppNoticesContainer extends React.Component {
-
   componentWillReceiveProps(nextProps) {
     const { notices } = this.props;
     // if there any new notices, scroll to top so user can see them
@@ -49,7 +48,6 @@ class AppNoticesContainer extends React.Component {
     }
     return content;
   }
-
 }
 
 AppNoticesContainer.propTypes = {
@@ -77,8 +75,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      AppNoticesContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    AppNoticesContainer
+  )
+);

@@ -20,6 +20,7 @@ class TopPeopleContainer extends React.Component {
       fetchData(nextProps.queries);
     }
   }
+
   handleEntityClick = (tagId) => {
     const { queries, updateQueryFilter } = this.props;
     const queryFragment = `tags_id_stories: ${tagId}`;
@@ -29,6 +30,7 @@ class TopPeopleContainer extends React.Component {
       updateQueryFilter(queryFragment);
     }
   }
+
   render() {
     const { count, entities } = this.props;
     const { formatMessage } = this.props.intl;
@@ -98,10 +100,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        TopPeopleContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      TopPeopleContainer
     )
-  );
+  )
+);

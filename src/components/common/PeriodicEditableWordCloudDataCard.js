@@ -35,7 +35,7 @@ PeriodicEditableWordCloudDataCard.propTypes = {
   targetURL: PropTypes.string,
   handleTimePeriodClick: PropTypes.func.isRequired,
   selectedTimePeriod: PropTypes.string.isRequired,
-    // from dispatch
+  // from dispatch
   onViewModeClick: PropTypes.func.isRequired,
   domId: PropTypes.string.isRequired,
   // from compositional chain
@@ -44,8 +44,8 @@ PeriodicEditableWordCloudDataCard.propTypes = {
 };
 
 export default
-  injectIntl(
-    withTimePeriods(
-      PeriodicEditableWordCloudDataCard
-    )
-  );
+injectIntl(
+  withTimePeriods(
+    PeriodicEditableWordCloudDataCard
+  )
+);

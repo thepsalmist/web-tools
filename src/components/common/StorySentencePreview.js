@@ -16,7 +16,7 @@ const StorySentencePreview = (props) => {
   return (
     <div className="story-sentence-preview">
       {sentences.map((sentence, idx) => {
-        let dateToShow = null;  // need to handle undateable sentences
+        let dateToShow = null; // need to handle undateable sentences
         if (sentence.story.publish_date === 'undateable') {
           dateToShow = formatMessage(localMessages.undateable);
         } else {

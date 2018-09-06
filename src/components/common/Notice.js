@@ -19,6 +19,7 @@ function composeNotice(level) {
     state = {
       showDetails: false,
     };
+
     render() {
       const { children, details } = this.props;
       const { formatMessage } = this.props.intl;
@@ -35,7 +36,7 @@ function composeNotice(level) {
               href={`#${formatMessage(localMessages.details)}`}
               onClick={(evt) => {
                 evt.preventDefault();
-                this.setState({ showDetails: !this.state.showDetails });
+                this.setState(prevState => ({ showDetails: !prevState.showDetails }));
               }}
             >
               <FormattedMessage {...localMessages.details} />

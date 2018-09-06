@@ -42,23 +42,21 @@ import { getBrandDarkColor, getBrandDarkerColor } from '../../styles/colors';
  * The wrapper for our custom icons.  The idea is that you define all the SVG icons in individual
  * Components in the `icons` directory, then export wrapper instances of them here.
  */
-/**
- * The wrapper for our custom icons.  The idea is that you define all the SVG icons in individual
- * Components in the `icons` directory, then export wrapper instances of them here.
- */
 function composeIconButton(Icon, defaultTooltipMessage, useBackgroundColor = true,
   defaultWidth = undefined, defaultHeight = undefined) {
   class AppIconButton extends React.Component {
     state = {
       backgroundColor: getBrandDarkColor(),
-      // color: 'primary',
-    };
+    }
+
     handleMouseEnter = () => {
       this.setState({ backgroundColor: getBrandDarkerColor() });
     }
+
     handleMouseLeave = () => {
       this.setState({ backgroundColor: getBrandDarkColor() });
     }
+
     handleClick = (event) => {
       const { onClick } = this.props;
       event.preventDefault();
@@ -66,6 +64,7 @@ function composeIconButton(Icon, defaultTooltipMessage, useBackgroundColor = tru
         onClick(event);
       }
     }
+
     render() {
       const { linkTo, onClick, color, tooltip, backgroundColor } = this.props;
       const { formatMessage } = this.props.intl;
@@ -111,6 +110,7 @@ function composeIconButton(Icon, defaultTooltipMessage, useBackgroundColor = tru
       );
     }
   }
+
   AppIconButton.propTypes = {
     onClick: PropTypes.func,
     linkTo: PropTypes.oneOfType([
@@ -121,8 +121,9 @@ function composeIconButton(Icon, defaultTooltipMessage, useBackgroundColor = tru
     tooltip: PropTypes.string,
     intl: PropTypes.object.isRequired,
     color: PropTypes.string,
-    backgroundColor: PropTypes.string,  // overrides everything else
+    backgroundColor: PropTypes.string, // overrides everything else
   };
+
   return injectIntl(AppIconButton);
 }
 

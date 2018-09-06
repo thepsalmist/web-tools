@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 const ExploreIcon = props => (
-  <div className="app-icon app-icon-explore" style={{ backgroundColor: props.backgroundColor }} >
+  <div className="app-icon app-icon-explore" style={{ backgroundColor: props.backgroundColor }}>
     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="9.477px" height="6.601px" viewBox="0 0 9.477 6.601" enableBackground="new 0 0 9.477 6.601" xmlSpace="preserve">
       <g>
         <g>

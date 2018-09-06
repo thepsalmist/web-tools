@@ -16,6 +16,7 @@ class LoginContainer extends React.Component {
       this.context.router.push('/home');
     }
   }
+
   render() {
     const { formatMessage, isLoggedIn } = this.props.intl;
     const className = `logged-in-${isLoggedIn}`;
@@ -52,8 +53,8 @@ const mapStateToProps = state => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps)(
-      LoginContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps)(
+    LoginContainer
+  )
+);

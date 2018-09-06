@@ -25,16 +25,19 @@ class MediaInlinksContainer extends React.Component {
       fetchData(nextProps);
     }
   }
+
   onChangeSort = (newSort) => {
     const { sortData } = this.props;
     sortData(newSort);
   }
+
   downloadCsv = () => {
     const { mediaId, topicId, filters } = this.props;
     const filtersAsParams = filtersAsUrlParams(filters);
     const url = `/api/topics/${topicId}/media/${mediaId}/inlinks.csv?${filtersAsParams}`;
     window.location = url;
   }
+
   render() {
     const { inlinkedStories, topicId, helpButton, showTweetCounts } = this.props;
     const { formatMessage } = this.props.intl;
@@ -104,12 +107,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpIntro, messages.storiesTableHelpText])(
-        withAsyncFetch(
-          MediaInlinksContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpIntro, messages.storiesTableHelpText])(
+      withAsyncFetch(
+        MediaInlinksContainer
       )
     )
-  );
+  )
+);

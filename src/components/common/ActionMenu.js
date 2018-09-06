@@ -20,16 +20,20 @@ class ActionMenu extends React.Component {
       this.handlePopupClose(event);
     }
   }
+
   handlePopupOpen = (event) => {
     event.preventDefault(); // don't go anywhere on anchor click
     this.setState({ anchorEl: event.currentTarget.parentElement.parentElement });
   }
+
   handlePopupClose = () => {
     this.setState({ anchorEl: null });
   }
+
   handleMouseEnter = () => {
     this.setState({ backgroundColor: getBrandDarkerColor() });
   }
+
   handleMouseLeave = () => {
     this.setState({ backgroundColor: getBrandDarkColor() });
   }
@@ -54,10 +58,10 @@ class ActionMenu extends React.Component {
     );
 
     if (openButton) {
-      openIconButton = open;
+      openIconButton = openButton;
     }
     if (closeButton) {
-      closeIconButton = close;
+      closeIconButton = closeButton;
     }
 
     const icon = (this.state.anchorEl) ? closeIconButton : openIconButton;

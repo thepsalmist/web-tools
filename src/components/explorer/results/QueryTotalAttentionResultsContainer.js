@@ -38,8 +38,8 @@ class QueryTotalAttentionResultsContainer extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const { results, queries } = this.props;
-    return queryChangedEnoughToUpdate(queries, nextProps.queries, results, nextProps.results) ||
-    (this.state.view !== nextState.view);
+    return queryChangedEnoughToUpdate(queries, nextProps.queries, results, nextProps.results)
+    || (this.state.view !== nextState.view);
   }
 
   setView = (nextView) => {
@@ -143,12 +143,12 @@ const mapDispatchToProps = () => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withSummary(localMessages.title, localMessages.helpIntro, [localMessages.helpDetails, messages.countsVsPercentageHelp])(
-        withAsyncFetch(
-          QueryTotalAttentionResultsContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withSummary(localMessages.title, localMessages.helpIntro, [localMessages.helpDetails, messages.countsVsPercentageHelp])(
+      withAsyncFetch(
+        QueryTotalAttentionResultsContainer
       )
     )
-  );
+  )
+);

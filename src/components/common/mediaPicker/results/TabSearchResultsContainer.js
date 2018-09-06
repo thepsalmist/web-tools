@@ -5,10 +5,9 @@ import { connect } from 'react-redux';
 import { Grid, Row } from 'react-flexbox-grid/lib';
 import CollectionResultsTable from './CollectionResultsTable';
 import StarredSearchResultsContainer from './StarredSearchResultsContainer';
-// import MediaPickerSearchForm from '../MediaPickerSearchForm';
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
-import LoadingSpinner from '../../../common/LoadingSpinner';
-import TabSelector from '../../../common/TabSelector';
+import LoadingSpinner from '../../LoadingSpinner';
+import TabSelector from '../../TabSelector';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.collections.title', defaultMessage: 'Collections matching "{name}"' },
@@ -25,6 +24,7 @@ class TabSearchResultsContainer extends React.Component {
   state = {
     selectedViewIndex: VIEW_FAVORITES,
   };
+
   render() {
     const { queryResults, handleToggleAndSelectMedia, fetchStatus, displayResults } = this.props;
     const { formatMessage } = this.props.intl;
@@ -47,8 +47,8 @@ class TabSearchResultsContainer extends React.Component {
     if (fetchStatus === FETCH_ONGOING || !displayResults) {
       // we have to do this here to show a loading spinner when first searching (and featured collections are showing)
       tabContent = <LoadingSpinner />;
-    } else if (this.state.selectedViewIndex === VIEW_FAVORITES &&
-      queryResults && (queryResults.favoritedCollections || queryResults.favoritedSources)) {
+    } else if (this.state.selectedViewIndex === VIEW_FAVORITES
+      && queryResults && (queryResults.favoritedCollections || queryResults.favoritedSources)) {
       tabContent = (
         <div className="media-picker-tabbed-content-wrapper">
           <StarredSearchResultsContainer
@@ -59,8 +59,7 @@ class TabSearchResultsContainer extends React.Component {
           />
         </div>
       );
-    } else if (displayResults &&
-      queryResults && (queryResults.featured)) {
+    } else if (displayResults && queryResults && (queryResults.featured)) {
       tabContent = (
         <div className="media-picker-tabbed-content-wrapper">
           <CollectionResultsTable
@@ -100,9 +99,8 @@ TabSearchResultsContainer.propTypes = {
 };
 
 export default
-  injectIntl(
-    connect()(
-      TabSearchResultsContainer
-    )
-  );
-
+injectIntl(
+  connect()(
+    TabSearchResultsContainer
+  )
+);

@@ -4,13 +4,14 @@ import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import AutoComplete from 'material-ui/AutoComplete';
-import MenuItem from 'material-ui/MenuItem';
+import MenuItem from '@material-ui/core/MenuItem';
 import { fetchTopicSearchResults } from '../../../actions/topicActions';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { SearchButton } from '../../common/IconButton';
 import { FETCH_ONGOING } from '../../../lib/fetchConstants';
 
 const MAX_SUGGESTION_CHARS = 60;
+const DEFAULT_MAX_TOPICS_TO_SHOW = 5;
 
 const DELAY_BEFORE_SEARCH_MS = 500; // wait this long after a keypress to fire a search
 
@@ -27,12 +28,15 @@ class TopicSearchContainer extends React.Component {
     };
   }
 
+  getMaxTopicsToShow = () => {
+    const { maxTopics } = this.props;
+    return maxTopics || DEFAULT_MAX_TOPICS_TO_SHOW;
+  }
+
   handleClick = (item) => {
     const { onTopicSelected } = this.props;
     if (item) {
-      if (onTopicSelected) {
-        onTopicSelected(item);
-      }
+      onTopicSelected(item.item);
     }
   }
 
@@ -61,6 +65,16 @@ class TopicSearchContainer extends React.Component {
     }
   }
 
+  handleNewRequest = (item, index) => {
+    const { search } = this.props;
+    if (index === -1) { // they pressed enter in the text field
+      search(item.text);
+      return;
+    }
+    // we want to send the user to the topic media url. The handleClick is no longer triggered in new/old material-ui setup
+    this.handleClick(item);
+  }
+
   resetIfRequested = () => {
     const { topicResults } = this.props;
     let results = [];
@@ -74,6 +88,7 @@ class TopicSearchContainer extends React.Component {
           primaryText={(item.name.length > MAX_SUGGESTION_CHARS) ? `${item.name.substr(0, MAX_SUGGESTION_CHARS)}...` : item.name}
         />
       ),
+      item,
     }));
     return resultsAsComponents;
   }
@@ -91,12 +106,13 @@ class TopicSearchContainer extends React.Component {
         <AutoComplete
           hintText={formatMessage(localMessages.searchHint)}
           fullWidth
-          openOnFocus={false}
+          openOnFocus
+          searchText={this.state.lastSearchString}
           onClick={this.resetIfRequested}
           dataSource={resultsAsComponents}
           onUpdateInput={this.handleUpdateInput}
           onNewRequest={this.handleNewRequest}
-          maxSearchResults={10}
+          maxSearchResults={this.getMaxTopicsToShow()}
           filter={() => true}
         />
       </div>
@@ -110,6 +126,7 @@ TopicSearchContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
   topicResults: PropTypes.array.isRequired,
+  maxTopics: PropTypes.number,
   // from dispatch
   onTopicSelected: PropTypes.func.isRequired,
   search: PropTypes.func.isRequired,

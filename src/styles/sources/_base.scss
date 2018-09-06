@@ -1,12 +1,9 @@
 @import '../constants';
 
 .app-sources {
-  a {
-    color: $sources-primary;
-  }
 
   #nav-toolbar {
-    background-color: $sources-primary;
+    background-color: $sources-darker;
     li.sources {
       border-bottom: 2px solid white;
     }
@@ -64,4 +61,9 @@
   }
 
 
+}
+
+/* important for this to outside of app-container for modals and such */
+a {
+  color: $sources-primary;
 }

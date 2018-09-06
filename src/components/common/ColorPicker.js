@@ -1,7 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { GithubPicker } from 'react-color';
+import ListItemText from '@material-ui/core/ListItemText';
+
+const localMessages = {
+  choose: { id: 'explorer.colorpicker', defaultMessage: 'Choose A Color' },
+};
 
 class ColorPicker extends React.Component {
   state = {
@@ -19,12 +24,38 @@ class ColorPicker extends React.Component {
   };
 
   render() {
-    const { color } = this.props;
+    const { color, showLabel } = this.props;
+
+
     let colorPicker = null;
-    if (this.state.displayColorPicker) {
-      colorPicker = <GithubPicker triangle="hide" color={color} onChange={this.handleClose} colors={['#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE', '#004DCF', '#5300EB']} />;
+    if (!showLabel) {
+      if (this.state.displayColorPicker === false) {
+        colorPicker = (
+          <button
+            type="button"
+            onClick={this.handleClick}
+            style={{ cursor: 'pointer', width: 10, height: 10, borderRadius: 10, backgroundColor: `${color}`, display: 'inline-block' }}
+          />
+        );
+      } else {
+        colorPicker = (
+          <div>
+            <button
+              type="button"
+              onClick={this.handleClick}
+              style={{ cursor: 'pointer', width: 10, height: 10, borderRadius: 10, backgroundColor: `${color}`, display: 'inline-block' }}
+            />
+            <GithubPicker triangle="hide" color={color} onChange={this.handleClose} colors={['#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE', '#004DCF', '#5300EB']} />
+          </div>
+        );
+      }
     } else {
-      colorPicker = <button type="button" onClick={this.handleClick} style={{ cursor: 'pointer', width: 10, height: 10, borderRadius: 10, backgroundColor: `${color}`, display: 'inline-block' }} />;
+      colorPicker = (
+        <div>
+          <ListItemText><FormattedMessage {...localMessages.choose} /></ListItemText>
+          <GithubPicker triangle="hide" color={color} onChange={this.handleClose} colors={['#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE', '#004DCF', '#5300EB']} />
+        </div>
+      );
     }
     return (
       <div className="color-picker">
@@ -38,6 +69,7 @@ ColorPicker.propTypes = {
   onClick: PropTypes.func,
   onChange: PropTypes.func.isRequired,
   color: PropTypes.string,
+  showLabel: PropTypes.bool,
 };
 
 export default injectIntl(ColorPicker);

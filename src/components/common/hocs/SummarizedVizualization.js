@@ -2,13 +2,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedHTMLMessage, injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
+import AppButton from '../AppButton';
+import messages from '../../../resources/messages';
 
 const localMessage = {
-  showDetails: { id: 'describedDataCard.description.show', defaultMessage: 'learn more' },
-  hideDescription: { id: 'describedDataCard.description.hide', defaultMessage: 'hide details' },
+  showDetails: { id: 'summarizedContainer.description.show', defaultMessage: 'learn more' },
+  hideDescription: { id: 'summarizedContainer.description.hide', defaultMessage: 'hide details' },
 };
 
-function composeSummarizedVisualization(titleMesage, introMessage, detailedMesasge) {
+function withSummary(titleMessage, introMessage, detailedMessage, wide) {
   return (ChildComponent) => {
     class SummarizedVisualization extends React.Component {
       state = {
@@ -25,15 +27,17 @@ function composeSummarizedVisualization(titleMesage, introMessage, detailedMesas
       }
 
       render() {
+        const { handleExplore } = this.props;
+        const { formatMessage } = this.props.intl;
         let detailsContent;
         let showDetailsButton;
 
-        if (detailedMesasge) { // only toggle extra text if there is any
+        if (detailedMessage) { // only toggle extra text if there is any
           if (this.state.showingDetails) {
-            if (Array.isArray(detailedMesasge)) {
-              detailsContent = detailedMesasge.map(msgId => <FormattedHTMLMessage key={msgId.id} {...msgId} />);
+            if (Array.isArray(detailedMessage)) {
+              detailsContent = detailedMessage.map(msgId => <FormattedHTMLMessage key={msgId.id} {...msgId} />);
             } else {
-              detailsContent = <FormattedHTMLMessage {...detailedMesasge} />;
+              detailsContent = <FormattedHTMLMessage {...detailedMessage} />;
             }
             detailsContent = (
               <span className="summary-details">
@@ -55,11 +59,17 @@ function composeSummarizedVisualization(titleMesage, introMessage, detailedMesas
         }
 
         return (
-          <div className="summarized-viz">
+          <div className={`summarized-viz ${wide ? 'wide' : ''}`}>
             <Row>
-              <Col lg={4}>
+              <Col lg={wide ? 3 : 4}>
                 <div className="summary">
-                  <h2><FormattedHTMLMessage {...titleMesage} /></h2>
+                  { titleMessage && <h2><FormattedHTMLMessage {...titleMessage} /></h2> }
+                  { handleExplore && (
+                    <AppButton
+                      label={formatMessage(messages.details)}
+                      onClick={handleExplore}
+                    />
+                  )}
                   <div className="summary-intro">
                     <FormattedHTMLMessage {...introMessage} />
                     {showDetailsButton}
@@ -67,8 +77,8 @@ function composeSummarizedVisualization(titleMesage, introMessage, detailedMesas
                   {detailsContent}
                 </div>
               </Col>
-              <Col lg={1} />
-              <Col lg={7}>
+              {!wide && <Col lg={1} />}
+              <Col lg={wide ? 9 : 7}>
                 <div className="content">
                   <ChildComponent {...this.props} showingDetails={this.state.showingDetails} handleExtraContent={this.handleExtraContent} />
                 </div>
@@ -82,10 +92,12 @@ function composeSummarizedVisualization(titleMesage, introMessage, detailedMesas
 
     SummarizedVisualization.propTypes = {
       intl: PropTypes.object.isRequired,
+      // from child:
+      handleExplore: PropTypes.func,
     };
 
     return injectIntl(SummarizedVisualization);
   };
 }
 
-export default composeSummarizedVisualization;
+export default withSummary;

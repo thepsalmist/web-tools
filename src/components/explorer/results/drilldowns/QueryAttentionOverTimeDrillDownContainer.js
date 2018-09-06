@@ -10,6 +10,11 @@ import QueryAttentionOverTimeDrillDownDataCard from './QueryAttentionOverTimeDri
 import LoadingSpinner from '../../../common/LoadingSpinner';
 
 class QueryAttentionOverTimeDrillDownContainer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.rootRef = React.createRef();
+  }
+
   componentWillReceiveProps(nextProps) {
     const { lastSearchTime, fetchData, dataPoint } = this.props;
     if ((nextProps.lastSearchTime !== lastSearchTime
@@ -23,6 +28,11 @@ class QueryAttentionOverTimeDrillDownContainer extends React.Component {
     return (nextProps.dataPoint !== dataPoint
       || nextProps.words !== words
       || nextProps.stories !== stories);
+  }
+
+  componentDidUpdate() {
+    const rootNode = this.rootRef.current;
+    rootNode.scrollIntoView();
   }
 
   render() {
@@ -48,7 +58,7 @@ class QueryAttentionOverTimeDrillDownContainer extends React.Component {
 
     if (dateSelected) {
       return (
-        <div className="drill-down">
+        <div className="drill-down" ref={this.rootRef}>
           {content}
         </div>
       );

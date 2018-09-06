@@ -2,11 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import MenuItem from 'material-ui/MenuItem';
 import { Row, Col } from 'react-flexbox-grid/lib';
-import ActionMenu from '../../../common/ActionMenu';
+import { CloseButton } from '../../../common/IconButton';
 import { resetStory } from '../../../../actions/storyActions';
-import withHelp from '../../../common/hocs/HelpfulContainer';
 import DataCard from '../../../common/DataCard';
 import StoryEntitiesContainer from '../../../common/story/StoryEntitiesContainer';
 import StoryNytThemesContainer from '../../../common/story/StoryNytThemesContainer';
@@ -17,11 +15,7 @@ import { trimToMaxLength } from '../../../../lib/stringUtil';
 import StatBar from '../../../common/statbar/StatBar';
 
 const localMessages = {
-  title: { id: 'word.inContext.title', defaultMessage: 'Details for: {title}' },
-  helpTitle: { id: 'word.inContext.help.title', defaultMessage: 'About Word in Context' },
-  helpText: { id: 'word.inContext.help.text',
-    defaultMessage: '<p>It is helpful to look at how a word is used, in addition to the fact that it is used.  While a word cloud can tell you what words are used, this interactive visualization can help you explore the use of a word in context.</p>',
-  },
+  title: { id: 'word.inContext.title', defaultMessage: 'Story Info: ' },
   close: { id: 'drilldown.story.inContext.close', defaultMessage: 'Close' },
   readThisStory: { id: 'drilldown.story.readThisStory', defaultMessage: 'Read This Story' },
   fullDescription: { id: 'explorer.story.fullDescription', defaultMessage: 'Published in {media} on {publishDate} in {language}' },
@@ -29,9 +23,21 @@ const localMessages = {
 };
 
 class SelectedStoryDrillDownContainer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.rootRef = React.createRef();
+  }
+
   shouldComponentUpdate(nextProps) {
     const { selectedStory, lastSearchTime } = this.props;
     return (nextProps.lastSearchTime !== lastSearchTime || nextProps.selectedStory !== selectedStory);
+  }
+
+  componentDidUpdate() {
+    const rootNode = this.rootRef.current;
+    if (rootNode) {
+      rootNode.scrollIntoView();
+    }
   }
 
   openNewPage = (url) => {
@@ -39,31 +45,22 @@ class SelectedStoryDrillDownContainer extends React.Component {
   }
 
   render() {
-    const { selectedStory, storyInfo, handleClose, helpButton } = this.props;
-    const { formatMessage, formatDate } = this.props.intl;
+    const { selectedStory, storyInfo, handleClose } = this.props;
+    const { formatDate } = this.props.intl;
 
     let content = null;
     if (selectedStory) {
       content = (
-        <div className="drill-down">
+        <div className="drill-down" ref={this.rootRef}>
           <DataCard className="query-story-drill-down">
             <Row>
               <Col lg={12}>
-                <ActionMenu>
-                  <MenuItem
-                    className="action-icon-menu-item"
-                    primaryText={formatMessage(localMessages.close)}
-                    onTouchTap={handleClose}
-                  />
-                  <MenuItem
-                    className="action-icon-menu-item"
-                    primaryText={formatMessage(localMessages.readThisStory)}
-                    onTouchTap={() => this.openNewPage(storyInfo.url)}
-                  />
-                </ActionMenu>
+                <div className="actions">
+                  <CloseButton onClick={handleClose} />
+                </div>
                 <h2>
-                  <FormattedMessage {...localMessages.title} values={{ title: trimToMaxLength(storyInfo.title, 80) }} />
-                  {helpButton}
+                  <FormattedMessage {...localMessages.title} />
+                  <a href={storyInfo.url} target="_blank" rel="noopener noreferrer">{trimToMaxLength(storyInfo.title, 80)}</a>
                 </h2>
               </Col>
             </Row>
@@ -75,7 +72,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
                     { message: messages.sourceName,
                       data: (
                         <a href={urlToSource(storyInfo.media_id)} target="_blank" rel="noopener noreferrer">
-                          {storyInfo.media_name}
+                          {storyInfo.media_name || storyInfo.media.name}
                         </a>
                       ),
                     },
@@ -131,7 +128,6 @@ SelectedStoryDrillDownContainer.propTypes = {
   handleClose: PropTypes.func.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
-  helpButton: PropTypes.node.isRequired,
 };
 
 
@@ -147,12 +143,9 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordTreeHelpText])(
-      SelectedStoryDrillDownContainer
-    )
+    SelectedStoryDrillDownContainer
   )
 );

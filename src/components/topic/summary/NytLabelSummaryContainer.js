@@ -2,20 +2,18 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import MenuItem from 'material-ui/MenuItem';
 import { schemeCategory10 } from 'd3';
 import { push } from 'react-router-redux';
 import { fetchTopicNytLabelCounts, filterByQuery } from '../../../actions/topicActions';
+import ActionMenu from '../../common/ActionMenu';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import withDescription from '../../common/hocs/DescribedDataCard';
+import withSummary from '../../common/hocs/SummarizedVizualization';
 import BubbleRowChart from '../../vis/BubbleRowChart';
 import { downloadSvg } from '../../util/svg';
-import DataCard from '../../common/DataCard';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import messages from '../../../resources/messages';
-import ActionMenu from '../../common/ActionMenu';
-import { DownloadButton } from '../../common/IconButton';
+import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 import { filtersAsUrlParams, filteredLocation } from '../../util/location';
 import { WarningNotice } from '../../common/Notice';
 
@@ -26,8 +24,8 @@ const COVERAGE_REQUIRED = 0.8; // need > this many of the stories tagged to show
 const BUBBLES_TO_SHOW = 5;
 
 const localMessages = {
-  title: { id: 'topic.summary.nytLabels.title', defaultMessage: 'Top {number} Themes' },
-  descriptionIntro: { id: 'topic.summary.nytLabels.help.title', defaultMessage: 'The top themes that stories within this Topic are about, as determined by our machine learning models trained on news media.' },
+  title: { id: 'topic.summary.nytLabels.title', defaultMessage: 'Top 5 Themes' },
+  descriptionIntro: { id: 'topic.summary.nytLabels.help.title', defaultMessage: '<p>The top themes that stories within this Topic are about, as determined by our machine learning models trained on news media.</p>' },
   notEnoughData: { id: 'topic.summary.nytLabels.notEnoughData',
     defaultMessage: 'Sorry, but only {pct} of the stories have been processed to add themes.  We can\'t gaurantee the accuracy of partial results, so we can\'t show a report of the top themes right now.  If you are really curious, you can download the CSV using the link in the top-right of this box, but don\'t trust those numbers as fully accurate. Email us if you want us to process this topic to add themes.',
   },
@@ -94,28 +92,7 @@ class NytLabelSummaryContainer extends React.Component {
         );
       }
       content = (
-        <div>
-          <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-            <div className="actions">
-              <ActionMenu>
-                <MenuItem
-                  className="action-icon-menu-item"
-                  primaryText={formatMessage(messages.downloadCSV)}
-                  rightIcon={<DownloadButton />}
-                  onTouchTap={this.downloadCsv}
-                />
-                <MenuItem
-                  className="action-icon-menu-item"
-                  primaryText={formatMessage(messages.downloadSVG)}
-                  rightIcon={<DownloadButton />}
-                  onTouchTap={() => downloadSvg(BUBBLE_CHART_DOM_ID)}
-                />
-              </ActionMenu>
-            </div>
-          </Permissioned>
-          <h2>
-            <FormattedMessage {...localMessages.title} values={{ number: BUBBLES_TO_SHOW }} />
-          </h2>
+        <React.Fragment>
           {warning}
           <BubbleRowChart
             maxBubbleRadius={60}
@@ -127,46 +104,46 @@ class NytLabelSummaryContainer extends React.Component {
             onBubbleClick={this.handleBubbleClick}
             minCutoffValue={0.05}
           />
-        </div>
+          <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
+            <div className="actions">
+              <ActionMenu actionTextMsg={messages.downloadOptions}>
+                <SVGAndCSVMenu
+                  downloadCsv={() => this.downloadCsv}
+                  downloadSvg={() => downloadSvg(BUBBLE_CHART_DOM_ID)}
+                  label={formatMessage(localMessages.title)}
+                />
+              </ActionMenu>
+            </div>
+          </Permissioned>
+        </React.Fragment>
       );
     } else {
       content = (
-        <div>
-          <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-            <div className="actions">
-              <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.downloadCsv} />
-            </div>
-          </Permissioned>
-          <h2>
-            <FormattedMessage {...localMessages.title} values={{ number: BUBBLES_TO_SHOW }} />
-          </h2>
+        <React.Fragment>
           <p>
             <FormattedMessage
               {...localMessages.notEnoughData}
               values={{ pct: formatNumber(coverageRatio, { style: 'percent', maximumFractionDigits: 2 }) }}
             />
           </p>
-        </div>
+        </React.Fragment>
       );
     }
-    return (
-      <DataCard>
-        {content}
-      </DataCard>
-    );
+    return content;
   }
 }
 
 NytLabelSummaryContainer.propTypes = {
   // from parent
   location: PropTypes.object.isRequired,
+  filters: PropTypes.object.isRequired,
+  topicId: PropTypes.number.isRequired,
+  topicName: PropTypes.string.isRequired,
   // from composition chain
   intl: PropTypes.object.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
-  filters: PropTypes.object.isRequired,
   coverage: PropTypes.object.isRequired,
-  topicId: PropTypes.number.isRequired,
   data: PropTypes.array,
   // from dispatch
   fetchData: PropTypes.func.isRequired,
@@ -177,13 +154,14 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.nytlabels.fetchStatus,
   data: state.topics.selected.nytlabels.entities,
   coverage: state.topics.selected.nytlabels.coverage,
-  filters: state.topics.selected.filters,
-  topicId: state.topics.selected.id,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchData: (props) => {
     dispatch(fetchTopicNytLabelCounts(props.topicId, props.filters));
+  },
+  asyncFetch: () => {
+    dispatch(fetchTopicNytLabelCounts(ownProps.topicId, ownProps.filters));
   },
   updateQueryFilter: (newQueryFilter) => {
     const newFilters = {
@@ -196,18 +174,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(stateProps);
-    },
-  });
-}
-
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withDescription(localMessages.descriptionIntro, messages.nytThemeHelpDetails)(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withSummary(localMessages.title, localMessages.descriptionIntro, messages.nytThemeHelpDetails)(
       withAsyncFetch(
         NytLabelSummaryContainer
       )

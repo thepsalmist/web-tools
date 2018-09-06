@@ -58,7 +58,7 @@ class SignupContainer extends React.Component {
                 name="email"
                 fullWidth
                 component={renderTextField}
-                floatingLabelText={messages.userEmail}
+                label={messages.userEmail}
               />
             </Col>
           </Row>
@@ -69,7 +69,7 @@ class SignupContainer extends React.Component {
                 type="text"
                 fullWidth
                 component={renderTextField}
-                floatingLabelText={messages.userFullName}
+                label={messages.userFullName}
               />
             </Col>
           </Row>
@@ -80,7 +80,7 @@ class SignupContainer extends React.Component {
                 type="password"
                 fullWidth
                 component={renderTextField}
-                floatingLabelText={messages.userPassword}
+                label={messages.userPassword}
               />
             </Col>
           </Row>
@@ -91,7 +91,7 @@ class SignupContainer extends React.Component {
                 type="password"
                 fullWidth
                 component={renderTextField}
-                floatingLabelText={messages.userConfirmPassword}
+                label={messages.userConfirmPassword}
               />
             </Col>
           </Row>
@@ -105,7 +105,7 @@ class SignupContainer extends React.Component {
                 rowsMax={4}
                 component={renderTextField}
                 hintText={formatMessage(localMessages.notesHint)}
-                floatingLabelText={messages.userNotes}
+                label={messages.userNotes}
               />
             </Col>
           </Row>

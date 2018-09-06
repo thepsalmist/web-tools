@@ -6,3 +6,4 @@ export * from './system/mediaPickerActions';
 export * from './system/metadataActions';
 export * from './system/recentNewsActions';
 export * from './system/statActions';
+export * from './system/searchActions';

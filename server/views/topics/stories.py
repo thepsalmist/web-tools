@@ -13,7 +13,8 @@ import server.util.tags as tag_util
 from server.util.request import api_error_handler
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
 from server.views.topics.apicache import topic_story_count, topic_word_counts, add_to_user_query, \
-    WORD_COUNT_DOWNLOAD_COLUMNS, topic_ngram_counts, topic_story_list_by_page, get_media, topic_story_list, story_list
+    WORD_COUNT_DOWNLOAD_COLUMNS, topic_ngram_counts, topic_story_list_by_page, topic_story_link_list_by_page, \
+    get_media, topic_story_list, story_list
 from server.views.topics import access_public_topic
 
 logger = logging.getLogger(__name__)
@@ -270,6 +271,90 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
     }
     return Response(_topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **params),
                     mimetype='text/csv; charset=utf-8', headers=headers)
+
+
+
+@app.route('/api/topics/<topics_id>/stories/story_links.csv', methods=['GET'])
+@flask_login.login_required
+def get_topic_story_links_csv(topics_id):
+    user_mc = user_mediacloud_client()
+    topic = user_mc.topic(topics_id)
+    #page through results for timespand
+    props = [
+        'stories_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',
+        'themes', 'subtopics',
+        'inlink_count', 'facebook_share_count', 'outlink_count', 'media_inlink_count',
+        'media_id', 'media_name', 'media_url',
+        # 'media_pub_country', 'media_pub_state', 'media_language', 'media_about_country', 'media_media_type'
+    ]
+    return stream_story_link_list_csv(user_mediacloud_key(), topic['name'] + '-stories', topics_id)
+
+def stream_story_link_list_csv(user_key, filename, topics_id, **kwargs):
+
+    all_stories = []
+    params=kwargs.copy()
+
+    merged_args = {
+        'snapshots_id': request.args['snapshotId'],
+        'timespans_id': request.args['timespanId'],
+        'foci_id': request.args['focusId'] if 'foci_id' in request.args else None,
+    }
+    params.update(merged_args)
+    if 'q' in params:
+        params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
+    params['limit'] = 1000  # an arbitrary value to let us page through with big topics
+
+    props = [
+        'stories_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',
+        'inlink_count','outlink_count'
+        # 'media_pub_country', 'media_pub_state', 'media_language', 'media_about_country', 'media_media_type'
+    ]
+
+    timestamped_filename = csv.safe_filename(filename)
+    headers = {
+        "Content-Disposition": "attachment;filename=" + timestamped_filename
+    }
+    return Response(_topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **params),
+                    mimetype='text/csv; charset=utf-8', headers=headers)
+
+
+# generator you can use to handle a long list of stories row by row (one row per story)
+def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
+    local_mc = user_admin_mediacloud_client(user_key)
+    spec_props = [
+        'source_stories_id', 'source_publish_date', 'source_title', 'source_url', 'source_language', 'source_ap_syndicated',
+        'source_inlink_count', 'source_outlink_count', 'ref_stories_id', 'ref_publish_date', 'ref_title', 'ref_url', 'ref_language',
+        'ref_ap_syndicated', 'ref_inlink_count', 'ref_outlink_count'
+        # 'media_pub_country', 'media_pub_state', 'media_language', 'media_about_country', 'media_media_type'
+    ]
+    yield u','.join(spec_props) + u'\n'  # first send the column names
+    link_id = 0
+    more_pages = True
+    while more_pages:
+        story_link_page = topic_story_link_list_by_page(user_key, topics_id, link_ids=link_id, **kwargs)
+
+        story_src_ids = [str(s['source_stories_id']) for s in story_link_page['links']]
+        story_ref_ids = [str(s['ref_stories_id']) for s in story_link_page['links']]
+        story_src_ids = story_src_ids + story_ref_ids
+
+        stories_info_list = local_mc.topicStoryList(topics_id, stories_id=story_src_ids)
+
+        for s in story_link_page['links']:
+            for s_info in stories_info_list['stories']:
+                if s['source_stories_id'] == s_info['stories_id']:
+                    s['source_info'] = s_info
+                if s['ref_stories_id'] == s_info['stories_id']:
+                    s['ref_info'] = s_info
+
+        if 'next' in story_link_page['link_ids']:
+            link_id = story_link_page['link_ids']['next']
+        else:
+            more_pages = False
+            for s in story_link_page['links']:
+                cleaned_source_info = csv.dict2row(props, s['source_info'])
+                cleaned_ref_info = csv.dict2row(props, s['ref_info'])
+                row_string = u','.join(cleaned_source_info) + ',' + u','.join(cleaned_ref_info) + u'\n'
+                yield row_string
 
 
 # generator you can use to handle a long list of stories row by row (one row per story)

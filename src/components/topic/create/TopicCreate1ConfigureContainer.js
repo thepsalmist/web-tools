@@ -27,11 +27,12 @@ const localMessages = {
 const formSelector = formValueSelector('topicForm');
 
 const TopicCreate1ConfigureContainer = (props) => {
-  const { finishStep, handleMediaChange, handleMediaDelete } = props;
+  const { finishStep, handleMediaChange, handleMediaDelete, formData } = props;
   const { formatMessage } = props.intl;
   const endDate = getCurrentDate();
   const startDate = getMomentDateSubtraction(endDate, 3, 'months');
-  const initialValues = { start_date: startDate, end_date: endDate, max_iterations: 15, max_stories: MAX_RECOMMENDED_STORIES, buttonLabel: formatMessage(messages.preview) };
+  const sAndC = (formData && formData.sourcesAndCollections) || [];
+  const initialValues = { start_date: startDate, end_date: endDate, max_iterations: 15, max_stories: MAX_RECOMMENDED_STORIES, buttonLabel: formatMessage(messages.preview), sourcesAndCollections: sAndC };
   return (
     <Grid>
       <Helmet><title>{formatMessage(localMessages.title)}</title></Helmet>

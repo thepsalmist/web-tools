@@ -3,8 +3,10 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import AppButton from '../common/AppButton';
 import SourcesMarketingFeatureList from './homepage/SourcesMarketingFeatureList';
 import messages from '../../resources/messages';
+import { urlToSourceManager } from '../../lib/urlUtil';
 
 const localMessages = {
   aboutTitle: { id: 'about.title', defaultMessage: 'About Source Manager' },
@@ -25,6 +27,16 @@ const About = (props) => {
         <Row>
           <Col lg={12}>
             <p className="subtitle"><FormattedMessage {...messages.sourcesToolDescription} /></p>
+          </Col>
+        </Row>
+      </Grid>
+      <Grid>
+        <Row>
+          <Col lg={10} md={10} sm={10} />
+          <Col m={2} lg={2}>
+            <AppButton color="primary" primary onTouchTap={() => { window.location = urlToSourceManager('home'); }}>
+              <FormattedMessage {...messages.tryItNow} />
+            </AppButton>
           </Col>
         </Row>
       </Grid>

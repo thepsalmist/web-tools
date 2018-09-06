@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Step, Stepper, StepLabel } from 'material-ui/Stepper';
+import Stepper from '@material-ui/core/Stepper';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import BackLinkingControlBar from '../../../BackLinkingControlBar';
 import FocusForm1TechniqueContainer from './FocusForm1TechniqueContainer';
@@ -43,22 +45,21 @@ class FocusBuilderWizard extends React.Component {
       FocusForm4ConfirmContainer,
     ];
     const CurrentStepComponent = steps[currentStep];
-    const stepLabelStyle = { height: 45 };
     return (
       <div className="focus-builder-wizard">
         <BackLinkingControlBar message={localMessages.backToFociManager} linkTo={`/topics/${topicId}/snapshot/foci`}>
           <Stepper activeStep={currentStep}>
             <Step>
-              <StepLabel style={stepLabelStyle}><FormattedMessage {...localMessages.step0Name} /></StepLabel>
+              <StepLabel><FormattedMessage {...localMessages.step0Name} /></StepLabel>
             </Step>
             <Step>
-              <StepLabel style={stepLabelStyle}><FormattedMessage {...localMessages.step1Name} /></StepLabel>
+              <StepLabel><FormattedMessage {...localMessages.step1Name} /></StepLabel>
             </Step>
             <Step>
-              <StepLabel style={stepLabelStyle}><FormattedMessage {...localMessages.step2Name} /></StepLabel>
+              <StepLabel><FormattedMessage {...localMessages.step2Name} /></StepLabel>
             </Step>
             <Step>
-              <StepLabel style={stepLabelStyle}><FormattedMessage {...localMessages.step3Name} /></StepLabel>
+              <StepLabel><FormattedMessage {...localMessages.step3Name} /></StepLabel>
             </Step>
           </Stepper>
         </BackLinkingControlBar>

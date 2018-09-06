@@ -73,7 +73,8 @@ class EditKeywordSearchContainer extends React.Component {
               <Field
                 name="keywords"
                 component={renderTextField}
-                floatingLabelText={messages.searchByKeywords}
+                label={messages.searchByKeywords}
+                helpertext={localMessages.errorNoKeywords}
                 fullWidth
                 onKeyDown={this.handleKeyDown}
               />
@@ -91,7 +92,7 @@ class EditKeywordSearchContainer extends React.Component {
           <Row>
             <Col lg={8} xs={12}>
               <br />
-              <AppButton flat onClick={onPreviousStep} label={formatMessage(messages.previous)} />
+              <AppButton color="secondary" variant="outlined" onClick={onPreviousStep} label={formatMessage(messages.previous)} />
               &nbsp; &nbsp;
               <AppButton disabled={nextButtonDisabled} type="submit" label={formatMessage(messages.next)} primary />
             </Col>
@@ -138,7 +139,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 function validate(values) {
   const errors = {};
   if (!notEmptyString(values.keywords)) {
-    errors.keywords = localMessages.errorNoKeywords;
+    errors.keywords = true; // localMessages.errorNoKeywords;
   }
   return errors;
 }

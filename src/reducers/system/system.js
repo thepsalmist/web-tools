@@ -5,6 +5,7 @@ import mediaPicker from './mediaPicker/media';
 import topEntitiesPeople from './topEntitiesPeople';
 import topEntitiesOrgs from './topEntitiesOrgs';
 import recentNews from './recentNews';
+import sourceSearch from './sourceSearch';
 
 const system = combineReducers({
   stats,
@@ -13,6 +14,7 @@ const system = combineReducers({
   topEntitiesPeople,
   topEntitiesOrgs,
   recentNews,
+  sourceSearch,
 });
 
 export default system;

@@ -7,7 +7,7 @@ import withSampleSize from '../../common/composers/SampleSize';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import { filteredLinkTo, filtersAsUrlParams } from '../../util/location';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import withDescription from '../../common/hocs/DescribedDataCard';
+import withSummary from '../../common/hocs/SummarizedVizualization';
 import EditableWordCloudDataCard from '../../common/EditableWordCloudDataCard';
 import { fetchTopicTopWords } from '../../../actions/topicActions';
 import messages from '../../../resources/messages';
@@ -18,7 +18,7 @@ const WORD_CLOUD_DOM_ID = 'topic-summary-media-word-cloud';
 
 const localMessages = {
   descriptionIntro: { id: 'topic.summary.words.help.into',
-    defaultMessage: 'Look at the top words to see how this topic was talked about. This can suggest what the dominant narrative was, and looking at different timespans can suggest how it evolved over time.',
+    defaultMessage: '<p>Look at the top words to see how this topic was talked about. This can suggest what the dominant narrative was, and looking at different timespans can suggest how it evolved over time.</p>',
   },
 };
 
@@ -33,19 +33,19 @@ class WordsSummaryContainer extends React.Component {
   render() {
     const { topicInfo, initSampleSize, onViewSampleSizeClick, filters, handleWordCloudClick } = this.props;
     const urlDownload = `/api/topics/${topicInfo.topics_id}/words.csv?${filtersAsUrlParams(filters)}`;
-    const { formatMessage } = this.props.intl;
     return (
       <EditableWordCloudDataCard
+        width={630}
         words={this.props.words}
-        explore={filteredLinkTo(`/topics/${topicInfo.topics_id}/words`, filters)}
         initSampleSize={initSampleSize}
         downloadUrl={urlDownload}
+        border={false}
         onViewModeClick={handleWordCloudClick}
         onViewSampleSizeClick={onViewSampleSizeClick}
-        title={formatMessage(messages.topWords)}
         domId={WORD_CLOUD_DOM_ID}
         svgDownloadPrefix={`${topicDownloadFilename(topicInfo.name, filters)}-words`}
-        includeTopicWord2Vec
+        hideGoogleWord2Vec
+        actionsAsLinksUnderneath
       />
     );
   }
@@ -66,6 +66,7 @@ WordsSummaryContainer.propTypes = {
   asyncFetch: PropTypes.func.isRequired,
   fetchData: PropTypes.func.isRequired,
   initSampleSize: PropTypes.string,
+  handleExplore: PropTypes.func.isRequired,
   // from state
   topicInfo: PropTypes.object,
   words: PropTypes.array,
@@ -89,6 +90,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(fetchTopicTopWords(ownProps.topicId, ownProps.filters));
   },
   pushToUrl: url => dispatch(push(url)),
+  handleExplore: () => {
+    const exploreUrl = filteredLinkTo(`/topics/${ownProps.topicId}/words`, ownProps.filters);
+    dispatch(push(exploreUrl));
+  },
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
@@ -106,8 +111,7 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withSampleSize(
-      withDescription(localMessages.descriptionIntro,
-        [messages.wordcloudHelpText, messages.wordCloudTopicWord2VecLayoutHelp])(
+      withSummary(messages.topWords, localMessages.descriptionIntro, [messages.wordcloudHelpText, messages.wordCloudTopicWord2VecLayoutHelp])(
         withAsyncFetch(
           withCsvDownloadNotifyContainer(
             WordsSummaryContainer

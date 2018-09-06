@@ -1,6 +1,122 @@
 {
   "releases": [
     {
+      "date": "2018-08-31",
+      "version": "v3.4.0",
+      "notes": [
+        {
+          "apps": [ "sources", "explorer", "topics" ],
+          "type": "Feature",
+          "note": "Lots of polish to all the buttons, text, etc. widgets that we use."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "The topic summary page is split into categories like Explorer now."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Clicking for details in explorer now scrolls right to the details."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "The selecting media window no longer shows up weirdly off-screen."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Feature",
+          "note": "Move themes results from attention to langauge tab."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Word trees in explorer show all the words again."
+        },
+        {
+          "apps": [ "topics", "explorer", "sources" ],
+          "type": "Fix",
+          "note": "Feedback after you do something now shows up on top of screen."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "You can search for a specific media source in a topic."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "Admins can now see our cached copy of the story within a Topic."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "You can now download total attention for all queries in Explorer in one CSV."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "You can download a CSV comparing top words in each subtopic."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Download total attention for all queries in Explorer in one CSV."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Deleting saved searches in Explorer works again."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Removed some unused columns from the Topic story CSV download."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Download total attention for all queries in Explorer in one CSV."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Favoriting sources and collections in Source Mgr works again."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Download total attention for all queries in Explorer in one CSV."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "The sample story title in Explorer links to its webpage again."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Download total attention for all queries in Explorer in one CSV."
+        },
+        {
+          "apps": [ "explorer", "topics" ],
+          "type": "Fix",
+          "note": "Renamed 'representation' to 'entities', because that's what they are."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Feature",
+          "note": "The feeds for a source now are split between active and inactive on two tabs."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Fixed a bug preventing some sample story dates from showing up correctly."
+        }
+      ]
+    },
+    {
       "date": "2018-07-26",
       "version": "v3.3.1",
       "notes": [

@@ -6,7 +6,10 @@ import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import { reduxForm } from 'redux-form';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import Dialog from 'material-ui/Dialog';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
 import { filteredLinkTo } from '../../util/location';
 import AppButton from '../../common/AppButton';
 import withIntlForm from '../../common/hocs/IntlForm';
@@ -119,14 +122,20 @@ class EditTopicContainer extends React.Component {
       ];
       dialogContent = (
         <Dialog
-          title={formatMessage(localMessages.riskConfirmTitle)}
-          actions={dialogActions}
           modal
           open={this.state.editConfirmationOpen}
-          onRequestClose={this.handleConfirmCancel}
+          onClose={this.handleConfirmCancel}
           className="app-dialog"
         >
-          <p><FormattedMessage {...localMessages.handleRiskDescription} /></p>
+          <DialogTitle>
+            {formatMessage(localMessages.riskConfirmTitle)}
+          </DialogTitle>
+          <DialogActions>
+            {dialogActions}
+          </DialogActions>
+          <DialogContent>
+            <p><FormattedMessage {...localMessages.handleRiskDescription} /></p>
+          </DialogContent>
         </Dialog>
       );
     }
@@ -206,7 +215,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       .then((results) => {
         if (results.topics_id) {
           // let them know it worked
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
           // if the dates changed tell them it needs a new snapshot
           if ((infoToSave.start_date !== topicInfo.start_date) || (infoToSave.end_date !== topicInfo.end_date)) {
             dispatch(setTopicNeedsNewSnapshot(true));
@@ -215,12 +224,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           dispatch(push(topicSummaryUrl));
           // update topic info and redirect back to topic summary
         } else if (results.status === 500 && results.message.indexOf('cannot reduce') > -1) {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.resetting) }));
+          dispatch(updateFeedback({ classes: 'warning-notice', open: true, message: ownProps.intl.formatMessage(localMessages.resetting) }));
           // dispatch(resetTopic(ownProps.params.topicId));
           const topicSummaryUrl = filteredLinkTo(`/topics/${results.topics_id}/summary`, filters);
           dispatch(push(topicSummaryUrl));
         } else {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
         }
       });
   },

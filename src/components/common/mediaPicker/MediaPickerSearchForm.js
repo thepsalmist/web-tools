@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
-import TextField from 'material-ui/TextField';
+import TextField from '@material-ui/core/TextField';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../AppButton';
 
@@ -55,9 +55,8 @@ class MediaPickerSearchForm extends React.Component {
             name="mediaKeyword"
             defaultValue={storedKeyword.mediaKeyword}
             onKeyPress={this.handleMenuItemKeyDown}
-            ref={this.focusUsernameInputField}
             fullWidth
-            hintText={hintText}
+            label={hintText}
           />
         </Col>
         <Col lg={2}>
@@ -66,7 +65,7 @@ class MediaPickerSearchForm extends React.Component {
             label={formatMessage(localMessages.search)}
             onClick={this.handleSearchButtonClick}
             disabled={pristine}
-            primary
+            color="primary"
           />
         </Col>
       </Row>

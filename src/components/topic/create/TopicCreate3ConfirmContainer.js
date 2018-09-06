@@ -94,7 +94,6 @@ const TopicCreate3ConfirmContainer = (props) => {
             <AppButton flat label={formatMessage(messages.previous)} onClick={() => handlePreviousStep()} />
             &nbsp; &nbsp;
             <AppButton
-              style={{ marginTop: 30 }}
               type="submit"
               disabled={pristine || submitting}
               label={formatMessage(localMessages.createTopic)}
@@ -171,15 +170,15 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     if (!hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {
       // min/max don't apply to admins
       if (storyCount > WARNING_LIMIT_RECOMMENDED_STORIES && storyCount < MAX_RECOMMENDED_STORIES) {
-        dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
+        dispatch(updateFeedback({ classes: 'warning-notice', open: true, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
         return dispatch(addNotice({ level: LEVEL_WARNING, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
       }
       if (storyCount > MAX_RECOMMENDED_STORIES) {
-        dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
+        dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
         return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
       }
       if (storyCount < MIN_RECOMMENDED_STORIES) {
-        dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.notEnoughStories) }));
+        dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.notEnoughStories) }));
         return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.notEnoughStories) }));
       }
     }

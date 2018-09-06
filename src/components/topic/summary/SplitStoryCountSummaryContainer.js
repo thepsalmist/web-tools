@@ -1,23 +1,27 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
+import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ActionMenu from '../../common/ActionMenu';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import withDescription from '../../common/hocs/DescribedDataCard';
+import withSummary from '../../common/hocs/SummarizedVizualization';
 import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
 import { fetchTopicSplitStoryCounts } from '../../../actions/topicActions';
 import messages from '../../../resources/messages';
 import Permissioned from '../../common/Permissioned';
-import LinkWithFilters from '../LinkWithFilters';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
-import { DownloadButton, ExploreButton } from '../../common/IconButton';
-import DataCard from '../../common/DataCard';
+import { DownloadButton } from '../../common/IconButton';
 import { getBrandDarkColor } from '../../../styles/colors';
 import { filteredLinkTo, filtersAsUrlParams } from '../../util/location';
 
 const localMessages = {
   title: { id: 'topic.summary.splitStoryCount.title', defaultMessage: 'Attention Over Time' },
-  descriptionIntro: { id: 'topic.summary.splitStoryCount.help.title', defaultMessage: 'Analyze attention to this topic over time to understand how it is covered. This chart shows the total number of stories that matched your topic query. Spikes in attention can reveal key events.  Plateaus can reveal stable, "normal", attention levels.' },
+  descriptionIntro: { id: 'topic.summary.splitStoryCount.help.title', defaultMessage: '<p>Analyze attention to this topic over time to understand how it is covered. This chart shows the total number of stories that matched your topic query. Spikes in attention can reveal key events.  Plateaus can reveal stable, "normal", attention levels.</p>' },
+  downloadCsv: { id: 'topic.summary.splitStoryCount.download', defaultMessage: 'Download daily story count CSV' },
 };
 
 class SplitStoryCountSummaryContainer extends React.Component {
@@ -35,29 +39,30 @@ class SplitStoryCountSummaryContainer extends React.Component {
   }
 
   render() {
-    const { total, counts, topicId, filters } = this.props;
-    const { formatMessage } = this.props.intl;
-    const exploreUrl = `/topics/${topicId}/attention`;
+    const { total, counts } = this.props;
     return (
-      <DataCard>
-        <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-          <div className="actions">
-            <ExploreButton linkTo={filteredLinkTo(exploreUrl, filters)} />
-            <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.downloadCsv} />
-          </div>
-        </Permissioned>
-        <h2>
-          <LinkWithFilters to={exploreUrl}>
-            <FormattedMessage {...localMessages.title} />
-          </LinkWithFilters>
-        </h2>
+      <React.Fragment>
         <AttentionOverTimeChart
           total={total}
           data={counts}
           height={200}
           lineColor={getBrandDarkColor()}
+          backgroundColor="#f5f5f5"
         />
-      </DataCard>
+        <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
+          <div className="actions">
+            <ActionMenu actionTextMsg={messages.downloadOptions}>
+              <MenuItem
+                className="action-icon-menu-item"
+                onClick={this.downloadCsv}
+              >
+                <ListItemText><FormattedMessage {...localMessages.downloadCsv} /></ListItemText>
+                <ListItemIcon><DownloadButton /></ListItemIcon>
+              </MenuItem>
+            </ActionMenu>
+          </div>
+        </Permissioned>
+      </React.Fragment>
     );
   }
 }
@@ -75,6 +80,7 @@ SplitStoryCountSummaryContainer.propTypes = {
   // from dispath
   asyncFetch: PropTypes.func.isRequired,
   fetchData: PropTypes.func.isRequired,
+  handleExplore: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -83,9 +89,13 @@ const mapStateToProps = state => ({
   counts: state.topics.selected.summary.splitStoryCount.counts,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchData: (props) => {
     dispatch(fetchTopicSplitStoryCounts(props.topicId, props.filters));
+  },
+  handleExplore: () => {
+    const exploreUrl = filteredLinkTo(`/topics/${ownProps.topicId}/attention`, ownProps.filters);
+    dispatch(push(exploreUrl));
   },
 });
 
@@ -100,7 +110,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withDescription(localMessages.descriptionIntro, [messages.attentionChartHelpText])(
+    withSummary(localMessages.title, localMessages.descriptionIntro, [messages.attentionChartHelpText])(
       withAsyncFetch(
         SplitStoryCountSummaryContainer
       )

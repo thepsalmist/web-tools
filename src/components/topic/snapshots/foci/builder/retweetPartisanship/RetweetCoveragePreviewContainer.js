@@ -51,7 +51,7 @@ RetweetCoveragePreviewContainer.propTypes = {
   // from dispatch
   asyncFetch: PropTypes.func.isRequired,
   // from state
-  counts: PropTypes.object,
+  counts: PropTypes.array,
   fetchStatus: PropTypes.string.isRequired,
 };
 

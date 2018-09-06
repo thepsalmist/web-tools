@@ -41,7 +41,7 @@ const TopicsHomepage = (props) => {
     content = (
       <div>
 
-        <Helmet><title>{titleHandler()}</title></Helmet>
+        <Helmet><title>{'Home | Topic Mapper | Media Cloud'}</title></Helmet>
 
         <div className="controlbar">
           <div className="main">

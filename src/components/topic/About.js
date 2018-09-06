@@ -3,8 +3,10 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import AppButton from '../common/AppButton';
 import TopicsMarketingFeatureList from './homepage/TopicsMarketingFeatureList';
 import messages from '../../resources/messages';
+import { urlToTopicMapper } from '../../lib/urlUtil';
 
 const localMessages = {
   aboutTitle: { id: 'about.title', defaultMessage: 'About Topic Mapper' },
@@ -25,6 +27,16 @@ const About = (props) => {
         <Row>
           <Col lg={12}>
             <p className="subtitle"><FormattedMessage {...messages.topicsToolDescription} /></p>
+          </Col>
+        </Row>
+      </Grid>
+      <Grid>
+        <Row>
+          <Col lg={10} md={10} sm={10} />
+          <Col m={2} lg={2}>
+            <AppButton color="primary" primary onTouchTap={() => { window.location = urlToTopicMapper('home'); }}>
+              <FormattedMessage {...messages.tryItNow} />
+            </AppButton>
           </Col>
         </Row>
       </Grid>

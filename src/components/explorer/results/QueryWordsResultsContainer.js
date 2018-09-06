@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import composeSummarizedVisualization from './SummarizedVizualization';
+import withSummary from '../../common/hocs/SummarizedVizualization';
+import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import { fetchQueryTopWords, fetchDemoQueryTopWords, resetTopWords, selectWord } from '../../../actions/explorerActions';
 import { postToDownloadUrl, slugifiedQueryLabel } from '../../../lib/explorerUtil';
@@ -11,7 +12,6 @@ import withQueryResults from './QueryResultsSelector';
 import EditableWordCloudDataCard from '../../common/EditableWordCloudDataCard';
 
 const localMessages = {
-  title: { id: 'explorer.topWords.title', defaultMessage: 'Top Words' },
   descriptionIntro: { id: 'explorer.topWords.help.title', defaultMessage: '<p>Here are the top words used with each query. Looking at the language used can help you identify how this issue is talked about in the media online.</p>' },
   menuHeader: { id: 'explorer.topWords.menuHeader', defaultMessage: 'Query: {queryName}' },
 };
@@ -24,17 +24,19 @@ class QueryWordsResultsContainer extends React.Component {
   }
 
   handleWordClick = (wordDataPoint) => {
-    const { handleSelectedWord, selectedQuery } = this.props;
-    handleSelectedWord(selectedQuery, wordDataPoint.term);
+    const { handleSelectedWord, selectedQuery, isLoggedIn, onShowLoginDialog } = this.props;
+    if (isLoggedIn) {
+      handleSelectedWord(selectedQuery, wordDataPoint.term);
+    } else {
+      onShowLoginDialog();
+    }
   }
 
   render() {
     const { results, queries, tabSelector, selectedQueryIndex, fetchData, internalItemSelected } = this.props;
-    const { formatMessage } = this.props.intl;
     const selectedQuery = queries[selectedQueryIndex];
     return (
       <EditableWordCloudDataCard
-        actionMenuHeaderText={formatMessage(localMessages.menuHeader, { queryName: selectedQuery.label })}
         onViewSampleSizeClick={sampleSize => fetchData(queries, sampleSize)}
         initSampleSize={results[selectedQueryIndex].sample_size}
         subHeaderContent={tabSelector}
@@ -59,11 +61,12 @@ QueryWordsResultsContainer.propTypes = {
   lastSearchTime: PropTypes.number.isRequired,
   queries: PropTypes.array.isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
-  // from composition
+  // from hocs
   intl: PropTypes.object.isRequired,
   selectedQueryIndex: PropTypes.number.isRequired,
   selectedQuery: PropTypes.object.isRequired,
   tabSelector: PropTypes.object.isRequired,
+  onShowLoginDialog: PropTypes.func.isRequired,
   // from dispatch
   fetchData: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
@@ -145,10 +148,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    composeSummarizedVisualization(localMessages.title, localMessages.descriptionIntro, messages.wordcloudHelpText)(
+    withSummary(messages.topWords, localMessages.descriptionIntro, messages.wordcloudHelpText)(
       withAsyncFetch(
         withQueryResults(
-          QueryWordsResultsContainer
+          withLoginRequired(
+            QueryWordsResultsContainer
+          )
         )
       )
     )

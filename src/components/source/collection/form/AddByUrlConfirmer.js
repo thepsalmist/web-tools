@@ -70,7 +70,7 @@ class AddByUrlConfirmer extends Component {
         <AppButton
           label={formatMessage(messages.ok)}
           onClick={() => onConfirm([...newSources, ...existingSources])}
-          primary
+          color="primary"
         />
       </div>
     );

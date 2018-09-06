@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import MenuItem from 'material-ui/MenuItem';
+import MenuItem from '@material-ui/core/MenuItem';
 import slugify from 'slugify';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import ActionMenu from '../../../common/ActionMenu';
@@ -27,6 +27,11 @@ const localMessages = {
 };
 
 class WordInContextDrillDownContainer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.rootRef = React.createRef();
+  }
+
   componentWillReceiveProps(nextProps) {
     const { lastSearchTime, fetchData, selectedWord } = this.props;
     if ((nextProps.lastSearchTime !== lastSearchTime
@@ -38,6 +43,11 @@ class WordInContextDrillDownContainer extends React.Component {
   shouldComponentUpdate(nextProps) {
     const { selectedWord, fragments } = this.props;
     return (nextProps.selectedWord !== selectedWord) || (nextProps.fragments !== fragments);
+  }
+
+  componentDidUpdate() {
+    const rootNode = this.rootRef.current;
+    rootNode.scrollIntoView();
   }
 
   getUniqueDomId = () => 'word-in-context-';
@@ -53,34 +63,36 @@ class WordInContextDrillDownContainer extends React.Component {
 
   render() {
     const { selectedWord, handleAddToAllQueries, handleClose, fragments, helpButton } = this.props;
-    const { formatMessage } = this.props.intl;
     const uniqueDomId = this.getUniqueDomId();
 
     let content = null;
     if (selectedWord) {
       content = (
-        <div className="drill-down">
+        <div className="drill-down" ref={this.rootRef}>
           <DataCard className="query-word-drill-down">
             <ActionMenu>
               <MenuItem
                 className="action-icon-menu-item"
-                primaryText={formatMessage(localMessages.close)}
                 onTouchTap={handleClose}
-              />
+              >
+                <FormattedMessage {...localMessages.close} />
+              </MenuItem>
               <MenuItem
                 className="action-icon-menu-item"
-                primaryText={formatMessage(localMessages.addWordToAllQueries)}
                 onTouchTap={() => {
                   const wordToAdd = selectedWord.word;
                   handleClose();
                   handleAddToAllQueries(wordToAdd);
                 }}
-              />
+              >
+                <FormattedMessage {...localMessages.addWordToAllQueries} />
+              </MenuItem>
               <MenuItem
                 className="action-icon-menu-item"
-                primaryText={formatMessage(messages.downloadSVG)}
                 onTouchTap={this.handleDownloadSvg}
-              />
+              >
+                <FormattedMessage {...messages.downloadSVG} />
+              </MenuItem>
             </ActionMenu>
             <h2>
               <FormattedMessage {...localMessages.title} values={{ word: selectedWord.word }} />
@@ -138,8 +150,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   handleAddToAllQueries: (word) => {
     ownProps.onQueryModificationRequested(word);
-    dispatch(updateFeedback({ open: true,
-      message: ownProps.intl.formatMessage(localMessages.addingToQueries, { word }) }));
+    dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.addingToQueries, { word }) }));
   },
   handleClose: () => {
     dispatch(resetSelectedWord());

@@ -17,45 +17,37 @@ import QuerySelectorContainer from './QuerySelectorContainer';
 const FilterSelectorContainer = (props) => {
   const { filters, topicId, filtersVisible, snapshotId, snapshots, location, handleSnapshotSelected,
     onFocusSelected, onQuerySelected } = props;
-  let content = null;
-  let focusSelectorContent = null;
-  if (snapshotId) {
-    focusSelectorContent = (
-      <FocusSelectorContainer
-        topicId={topicId}
-        location={location}
-        snapshotId={filters.snapshotId}
-        onFocusSelected={onFocusSelected}
-      />
-    );
-  }
-  if (filtersVisible) {
-    content = (
-      <div className="filter">
-        <Grid>
-          <Row className="filter-selector">
-            <Col lg={4} className="focus-selector">
-              {focusSelectorContent}
-            </Col>
-            <Col lg={5}>
-              <QuerySelectorContainer
+  return (filtersVisible && (
+    <div className="filter">
+      <Grid>
+        <Row className="filter-selector">
+          <Col lg={4}>
+            {snapshotId && (
+              <FocusSelectorContainer
                 topicId={topicId}
-                onQuerySelected={onQuerySelected}
+                location={location}
+                snapshotId={filters.snapshotId}
+                onFocusSelected={onFocusSelected}
               />
-            </Col>
-            <Col lg={3} className="snapshot-selector">
-              <SnapshotSelector
-                selectedId={snapshotId}
-                snapshots={snapshots}
-                onSnapshotSelected={handleSnapshotSelected}
-              />
-            </Col>
-          </Row>
-        </Grid>
-      </div>
-    );
-  }
-  return content;
+            )}
+          </Col>
+          <Col lg={5}>
+            <QuerySelectorContainer
+              topicId={topicId}
+              onQuerySelected={onQuerySelected}
+            />
+          </Col>
+          <Col lg={3}>
+            <SnapshotSelector
+              selectedId={snapshotId}
+              snapshots={snapshots}
+              onSnapshotSelected={handleSnapshotSelected}
+            />
+          </Col>
+        </Row>
+      </Grid>
+    </div>
+  ));
 };
 
 FilterSelectorContainer.propTypes = {
@@ -86,13 +78,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleSnapshotSelected: (snapshot) => {
+  handleSnapshotSelected: (snapshotId) => {
     const newLocation = filteredLocation(ownProps.location, {
-      snapshots_id: snapshot.snapshots_id,
+      snapshots_id: snapshotId,
       timespanId: null,
       focusId: null,
     });
-    dispatch(filterBySnapshot(snapshot.snapshots_id));
+    dispatch(filterBySnapshot(snapshotId));
     dispatch(push(newLocation));
   },
 });

@@ -44,6 +44,7 @@
         margin-left: 23px;
         display: block;
         color: $material-grey600;
+        margin-top: 10px;
       }
 
       .add-query-item {
@@ -59,11 +60,6 @@
         width: 210px !important;
       }
 
-      .query-picker-icon-button {
-        width: 20px !important;
-        float: right !important;
-      }
-
       .query-picker-name {
         font-size: 16px;
         padding-top: 20px;
@@ -77,6 +73,21 @@
   }
 
 }
+
+div.query-picker-icon-button {
+    padding-top: 10px;
+    float: right !important;
+    button {
+      width: 30px;
+      height: 30px;
+    }
+    
+    li.color-picker-menu-item {
+      height: 73px !important;
+      top: -20px;
+    }
+}
+
 div.app-button.query-item-header-dialog-button{
   margin-right: 30px !important;
 }

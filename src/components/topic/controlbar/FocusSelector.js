@@ -1,25 +1,29 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import { getBrandDarkerColor } from '../../../styles/colors';
+import { injectIntl, FormattedMessage } from 'react-intl';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Typography from '@material-ui/core/Typography';
 import messages from '../../../resources/messages';
 
 export const REMOVE_FOCUS = 0;
 
 const localMessages = {
+  pickFocus: { id: 'topic.focusFilter.pick', defaultMessage: 'Subtopic' },
+  removeFocus: { id: 'topic.focusFilter.pick', defaultMessage: 'Don\'t use any Subtopic' },
 };
 
 class FocusSelector extends React.Component {
-  handleFocusChange = (evt, index, value) => {
+  handleFocusChange = (evt) => {
     const { foci, onFocusSelected } = this.props;
     const { formatMessage } = this.props.intl;
     let selected;
-    if (value === REMOVE_FOCUS) {
-      selected = { foci_id: REMOVE_FOCUS, name: formatMessage(localMessages.noFocus) };
+    if (evt.target.value === REMOVE_FOCUS) {
+      selected = { foci_id: REMOVE_FOCUS, name: formatMessage(messages.noFocus) };
     } else {
-      selected = foci.find(focus => (focus.foci_id === value));
+      selected = foci.find(focus => (focus.foci_id === evt.target.value));
     }
     onFocusSelected(selected);
   }
@@ -48,13 +52,11 @@ class FocusSelector extends React.Component {
     // default to none
     return (
       <div className="focus-selector-wrapper">
-        <SelectField
-          floatingLabelText={formatMessage(messages.focusPick)}
-          floatingLabelFixed
-          floatingLabelStyle={{ color: 'rgb(224,224,224)', opacity: 0.8 }}
-          selectedMenuItemStyle={{ color: getBrandDarkerColor(), fontWeight: 'bold' }}
-          labelStyle={{ color: 'rgb(255,255,255)' }}
-          value={selectedId}
+        <InputLabel><FormattedMessage {...localMessages.pickFocus} /></InputLabel>
+        <Select
+          label={formatMessage(localMessages.pickFocus)}
+          className="focus-selector"
+          value={selectedId || ''}
           fullWidth
           onChange={this.handleFocusChange}
         >
@@ -62,11 +64,16 @@ class FocusSelector extends React.Component {
             <MenuItem
               key={focus.foci_id}
               value={focus.foci_id}
-              primaryText={focusName(focus)}
-            />
+            >
+              <ListItemText><Typography classes={{ root: 'selected-focus-details' }}>{focusName(focus)}</Typography></ListItemText>
+            </MenuItem>
           ))}
-          <MenuItem value={REMOVE_FOCUS} primaryText={formatMessage(messages.removeFocus)} />
-        </SelectField>
+          <MenuItem
+            value={REMOVE_FOCUS}
+          >
+            <ListItemText>{formatMessage(localMessages.removeFocus)}</ListItemText>
+          </MenuItem>
+        </Select>
         {detailsContent}
       </div>
     );

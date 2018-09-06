@@ -79,7 +79,7 @@ const FocusForm4ConfirmContainer = (props) => {
         <Row>
           <Col lg={12}>
             <br /><br />
-            <AppButton flat label={formatMessage(messages.previous)} onClick={handlePreviousStep} />
+            <AppButton variant="outlined" color="secondary" label={formatMessage(messages.previous)} onClick={handlePreviousStep} />
             &nbsp; &nbsp;
             <AppButton
               disabled={submitting}

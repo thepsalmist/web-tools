@@ -19,6 +19,7 @@ import { asyncContainerize } from '../../common/hocs/AsyncContainer';
 import ModifyTopicDialog from './ModifyTopicDialog';
 import { LEVEL_WARNING } from '../../common/Notice';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
+import AboutTopicDialog from './AboutTopicDialog';
 
 const localMessages = {
   editPermissions: { id: 'topic.editPermissions', defaultMessage: 'Edit Topic Permissions' },
@@ -26,7 +27,7 @@ const localMessages = {
   filterTopic: { id: 'topic.filter', defaultMessage: 'Filter this Topic' },
   startedSpider: { id: 'topic.startedSpider', defaultMessage: 'Started a new spidering job for this topic' },
   summaryMessage: { id: 'snapshot.required', defaultMessage: 'You have made some changes that you can only see if you generate a new Snapshot. <a href="{url}">Generate one now</a>.' },
-  topicHomepage: { id: 'topic.homepage', defaultMessage: 'Topic Homepage' },
+  topicHomepage: { id: 'topic.homepage', defaultMessage: 'Topic Summary' },
   jumpToExplorer: { id: 'topic.controlBar.jumpToExplorer', defaultMessage: 'Query on Explorer' },
 };
 
@@ -85,6 +86,7 @@ class TopicFilterControlBar extends React.Component {
                   <HomeButton />
                   <b><FormattedMessage {...localMessages.topicHomepage} /></b>
                 </LinkWithFilters>
+                <AboutTopicDialog />
                 <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
                   <ModifyTopicDialog
                     topicId={topicId}
@@ -218,7 +220,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleSpiderRequest: () => {
     dispatch(topicStartSpider(ownProps.topicId))
       .then(() => {
-        dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.startedSpider) }));
+        dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.startedSpider) }));
       });
   },
 });

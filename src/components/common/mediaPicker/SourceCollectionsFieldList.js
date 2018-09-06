@@ -58,6 +58,7 @@ const renderCollectionSelector = ({ allowRemoval, showWarningIfEmpty, helpButton
     </div>
   );
 };
+
 renderCollectionSelector.propTypes = {
   fields: PropTypes.object,
   meta: PropTypes.object,

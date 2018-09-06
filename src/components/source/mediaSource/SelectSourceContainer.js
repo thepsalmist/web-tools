@@ -16,6 +16,7 @@ import { EditButton, ExploreButton } from '../../common/IconButton';
 import SourceMgrHeaderContainer from '../SourceMgrHeaderContainer';
 
 const localMessages = {
+  title: { id: 'source.title', defaultMessage: '{name} | Source Summary | Media Cloud' },
   editSource: { id: 'source.edit', defaultMessage: 'Modify this Source' },
   visitHomepage: { id: 'source.visit', defaultMessage: 'Visit {url}' },
   editFeeds: { id: 'source.feeds.edit', defaultMessage: 'Modify this Source\'s Feeds' },
@@ -46,14 +47,14 @@ class SelectSourceContainer extends React.Component {
 
   render() {
     const { children, source } = this.props;
-    const titleHandler = parentTitle => `${source.name} | ${parentTitle}`;
+    const { formatMessage } = this.props.intl;
     return (
       <div className="source-container">
-        <Helmet><title>{titleHandler()}</title></Helmet>
+        <Helmet><title>{formatMessage(localMessages.title, { name: source.name })}</title></Helmet>
         <SourceMgrHeaderContainer />
         <SourceControlBar>
           <a href="search-in-explorer" onClick={this.searchInExplorer}>
-            <ExploreButton />
+            <ExploreButton useBackgroundColor />
             <FormattedMessage {...localMessages.searchNow} />
           </a>
           <a href={source.url}>

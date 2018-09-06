@@ -102,7 +102,7 @@ class ManageFocalSetsContainer extends React.Component {
             <Col lg={12}>
               <div id="create-foci-button">
                 <Link to={`/topics/${topicId}/snapshot/foci/create`}>
-                  <AppButton primary label={formatMessage(messages.addFocus)} />
+                  <AppButton primary label={formatMessage(messages.addFocus)}>{formatMessage(messages.addFocus)}</AppButton>
                 </Link>
               </div>
             </Col>
@@ -141,9 +141,9 @@ const mapDispatchToProps = dispatch => ({
     dispatch(deleteFocalSetDefinition(topicId, focalSetDefinitionId))
       .then((results) => {
         if (results.success === 0) {
-          dispatch(updateFeedback({ open: true, message: failedMessage }));
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: failedMessage }));
         } else {
-          dispatch(updateFeedback({ open: true, message: succeededMessage }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: succeededMessage }));
           dispatch(setTopicNeedsNewSnapshot(true));
           dispatch(fetchFocalSetDefinitions(topicId));
         }
@@ -153,9 +153,9 @@ const mapDispatchToProps = dispatch => ({
     dispatch(deleteFocusDefinition(topicId, focusDefinitionId))
       .then((results) => {
         if (results.success === 0) {
-          dispatch(updateFeedback({ open: true, message: failedMessage }));
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: failedMessage }));
         } else {
-          dispatch(updateFeedback({ open: true, message: succeededMessage }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: succeededMessage }));
           dispatch(setTopicNeedsNewSnapshot(true));
           dispatch(fetchFocalSetDefinitions(topicId));
         }

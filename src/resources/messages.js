@@ -9,10 +9,10 @@ const messages = {
   sourcesToolDescription: { id: 'app.sources.description', defaultMessage: 'Check the breadth of our global coverage by browsing the media sources and collections in our database, and suggesting more to add.' },
   topicsToolName: { id: 'app.topics.name', defaultMessage: 'Topic Mapper' },
   topicsToolDescription: { id: 'app.topics.description', defaultMessage: 'Dive deeply into coverage of an issue by collecting more stories, analyzing influence, and slicing and dicing the stories to discover narratives.' },
-  toolsAppName: { id: 'app.tools.name', defaultMessage: 'Tools' },
-  toolsAppDescription: { id: 'app.tools.description', defaultMessage: 'Support for MediaCloud, including FAQs, tools and how to use them' },
+  toolsToolName: { id: 'app.tools.name', defaultMessage: 'Tools' },
+  toolsToolDescription: { id: 'app.tools.description', defaultMessage: 'Support for MediaCloud, including FAQs, tools and how to use them' },
   explorerToolName: { id: 'app.explorer.name', defaultMessage: 'Explorer' },
-  explorerToolDescription: { id: 'app.explorer.description', defaultMessage: 'Get a quick overview of how your topic of interest is covered by digital news media by exploring attention, language, and representation.' },
+  explorerToolDescription: { id: 'app.explorer.description', defaultMessage: 'Get a quick overview of how your topic of interest is covered by digital news media by exploring attention, language, and entities.' },
   readGuide: { id: 'app.readGuide', defaultMessage: 'Read User Guide' },
 
   c4cmName: { id: 'c4cm.name', defaultMessage: 'MIT Center for Civic Media' },
@@ -128,7 +128,7 @@ const messages = {
   storyUndateable: { id: 'story.undateable', defaultMessage: 'Undateable?' },
   storiesTableHelpTitle: { id: 'stories.help.title', defaultMessage: 'About Stories' },
   storiesTableHelpText: { id: 'stories.help.text',
-    defaultMessage: '<p>This table has one row for each Story.  The column currently being used to sort the results has a little down arrow next to it.  Click one of the green column headers to change how it is sorted.  Here is a summary of the columns:</p><ul><li>Title: the title of the story; click to see details about this story</li><li>Media Source: the name of the Media Source; click to see details about this source\'s content within this Topic</li><li>Publish Date: our best guess of the date and time this content was published</li><li>Media Inlinks: how many unique other Media Sources have links to this content in the Topic</li><li>Outlinks: the number of links in this story to other stories</li><li>Bit.ly Clicks: the number of clicks on links to this story shortened using the Bit.ly URL shortening service</li><li>Facebook Shares: the number of times this story was shared on Facebook</li></ul><p>Click the download button in the top right to download a CSV of the full list of stories</p>',
+    defaultMessage: '<p>This table has one row for each Story.  The column currently being used to sort the results has a little down arrow next to it.  Click one of the green column headers to change how it is sorted.  Here is a summary of the columns:</p><ul><li>Title: the title of the story; click to see details about this story</li><li>Media Source: the name of the Media Source; click to see details about this source\'s content within this Topic</li><li>Publish Date: our best guess of the date and time this content was published</li><li>Media Inlinks: how many unique other Media Sources have links to this content in the Topic</li><li>Outlinks: the number of links in this story to other stories</li><li>Facebook Shares: the number of times this story was shared on Facebook</li></ul><p>Click the download button in the top right to download a CSV of the full list of stories</p>',
   },
   heatMapHelpText: { id: 'heatmap.help.text',
     defaultMessage: '<p>The country map shows you an intensity of how often countries are the main focus of stories. This uses our <a href="https://cliff.mediacloud.org" target="_top">CLIFF-CLAVIN</a> geolocation engine to determine which countries each story is about (based on the places mentioned). The darker the color, the more a country was focused on. Note that this is using a sampling of the stories, not all of them. If you download a CSV of the results, the counts you see are also based on this sampling.</p><p>We have been tagging all english language stories with the places they mention since June 1, 2016.</p>',
@@ -175,6 +175,7 @@ const messages = {
   nextPage: { id: 'paging.next', defaultMessage: 'Next Page' },
   previousPage: { id: 'paging.previous', defaultMessage: 'Previous Page' },
   readItNow: { id: 'readItNow', defaultMessage: 'Read It Now' },
+  tryItNow: { id: 'tryItNow', defaultMessage: 'Try It Now' },
   moreOptions: { id: 'moreOptions', defaultMessage: 'More Options' },
   filter: { id: 'filter', defaultMessage: 'Filter' },
   query: { id: 'query', defaultMessage: 'Query' },
@@ -192,9 +193,6 @@ const messages = {
 
   topicFavorited: { id: 'topics.favorited', defaultMessage: 'Starred this topic.' },
   topicUnfavorited: { id: 'topics.unfavorited', defaultMessage: 'Unstarred this topic.' },
-
-  focusPick: { id: 'focus.pick', defaultMessage: 'Pick a Subtopic' },
-  removeFocus: { id: 'focus.pick', defaultMessage: 'Don\'t use any Subtopic' },
 
   menuOpenTooltip: { id: 'menu.open.tooltip', defaultMessage: 'Open Main Menu' },
   menuTitle: { id: 'menu.title', defaultMessage: 'Main Menu' },
@@ -226,9 +224,9 @@ const messages = {
   totalStoriesStat: { id: 'totalStories', defaultMessage: 'Total Stories' },
   totalDownloadsStat: { id: 'totalDownloads', defaultMessage: 'Total Downloads' },
   totalSentencesStat: { id: 'totalSentences', defaultMessage: 'Total Sentences' },
-  crawledMediaStat: { id: 'crawledMedia', defaultMessage: 'Active Crawled Media' },
+  crawledMediaStat: { id: 'crawledMedia', defaultMessage: 'Media Crawled Daily' },
   crawledFeedsStat: { id: 'crawledFeeds', defaultMessage: 'Active Crawled Feeds' },
-  dailyStoriesStat: { id: 'dailyStories', defaultMessage: 'Daily Stories' },
+  dailyStoriesStat: { id: 'dailyStories', defaultMessage: 'Stories Added Daily' },
   dailyDownloadsStat: { id: 'dailyDownloads', defaultMessage: 'Daily Downloads' },
 
   entityHelpTitle: { id: 'geo.help.title', defaultMessage: 'About Our Entity Detection' },
@@ -263,7 +261,7 @@ const messages = {
   attention: { id: 'attention', defaultMessage: 'Attention' },
   storiesPerDay: { id: 'source.storiesPerDay', defaultMessage: 'Stories per Day' },
   sourceStartDate: { id: 'source.startDate', defaultMessage: 'First Story' },
-  representation: { id: 'representation', defaultMessage: 'Representation' },
+  representation: { id: 'representation', defaultMessage: 'Entities' },
   influence: { id: 'influence', defaultMessage: 'Influence' },
 
   countsVsPercentageHelp: { id: 'explorer.countsVsPercentageHelp', defaultMessage: '<p><b>Counts vs. Percentage</b><br />You can view the attention devoted to your issue in terms of absolute counts or as percentages.  Absolute counts suffer from weekly ebbs and flows, and while searching collections don\'t reflect when we add more sources.  You can switch to view percentages in order to see normalized results that you can compare across sources and collections. To generate the normalization we run each query again without the keywords.</p>' },
@@ -275,6 +273,8 @@ const messages = {
   countryOfFocus: { id: 'source.countryOfFocus', defaultMessage: 'Country of Focus' },
   languageHelpContent: { id: 'source.details.language.help.content', defaultMessage: '<p>We automatically guess the langauge of stories in our system. This language is the one most used by this source based on the automatic detection.</p>' },
   geoHelpDetailedContent: { id: 'source.details.geo.title', defaultMessage: '<p>This is the country this source writes about most.</p>' },
+
+  queryHelpLink: { id: 'explorer.queryBuilder.query.descLink', defaultMessage: 'Learn more about writing boolean search queries.' },
 
 };
 

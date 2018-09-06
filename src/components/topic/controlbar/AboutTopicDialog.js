@@ -17,7 +17,6 @@ const localMessages = {
 };
 
 class AboutTopicDialog extends React.Component {
-
   state = {
     open: false,
   };
@@ -64,7 +63,6 @@ class AboutTopicDialog extends React.Component {
       </div>
     );
   }
-
 }
 
 AboutTopicDialog.propTypes = {
@@ -79,8 +77,8 @@ const mapStateToProps = state => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps)(
-      AboutTopicDialog
-    )
-  );
+injectIntl(
+  connect(mapStateToProps)(
+    AboutTopicDialog
+  )
+);

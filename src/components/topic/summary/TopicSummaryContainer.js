@@ -30,7 +30,6 @@ const localMessages = {
 };
 
 class TopicSummaryContainer extends React.Component {
-
   state = {
     selectedViewIndex: 0,
   };
@@ -204,7 +203,6 @@ class TopicSummaryContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 TopicSummaryContainer.propTypes = {

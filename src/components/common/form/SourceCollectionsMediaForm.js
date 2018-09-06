@@ -12,10 +12,7 @@ const renderCollectionSelector = ({ allowRemoval, fields, meta }) => (
         key={name}
         name={name}
         component={(info) => {
-          const handleDelete = (allowRemoval || info.meta.dirty)
-          && fields.length > 1 ? () => {
-            fields.remove(index);
-          } : undefined;
+          const handleDelete = ((allowRemoval || info.meta.dirty) && fields.length > 1) ? () => { fields.remove(index); } : undefined;
           const val = info.input.value;
           let tempObj = {};
           if (val && typeof val === 'number') {

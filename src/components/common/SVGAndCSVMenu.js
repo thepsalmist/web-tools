@@ -14,34 +14,36 @@ const localMessages = {
 
 const SVGAndCSVMenu = (props) => {
   const { downloadCsv, downloadSvg, label, idx } = props;
-  return [(
-    <MenuItem
-      key={`${idx}-csv`}
-      className={ACTION_MENU_ITEM_CLASS}
-      onClick={() => downloadCsv(label)}
-    >
-      <ListItemText>
-        <FormattedMessage {...localMessages.downloadCSV} values={{ name: label }} />
-      </ListItemText>
-      <ListItemIcon>
-        <DownloadButton />
-      </ListItemIcon>
-    </MenuItem>
-  ),
-  (
-    <MenuItem
-      key={`${idx}-svg`}
-      className={ACTION_MENU_ITEM_CLASS}
-      onClick={() => downloadSvg(label)}
-    >
-      <ListItemText>
-        <FormattedMessage {...localMessages.downloadSVG} values={{ name: label }} />
-      </ListItemText>
-      <ListItemIcon>
-        <DownloadButton />
-      </ListItemIcon>
-    </MenuItem>
-  )];
+  return [
+    (
+      <MenuItem
+        key={`${idx}-csv`}
+        className={ACTION_MENU_ITEM_CLASS}
+        onClick={() => downloadCsv(label)}
+      >
+        <ListItemText>
+          <FormattedMessage {...localMessages.downloadCSV} values={{ name: label }} />
+        </ListItemText>
+        <ListItemIcon>
+          <DownloadButton />
+        </ListItemIcon>
+      </MenuItem>
+    ),
+    (
+      <MenuItem
+        key={`${idx}-svg`}
+        className={ACTION_MENU_ITEM_CLASS}
+        onClick={() => downloadSvg(label)}
+      >
+        <ListItemText>
+          <FormattedMessage {...localMessages.downloadSVG} values={{ name: label }} />
+        </ListItemText>
+        <ListItemIcon>
+          <DownloadButton />
+        </ListItemIcon>
+      </MenuItem>
+    ),
+  ];
 };
 
 SVGAndCSVMenu.propTypes = {

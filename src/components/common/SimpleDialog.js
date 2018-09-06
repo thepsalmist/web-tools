@@ -26,7 +26,7 @@ class SimpleDialog extends React.Component {
     const { formatMessage } = this.props.intl;
     return (
       <span>
-        <a role="button" tabIndex="0" onClick={this.handleClickOpen}>{trigger}</a>
+        <a href="#" role="button" tabIndex="0" onClick={this.handleClickOpen}>{trigger}</a>
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
@@ -60,7 +60,4 @@ SimpleDialog.propTypes = {
 };
 
 
-export default
-  injectIntl(
-    SimpleDialog
-  );
+export default injectIntl(SimpleDialog);

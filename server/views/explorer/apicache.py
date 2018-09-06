@@ -4,7 +4,7 @@ from server import mc, TOOL_API_KEY
 from server.views import TAG_COUNT_UI_LENGTH
 from server.cache import cache, key_generator
 from server.auth import user_mediacloud_client, user_mediacloud_key, is_user_logged_in, user_admin_mediacloud_client
-from server.util.tags import processed_by_cliff_query_clause
+from server.util.tags import processed_by_cliff_query_clause, is_bad_theme
 import server.util.wordembeddings as wordembeddings
 from server.util.stringutil import trimSolrDate
 
@@ -88,6 +88,10 @@ def _most_used_tags(q, fq, tag_sets_id):
     # top tags used in stories matching query (pass in None for no limit)
     api_key = _api_key()
     tags = _cached_most_used_tags(api_key, q, fq, tag_sets_id, 1000)
+    # extract bogus NYT tags
+    for t in tags:
+        if (is_bad_theme(t['tags_id'])):
+            tags.remove(t)
     return tags
 
 

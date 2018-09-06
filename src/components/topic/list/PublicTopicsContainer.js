@@ -25,6 +25,7 @@ const PublicTopicsContainer = (props) => {
         }}
         onSetFavorited={(id, isFav) => { onSetFavorited(id, isFav); asyncFetch(); }}
         emptyMsg={localMessages.empty}
+        hideState
       />
     </div>
   );

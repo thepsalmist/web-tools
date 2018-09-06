@@ -9,7 +9,11 @@ const SourcesApp = (props) => {
   const { formatMessage } = props.intl;
   return (
     <div>
-      <Helmet><title>{formatMessage(messages.sourcesToolName)}</title></Helmet>
+      <Helmet>
+        <title>
+          {`${formatMessage(messages.sourcesToolName)} | ${formatMessage(messages.suiteName)}`}
+        </title>
+      </Helmet>
       <AppContainer
         name="sources"
         title={formatMessage(messages.sourcesToolName)}

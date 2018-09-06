@@ -1,6 +1,37 @@
 {
   "releases": [
     {
+      "date": "2018-09-05",
+      "version": "v3.4.0",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Searching for sources and collections from the homepage works again."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Approving suggested sources works again."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Removed some errant themes from the list of themes that show up."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Admins can see full cached HTML of a story in Topic Mapper."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Date shows up correctly now when looking at detailed info about a story in Explorer."
+        }
+      ]
+    },
+    {
       "date": "2018-08-31",
       "version": "v3.4.0",
       "notes": [

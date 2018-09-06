@@ -42,14 +42,14 @@ class SourceSearchContainer extends React.Component {
     return maxCollections || DEFAULT_MAX_COLLECTIONS_TO_SHOW;
   }
 
-  handleClick = (item) => {
+  handleClick = (searchResult) => {
     const { onMediaSourceSelected, onCollectionSelected, onAdvancedSearchSelected } = this.props;
-    if (item) {
-      if (item.type === 'mediaSource') {
-        if (onMediaSourceSelected) onMediaSourceSelected(item);
-      } else if (item.type === 'collection') {
-        if (onCollectionSelected) onCollectionSelected(item);
-      } else if (item === ADVANCED_SEARCH_ITEM_VALUE) {
+    if (searchResult) {
+      if (searchResult.item.type === 'mediaSource') {
+        if (onMediaSourceSelected) onMediaSourceSelected(searchResult.item);
+      } else if (searchResult.item.type === 'collection') {
+        if (onCollectionSelected) onCollectionSelected(searchResult.item);
+      } else if (searchResult.text === ADVANCED_SEARCH_ITEM_VALUE) {
         if (onAdvancedSearchSelected) onAdvancedSearchSelected('');
       }
     }
@@ -68,10 +68,10 @@ class SourceSearchContainer extends React.Component {
     }
   }
 
-  handleMenuItemKeyDown = (item, event) => {
+  handleMenuItemKeyDown = (searchResult, event) => {
     switch (event.key) {
       case 'Enter':
-        this.handleClick(item);
+        this.handleClick(searchResult);
         break;
       default: break;
     }
@@ -113,6 +113,7 @@ class SourceSearchContainer extends React.Component {
       return ({
         text: item.name,
         value: menuItemValue,
+        item,
       });
     });
 
@@ -139,12 +140,13 @@ class SourceSearchContainer extends React.Component {
     });
   }
 
-  handleNewRequest = (searchString, index) => {
+  handleNewRequest = (item, index) => {
     const { search } = this.props;
     if (index === -1) { // they pressed enter in the text field
-      search(searchString);
+      search(item.text);
     }
-    // else: they clicked an item and it will take care of things itself
+    // we want to send the user to the media url. The handleClick is no longer triggered in new/old material-ui setup
+    this.handleClick(item);
   }
 
   render() {
@@ -157,7 +159,7 @@ class SourceSearchContainer extends React.Component {
         <SearchButton />
         <div className="fetching">{fetchingStatus}</div>
         <AutoComplete
-          label={formatMessage(localMessages.searchHint)}
+          hintText={formatMessage(localMessages.searchHint)}
           fullWidth
           openOnFocus
           searchText={this.state.lastSearchString}

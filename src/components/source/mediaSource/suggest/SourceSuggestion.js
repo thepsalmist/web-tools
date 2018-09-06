@@ -3,6 +3,9 @@ import React from 'react';
 import { FormattedMessage, FormattedDate, injectIntl } from 'react-intl';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
 import DataCard from '../../../common/DataCard';
 import { DeleteButton, AddButton } from '../../../common/IconButton';
 import messages from '../../../../resources/messages';
@@ -68,13 +71,26 @@ class SourceSuggestion extends React.Component {
       dialogs = (
         <div className="source-suggestion-confirmation">
           <Dialog
-            title={formatMessage(localMessages.approveTitle)}
             className="app-dialog"
-            actions={[
+            modal="false"
+            open={this.state.showApproveDialog}
+            onClose={() => this.setState({ showApproveDialog: false })}
+          >
+            <DialogTitle><FormattedMessage {...localMessages.approveTitle} /></DialogTitle>
+            <DialogContent>
+              <FormattedMessage {...localMessages.approveIntro} values={{ url: suggestion.url, email: suggestion.email }} />
+              <TextField
+                name="rejectReason"
+                id={approveReasonInputId}
+                fullWidth
+                hintText={formatMessage(localMessages.reasonHintText)}
+              />
+            </DialogContent>
+            <DialogActions>
               <AppButton
                 label={formatMessage(messages.cancel)}
                 onTouchTap={() => this.setState({ showApproveDialog: false })}
-              />,
+              />
               <AppButton
                 label={formatMessage(localMessages.approve)}
                 primary
@@ -82,28 +98,30 @@ class SourceSuggestion extends React.Component {
                   this.setState({ showApproveDialog: false });
                   onApprove(suggestion, document.getElementById(approveReasonInputId).value);
                 }}
-              />,
-            ]}
-            modal={false}
-            open={this.state.showApproveDialog}
-            onRequestClose={() => this.setState({ showApproveDialog: false })}
-          >
-            <p><FormattedMessage {...localMessages.approveIntro} values={{ url: suggestion.url, email: suggestion.email }} /></p>
-            <TextField
-              name="rejectReason"
-              id={approveReasonInputId}
-              fullWidth
-              hintText={formatMessage(localMessages.reasonHintText)}
-            />
+              />
+            </DialogActions>
           </Dialog>
           <Dialog
-            title={formatMessage(localMessages.rejectTitle)}
             className="app-dialog"
-            actions={[
+            modal="false"
+            open={this.state.showRejectDialog}
+            onClose={() => this.setState({ showRejectDialog: false })}
+          >
+            <DialogTitle><FormattedMessage {...localMessages.rejectTitle} /></DialogTitle>
+            <DialogContent>
+              <FormattedMessage {...localMessages.rejectIntro} values={{ url: suggestion.url, email: suggestion.email }} />
+              <TextField
+                name="rejectReason"
+                id={rejectReasonInputId}
+                fullWidth
+                hintText={formatMessage(localMessages.reasonHintText)}
+              />
+            </DialogContent>
+            <DialogActions>
               <AppButton
                 label={formatMessage(messages.cancel)}
                 onTouchTap={() => this.setState({ showRejectDialog: false })}
-              />,
+              />
               <AppButton
                 label={formatMessage(localMessages.reject)}
                 primary
@@ -111,19 +129,8 @@ class SourceSuggestion extends React.Component {
                   this.setState({ showRejectDialog: false });
                   onReject(suggestion, document.getElementById(rejectReasonInputId).value);
                 }}
-              />,
-            ]}
-            modal={false}
-            open={this.state.showRejectDialog}
-            onRequestClose={() => this.setState({ showRejectDialog: false })}
-          >
-            <p><FormattedMessage {...localMessages.rejectIntro} values={{ url: suggestion.url, email: suggestion.email }} /></p>
-            <TextField
-              name="rejectReason"
-              id={rejectReasonInputId}
-              fullWidth
-              hintText={formatMessage(localMessages.reasonHintText)}
-            />
+              />
+            </DialogActions>
           </Dialog>
         </div>
       );

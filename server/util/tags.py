@@ -18,6 +18,7 @@ STORY_UNDATEABLE_TAG = 8877812  # if a story has this tag, that means it was und
 NYT_LABELER_1_0_0_TAG_ID = 9360669  # the tag that indicates a story was tagged by the NYT labeller version 1
 NYT_LABELS_TAG_SET_ID = 1963  # the tag set all the descriptor tags are in
 NYT_LABELS_SAMPLE_SIZE = 10000  # the sample size to use for looking at NYT descriptor tags
+BAD_THEMES = [9360842, 9360856]
 
 # constants for versioning of geo-tagged stories
 TAG_SET_GEOCODER_VERSION = 1937
@@ -90,6 +91,17 @@ def is_metadata_tag_set(tag_sets_id):
             return True
     return False
 
+
+def is_bad_theme(tag_id):
+    '''
+    Find out if a tag set is one used to hold metadata on a Source.
+    :param tag_sets_id: the id of tag set
+    :return: True if it is a valid metadata tag set, False if it is not
+    '''
+
+    if int(tag_id) in BAD_THEMES:
+            return True
+    return False
 
 def format_name_from_label(user_label):
     formatted_name = re.sub('\W|^(?=\d)', '_', user_label)

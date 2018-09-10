@@ -20,7 +20,7 @@ function prodConfigGenerator(basedir, toolName) {
     plugins: [
       // Create the manifest file that Flask and other frameworks use.
       new ManifestRevisionPlugin(
-        path.join(basedir, 'server', 'static', 'gen', toolName, 'manifest.json'),
+        path.resolve(basedir, 'server', 'static', 'gen', toolName, 'manifest.json'),
         { rootAssetPath: './src' },
       ),
     ],

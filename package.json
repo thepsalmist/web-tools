@@ -70,7 +70,8 @@
     "redux-simple-promise": "2.0.2",
     "redux-thunk": "2.2.0",
     "simple-assign": "^0.1.0",
-    "slugify": "^1.2.9"
+    "slugify": "^1.2.9",
+    "webpack-dev-server": "^3.1.8"
   },
   "devDependencies": {
     "autoprefixer": "^8.6.3",

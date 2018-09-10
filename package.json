@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "webpack --mode development",
-    "build": "webpack --mode production",
+    "webpack-version": "webpack --version",
     "explorer-dev": "MC_APP_NAME=explorer webpack-serve --config config/webpack.config.js --port 2992 --content build/public",
     "explorer-release": "NODE_ENV=production MC_APP_NAME=explorer webpack --config config/webpack.config.js",
     "sources-dev": "MC_APP_NAME=sources webpack-serve --config config/webpack.config.js --port 2992 --content build/public",
@@ -119,7 +118,7 @@
     "script-loader": "0.7.0",
     "style-loader": "^0.21.0",
     "uglifyjs-webpack-plugin": "^1.2.7",
-    "webpack": "^4.12.0",
+    "webpack": "^4.18.0",
     "webpack-cli": "^3.0.8",
     "webpack-config": "^6.1.2",
     "webpack-md5-hash": "^0.0.6",

@@ -14,6 +14,7 @@ import { EditButton, ExploreButton } from '../../common/IconButton';
 import SourceMgrHeaderContainer from '../SourceMgrHeaderContainer';
 import { getCurrentDate, oneMonthBefore } from '../../../lib/dateUtil';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
+import messages from '../../../resources/messages';
 
 const localMessages = {
   searchNow: { id: 'collection.details.searchNow', defaultMessage: 'Search in Explorer' },
@@ -47,10 +48,10 @@ class SelectCollectionContainer extends React.Component {
 
   render() {
     const { children, collection } = this.props;
-    const titleHandler = parentTitle => `${collection.label} | ${parentTitle}`;
+    const { formatMessage } = this.props.intl;
     return (
       <div className="collection-container">
-        <Helmet><title>{titleHandler()}</title></Helmet>
+        <Helmet><title>{`${collection.label} | ${formatMessage(messages.sourcesToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
         <SourceMgrHeaderContainer />
         <SourceControlBar>
           <a href="search-in-explorer" onClick={this.searchInExplorer} >

@@ -14,6 +14,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import { EditButton, ExploreButton } from '../../common/IconButton';
 import SourceMgrHeaderContainer from '../SourceMgrHeaderContainer';
+import messages from '../../../resources/messages';
 
 const localMessages = {
   title: { id: 'source.title', defaultMessage: '{name} | Source Summary | Media Cloud' },
@@ -51,7 +52,7 @@ class SelectSourceContainer extends React.Component {
     const { formatMessage } = this.props.intl;
     return (
       <div className="source-container">
-        <Helmet><title>{formatMessage(localMessages.title, { name: source.name })}</title></Helmet>
+        <Helmet><title>{`${source.name} | ${formatMessage(messages.sourcesToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
         <SourceMgrHeaderContainer />
         <SourceControlBar>
           <a href="search-in-explorer" onClick={this.searchInExplorer} >

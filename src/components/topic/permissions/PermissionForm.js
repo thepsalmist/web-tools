@@ -5,7 +5,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
-// import { notEmptyString } from '../../../lib/formValidators';
+import { notEmptyString } from '../../../lib/formValidators';
 import AppButton from '../../common/AppButton';
 import withIntlForm from '../../common/hocs/IntlForm';
 import { DeleteButton } from '../../common/IconButton';
@@ -71,7 +71,7 @@ PermissionForm.propTypes = {
   intl: PropTypes.object.isRequired,
   renderTextField: PropTypes.func.isRequired,
   renderSelect: PropTypes.func.isRequired,
-  initialValues: PropTypes.object,
+  initialValues: PropTypes.array,
   name: PropTypes.string,
 
   pristine: PropTypes.bool.isRequired,
@@ -81,7 +81,7 @@ PermissionForm.propTypes = {
   showDeleteButton: PropTypes.bool,
 };
 
-/* function validate(values) {
+function validate(values) {
   const errors = {};
   if (!notEmptyString(values.email)) {
     errors.email = localMessages.emailError;
@@ -90,21 +90,19 @@ PermissionForm.propTypes = {
     errors.permission = localMessages.permissionError;
   }
   return errors;
-} */
+}
 
 const reduxFormConfig = {
   form: 'updatePermissionFormParent',
-  // validate,
+  validate,
   enableReinitialize: true,
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true,
 };
 
 export default
-injectIntl(
-  withIntlForm(
-    reduxForm(reduxFormConfig)(
-      PermissionForm
-    )
+withIntlForm(
+  reduxForm(reduxFormConfig)(
+    PermissionForm
   )
 );

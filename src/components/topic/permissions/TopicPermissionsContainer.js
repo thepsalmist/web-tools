@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { reduxForm, formValueSelector } from 'redux-form';
+import { reduxForm } from 'redux-form';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import PermissionForm from './PermissionForm';
@@ -11,8 +11,6 @@ import BackLinkingControlBar from '../BackLinkingControlBar';
 import { updateFeedback } from '../../../actions/appActions';
 import { PERMISSION_TOPIC_NONE } from '../../../lib/auth';
 import messages from '../../../resources/messages';
-
-const formSelector = formValueSelector('updatePermissionFormParent');
 
 const localMessages = {
   title: { id: 'topic.permissions.title', defaultMessage: 'Topic Permissions' },
@@ -33,6 +31,7 @@ class TopicPermissionsContainer extends React.Component {
 
   render() {
     const { handleUpdate, handleSubmit, permissions, topicId } = this.props;
+    const permissionsPlusOne = [{ email: 'test', permission: '' }, ...permissions];
     return (
       <div className="topic-permissioned">
         <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
@@ -50,25 +49,21 @@ class TopicPermissionsContainer extends React.Component {
                   <h2><FormattedMessage {...localMessages.addTitle} /></h2>
                 </Col>
               </Row>
-              <PermissionForm name="newPermissionForm" initialValues={{ email: 'test', permission: null }} onSave={handleUpdate} />
+              <PermissionForm name="0" initialValues={permissionsPlusOne} onSave={handleUpdate} />
               <Row>
                 <Col md={10} sm={12}>
                   <h2><FormattedMessage {...localMessages.existingTitle} /></h2>
                   <p><FormattedMessage {...localMessages.existingIntro} /></p>
                 </Col>
               </Row>
-              { permissions.map((p, index) => {
-                const initVals = {};
-                initVals[`updatePermissionForm${index}`] = p;
-                return (
-                  <PermissionForm
-                    name={`${index}`}
-                    key={p.email}
-                    initialValues={permissions} // b/c of how this is constructed - we need each form to have all the permission data
-                    onDelete={this.handleDelete}
-                  />
-                );
-              })}
+              { permissions.map((p, index) => (
+                <PermissionForm
+                  name={`${index + 1}`}
+                  key={p.email}
+                  initialValues={permissionsPlusOne} // b/c of how this is constructed - we need each form to have all the permission data
+                  onDelete={this.handleDelete}
+                />
+              ))}
             </Grid>
           </div>
         </form>
@@ -92,14 +87,12 @@ TopicPermissionsContainer.propTypes = {
   // from form helper
   handleSubmit: PropTypes.func,
   initialValues: PropTypes.object,
-  formValues: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
   fetchStatus: state.topics.selected.permissions.fetchStatus,
   permissions: state.topics.selected.permissions.list,
-  formQuery: formSelector(state.form, 'updatePermissionFormParent'),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -141,6 +134,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 const reduxFormConfig = {
   form: 'updatePermissionFormParent',
+  enableReinitialize: true,
   // validate,
   destroyOnUnmount: false,
 };

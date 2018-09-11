@@ -30,12 +30,12 @@ class TopicPermissionsContainer extends React.Component {
   }
 
   render() {
-    const { handleUpdate, handleSubmit, permissions, topicId } = this.props;
+    const { handleUpdate, permissions, topicId, handleSubmit } = this.props;
     const permissionsPlusOne = [{ email: 'test', permission: '' }, ...permissions];
     return (
       <div className="topic-permissioned">
         <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
-        <form name="updatePermissionFormParent" onSubmit={handleSubmit(handleUpdate.bind(this))} onDelete={this.handleDelete}>
+        <form name="updatePermissionFormParent" onSubmit={handleSubmit} onDelete={this.handleDelete}>
           <div className="topic-acl">
             <Grid>
               <Row>
@@ -49,7 +49,7 @@ class TopicPermissionsContainer extends React.Component {
                   <h2><FormattedMessage {...localMessages.addTitle} /></h2>
                 </Col>
               </Row>
-              <PermissionForm name="0" initialValues={permissionsPlusOne} onSave={handleUpdate} />
+              <PermissionForm index="0" initialValues={permissionsPlusOne} onSave={handleUpdate} />
               <Row>
                 <Col md={10} sm={12}>
                   <h2><FormattedMessage {...localMessages.existingTitle} /></h2>
@@ -58,8 +58,9 @@ class TopicPermissionsContainer extends React.Component {
               </Row>
               { permissions.map((p, index) => (
                 <PermissionForm
-                  name={`${index + 1}`}
+                  index={`${index + 1}`}
                   key={p.email}
+                  onSave={this.handleUpdate}
                   initialValues={permissionsPlusOne} // b/c of how this is constructed - we need each form to have all the permission data
                   onDelete={this.handleDelete}
                 />
@@ -85,14 +86,15 @@ TopicPermissionsContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   permissions: PropTypes.array,
   // from form helper
-  handleSubmit: PropTypes.func,
   initialValues: PropTypes.object,
+  handleSubmit: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
   fetchStatus: state.topics.selected.permissions.fetchStatus,
   permissions: state.topics.selected.permissions.list,
+  formValues: state.form.updatePermissionFormParent,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -121,8 +123,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    handleUpdate: (values) => {
-      dispatchProps.doUpdatePermission(stateProps.topicId, values);
+    handleUpdate: (index) => {
+      dispatchProps.doUpdatePermission(stateProps.topicId, stateProps.formValues.values[index]);
     },
     handleDelete: (email) => {
       dispatchProps.doDeletePermission(stateProps.topicId, email);

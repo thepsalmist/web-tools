@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Field, reduxForm, FormSection } from 'redux-form';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -26,7 +26,7 @@ const localMessages = {
 };
 
 const PermissionForm = (props) => {
-  const { name, pristine, submitting, renderTextField, renderSelect, initialValues, showDeleteButton, onDelete } = props;
+  const { index, pristine, submitting, renderTextField, renderSelect, initialValues, showDeleteButton, onSave, onDelete } = props;
   const { formatMessage } = props.intl;
   const buttonLabel = (initialValues.email === null) ? formatMessage(localMessages.addUser) : formatMessage(localMessages.updateUser);
   let deleteButton = null;
@@ -34,7 +34,7 @@ const PermissionForm = (props) => {
     deleteButton = <DeleteButton tooltip={formatMessage(localMessages.remove)} onClick={() => onDelete(initialValues.email)} />;
   }
   return (
-    <FormSection name={name} className="permission-form update-permission">
+    <FormSection name={index} className="permission-form update-permission">
       <Row>
         <Col lg={5} md={5} sm={12}>
           <Field
@@ -58,6 +58,7 @@ const PermissionForm = (props) => {
             disabled={pristine || submitting}
             label={buttonLabel}
             color="primary"
+            onClick={() => onSave(index)}
           />
           {deleteButton}
         </Col>
@@ -72,11 +73,12 @@ PermissionForm.propTypes = {
   renderTextField: PropTypes.func.isRequired,
   renderSelect: PropTypes.func.isRequired,
   initialValues: PropTypes.array,
-  name: PropTypes.string,
+  index: PropTypes.string,
 
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   // from parent
+  onSave: PropTypes.func,
   onDelete: PropTypes.func,
   showDeleteButton: PropTypes.bool,
 };

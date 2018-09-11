@@ -31,7 +31,7 @@ const PermissionForm = (props) => {
   const buttonLabel = (initialValues.email === null) ? formatMessage(localMessages.addUser) : formatMessage(localMessages.updateUser);
   let deleteButton = null;
   if (showDeleteButton === true) {
-    deleteButton = <DeleteButton tooltip={formatMessage(localMessages.remove)} onClick={() => onDelete(initialValues.email)} />;
+    deleteButton = <DeleteButton tooltip={formatMessage(localMessages.remove)} onClick={() => onDelete(index)} />;
   }
   return (
     <FormSection name={index} className="permission-form update-permission">

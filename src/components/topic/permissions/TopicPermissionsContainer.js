@@ -30,12 +30,12 @@ class TopicPermissionsContainer extends React.Component {
   }
 
   render() {
-    const { handleUpdate, permissions, topicId, handleSubmit } = this.props;
-    const permissionsPlusOne = [{ email: 'test', permission: '' }, ...permissions];
+    const { handleUpdate, permissions, topicId, handleSubmit, handleDelete } = this.props;
+    const permissionsPlusOne = [{ email: '', permission: '' }, ...permissions];
     return (
       <div className="topic-permissioned">
         <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
-        <form name="updatePermissionFormParent" onSubmit={handleSubmit} onDelete={this.handleDelete}>
+        <form name="updatePermissionFormParent" onSubmit={handleSubmit} onDelete={handleDelete}>
           <div className="topic-acl">
             <Grid>
               <Row>
@@ -60,9 +60,10 @@ class TopicPermissionsContainer extends React.Component {
                 <PermissionForm
                   index={`${index + 1}`}
                   key={p.email}
-                  onSave={this.handleUpdate}
+                  onSave={handleUpdate}
                   initialValues={permissionsPlusOne} // b/c of how this is constructed - we need each form to have all the permission data
-                  onDelete={this.handleDelete}
+                  showDeleteButton
+                  onDelete={handleDelete}
                 />
               ))}
             </Grid>
@@ -112,8 +113,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         }
       });
   },
-  doDeletePermission: (topicId, email) => {
-    dispatch(updatePermission(topicId, email, PERMISSION_TOPIC_NONE))
+  doDeletePermission: (topicId, values) => {
+    dispatch(updatePermission(topicId, values.email, PERMISSION_TOPIC_NONE))
       .then(() => dispatch(fetchPermissionsList(topicId)));
   },
   fetchData: (topicId) => {
@@ -126,8 +127,8 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
     handleUpdate: (index) => {
       dispatchProps.doUpdatePermission(stateProps.topicId, stateProps.formValues.values[index]);
     },
-    handleDelete: (email) => {
-      dispatchProps.doDeletePermission(stateProps.topicId, email);
+    handleDelete: (index) => {
+      dispatchProps.doDeletePermission(stateProps.topicId, stateProps.formValues.values[index]);
     },
     asyncFetch: () => {
       dispatchProps.fetchData(stateProps.topicId);

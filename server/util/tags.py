@@ -64,7 +64,15 @@ VALID_METADATA_IDS = [
 ]
 
 
-def processed_by_cliff_query_clause():
+def processed_for_themes_query_clause():
+    '''
+    :return: A solr query clause you can use to filter for stories that have been tagged by any version
+     of our CLIFF geotagging engine (ie. tagged with people, places, and organizations)
+    '''
+    return u"(tags_id_stories:{})".format(NYT_LABELER_1_0_0_TAG_ID)
+
+
+def processed_for_entities_query_clause():
     '''
     :return: A solr query clause you can use to filter for stories that have been tagged by any version
      of our CLIFF geotagging engine (ie. tagged with people, places, and organizations)
@@ -72,7 +80,7 @@ def processed_by_cliff_query_clause():
     return u"(tags_id_stories:({} {}))".format(CLIFF_CLAVIN_2_4_1_TAG_ID, CLIFF_CLAVIN_2_3_0_TAG_ID)
 
 
-def processed_by_cliff_tag_ids():
+def processed_for_entities_tag_ids():
     '''
     :return: A list of the tags that mean a story has been processed by some version of CLIFF (ie. the story
      has been tagged with people, places, and organizations)
@@ -102,6 +110,7 @@ def is_bad_theme(tag_id):
     if int(tag_id) in BAD_THEMES:
             return True
     return False
+
 
 def format_name_from_label(user_label):
     formatted_name = re.sub('\W|^(?=\d)', '_', user_label)

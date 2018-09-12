@@ -9,8 +9,9 @@ from server.util.request import api_error_handler, form_fields_required, argumen
 
 logger = logging.getLogger(__name__)
 
-ACTIVATION_URL = "https://tools.mediacloud.org/api/user/activate/confirm"
-PASSWORD_RESET_URL = "https://tools.mediacloud.org/#/user/reset-password"
+AUTH_MANAGEMENT_DOMAIN = 'https://tools.mediacloud.org' # because it is too hard to tell which site you are on
+ACTIVATION_URL = AUTH_MANAGEMENT_DOMAIN + "/api/user/activate/confirm"
+PASSWORD_RESET_URL = AUTH_MANAGEMENT_DOMAIN + "/api/user/reset-password-request-receive"
 
 
 @app.route('/api/login', methods=['POST'])
@@ -69,17 +70,15 @@ def signup():
 @arguments_required('email', 'activation_token')
 def activation_confirm():
     logger.debug("activation request from %s", request.args['email'])
-    domain = 'https://tools.mediacloud.org'
-    redirect_to_return = None
     try:
         results = mc.authActivate(request.args['email'], request.args['activation_token'])
         if results['success'] is 1:
-            redirect_to_return = redirect(domain + '/#/user/activated?success=1')
+            redirect_to_return = redirect(AUTH_MANAGEMENT_DOMAIN + '/#/user/activated?success=1')
         else:
-            redirect_to_return = redirect(domain + '/#/user/activated?success=0&msg=' + results['error'])
+            redirect_to_return = redirect(AUTH_MANAGEMENT_DOMAIN + '/#/user/activated?success=0&msg=' + results['error'])
     except MCException as mce:
         # this is long stack trace so we have to trim it for url length support
-        redirect_to_return = redirect(domain + '/#/user/activated?success=0&msg=' + str(mce[:300]))
+        redirect_to_return = redirect(AUTH_MANAGEMENT_DOMAIN + '/#/user/activated?success=0&msg=' + str(mce[:300]))
     return redirect_to_return
 
 
@@ -100,6 +99,17 @@ def request_password_reset():
     logger.debug("request password reset from %s", request.form['email'])
     results = mc.authSendPasswordResetLink(request.form["email"], PASSWORD_RESET_URL)
     return jsonify(results)
+
+
+# crazy redirect workaround becasue the backend isn't handling the #-based URL part we want to use
+@app.route('/api/user/reset-password-request-receive', methods=['GET'])
+@arguments_required('email', 'password_reset_token')
+@api_error_handler
+def request_password_reset_receive():
+    redirect_to_return = redirect(AUTH_MANAGEMENT_DOMAIN +
+                                  '/#/user/reset-password?email={}&password_reset_token={}'.format(
+                                      request.args['email'], request.args['password_reset_token']))
+    return redirect_to_return
 
 
 @app.route('/api/user/reset-password', methods=['POST'])

@@ -78,9 +78,6 @@ class AppMenu extends React.Component {
           open={this.state.open}
           anchorEl={this.state.anchorEl}
           onClose={this.close}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-          getContentAnchorEl={null}
         >
           {newItems}
         </Menu>

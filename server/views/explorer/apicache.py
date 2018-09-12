@@ -4,7 +4,8 @@ from server import mc, TOOL_API_KEY
 from server.views import TAG_COUNT_UI_LENGTH
 from server.cache import cache, key_generator
 from server.auth import user_mediacloud_client, user_mediacloud_key, is_user_logged_in, user_admin_mediacloud_client
-from server.util.tags import processed_by_cliff_query_clause, is_bad_theme
+from server.util.tags import processed_for_entities_query_clause, processed_for_themes_query_clause, is_bad_theme,\
+    NYT_LABELS_TAG_SET_ID, CLIFF_ORGS, CLIFF_PEOPLE, GEO_TAG_SET
 import server.util.wordembeddings as wordembeddings
 from server.util.stringutil import trimSolrDate
 
@@ -74,7 +75,12 @@ def _cached_sentence_list(mc_api_key, q, fq, rows, include_stories=True):
 
 def top_tags_with_coverage(q, fq, tag_sets_id, limit=TAG_COUNT_UI_LENGTH):
     tag_counts = _most_used_tags(q, fq, tag_sets_id)
-    coverage = cliff_coverage(q, fq)
+    if tag_sets_id in [GEO_TAG_SET, CLIFF_ORGS, CLIFF_PEOPLE]:
+        coverage = _entity_coverage(q, fq)
+    elif tag_sets_id is NYT_LABELS_TAG_SET_ID:
+        coverage = _theme_coverage(q, fq)
+    else:
+        raise RuntimeError("Unknown tag set it for computing coverage: {}".format(tag_sets_id))
     for t in tag_counts:  # add in pct of what's been run through CLIFF to total results
         try:
             t['pct'] = float(t['count']) / coverage['counts']
@@ -90,14 +96,17 @@ def _most_used_tags(q, fq, tag_sets_id):
     tags = _cached_most_used_tags(api_key, q, fq, tag_sets_id, 1000)
     # extract bogus NYT tags
     for t in tags:
-        if (is_bad_theme(t['tags_id'])):
+        if is_bad_theme(t['tags_id']):
             tags.remove(t)
     return tags
 
 
-def cliff_coverage(q, fq):
-    # dict of info about stories tagged by CLIFF
-    return tag_set_coverage(q, u'({}) AND {}'.format(q, processed_by_cliff_query_clause()), fq)
+def _entity_coverage(q, fq):
+    return tag_set_coverage(q, u'({}) AND {}'.format(q, processed_for_entities_query_clause()), fq)
+
+
+def _theme_coverage(q, fq):
+    return tag_set_coverage(q, u'({}) AND {}'.format(q, processed_for_themes_query_clause()), fq)
 
 
 def tag_set_coverage(total_q, subset_q, fq):

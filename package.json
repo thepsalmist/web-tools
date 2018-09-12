@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "webpack-version": "webpack --version",
     "explorer-dev": "MC_APP_NAME=explorer webpack-serve --config config/webpack.config.js --port 2992 --content build/public",
     "explorer-release": "NODE_ENV=production MC_APP_NAME=explorer webpack --config config/webpack.config.js",
     "sources-dev": "MC_APP_NAME=sources webpack-serve --config config/webpack.config.js --port 2992 --content build/public",
@@ -20,7 +19,7 @@
     ]
   },
   "dependencies": {
-    "@material-ui/core": "^3.0.2",
+    "@material-ui/core": "^3.0.3",
     "@material-ui/icons": "^3.0.1",
     "airbnb-js-shims": "^1.0.1",
     "babel-polyfill": "6.23.0",
@@ -70,8 +69,7 @@
     "redux-simple-promise": "2.0.2",
     "redux-thunk": "2.2.0",
     "simple-assign": "^0.1.0",
-    "slugify": "^1.2.9",
-    "webpack-dev-server": "^3.1.8"
+    "slugify": "^1.2.9"
   },
   "devDependencies": {
     "autoprefixer": "^8.6.3",
@@ -108,12 +106,12 @@
     "image-webpack-loader": "3.3.1",
     "manifest-revision-webpack-plugin": "0.4.0",
     "mini-css-extract-plugin": "^0.4.1",
-    "nightmare": "2.10.0",
+    "nightmare": "3.0.1",
     "node-sass": "^4.9.0",
     "optimize-css-assets-webpack-plugin": "^5.0.0",
     "postcss-loader": "^2.1.5",
     "react-hot-loader": "3.0.0-beta.6",
-    "react-scripts": "0.9.5",
+    "react-scripts": "1.1.5",
     "redux-devtools": "3.4.1",
     "sass-loader": "^7.0.3",
     "script-loader": "0.7.0",

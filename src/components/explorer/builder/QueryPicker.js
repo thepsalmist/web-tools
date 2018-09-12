@@ -165,15 +165,17 @@ class QueryPicker extends React.Component {
     updateCurrentQuery(updatedQuery, propertyName);
   }
 
+  getAllActiveQueries = queries => (queries.filter(q => q.deleted !== true));
+
   render() {
-    const { isLoggedIn, selected, queries, isEditable, addAQuery, handleLoadUserSearches, handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll } = this.props;
+    const { isLoggedIn, selected, queries, isEditable, addAQuery, handleDuplicateQuery, handleLoadUserSearches, handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
     let queryPickerContent; // editable if demo mode
     let queryFormContent; // hidden if demo mode
     let fixedQuerySlides;
     let canSelectMedia = false;
 
-    const unDeletedQueries = queries.filter(q => q.deleted !== true);
+    const unDeletedQueries = this.getAllActiveQueries(queries);
     if (unDeletedQueries && unDeletedQueries.length > 0 && selected) {
       fixedQuerySlides = unDeletedQueries.map((query, index) => (
         <div key={index}>
@@ -190,6 +192,7 @@ class QueryPicker extends React.Component {
             updateDemoQueryLabel={newValue => this.updateDemoQueryLabel(query, newValue)}
             onSearch={this.saveAndSearch}
             onDelete={() => this.handleDeleteAndSelectQuery(query)}
+            onDuplicate={() => handleDuplicateQuery(query, queries)}
             // loadDialog={loadQueryEditDialog}
           />
         </div>
@@ -322,6 +325,7 @@ QueryPicker.propTypes = {
   addAQuery: PropTypes.func.isRequired,
   handleLoadUserSearches: PropTypes.func.isRequired,
   handleLoadSelectedSearch: PropTypes.func.isRequired,
+  handleDuplicateQuery: PropTypes.func.isRequired,
   savedSearches: PropTypes.array.isRequired,
   sendAndSaveUserSearch: PropTypes.func.isRequired,
   handleDeleteUserSearch: PropTypes.func.isRequired,
@@ -418,6 +422,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     if (query) {
       dispatch(markAsDeletedQuery(query));
       dispatch(selectQuery(replacementSelectionQuery));
+    }
+  },
+  handleDuplicateQuery: (query, queries) => {
+    const dupeQuery = Object.assign({}, query, { index: queries.length }); // this will be an issue
+    if (query) {
+      dispatch(addCustomQuery(dupeQuery));
+      dispatch(selectQuery(dupeQuery));
     }
   },
 });

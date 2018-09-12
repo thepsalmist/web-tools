@@ -195,3 +195,11 @@ def topic_word_media(topics_id, word):
     response = topic_media_list(user_mediacloud_key(), topics_id, q=word)
     return jsonify(response)
 '''
+
+
+@app.route('/api/topics/<topics_id>/words/<word>/similar', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def topic_similar_words(topics_id, word):
+    results = apicache.topic_similar_words(topics_id, word)
+    return jsonify(results)

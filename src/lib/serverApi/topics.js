@@ -355,3 +355,8 @@ export function topicTopOrgs(topicId, params) {
   const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'sort', 'limit', 'q', 'linkId']);
   return createApiPromise(`/api/topics/${topicId}/entities/organizations`, acceptedParams);
 }
+
+export function topicSimilarWords(topicId, theWord, params) {
+  const acceptedParams = acceptParams(params, ['snapshotId']);
+  return createApiPromise(`/api/topics/${topicId}/words/${theWord}/similar`, acceptedParams);
+}

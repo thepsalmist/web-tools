@@ -212,6 +212,18 @@ def _word2vec_topic_2d_results(topics_id, snapshots_id, words):
     return word2vec_results
 
 
+def topic_similar_words(topics_id, word):
+    # no need for user-specific cache on this
+    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    results = _word2vec_topic_similar_words(topics_id, snapshots_id, [word])
+    return results[0]['results']
+
+
+def _word2vec_topic_similar_words(topics_id, snapshots_id, words):
+    word2vec_results = wordembeddings.topic_similar_words(topics_id, snapshots_id, words)
+    return word2vec_results
+
+
 @cache.cache_on_arguments(function_key_generator=key_generator)
 def _cached_word2vec_google_2d_results(words):
     word2vec_results = wordembeddings.google_news_2d(words)

@@ -1,32 +1,29 @@
+from flask import jsonify
 import requests
 
 from server import config
 
-GOOGLE_NEWS_MODEL_NAME = 'GoogleNews-vectors-negative300'
-TOPIC_MODEL_NAME_FORMAT = 'w2v-topic-model-{}'
-
-
-def _server_url():
-    return config.get('WORD_EMBEDDINGS_SERVER_URL')
-
+# Helpers for accessing data from the Media Cloud Word Embeddings server
 
 def google_news_2d(words):
-    try:
-        response = requests.post("{}/embeddings/2d.json".format(_server_url()),
-                                 data={'words[]': words,
-                                       'model': GOOGLE_NEWS_MODEL_NAME})
-        return response.json()['results']
-    except Exception:
-        return []
+    results = _query_for_json("/api/v2/google-news/2d",
+                              {'words[]': words})
+    return results
 
 
 def topic_2d(topics_id, snapshots_id, words):
-    try:
-        # response = requests.post("{}/embeddings/2d.json".format(_server_url()),
-        response = requests.post("{}/api/v2/topics/{}/snapshots/{}/2d".format(_server_url(), topics_id, snapshots_id),
-                                 data={'words[]': words,
-                                       'model': TOPIC_MODEL_NAME_FORMAT.format(topics_id)})
-        response_json = response.json()
-        return response_json['results']
-    except Exception:
-        return []
+    results = _query_for_json("/api/v2/topics/{}/snapshots/{}/2d".format(topics_id, snapshots_id),
+                              {'words[]': words})
+    return results
+
+
+def topic_similar_words(topics_id, snapshots_id, words):
+    results = _query_for_json("/api/v2/topics/{}/snapshots/{}/similar-words".format(topics_id, snapshots_id),
+                              {'words[]': words})
+    return results
+
+
+def _query_for_json(endpoint, data):
+    response = requests.post("{}{}".format(config.get('WORD_EMBEDDINGS_SERVER_URL'), endpoint), data=data)
+    response_json = response.json()
+    return response_json['results']

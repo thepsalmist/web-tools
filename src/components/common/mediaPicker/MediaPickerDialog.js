@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import Modal from '@material-ui/core/Modal';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -9,7 +9,6 @@ import PickedMediaContainer from './PickedMediaContainer';
 import MediaPickerResultsContainer from './MediaPickerResultsContainer';
 import { fetchMediaPickerFeaturedCollections, initializePreviouslySelectedMedia, clearSelectedMedia } from '../../../actions/systemActions';
 import AppButton from '../AppButton';
-import { AddQueryButton } from '../IconButton';
 import { PICK_FEATURED } from '../../../lib/explorerUtil';
 import { TAG_SET_MC_ID } from '../../../lib/tagUtil';
 
@@ -109,14 +108,12 @@ class MediaPickerDialog extends React.Component {
 
     return (
       <div className="add-media">
-        <AddQueryButton
+        <AppButton
           onClick={() => this.handleModifyClick(initMedia)}
           tooltip={formatMessage(localMessages.addMedia)}
+          label="Add Media"
         />
         {modalContent}
-        <div className="add-media-label">
-          <FormattedMessage {...localMessages.addMedia} />
-        </div>
       </div>
     );
   }

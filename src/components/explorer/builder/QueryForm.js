@@ -7,7 +7,7 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import CopyAllComponent from '../../common/CopyAllComponent';
-import SourceCollectionsFieldList from '../../common/mediaPicker/SourceCollectionsFieldList';
+import SourceCollectionsMediaForm from '../../common/form/SourceCollectionsMediaForm';
 import MediaPickerDialog from '../../common/mediaPicker/MediaPickerDialog';
 import QueryHelpDialog from '../../common/help/QueryHelpDialog';
 import MediaHelpDialog from '../../common/help/MediaHelpDialog';
@@ -37,7 +37,7 @@ const localMessages = {
   queryStringError: { id: 'explorer.queryBuilder.queryStringError', defaultMessage: 'Your {name} query is missing keywords.' },
   startDateWarning: { id: 'explorer.queryBuilder.warning.startDate', defaultMessage: 'Start Date must be before End Date' },
   invalidDateWarning: { id: 'explorer.queryBuilder.warning.invalidDate', defaultMessage: 'Use the YYYY-MM-DD format' },
-  noMediaSpecified: { id: 'explorer.queryBuilder.warning.noMediaSpecified', defaultMessage: 'Searching all media - generally not a great idea' },
+  noMediaSpecified: { id: 'explorer.queryBuilder.warning.noMediaSpecified', defaultMessage: 'No media selected' },
   copyQueryKeywordTitle: { id: 'explorer.queryform.copyQueryQ', defaultMessage: 'Copy Query Keywords' },
   copyQueryDatesTitle: { id: 'explorer.queryform.copyQueryDates', defaultMessage: 'Copy Query Dates' },
   copyQueryMediaTitle: { id: 'explorer.queryform.copyQueryMedia', defaultMessage: 'Copy Query Media' },
@@ -131,16 +131,18 @@ class QueryForm extends React.Component {
                       onOk={() => handleCopyAll(MEDIA)}
                     />
                   </div>
-                  <SourceCollectionsFieldList
+                  <SourceCollectionsMediaForm
                     className="query-field"
                     form="queryForm"
                     destroyOnUnmount={false}
-                    enableReinitialize
                     onDelete={onMediaDelete}
-                    initialValues={cleanedInitialValues}
+                    initialValues={cleanedInitialValues.media}
                     allowRemoval={isEditable}
-                    showWarningIfEmpty
+                    name="media"
+                    title="title"
+                    intro="intro"
                   />
+                  <br />
                   {mediaPicker}
                   <div className="query-field-desc">
                     <FormattedMessage {...localMessages.selectSandCDesc} />
@@ -269,7 +271,11 @@ function validate(values, props) {
   if (validDate(values.startDate) && validDate(values.endDate) && isStartDateAfterEndDate(values.startDate, values.endDate)) {
     errors.startDate = { _error: formatMessage(localMessages.startDateWarning) };
   }
-
+  if ((!values.collections || !values.collections.length)
+    && (!values.sources || !values.sources.length)
+    && (!values.media || !values.media.length)) {
+    errors.media = { _error: formatMessage(localMessages.noMediaSpecified) };
+  }
   return errors;
 }
 

@@ -1,8 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import Button from '@material-ui/core/Button';
+import AppButton from './AppButton';
 import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
 import messages from '../../resources/messages';
 
 const localMessages = {
@@ -32,14 +35,13 @@ class CopyAllComponent extends React.Component {
     const { label, title, msg } = this.props;
     const { formatMessage } = this.props.intl;
     const dialogActions = [
-      <Button
-        variant="outlined"
+      <AppButton
+        key={formatMessage(messages.cancel)}
         label={formatMessage(messages.cancel)}
-        primary
         onClick={this.handleCancel}
       />,
-      <Button
-        variant="outlined"
+      <AppButton
+        key={formatMessage(messages.ok)}
         label={formatMessage(messages.ok)}
         primary
         onClick={this.handleClose}
@@ -58,16 +60,17 @@ class CopyAllComponent extends React.Component {
     return (
       <div className="copy-all">
         <label htmlFor="q">{label}</label>
-        <a href="#" role="button" title={formatMessage(localMessages.title)} tabIndex="0" onClick={this.handleOpen}>&nbsp;&#x00BB;</a>
+        <a role="button" title={formatMessage(localMessages.title)} tabIndex="0" onTouchTap={this.handleOpen}>&nbsp;&#x00BB;</a>
         <Dialog
-          title={dialogTitle}
-          actions={dialogActions}
-          modal={false}
           className="app-dialog"
           open={this.state.open}
-          onRequestClose={this.handleClose}
+          onClose={this.handleClose}
         >
-          {content}
+          <DialogTitle>{dialogTitle}</DialogTitle>
+          <DialogContent>
+            {content}
+          </DialogContent>
+          <DialogActions>{dialogActions}</DialogActions>
         </Dialog>
       </div>
     );

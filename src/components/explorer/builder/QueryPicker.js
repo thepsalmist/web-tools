@@ -166,7 +166,7 @@ class QueryPicker extends React.Component {
   }
 
   render() {
-    const { isLoggedIn, selected, queries, isEditable, handleLoadUserSearches, handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll } = this.props;
+    const { isLoggedIn, selected, queries, isEditable, addAQuery, handleLoadUserSearches, handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
     let queryPickerContent; // editable if demo mode
     let queryFormContent; // hidden if demo mode
@@ -218,9 +218,9 @@ class QueryPicker extends React.Component {
                 <AddQueryButton
                   key={fixedQuerySlides.length} // this isn't working
                   tooltip={formatMessage(localMessages.addQuery)}
-                  onClick={() => this.addAQuery(defaultQuery)}
+                  onClick={() => addAQuery(defaultQuery)}
                 />
-                <a href="" onTouchTap={() => this.addAQuery(defaultQuery)}><FormattedMessage {...localMessages.addQuery} /></a>
+                <a href="" onTouchTap={() => addAQuery(defaultQuery)}><FormattedMessage {...localMessages.addQuery} /></a>
               </div>
             </div>
           </div>

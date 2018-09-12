@@ -4,7 +4,7 @@ import flask_login
 
 from server import app
 from server.auth import user_mediacloud_key
-from server.util.tags import CLIFF_PEOPLE, CLIFF_ORGS, processed_by_cliff_tag_ids
+from server.util.tags import CLIFF_PEOPLE, CLIFF_ORGS, processed_for_entities_tag_ids
 from server.util.request import api_error_handler
 from server.views.topics.apicache import topic_tag_coverage, topic_tag_counts
 import server.util.csv as csv
@@ -17,7 +17,7 @@ ENTITY_DOWNLOAD_COLUMNS = ['tags_id', 'label', 'count', 'pct']
 
 
 def process_tags_for_coverage(topics_id, tag_counts):
-    coverage = topic_tag_coverage(topics_id, processed_by_cliff_tag_ids())
+    coverage = topic_tag_coverage(topics_id, processed_for_entities_tag_ids())
     top_tag_counts = tag_counts[:DEFAULT_DISPLAY_AMOUNT]
     for t in tag_counts:  # add in pct to ALL counts, not top, so CSV download can include them
         try:

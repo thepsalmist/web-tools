@@ -6,7 +6,7 @@ from flask import jsonify, request
 
 import server.util.csv as csv
 from server import app
-from server.views import TAG_COUNT_SAMPLE_SIZE, TAG_COUNT_DOWNLOAD_LENGTH
+from server.views import TAG_COUNT_DOWNLOAD_LENGTH
 from server.util.request import api_error_handler
 from server.util.tags import CLIFF_PEOPLE, CLIFF_ORGS, NYT_LABELS_TAG_SET_ID, is_bad_theme
 from server.views.explorer import parse_as_sample, parse_query_with_args_and_sample_search, parse_query_with_keywords, \

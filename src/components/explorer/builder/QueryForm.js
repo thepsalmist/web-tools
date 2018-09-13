@@ -142,7 +142,6 @@ class QueryForm extends React.Component {
                     title="title"
                     intro="intro"
                   />
-                  <br />
                   {mediaPicker}
                   <div className="query-field-desc">
                     <FormattedMessage {...localMessages.selectSandCDesc} />
@@ -183,8 +182,8 @@ class QueryForm extends React.Component {
                     disabled={!isEditable}
                     onChange={onDateChange}
                   />
+                  <div className="query-field-desc"><FormattedMessage {...localMessages.datesDesc} /></div>
                 </div>
-                <div className="query-field-desc"><FormattedMessage {...localMessages.datesDesc} /></div>
               </Col>
             </Row>
           </Grid>

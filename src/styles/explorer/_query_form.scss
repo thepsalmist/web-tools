@@ -16,9 +16,14 @@
       border: 1px solid $material-grey200;
       border-top: 0px;
       padding: 10px;
+      button {
+        margin: 15px 0 !important;
+      }
     }
     .error {
       color: red !important;
+      border: 1px solid $material-grey200;
+      padding: 10px;
     }
   }
 
@@ -79,10 +84,13 @@
       width: 108px !important;
       margin-top: 0px;
       vertical-align: top;
+      input {
+        padding: 20px 0;
+      }
     }
     .date-for-wrapper {
       padding: 0px 10px;
-      margin-top: 0px;
+      margin-top: 20px;
       display: inline-block;
       line-height: 41px;
       vertical-align: top;
@@ -91,6 +99,12 @@
       width: 108px !important;
       margin-top: 0px;
       vertical-align: top;
+      input {
+        padding: 20px 0;
+      }
+    }
+    .query-field-desc {
+      padding-top: 20px;
     }
   }
 

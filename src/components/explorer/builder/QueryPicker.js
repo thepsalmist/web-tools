@@ -29,6 +29,8 @@ const localMessages = {
 const formSelector = formValueSelector('queryForm');
 
 class QueryPicker extends React.Component {
+  getAllActiveQueries = queries => (queries.filter(q => q.deleted !== true));
+
   handleColorChange = (newColorInfo) => {
     // when user changes color we want to change it on all charts right away
     const { selected, formQuery, updateCurrentQuery } = this.props;
@@ -165,8 +167,6 @@ class QueryPicker extends React.Component {
     updateCurrentQuery(updatedQuery, propertyName);
   }
 
-  getAllActiveQueries = queries => (queries.filter(q => q.deleted !== true));
-
   render() {
     const { isLoggedIn, selected, queries, isEditable, addAQuery, handleDuplicateQuery, handleLoadUserSearches, handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
@@ -192,7 +192,7 @@ class QueryPicker extends React.Component {
             updateDemoQueryLabel={newValue => this.updateDemoQueryLabel(query, newValue)}
             onSearch={this.saveAndSearch}
             onDelete={() => this.handleDeleteAndSelectQuery(query)}
-            onDuplicate={() => handleDuplicateQuery(query, queries)}
+            /* onDuplicate={() => handleDuplicateQuery(query, queries)} */
             // loadDialog={loadQueryEditDialog}
           />
         </div>

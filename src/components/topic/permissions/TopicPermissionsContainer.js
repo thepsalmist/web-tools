@@ -26,16 +26,18 @@ const localMessages = {
   existingIntro: { id: 'topic.permissions.existing.intro', defaultMessage: 'Here is a list of the current users and what they are allowed to do.' },
   addTitle: { id: 'topic.permissions.add', defaultMessage: 'Add Someone to this Topic' },
   emailError: { id: 'topic.permissions.email.error', defaultMessage: 'You have to enter the email of a Media Cloud user.' },
-  failedToSave: { id: 'topic.permissions.email.failedSave', defaultMessage: 'Something went wrong! We couldn\'t save those permissions' },
+  failedToSave: { id: 'topic.permissions.email.failedSave', defaultMessage: 'We couldn\'t save those permissions. ' },
   saved: { id: 'topic.permissions.email.saveWorked', defaultMessage: 'Saved the new permissions.' },
   emailFieldHint: { id: 'topic.permissions.email.hint', defaultMessage: 'Enter someone\'s email' },
+  unknownEmail: { id: 'topic.permissions.email.unknown', defaultMessage: 'Unknown email {email}.' },
 };
-
 
 // render a list of permissions and the option to add one more
 const PermissionsList = ({ renderTextField, renderSelect, intl: { formatMessage }, fields, meta: { error, submitFailed } }) => (
   <div className="topic-permissions-list">
-    <AppButton onClick={() => fields.push({})}><FormattedMessage {...localMessages.addTitle} /></AppButton>
+    <AppButton onClick={() => fields.push({ permission: PERMISSION_TOPIC_READ })}>
+      <FormattedMessage {...localMessages.addTitle} />
+    </AppButton>
     {submitFailed && error && <span>{error}</span>}
     {fields.map((permission, index) => (
       <div className="topic-permission-item" key={`permission${index}`}>
@@ -92,7 +94,7 @@ class TopicPermissionsContainer extends React.Component {
               <p><FormattedMessage {...localMessages.intro} /></p>
             </Col>
           </Row>
-          <form name="updatePermissionFormParent" onSubmit={handleSubmit(handleUpdate)}>
+          <form name="updateTopicPermissions" onSubmit={handleSubmit(handleUpdate)}>
             <Row>
               <Col lg={12} md={12} sm={12}>
                 <FieldArray name="permissions" component={HocPermissionsList} />
@@ -125,7 +127,6 @@ TopicPermissionsContainer.propTypes = {
   // from state
   topicId: PropTypes.number,
   fetchStatus: PropTypes.string.isRequired,
-  permissions: PropTypes.array,
   // from form helper
   initialValues: PropTypes.object,
   handleSubmit: PropTypes.func,
@@ -136,37 +137,33 @@ TopicPermissionsContainer.propTypes = {
 const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
   fetchStatus: state.topics.selected.permissions.fetchStatus,
-  permissions: state.topics.selected.permissions.list,
   initialValues: { permissions: state.topics.selected.permissions.list },
-  formValues: state.form.updatePermissionFormParent,
 });
 
+const UKNOWN_EMAIL_ERROR_REGEX = /Unknown email '(.*)'/;
+
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  updatePermissions: (topicId, permissions) => {
-    // save and then update the list of existing permissions
-    dispatch(updatePermissions(topicId, permissions))
-      .then((response) => {
-        if (response.success === 0) {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failedToSave) }));
-        } else {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.saved) }));
-          dispatch(fetchPermissionsList(topicId));
+  // save and then update the list of existing permissions
+  updatePermissions: (topicId, permissions) => dispatch(updatePermissions(topicId, permissions))
+    .then((response) => {
+      if (response.success === 0) {
+        let extraDetail;
+        if (UKNOWN_EMAIL_ERROR_REGEX.test(response.results)) {
+          [extraDetail] = response.results.match(UKNOWN_EMAIL_ERROR_REGEX);
         }
-      });
-  },
-  fetchData: (topicId) => {
-    dispatch(fetchPermissionsList(topicId));
-  },
+        dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failedToSave) + extraDetail }));
+      } else {
+        dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.saved) }));
+        dispatch(fetchPermissionsList(topicId));
+      }
+    }),
+  fetchData: topicId => dispatch(fetchPermissionsList(topicId)),
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    handleUpdate: (values) => {
-      dispatchProps.updatePermissions(stateProps.topicId, values.permissions);
-    },
-    asyncFetch: () => {
-      dispatchProps.fetchData(stateProps.topicId);
-    },
+    handleUpdate: values => dispatchProps.updatePermissions(stateProps.topicId, values.permissions),
+    asyncFetch: () => dispatchProps.fetchData(stateProps.topicId),
   });
 }
 
@@ -185,8 +182,10 @@ function validate(values) {
 }
 
 const reduxFormConfig = {
-  form: 'updatePermissionFormParent',
+  form: 'updateTopicPermissions',
   validate,
+  destroyOnUnmount: false,
+  enableReinitialize: true,
 };
 
 export default

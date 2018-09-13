@@ -31,7 +31,7 @@ function withIntlForm(Component) {
       return intlCustom;
     };
 
-    renderTextField = ({ autoComplete, input, meta: { touched, error, asyncValidating }, ...custom }) => {
+    renderTextField = ({ input, meta: { touched, error, asyncValidating }, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
       if (intlCustom && intlCustom.helpertext !== undefined) {
         intlCustom.helperText = intlCustom.helpertext;
@@ -42,9 +42,6 @@ function withIntlForm(Component) {
           {...input}
           {...intlCustom}
           error={Boolean(touched && error)}
-          inputProps={{
-            autoComplete,
-          }}
           helperText={touched ? this.intlIfObject(error) : ''}
           margin="normal"
         />

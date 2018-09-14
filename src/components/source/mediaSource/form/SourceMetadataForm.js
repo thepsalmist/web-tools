@@ -25,7 +25,7 @@ const SourceMetadataForm = props => (
           id={TAG_SET_PUBLICATION_COUNTRY}
           name="publicationCountry"
           form="sourceForm"
-          initialValues={props.initialValues.metadata.pub_country}
+          initialValues={props.initialValues.metadata ? props.initialValues.metadata.pub_country : null}
           label={props.intl.formatMessage(messages.pubCountry)}
         />
       </Col>
@@ -37,7 +37,7 @@ const SourceMetadataForm = props => (
           id={TAG_SET_PUBLICATION_STATE}
           name="publicationState"
           form="sourceForm"
-          initialValues={props.initialValues.metadata.pub_state}
+          initialValues={props.initialValues.metadata ? props.initialValues.metadata.pub_state : null}
           label={props.intl.formatMessage(messages.pubState)}
         />
       </Col>
@@ -49,7 +49,7 @@ const SourceMetadataForm = props => (
           name="primaryLanguage"
           form="sourceForm"
           disabled
-          initialValues={props.initialValues.metadata.language}
+          initialValues={props.initialValues.metadata ? props.initialValues.metadata.language : null}
           label={props.intl.formatMessage(messages.language)}
         />
       </Col>
@@ -61,7 +61,7 @@ const SourceMetadataForm = props => (
           name="countryOfFocus"
           form="sourceForm"
           disabled
-          initialValues={props.initialValues.metadata.about_country}
+          initialValues={props.initialValues.metadata ? props.initialValues.metadata.about_country : null}
           label={props.intl.formatMessage(messages.countryOfFocus)}
         />
       </Col>
@@ -75,7 +75,7 @@ const SourceMetadataForm = props => (
           name="mediaType"
           form="sourceForm"
           showDescription
-          initialValues={props.initialValues.metadata.media_type}
+          initialValues={props.initialValues.metadata ? props.initialValues.metadata.media_type : null}
           label={props.intl.formatMessage(messages.mediaType)}
         />
       </Col>

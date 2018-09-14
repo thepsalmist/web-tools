@@ -6,7 +6,7 @@ import json
 from mediacloud.error import MCException
 
 from server import app
-from server.util.request import form_fields_required, json_error_response, api_error_handler
+from server.util.request import json_error_response, api_error_handler
 from server.auth import user_admin_mediacloud_client
 
 logger = logging.getLogger(__name__)

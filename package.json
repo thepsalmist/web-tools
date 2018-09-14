@@ -59,6 +59,7 @@
     "react-redux": "5.0.7",
     "react-router": "3.0.5",
     "react-router-redux": "4.0.8",
+    "react-select": "^2.0.0",
     "react-sigma": "^1.2.19",
     "react-slick": "^0.23.0",
     "react-tap-event-plugin": "3.0.2",

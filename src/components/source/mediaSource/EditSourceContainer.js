@@ -8,10 +8,11 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { updateSource, fetchSourceDetails } from '../../../actions/sourceActions';
 import { updateFeedback } from '../../../actions/appActions';
 import SourceForm from './form/SourceForm';
-import { isCollectionTagSet, TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE } from '../../../lib/tagUtil';
+import { isCollectionTagSet } from '../../../lib/tagUtil';
 import { getUserRoles, hasPermissions, PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import Permissioned from '../../common/Permissioned';
 import { nullOrUndefined } from '../../../lib/formValidators';
+import messages from '../../../resources/messages';
 
 const localMessages = {
   mainTitle: { id: 'source.maintitle', defaultMessage: 'Modify this Source' },
@@ -22,12 +23,6 @@ const localMessages = {
 const EditSourceContainer = (props) => {
   const { handleSave, source, user } = props;
   const { formatMessage } = props.intl;
-  const titleHandler = parentTitle => `${formatMessage(localMessages.mainTitle)} | ${parentTitle}`;
-  const pubCountry = source.media_source_tags.find(t => t.tag_sets_id === TAG_SET_PUBLICATION_COUNTRY);
-  const pubState = source.media_source_tags.find(t => t.tag_sets_id === TAG_SET_PUBLICATION_STATE);
-  const pLanguage = source.media_source_tags.find(t => t.tag_sets_id === TAG_SET_PRIMARY_LANGUAGE);
-  const pCountryFocus = source.media_source_tags.find(t => t.tag_sets_id === TAG_SET_COUNTRY_OF_FOCUS);
-  const pMediaType = source.media_source_tags.find(t => t.tag_sets_id === TAG_SET_MEDIA_TYPE);
   const canSeePrivateCollections = hasPermissions(getUserRoles(user), PERMISSION_MEDIA_EDIT);
   const intialValues = {
     ...source,
@@ -35,15 +30,15 @@ const EditSourceContainer = (props) => {
     collections: source.media_source_tags
       .map(t => ({ ...t, name: t.label }))
       .filter(t => (isCollectionTagSet(t.tag_sets_id) && (t.show_on_media || canSeePrivateCollections))),
-    publicationCountry: pubCountry ? pubCountry.tags_id : undefined,
-    publicationState: pubState ? pubState.tags_id : undefined,
-    primaryLanguage: pLanguage ? pLanguage.tags_id : undefined,
-    countryOfFocus: pCountryFocus ? pCountryFocus.tags_id : undefined,
-    mediaType: pMediaType ? pMediaType.tags_id : undefined,
+    publicationCountry: source.metadata.pub_country,
+    publicationState: source.metadata.pub_state,
+    primaryLanguage: source.metadata.language,
+    countryOfFocus: source.metadata.about_country,
+    mediaType: source.metadata.media_type,
   };
   return (
     <div className="edit-source">
-      <Helmet><title>{titleHandler()}</title></Helmet>
+      <Helmet><title>{`${formatMessage(messages.edit)} ${source.name} | ${formatMessage(messages.sourcesToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
       <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
         <Grid>
           <Row>
@@ -94,7 +89,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     };
     metadataTagFormKeys.forEach((key) => { // the metdata tags are encoded in individual properties on the form
       if (key in values) {
-        infoToSave[key] = nullOrUndefined(values[key]) ? '' : values[key];
+        infoToSave[key] = nullOrUndefined(values[key]) ? '' : values[key].tags_id;
       }
     });
     if ('collections' in values) {
@@ -102,16 +97,17 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     } else {
       infoToSave['collections[]'] = [];
     }
-    dispatch(updateSource(infoToSave))
+    return dispatch(updateSource(infoToSave))
       .then((result) => {
         if (result.success === 1) {
           // need to fetch it again because something may have changed
-          dispatch(fetchSourceDetails(ownProps.params.sourceId))
+          return dispatch(fetchSourceDetails(ownProps.params.sourceId))
             .then(() => {
               dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
               dispatch(push(`/sources/${ownProps.params.sourceId}`));
             });
         }
+        return null; // no promise to return here
       });
   },
 });

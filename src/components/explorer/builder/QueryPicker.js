@@ -16,6 +16,8 @@ import { selectQuery, updateQuery, addCustomQuery, loadUserSearches, saveUserSea
 import { AddQueryButton } from '../../common/IconButton';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
 import { autoMagicQueryLabel, generateQueryParamString, KEYWORD, DATES, MEDIA } from '../../../lib/explorerUtil';
+import { ALL_MEDIA } from '../../../lib/mediaUtil';
+
 
 const localMessages = {
   mainTitle: { id: 'explorer.querypicker.mainTitle', defaultMessage: 'Query List' },
@@ -65,11 +67,17 @@ class QueryPicker extends React.Component {
       ...selected,
       ...formQuery,
     };
-    const updatedSources = sourceAndCollections.filter(m => m.type === 'source' || m.media_id);
-    const updatedCollections = sourceAndCollections.filter(m => m.type === 'collection' || m.tags_id);
-    updatedQuery.collections = updatedCollections;
-    updatedQuery.sources = updatedSources;
-    updateCurrentQueryThenReselect(updatedQuery);
+    if (sourceAndCollections.filter(m => m.id === ALL_MEDIA).length === 0) {
+      const updatedSources = sourceAndCollections.filter(m => m.type === 'source' || m.media_id);
+      const updatedCollections = sourceAndCollections.filter(m => m.type === 'collection' || m.tags_id);
+      updatedQuery.collections = updatedCollections;
+      updatedQuery.sources = updatedSources;
+      updateCurrentQueryThenReselect(updatedQuery);
+    } else {
+      updatedQuery.collections = sourceAndCollections;
+      updatedQuery.sources = [];
+      updateCurrentQueryThenReselect(updatedQuery);
+    }
   }
 
   saveAndSearch = () => {
@@ -168,7 +176,7 @@ class QueryPicker extends React.Component {
   }
 
   render() {
-    const { isLoggedIn, selected, queries, isEditable, addAQuery, handleDuplicateQuery, handleLoadUserSearches, handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll } = this.props;
+    const { isLoggedIn, selected, queries, isEditable, addAQuery, /* handleDuplicateQuery, */ handleLoadUserSearches, handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
     let queryPickerContent; // editable if demo mode
     let queryFormContent; // hidden if demo mode

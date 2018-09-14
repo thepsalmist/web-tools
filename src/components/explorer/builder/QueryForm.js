@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedMessage } from 'react-intl';
-import { reduxForm, Field, propTypes } from 'redux-form';
+import { connect } from 'react-redux';
+import { FormattedMessage } from 'react-intl';
+import { reduxForm, Field, propTypes, formValueSelector } from 'redux-form';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
@@ -16,6 +17,8 @@ import { emptyString, validDate } from '../../../lib/formValidators';
 import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil';
 import { KEYWORD, MEDIA, DATES } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
+
+const formSelector = formValueSelector('queryForm');
 
 const localMessages = {
   mainTitle: { id: 'explorer.queryBuilder.maintitle', defaultMessage: 'Create Query' },
@@ -56,9 +59,10 @@ class QueryForm extends React.Component {
   }
 
   render() {
-    const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, handleLoadSearches, handleDeleteSearch, handleLoadSelectedSearch, savedSearches, searchNickname, handleSaveSearch,
+    const { initialValues, mediaUpdates, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, handleLoadSearches, handleDeleteSearch, handleLoadSelectedSearch, savedSearches, searchNickname, handleSaveSearch,
       submitting, handleSubmit, onSave, onMediaChange, renderTextField, renderTextFieldWithFocus, handleCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
+    const updatedMedia = formSelector(this.state, 'media');
     const cleanedInitialValues = initialValues ? { ...initialValues } : {};
     if (cleanedInitialValues.disabled === undefined) {
       cleanedInitialValues.disabled = false;
@@ -207,7 +211,7 @@ class QueryForm extends React.Component {
                   <AppButton
                     type="submit"
                     label={buttonLabel}
-                    disabled={submitting}
+                    disabled={mediaUpdates && mediaUpdates.length === 0 || submitting}
                     onClick={onWillSearch}
                     primary
                   />
@@ -252,7 +256,13 @@ QueryForm.propTypes = {
   submitting: PropTypes.bool.isRequired,
   isEditable: PropTypes.bool.isRequired,
   focusRequested: PropTypes.func.isRequired,
+  mediaUpdates: PropTypes.object,
 };
+
+
+const mapStateToProps = state => ({
+  mediaUpdates: formSelector(state, 'media'),
+});
 
 function validate(values, props) {
   const { formatMessage } = props.intl;
@@ -290,10 +300,10 @@ function warn(values, props) {
 }
 
 export default
-injectIntl(
-  withIntlForm(
-    withHelp(localMessages.queryHelpTitle, localMessages.queryHelpContent)(
-      reduxForm({ propTypes, validate, warn })(
+withIntlForm(
+  withHelp(localMessages.queryHelpTitle, localMessages.queryHelpContent)(
+    reduxForm({ propTypes, validate, warn })(
+      connect(mapStateToProps, null)(
         QueryForm
       ),
     ),

@@ -5,14 +5,14 @@ import { reduxForm, FieldArray, Field, propTypes } from 'redux-form';
 import withIntlForm from '../hocs/IntlForm';
 import SourceOrCollectionWidget from '../SourceOrCollectionWidget';
 
-const renderCollectionSelector = ({ allowRemoval, fields, meta }) => (
+const renderCollectionSelector = ({ allowRemoval, fields, meta, onDelete }) => (
   <div>
     {fields.map((name, index) => (
       <Field
         key={name}
         name={name}
         component={(info) => {
-          const handleDelete = ((allowRemoval || info.meta.dirty) && fields.length > 1) ? () => { fields.remove(index); } : undefined;
+          const handleDelete = ((allowRemoval || info.meta.dirty)) ? () => { fields.remove(index); onDelete(info.input.value); } : undefined;
           const val = info.input.value;
           let tempObj = {};
           if (val && typeof val === 'number') {
@@ -35,10 +35,11 @@ renderCollectionSelector.propTypes = {
   meta: PropTypes.object,
   allowRemoval: PropTypes.bool,
   validate: PropTypes.func,
+  onDelete: PropTypes.func,
 };
 
 const SourceCollectionsMediaForm = (props) => {
-  const { name, initialValues, allowRemoval } = props;
+  const { name, initialValues, allowRemoval, onDelete } = props;
   return (
     <div className="explorer-source-collection-form">
       <FieldArray
@@ -48,7 +49,7 @@ const SourceCollectionsMediaForm = (props) => {
         allowRemoval={allowRemoval}
         component={renderCollectionSelector}
         initialValues={initialValues}
-        // onDelete={onDelete} // not using - update back up?
+        onDelete={onDelete}
       />
     </div>
   );

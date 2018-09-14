@@ -11,6 +11,7 @@ import { fetchMediaPickerFeaturedCollections, initializePreviouslySelectedMedia,
 import AppButton from '../AppButton';
 import { PICK_FEATURED } from '../../../lib/explorerUtil';
 import { TAG_SET_MC_ID } from '../../../lib/tagUtil';
+import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.select.title', defaultMessage: 'title' },
@@ -64,7 +65,12 @@ class MediaPickerDialog extends React.Component {
     const { onConfirmSelection, selectedMedia, setQueryFormChildDialogOpen, reset } = this.props;
     this.setState({ open: false });
     if (confirm) {
-      onConfirmSelection(selectedMedia); // passed in from containing element
+      const allTest = selectedMedia.filter(m => m.id === ALL_MEDIA);
+      if (allTest.length > 0) {
+        onConfirmSelection(allTest); // if selected, this takes precedence
+      } else {
+        onConfirmSelection(selectedMedia); // passed in from containing element
+      }
     }
     reset();
     if (setQueryFormChildDialogOpen) {

@@ -1,8 +1,44 @@
 {
   "releases": [
     {
+      "date": "2018-09-14",
+      "version": "v3.4.2",
+      "notes": [
+        {
+          "apps": [ "topics", "sources", "explorer" ],
+          "type": "Fix",
+          "note": "Password reset link works again."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Topic creation page looks better."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Copy-to-all button in Explorer works again."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Explorer can now show NYT themes more often."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Topic permission no longer blank out after you change them."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "We show clear labels again while editing source metadata."
+        }
+      ]
+    },
+    {
       "date": "2018-09-05",
-      "version": "v3.4.0",
+      "version": "v3.4.1",
       "notes": [
         {
           "apps": [ "sources" ],

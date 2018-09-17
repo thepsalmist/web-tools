@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2018-09-17",
+      "version": "v3.4.3",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Solved problem preventing some users from downloading topic story CSV files."
+        }
+      ]
+    },
+    {
       "date": "2018-09-14",
       "version": "v3.4.2",
       "notes": [

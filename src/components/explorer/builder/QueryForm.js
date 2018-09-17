@@ -58,11 +58,17 @@ class QueryForm extends React.Component {
     this.setState(prevState => ({ childDialogOpen: !prevState.childDialogOpen }));
   }
 
+  evalAllQueriesForValidMedia = () => {
+    const { queries, mediaUpdates } = this.props;
+    const anyQueriesNoMedia = queries.filter(q => (q.index !== mediaUpdates.index) && q.media && q.media.length === 0).length; // if any query is missing media
+    const thisCurrentQueryFormNoMedia = mediaUpdates && (mediaUpdates.media === undefined || mediaUpdates.media.length === 0) && mediaUpdates.sources.length === 0 && mediaUpdates.collections.length === 0;
+    return anyQueriesNoMedia || thisCurrentQueryFormNoMedia;
+  }
+
   render() {
-    const { initialValues, mediaUpdates, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, handleLoadSearches, handleDeleteSearch, handleLoadSelectedSearch, savedSearches, searchNickname, handleSaveSearch,
+    const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, handleLoadSearches, handleDeleteSearch, handleLoadSelectedSearch, savedSearches, searchNickname, handleSaveSearch,
       submitting, handleSubmit, onSave, onMediaChange, renderTextField, renderTextFieldWithFocus, handleCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
-    const updatedMedia = formSelector(this.state, 'media');
     const cleanedInitialValues = initialValues ? { ...initialValues } : {};
     if (cleanedInitialValues.disabled === undefined) {
       cleanedInitialValues.disabled = false;
@@ -88,6 +94,7 @@ class QueryForm extends React.Component {
       );
       mediaLabel = formatMessage(localMessages.selectSandC);
     }
+    const queriesMissingMedia = this.evalAllQueriesForValidMedia();
     if (!selected) { return null; }
     return (
       <form className="app-form query-form" name="queryForm" onSubmit={handleSubmit(onSave)}>
@@ -211,7 +218,7 @@ class QueryForm extends React.Component {
                   <AppButton
                     type="submit"
                     label={buttonLabel}
-                    disabled={mediaUpdates && mediaUpdates.length === 0 || submitting}
+                    disabled={queriesMissingMedia || submitting}
                     onClick={onWillSearch}
                     primary
                   />
@@ -249,7 +256,9 @@ QueryForm.propTypes = {
   handleCopyAll: PropTypes.func.isRequired,
   onMediaDelete: PropTypes.func.isRequired,
   onDateChange: PropTypes.func.isRequired,
-  // from form healper
+  // from state
+  queries: PropTypes.array,
+  // from form helper
   updateQuery: PropTypes.func,
   handleSubmit: PropTypes.func,
   pristine: PropTypes.bool.isRequired,
@@ -261,7 +270,8 @@ QueryForm.propTypes = {
 
 
 const mapStateToProps = state => ({
-  mediaUpdates: formSelector(state, 'media'),
+  mediaUpdates: formSelector(state, 'index', 'media', 'sources', 'collections'),
+  queries: state.explorer.queries.queries ? state.explorer.queries.queries : null,
 });
 
 function validate(values, props) {

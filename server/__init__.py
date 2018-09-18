@@ -107,7 +107,7 @@ def create_app():
     my_app.config['SENTRY_USER_ATTRS'] = ['email']
     try:
         sentry_dsn = config.get('SENTRY_DSN')
-        Sentry(my_app, dsn=sentry_dsn, name=server_app)
+        Sentry(my_app, dsn=sentry_dsn)
     except ConfigException as e:
         logger.warn(e)
     # set up webpack
@@ -218,3 +218,4 @@ if (server_app == SERVER_APP_EXPLORER) or is_dev_mode():
     import server.views.explorer.story_counts
     import server.views.explorer.geo
     import server.views.explorer.tags
+    import server.views.explorer.saved_searches

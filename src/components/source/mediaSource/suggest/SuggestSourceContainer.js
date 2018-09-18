@@ -28,7 +28,7 @@ const SuggestSourceContainer = (props) => {
   const titleHandler = formatMessage(localMessages.mainTitle);
   return (
     <div>
-      <Helmet><title>{titleHandler()}</title></Helmet>
+      <Helmet><title>{titleHandler}</title></Helmet>
       <Grid>
         <Row>
           <Col lg={12}>
@@ -42,11 +42,11 @@ const SuggestSourceContainer = (props) => {
           <Row>
             <Col lg={12}>
               <AppButton
-                style={{ marginTop: 30 }}
                 type="submit"
+                style={{ marginTop: 30 }}
                 label={formatMessage(localMessages.addButton)}
                 disabled={pristine || submitting}
-                primary
+                color="primary"
               />
             </Col>
           </Row>
@@ -93,7 +93,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       feedurl: (values.feedurl) || null,
       reason: (values.reason) || null,
     };
-    if ('collections' in values) {  // the collections are a FieldArray on the form
+    if ('collections' in values) { // the collections are a FieldArray on the form
       infoToSave['collections[]'] = values.collections.map(s => s.id);
     } else {
       infoToSave['collections[]'] = [];
@@ -101,22 +101,22 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     return dispatch(suggestSource(infoToSave))
       .then((results) => {
         if (results.success === 1) {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
           dispatch(reset('suggestionForm')); // empty it so they don't resubmit by accident
         } else {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.errorFeedback) }));
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.errorFeedback) }));
         }
       });
   },
 });
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        connect(mapStateToProps, mapDispatchToProps)(
-         SuggestSourceContainer
-        )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      connect(mapStateToProps, mapDispatchToProps)(
+        SuggestSourceContainer
       )
     )
-  );
+  )
+);

@@ -21,6 +21,6 @@ SafelyFormattedNumber.propTypes = {
 };
 
 export default
-  injectIntl(
-    SafelyFormattedNumber
-  );
+injectIntl(
+  SafelyFormattedNumber
+);

@@ -46,7 +46,4 @@ FocalTechniqueDescription.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    FocalTechniqueDescription
-  );
+export default injectIntl(FocalTechniqueDescription);

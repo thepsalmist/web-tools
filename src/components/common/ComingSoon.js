@@ -18,6 +18,6 @@ ComingSoon.propTypes = {
 };
 
 export default
-  injectIntl(
-    ComingSoon
-  );
+injectIntl(
+  ComingSoon
+);

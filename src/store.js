@@ -36,12 +36,11 @@ function configProductionStore(appName) {
         breadcrumbDataFromAction: action => (
           { STRING: action.str }
         ),
-      }),
-    ),
+      })),
   ));
 }
 
-let store;   // singleton store
+let store; // singleton store
 
 // acts as a singleton factory method
 function getStore(appName) {

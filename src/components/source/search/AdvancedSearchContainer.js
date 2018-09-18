@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import Divider from 'material-ui/Divider';
+import Divider from '@material-ui/core/Divider';
 import AdvancedSearchForm from './AdvancedSearchForm';
 import AdvancedSearchResultsContainer from './AdvancedSearchResultsContainer';
 
@@ -17,7 +17,6 @@ const localMessages = {
 };
 
 class AdvancedSearchContainer extends React.Component {
-
   constructor(props) {
     super(props);
     const defaultQueryStr = (props.urlQueryString) ? props.urlQueryString : null;
@@ -80,13 +79,12 @@ class AdvancedSearchContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 AdvancedSearchContainer.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   location: PropTypes.object,
   // from dispatch
   // from url
@@ -98,8 +96,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps)(
-      AdvancedSearchContainer
-    ),
-  );
+injectIntl(
+  connect(mapStateToProps)(
+    AdvancedSearchContainer
+  ),
+);

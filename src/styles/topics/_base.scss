@@ -6,27 +6,26 @@
     color: $topics-primary;
   }
 
-  .app-button {
-    &.hovering :hover {
-      background-color: $topics-darker !important;
+  .chip.chip-collection {
+    div.app-icon.app-icon-large.app-icon-collection {
+      svg {
+        padding-top: 10px;
+      }
     }
   }
-
-  .app-icon-button {
-    &.hovering :hover {
-      background-color: $topics-darker !important;
-    }  	
-  }
-
   .app-icon-filled-star > svg {
     fill: $topics-primary;
   }
 
   #nav-toolbar {
-    background-color: $topics-primary;
+    background-color: $topics-darker;
     li.topics {
       border-bottom: 2px solid white;
     }
+  }
+
+  #content {
+    padding-bottom: 0px;
   }
 
 }

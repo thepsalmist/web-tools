@@ -7,8 +7,8 @@ import withAsyncFetch from '../../../common/hocs/AsyncContainer';
 import { fetchCollectionList } from '../../../../actions/sourceActions';
 import CollectionTable from '../../../common/CollectionTable';
 import TabSelector from '../../../common/TabSelector';
-import { TAG_SET_MC_ID, isCollectionTagSet, canSeePrivateCollections } from '../../../../lib/tagUtil';
-import { PERMISSION_MEDIA_EDIT } from '../../../../lib/auth';
+import { TAG_SET_MC_ID, isCollectionTagSet } from '../../../../lib/tagUtil';
+import { PERMISSION_MEDIA_EDIT, getUserRoles, hasPermissions } from '../../../../lib/auth';
 import Permissioned from '../../../common/Permissioned';
 
 const localMessages = {
@@ -20,9 +20,11 @@ class MCCollectionListContainer extends React.Component {
   state = {
     selectedViewIndex: 0,
   };
+
   render() {
-    const { name, collections, linkToFullUrl } = this.props;
+    const { name, collections, linkToFullUrl, user } = this.props;
     const { formatMessage } = this.props.intl;
+    const canSeePrivateCollections = hasPermissions(getUserRoles(user), PERMISSION_MEDIA_EDIT);
     const privateColl = collections.filter(t => (isCollectionTagSet(t.tag_sets_id) && (!t.show_on_media || canSeePrivateCollections)));
     const allOtherCollections = collections.filter(t => (isCollectionTagSet(t.tag_sets_id) && (t.show_on_media)));
 
@@ -88,10 +90,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        MCCollectionListContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      MCCollectionListContainer
     )
-  );
+  )
+);

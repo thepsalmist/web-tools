@@ -5,8 +5,22 @@
   &.controlbar-topic {
     background-color: $white !important;
 
+    .about-topic {
+      .app-icon-help {
+        background-color: $topics-primary;
+        path, circle {
+          fill: white;
+        }
+      }
+    }
+
     .jumps {
       font-weight: bold;
+      margin-left: 15px;
+    }
+
+    .about-topic {
+      display: inline-block;
       margin-left: 15px;
     }
 
@@ -37,13 +51,15 @@
         }
       }
     }
+
     .filter {
       background-color: $material-grey800;;
       .filter-selector {
-
-        .snapshot-selector, .focus-selector {
-          div {
-          }
+        color: $white !important;
+        padding: 10px 0px;
+        label {
+          color: $white !important;
+          font-size: 12px;
         }
       }
     }

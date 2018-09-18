@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import FontIcon from 'material-ui/FontIcon';
+import Icon from '@material-ui/core/Icon';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 export const LEVEL_INFO = 'info';
 export const LEVEL_WARNING = 'warning';
 export const LEVEL_ERROR = 'error';
+export const LEVEL_DETAIL = 'info_outline';
 
 const localMessages = {
   details: { id: 'errors.internal.details', defaultMessage: 'details' },
@@ -18,6 +19,7 @@ function composeNotice(level) {
     state = {
       showDetails: false,
     };
+
     render() {
       const { children, details } = this.props;
       const { formatMessage } = this.props.intl;
@@ -34,7 +36,7 @@ function composeNotice(level) {
               href={`#${formatMessage(localMessages.details)}`}
               onClick={(evt) => {
                 evt.preventDefault();
-                this.setState({ showDetails: !this.state.showDetails });
+                this.setState(prevState => ({ showDetails: !prevState.showDetails }));
               }}
             >
               <FormattedMessage {...localMessages.details} />
@@ -45,7 +47,7 @@ function composeNotice(level) {
       }
       return (
         <div className={`notice ${level}-notice`}>
-          <FontIcon className="material-icons" color={'#000000'}>{fontIconName}</FontIcon>
+          <Icon className="material-icons" color="disabled">{fontIconName}</Icon>
           {children}
           {detailsContent}
         </div>
@@ -61,6 +63,8 @@ function composeNotice(level) {
 }
 
 export const InfoNotice = composeNotice(LEVEL_INFO);
+
+export const DetailNotice = composeNotice(LEVEL_DETAIL);
 
 export const WarningNotice = composeNotice(LEVEL_WARNING);
 

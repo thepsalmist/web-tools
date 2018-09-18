@@ -38,6 +38,7 @@ class TopicStoryCountPreview extends React.Component {
       fetchData(nextProps.query, user);
     }
   }
+
   render() {
     const { count, user, query } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
@@ -54,7 +55,7 @@ class TopicStoryCountPreview extends React.Component {
     let content = null;
     let storySizeWarning = null;
     if (count !== null) {
-      const data = [  // format the data for the bubble chart help
+      const data = [ // format the data for the bubble chart help
         {
           value: count,
           fill: getBrandDarkColor(),
@@ -78,12 +79,14 @@ class TopicStoryCountPreview extends React.Component {
       } else if ((count < MIN_RECOMMENDED_STORIES) && !hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {
         storySizeWarning = (<WarningNotice><FormattedHTMLMessage {...localMessages.notEnoughStories} /></WarningNotice>);
       }
-      content = (<BubbleRowChart
-        data={data}
-        padding={30}
-        domId={BUBBLE_CHART_DOM_ID}
-        width={750}
-      />);
+      content = (
+        <BubbleRowChart
+          data={data}
+          padding={30}
+          domId={BUBBLE_CHART_DOM_ID}
+          width={750}
+        />
+      );
     }
     return (
       <DataCard>
@@ -127,19 +130,20 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     infoForQuery['collections[]'] = [];
     infoForQuery['sources[]'] = [];
 
-    if ('sourcesAndCollections' in query) {  // in FieldArrays on the form
+    if ('sourcesAndCollections' in query) { // in FieldArrays on the form
       infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
       infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
     }
     dispatch(fetchStoryCountByQuery(infoForQuery))
       .then((result) => {
-        if (!hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {  // only apply checks to non-admins
+        if (!hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) { // only apply checks to non-admins
           if (result.count > MAX_RECOMMENDED_STORIES) {
-            dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
+            dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
           } else if (result.count < MAX_RECOMMENDED_STORIES && result.count > WARNING_LIMIT_RECOMMENDED_STORIES) {
-            dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
+            dispatch(updateFeedback({ classes: 'warning-notice', open: true, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
           } else if (result.count < MIN_RECOMMENDED_STORIES) {
             dispatch(updateFeedback({
+              classes: 'error-notice',
               open: true,
               message: ownProps.intl.formatMessage(localMessages.notEnoughStories),
             }));
@@ -158,12 +162,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-       withDescription(localMessages.descriptionIntro, [messages.storyCountHelpText])(
-        withAsyncFetch(
-          TopicStoryCountPreview
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withDescription(localMessages.descriptionIntro, [messages.storyCountHelpText])(
+      withAsyncFetch(
+        TopicStoryCountPreview
       )
     )
-  );
+  )
+);

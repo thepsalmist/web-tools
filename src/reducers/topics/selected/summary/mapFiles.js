@@ -10,4 +10,3 @@ const mapFiles = createAsyncReducer({
 });
 
 export default mapFiles;
-

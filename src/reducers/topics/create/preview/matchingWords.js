@@ -3,7 +3,7 @@ import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 
 const matchingWords = createAsyncReducer({
   initialState: {
-    list: [],   // the thing you queried for
+    list: [], // the thing you queried for
     totals: [], // options topic/focus-level totals to compare to
   },
   action: FETCH_CREATE_TOPIC_QUERY_WORDS,

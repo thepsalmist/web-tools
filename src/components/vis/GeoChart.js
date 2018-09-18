@@ -19,27 +19,15 @@ const localMessages = {
 };
 
 class GeoChart extends React.Component {
-
   getConfig() {
     const { data, countryMinColorScale, countryMaxColorScale, hoverColor, hideLegend, backgroundColor } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
     const options = {
-      countryMinColorScale,
-      countryMaxColorScale,
-      hoverColor,
+      countryMinColorScale: countryMinColorScale || '#ffffff',
+      countryMaxColorScale: countryMaxColorScale || getBrandDarkColor(),
+      hoverColor: hoverColor || getBrandDarkColor(),
+      hideLegend: hideLegend || false,
     };
-    if (countryMinColorScale === undefined) {
-      options.countryMinColorScale = '#ffffff';
-    }
-    if (countryMaxColorScale === undefined) {
-      options.countryMaxColorScale = getBrandDarkColor();
-    }
-    if (hoverColor === undefined) {
-      options.hoverColor = '#BADA55';
-    }
-    if (hideLegend === undefined) {
-      options.hideLegend = false;
-    }
     const config = {
       // Initiate the chart
       chart: {
@@ -60,8 +48,6 @@ class GeoChart extends React.Component {
         },
       },
       colorAxis: {
-        min: 0.01,
-        max: 100.0,
         minColor: options.countryMinColorScale,
         maxColor: options.countryMaxColorScale,
         type: 'logarithmic',
@@ -138,7 +124,7 @@ class GeoChart extends React.Component {
             point: {
               events: {
                 click: function handleCountryClick(event) {
-                  onCountryClick(event, this);  // preserve the highcharts "this", which is the chart
+                  onCountryClick(event, this); // preserve the highcharts "this", which is the chart
                 },
               },
             },

@@ -17,7 +17,6 @@ const localMessages = {
 };
 
 class CollectionContentHistory extends React.Component {
-
   downloadCsv = (evt) => {
     const { collection } = this.props;
     if (evt) {
@@ -73,13 +72,11 @@ class CollectionContentHistory extends React.Component {
                 />
               </Col>
             </Row>
-            )
-          )}
+          ))}
         </Grid>
       </div>
     );
   }
-
 }
 
 CollectionContentHistory.propTypes = {
@@ -119,10 +116,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        CollectionContentHistory
-      ),
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      CollectionContentHistory
+    ),
+  )
+);

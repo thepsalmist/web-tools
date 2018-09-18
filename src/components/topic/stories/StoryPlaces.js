@@ -63,8 +63,8 @@ StoryPlaces.propTypes = {
 };
 
 export default
-  injectIntl(
-    withHelp(localMessages.helpTitle, localMessages.helpText)(
-      StoryPlaces
-    )
-  );
+injectIntl(
+  withHelp(localMessages.helpTitle, localMessages.helpText)(
+    StoryPlaces
+  )
+);

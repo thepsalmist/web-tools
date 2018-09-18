@@ -35,7 +35,4 @@ PageNotFound.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    PageNotFound
-  );
+export default injectIntl(PageNotFound);

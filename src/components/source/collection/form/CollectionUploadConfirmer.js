@@ -34,12 +34,13 @@ const CollectionUploadConfirmer = (props) => {
       <AppButton
         label={formatMessage(messages.cancel)}
         onClick={() => { onCancel(); onClickButton(); }}
+        color="secondary"
       />
       &nbsp; &nbsp;
       <AppButton
         label={formatMessage(messages.ok)}
         onClick={() => { onConfirm(sources); onClickButton(); }}
-        primary
+        color="primary"
       />
     </div>
   );
@@ -67,8 +68,8 @@ const mapDispatchToProps = () => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      CollectionUploadConfirmer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    CollectionUploadConfirmer
+  )
+);

@@ -19,12 +19,12 @@ import { updateFeedback } from '../../../actions/appActions';
 import { SOURCE_SCRAPE_STATE_QUEUED, SOURCE_SCRAPE_STATE_RUNNING } from '../../../reducers/sources/sources/selected/sourceDetails';
 
 const localMessages = {
+  title: { id: 'source.feeds.title', defaultMessage: '{name} | Source Feeds | Media Cloud' },
   sourceFeedsTitle: { id: 'source.details.feeds.title', defaultMessage: '{name}: Feeds' },
   add: { id: 'source.deatils.feeds.add', defaultMessage: 'Add A Feed' },
 };
 
 class SourceFeedContainer extends React.Component {
-
   componentWillReceiveProps(nextProps) {
     const { sourceId, fetchData } = this.props;
     if ((nextProps.sourceId !== sourceId)) {
@@ -41,7 +41,6 @@ class SourceFeedContainer extends React.Component {
   render() {
     const { sourceId, sourceName, feeds, scrapeFeeds, pushToUrl } = this.props;
     const { formatMessage } = this.props.intl;
-    const titleHandler = parentTitle => `${sourceName} | ${parentTitle}`;
     const content = null;
     if (feeds === undefined) {
       return (
@@ -52,12 +51,12 @@ class SourceFeedContainer extends React.Component {
     }
     return (
       <Grid className="details source-details">
-        <Helmet><title>{titleHandler()}</title></Helmet>
+        <Helmet><title>{formatMessage(localMessages.title, { name: sourceName })}</title></Helmet>
         <Row>
           <Col lg={11} xs={11}>
             <h1>
               <MediaSourceIcon height={32} />
-              <Link to={`/sources/${sourceId}`} >
+              <Link to={`/sources/${sourceId}`}>
                 <FormattedMessage {...localMessages.sourceFeedsTitle} values={{ name: sourceName }} />
               </Link>
             </h1>
@@ -65,13 +64,13 @@ class SourceFeedContainer extends React.Component {
               <AppButton
                 className="source-scrape-feeds-button"
                 label={formatMessage(messages.scrapeForFeeds)}
-                primary
+                color="primary"
                 onClick={scrapeFeeds}
               />
             </Permissioned>
           </Col>
           <Col lg={1} xs={1}>
-            <div className="actions" style={{ marginTop: 40 }} >
+            <div className="actions" style={{ marginTop: 40 }}>
               <AddButton
                 tooltip={formatMessage(localMessages.add)}
                 onClick={() => { pushToUrl(`/sources/${sourceId}/feeds/create`); }}
@@ -88,7 +87,6 @@ class SourceFeedContainer extends React.Component {
       </Grid>
     );
   }
-
 }
 
 SourceFeedContainer.propTypes = {
@@ -99,12 +97,11 @@ SourceFeedContainer.propTypes = {
   scrapeFeeds: PropTypes.func.isRequired,
   pushToUrl: PropTypes.func.isRequired,
   // from context
-  params: PropTypes.object.isRequired,       // params from router
-  sourceId: PropTypes.number.isRequired,
-  sourceName: PropTypes.string.isRequired,
+  params: PropTypes.object.isRequired, // params from router
   // from state
   fetchStatus: PropTypes.string.isRequired,
-  source: PropTypes.object,
+  sourceId: PropTypes.number.isRequired,
+  sourceName: PropTypes.string.isRequired,
   feeds: PropTypes.array,
   feedcount: PropTypes.number,
 };
@@ -128,24 +125,24 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   scrapeFeeds: () => {
     dispatch(scrapeSourceFeeds(ownProps.params.sourceId))
       .then((results) => {
-        if ((results.job_state.state === SOURCE_SCRAPE_STATE_QUEUED) ||
-          (results.job_state.state === SOURCE_SCRAPE_STATE_RUNNING)) {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(messages.sourceScraping) }));
+        if ((results.job_state.state === SOURCE_SCRAPE_STATE_QUEUED)
+          || (results.job_state.state === SOURCE_SCRAPE_STATE_RUNNING)) {
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(messages.sourceScraping) }));
           // update the source so the user sees the new scrape status
           dispatch(fetchSourceDetails(ownProps.params.sourceId))
             .then(() => dispatch(push(`/sources/${ownProps.params.sourceId}`)));
         } else {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(messages.sourceScrapeFailed) }));
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(messages.sourceScrapeFailed) }));
         }
       });
   },
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        SourceFeedContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      SourceFeedContainer
     )
-  );
+  )
+);

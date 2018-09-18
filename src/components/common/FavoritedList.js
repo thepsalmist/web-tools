@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import DataCard from './DataCard';
-import { DownloadButton } from '../common/IconButton';
+import { DownloadButton } from './IconButton';
 import messages from '../../resources/messages';
 
 const FavoritedList = (props) => {
@@ -23,9 +23,7 @@ const FavoritedList = (props) => {
       <h2>{title}{helpButton}</h2>
       <p>{intro}</p>
       <div className="">
-        {favoritedItems.map(c =>
-          <div key={c.tags_id || c.media_id} >{c.name}</div>
-        )}
+        {favoritedItems.map(c => <div key={c.tags_id || c.media_id}>{c.name}</div>)}
       </div>
     </DataCard>
   );
@@ -49,8 +47,8 @@ const mapDispatchToProps = () => ({
 });
 
 export default
-  injectIntl(
-    connect(null, mapDispatchToProps)(
-      FavoritedList
-    )
-  );
+injectIntl(
+  connect(null, mapDispatchToProps)(
+    FavoritedList
+  )
+);

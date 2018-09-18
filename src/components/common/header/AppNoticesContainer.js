@@ -6,14 +6,13 @@ import { injectIntl } from 'react-intl';
 import { dismissNotices } from '../../../actions/appActions';
 import { CloseButton } from '../IconButton';
 import AppNotice from './AppNotice';
-import { LEVEL_ERROR } from '../Notice';
+import { LEVEL_ERROR, LEVEL_WARNING } from '../Notice';
 
 const localMessages = {
   dismiss: { id: 'notices.dismiss', defaultMessage: 'dismiss' },
 };
 
 class AppNoticesContainer extends React.Component {
-
   componentWillReceiveProps(nextProps) {
     const { notices } = this.props;
     // if there any new notices, scroll to top so user can see them
@@ -27,9 +26,18 @@ class AppNoticesContainer extends React.Component {
     const { formatMessage } = this.props.intl;
     let content = null;
     if (notices.length > 0) {
-      const isNotAllErrors = notices.map(({ level }) => level === LEVEL_ERROR).includes(false);
+      const hasAnyErrors = notices.map(({ level }) => level === LEVEL_ERROR).includes(true);
+      const hasAnyWarnings = notices.map(({ level }) => level === LEVEL_WARNING).includes(true);
+      let className;
+      if (hasAnyErrors) {
+        className = 'app-notice-list-errors';
+      } else if (hasAnyWarnings) {
+        className = 'app-notice-list-warnings';
+      } else {
+        className = 'app-notice-list-info';
+      }
       content = (
-        <div id="app-notice-list" className={`app-notice-list-${isNotAllErrors ? 'warnings' : 'errors'}`}>
+        <div id="app-notice-list" className={className}>
           <Grid>
             <Row>
               <Col lg={10}>
@@ -49,7 +57,6 @@ class AppNoticesContainer extends React.Component {
     }
     return content;
   }
-
 }
 
 AppNoticesContainer.propTypes = {
@@ -77,8 +84,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      AppNoticesContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    AppNoticesContainer
+  )
+);

@@ -3,7 +3,7 @@ import { TOPIC_FILTER_BY_SNAPSHOT, TOPIC_FILTER_BY_TIMESPAN, TOPIC_FILTER_BY_FOC
 import { createReducer } from '../../../lib/reduxHelpers';
 
 function parseId(potentialId) {
-  return (isNaN(potentialId) || potentialId === null) ? null : parseInt(potentialId, 10);
+  return (Number.isNaN(potentialId) || potentialId === null) ? null : parseInt(potentialId, 10);
 }
 
 const info = createReducer({

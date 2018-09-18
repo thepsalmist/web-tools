@@ -16,7 +16,6 @@ export const SELECT_COLLECTION = 'SELECT_COLLECTION';
 export const UPDATE_COLLECTION = 'UPDATE_COLLECTION';
 export const FETCH_COLLECTION_TO_COPY = 'FETCH_COLLECTION_TO_COPY';
 export const CREATE_NEW_COLLECTION = 'CREATE_NEW_COLLECTION';
-export const SET_FAVORITE_COLLECTION = 'SET_FAVORITE_COLLECTION';
 export const FETCH_COLLECTION_SOURCES_BY_IDS = 'FETCH_COLLECTION_SOURCES_BY_IDS';
 export const RESET_COLLECTIONS_BY_IDS = 'RESET_COLLECTIONS_BY_IDS';
 export const UPLOAD_SOURCE_LIST_FROM_TEMPLATE = 'UPLOAD_SOURCE_LIST_FROM_TEMPLATE';
@@ -26,8 +25,6 @@ export const FETCH_COLLECTION_SOURCE_LIST = 'FETCH_COLLECTION_SOURCE_LIST';
 export const fetchCollectionSourcesByIds = createAsyncAction(FETCH_COLLECTION_SOURCES_BY_IDS, api.collectionsByIds, props => props);
 
 export const resetCollectionsByIds = createAction(RESET_COLLECTIONS_BY_IDS);
-
-export const favoriteCollection = createAsyncAction(SET_FAVORITE_COLLECTION, api.favoriteCollection);
 
 export const selectCollection = createAction(SELECT_COLLECTION, id => id);
 

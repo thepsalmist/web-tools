@@ -7,10 +7,13 @@ import messages from '../../resources/messages';
 
 const ExplorerApp = (props) => {
   const { formatMessage } = props.intl;
-  const titleHandler = parentTitle => `${formatMessage(messages.explorerToolName)} | ${parentTitle}`;
   return (
     <div>
-      <Helmet><title>{titleHandler()}</title></Helmet>
+      <Helmet>
+        <title>
+          {`${formatMessage(messages.explorerToolName)} | ${formatMessage(messages.suiteName)}`}
+        </title>
+      </Helmet>
       <AppContainer
         name="explorer"
         title={formatMessage(messages.explorerToolName)}
@@ -27,7 +30,4 @@ ExplorerApp.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    ExplorerApp
-  );
+export default injectIntl(ExplorerApp);

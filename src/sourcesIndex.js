@@ -10,14 +10,15 @@ import initializeApp from './index';
 
 ReactGA.initialize('UA-60744513-8');
 
-setVersion('3.1.5');
+setVersion('3.4.2');
 
 setAppName(APP_SOURCE_MANAGER);
 
 setAppColors({
   light: '#5CB6DD',
-  dark: '#3C96BD',  // primary
+  dark: '#3C96BD', // primary
   darker: '#1C769D',
+  main: '#3C96BD',
 });
 
 initializeApp(routes);

@@ -55,6 +55,7 @@ const CollectionDetailsForm = (props) => {
             component={renderCheckbox}
             fullWidth
             label={localMessages.staticLabel}
+            helpertext={localMessages.staticLabel}
             onChange={updateFields}
           />
         </Col>
@@ -88,10 +89,10 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        CollectionDetailsForm
-      )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      CollectionDetailsForm
     )
-  );
+  )
+);

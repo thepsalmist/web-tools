@@ -7,7 +7,6 @@ const localMessages = {
 };
 
 class FaqItem extends React.Component {
-
   state = {
     showAnswer: false,
   };
@@ -27,8 +26,7 @@ class FaqItem extends React.Component {
 
   toggleVisible = (evt) => {
     evt.preventDefault();
-    const visible = !this.state.showAnswer;
-    this.setState({ showAnswer: visible });
+    this.setState(prevState => ({ showAnswer: !prevState.showAnswer }));
   }
 
   render() {
@@ -46,7 +44,6 @@ class FaqItem extends React.Component {
       </div>
     );
   }
-
 }
 
 FaqItem.propTypes = {
@@ -59,6 +56,6 @@ FaqItem.propTypes = {
 };
 
 export default
-  injectIntl(
-    FaqItem
-  );
+injectIntl(
+  FaqItem
+);

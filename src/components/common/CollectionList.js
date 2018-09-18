@@ -3,9 +3,9 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import DataCard from './DataCard';
-import CollectionTable from '../common/CollectionTable';
+import CollectionTable from './CollectionTable';
 import { isCollectionTagSet, compareTagNames } from '../../lib/tagUtil';
-import { DownloadButton } from '../common/IconButton';
+import { DownloadButton } from './IconButton';
 import messages from '../../resources/messages';
 import { getUserRoles, hasPermissions, PERMISSION_MEDIA_EDIT } from '../../lib/auth';
 
@@ -54,8 +54,8 @@ const mapStateToProps = state => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps)(
-      CollectionList
-    )
-  );
+injectIntl(
+  connect(mapStateToProps)(
+    CollectionList
+  )
+);

@@ -2,6 +2,7 @@ let appColors = {
   light: '#CC0000',
   dark: '#990000',
   darker: '#330000',
+  main: '#991000',
 };
 
 export function setAppColors(newAppColors) {

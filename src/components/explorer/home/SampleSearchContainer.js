@@ -21,9 +21,9 @@ const SampleSearchContainer = (props) => {
   // const initialValues = { keyword: 'Search for' };
 
   if (samples && samples.length > 0) {
-    fixedSearchSlides = samples.map((search, index) =>
-      (<div key={index}><SampleSearchItem search={search} user={user} /></div>)
-    );
+    fixedSearchSlides = samples.map((search, index) => (
+      <div key={index}><SampleSearchItem search={search} user={user} /></div>
+    ));
 
     content = (
       <ItemSlider
@@ -80,11 +80,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        SampleSearchContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      SampleSearchContainer
     )
-  );
-
+  )
+);

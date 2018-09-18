@@ -55,12 +55,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        withCsvDownloadNotifyContainer(
-          CollectionSourceListContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      withCsvDownloadNotifyContainer(
+        CollectionSourceListContainer
       )
     )
-  );
+  )
+);

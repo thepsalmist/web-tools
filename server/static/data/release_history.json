@@ -1,6 +1,309 @@
 {
   "releases": [
     {
+      "date": "2018-09-14",
+      "version": "v3.4.2",
+      "notes": [
+        {
+          "apps": [ "topics", "sources", "explorer" ],
+          "type": "Fix",
+          "note": "Password reset link works again."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Topic creation page looks better."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Copy-to-all button in Explorer works again."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Explorer can now show NYT themes more often."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Topic permission no longer blank out after you change them."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "We show clear labels again while editing source metadata."
+        }
+      ]
+    },
+    {
+      "date": "2018-09-05",
+      "version": "v3.4.1",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Searching for sources and collections from the homepage works again."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Approving suggested sources works again."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Removed some errant themes from the list of themes that show up."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Admins can see full cached HTML of a story in Topic Mapper."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Date shows up correctly now when looking at detailed info about a story in Explorer."
+        }
+      ]
+    },
+    {
+      "date": "2018-08-31",
+      "version": "v3.4.0",
+      "notes": [
+        {
+          "apps": [ "sources", "explorer", "topics" ],
+          "type": "Feature",
+          "note": "Lots of polish to all the buttons, text, etc. widgets that we use."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "The topic summary page is split into categories like Explorer now."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Clicking for details in explorer now scrolls right to the details."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "The selecting media window no longer shows up weirdly off-screen."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Feature",
+          "note": "Move themes results from attention to langauge tab."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Word trees in explorer show all the words again."
+        },
+        {
+          "apps": [ "topics", "explorer", "sources" ],
+          "type": "Fix",
+          "note": "Feedback after you do something now shows up on top of screen."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "You can search for a specific media source in a topic."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "Admins can now see our cached copy of the story within a Topic."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "You can now download total attention for all queries in Explorer in one CSV."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "You can download a CSV comparing top words in each subtopic."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Download total attention for all queries in Explorer in one CSV."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Deleting saved searches in Explorer works again."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Removed some unused columns from the Topic story CSV download."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Download total attention for all queries in Explorer in one CSV."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Favoriting sources and collections in Source Mgr works again."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Download total attention for all queries in Explorer in one CSV."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "The sample story title in Explorer links to its webpage again."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Download total attention for all queries in Explorer in one CSV."
+        },
+        {
+          "apps": [ "explorer", "topics" ],
+          "type": "Fix",
+          "note": "Renamed 'representation' to 'entities', because that's what they are."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Feature",
+          "note": "The feeds for a source now are split between active and inactive on two tabs."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Fixed a bug preventing some sample story dates from showing up correctly."
+        }
+      ]
+    },
+    {
+      "date": "2018-07-26",
+      "version": "v3.3.1",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Now you can edit sources again."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Show entities for a story correctly in Explorer."
+        }
+      ]
+    },
+    {
+      "date": "2018-07-25",
+      "version": "v3.3.0",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Feature",
+          "note": "Click a sample story in Explorer to learn more about the data we have on it."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "Add media metadata to topic top media lists."
+        },
+        {
+          "apps": [ "topics", "explorer" ],
+          "type": "Fix",
+          "note": "Remove duplicate entries from list of locations mentioned in a story."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Feature",
+          "note": "Split view of RSS and spidered stories in Source Manager charts."
+        },
+        {
+          "apps": [ "topics", "explorer", "sources" ],
+          "type": "Feature",
+          "note": "Better about pages for every tool."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Remove duplicate subtopic info from topic story download CSV."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Use a better color palette for Explorer geographic representation maps."
+        }
+      ]
+    },
+    {
+      "date": "2018-07-23",
+      "version": "v3.2.2",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Fix bug that was showing super long lists of stories in Topic Mapper."
+        }
+      ]
+    },
+    {
+      "date": "2018-07-13",
+      "version": "v3.2.1",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "You can toggle between tabs in the Explorer Top Words results again."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "The Topic Mapper homepage works again for logged-out users."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "You can use the back button while created a new Topic."
+        }
+      ]
+    },
+    {
+      "date": "2018-07-05",
+      "version": "v3.2.0",
+      "notes": [
+        {
+          "apps": ["explorer"],
+          "type": "Feature",
+          "note": "Click a top word to see a 'Word Tree' showing how it is used in context."
+        },
+        {
+          "apps": ["explorer"],
+          "type": "Feature",
+          "note": "Renamed 'People & Places' to 'Representation'."
+        },
+        {
+          "apps": ["explorer", "topics"],
+          "type": "Feature",
+          "note": "Switch between 1k and 10k sample sizes for word clouds."
+        },
+        {
+          "apps": ["explorer"],
+          "type": "Feature",
+          "note": "Quickly choose from your starred sources & collections while picking media."
+        },
+        {
+          "apps": ["topics"],
+          "type": "Fix",
+          "note": "Links to source articles in Topic Mapper show up better."
+        }
+      ]
+    },
+    {
       "date": "2018-06-21",
       "version": "v3.1.5",
       "notes": [

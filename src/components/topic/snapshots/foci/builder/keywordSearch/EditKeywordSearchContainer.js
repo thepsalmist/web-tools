@@ -19,9 +19,7 @@ const localMessages = {
   errorNoKeywords: { id: 'focalTechnique.boolean.keywords.error', defaultMessage: 'You need to specify some keywords.' },
 };
 
-
 class EditKeywordSearchContainer extends React.Component {
-
   constructor(props) {
     // Track this in local React state because we don't need it anywhere else.
     // We can't read out of the form state becase we need to know when they click "search",
@@ -75,7 +73,8 @@ class EditKeywordSearchContainer extends React.Component {
               <Field
                 name="keywords"
                 component={renderTextField}
-                floatingLabelText={messages.searchByKeywords}
+                label={messages.searchByKeywords}
+                helpertext={localMessages.errorNoKeywords}
                 fullWidth
                 onKeyDown={this.handleKeyDown}
               />
@@ -93,7 +92,7 @@ class EditKeywordSearchContainer extends React.Component {
           <Row>
             <Col lg={8} xs={12}>
               <br />
-              <AppButton flat onClick={onPreviousStep} label={formatMessage(messages.previous)} />
+              <AppButton color="secondary" variant="outlined" onClick={onPreviousStep} label={formatMessage(messages.previous)} />
               &nbsp; &nbsp;
               <AppButton disabled={nextButtonDisabled} type="submit" label={formatMessage(messages.next)} primary />
             </Col>
@@ -102,7 +101,6 @@ class EditKeywordSearchContainer extends React.Component {
       </Grid>
     );
   }
-
 }
 
 EditKeywordSearchContainer.propTypes = {
@@ -141,7 +139,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 function validate(values) {
   const errors = {};
   if (!notEmptyString(values.keywords)) {
-    errors.keywords = localMessages.errorNoKeywords;
+    errors.keywords = true; // localMessages.errorNoKeywords;
   }
   return errors;
 }
@@ -154,12 +152,12 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        connect(mapStateToProps, mapDispatchToProps)(
-          EditKeywordSearchContainer
-        )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      connect(mapStateToProps, mapDispatchToProps)(
+        EditKeywordSearchContainer
       )
     )
-  );
+  )
+);

@@ -1,9 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
-import FlatButton from 'material-ui/FlatButton';
-import Dialog from 'material-ui/Dialog';
-import messages from '../../../resources/messages';
+import { FormattedHTMLMessage, injectIntl } from 'react-intl';
+import SimpleDialog from '../SimpleDialog';
 
 const localMessages = {
   invitation: { id: 'help.query.invitation', defaultMessage: 'Learn about writing search terms.' },
@@ -24,51 +22,28 @@ const localMessages = {
   ` },
 };
 
-class QueryHelpDialog extends React.Component {
-  state = {
-    open: false,
-  };
-  handleOpen = (evt) => {
-    this.setState({ open: true });
-    evt.preventDefault();
-  };
-  handleClose = () => {
-    this.setState({ open: false });
-  };
-  render() {
-    const { formatMessage } = this.props.intl;
-    const dialogActions = [
-      <FlatButton
-        label={formatMessage(messages.ok)}
-        primary
-        onClick={this.handleClose}
-      />,
-    ];
-    return (
-      <span className="query-help-dialog">
-        <a href="#help" onClick={this.handleOpen}><FormattedMessage {...localMessages.invitation} /></a>
-        <Dialog
-          title={formatMessage(localMessages.title)}
-          actions={dialogActions}
-          modal
-          className="app-dialog"
-          open={this.state.open}
-          onRequestClose={this.handleClose}
-        >
-          <div className="query-help-dialog-content">
-            <FormattedHTMLMessage {...localMessages.content} />
-          </div>
-        </Dialog>
-      </span>
-    );
-  }
-}
+const QueryHelpDialog = (props) => {
+  const { trigger } = props;
+  const { formatMessage } = props.intl;
+
+  return (
+    <SimpleDialog
+      trigger={trigger}
+      title={formatMessage(localMessages.title)}
+    >
+      <div className="query-help-dialog-content">
+        <FormattedHTMLMessage {...localMessages.content} />
+      </div>
+    </SimpleDialog>
+  );
+};
 
 QueryHelpDialog.propTypes = {
   intl: PropTypes.object.isRequired,
+  trigger: PropTypes.string.isRequired,
 };
 
 export default
-  injectIntl(
-    QueryHelpDialog
-  );
+injectIntl(
+  QueryHelpDialog
+);

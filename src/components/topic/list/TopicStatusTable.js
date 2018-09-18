@@ -43,8 +43,8 @@ const TopicStatusTable = props => (
           <th><FormattedMessage {...localMessages.message} /></th>
           <th><FormattedMessage {...localMessages.owners} /></th>
         </tr>
-        {props.topics.map((t, idx) =>
-          (<tr key={t.topics_id} className={`${(idx % 2 === 0) ? 'even' : 'odd'} ${classNameForState(t.state)}`}>
+        {props.topics.map((t, idx) => (
+          <tr key={t.topics_id} className={`${(idx % 2 === 0) ? 'even' : 'odd'} ${classNameForState(t.state)}`}>
             <td><b><Link to={`/topics/${t.topics_id}/summary`}>{t.name}</Link></b></td>
             <td className="topic-state">{t.state.indexOf('error') > -1 ? t.inErrorSince : t.state}</td>
             <td><FormattedDate value={t.start_date} /> - <FormattedDate value={t.end_date} /></td>
@@ -52,8 +52,8 @@ const TopicStatusTable = props => (
             <td className="numeric">{t.max_stories}</td>
             <td>{(t.message && (t.message.length > MAX_MESSAGE_CHARS)) ? `${t.message.substring(0, 600)}...` : t.message}</td>
             <td>{t.owners.map(u => <a key={u.auth_users_id} href="mailto:{u.email}">{u.full_name}</a>)}</td>
-          </tr>)
-        )}
+          </tr>
+        ))}
       </tbody>
     </table>
   </div>
@@ -67,6 +67,6 @@ TopicStatusTable.propTypes = {
 };
 
 export default
-  injectIntl(
-    TopicStatusTable
-  );
+injectIntl(
+  TopicStatusTable
+);

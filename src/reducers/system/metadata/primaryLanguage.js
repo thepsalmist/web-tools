@@ -1,4 +1,4 @@
-import { FETCH_METADATA_VALUES_FOR_PRIMARY_LANGUAGE } from '../../../actions/sourceActions';
+import { FETCH_METADATA_VALUES_FOR_PRIMARY_LANGUAGE } from '../../../actions/systemActions';
 import { createAsyncReducer } from '../../../lib/reduxHelpers';
 
 const primaryLanguage = createAsyncReducer({

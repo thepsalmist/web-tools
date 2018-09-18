@@ -12,6 +12,7 @@ import InfluentialStoriesContainer from '../components/topic/stories/Influential
 import InfluentialStoryExplorerContainer from '../components/topic/stories/InfluentialStoryExplorerContainer';
 import StoryContainer from '../components/topic/stories/StoryContainer';
 import StoryUpdateContainer from '../components/topic/stories/StoryUpdateContainer';
+import StoryCachedContainer from '../components/topic/stories/StoryCachedContainer';
 import MediaContainer from '../components/topic/media/MediaContainer';
 import LinkMapContainer from '../components/topic/maps/LinkMapContainer';
 import CreateFocusContainer from '../components/topic/snapshots/foci/CreateFocusContainer';
@@ -43,23 +44,26 @@ const topicRoutes = (
     <Redirect from="/topics/public/home" to="/home" />
     <Route path="/home" component={TopicsHomepage} />
 
-    <Route path="/topics/create" component={CreateTopicContainer} onEnter={requireAuth} />
+    <Route path="/topics/create" component={CreateTopicContainer} onEnter={requireAuth}>
+      <Route path="/topics/create/:step" component={CreateTopicContainer} onEnter={requireAuth} />
+    </Route>
 
     <Route path="/topics/status" component={TopicStatusDashboardContainer} onEnter={requireAuth} />
 
-    <Route path="/topics/:topicId" component={TopicContainer} onEnter={requireAuth} >
+    <Route path="/topics/:topicId" component={TopicContainer} onEnter={requireAuth}>
 
       <Route path="edit" component={EditTopicContainer} onEnter={requireAuth} />
 
       <Route path="permissions" component={TopicPermissionsContainer} onEnter={requireAuth} />
 
-      <Route path="/topics/:topicId/filtered" component={FilteredTopicContainer} onEnter={requireAuth} >
+      <Route path="/topics/:topicId/filtered" component={FilteredTopicContainer} onEnter={requireAuth}>
         <Route path="/topics/:topicId/summary" component={TopicSummaryContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/media" component={InfluentialMediaContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/media/:mediaId" component={MediaContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/stories" component={InfluentialStoriesContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/stories/explore" component={InfluentialStoryExplorerContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/stories/:storiesId/update" component={StoryUpdateContainer} onEnter={requireAuth} />
+        <Route path="/topics/:topicId/stories/:storiesId/cached" component={StoryCachedContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/stories/:storiesId" component={StoryContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/attention" component={AttentionContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/words" component={InfluentialWordsContainer} onEnter={requireAuth} />
@@ -67,7 +71,7 @@ const topicRoutes = (
         <Route path="/topics/:topicId/link-map" component={LinkMapContainer} onEnter={requireAuth} />
       </Route>
 
-      <Route path="/topics/:topicId/snapshot" component={SnapshotBuilder} >
+      <Route path="/topics/:topicId/snapshot" component={SnapshotBuilder}>
         <Route path="generate" component={SnapshotGenerate} />
         <Route path="foci" component={ManageFocalSetsContainer} />
         <Route path="foci/create" component={CreateFocusContainer} />

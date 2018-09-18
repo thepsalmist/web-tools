@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Field } from 'redux-form';
-import MenuItem from 'material-ui/MenuItem';
+import MenuItem from '@material-ui/core/MenuItem';
 import { FETCH_SUCCEEDED } from '../../lib/fetchConstants';
 import withAsyncFetch from './hocs/AsyncContainer';
-import { fetchMetadataValuesForCountry, fetchMetadataValuesForState, fetchMetadataValuesForPrimaryLanguage, fetchMetadataValuesForCountryOfFocus, fetchMetadataValuesForMediaType } from '../../actions/sourceActions';
+import { fetchMetadataValuesForCountry, fetchMetadataValuesForState, fetchMetadataValuesForPrimaryLanguage, fetchMetadataValuesForCountryOfFocus, fetchMetadataValuesForMediaType } from '../../actions/systemActions';
 import withIntlForm from './hocs/IntlForm';
 import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE } from '../../lib/tagUtil';
 
@@ -17,7 +17,8 @@ const localMessages = {
 };
 
 const MetadataPickerContainer = (props) => {
-  const { label, name, tags, renderSelectField, renderAutoComplete, autocomplete, floatingLabelText, disabled, showDescription } = props;
+  const { initialValues, label, name, tags, isClearable, renderSelect, autocompleteHideOptions,
+    renderSimpleAutoComplete, autocomplete, disabled, showDescription } = props;
   const { formatMessage } = props.intl;
   const mode = autocomplete ? MODE_AUTOCOMPLETE : MODE_SELECT;
   let content = null;
@@ -26,71 +27,72 @@ const MetadataPickerContainer = (props) => {
       if (showDescription) {
         content = (
           <Field
-            fullWidth name={name}
-            component={renderSelectField}
+            fullWidth
+            name={name}
+            component={renderSelect}
             disabled={disabled}
-            floatingLabelText={floatingLabelText || label}
+            label={label}
           >
-            <MenuItem className="header-primary-menu" value={null} primaryText={''} />
-            {tags.map(t =>
+            <MenuItem className="header-primary-menu" value={null} />
+            {tags.map(t => (
               <MenuItem
                 className="header-primary-menu"
                 key={t.tags_id}
                 value={t.tags_id}
-                primaryText={
-                  <div className="header-primary-label">{t.label}
-                    <br /><span className="header-primary-description">{t.description}</span>
-                  </div>
-                }
-              />
-            )}
+              >
+                <div className="header-primary-label">{t.label}
+                  <br /><span className="header-primary-description">{t.description}</span>
+                </div>
+              </MenuItem>
+            ))}
           </Field>
         );
       } else {
         content = (
           <Field
-            fullWidth name={name}
-            component={renderSelectField}
+            fullWidth
+            name={name}
+            component={renderSelect}
             disabled={disabled}
-            floatingLabelText={floatingLabelText || label}
+            label={label}
           >
-            <MenuItem value={null} primaryText={''} />
-            {tags.map(t => <MenuItem key={t.tags_id} value={t.tags_id} primaryText={t.label} />)}
+            <MenuItem value={null} />
+            {tags.map(t => <MenuItem key={t.tags_id} value={t.tags_id}>{t.label}</MenuItem>)}
           </Field>
         );
       }
       break;
     case MODE_AUTOCOMPLETE:
-      // need to figure out autocomplete text to prepopulate here
-      // commented out because the initialvalues are interfering with the display of the selected values
-      /* let initialText = '';
-      if ((initialValues) && (initialValues[name]) && (tags.length > 0)) {
-        const matchingItem = tags.find(t => t.tags_id === initialValues[name]);
-        if (matchingItem) {
-          initialText = matchingItem.label;
-        }
-      }*/
+      let styles = {};
+      if (autocompleteHideOptions) {
+        styles = {
+          dropdownIndicator: () => ({ display: 'none' }),
+        };
+      }
       content = (
-        <Field
-          className="metadata-picker"
-          // searchText={initialText}
-          name={name}
-          component={renderAutoComplete}
-          hintText={formatMessage(localMessages.hintText, { label })}
-          floatingLabelText={floatingLabelText || label}
-          openOnFocus
-          fullWidth
-          dataSource={tags}
-          dataSourceConfig={{ text: 'label', value: 'tags_id' }}
-          maxSearchResults={10}
-        />
+        <React.Fragment>
+          <label>{label}</label>
+          <Field
+            styles={styles}
+            name={name}
+            component={renderSimpleAutoComplete}
+            placeholder={formatMessage(localMessages.hintText, { label })}
+            fullWidth
+            isDisabled={disabled}
+            options={tags}
+            defaultValue={initialValues}
+            getOptionLabel={tag => tag.label}
+            getOptionValue={tag => tag.tags_id}
+            isClearable={isClearable}
+          />
+        </React.Fragment>
       );
       break;
     default:
       content = '';
       break;
   }
-  return (<div className={`metadata-picker-${name}`}>{content}</div>);
+  return (<div className={`metadata-picker metadata-picker-${name}`}>{content}</div>);
 };
 
 MetadataPickerContainer.propTypes = {
@@ -100,12 +102,13 @@ MetadataPickerContainer.propTypes = {
   initialValues: PropTypes.object,
   disabled: PropTypes.bool,
   autocomplete: PropTypes.bool,
+  autocompleteHideOptions: PropTypes.bool,
+  isClearable: PropTypes.bool,
   showDescription: PropTypes.bool,
-  floatingLabelText: PropTypes.string,
   // from compositional chain
   intl: PropTypes.object.isRequired,
-  renderSelectField: PropTypes.func.isRequired,
-  renderAutoComplete: PropTypes.func.isRequired,
+  renderSelect: PropTypes.func.isRequired,
+  renderSimpleAutoComplete: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string,
   tags: PropTypes.array,
@@ -155,10 +158,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withIntlForm(
-      withAsyncFetch(
-        MetadataPickerContainer
-      )
+connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  withIntlForm(
+    withAsyncFetch(
+      MetadataPickerContainer
     )
-  );
+  )
+);

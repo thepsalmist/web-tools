@@ -1,3 +1,4 @@
+@import '_base.scss';
 @import '_branding';
 @import '_actions';
 @import '_controlbar';
@@ -10,6 +11,7 @@
 @import '_app_form';
 @import '_app_notice_list';
 @import '_collection_list';
+@import '_source_table';
 @import '_slider';
 @import '_action_icon_menu';
 @import '_notice';
@@ -22,7 +24,6 @@
 @import '_user_login';
 @import '_faq';
 @import '_document_download';
-@import 'mediapicker/_media_picker';
 @import '_app_dialog';
 @import '_entities';
 @import '_metadata_media_type';
@@ -34,18 +35,9 @@
 @import '_marketing';
 @import '_story_switchover';
 @import '_homepage';
-
-#content { 
-  min-height: 400px;
-  padding-bottom: 30px;
-  background-color: $white;
-
-  .notice {
-    padding: 10px;
-  }
-
-}
-
-.warning {
-  color: $warning-color;
-}
+@import '_summarized_viz';
+@import '_about';
+@import '_error_boundary';
+@import '_signup_form';
+@import 'mediapicker/media_picker';
+@import 'viz/viz';

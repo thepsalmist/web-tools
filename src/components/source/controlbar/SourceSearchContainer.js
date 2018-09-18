@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import AutoComplete from 'material-ui/AutoComplete';
-import MenuItem from 'material-ui/MenuItem';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { SearchButton } from '../../common/IconButton';
 import { FETCH_ONGOING, FETCH_SUCCEEDED } from '../../../lib/fetchConstants';
@@ -23,12 +24,10 @@ const localMessages = {
 };
 
 class SourceSearchContainer extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       lastSearchString: '',
-      lastKeypress: 0,
       searchTimeout: null,
     };
   }
@@ -43,14 +42,14 @@ class SourceSearchContainer extends React.Component {
     return maxCollections || DEFAULT_MAX_COLLECTIONS_TO_SHOW;
   }
 
-  handleClick = (item) => {
+  handleClick = (searchResult) => {
     const { onMediaSourceSelected, onCollectionSelected, onAdvancedSearchSelected } = this.props;
-    if (item) {
-      if (item.type === 'mediaSource') {
-        if (onMediaSourceSelected) onMediaSourceSelected(item);
-      } else if (item.type === 'collection') {
-        if (onCollectionSelected) onCollectionSelected(item);
-      } else if (item === ADVANCED_SEARCH_ITEM_VALUE) {
+    if (searchResult) {
+      if (searchResult.item.type === 'mediaSource') {
+        if (onMediaSourceSelected) onMediaSourceSelected(searchResult.item);
+      } else if (searchResult.item.type === 'collection') {
+        if (onCollectionSelected) onCollectionSelected(searchResult.item);
+      } else if (searchResult.text === ADVANCED_SEARCH_ITEM_VALUE) {
         if (onAdvancedSearchSelected) onAdvancedSearchSelected('');
       }
     }
@@ -69,10 +68,10 @@ class SourceSearchContainer extends React.Component {
     }
   }
 
-  handleMenuItemKeyDown = (item, event) => {
+  handleMenuItemKeyDown = (searchResult, event) => {
     switch (event.key) {
       case 'Enter':
-        this.handleClick(item);
+        this.handleClick(searchResult);
         break;
       default: break;
     }
@@ -83,7 +82,7 @@ class SourceSearchContainer extends React.Component {
       disableStaticCollections } = this.props;
     const { formatMessage } = this.props.intl;
     let results = [];
-    // if (!fetchesSucceeded) return [];  // can't wait for both, because collections results are too slow :-(
+    // if (!fetchesSucceeded) return []; // can't wait for both, because collections results are too slow :-(
     if (searchSources || searchSources === undefined) { // sources always return first, so so them first so list isn't jumpy
       results = results.concat(sourceResults.slice(0, this.getMaxSourcesToShow()));
     }
@@ -96,22 +95,25 @@ class SourceSearchContainer extends React.Component {
           onClick={() => this.handleClick(item)}
           onKeyDown={this.handleMenuItemKeyDown.bind(this, item)}
           id={`searchResult${item.media_id || item.tags_id}`}
-          primaryText={(item.name.length > MAX_SUGGESTION_CHARS) ? `${item.name.substr(0, MAX_SUGGESTION_CHARS)}...` : item.name}
-        />
+        >
+          <ListItemText>{(item.name.length > MAX_SUGGESTION_CHARS) ? `${item.name.substr(0, MAX_SUGGESTION_CHARS)}...` : item.name}</ListItemText>
+        </MenuItem>
       );
       if (disableStaticCollections && item.is_static === 1) {
         menuItemValue = (
           <MenuItem
             id={`searchResult${item.media_id || item.tags_id}`}
-            primaryText={(item.name.length > MAX_SUGGESTION_CHARS) ? `${item.name.substr(0, MAX_SUGGESTION_CHARS)}...` : `${item.name} is static and cannot be added`}
             style={{ color: '#aaaaaa' }}
             disabled
-          />
+          >
+            <ListItemText>{(item.name.length > MAX_SUGGESTION_CHARS) ? `${item.name.substr(0, MAX_SUGGESTION_CHARS)}...` : `${item.name} is static and cannot be added`}</ListItemText>
+          </MenuItem>
         );
       }
       return ({
         text: item.name,
         value: menuItemValue,
+        item,
       });
     });
 
@@ -134,16 +136,17 @@ class SourceSearchContainer extends React.Component {
     clearTimeout(this.state.searchTimeout); // cancel any pending searches
     this.setState({
       lastSearchString: searchString,
-      searchTimeout: setTimeout(this.fireSearchIfNeeded, DELAY_BEFORE_SEARCH_MS),  // schedule a search for when they stop typing
+      searchTimeout: setTimeout(this.fireSearchIfNeeded, DELAY_BEFORE_SEARCH_MS), // schedule a search for when they stop typing
     });
   }
 
-  handleNewRequest = (searchString, index) => {
+  handleNewRequest = (item, index) => {
     const { search } = this.props;
     if (index === -1) { // they pressed enter in the text field
-      search(searchString);
+      search(item.text);
     }
-    // else: they clicked an item and it will take care of things itself
+    // we want to send the user to the media url. The handleClick is no longer triggered in new/old material-ui setup
+    this.handleClick(item);
   }
 
   render() {
@@ -170,15 +173,15 @@ class SourceSearchContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 SourceSearchContainer.propTypes = {
   intl: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
   // from parent
-  searchSources: PropTypes.bool,      // include source results?
-  searchCollections: PropTypes.bool,  // include collection results?
-  searchStaticCollections: PropTypes.bool,  // inclue static collecton results?
+  searchSources: PropTypes.bool, // include source results?
+  searchCollections: PropTypes.bool, // include collection results?
+  searchStaticCollections: PropTypes.bool, // inclue static collecton results?
   onMediaSourceSelected: PropTypes.func,
   onCollectionSelected: PropTypes.func,
   onAdvancedSearchSelected: PropTypes.func,
@@ -195,10 +198,10 @@ SourceSearchContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchesOngoing: (state.sources.search.simple.sources.fetchStatus === FETCH_ONGOING) ||
-              (state.sources.search.simple.collections.fetchStatus === FETCH_ONGOING),
-  fetchesSucceeded: (state.sources.search.simple.sources.fetchStatus === FETCH_SUCCEEDED) &&
-              (state.sources.search.simple.collections.fetchStatus === FETCH_SUCCEEDED),
+  fetchesOngoing: (state.sources.search.simple.sources.fetchStatus === FETCH_ONGOING)
+  || (state.sources.search.simple.collections.fetchStatus === FETCH_ONGOING),
+  fetchesSucceeded: (state.sources.search.simple.sources.fetchStatus === FETCH_SUCCEEDED)
+  && (state.sources.search.simple.collections.fetchStatus === FETCH_SUCCEEDED),
   sourceResults: state.sources.search.simple.sources.list,
   collectionResults: state.sources.search.simple.collections.list,
 });
@@ -227,9 +230,10 @@ SourceSearchContainer.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
+
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      SourceSearchContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    SourceSearchContainer
+  )
+);

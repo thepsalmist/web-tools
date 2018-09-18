@@ -2,17 +2,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { reduxForm, FieldArray, Field, propTypes } from 'redux-form';
-import withIntlForm from '../../common/hocs/IntlForm';
-import SourceOrCollectionWidget from '../../common/SourceOrCollectionWidget';
+import withIntlForm from '../hocs/IntlForm';
+import SourceOrCollectionWidget from '../SourceOrCollectionWidget';
 
-const renderCollectionSelector = ({ allowRemoval, fields }) => (
+const renderCollectionSelector = ({ allowRemoval, fields, meta }) => (
   <div>
     {fields.map((name, index) => (
       <Field
         key={name}
         name={name}
         component={(info) => {
-          const handleDelete = (allowRemoval || info.meta.dirty) && fields.length > 1 ? () => { fields.remove(index); } : undefined;
+          const handleDelete = ((allowRemoval || info.meta.dirty) && fields.length > 1) ? () => { fields.remove(index); } : undefined;
           const val = info.input.value;
           let tempObj = {};
           if (val && typeof val === 'number') {
@@ -26,18 +26,19 @@ const renderCollectionSelector = ({ allowRemoval, fields }) => (
         }}
       />
     ))}
+    <div className="error">{meta.error}</div>
   </div>
 );
+
 renderCollectionSelector.propTypes = {
   fields: PropTypes.object,
   meta: PropTypes.object,
   allowRemoval: PropTypes.bool,
   validate: PropTypes.func,
-  onDelete: PropTypes.func,
 };
 
 const SourceCollectionsMediaForm = (props) => {
-  const { name, initialValues, allowRemoval, onDelete } = props;
+  const { name, initialValues, allowRemoval } = props;
   return (
     <div className="explorer-source-collection-form">
       <FieldArray
@@ -47,7 +48,7 @@ const SourceCollectionsMediaForm = (props) => {
         allowRemoval={allowRemoval}
         component={renderCollectionSelector}
         initialValues={initialValues}
-        onDelete={onDelete} // call back up to update the selected media array and hence sources and collections
+        // onDelete={onDelete} // not using - update back up?
       />
     </div>
   );
@@ -60,15 +61,15 @@ SourceCollectionsMediaForm.propTypes = {
   selected: PropTypes.object,
   allowRemoval: PropTypes.bool,
   name: PropTypes.string,
+  // valid: PropTypes.bool,  not using - but this is helpful to determine if validation is getting
   onDelete: PropTypes.func,
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm({ propTypes })(
-        SourceCollectionsMediaForm
-      )
+injectIntl(
+  withIntlForm(
+    reduxForm({ propTypes })(
+      SourceCollectionsMediaForm
     )
-  );
-
+  )
+);

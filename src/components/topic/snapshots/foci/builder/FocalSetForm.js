@@ -22,12 +22,9 @@ const localMessages = {
   defaultSetDescriptionNytTheme: { id: 'focalSet.default.setDescription.nyt', defaultMessage: 'Subtopics for the themes stories are most often related to.' },
   defaultSetNameMediaType: { id: 'focalSet.default.setName.mediaType', defaultMessage: 'Media Type' },
   defaultSetDescriptionMediaType: { id: 'focalSet.default.setDescription.mediaType', defaultMessage: 'Automatically generated subtopics that group together stories by the type of media source that published them.' },
-
 };
 
-
 class FocalSetForm extends React.Component {
-
   componentWillMount() {
     const { change, focalTechnique } = this.props;
     const { formatMessage } = this.props.intl;
@@ -71,20 +68,19 @@ class FocalSetForm extends React.Component {
         <Field
           name="focalSetName"
           component={renderTextField}
-          floatingLabelText={localMessages.focalSetName}
+          helpertext={localMessages.focalSetName}
           fullWidth={fullWidthFields}
         />
         <br />
         <Field
           name="focalSetDescription"
           component={renderTextField}
-          floatingLabelText={localMessages.focalSetDescription}
+          helpertext={localMessages.focalSetDescription}
           fullWidth={fullWidthFields}
         />
       </div>
     );
   }
-
 }
 
 FocalSetForm.propTypes = {
@@ -112,15 +108,15 @@ function validate(values) {
 
 const reduxFormConfig = {
   form: 'snapshotFocus', // make sure this matches the sub-components and other wizard steps
-  destroyOnUnmount: false,  // so the wizard works
+  destroyOnUnmount: false, // so the wizard works
   validate,
 };
 
 export default
-  withIntlForm(
-    reduxForm(reduxFormConfig)(
-      injectIntl(
-        FocalSetForm
-      )
+withIntlForm(
+  reduxForm(reduxFormConfig)(
+    injectIntl(
+      FocalSetForm
     )
-  );
+  )
+);

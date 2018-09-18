@@ -17,7 +17,6 @@ const localMessages = {
 };
 
 class EditFocusContainer extends React.Component {
-
   getInitialValues = () => {
     const { topicId, focusDefinition } = this.props;
     return {
@@ -46,7 +45,6 @@ class EditFocusContainer extends React.Component {
       />
     );
   }
-
 }
 
 EditFocusContainer.propTypes = {
@@ -67,8 +65,8 @@ const findFocalSetDefById = (state, focusDefId) => {
   }
   const matchingFocalSetDef = focalSetDefinitions.find(
     focalSetDef => focalSetDef.focus_definitions.map(
-        focusDef => focusDef.focus_definitions_id
-      ).includes(focusDefId)
+      focusDef => focusDef.focus_definitions_id
+    ).includes(focusDefId)
   );
   const matchingFocusDef = matchingFocalSetDef.focus_definitions.find(
     focusDef => focusDef.focus_definitions_id === focusDefId
@@ -80,7 +78,7 @@ const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   fetchStatus: state.topics.selected.focalSets.definitions.fetchStatus,
   focusDefId: parseInt(ownProps.params.focusDefId, 10),
-  focusDefinition: findFocalSetDefById(state, parseInt(ownProps.params.focusDefId, 10)),  // find the one we want to edit
+  focusDefinition: findFocalSetDefById(state, parseInt(ownProps.params.focusDefId, 10)), // find the one we want to edit
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -94,13 +92,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       .then((results) => {
         if (results.length === 1) {
           const focusSavedMessage = ownProps.intl.formatMessage(localMessages.focusSaved);
-          dispatch(setTopicNeedsNewSnapshot(true));           // user feedback
-          dispatch(updateFeedback({ open: true, message: focusSavedMessage }));  // user feedback
+          dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage })); // user feedback
           dispatch(push(`/topics/${ownProps.topicId}/snapshot/foci`)); // go back to focus management page
           dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
         } else {
           const focusNoteSavedMessage = ownProps.intl.formatMessage(localMessages.focusNotSaved);
-          dispatch(updateFeedback({ open: true, message: focusNoteSavedMessage }));  // user feedback
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: focusNoteSavedMessage })); // user feedback
         }
       });
   },
@@ -115,10 +113,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        EditFocusContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      EditFocusContainer
     )
-  );
+  )
+);

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
-// import { push } from 'react-router-redux';
+import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { selectQuery, resetSelected, resetQueries, resetSentenceCounts, resetSampleStories, resetStoryCounts,
   resetGeo, updateTimestampForQueries, removeDeletedQueries } from '../../../actions/explorerActions';
 import QueryBuilderContainer from './QueryBuilderContainer';
@@ -18,21 +18,32 @@ class DemoQueryBuilderContainer extends React.Component {
   componentWillMount() {
     const { selectFirstQuery, queries } = this.props;
     // console.log(queries[0]);
-    selectFirstQuery(queries[0]);  // on first load select first by default so the builder knows which one to render in the form
+    selectFirstQuery(queries[0]); // on first load select first by default so the builder knows which one to render in the form
   }
+
   /*
   componentWillUnmount() {
     const { resetExplorerData } = this.props;
     resetExplorerData();
   }
   */
+
   render() {
     const { queries, handleSearch, samples, location, lastSearchTime } = this.props;
     const isEditable = location.pathname.includes('queries/demo/search');
     return (
       <div className="query-container query-container-demo">
-        <WarningNotice><FormattedHTMLMessage {...localMessages.register} />
-        </WarningNotice>
+        <div className="warning-background">
+          <Grid>
+            <Row>
+              <Col lg={12}>
+                <WarningNotice>
+                  <FormattedHTMLMessage {...localMessages.register} />
+                </WarningNotice>
+              </Col>
+            </Row>
+          </Grid>
+        </div>
         <QueryBuilderContainer isEditable={isEditable} onSearch={() => handleSearch()} />
         <QueryResultsContainer
           lastSearchTime={lastSearchTime}
@@ -94,10 +105,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      composeUrlBasedQueryContainer()(
-        DemoQueryBuilderContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    composeUrlBasedQueryContainer()(
+      DemoQueryBuilderContainer
     )
-  );
+  )
+);

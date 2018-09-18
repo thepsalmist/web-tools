@@ -24,22 +24,25 @@ const localMessages = {
 class WordStoriesContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { fetchData, filters, sort } = this.props;
-    if ((nextProps.filters !== filters) ||
-        (nextProps.sort !== sort) ||
-        (nextProps.stem !== this.props.stem)) {
+    if ((nextProps.filters !== filters)
+      || (nextProps.sort !== sort)
+      || (nextProps.stem !== this.props.stem)) {
       fetchData(nextProps.filters, nextProps.sort, nextProps.stem);
     }
   }
+
   handleSortData = (newSort) => {
     const { sortData } = this.props;
     sortData(newSort);
   }
+
   downloadCsv = () => {
     const { term, topicId, filters, notifyOfCsvDownload } = this.props;
     const url = `/api/topics/${topicId}/words/${term}*/stories.csv?${filtersAsUrlParams(filters)}`;
     window.location = url;
     notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
   }
+
   render() {
     const { inlinkedStories, topicId, helpButton, showTweetCounts } = this.props;
     const { formatMessage } = this.props.intl;
@@ -111,14 +114,14 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpIntro, messages.storiesTableHelpText])(
-        withAsyncFetch(
-          withCsvDownloadNotifyContainer(
-            WordStoriesContainer
-          )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpIntro, messages.storiesTableHelpText])(
+      withAsyncFetch(
+        withCsvDownloadNotifyContainer(
+          WordStoriesContainer
         )
       )
     )
-  );
+  )
+);

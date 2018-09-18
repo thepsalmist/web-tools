@@ -1,4 +1,5 @@
-import { FETCH_SOURCE_DETAILS, SET_FAVORITE_SOURCE } from '../../../../actions/sourceActions';
+import { FETCH_SOURCE_DETAILS } from '../../../../actions/sourceActions';
+import { SET_FAVORITE_SOURCE } from '../../../../actions/systemActions';
 import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 import { mediaSourceMetadataProps } from '../../../../lib/tagUtil';
 

@@ -13,7 +13,6 @@ import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil'
 import { fetchTopicWithNameExists } from '../../../actions/topicActions';
 import { assetUrl } from '../../../lib/assetUtil';
 
-export const TOPIC_FORM_MODE_EDIT = 'TOPIC_FORM_MODE_EDIT';
 export const TOPIC_FORM_MODE_CREATE = 'TOPIC_FORM_MODE_CREATE';
 
 const localMessages = {
@@ -33,9 +32,10 @@ const localMessages = {
 class TopicForm extends React.Component {
   shouldComponentUpdate = (nextProps) => {
     const { initialValues } = this.props;
-    return (initialValues.sourcesAndCollections !== nextProps.initialValues.sourcesAndCollections ||
-      initialValues !== nextProps.initialValues);
+    return (initialValues.sourcesAndCollections !== nextProps.initialValues.sourcesAndCollections
+      || initialValues !== nextProps.initialValues);
   }
+
   render() {
     const { initialValues, topicId, onSubmit, handleSubmit, pristine, submitting, asyncValidating, title, intro, mode, onMediaChange } = this.props;
     const { formatMessage } = this.props.intl;
@@ -57,7 +57,7 @@ class TopicForm extends React.Component {
         <Row>
           <Col lg={10}>
             <TopicDetailForm
-              initialValues={initialValues}
+              defaultValue={initialValues}
               mode={mode}
             />
           </Col>
@@ -71,22 +71,24 @@ class TopicForm extends React.Component {
           </Col>
         </Row>
         <Row><Col lg={12}><hr /></Col></Row>
-        <Row><Col lg={6}>
-          <div className="media-field-wrapper">
-            {mediaLabel}
-            <SourceCollectionsMediaForm
-              title={title}
-              intro={intro}
-              className="query-field"
-              form="topicForm"
-              destroyOnUnmount={false}
-              name="sourcesAndCollections"
-              initialValues={initialValues.sourcesAndCollections} // to and from MediaPicker
-              allowRemoval
-            />
-            {mediaPicker}
-          </div>
-        </Col></Row>
+        <Row>
+          <Col lg={6}>
+            <div className="media-field-wrapper">
+              {mediaLabel}
+              <SourceCollectionsMediaForm
+                title={title}
+                intro={intro}
+                className="query-field"
+                form="topicForm"
+                destroyOnUnmount={false}
+                name="sourcesAndCollections"
+                defaultValue={initialValues.sourcesAndCollections} // to and from MediaPicker
+                allowRemoval
+              />
+              {mediaPicker}
+            </div>
+          </Col>
+        </Row>
         <Row><Col lg={12}><hr /></Col></Row>
         <Row>
           <Col lg={12}>
@@ -126,6 +128,7 @@ TopicForm.propTypes = {
   topicNameSearch: PropTypes.object,
   mode: PropTypes.string.isRequired,
   onMediaChange: PropTypes.func.isRequired,
+  meta: PropTypes.object,
 };
 
 function validate(values, props) {
@@ -138,7 +141,7 @@ function validate(values, props) {
     errors.description = localMessages.descriptionError;
   }
   if (emptyString(values.solr_seed_query)) {
-    errors.solr_seed_query = localMessages.seedQueryError;
+    errors.solr_seed_query = formatMessage(localMessages.seedQueryError);
   }
   if (invalidDate(values.start_date) || !isValidSolrDate(values.start_date)) {
     errors.start_date = localMessages.dateError;
@@ -158,16 +161,17 @@ function validate(values, props) {
   return errors;
 }
 
-const asyncValidate = (values, dispatch) => (
+const asyncValidate = (values, dispatch, props) => {
+  const { formatMessage } = props.intl;
   // verify topic name is unique
-  dispatch(fetchTopicWithNameExists(values.name, values.topics_id))
+  return dispatch(fetchTopicWithNameExists(values.name, values.topics_id))
     .then((results) => {
       if (results.nameInUse === true) {
-        const error = { name: localMessages.nameInUseError };
+        const error = { name: formatMessage(localMessages.nameInUseError) }; // object
         throw error;
       }
-    })
-);
+    });
+};
 
 const reduxFormConfig = {
   form: 'topicForm',
@@ -180,8 +184,8 @@ const reduxFormConfig = {
 };
 
 export default
-  withIntlForm(
-    reduxForm(reduxFormConfig)(
-      TopicForm
-    )
-  );
+withIntlForm(
+  reduxForm(reduxFormConfig)(
+    TopicForm
+  )
+);

@@ -2,17 +2,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import composeSummarizedVisualization from './SummarizedVizualization';
+import withSummary from '../../common/hocs/SummarizedVizualization';
+import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import { fetchQueryTopWords, fetchDemoQueryTopWords, resetTopWords, selectWord }
-from '../../../actions/explorerActions';
-import { postToDownloadUrl, slugifiedQueryLabel, queryChangedEnoughToUpdate } from '../../../lib/explorerUtil';
+import { fetchQueryTopWords, fetchDemoQueryTopWords, resetTopWords, selectWord } from '../../../actions/explorerActions';
+import { postToDownloadUrl, slugifiedQueryLabel } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
-import composeQueryResultsSelector from './QueryResultsSelector';
+import withQueryResults from './QueryResultsSelector';
 import EditableWordCloudDataCard from '../../common/EditableWordCloudDataCard';
 
 const localMessages = {
-  title: { id: 'explorer.topWords.title', defaultMessage: 'Top Words' },
   descriptionIntro: { id: 'explorer.topWords.help.title', defaultMessage: '<p>Here are the top words used with each query. Looking at the language used can help you identify how this issue is talked about in the media online.</p>' },
   menuHeader: { id: 'explorer.topWords.menuHeader', defaultMessage: 'Query: {queryName}' },
 };
@@ -20,30 +19,24 @@ const localMessages = {
 const WORD_CLOUD_DOM_ID = 'query-word-cloud-wrapper';
 
 class QueryWordsResultsContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { lastSearchTime, fetchData } = this.props;
-    if (nextProps.lastSearchTime !== lastSearchTime) {
-      fetchData(nextProps.queries);
-    }
-  }
-  shouldComponentUpdate(nextProps) {
-    const { results, queries } = this.props;
-    return queryChangedEnoughToUpdate(queries, nextProps.queries, results, nextProps.results);
-  }
   handleDownload = (query, ngramSize, sampleSize) => {
     postToDownloadUrl('/api/explorer/words/wordcount.csv', query, { ngramSize, sample_size: sampleSize });
   }
+
   handleWordClick = (wordDataPoint) => {
-    const { handleSelectedWord, selectedQuery } = this.props;
-    handleSelectedWord(selectedQuery, wordDataPoint.term);
+    const { handleSelectedWord, selectedQuery, isLoggedIn, onShowLoginDialog } = this.props;
+    if (isLoggedIn) {
+      handleSelectedWord(selectedQuery, wordDataPoint.term);
+    } else {
+      onShowLoginDialog();
+    }
   }
+
   render() {
-    const { results, queries, tabSelector, selectedQueryIndex, fetchData } = this.props;
-    const { formatMessage } = this.props.intl;
+    const { results, queries, tabSelector, selectedQueryIndex, fetchData, internalItemSelected } = this.props;
     const selectedQuery = queries[selectedQueryIndex];
     return (
       <EditableWordCloudDataCard
-        actionMenuHeaderText={formatMessage(localMessages.menuHeader, { queryName: selectedQuery.label })}
         onViewSampleSizeClick={sampleSize => fetchData(queries, sampleSize)}
         initSampleSize={results[selectedQueryIndex].sample_size}
         subHeaderContent={tabSelector}
@@ -57,6 +50,7 @@ class QueryWordsResultsContainer extends React.Component {
         textColor={selectedQuery.color}
         actionsAsLinksUnderneath
         hideGoogleWord2Vec
+        selectedTerm={internalItemSelected ? internalItemSelected.word : ''}
       />
     );
   }
@@ -67,16 +61,17 @@ QueryWordsResultsContainer.propTypes = {
   lastSearchTime: PropTypes.number.isRequired,
   queries: PropTypes.array.isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
-  // from composition
+  // from hocs
   intl: PropTypes.object.isRequired,
   selectedQueryIndex: PropTypes.number.isRequired,
   selectedQuery: PropTypes.object.isRequired,
   tabSelector: PropTypes.object.isRequired,
+  onShowLoginDialog: PropTypes.func.isRequired,
   // from dispatch
   fetchData: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
   handleSelectedWord: PropTypes.func.isRequired,
-  selectedWord: PropTypes.object,
+  internalItemSelected: PropTypes.object,
   // from mergeProps
   asyncFetch: PropTypes.func.isRequired,
   // from state
@@ -86,7 +81,7 @@ QueryWordsResultsContainer.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: state.explorer.topWords.fetchStatus,
   results: state.explorer.topWords.results,
-  selectedWord: state.explorer.topWords.selectedWord,
+  internalItemSelected: state.explorer.topWords.selectedWord,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -143,18 +138,24 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
     asyncFetch: () => {
       dispatchProps.fetchData(ownProps.queries);
     },
+    shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
+      const { internalItemSelected } = stateProps;
+      return nextProps.internalItemSelected !== internalItemSelected;
+    },
   });
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      composeSummarizedVisualization(localMessages.title, localMessages.descriptionIntro, messages.wordcloudHelpText)(
-        withAsyncFetch(
-          composeQueryResultsSelector(
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withSummary(messages.topWords, localMessages.descriptionIntro, messages.wordcloudHelpText)(
+      withAsyncFetch(
+        withQueryResults(
+          withLoginRequired(
             QueryWordsResultsContainer
           )
         )
       )
     )
-  );
+  )
+);

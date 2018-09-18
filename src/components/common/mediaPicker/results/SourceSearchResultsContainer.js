@@ -25,8 +25,9 @@ class SourceSearchResultsContainer extends React.Component {
   state = {
     showAdvancedOptions: false,
   }
+
   toggleAdvancedOptions = () => {
-    this.setState({ showAdvancedOptions: !this.state.showAdvancedOptions });
+    this.setState(prevState => ({ showAdvancedOptions: !prevState.showAdvancedOptions }));
   }
 
   updateMediaQuery(values) {
@@ -36,22 +37,12 @@ class SourceSearchResultsContainer extends React.Component {
     if (this.state.showAdvancedOptions) {
       const formValues = formQuery['advanced-media-picker-search'];
       updatedQueryObj.tags = [];
-
-      if ('publicationCountry' in formValues) {
-        updatedQueryObj.tags.push(formValues.publicationCountry);
-      }
-      if ('publicationState' in formValues) {
-        updatedQueryObj.tags.push(formValues.publicationState);
-      }
-      if ('primaryLanguage' in formValues) {
-        updatedQueryObj.tags.push(formValues.primaryLanguage);
-      }
-      if ('countryOfFocus' in formValues) {
-        updatedQueryObj.tags.push(formValues.countryOfFocus);
-      }
-      if ('mediaType' in formValues) {
-        updatedQueryObj.tags.push(formValues.mediaType);
-      }
+      const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType'];
+      metadataQueryFields.forEach((key) => {
+        if (key in formValues) {
+          updatedQueryObj.tags.push(formValues[key]);
+        }
+      });
       this.setState(updatedQueryObj);
       updateAdvancedMediaQuerySelection(updatedQueryObj);
     } else {
@@ -126,7 +117,8 @@ const mapStateToProps = state => ({
   selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : 0,
   selectedMediaQueryKeyword: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.mediaKeyword : null,
   sourceResults: state.system.mediaPicker.sourceQueryResults,
-  formQuery: formSelector(state,
+  formQuery: formSelector(
+    state,
     'advanced-media-picker-search.publicationCountry',
     'advanced-media-picker-search.publicationState',
     'advanced-media-picker-search.primaryLanguage',
@@ -145,15 +137,14 @@ const mapDispatchToProps = dispatch => ({
   updateAdvancedMediaQuerySelection: (values) => {
     if (values.tags && values.tags.length > 0) {
       dispatch(selectMediaPickerQueryArgs(values));
-      dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: values.tags }));
+      dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: values.tags.map(tag => tag.tags_id) }));
     }
   },
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      SourceSearchResultsContainer
-    )
-  );
-
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    SourceSearchResultsContainer
+  )
+);

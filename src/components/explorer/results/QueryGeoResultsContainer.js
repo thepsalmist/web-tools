@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedHTMLMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import MenuItem from 'material-ui/MenuItem';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import composeSummarizedVisualization from './SummarizedVizualization';
-import composeQueryResultsSelector from './QueryResultsSelector';
+import withSummary from '../../common/hocs/SummarizedVizualization';
+import withQueryResults from './QueryResultsSelector';
 import GeoChart from '../../vis/GeoChart';
 import { fetchDemoQueryGeo, fetchQueryGeo, resetGeo } from '../../../actions/explorerActions';
 import { DownloadButton } from '../../common/IconButton';
@@ -25,23 +27,25 @@ class QueryGeoResultsContainer extends React.Component {
   downloadCsv = (query) => {
     postToDownloadUrl('/api/explorer/geography/geography.csv', query);
   }
+
   render() {
     const { results, intl, queries, handleCountryClick, selectedTabIndex, tabSelector } = this.props;
-    const { formatMessage, formatNumber } = intl;
+    const { formatNumber } = intl;
     let content;
     const coverageRatio = results[selectedTabIndex] ? results[selectedTabIndex].coverage_percentage : 0;
     if (coverageRatio > COVERAGE_REQUIRED) {
+      const data = results[selectedTabIndex].results.map(item => ({ ...item, value: item.pct }));
       content = (
         <div>
-          {results[selectedTabIndex] &&
+          {results[selectedTabIndex] && (
             <GeoChart
-              data={results[selectedTabIndex].results}
+              data={data}
               countryMaxColorScale={queries[selectedTabIndex].color}
               hideLegend
               onCountryClick={handleCountryClick}
               backgroundColor="#f5f5f5"
             />
-          }
+          )}
         </div>
       );
     } else {
@@ -60,21 +64,22 @@ class QueryGeoResultsContainer extends React.Component {
         { content }
         <div className="actions">
           <ActionMenu actionTextMsg={messages.downloadOptions}>
-            {queries.map((q, idx) =>
-              <MenuItem
-                key={idx}
-                className="action-icon-menu-item"
-                primaryText={formatMessage(localMessages.downloadCsv, { name: q.label })}
-                rightIcon={<DownloadButton />}
-                onTouchTap={() => this.downloadCsv(q)}
-              />
-            )}
+            <MenuItem
+              className="action-icon-menu-item"
+              onClick={() => this.downloadCsv(queries[selectedTabIndex])}
+            >
+              <ListItemText>
+                <FormattedMessage {...localMessages.downloadCsv} values={{ name: queries[selectedTabIndex].label }} />
+              </ListItemText>
+              <ListItemIcon>
+                <DownloadButton />
+              </ListItemIcon>
+            </MenuItem>
           </ActionMenu>
         </div>
       </div>
     );
   }
-
 }
 
 QueryGeoResultsContainer.propTypes = {
@@ -150,14 +155,14 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      composeSummarizedVisualization(localMessages.title, localMessages.help, [messages.heatMapHelpText])(
-        withAsyncFetch(
-          composeQueryResultsSelector(
-            QueryGeoResultsContainer
-          )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withSummary(localMessages.title, localMessages.help, [messages.heatMapHelpText])(
+      withAsyncFetch(
+        withQueryResults(
+          QueryGeoResultsContainer
         )
       )
     )
-  );
+  )
+);

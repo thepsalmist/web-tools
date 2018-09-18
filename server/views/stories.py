@@ -1,12 +1,12 @@
 from flask import jsonify
 import flask_login
 from operator import itemgetter
-from itertools import groupby
 import requests
 import logging
 
-from server import app, cliff, mc, NYT_THEME_LABELLER_URL
-from server.auth import user_mediacloud_client, user_mediacloud_key
+from flask import request
+from server import app, cliff, NYT_THEME_LABELLER_URL, mc
+from server.auth import user_mediacloud_client, user_admin_mediacloud_client
 from server.util.request import api_error_handler
 import server.util.csv as csv
 from server.cache import cache, key_generator
@@ -26,15 +26,30 @@ logger = logging.getLogger(__name__)
 @api_error_handler
 def story_info(stories_id):
     user_mc = user_mediacloud_client()
-    story = user_mc.story(stories_id)
+    admin_mc = user_admin_mediacloud_client()
+    if 'text' in request.args and request.args['text'] == 'true':
+        story = admin_mc.story(stories_id, text=True)
+    else:
+        story = user_mc.story(stories_id)
+    story["media"] = user_mc.media(story["media_id"])
     return jsonify({'info': story})
+
+
+@app.route('/api/stories/<stories_id>/raw.html', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def story_raw(stories_id):
+    admin_mc = user_admin_mediacloud_client()
+    story = admin_mc.story(stories_id, raw_1st_download=True)
+    text = story['raw_first_download_file']
+    return text
 
 
 @app.route('/api/stories/<stories_id>/entities', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
 def story_entities(stories_id):
-    entities = entities_from_mc_or_cliff(user_mediacloud_key(), stories_id)
+    entities = entities_from_mc_or_cliff(stories_id)
     return jsonify({'list': entities})
 
 
@@ -43,12 +58,12 @@ def story_entities(stories_id):
 @api_error_handler
 def story_entities_csv(stories_id):
     # in the download include all entity types
-    entities = entities_from_mc_or_cliff(user_mediacloud_key(), stories_id)
+    entities = entities_from_mc_or_cliff(stories_id)
     props = ['type', 'name', 'frequency']
     return csv.stream_response(entities, props, 'story-'+str(stories_id)+'-entities')
 
 
-def entities_from_mc_or_cliff(user_mediacloud_key, stories_id):
+def entities_from_mc_or_cliff(stories_id):
     entities = []
     # get entities from MediaCloud, or from CLIFF if not in MC
     cliff_results = cached_story_raw_cliff_results(stories_id)[0]['cliff']
@@ -69,12 +84,15 @@ def entities_from_mc_or_cliff(user_mediacloud_key, stories_id):
             'frequency': person['count']
         })
     # places don't have frequency set correctly, so we need to sum them
-    place_names = [place['name'] for place in cliff_results ['results']['places']['mentions']]
-    locations = [{
-        'type': 'LOCATION',
-        'name': key,
-        'frequency': len(list(group))
-    } for key, group in groupby(place_names)]
+    locations = []
+    place_names = set([place['name'] for place in cliff_results['results']['places']['mentions']])
+    for place in place_names:
+        loc = {
+            'type': 'LOCATION',
+            'name': place,
+            'frequency': len([p for p in cliff_results['results']['places']['mentions'] if p['name'] == place])
+        }
+        locations.append(loc)
     entities += locations
     # sort smartly
     unique_entities = sorted(entities, key=itemgetter('frequency'), reverse=True)
@@ -83,8 +101,8 @@ def entities_from_mc_or_cliff(user_mediacloud_key, stories_id):
 
 @cache.cache_on_arguments(function_key_generator=key_generator)
 def cached_story_raw_cliff_results(stories_id):
-    user_mc = user_mediacloud_client()
-    themes = user_mc.storyRawCliffResults([stories_id])
+    # need to pull story results with the tool key, so we don't need to cache on user key here
+    themes = mc.storyRawCliffResults([stories_id])
     return themes
 
 

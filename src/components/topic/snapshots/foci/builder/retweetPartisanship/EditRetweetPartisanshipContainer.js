@@ -43,7 +43,7 @@ const EditRetweetPartisanshipContainer = (props) => {
         <Row>
           <Col lg={8} xs={12}>
             <br />
-            <AppButton flat onClick={onPreviousStep} label={formatMessage(messages.previous)} />
+            <AppButton color="secondary" variant="outlined" onClick={onPreviousStep} label={formatMessage(messages.previous)} />
             &nbsp; &nbsp;
             <AppButton type="submit" label={formatMessage(messages.next)} primary />
           </Col>
@@ -85,16 +85,16 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 const reduxFormConfig = {
   form: 'snapshotFocus', // make sure this matches the sub-components and other wizard steps
-  destroyOnUnmount: false,  // so the wizard works
+  destroyOnUnmount: false, // so the wizard works
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        connect(mapStateToProps, mapDispatchToProps)(
-          EditRetweetPartisanshipContainer
-        )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      connect(mapStateToProps, mapDispatchToProps)(
+        EditRetweetPartisanshipContainer
       )
     )
-  );
+  )
+);

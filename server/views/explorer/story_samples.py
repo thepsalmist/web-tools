@@ -15,14 +15,19 @@ import server.views.explorer.apicache as apicache
 
 logger = logging.getLogger(__name__)
 
+SAMPLE_STORY_COUNT = 10
+
 
 @app.route('/api/explorer/stories/sample', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
 def api_explorer_story_sample():
     solr_q, solr_fq = parse_query_with_keywords(request.args)
-    story_sample_result = apicache.random_story_list(solr_q, solr_fq, 50)
-    return jsonify(story_sample_result)  
+    story_sample_result = apicache.random_story_list(solr_q, solr_fq, SAMPLE_STORY_COUNT)
+
+    for story in story_sample_result:
+        story["media"] = apicache.media(story["media_id"])
+    return jsonify(story_sample_result)
 
 
 @app.route('/api/explorer/demo/stories/sample', methods=['GET'])
@@ -36,8 +41,10 @@ def api_explorer_demo_story_sample():
     else:
         solr_q, solr_fq = parse_query_with_keywords(request.args)
 
-    story_sample_result = apicache.random_story_list(solr_q, solr_fq, 50)
-    return jsonify(story_sample_result)  
+    story_sample_result = apicache.random_story_list(solr_q, solr_fq, SAMPLE_STORY_COUNT)
+    for story in story_sample_result:
+        story["media"] = apicache.media(story["media_id"])
+    return jsonify(story_sample_result)
 
 
 @app.route('/api/explorer/stories/samples.csv', methods=['POST'])
@@ -67,7 +74,7 @@ def _stream_story_list_csv(filename, q, fq, stories_per_page=500, sort=MediaClou
     headers = {
         "Content-Disposition": "attachment;filename=" + timestamped_filename
     }
-    return Response(_story_list_by_page_as_csv_row(q, fq, stories_per_page, sort, 5, props),
+    return Response(_story_list_by_page_as_csv_row(q, fq, stories_per_page, sort, page_limit, props),
                     mimetype='text/csv; charset=utf-8', headers=headers)
 
 
@@ -85,7 +92,6 @@ def _story_list_by_page_as_csv_row(q, fq, stories_per_page, sort, page_limit, pr
 def _story_list_by_page(q, fq, stories_per_page, sort, page_limit=None):
     last_processed_stories_id = 0  # download oldest first
     page_count = 0
-    media_cache = {}  # media_id => media object
     while True:
         if (page_limit is not None) and (page_count >= page_limit):
             break
@@ -93,10 +99,7 @@ def _story_list_by_page(q, fq, stories_per_page, sort, page_limit=None):
         for s in story_page:
             # add in media metadata to the story (from lazy cache)
             media_id = s['media_id']
-            if media_id not in media_cache:
-                media = apicache.media(media_id)
-                media_cache[media_id] = media
-            media = media_cache[media_id]
+            media = apicache.media(media_id)
             for k, v in media['metadata'].iteritems():
                 s[u'media_{}'.format(k)] = v['label'] if v is not None else None
             # and add in the story metadata too

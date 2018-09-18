@@ -54,7 +54,7 @@ export function topicStoryCounts(topicId, params) {
   return createApiPromise(`/api/topics/${topicId}/stories/counts`, acceptedParams);
 }
 
-export function story(topicId, storiesId, params) {
+export function topicStoryInfo(topicId, storiesId, params) {
   const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q']);
   return createApiPromise(`/api/topics/${topicId}/stories/${storiesId}`, acceptedParams);
 }
@@ -134,8 +134,8 @@ export function topicGenerateSnapshot(topicId, params) {
   return createPostingApiPromise(`/api/topics/${topicId}/snapshots/generate`, acceptedParams);
 }
 
-export function topicUpdatePermission(topicId, email, permission) {
-  return createPostingApiPromise(`/api/topics/${topicId}/permissions/update`, { email, permission }, 'put');
+export function topicUpdatePermissions(topicId, permissions) {
+  return createPostingApiPromise(`/api/topics/${topicId}/permissions/update`, { permissions: JSON.stringify(permissions) }, 'put');
 }
 
 export function topicListPermissions(topicId) {

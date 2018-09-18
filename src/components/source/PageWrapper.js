@@ -41,7 +41,4 @@ PageWrapper.propTypes = {
   children: PropTypes.node,
 };
 
-export default
-  injectIntl(
-    PageWrapper
-  );
+export default injectIntl(PageWrapper);

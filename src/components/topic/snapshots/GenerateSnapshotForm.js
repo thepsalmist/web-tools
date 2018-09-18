@@ -24,9 +24,8 @@ const GenerateSnapshotForm = (props) => {
           <Field
             name="note"
             component={renderTextField}
-            floatingLabelText={localMessages.noteLabel}
+            label={localMessages.noteLabel}
             fullWidth
-            hintText={localMessages.noteHint}
           />
         </Col>
       </Row>
@@ -37,7 +36,7 @@ const GenerateSnapshotForm = (props) => {
             type="submit"
             label={formatMessage(localMessages.generate)}
             disabled={submitting}
-            primary
+            color="primary"
           />
         </Col>
       </Row>
@@ -68,10 +67,10 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        GenerateSnapshotForm
-      )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      GenerateSnapshotForm
     )
-  );
+  )
+);

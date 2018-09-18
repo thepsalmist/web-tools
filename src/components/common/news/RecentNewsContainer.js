@@ -16,6 +16,6 @@ const mapStateToProps = state => ({
 });
 
 export default
-  connect(mapStateToProps)(
-    RecentNewsContainer
-  );
+connect(mapStateToProps)(
+  RecentNewsContainer
+);

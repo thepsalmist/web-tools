@@ -30,16 +30,19 @@ class InfluentialStoriesContainer extends React.Component {
       fetchData(nextProps);
     }
   }
+
   onChangeSort = (newSort) => {
     const { sortData } = this.props;
     sortData(newSort);
   }
+
   downloadCsv = () => {
     const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
     const url = `/api/topics/${topicId}/stories.csv?snapshotId=${filters.snapshotId}&timespanId=${filters.timespanId}&sort=${sort}`;
     window.location = url;
     notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
   }
+
   render() {
     const { stories, showTweetCounts, sort, topicId, previousButton, nextButton, helpButton } = this.props;
     const { formatMessage } = this.props.intl;
@@ -121,8 +124,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(fetchTopicInfluentialStories(props.topicId, params))
       .then((results) => {
         // only update the url if it has changed
-        if ((results.link_ids.current.toString() !== ownProps.location.query.linkId) ||
-            (props.sort !== ownProps.location.query.sort)) {
+        if ((results.link_ids.current.toString() !== ownProps.location.query.linkId)
+          || (props.sort !== ownProps.location.query.sort)) {
           dispatch(push(pagedAndSortedLocation(
             ownProps.location,
             results.link_ids.current,
@@ -153,16 +156,16 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(messages.storiesTableHelpTitle, messages.storiesTableHelpText)(
-        withPaging(
-          withAsyncFetch(
-            withCsvDownloadNotifyContainer(
-              InfluentialStoriesContainer
-            )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(messages.storiesTableHelpTitle, messages.storiesTableHelpText)(
+      withPaging(
+        withAsyncFetch(
+          withCsvDownloadNotifyContainer(
+            InfluentialStoriesContainer
           )
         )
       )
     )
-  );
+  )
+);

@@ -14,8 +14,10 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import { EditButton, ExploreButton } from '../../common/IconButton';
 import SourceMgrHeaderContainer from '../SourceMgrHeaderContainer';
+import messages from '../../../resources/messages';
 
 const localMessages = {
+  title: { id: 'source.title', defaultMessage: '{name} | Source Summary | Media Cloud' },
   editSource: { id: 'source.edit', defaultMessage: 'Modify this Source' },
   visitHomepage: { id: 'source.visit', defaultMessage: 'Visit {url}' },
   editFeeds: { id: 'source.feeds.edit', defaultMessage: 'Modify this Source\'s Feeds' },
@@ -23,7 +25,6 @@ const localMessages = {
 };
 
 class SelectSourceContainer extends React.Component {
-
   componentWillReceiveProps(nextProps) {
     const { sourceId, fetchData } = this.props;
     if ((nextProps.sourceId !== sourceId)) {
@@ -47,14 +48,14 @@ class SelectSourceContainer extends React.Component {
 
   render() {
     const { children, source } = this.props;
-    const titleHandler = parentTitle => `${source.name} | ${parentTitle}`;
+    const { formatMessage } = this.props.intl;
     return (
       <div className="source-container">
-        <Helmet><title>{titleHandler()}</title></Helmet>
+        <Helmet><title>{`${source.name} | ${formatMessage(messages.sourcesToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
         <SourceMgrHeaderContainer />
         <SourceControlBar>
-          <a href="search-in-explorer" onClick={this.searchInExplorer} >
-            <ExploreButton />
+          <a href="search-in-explorer" onClick={this.searchInExplorer}>
+            <ExploreButton useBackgroundColor />
             <FormattedMessage {...localMessages.searchNow} />
           </a>
           <a href={source.url}>
@@ -62,11 +63,11 @@ class SelectSourceContainer extends React.Component {
             <FormattedMessage {...localMessages.visitHomepage} values={{ url: source.url }} />
           </a>
           <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
-            <Link to={`/sources/${source.media_id}/edit`} >
+            <Link to={`/sources/${source.media_id}/edit`}>
               <EditButton />
               <FormattedMessage {...localMessages.editSource} />
             </Link>
-            <Link to={`/sources/${source.media_id}/feeds`} >
+            <Link to={`/sources/${source.media_id}/feeds`}>
               <EditButton />
               <FormattedMessage {...localMessages.editFeeds} />
             </Link>
@@ -78,7 +79,6 @@ class SelectSourceContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 SelectSourceContainer.propTypes = {
@@ -89,7 +89,7 @@ SelectSourceContainer.propTypes = {
   removeSourceId: PropTypes.func.isRequired,
   // from context
   location: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   sourceId: PropTypes.number.isRequired,
   children: PropTypes.node.isRequired,
   // from state
@@ -123,10 +123,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        SelectSourceContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      SelectSourceContainer
     )
-  );
+  )
+);

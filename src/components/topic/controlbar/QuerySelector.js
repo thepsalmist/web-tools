@@ -1,14 +1,16 @@
+/* eslint react/no-unused-state: 0 */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import TextField from 'material-ui/TextField';
+import TextField from '@material-ui/core/TextField';
 
 const localMessages = {
-  pickQuery: { id: 'query.pick', defaultMessage: 'Story Search (press enter to apply)' },
+  label: { id: 'topic.queryFilter.label', defaultMessage: 'Story Filter' },
+  placeholder: { id: 'topic.queryFilter.placeholder', defaultMessage: '(enter a boolean query and press return)' },
 };
 
 class QuerySelector extends React.Component {
-
   state = {
     focused: false,
     value: '',
@@ -66,17 +68,13 @@ class QuerySelector extends React.Component {
     return (
       <div className="query-selector-wrapper">
         <TextField
-          floatingLabelText={formatMessage(localMessages.pickQuery)}
-          floatingLabelFixed
-          floatingLabelStyle={{ color: 'rgb(224,224,224)', opacity: 0.8 }}
-          value={this.state.value}
+          label={formatMessage(localMessages.label)}
+          placeholder={formatMessage(localMessages.placeholder)}
+          InputLabelProps={{ shrink: true }}
+          value={this.state.value ? this.state.value : ''}
           onKeyDown={this.handleMenuItemKeyDown}
           fullWidth
-          id="topic-filter-query"
           onChange={this.handleChange}
-          inputStyle={{
-            color: '#FFFFFF',
-          }}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
         />
@@ -84,7 +82,6 @@ class QuerySelector extends React.Component {
       </div>
     );
   }
-
 }
 
 QuerySelector.propTypes = {
@@ -96,6 +93,6 @@ QuerySelector.propTypes = {
 };
 
 export default
-  injectIntl(
-    QuerySelector
-  );
+injectIntl(
+  QuerySelector
+);

@@ -22,20 +22,18 @@ const localMessages = {
 };
 
 class WordInContextContainer extends React.Component {
-  state = {
-    imageUri: null,
-  }
   componentWillReceiveProps(nextProps) {
     const { fetchData, filters } = this.props;
-    if (nextProps.filters !== filters ||
-      (nextProps.stem !== this.props.stem)) {
+    if (nextProps.filters !== filters || (nextProps.stem !== this.props.stem)) {
       fetchData(nextProps);
     }
   }
+
   getUniqueDomId = () => {
     const { topicId } = this.props;
     return `word-in-context-${topicId}`;
   }
+
   handleDownloadSvg = () => {
     const { topicName, filters, term } = this.props;
     // a little crazy, but it works (we have to just walk the DOM rendered by the library we are using)
@@ -44,6 +42,7 @@ class WordInContextContainer extends React.Component {
     const svgDownloadPrefix = `${topicDownloadFilename(topicName, filters)}-${slugify(term)}-in-context`;
     downloadSvg(svgDownloadPrefix, svgNode);
   }
+
   render() {
     const { term, fragments, helpButton } = this.props;
     const { formatMessage } = this.props.intl;
@@ -100,13 +99,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordTreeHelpText])(
-        withAsyncFetch(
-          WordInContextContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordTreeHelpText])(
+      withAsyncFetch(
+        WordInContextContainer
       )
     )
-  );
-
+  )
+);

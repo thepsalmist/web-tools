@@ -1,7 +1,7 @@
 
 export function trimToMaxLength(string, maxLength) {
   if ((string === undefined) || (string === null)) {
-    return string;  // is this right, or should we return empty string?
+    return string; // is this right, or should we return empty string?
   }
   if (string.length < maxLength) {
     return string;

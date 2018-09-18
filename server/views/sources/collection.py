@@ -259,10 +259,24 @@ def _collection_source_story_split_historical_counts(collection_id):
 @flask_login.login_required
 @api_error_handler
 def collection_source_split_stories(collection_id):
-    q = "tags_id_media:{}".format(collection_id)
-    results = apicache.last_year_split_story_count(user_mediacloud_key(), q)
+    collections_query = "tags_id_media:{}".format(collection_id)
+    exclude_spidered_stories = " tags_id_media:{} AND NOT tags_id_stories:{}".format(str(collection_id),
+                                                                                8875452) if 'separate_spidered' in request.args else collections_query
     interval = 'day' # default, and not currently passed to the calls above
-    return jsonify({'results': {'list': results['counts'], 'total_story_count': results['total_story_count'], 'interval': interval}})
+
+    all_results = apicache.last_year_split_story_count(user_mediacloud_key(), collections_query)
+    non_spidered_results = apicache.last_year_split_story_count(user_mediacloud_key(),
+                                                                exclude_spidered_stories)  # same if request.args doesn't ask to exclude_spidered
+
+    all_stories = {
+        'total_story_count': all_results['total_story_count'],
+        'list': all_results['counts'],
+    }
+    partial_stories = {
+        'total_story_count': non_spidered_results['total_story_count'],
+        'list': non_spidered_results['counts'],
+    }
+    return jsonify({'results': {'all_stories': all_stories, 'partial_stories': partial_stories, 'interval': interval}})
 
 
 @app.route('/api/collections/<collection_id>/story-split/count.csv')

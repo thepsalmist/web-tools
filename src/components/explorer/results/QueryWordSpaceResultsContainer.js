@@ -2,15 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import MenuItem from 'material-ui/MenuItem';
 import ActionMenu from '../../common/ActionMenu';
-import composeSummarizedVisualization from './SummarizedVizualization';
-import { DownloadButton } from '../../common/IconButton';
+import withSummary from '../../common/hocs/SummarizedVizualization';
 import { postToDownloadUrl, downloadExplorerSvg } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import WordSpace from '../../vis/WordSpace';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import composeQueryResultsSelector from './QueryResultsSelector';
+import withQueryResults from './QueryResultsSelector';
+import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 
 const localMessages = {
   title: { id: 'explorer.topWords.title', defaultMessage: 'Word Space' },
@@ -26,9 +25,9 @@ class QueryWordSpaceResultsContainer extends React.Component {
   handleDownloadCsv = (query) => {
     postToDownloadUrl('/api/explorer/words/wordcount.csv', query);
   }
+
   render() {
     const { results, queries, selectedTabIndex, tabSelector } = this.props;
-    const { formatMessage } = this.props.intl;
     const domId = `${WORD_SPACE_DOM_ID}-${selectedTabIndex}`;
     return (
       <div>
@@ -43,25 +42,11 @@ class QueryWordSpaceResultsContainer extends React.Component {
         />
         <div className="actions">
           <ActionMenu actionTextMsg={messages.downloadOptions}>
-            {queries.map((q, idx) =>
-              <span key={`wordspace-actions-${idx}`}>
-                <MenuItem
-                  className="action-icon-menu-item"
-                  primaryText={formatMessage(localMessages.downloadCsv, { name: q.label })}
-                  rightIcon={<DownloadButton />}
-                  onTouchTap={() => this.handleDownloadCsv(q)}
-                />
-                <MenuItem
-                  className="action-icon-menu-item"
-                  primaryText={formatMessage(localMessages.downloadSvg, { name: q.label })}
-                  rightIcon={<DownloadButton />}
-                  onTouchTap={() => {
-                    const svgChild = document.getElementById(domId);
-                    downloadExplorerSvg(q.label, 'sampled-word-space', svgChild);
-                  }}
-                />
-              </span>
-            )}
+            <SVGAndCSVMenu
+              downloadCsv={() => this.handleDownloadCsv(queries[selectedTabIndex])}
+              downloadSvg={() => downloadExplorerSvg(queries[selectedTabIndex].label, 'sampled-word-space', domId)}
+              label={queries[selectedTabIndex].label}
+            />
           </ActionMenu>
         </div>
       </div>
@@ -105,14 +90,14 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      composeSummarizedVisualization(localMessages.title, localMessages.descriptionIntro, messages.wordSpaceLayoutHelp)(
-        withAsyncFetch(
-          composeQueryResultsSelector(
-            QueryWordSpaceResultsContainer
-          )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withSummary(localMessages.title, localMessages.descriptionIntro, messages.wordSpaceLayoutHelp)(
+      withAsyncFetch(
+        withQueryResults(
+          QueryWordSpaceResultsContainer
         )
       )
     )
-  );
+  )
+);

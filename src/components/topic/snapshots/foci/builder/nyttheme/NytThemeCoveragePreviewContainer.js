@@ -22,6 +22,7 @@ class NytThemeCoveragePreviewContainer extends React.Component {
       fetchData(topicId, nextProps.numThemes);
     }
   }
+
   render() {
     const { counts, numThemes } = this.props;
     const { formatMessage } = this.props.intl;
@@ -84,11 +85,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 
   });
 }
+
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        NytThemeCoveragePreviewContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      NytThemeCoveragePreviewContainer
     )
-  );
+  )
+);

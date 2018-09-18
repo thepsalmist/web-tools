@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { trimToMaxLength } from '../../lib/stringUtil';
 
+const MAX_TAB_LABEL_LENGTH = 21;
+
 class TabSelector extends React.Component {
   state = {
     selectedViewIndex: 0,
@@ -15,7 +17,7 @@ class TabSelector extends React.Component {
     }
     return (
       <ul className="tab-selector">
-        {tabLabels.filter(label => label !== undefined).map((label, idx) =>
+        {tabLabels.filter(label => label !== undefined).map((label, idx) => (
           <li
             role="button"
             tabIndex={0}
@@ -28,9 +30,9 @@ class TabSelector extends React.Component {
               onViewSelected(idx);
             }}
           >
-            {trimToMaxLength(label.label || label, 20)}
+            {trimToMaxLength(label.label || label, MAX_TAB_LABEL_LENGTH)}
           </li>
-        )}
+        ))}
       </ul>
     );
   }
@@ -38,7 +40,7 @@ class TabSelector extends React.Component {
 
 TabSelector.propTypes = {
   // from parent
-  tabLabels: PropTypes.array,  // an array of strings
+  tabLabels: PropTypes.array, // an array of strings
   onViewSelected: PropTypes.func, // will get passed the index of the tab selected
 };
 

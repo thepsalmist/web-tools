@@ -1,11 +1,11 @@
 import logging
 import json
-from flask import jsonify, request
+from flask import jsonify, request, Response
 import flask_login
 
 from server import app, TOOL_API_KEY
 from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS
-from server.auth import user_mediacloud_key, user_admin_mediacloud_client, is_user_logged_in
+from server.auth import user_mediacloud_key, user_mediacloud_client, user_admin_mediacloud_client, is_user_logged_in
 from server.util import csv
 from server.views.topics import validated_sort, TOPIC_MEDIA_CSV_PROPS
 from server.views.topics.splitstories import stream_topic_split_story_counts_csv
@@ -132,25 +132,90 @@ def _media_info_worker(media_topic_data):
     return media_topic_data
 
 
+@app.route('/api/topics/<topics_id>/media/media_links.csv', methods=['GET'])
+@flask_login.login_required
+def get_topic_media_links_csv(topics_id):
+    user_mc = user_mediacloud_client()
+    topic = user_mc.topic(topics_id)
+
+    #page through results for timespand
+    return stream_media_link_list_csv(user_mediacloud_key(), topic['name'] + '-stories', topics_id)
+
+def stream_media_link_list_csv(user_mc_key, filename, topics_id, **kwargs):
+
+    all_stories = []
+    params=kwargs.copy()
+
+    merged_args = {
+        'snapshots_id': request.args['snapshotId'],
+        'timespans_id': request.args['timespanId'],
+        'foci_id': request.args['focusId'] if 'foci_id' in request.args else None,
+    }
+    params.update(merged_args)
+    if 'q' in params:
+        params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
+    params['limit'] = 1000  # an arbitrary value to let us page through with big topics
+
+    timestamped_filename = csv.safe_filename(filename)
+    headers = {
+        "Content-Disposition": "attachment;filename=" + timestamped_filename
+    }
+    return Response(_topic_media_link_list_by_page_as_csv_row(user_mc_key, topics_id, TOPIC_MEDIA_CSV_PROPS, **params),
+                    mimetype='text/csv; charset=utf-8', headers=headers)
+
+
+# generator you can use to handle a long list of stories row by row (one row per story)
+def _topic_media_link_list_by_page_as_csv_row(user_mc_key, topics_id, props, **kwargs):
+    local_mc = user_admin_mediacloud_client(user_mc_key) #having issues with calling apicache call.. so trying directly
+    yield u','.join(props) + u'\n'  # first send the column names
+    all_media = []
+    more_media = True
+    link_id =0
+    params = kwargs
+    params['limit'] = 1000  # an arbitrary value to let us page through with big pages
+    while more_media:
+        media_link_page = apicache.topic_media_link_list_by_page(TOOL_API_KEY, topics_id, link_ids=link_id, **kwargs)
+        media_list = media_link_page['links']
+
+        media_src_ids = [str(s['source_media_id']) for s in media_link_page['links']]
+        media_ref_ids = [str(s['ref_media_id']) for s in media_link_page['links']]
+        media_src_ids = media_src_ids + media_ref_ids
+# user_mc_key isn't working
+        #
+
+        for m in media_link_page['links']:
+            q = "media_id:{[61164, 4434, 18380]}"
+            params['q'] = q
+            # TODO - CSB this currently doesn't work the way we need it to. waiting for hal to respond
+            media_info = local_mc.topicMediaList(topics_id, **params)
+            for m_info in media_info['media']:
+                if m['source_media_id'] == m_info['media_id']:
+                    m['source_info'] = m_info
+                if m['ref_media_id'] == m_info['media_id']:
+                    m['ref_info'] = m_info
+
+        if 'next' in media_link_page['link_ids']:
+            link_id = media_link_page['link_ids']['next']
+        else:
+            more_media = False
+            for s in media_link_page['links']:
+                cleaned_source_info = csv.dict2row(TOPIC_MEDIA_CSV_PROPS, s['source_info'])
+                cleaned_ref_info = csv.dict2row(TOPIC_MEDIA_CSV_PROPS, s['ref_info'])
+                row_string = u','.join(cleaned_source_info) + ',' + u','.join(cleaned_ref_info) + u'\n'
+                yield row_string
+
 def _stream_media_list_csv(user_mc_key, filename, topics_id, **kwargs):
     # Helper method to stream a list of media back to the client as a csv.  Any args you pass in will be
     # simply be passed on to a call to topicMediaList.
-    add_metadata = False  # off for now because this is SUPER slow
     all_media = []
     more_media = True
     params = kwargs
     params['limit'] = 1000  # an arbitrary value to let us page through with big pages
     try:
-        cols_to_export = TOPIC_MEDIA_CSV_PROPS
-        if not add_metadata:
-            cols_to_export = cols_to_export[:-4]    # remove the metadata cols
 
         while more_media:
             page = apicache.topic_media_list(user_mediacloud_key(), topics_id, **params)
             media_list = page['media']
-
-            if add_metadata:
-                media_list = [_media_info_worker(m) for m in media_list]
 
             all_media = all_media + media_list
 
@@ -160,7 +225,7 @@ def _stream_media_list_csv(user_mc_key, filename, topics_id, **kwargs):
             else:
                 more_media = False
 
-        return csv.download_media_csv(all_media, filename, cols_to_export)
+        return csv.download_media_csv(all_media, filename, TOPIC_MEDIA_CSV_PROPS)
     except Exception as exception:
         return json.dumps({'error': str(exception)}, separators=(',', ':')), 400
 

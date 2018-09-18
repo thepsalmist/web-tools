@@ -19,4 +19,3 @@ const topWords = createAsyncReducer({
 });
 
 export default topWords;
-

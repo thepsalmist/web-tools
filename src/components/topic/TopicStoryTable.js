@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import Link from 'react-router/lib/Link';
-import ArrowDropDownIcon from 'material-ui/svg-icons/navigation/arrow-drop-down';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import messages from '../../resources/messages';
 import LinkWithFilters from './LinkWithFilters';
 import { storyPubDateToTimestamp, STORY_PUB_DATE_UNDATEABLE } from '../../lib/dateUtil';
@@ -18,7 +18,6 @@ const localMessages = {
 const ICON_STYLE = { margin: 0, padding: 0, width: 12, height: 12 };
 
 class TopicStoryTable extends React.Component {
-
   sortableHeader = (sortKey, textMsg) => {
     const { onChangeSort, sortedBy } = this.props;
     const { formatMessage } = this.props.intl;
@@ -73,7 +72,7 @@ class TopicStoryTable extends React.Component {
             </tr>
             {stories.map((story, idx) => {
               const domain = storyDomainName(story);
-              let dateToShow = null;  // need to handle undateable stories
+              let dateToShow = null; // need to handle undateable stories
               let dateStyle = '';
               const title = maxTitleLength !== undefined ? `${story.title.substr(0, maxTitleLength)}...` : story.title;
               const tweetInfo = showTweetCounts ? <td className="numeric"><SafelyFormattedNumber value={story.simple_tweet_count} /></td> : null;
@@ -100,9 +99,7 @@ class TopicStoryTable extends React.Component {
                         { foci.name }
                       </Link>
                     </span>
-                  ),
-                  )
-                );
+                  )));
                 // listOfFoci = intersperse(listOfFoci, ', ');
               }
               return (
@@ -133,14 +130,12 @@ class TopicStoryTable extends React.Component {
                   <td>{listOfFoci}</td>
                 </tr>
               );
-            }
-            )}
+            })}
           </tbody>
         </table>
       </div>
     );
   }
-
 }
 
 TopicStoryTable.propTypes = {

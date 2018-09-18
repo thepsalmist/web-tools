@@ -51,7 +51,4 @@ ToolsFaq.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    ToolsFaq
-  );
+export default injectIntl(ToolsFaq);

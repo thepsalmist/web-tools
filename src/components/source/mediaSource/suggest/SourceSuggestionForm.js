@@ -60,7 +60,7 @@ const SourceSuggestionForm = (props) => {
           <Field
             name="feedurl"
             component={renderTextField}
-            hintText={localMessages.feedUrlHint}
+            label={localMessages.feedUrlHint}
             fullWidth
           />
         </Col>
@@ -75,7 +75,7 @@ const SourceSuggestionForm = (props) => {
           <Field
             name="reason"
             component={renderTextField}
-            hintText={localMessages.reasonHint}
+            label={localMessages.reasonHint}
             fullWidth
           />
         </Col>
@@ -108,10 +108,10 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        SourceSuggestionForm
-      )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      SourceSuggestionForm
     )
-  );
+  )
+);

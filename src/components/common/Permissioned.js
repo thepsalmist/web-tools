@@ -1,13 +1,10 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import { PERMISSION_TOPIC_READ, PERMISSION_TOPIC_WRITE, PERMISSION_TOPIC_ADMIN, hasPermissions, getUserRoles,
-         PERMISSION_ADMIN, PERMISSION_MEDIA_EDIT, PERMISSION_STORY_EDIT, PERMISSION_LOGGED_IN,
-         PERMISSION_NOT_LOGGED_IN } from '../../lib/auth';
+  PERMISSION_ADMIN, PERMISSION_MEDIA_EDIT, PERMISSION_STORY_EDIT, PERMISSION_LOGGED_IN,
+  PERMISSION_NOT_LOGGED_IN } from '../../lib/auth';
 
-/**
- * Use this to restrict who is allowed to see what.
- **/
+// Use this to restrict who is allowed to see what.
 const Permissioned = (props) => {
   const { children, onlyTopic, onlyRole, userTopicPermission, user } = props;
   const userRolePermissions = getUserRoles(user);
@@ -45,6 +42,7 @@ const Permissioned = (props) => {
   if (allowed) {
     content = children;
   }
+  /*
   let cssClasses = 'permissioned';
   if (onlyTopic) cssClasses += ` topic-${onlyTopic}`;
   if (onlyRole) cssClasses += ` role-${onlyRole}`;
@@ -53,6 +51,8 @@ const Permissioned = (props) => {
       {content}
     </span>
   );
+  */
+  return content;
 };
 
 Permissioned.propTypes = {
@@ -66,11 +66,11 @@ Permissioned.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  userTopicPermission: state.topics ? state.topics.selected.info.user_permission : null,  // do this to support other apps (ie. NOT topic mapper)
+  userTopicPermission: state.topics ? state.topics.selected.info.user_permission : null, // do this to support other apps (ie. NOT topic mapper)
   user: state.user,
 });
 
 export default
-  connect(mapStateToProps)(
-    Permissioned
-  );
+connect(mapStateToProps)(
+  Permissioned
+);

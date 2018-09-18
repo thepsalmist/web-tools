@@ -38,14 +38,16 @@ const FocusForm3DescribeContainer = (props) => {
   let content;
   switch (formData.focalTechnique) {
     case FOCAL_TECHNIQUE_BOOLEAN_QUERY:
-      content = (<FocusDescriptionForm
-        topicId={topicId}
-        initialValues={initialValues}
-        focalSetDefinitions={focalSetDefinitions}
-        focalTechnique={formData.focalTechnique}
-        currentFocalSetDefinitionId={formData.focalSetDefinitionId}
-        keywords={formData.keywords}
-      />);
+      content = (
+        <FocusDescriptionForm
+          topicId={topicId}
+          initialValues={initialValues}
+          focalSetDefinitions={focalSetDefinitions}
+          focalTechnique={formData.focalTechnique}
+          currentFocalSetDefinitionId={formData.focalSetDefinitionId}
+          keywords={formData.keywords}
+        />
+      );
       break;
     case FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP:
       introContent = (
@@ -129,7 +131,7 @@ const FocusForm3DescribeContainer = (props) => {
         {content}
         <Row>
           <Col lg={12}>
-            <AppButton flat label={formatMessage(messages.previous)} onClick={() => goToStep(1)} />
+            <AppButton variant="outlined" color="secondary" label={formatMessage(messages.previous)} onClick={() => goToStep(1)} />
             &nbsp; &nbsp;
             <AppButton type="submit" label={formatMessage(messages.next)} primary />
           </Col>
@@ -146,7 +148,7 @@ FocusForm3DescribeContainer.propTypes = {
   // form composition
   intl: PropTypes.object.isRequired,
   renderTextField: PropTypes.func.isRequired,
-  renderSelectField: PropTypes.func.isRequired,
+  renderSelect: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
@@ -201,12 +203,12 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-          FocusForm3DescribeContainer
-        )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+        FocusForm3DescribeContainer
       )
     )
-  );
+  )
+);

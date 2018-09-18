@@ -16,7 +16,7 @@ const app = createReducer({
   [UPDATE_FEEDBACK]: payload => ({ feedback: payload }),
   [ADD_NOTICE]: (payload, state) => ({ notices: [...state.notices, payload] }),
   [DISMISS_NOTICES]: () => ({ notices: [] }),
-  [LOCATION_CHANGE]: () => ({ notices: [] }),  // empty out errors when the user switches pages
+  [LOCATION_CHANGE]: () => ({ notices: [] }), // empty out errors when the user switches pages
   // when an object is selected we want to show the subheader that app has set
   [SET_SUB_HEADER_VISIBLE]: payload => ({ showSubHeader: payload }),
 });

@@ -5,7 +5,7 @@ import { FETCH_QUERY_SAMPLE_STORIES, RESET_SAMPLE_STORIES } from '../../actions/
 
 const stories = createIndexedAsyncReducer({
   initialState: ({
-    fetchStatus: '', fetchStatuses: [], results: [],
+    fetchStatus: '', fetchStatuses: [], results: [], selectedStory: {},
   }),
   action: FETCH_QUERY_SAMPLE_STORIES,
   [RESET_SAMPLE_STORIES]: () => ({

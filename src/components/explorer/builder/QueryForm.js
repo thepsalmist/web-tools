@@ -2,30 +2,34 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { reduxForm, Field, propTypes } from 'redux-form';
-// import MenuItem from 'material-ui/MenuItem';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
-import ColorPicker from '../../common/ColorPicker';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import CopyAllComponent from '../../common/CopyAllComponent';
 import SourceCollectionsFieldList from '../../common/mediaPicker/SourceCollectionsFieldList';
 import MediaPickerDialog from '../../common/mediaPicker/MediaPickerDialog';
 import QueryHelpDialog from '../../common/help/QueryHelpDialog';
+import MediaHelpDialog from '../../common/help/MediaHelpDialog';
 import SavedSearchControls from './SavedSearchControls';
 import { emptyString, validDate } from '../../../lib/formValidators';
 import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil';
 import { KEYWORD, MEDIA, DATES } from '../../../lib/explorerUtil';
+import messages from '../../../resources/messages';
 
 const localMessages = {
   mainTitle: { id: 'explorer.queryBuilder.maintitle', defaultMessage: 'Create Query' },
   addButton: { id: 'explorer.queryBuilder.saveAll', defaultMessage: 'Search' },
   feedback: { id: 'explorer.queryBuilder.feedback', defaultMessage: 'We saved your new source' },
   query: { id: 'explorer.queryBuilder.query', defaultMessage: 'Enter search terms' },
-  selectSandC: { id: 'explorer.queryBuilder.selectSAndC', defaultMessage: 'Select media' },
+  queryDesc: { id: 'explorer.queryBuilder.query.desc', defaultMessage: 'Media Cloud will return stories that match your search query. We use standard boolean search syntax.' },
+  selectSandC: { id: 'explorer.queryBuilder.selectSAndC', defaultMessage: 'Select your media' },
+  selectSandCDesc: { id: 'explorer.queryBuilder.selectSAndCDesc', defaultMessage: 'Choose individual sources or collections to be searched. Our system includes collections for a large range of countries, in multiple languages.' },
+  selectSandCDescLink: { id: 'explorer.queryBuilder.selectSAndCDescLink', defaultMessage: 'Learn more about choosing media.' },
   SandC: { id: 'explorer.queryBuilder.sAndC', defaultMessage: 'Media' },
   color: { id: 'explorer.queryBuilder.color', defaultMessage: 'Choose a color' },
-  dates: { id: 'explorer.queryBuilder.dates', defaultMessage: 'For dates' },
+  dates: { id: 'explorer.queryBuilder.dates', defaultMessage: 'Enter dates' },
+  datesDesc: { id: 'explorer.queryBuilder.datesDesc', defaultMessage: 'Our database goes back to 2011, however the start date for different sources and collections can vary. Click on a source or collecton to learn more about when we added it.' },
   dateTo: { id: 'explorer.queryBuilder.dateTo', defaultMessage: 'to' },
   queryHelpTitle: { id: 'explorer.queryBuilder.queryHelp.title', defaultMessage: 'Building Query Strings' },
   queryHelpContent: { id: 'explorer.queryBuilder.queryHelp.content', defaultMessage: '<p>You can write boolean queries to search against out database. To search for a single word, just enter that word:</p><code>gender</code><p>You can also use boolean and phrase searches like this:</p><code>"gender equality" OR "gender equity"</code>' },
@@ -48,26 +52,25 @@ class QueryForm extends React.Component {
   }
 
   setQueryFormChildDialogOpen = () => {
-    this.setState({ childDialogOpen: !this.state.childDialogOpen });
+    this.setState(prevState => ({ childDialogOpen: !prevState.childDialogOpen }));
   }
 
   render() {
     const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, handleLoadSearches, handleDeleteSearch, handleLoadSelectedSearch, savedSearches, searchNickname, handleSaveSearch,
-      submitting, handleSubmit, onSave, onColorChange, onMediaChange, renderTextField, renderTextFieldWithFocus, handleCopyAll } = this.props;
+      submitting, handleSubmit, onSave, onMediaChange, renderTextField, renderTextFieldWithFocus, handleCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
     const cleanedInitialValues = initialValues ? { ...initialValues } : {};
     if (cleanedInitialValues.disabled === undefined) {
       cleanedInitialValues.disabled = false;
     }
-    cleanedInitialValues.media = [  // merge intial sources and collections into one list for display with `renderFields`
+    cleanedInitialValues.media = [ // merge intial sources and collections into one list for display with `renderFields`
       ...initialValues.sources,
       ...initialValues.collections,
     ];
-    selected.media = [  // merge sources and collections into one list for display with `renderFields`
+    selected.media = [ // merge sources and collections into one list for display with `renderFields`
       ...selected.sources,
       ...selected.collections,
     ];
-    const currentColor = selected.color; // for ColorPicker
     const currentQ = selected.q;
     let mediaPicker = null;
     let mediaLabel = formatMessage(localMessages.SandC);
@@ -87,36 +90,47 @@ class QueryForm extends React.Component {
         <div className="query-form-wrapper">
           <Grid>
             <Row>
-              <Col lg={5}>
+              <Col lg={4}>
                 <div className="q-field-wrapper">
-                  <CopyAllComponent label={formatMessage(localMessages.query)} title={formatMessage(localMessages.copyQueryKeywordTitle)} msg={formatMessage(localMessages.copyQueryKeywordMsg)} onOk={() => handleCopyAll(KEYWORD)} />
+                  <div className="media-field-label query-field-label">
+                    <span className="query-field-number">1</span>
+                    <CopyAllComponent
+                      label={formatMessage(localMessages.query)}
+                      title={formatMessage(localMessages.copyQueryKeywordTitle)}
+                      msg={formatMessage(localMessages.copyQueryKeywordMsg)}
+                      onOk={() => handleCopyAll(KEYWORD)}
+                    />
+                  </div>
                   <Field
                     className="query-field"
                     name="q"
                     type="text"
                     value={currentQ}
-                    multiLine
+                    multiline
                     rows={3}
                     rowsMax={4}
                     fullWidth
                     onChange={this.focusSelect}
                     component={renderTextFieldWithFocus}
                   />
-                  <QueryHelpDialog />
                 </div>
-                <div className="color-field-wrapper">
-                  <label className="inline" htmlFor="color"><FormattedMessage {...localMessages.color} /></label>
-                  <ColorPicker
-                    name="color"
-                    color={currentColor}
-                    onChange={onColorChange}
-                  />
+                <div className="query-field-desc">
+                  <FormattedMessage {...localMessages.queryDesc} />
+                  &nbsp;
+                  <QueryHelpDialog trigger={formatMessage(messages.queryHelpLink)} />
                 </div>
               </Col>
-              <Col lg={1} />
-              <Col lg={6}>
+              <Col lg={4}>
                 <div className="media-field-wrapper">
-                  <CopyAllComponent label={mediaLabel} title={formatMessage(localMessages.copyQueryMediaTitle)} msg={formatMessage(localMessages.copyQueryMediaMsg)} onOk={() => handleCopyAll(MEDIA)} />
+                  <div className="media-field-label query-field-label">
+                    <span className="query-field-number">2</span>
+                    <CopyAllComponent
+                      label={mediaLabel}
+                      title={formatMessage(localMessages.copyQueryMediaTitle)}
+                      msg={formatMessage(localMessages.copyQueryMediaMsg)}
+                      onOk={() => handleCopyAll(MEDIA)}
+                    />
+                  </div>
                   <SourceCollectionsFieldList
                     className="query-field"
                     form="queryForm"
@@ -128,9 +142,22 @@ class QueryForm extends React.Component {
                     showWarningIfEmpty
                   />
                   {mediaPicker}
+                  <div className="query-field-desc">
+                    <FormattedMessage {...localMessages.selectSandCDesc} />
+                    &nbsp;
+                    <MediaHelpDialog trigger={formatMessage(localMessages.selectSandCDescLink)} />
+                  </div>
                 </div>
-                <div>
-                  <CopyAllComponent label={formatMessage(localMessages.dates)} title={formatMessage(localMessages.copyQueryDatesTitle)} msg={formatMessage(localMessages.copyQueryDatesMsg)} onOk={() => handleCopyAll(DATES)} />
+              </Col>
+              <Col lg={4}>
+                <div className="dates-field-label query-field-label">
+                  <span className="query-field-number">3</span>
+                  <CopyAllComponent
+                    label={formatMessage(localMessages.dates)}
+                    title={formatMessage(localMessages.copyQueryDatesTitle)}
+                    msg={formatMessage(localMessages.copyQueryDatesMsg)}
+                    onOk={() => handleCopyAll(DATES)}
+                  />
                 </div>
                 <div className="dates-field-wrapper">
                   <Field
@@ -139,7 +166,7 @@ class QueryForm extends React.Component {
                     name="startDate"
                     type="inline"
                     component={renderTextField}
-                    underlineShow={false}
+                    disableunderline="true"
                     disabled={!isEditable}
                     onChange={onDateChange}
                   />
@@ -150,11 +177,12 @@ class QueryForm extends React.Component {
                     name="endDate"
                     type="inline"
                     component={renderTextField}
-                    underlineShow={false}
+                    disableunderline="true"
                     disabled={!isEditable}
                     onChange={onDateChange}
                   />
                 </div>
+                <div className="query-field-desc"><FormattedMessage {...localMessages.datesDesc} /></div>
               </Col>
             </Row>
           </Grid>
@@ -163,7 +191,7 @@ class QueryForm extends React.Component {
           <Grid>
             <Row>
               <Col lg={6} />
-              <Col lg={6} >
+              <Col lg={6}>
                 <div className="query-form-actions">
                   <SavedSearchControls
                     searchNickname={searchNickname}
@@ -196,7 +224,7 @@ QueryForm.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
   renderTextField: PropTypes.func.isRequired,
-  renderSelectField: PropTypes.func.isRequired,
+  renderSelect: PropTypes.func.isRequired,
   renderTextFieldWithFocus: PropTypes.func.isRequired,
   searchNickname: PropTypes.string.isRequired,
   savedSearches: PropTypes.array,
@@ -248,21 +276,21 @@ function validate(values, props) {
 function warn(values, props) {
   const { formatMessage } = props.intl;
   const warnings = {};
-  if ((!values.collections || !values.collections.length) &&
-    (!values.sources || !values.sources.length) &&
-    (!values.media || !values.media.length)) {
+  if ((!values.collections || !values.collections.length)
+    && (!values.sources || !values.sources.length)
+    && (!values.media || !values.media.length)) {
     warnings.media = { _warning: formatMessage(localMessages.noMediaSpecified) };
   }
   return warnings;
 }
 
 export default
-  injectIntl(
-    withIntlForm(
-      withHelp(localMessages.queryHelpTitle, localMessages.queryHelpContent)(
-        reduxForm({ propTypes, validate, warn })(
-          QueryForm
-        ),
+injectIntl(
+  withIntlForm(
+    withHelp(localMessages.queryHelpTitle, localMessages.queryHelpContent)(
+      reduxForm({ propTypes, validate, warn })(
+        QueryForm
       ),
     ),
-  );
+  ),
+);

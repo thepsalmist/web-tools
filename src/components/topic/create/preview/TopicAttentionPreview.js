@@ -24,6 +24,7 @@ class TopicAttentionPreview extends React.Component {
       fetchData(nextProps.query);
     }
   }
+
   render() {
     const { total, counts, query } = this.props;
     return (
@@ -78,7 +79,7 @@ const mapDispatchToProps = dispatch => ({
     infoForQuery['collections[]'] = [];
     infoForQuery['sources[]'] = [];
 
-    if ('sourcesAndCollections' in query) {  // in FieldArrays on the form
+    if ('sourcesAndCollections' in query) { // in FieldArrays on the form
       infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
       infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
     }
@@ -95,12 +96,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withDescription(localMessages.descriptionIntro, localMessages.helpText)(
-        withAsyncFetch(
-          TopicAttentionPreview
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withDescription(localMessages.descriptionIntro, localMessages.helpText)(
+      withAsyncFetch(
+        TopicAttentionPreview
       )
     )
-  );
+  )
+);

@@ -39,7 +39,4 @@ KeywordSearchPreview.propTypes = {
   topicId: PropTypes.number.isRequired,
 };
 
-export default
-  injectIntl(
-    KeywordSearchPreview
-  );
+export default injectIntl(KeywordSearchPreview);

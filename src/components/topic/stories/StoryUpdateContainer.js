@@ -1,41 +1,28 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
-import { fetchMetadataValuesForPrimaryLanguage } from '../../../actions/sourceActions'; // TODO relocate metadata actions into system if we use more often...
-import { selectStory, fetchStory, updateStory } from '../../../actions/topicActions';
+import { fetchMetadataValuesForPrimaryLanguage } from '../../../actions/systemActions'; // TODO relocate metadata actions into system if we use more often...
+import { selectStory, fetchStory, updateStory } from '../../../actions/storyActions';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import StoryDetailForm from './StoryDetailForm';
-import messages from '../../../resources/messages';
 import { updateFeedback } from '../../../actions/appActions';
 import { TAG_SET_PRIMARY_LANGUAGE } from '../../../lib/tagUtil';
 
-
 const localMessages = {
-  feedback: { id: 'story.details.feedback', defaultMessage: 'Story Updates saved' },
+  title: { id: 'story.details.edit.title', defaultMessage: 'Edit Story Details' },
+  feedback: { id: 'story.details.edit.feedback', defaultMessage: 'Story Updates saved' },
 };
+
 class StoryUpdateContainer extends React.Component {
-
-  state = {
-    open: false,
-  };
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.storiesId !== this.props.storiesId) {
       const { fetchData } = this.props;
       fetchData(nextProps.storiesId);
     }
   }
-
-  handleRemoveClick = () => {
-    this.setState({ open: true });
-  };
-
-  handleRemoveDialogClose = () => {
-    this.setState({ open: false });
-  };
 
   handleReadItClick = () => {
     const { story } = this.props;
@@ -50,8 +37,6 @@ class StoryUpdateContainer extends React.Component {
 
   render() {
     const { story, storiesId, onSave, tags } = this.props;
-    const { formatMessage } = this.props.intl;
-    const titleHandler = `${formatMessage(messages.storyTitle)}: ${story.title}`;
     const lang = tags.map(c => c.tag).sort((f1, f2) => { // alphabetical
       // const f1Name = f1.toUpperCase();
       // const f2Name = f2.toUpperCase();
@@ -63,10 +48,12 @@ class StoryUpdateContainer extends React.Component {
       <div>
         <Grid>
           <Row>
-            <h2>{titleHandler()}</h2>
+            <Col lg={12}>
+              <h1><FormattedMessage {...localMessages.title} /></h1>
+            </Col>
           </Row>
           <Row>
-            <Col lg={6} xs={12} >
+            <Col lg={6} xs={12}>
               <StoryDetailForm story={story} initialValues={story} language={lang} storiesId={storiesId} onSave={onSave} buttonLabel="save" />
             </Col>
           </Row>
@@ -74,12 +61,11 @@ class StoryUpdateContainer extends React.Component {
       </div>
     );
   }
-
 }
 
 StoryUpdateContainer.propTypes = {
   // from context
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   intl: PropTypes.object.isRequired,
   // from parent
   // from dispatch
@@ -95,10 +81,10 @@ StoryUpdateContainer.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  fetchStatus: state.topics.selected.story.info.fetchStatus,
+  fetchStatus: state.story.info.fetchStatus,
   storiesId: parseInt(ownProps.params.storiesId, 10),
   topicId: parseInt(ownProps.params.topicId, 10),
-  story: state.topics.selected.story.info,
+  story: state.story.info,
   tags: state.system.metadata.primaryLanguage.tags,
 });
 
@@ -117,19 +103,19 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       .then((result) => {
         if (result.success === 1) {
           dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
-          dispatch(push(`/topics/${ownProps.params.topicId}/stories/${storyInfo.stories_id}`));
+          dispatch(push(`/topics/${ownProps.params.topicId}/stories/${ownProps.params.storiesId}`));
         }
       });
   },
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        injectIntl(
-          StoryUpdateContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      injectIntl(
+        StoryUpdateContainer
       )
     )
-  );
+  )
+);

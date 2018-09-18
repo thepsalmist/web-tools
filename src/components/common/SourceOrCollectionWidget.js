@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Col } from 'react-flexbox-grid/lib';
-import { DeleteMediaButton } from './IconButton';
+import { DeleteButton } from './IconButton';
 
 const SourceOrCollectionWidget = (props) => {
   const { object, onDelete, onClick, children } = props;
@@ -16,11 +16,11 @@ const SourceOrCollectionWidget = (props) => {
       key={`media-widget${objectId}`}
     >
       <Col>
-        <a role="button" tabIndex="0" onClick={onClick}>{name}</a>
+        <a href="#" onClick={onClick}>{name}</a>
         {children}
       </Col>
       <Col>
-        <DeleteMediaButton onClick={onDelete} />
+        <DeleteButton onClick={onDelete} />
       </Col>
     </div>
   );

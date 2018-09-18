@@ -9,16 +9,20 @@ const FavoriteToggler = (props) => {
   const { formatMessage } = props.intl;
   let mainButton = null;
   if (isFavorited) {
-    mainButton = (<FavoriteButton
-      tooltip={formatMessage(messages.unfavorite)}
-      onClick={() => onSetFavorited(false)}
-      color={'#ffffff'}
-    />);
+    mainButton = (
+      <FavoriteButton
+        tooltip={formatMessage(messages.unfavorite)}
+        onClick={() => onSetFavorited(false)}
+        color="#ffffff"
+      />
+    );
   } else {
-    mainButton = (<FavoriteBorderButton
-      tooltip={formatMessage(messages.favorite)}
-      onClick={() => onSetFavorited(true)}
-    />);
+    mainButton = (
+      <FavoriteBorderButton
+        tooltip={formatMessage(messages.favorite)}
+        onClick={() => onSetFavorited(true)}
+      />
+    );
   }
   return (
     <div className="fav-toggle-button">

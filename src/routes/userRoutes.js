@@ -16,7 +16,7 @@ import UserProfileContainer from '../components/user/UserProfileContainer';
 import ResendActivationForm from '../components/user/ResendActivationForm';
 
 const userRoutes = (
-  <Route path="/user" >
+  <Route path="/user">
 
     <Route path="/login" component={LoginFormContainer} />
 

@@ -36,7 +36,6 @@ const localMessages = {
 const formSelector = formValueSelector('snapshotFocus');
 
 class FocalTechniqueSelector extends React.Component {
-
   handleSelection = (focalTechniqueName) => {
     const { change } = this.props;
     change('focalTechnique', focalTechniqueName);
@@ -133,7 +132,6 @@ class FocalTechniqueSelector extends React.Component {
       </div>
     );
   }
-
 }
 
 FocalTechniqueSelector.propTypes = {
@@ -157,16 +155,16 @@ function validate() {
 
 const reduxFormConfig = {
   form: 'snapshotFocus', // make sure this matches the sub-components and other wizard steps
-  destroyOnUnmount: false,  // so the wizard works
+  destroyOnUnmount: false, // so the wizard works
   validate,
 };
 
 
 export default
-  injectIntl(
-    reduxForm(reduxFormConfig)(
-      connect(mapStateToProps)(
-        FocalTechniqueSelector
-      )
+injectIntl(
+  reduxForm(reduxFormConfig)(
+    connect(mapStateToProps)(
+      FocalTechniqueSelector
     )
-  );
+  )
+);

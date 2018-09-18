@@ -3,33 +3,45 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import SourceManagerFaq from './faq/SourceManagerFaq';
+import AppButton from '../common/AppButton';
+import SourcesMarketingFeatureList from './homepage/SourcesMarketingFeatureList';
+import messages from '../../resources/messages';
+import { urlToSourceManager } from '../../lib/urlUtil';
 
 const localMessages = {
-  aboutTitle: { id: 'about.title', defaultMessage: 'Source Manager' },
+  aboutTitle: { id: 'about.title', defaultMessage: 'About Source Manager' },
   aboutText: { id: 'about.text', defaultMessage: 'Browse the media sources and collections in our database, and suggest more to add.' },
 };
 
 const About = (props) => {
   const title = props.intl.formatMessage(localMessages.aboutTitle);
-  const titleHandler = parentTitle => `${title} | ${parentTitle}`;
   return (
-    <Grid>
-      <Helmet><title>{titleHandler()}</title></Helmet>
-      <div className="about-page">
+    <div className="about">
+      <Grid>
+        <Helmet><title>{title}</title></Helmet>
         <Row>
           <Col lg={12}>
             <h1><FormattedMessage {...localMessages.aboutTitle} /></h1>
-            <p className="intro"><FormattedMessage {...localMessages.aboutText} /></p>
           </Col>
         </Row>
         <Row>
           <Col lg={12}>
-            <SourceManagerFaq />
+            <p className="subtitle"><FormattedMessage {...messages.sourcesToolDescription} /></p>
           </Col>
         </Row>
-      </div>
-    </Grid>
+      </Grid>
+      <Grid>
+        <Row>
+          <Col lg={10} md={10} sm={10} />
+          <Col m={2} lg={2}>
+            <AppButton color="primary" primary onTouchTap={() => { window.location = urlToSourceManager('home'); }}>
+              <FormattedMessage {...messages.tryItNow} />
+            </AppButton>
+          </Col>
+        </Row>
+      </Grid>
+      <SourcesMarketingFeatureList />
+    </div>
   );
 };
 
@@ -39,7 +51,4 @@ About.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    About
-  );
+export default injectIntl(About);

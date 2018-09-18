@@ -25,7 +25,6 @@ const localMessages = {
 const WORD_CLOUD_DOM_ID = 'word-cloud';
 
 class StoryWordsContainer extends React.Component {
-
   componentWillReceiveProps(nextProps) {
     const { fetchData, filters } = this.props;
     if (nextProps.filters !== filters) {
@@ -47,7 +46,7 @@ class StoryWordsContainer extends React.Component {
         onViewSampleSizeClick={onViewSampleSizeClick}
         title={formatMessage(messages.topWords)}
         domId={WORD_CLOUD_DOM_ID}
-        svgDownloadPrefix={`${topicDownloadFilename(topicInfo.name, filters)}-story-${storiesId}--words`}
+        svgDownloadPrefix={`${topicDownloadFilename(topicInfo.name, filters)}-story-${storiesId}-words`}
         includeTopicWord2Vec
       />
     );
@@ -105,16 +104,16 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordcloudHelpText, messages.wordCloudTopicWord2VecLayoutHelp])(
-        withSampleSize(
-          withAsyncFetch(
-            withCsvDownloadNotifyContainer(
-              StoryWordsContainer
-            )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordcloudHelpText, messages.wordCloudTopicWord2VecLayoutHelp])(
+      withSampleSize(
+        withAsyncFetch(
+          withCsvDownloadNotifyContainer(
+            StoryWordsContainer
           )
         )
       )
     )
-  );
+  )
+);

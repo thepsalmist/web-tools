@@ -67,10 +67,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     };
     metadataTagFormKeys.forEach((key) => { // the metdata tags are encoded in individual properties on the form
       if (key in values) {
-        infoToSave[key] = !nullOrUndefined(values[key]) ? values[key] : '';
+        infoToSave[key] = !nullOrUndefined(values[key]) ? values[key].tags_id : '';
       }
     });
-    if ('collections' in values) {  // the collections are a FieldArray on the form
+    if ('collections' in values) { // the collections are a FieldArray on the form
       infoToSave['collections[]'] = values.collections.map(s => s.id);
     } else {
       infoToSave['collections[]'] = [];
@@ -81,15 +81,14 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         let resultMediaId = null;
         switch (result.status) {
           case CREATE_SOURCE_STATUS_NEW:
-            dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.savedNew) }));
+            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.savedNew) }));
             // need to fetch it again because something may have changed
             resultMediaId = result.media_id;
             dispatch(fetchSourceDetails(resultMediaId))
-              .then(() =>
-                dispatch(push(`/sources/${resultMediaId}`)));
+              .then(() => dispatch(push(`/sources/${resultMediaId}`)));
             break;
           case CREATE_SOURCE_STATUS_EXISTING:
-            dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.updatedExisting) }));
+            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.updatedExisting) }));
             resultMediaId = result.media_id;
             dispatch(push(`/sources/${resultMediaId}`));
             break;
@@ -97,7 +96,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           default:
             // let them know it didn't work
             const message = ownProps.intl.formatMessage(localMessages.saveFailed);
-            dispatch(updateFeedback({ open: true, message }));
+            dispatch(updateFeedback({ classes: 'error-notice', open: true, message }));
             break;
         }
       });
@@ -105,8 +104,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      CreateSourceContainer
-    ),
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    CreateSourceContainer
+  ),
+);

@@ -47,7 +47,7 @@ const EditMediaTypeContainer = (props) => {
         <Row>
           <Col lg={8} xs={12}>
             <br />
-            <AppButton flat onClick={onPreviousStep} label={formatMessage(messages.previous)} />
+            <AppButton color="secondary" variant="outlined" onClick={onPreviousStep} label={formatMessage(messages.previous)} />
             &nbsp; &nbsp;
             <AppButton type="submit" label={formatMessage(messages.next)} primary />
           </Col>
@@ -74,7 +74,7 @@ EditMediaTypeContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,
-  renderSelectField: PropTypes.func.isRequired,
+  renderSelect: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -91,16 +91,16 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 const reduxFormConfig = {
   form: 'snapshotFocus', // make sure this matches the sub-components and other wizard steps
-  destroyOnUnmount: false,  // so the wizard works
+  destroyOnUnmount: false, // so the wizard works
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        connect(mapStateToProps, mapDispatchToProps)(
-          EditMediaTypeContainer
-        )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      connect(mapStateToProps, mapDispatchToProps)(
+        EditMediaTypeContainer
       )
     )
-  );
+  )
+);

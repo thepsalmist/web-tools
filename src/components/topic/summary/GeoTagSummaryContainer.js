@@ -1,13 +1,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
+import { FormattedHTMLMessage, FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ActionMenu from '../../common/ActionMenu';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import GeoChart from '../../vis/GeoChart';
-import DataCard from '../../common/DataCard';
+import Permissioned from '../../common/Permissioned';
+import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { filtersAsUrlParams } from '../../util/location';
 import messages from '../../../resources/messages';
-import withDescription from '../../common/hocs/DescribedDataCard';
+import withSummary from '../../common/hocs/SummarizedVizualization';
 import { DownloadButton } from '../../common/IconButton';
 import { getBrandLightColor } from '../../../styles/colors';
 import { fetchTopicGeocodedStoryCounts } from '../../../actions/topicActions';
@@ -15,13 +20,13 @@ import { fetchTopicGeocodedStoryCounts } from '../../../actions/topicActions';
 const localMessages = {
   title: { id: 'topic.summary.geo.title', defaultMessage: 'Geographic Attention' },
   helpIntro: { id: 'topic.summary.geo.info',
-    defaultMessage: 'This is a map of the countries stories within this Topic are about. We\'ve extracted the places mentioned in each story and the ones mentioned most make a story "about" that place. Darker countries have more stories about them.' },
+    defaultMessage: '<p>This is a map of the countries stories within this Topic are about. We\'ve extracted the places mentioned in each story and the ones mentioned most make a story "about" that place. Darker countries have more stories about them.</p>' },
   notEnoughData: { id: 'topic.summary.geo.notEnoughData',
     defaultMessage: '<i>Sorry, but only {pct} of the stories have been processed to add the places they are about.  We can\'t gaurantee the accuracy of partial results, so we can\'t show a report of the geographic attention right now.  If you are really curious, you can download the CSV using the link in the top-right of this box, but don\'t trust those numbers as fully accurate. Email us if you want us to process this topic to add geographic attention.</i>',
   },
 };
 
-const COVERAGE_REQUIRED = 0.7;  // need > this many of the stories tagged to show the results
+const COVERAGE_REQUIRED = 0.7; // need > this many of the stories tagged to show the results
 
 class GeoTagSummaryContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
@@ -30,18 +35,20 @@ class GeoTagSummaryContainer extends React.Component {
       fetchData(nextProps.filters);
     }
   }
+
   downloadCsv = () => {
     const { topicId, filters } = this.props;
     const url = `/api/topics/${topicId}/geo-tags/counts.csv?${filtersAsUrlParams(filters)}`;
     window.location = url;
   }
+
   render() {
     const { data, coverage } = this.props;
-    const { formatMessage, formatNumber } = this.props.intl;
+    const { formatNumber } = this.props.intl;
     const coverageRatio = coverage.count / coverage.total;
     let content;
     if (coverageRatio > COVERAGE_REQUIRED) {
-      content = (<GeoChart data={data} countryMaxColorScale={getBrandLightColor()} />);
+      content = (<GeoChart data={data} countryMaxColorScale={getBrandLightColor()} backgroundColor="#f5f5f5" />);
     } else {
       content = (
         <p>
@@ -53,18 +60,24 @@ class GeoTagSummaryContainer extends React.Component {
       );
     }
     return (
-      <DataCard>
-        <div className="actions">
-          <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.downloadCsv} />
-        </div>
-        <h2>
-          <FormattedMessage {...localMessages.title} />
-        </h2>
+      <React.Fragment>
         {content}
-      </DataCard>
+        <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
+          <div className="actions">
+            <ActionMenu actionTextMsg={messages.downloadOptions}>
+              <MenuItem
+                className="action-icon-menu-item"
+                onClick={this.downloadCsv}
+              >
+                <ListItemText><FormattedMessage {...messages.downloadCSV} /></ListItemText>
+                <ListItemIcon><DownloadButton /></ListItemIcon>
+              </MenuItem>
+            </ActionMenu>
+          </div>
+        </Permissioned>
+      </React.Fragment>
     );
   }
-
 }
 
 GeoTagSummaryContainer.propTypes = {
@@ -98,12 +111,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withDescription(localMessages.helpIntro, messages.heatMapHelpText)(
-        withAsyncFetch(
-          GeoTagSummaryContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withSummary(localMessages.title, localMessages.helpIntro, messages.heatMapHelpText)(
+      withAsyncFetch(
+        GeoTagSummaryContainer
       )
     )
-  );
+  )
+);

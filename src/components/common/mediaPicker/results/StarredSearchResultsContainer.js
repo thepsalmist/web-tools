@@ -4,11 +4,11 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import CollectionResultsTable from './CollectionResultsTable';
 import SourceResultsTable from './SourceResultsTable';
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
-import LoadingSpinner from '../../../common/LoadingSpinner';
+import LoadingSpinner from '../../LoadingSpinner';
 
 const localMessages = {
-  collTitle: { id: 'system.mediaPicker.favorited.title', defaultMessage: 'Starred collections' },
-  sourceTitle: { id: 'system.mediaPicker.favorited.title', defaultMessage: 'Starred sources' },
+  collTitle: { id: 'system.mediaPicker.favorited.title', defaultMessage: 'My Starred Collections' },
+  sourceTitle: { id: 'system.mediaPicker.favorited.title', defaultMessage: 'My Starred Sources' },
   hintText: { id: 'system.mediaPicker.favorited.hint', defaultMessage: 'Search for favorites' },
   noResults: { id: 'system.mediaPicker.favorited.noResults', defaultMessage: 'No results. Try searching for issues like online news, health, blogs, conservative to see if we have collections made up of those types of sources.' },
 };
@@ -58,7 +58,6 @@ StarredSearchResultsContainer.propTypes = {
 
 
 export default
-  injectIntl(
-    StarredSearchResultsContainer
-  );
-
+injectIntl(
+  StarredSearchResultsContainer
+);

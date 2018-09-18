@@ -63,7 +63,4 @@ PieChart.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    PieChart
-  );
+export default injectIntl(PieChart);

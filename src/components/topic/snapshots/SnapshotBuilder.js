@@ -21,6 +21,6 @@ SnapshotBuilder.propTypes = {
 };
 
 export default
-  injectIntl(
-    SnapshotBuilder
-  );
+injectIntl(
+  SnapshotBuilder
+);

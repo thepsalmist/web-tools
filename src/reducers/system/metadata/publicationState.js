@@ -1,4 +1,4 @@
-import { FETCH_METADATA_VALUES_FOR_STATE } from '../../../actions/sourceActions';
+import { FETCH_METADATA_VALUES_FOR_STATE } from '../../../actions/systemActions';
 import { createAsyncReducer } from '../../../lib/reduxHelpers';
 
 const publicationState = createAsyncReducer({

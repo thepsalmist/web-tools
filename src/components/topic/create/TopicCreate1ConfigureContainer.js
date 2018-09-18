@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { push } from 'react-router-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
@@ -26,11 +27,12 @@ const localMessages = {
 const formSelector = formValueSelector('topicForm');
 
 const TopicCreate1ConfigureContainer = (props) => {
-  const { finishStep, handleMediaChange, handleMediaDelete } = props;
+  const { finishStep, handleMediaChange, handleMediaDelete, formData } = props;
   const { formatMessage } = props.intl;
   const endDate = getCurrentDate();
   const startDate = getMomentDateSubtraction(endDate, 3, 'months');
-  const initialValues = { start_date: startDate, end_date: endDate, max_iterations: 15, max_stories: MAX_RECOMMENDED_STORIES, buttonLabel: formatMessage(messages.preview) };
+  const sAndC = (formData && formData.sourcesAndCollections) || [];
+  const initialValues = { start_date: startDate, end_date: endDate, max_iterations: 15, max_stories: MAX_RECOMMENDED_STORIES, buttonLabel: formatMessage(messages.preview), sourcesAndCollections: sAndC };
   return (
     <Grid>
       <Helmet><title>{formatMessage(localMessages.title)}</title></Helmet>
@@ -77,6 +79,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   finishStep: (step) => {
+    dispatch(push(`/topics/create/${step}`));
     dispatch(goToCreateTopicStep(step));
   },
   handleMediaChange: (sourceAndCollections) => {
@@ -87,22 +90,22 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
     ownProps.change('sourcesAndCollections', selectedMedia); // redux-form change action
   },
-  handleMediaDelete: () => null,   // in create mode we don't need to update the values
+  handleMediaDelete: () => null, // in create mode we don't need to update the values
 });
 
 const reduxFormConfig = {
   form: 'topicForm',
-  destroyOnUnmount: false,  // so the wizard works
+  destroyOnUnmount: false, // so the wizard works
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        connect(mapStateToProps, mapDispatchToProps)(
-          TopicCreate1ConfigureContainer
-        )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      connect(mapStateToProps, mapDispatchToProps)(
+        TopicCreate1ConfigureContainer
       )
     )
-  );
+  )
+);

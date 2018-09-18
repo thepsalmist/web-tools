@@ -4,7 +4,7 @@ import RecentNewsContainer from '../components/common/news/RecentNewsContainer';
 import PageNotFound from '../components/PageNotFound';
 
 const systemRoutes = (
-  <Route path="/" >
+  <Route path="/">
 
     <Route path="/recent-news" component={RecentNewsContainer} />
 

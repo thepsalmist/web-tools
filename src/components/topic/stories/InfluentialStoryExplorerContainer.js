@@ -17,7 +17,6 @@ const localMessages = {
 const MAX_STORIES = 100000;
 
 class InfluentialStoryExplorerContainer extends React.Component {
-
   componentWillReceiveProps(nextProps) {
     const { filters, fetchData } = this.props;
     if (nextProps.filters !== filters) {
@@ -104,10 +103,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        InfluentialStoryExplorerContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      InfluentialStoryExplorerContainer
     )
-  );
+  )
+);

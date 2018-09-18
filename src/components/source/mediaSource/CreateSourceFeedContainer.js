@@ -20,7 +20,6 @@ const localMessages = {
   duplicateKey: { id: 'source.deatils.feeds.feedback.error.duplicate', defaultMessage: 'Duplicate key error' },
   notValidRss: { id: 'source.deatils.feeds.feedback.error.notValidRss', defaultMessage: 'Not Valid Rss error' },
   didNotWork: { id: 'source.deatils.feeds.feedback.error.didNotWork', defaultMessage: 'Did not work' },
-
 };
 
 const CreateSourceFeedContainer = (props) => {
@@ -38,7 +37,7 @@ const CreateSourceFeedContainer = (props) => {
     <Grid className="details source-feed-details">
       <h2>
         <MediaSourceIcon height={32} />
-        <Link to={`/sources/${sourceId}/feeds`} >
+        <Link to={`/sources/${sourceId}/feeds`}>
           <FormattedMessage {...localMessages.sourceFeedsTitle} values={{ name: sourceName }} />
         </Link>
         <FormattedMessage {...localMessages.createFeedsTitle} />
@@ -61,7 +60,7 @@ CreateSourceFeedContainer.propTypes = {
   // from dispatch
   handleSave: PropTypes.func.isRequired,
   // from context
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   // from state
   fetchStatus: PropTypes.string.isRequired,
   sourceId: PropTypes.number.isRequired,
@@ -89,12 +88,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       .then((result) => {
         if (result.feed !== undefined) {
           // let them know it worked
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
           // need to fetch it again because something may have changed
           dispatch(fetchSourceFeed(result.feed.media_id, result.feed.feeds_id))
-            .then(() =>
-              dispatch(push(`/sources/${result.feed.media_id}/feeds`))
-            );
+            .then(() => dispatch(push(`/sources/${result.feed.media_id}/feeds`)));
         } else if (result.message && result.message.includes('duplicate key')) {
           dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.duplicateKey) }));
           throw new SubmissionError({ url: ownProps.intl.formatMessage(localMessages.duplicateKey) });
@@ -110,8 +107,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      CreateSourceFeedContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    CreateSourceFeedContainer
+  )
+);

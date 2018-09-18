@@ -17,6 +17,7 @@
 
   .sub-title {
     margin: 0px;
+    margin-top: 5px;
     font-family: $font-families;
     color: rgb(255,255,255);
     opacity: 0.8;
@@ -28,8 +29,8 @@
     display: inline-block;
 
     button {
-      width: 22px !important;
-      height: 22px !important;
+      vertical-align: top;
+      margin-top: 4px;
     }
 
     .app-icon {
@@ -39,19 +40,21 @@
 
     .app-icon-filled-star {
       svg {
+        margin-top: -2px;
         color: rgb(255,255,255) !important;
         fill: rgb(255,255,255) !important;
-        width: 18px;
+        width: 13px;
       }
     }
 
     .app-icon-empty-star {
       svg {
+        margin-top: -2px;
         color: rgb(255,255,255) !important;
         path {
           fill: rgb(255,255,255) !important;
         }
-        width: 18px;
+        width: 13px;
       }
     }
 

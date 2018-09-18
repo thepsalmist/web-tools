@@ -10,30 +10,34 @@ import { setAttentionFocalSetId } from '../../../actions/topicActions';
 
 const localMessages = {
   mainTitle: { id: 'attention.mainTitle', defaultMessage: 'Attention Scoreboard' },
+  pickFocalSet: { id: 'attention.focalSet.selector.intro', defaultMessage: 'Pick a Set to compare the attention between the Subtopics.' },
 };
 
 const AttentionContainer = (props) => {
   const { selectedFocalSetId, filters, focalSets, topicId, handleFocalSetSelected } = props;
   const { formatMessage } = props.intl;
-  const titleHandler = parentTitle => `${formatMessage(localMessages.mainTitle)} | ${parentTitle}`;
   let content = null;
   const defaultFocalSet = focalSets.length > 0 ? focalSets[0].focal_sets_id : NO_FOCAL_SET_SELECTED;
   if (selectedFocalSetId !== NO_FOCAL_SET_SELECTED) {
-    content = (<FociAttentionComparisonContainer
-      topicId={topicId}
-      filters={filters}
-      selectedFocalSetId={selectedFocalSetId}
-    />);
+    content = (
+      <FociAttentionComparisonContainer
+        topicId={topicId}
+        filters={filters}
+        selectedFocalSetId={selectedFocalSetId}
+      />
+    );
   } else if (focalSets.length > 0) { // handle case for default if we do have any focal sets
-    content = (<FociAttentionComparisonContainer
-      topicId={topicId}
-      filters={filters}
-      selectedFocalSetId={defaultFocalSet}
-    />);
+    content = (
+      <FociAttentionComparisonContainer
+        topicId={topicId}
+        filters={filters}
+        selectedFocalSetId={defaultFocalSet}
+      />
+    );
   }
   return (
     <div>
-      <Helmet><title>{titleHandler()}</title></Helmet>
+      <Helmet><title>{formatMessage(localMessages.mainTitle)}</title></Helmet>
       <Grid>
         <Row>
           <Col lg={12}>
@@ -42,6 +46,7 @@ const AttentionContainer = (props) => {
         </Row>
         <Row>
           <Col lg={6}>
+            <p><FormattedMessage {...localMessages.pickFocalSet} /></p>
             <FocusSetSelectorContainer
               topicId={topicId}
               snapshotId={filters.snapshotId}
@@ -77,14 +82,14 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  handleFocalSetSelected: (evt, idx, focalSetId) => {
-    dispatch(setAttentionFocalSetId(parseInt(focalSetId, 10)));
+  handleFocalSetSelected: (evt) => {
+    dispatch(setAttentionFocalSetId(evt.target.value));
   },
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      AttentionContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    AttentionContainer
+  )
+);

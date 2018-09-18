@@ -1,7 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import Dialog from 'material-ui/Dialog';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
 import { DeleteButton, EditButton } from '../../../common/IconButton';
 import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
@@ -13,7 +16,6 @@ const localMessages = {
 };
 
 class FocusDefinition extends React.Component {
-
   state = {
     deleteConfirmationOpen: false,
   };
@@ -40,7 +42,6 @@ class FocusDefinition extends React.Component {
     const dialogActions = [
       <AppButton
         label={formatMessage(messages.cancel)}
-        primary
         onTouchTap={this.handleDeleteCancel}
       />,
       <AppButton
@@ -65,19 +66,23 @@ class FocusDefinition extends React.Component {
           <FormattedMessage {...messages.query} />: <code>{focusDefinition.query}</code>
         </p>
         <Dialog
-          title={formatMessage(localMessages.deleteConfirmTitle)}
-          actions={dialogActions}
-          modal
           open={this.state.deleteConfirmationOpen}
-          onRequestClose={this.handleDeleteCancel}
+          onClose={this.handleDeleteCancel}
           className="app-dialog"
         >
-          <p><FormattedMessage {...localMessages.deleteConfirmDescription} /></p>
+          <DialogTitle>
+            {formatMessage(localMessages.deleteConfirmTitle)}
+          </DialogTitle>
+          <DialogContent>
+            <FormattedMessage {...localMessages.deleteConfirmDescription} />
+          </DialogContent>
+          <DialogActions>
+            {dialogActions}
+          </DialogActions>
         </Dialog>
       </div>
     );
   }
-
 }
 
 FocusDefinition.propTypes = {
@@ -90,6 +95,6 @@ FocusDefinition.propTypes = {
 };
 
 export default
-  injectIntl(
-    FocusDefinition
-  );
+injectIntl(
+  FocusDefinition
+);

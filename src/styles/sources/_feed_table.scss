@@ -2,13 +2,14 @@
 
 .source-feed-table {
   margin-top: 20px;
-  
+
   tr {
-    &.feed-active {
-    }
-    &.feed-disabled {
+    &.feed-skipped {
       background-color: $material-grey500;
     }
   }
 
+  .tab-selector {
+    margin-bottom: 20px;
+  }
 }

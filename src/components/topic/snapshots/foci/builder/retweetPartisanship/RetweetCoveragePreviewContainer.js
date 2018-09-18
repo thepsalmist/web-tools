@@ -51,7 +51,7 @@ RetweetCoveragePreviewContainer.propTypes = {
   // from dispatch
   asyncFetch: PropTypes.func.isRequired,
   // from state
-  counts: PropTypes.object,
+  counts: PropTypes.array,
   fetchStatus: PropTypes.string.isRequired,
 };
 
@@ -67,10 +67,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        RetweetCoveragePreviewContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      RetweetCoveragePreviewContainer
     )
-  );
+  )
+);

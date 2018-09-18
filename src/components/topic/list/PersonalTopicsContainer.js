@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { Row, Col } from 'react-flexbox-grid/lib';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import { fetchPersonalTopicsList } from '../../../actions/topicActions';
 import TopicPreviewList from './TopicPreviewList';
@@ -17,7 +16,7 @@ const userIsOwner = (owners, user) => owners.filter(topicUser => topicUser.email
 const topicsUserOwns = (topics, user) => topics.filter(topic => userIsOwner(topic.owners, user));
 
 const PersonalTopicsContainer = (props) => {
-  const { topics, onSetFavorited, asyncFetch, prevButton, nextButton, user, showAll } = props;
+  const { topics, onSetFavorited, asyncFetch, user, showAll } = props;
   return (
     <div className="personal-topics-list">
       <TopicPreviewList
@@ -26,12 +25,6 @@ const PersonalTopicsContainer = (props) => {
         onSetFavorited={(id, isFav) => { onSetFavorited(id, isFav); asyncFetch(); }}
         emptyMsg={localMessages.empty}
       />
-      <Row>
-        <Col lg={12}>
-          {prevButton}
-          {nextButton}
-        </Col>
-      </Row>
     </div>
   );
 };
@@ -79,12 +72,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        withPaging(
-          PersonalTopicsContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      withPaging(
+        PersonalTopicsContainer
       )
     )
-  );
+  )
+);

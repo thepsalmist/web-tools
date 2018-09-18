@@ -7,10 +7,9 @@ import messages from '../../resources/messages';
 
 const TopicsApp = (props) => {
   const { formatMessage } = props.intl;
-  const titleHandler = parentTitle => `${formatMessage(messages.topicsToolName)} | ${parentTitle}`;
   return (
     <div>
-      <Helmet><title>{titleHandler()}</title></Helmet>
+      <Helmet><title>{`${formatMessage(messages.topicsToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
       <AppContainer
         name="topics"
         title={formatMessage(messages.topicsToolName)}
@@ -27,7 +26,4 @@ TopicsApp.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    TopicsApp
-  );
+export default injectIntl(TopicsApp);

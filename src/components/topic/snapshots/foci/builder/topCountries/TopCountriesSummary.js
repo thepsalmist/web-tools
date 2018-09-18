@@ -13,8 +13,7 @@ const TopCountriesSummary = (props) => {
     <div className="focus-create-cofirm-retweet-partisanship">
       <p><FormattedMessage {...localMessages.intro} /></p>
       <ul>
-        {counts.map(ctry => <li>{ctry.label}</li>
-        )}
+        {counts.map(ctry => <li>{ctry.label}</li>)}
       </ul>
     </div>
   );
@@ -35,8 +34,8 @@ const mapStateToProps = state => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps)(
-      TopCountriesSummary
-    )
-  );
+injectIntl(
+  connect(mapStateToProps)(
+    TopCountriesSummary
+  )
+);

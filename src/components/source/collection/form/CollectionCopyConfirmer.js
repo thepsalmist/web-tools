@@ -14,7 +14,6 @@ const localMessages = {
 };
 
 class CollectionCopyConfirmer extends Component {
-
   componentWillReceiveProps(nextProps) {
     const { collectionId, fetchData } = this.props;
     if ((nextProps.collectionId !== collectionId)) {
@@ -34,19 +33,19 @@ class CollectionCopyConfirmer extends Component {
           />
         </p>
         <AppButton
-          label={formatMessage(messages.cancel)}
           onClick={onCancel}
-        />
+          color="secondary"
+        >{formatMessage(messages.cancel)}
+        </AppButton>
         &nbsp; &nbsp;
         <AppButton
-          label={formatMessage(messages.ok)}
           onClick={() => onConfirm(collection)}
-          primary
-        />
+          color="primary"
+        >{formatMessage(messages.ok)}
+        </AppButton>
       </div>
     );
   }
-
 }
 
 CollectionCopyConfirmer.propTypes = {
@@ -82,10 +81,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        CollectionCopyConfirmer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      CollectionCopyConfirmer
     )
-  );
+  )
+);

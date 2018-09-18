@@ -25,6 +25,6 @@ TopicCreatePreview.propTypes = {
 };
 
 export default
-  injectIntl(
-    TopicCreatePreview
-  );
+injectIntl(
+  TopicCreatePreview
+);

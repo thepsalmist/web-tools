@@ -8,6 +8,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import MediaTable from '../MediaTable';
 import { fetchTopicInfluentialMedia, sortTopicInfluentialMedia } from '../../../actions/topicActions';
 import { DownloadButton } from '../../common/IconButton';
+import TopicSourceSearchContainer from '../search/TopicSourceSearchContainer';
 import messages from '../../../resources/messages';
 import DataCard from '../../common/DataCard';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
@@ -23,20 +24,23 @@ class InfluentialMediaContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { fetchData, filters, sort, links } = this.props;
     // can't compare filters the object here because it changes on load
-    if ((nextProps.filters.timespanId !== filters.timespanId) || (nextProps.filters.q !== filters.q) ||
-      (nextProps.sort !== sort) || (nextProps.links.current !== links.current)) {
+    if ((nextProps.filters.timespanId !== filters.timespanId) || (nextProps.filters.q !== filters.q)
+      || (nextProps.sort !== sort) || (nextProps.links.current !== links.current)) {
       fetchData(nextProps);
     }
   }
+
   onChangeSort = (newSort) => {
     const { sortData } = this.props;
     sortData(newSort);
   }
+
   downloadCsv = () => {
     const { topicId, filters, sort } = this.props;
     const url = `/api/topics/${topicId}/media.csv?snapshotId=${filters.snapshotId}&timespanId=${filters.timespanId}&sort=${sort}`;
     window.location = url;
   }
+
   render() {
     const { media, sort, topicId, previousButton, nextButton } = this.props;
     const { formatMessage } = this.props.intl;
@@ -46,6 +50,7 @@ class InfluentialMediaContainer extends React.Component {
         <Row>
           <Col lg={12} md={12} sm={12}>
             <Helmet><title>{titleHandler()}</title></Helmet>
+            <TopicSourceSearchContainer topicId={topicId} showSearch />
             <DataCard border={false}>
               <div className="actions">
                 <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.downloadCsv} />
@@ -132,12 +137,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withPaging(
-        withAsyncFetch(
-          InfluentialMediaContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withPaging(
+      withAsyncFetch(
+        InfluentialMediaContainer
       )
     )
-  );
+  )
+);

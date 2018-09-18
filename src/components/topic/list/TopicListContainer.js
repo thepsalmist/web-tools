@@ -21,7 +21,6 @@ const localMessages = {
 };
 
 class TopicListContainer extends React.Component {
-
   state = {
     selectedViewIndex: 0,
   };
@@ -67,9 +66,7 @@ class TopicListContainer extends React.Component {
         </Row>
 
         <div className="tabbed-content-wrapper">
-          <Row>
-            {viewContent}
-          </Row>
+          {viewContent}
         </div>
 
       </div>
@@ -95,14 +92,14 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(setTopicFavorite(topicId, isFavorite))
       .then(() => {
         const msg = (isFavorite) ? messages.topicFavorited : messages.topicUnfavorited;
-        dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(msg) }));
+        dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(msg) }));
       });
   },
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      TopicListContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    TopicListContainer
+  )
+);

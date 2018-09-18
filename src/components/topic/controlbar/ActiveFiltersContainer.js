@@ -33,8 +33,8 @@ const mapStateToProps = state => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps)(
-      ActiveFiltersContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps)(
+    ActiveFiltersContainer
+  )
+);

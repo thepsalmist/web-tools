@@ -1,0 +1,41 @@
+@import '../../_constants';
+
+div.ordered-word-cloud-tooltip {   
+  position: absolute;
+  width: 100px;
+  height: 38px;
+  padding: 8px;
+  font-family: $font-families;
+  font-size: 11px;
+  background: $material-grey400;
+  border: 1px solid $material-grey200;
+  pointer-events: none;
+}
+
+#bubble-chart-tooltip {   
+  position: absolute;
+  padding: 8px;
+  font-family: $font-families;
+  font-size: 12px;
+  background: $material-grey400;
+  border: 1px solid $material-grey200;
+  pointer-events: none;
+  opacity: 0;
+}
+
+svg.bubble-chart {
+
+  circle {
+    fill: $material-grey800;
+    &.total {
+      fill: $material-grey200;
+    }
+  }
+
+  text {
+    font-family: $font-families;
+    fill: $material-grey800;
+    font-size: 12px;
+  }
+
+}

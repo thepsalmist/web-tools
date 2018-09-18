@@ -22,23 +22,25 @@ const localMessages = {
 };
 
 class CreateCollectionContainer extends React.Component {
-
   componentWillMount() {
     const { saveParamsToStore } = this.props;
     saveParamsToStore(this.props, this);
   }
+
   componentWillReceiveProps(nextProps) {
-    if (nextProps.location.query.src !== this.props.location.query.src ||
-      nextProps.location.query.coll !== this.props.location.query.coll ||
-      nextProps.location.query.search !== this.props.location.query.search) {
+    if (nextProps.location.query.src !== this.props.location.query.src
+      || nextProps.location.query.coll !== this.props.location.query.coll
+      || nextProps.location.query.search !== this.props.location.query.search) {
       const { saveParamsToStore } = nextProps;
       saveParamsToStore(nextProps, this);
     }
   }
+
   componentWillUnmount() {
     const { dispatchReset } = this.props;
     dispatchReset();
   }
+
   render() {
     const { handleSave, prefillSrcIds, prefillCollectionIds, sourcesToPrefill, collectionsToPrefill } = this.props;
     const { formatMessage } = this.props.intl;
@@ -89,7 +91,7 @@ class CreateCollectionContainer extends React.Component {
 CreateCollectionContainer.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   location: PropTypes.object.isRequired,
   // from dispatch
   handleSave: PropTypes.func.isRequired,
@@ -129,10 +131,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       .then((results) => {
         if (results.tags_id) {
           // let them know it worked
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
           dispatch(push(`/collections/${results.tags_id}`));
         } else {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
         }
       });
   },
@@ -169,8 +171,8 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      CreateCollectionContainer
-    ),
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    CreateCollectionContainer
+  ),
+);

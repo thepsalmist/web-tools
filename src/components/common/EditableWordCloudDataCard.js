@@ -2,10 +2,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedHTMLMessage, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import MenuItem from 'material-ui/MenuItem';
+import MenuItem from '@material-ui/core/MenuItem';
 import Link from 'react-router/lib/Link';
-import Divider from 'material-ui/Divider';
-import Subheader from 'material-ui/Subheader';
+import Divider from '@material-ui/core/Divider';
+import Subheader from '@material-ui/core/ListSubheader';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import DataCard from './DataCard';
 import messages from '../../resources/messages';
 import OrderedWordCloud from '../vis/OrderedWordCloud';
@@ -15,14 +17,13 @@ import { DownloadButton, ExploreButton, EditButton } from './IconButton';
 import { getBrandDarkColor } from '../../styles/colors';
 import { downloadSvg } from '../util/svg';
 import ActionMenu from './ActionMenu';
-import { WarningNotice } from '../common/Notice';
+import { WarningNotice } from './Notice';
 import { VIEW_1K, VIEW_10K } from '../../lib/topicFilterUtil';
 
 const VIEW_CLOUD = 'VIEW_CLOUD';
 const VIEW_ORDERED = 'VIEW_ORDERED';
 const VIEW_GOOGLE_W2V = 'VIEW_GOOGLE_W2V';
 const VIEW_TOPIC_W2V = 'VIEW_TOPIC_W2V';
-
 
 const WORD_SPACE_WORD_LIMIT = 50;
 
@@ -45,9 +46,8 @@ const localMessages = {
 };
 
 class EditableWordCloudDataCard extends React.Component {
-
   state = {
-    editing: false,   // whether you are editing right now or not
+    editing: false, // whether you are editing right now or not
     modifiableWords: null, // all the words, including a boolean display property on each
     displayOnlyWords: null, // only the words that are being displayed
     view: VIEW_ORDERED, // which view to show (see view constants above)
@@ -58,7 +58,7 @@ class EditableWordCloudDataCard extends React.Component {
     if (this.state.modifiableWords) {
       const changeWord = this.state.modifiableWords.filter(w => (w.term === text.textContent));
       changeWord[0].display = !changeWord[0].display;
-      this.setState({ modifiableWords: [...this.state.modifiableWords] });  // reset this to trigger a re-render
+      this.setState(prevState => ({ modifiableWords: [...prevState.modifiableWords] })); // reset this to trigger a re-render
     }
   };
 
@@ -82,10 +82,11 @@ class EditableWordCloudDataCard extends React.Component {
     }
     // after initialization if not editing, filter words that say 'don't display'
     if (this.state.modifiableWords != null && this.state.editing) {
-      const displayOnlyWords = this.state.modifiableWords.filter(w => w.display === true);
+      const { modifiableWords } = this.state;
+      const displayOnlyWords = modifiableWords.filter(w => w.display === true);
       this.setState({ displayOnlyWords });
     }
-    this.setState({ editing: !this.state.editing });
+    this.setState(prevState => ({ editing: prevState.editing }));
   };
 
   downloadCsv = (ngramSize) => {
@@ -118,14 +119,19 @@ class EditableWordCloudDataCard extends React.Component {
     const { includeTopicWord2Vec, hideGoogleWord2Vec, actionMenuHeaderText, actionsAsLinksUnderneath, svgDownloadPrefix, onViewSampleSizeClick, initSampleSize } = this.props;
     const { formatMessage } = this.props.intl;
     let topicWord2VecMenuItem;
+    let wcChoice = <FormattedMessage {...messages.editWordCloud} />;
+    if (this.state.editing) {
+      wcChoice = <FormattedMessage {...messages.viewWordCloud} />;
+    }
     if (includeTopicWord2Vec === true) {
       topicWord2VecMenuItem = (
         <MenuItem
           className="action-icon-menu-item"
-          primaryText={formatMessage(localMessages.modeTopicW2V)}
           disabled={this.state.editing || this.state.view === VIEW_TOPIC_W2V}
-          onTouchTap={() => this.setView(VIEW_TOPIC_W2V)}
-        />
+          onClick={() => this.setView(VIEW_TOPIC_W2V)}
+        >
+          {formatMessage(localMessages.modeTopicW2V)}
+        </MenuItem>
       );
     }
     let googleWord2VecMenuItem;
@@ -133,10 +139,11 @@ class EditableWordCloudDataCard extends React.Component {
       googleWord2VecMenuItem = (
         <MenuItem
           className="action-icon-menu-item"
-          primaryText={formatMessage(localMessages.modeGoogleW2V)}
           disabled={this.state.editing || this.state.view === VIEW_GOOGLE_W2V}
-          onTouchTap={() => this.setView(VIEW_GOOGLE_W2V)}
-        />
+          onClick={() => this.setView(VIEW_GOOGLE_W2V)}
+        >
+          <FormattedMessage {...localMessages.modeGoogleW2V} />
+        </MenuItem>
       );
     }
     const actionMenuSubHeaderContent = actionMenuHeaderText ? <Subheader>{actionMenuHeaderText}</Subheader> : null;
@@ -144,79 +151,89 @@ class EditableWordCloudDataCard extends React.Component {
       <span>
         <MenuItem
           className="action-icon-menu-item"
-          primaryText={formatMessage(localMessages.sampleSize1k)}
           disabled={initSampleSize === VIEW_1K}
           onClick={() => onViewSampleSizeClick(VIEW_1K)}
-        />
+        >
+          <FormattedMessage {...localMessages.sampleSize1k} />
+        </MenuItem>
         <MenuItem
           className="action-icon-menu-item"
-          primaryText={formatMessage(localMessages.sampleSize10k)}
           disabled={initSampleSize === VIEW_10K}
           onClick={() => onViewSampleSizeClick(VIEW_10K)}
-        />
+        >
+          <FormattedMessage {...localMessages.sampleSize10k} />
+        </MenuItem>
         <Divider />
         <MenuItem
           className="action-icon-menu-item"
-          primaryText={formatMessage(localMessages.learnMore)}
           onClick={this.goToBlog}
-        />
+        >
+          <FormattedMessage {...localMessages.learnMore} />
+        </MenuItem>
       </span>
     );
     const viewOptions = (
       <span>
         <MenuItem
           className="action-icon-menu-item"
-          primaryText={formatMessage(localMessages.modeOrdered)}
           disabled={this.state.editing || this.state.view === VIEW_ORDERED}
-          onTouchTap={() => this.setView(VIEW_ORDERED)}
-        />
+          onClick={() => this.setView(VIEW_ORDERED)}
+        >
+          <FormattedMessage {...localMessages.modeOrdered} />
+        </MenuItem>
         <MenuItem
           className="action-icon-menu-item"
-          primaryText={formatMessage(localMessages.modeCloud)}
           disabled={this.state.editing || this.state.view === VIEW_CLOUD}
-          onTouchTap={() => this.setView(VIEW_CLOUD)}
-        />
+          onClick={() => this.setView(VIEW_CLOUD)}
+        >
+          <FormattedMessage {...localMessages.modeCloud} />
+        </MenuItem>
         {topicWord2VecMenuItem}
         {googleWord2VecMenuItem}
         <Divider />
         <MenuItem
           className="action-icon-menu-item"
-          primaryText={formatMessage(this.state.editing ? messages.viewWordCloud : messages.editWordCloud)}
-          rightIcon={(this.state.view === VIEW_ORDERED) ? <EditButton /> : undefined}
           disabled={this.state.view !== VIEW_ORDERED} // can only edit in ordered mode
-          onTouchTap={this.toggleEditing}
-        />
+          onClick={this.toggleEditing}
+        >
+          <ListItemText>{wcChoice}</ListItemText>
+          {(this.state.view === VIEW_ORDERED) ? <ListItemIcon><EditButton /></ListItemIcon> : ''}
+        </MenuItem>
       </span>
     );
     const downloadOptions = (
       <span>
         <MenuItem
           className="action-icon-menu-item"
-          primaryText={formatMessage(localMessages.downloadWordCSV)}
-          rightIcon={<DownloadButton />}
           disabled={this.state.editing} // can't download until done editing
-          onTouchTap={() => this.downloadCsv(1)}
-        />
+          onClick={() => this.downloadCsv(1)}
+        >
+          <ListItemText><FormattedMessage {...localMessages.downloadWordCSV} /></ListItemText>
+          <ListItemIcon>
+            <DownloadButton />
+          </ListItemIcon>
+        </MenuItem>
         <MenuItem
           className="action-icon-menu-item"
-          primaryText={formatMessage(localMessages.downloadBigramCSV)}
-          rightIcon={<DownloadButton />}
           disabled={this.state.editing} // can't download until done editing
-          onTouchTap={() => this.downloadCsv(2)}
-        />
+          onClick={() => this.downloadCsv(2)}
+        >
+          <ListItemText><FormattedMessage {...localMessages.downloadBigramCSV} /></ListItemText>
+          <ListItemIcon>
+            <DownloadButton />
+          </ListItemIcon>
+        </MenuItem>
         <MenuItem
           className="action-icon-menu-item"
-          primaryText={formatMessage(localMessages.downloadTrigramCSV)}
-          rightIcon={<DownloadButton />}
           disabled={this.state.editing} // can't download until done editing
-          onTouchTap={() => this.downloadCsv(3)}
-        />
+          onClick={() => this.downloadCsv(3)}
+        >
+          <FormattedMessage {...localMessages.downloadTrigramCSV} />
+        </MenuItem>
         <MenuItem
           className="action-icon-menu-item"
-          primaryText={formatMessage(messages.downloadSVG)}
-          rightIcon={<DownloadButton />}
           disabled={this.state.editing} // can't download until done editing
-          onTouchTap={() => {
+          onClick={() => {
             let domIdOrElement;
             if (this.state.ordered) { // tricky to get the correct element to serialize
               domIdOrElement = uniqueDomId;
@@ -227,7 +244,12 @@ class EditableWordCloudDataCard extends React.Component {
             const filename = svgDownloadPrefix || 'word-cloud';
             downloadSvg(filename, domIdOrElement);
           }}
-        />
+        >
+          <ListItemText><FormattedMessage {...messages.downloadSVG} /></ListItemText>
+          <ListItemIcon>
+            <DownloadButton />
+          </ListItemIcon>
+        </MenuItem>
       </span>
     );
     // now build the menu options as appropriate
@@ -289,21 +311,21 @@ class EditableWordCloudDataCard extends React.Component {
 
   render() {
     const { words, explore, onViewModeClick, width, height, maxFontSize, minFontSize, domId, actionsAsLinksUnderneath,
-      subHeaderContent, textAndLinkColor, textColor, linkColor, border } = this.props;
+      subHeaderContent, textAndLinkColor, textColor, linkColor, border, selectedTerm } = this.props;
     let className = 'editable-word-cloud-datacard';
-    let editingClickHandler = onViewModeClick;
+    let wordClickHandler = onViewModeClick;
     const tColor = textAndLinkColor || textColor || getBrandDarkColor();
     const lColor = textAndLinkColor || linkColor || getBrandDarkColor();
     let wordsArray = words.map(w => ({ ...w, display: true }));
     let editingWarning;
     const uniqueDomId = `${domId}-${(this.state.ordered ? 'ordered' : 'unordered')}`; // add mode to it so ordered or not works
     if (this.state.editing && this.state.modifiableWords) {
-      editingClickHandler = this.onEditModeClick;
+      wordClickHandler = this.onEditModeClick;
       className += ' editing';
       wordsArray = this.state.modifiableWords;
       editingWarning = (<WarningNotice><FormattedHTMLMessage {...localMessages.editing} /></WarningNotice>);
     } else if (!this.state.editing && this.state.displayOnlyWords) {
-      editingClickHandler = onViewModeClick;
+      wordClickHandler = onViewModeClick;
       wordsArray = this.state.displayOnlyWords;
       if (!this.isShowingAllWords()) {
         editingWarning = (<WarningNotice><FormattedHTMLMessage {...localMessages.edited} /></WarningNotice>);
@@ -325,8 +347,9 @@ class EditableWordCloudDataCard extends React.Component {
             height={height}
             maxFontSize={maxFontSize}
             minFontSize={minFontSize}
-            onWordClick={editingClickHandler}
+            onWordClick={wordClickHandler}
             domId={uniqueDomId}
+            selectedTerm={selectedTerm}
           />
         );
         break;
@@ -340,7 +363,7 @@ class EditableWordCloudDataCard extends React.Component {
             height={height}
             maxFontSize={maxFontSize}
             minFontSize={minFontSize}
-            onWordClick={editingClickHandler}
+            onWordClick={wordClickHandler}
             domId={uniqueDomId}
           />
         );
@@ -348,7 +371,7 @@ class EditableWordCloudDataCard extends React.Component {
       case VIEW_GOOGLE_W2V:
         cloudContent = (
           <WordSpace
-            words={wordsArray.slice(0, WORD_SPACE_WORD_LIMIT)}  // can't draw too many as it gets unreadable
+            words={wordsArray.slice(0, WORD_SPACE_WORD_LIMIT)} // can't draw too many as it gets unreadable
             domId={uniqueDomId}
             width={width}
             height={height}
@@ -361,7 +384,7 @@ class EditableWordCloudDataCard extends React.Component {
       case VIEW_TOPIC_W2V:
         cloudContent = (
           <WordSpace
-            words={wordsArray.slice(0, WORD_SPACE_WORD_LIMIT)}  // can't draw too many as it gets unreadable
+            words={wordsArray.slice(0, WORD_SPACE_WORD_LIMIT)} // can't draw too many as it gets unreadable
             domId={uniqueDomId}
             width={width}
             height={height}
@@ -404,34 +427,35 @@ EditableWordCloudDataCard.propTypes = {
   maxFontSize: PropTypes.number,
   minFontSize: PropTypes.number,
   border: PropTypes.bool,
-  textAndLinkColor: PropTypes.string,     // render the words in this color (instead of the brand dark color)
+  textAndLinkColor: PropTypes.string, // render the words in this color (instead of the brand dark color)
   textColor: PropTypes.string,
   linkColor: PropTypes.string,
-  title: PropTypes.string,     // rendered as an H2 inside the DataCard
+  title: PropTypes.string, // rendered as an H2 inside the DataCard
   words: PropTypes.array.isRequired,
-  downloadUrl: PropTypes.string,          // used as the base for downloads, ngram_size appended for bigram/trigram download
-  onDownload: PropTypes.func,             // if you want to handle the download request yourself, pass in a function (overrides downloadUrl)
-  svgDownloadPrefix: PropTypes.string,    // for naming the SVG download file
-  explore: PropTypes.object,              // show an exlore button and link it to this URL
-  helpButton: PropTypes.node,             // pass in a helpButton to render to the right of the H2 title
-  subtitleContent: PropTypes.object,      // shows up to the right of the H2 title
-  subHeaderContent: PropTypes.object,     // shows up under the H2 title, above the word cloud
+  selectedTerm: PropTypes.string,
+  downloadUrl: PropTypes.string, // used as the base for downloads, ngram_size appended for bigram/trigram download
+  onDownload: PropTypes.func, // if you want to handle the download request yourself, pass in a function (overrides downloadUrl)
+  svgDownloadPrefix: PropTypes.string, // for naming the SVG download file
+  explore: PropTypes.object, // show an exlore button and link it to this URL
+  helpButton: PropTypes.node, // pass in a helpButton to render to the right of the H2 title
+  subtitleContent: PropTypes.object, // shows up to the right of the H2 title
+  subHeaderContent: PropTypes.object, // shows up under the H2 title, above the word cloud
   actionMenuHeaderText: PropTypes.string, // text to put as a subheader in the action menu popup
-  includeTopicWord2Vec: PropTypes.bool,   // show an option to draw a word2vec map basde on w2v_x / w2v_y from topic-specific model
-  hideGoogleWord2Vec: PropTypes.bool,        // show an option to draw a word2vec map basde on w2v_x / w2v_y from GoogleNews model
+  includeTopicWord2Vec: PropTypes.bool, // show an option to draw a word2vec map basde on w2v_x / w2v_y from topic-specific model
+  hideGoogleWord2Vec: PropTypes.bool, // show an option to draw a word2vec map basde on w2v_x / w2v_y from GoogleNews model
   onViewModeClick: PropTypes.func.isRequired,
   onViewSampleSizeClick: PropTypes.func,
   initSampleSize: PropTypes.string,
   actionsAsLinksUnderneath: PropTypes.bool, // show the actions as links under the viz (ie. in a SummarizedVisualization card)
-  domId: PropTypes.string.isRequired,     // unique dom id needed to support CSV downloading
+  domId: PropTypes.string.isRequired, // unique dom id needed to support CSV downloading
   // from compositional chain
   intl: PropTypes.object.isRequired,
 };
 
 
 export default
-  injectIntl(
-    connect(null)(
-      EditableWordCloudDataCard
-    )
-  );
+injectIntl(
+  connect(null)(
+    EditableWordCloudDataCard
+  )
+);

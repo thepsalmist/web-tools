@@ -3,8 +3,7 @@ import { createAsyncAction } from '../../lib/reduxHelpers';
 import * as api from '../../lib/serverApi/topics';
 
 export const FETCH_TOPIC_STORY_COUNTS = 'FETCH_TOPIC_STORY_COUNTS';
-export const SELECT_STORY = 'SELECT_STORY';
-export const FETCH_STORY = 'FETCH_STORY';
+export const FETCH_TOPIC_STORY_INFO = 'FETCH_TOPIC_STORY_INFO';
 export const FETCH_STORY_WORDS = 'FETCH_STORY_WORDS';
 export const FETCH_STORY_INLINKS = 'FETCH_STORY_INLINKS';
 export const FETCH_STORY_OUTLINKS = 'FETCH_STORY_OUTLINKS';
@@ -14,16 +13,10 @@ export const SORT_TOPIC_INFLUENTIAL_STORIES = 'SORT_TOPIC_INFLUENTIAL_STORIES';
 export const FETCH_TOPIC_TOP_STORIES = 'FETCH_TOPIC_TOP_STORIES';
 export const FETCH_TOPIC_ENGLISH_STORY_COUNTS = 'FETCH_TOPIC_ENGLISH_STORY_COUNTS';
 export const FETCH_TOPIC_UNDATEABLE_STORY_COUNTS = 'FETCH_TOPIC_UNDATEABLE_STORY_COUNTS';
-export const UPDATE_STORY = 'UPDATE_STORY';
-
-// pass in stories id
-export const selectStory = createAction(SELECT_STORY, id => id);
-
-// pass in topic id, story id, and filters
-export const fetchStory = createAsyncAction(FETCH_STORY, api.story);
 
 // pass in topic id and story id
-export const updateStory = createAsyncAction(UPDATE_STORY, api.storyUpdate, params => params);
+export const fetchTopicStoryInfo = createAsyncAction(FETCH_TOPIC_STORY_INFO, api.topicStoryInfo);
+
 
 // pass in topic id and story id
 export const fetchStoryWords = createAsyncAction(FETCH_STORY_WORDS, api.storyWords);

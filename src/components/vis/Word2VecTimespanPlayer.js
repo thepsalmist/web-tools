@@ -16,10 +16,9 @@ const DEFAULT_WIDTH = 730;
 const DEFAULT_HEIGHT = 520;
 
 class Word2VecTimespanPlayer extends React.Component {
-
   constructor(props) {
     super(props);
-    const initialTimespan = props.initialTimespan;
+    const { initialTimespan } = props;
     const selectedPeriod = initialTimespan.period;
     const initialTimespanId = initialTimespan.timespans_id;
 
@@ -88,7 +87,7 @@ class Word2VecTimespanPlayer extends React.Component {
 
   render() {
     const { timespanEmbeddings, width, height, xProperty, yProperty, enterTimeout,
-            leaveTimeout, slideshowSpeed } = this.props;
+      leaveTimeout, slideshowSpeed } = this.props;
     const { currentTimespanIndex, currentPeriodList } = this.state;
 
     const options = {
@@ -162,7 +161,7 @@ class Word2VecTimespanPlayer extends React.Component {
             <WordSpace
               words={currentWords}
               scaleWords={overallWords}
-              domId={'w2v-timespan-slide'}
+              domId="w2v-timespan-slide"
               xProperty={options.xProperty}
               yProperty={options.yProperty}
             />
@@ -204,7 +203,4 @@ Word2VecTimespanPlayer.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    Word2VecTimespanPlayer
-  );
+export default injectIntl(Word2VecTimespanPlayer);

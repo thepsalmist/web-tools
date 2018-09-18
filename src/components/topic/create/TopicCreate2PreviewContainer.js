@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { push } from 'react-router-redux';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
@@ -32,10 +33,10 @@ const TopicCreate2PreviewContainer = (props) => {
       { content }
       <br />
       <Row>
-        <Col lg={12} md={12} sm={12} >
-          <AppButton flat label={formatMessage(messages.previous)} onClick={() => handlePreviousStep()} />
+        <Col lg={12} md={12} sm={12}>
+          <AppButton variant="outlined" label={formatMessage(messages.previous)} onClick={() => handlePreviousStep()} />
           &nbsp; &nbsp;
-          <AppButton type="submit" label={formatMessage(messages.confirm)} primary onClick={() => handleNextStep()} />
+          <AppButton primary type="submit" label={formatMessage(messages.confirm)} onClick={() => handleNextStep()} />
         </Col>
       </Row>
     </Grid>
@@ -64,9 +65,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   handlePreviousStep: () => {
+    dispatch(push('/topics/create/0'));
     dispatch(goToCreateTopicStep(0));
   },
   handleNextStep: () => {
+    dispatch(push('/topics/create/2'));
     dispatch(goToCreateTopicStep(2));
   },
 });
@@ -80,10 +83,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    withIntlForm(
-      connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-        TopicCreate2PreviewContainer
-      )
+injectIntl(
+  withIntlForm(
+    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+      TopicCreate2PreviewContainer
     )
-  );
+  )
+);

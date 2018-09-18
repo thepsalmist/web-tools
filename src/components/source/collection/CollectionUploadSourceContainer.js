@@ -20,8 +20,8 @@ const localMessages = {
   },
   feedback: { id: 'collection.upload.feedback', defaultMessage: 'This upload was successful' },
 };
-class CollectionUploadSourceContainer extends React.Component {
 
+class CollectionUploadSourceContainer extends React.Component {
   downloadCsv = (evt) => {
     const { myCollectionId, notifyOfCsvDownload } = this.props;
     if (evt) {
@@ -36,6 +36,7 @@ class CollectionUploadSourceContainer extends React.Component {
     window.location = url;
     notifyOfCsvDownload(HELP_SOURCES_CSV_COLUMNS);
   }
+
   selectedCSV = () => {
     this.setState({ confirmTemplate: true });
   }
@@ -50,6 +51,7 @@ class CollectionUploadSourceContainer extends React.Component {
     uploadCSVFile(fd);
     this.selectedCSV();
   }
+
   render() {
     const { onConfirm, mysources, myCollectionId, fetchStatus, error } = this.props;
     const { formatMessage } = this.props.intl;
@@ -74,7 +76,7 @@ class CollectionUploadSourceContainer extends React.Component {
         <p>
           <FormattedMessage {...localMessages.helpText} />
         </p>
-        <a href="#download" onClick={this.downloadCsv} >
+        <a href="#download" onClick={this.downloadCsv}>
           {downloadLabel}
         </a>
         &nbsp;
@@ -116,19 +118,19 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(uploadSourceListFromTemplate({ file: csvFile }))
       .then((results) => {
         if (results.status === 'Error') {
-          updateFeedback({ open: true, message: ownProps.intl.formatMessage({ id: 'collection.upload.error', defaultMessage: results.message }) });
+          updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage({ id: 'collection.upload.error', defaultMessage: results.message }) });
         } else if (results.status === 'Success') {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
         }
       });
   },
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withCsvDownloadNotifyContainer(
-        CollectionUploadSourceContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withCsvDownloadNotifyContainer(
+      CollectionUploadSourceContainer
     )
-  );
+  )
+);

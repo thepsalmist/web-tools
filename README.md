@@ -34,7 +34,7 @@ MongoDB:
 Redis:
 [Install Redis](http://redis.io/)  We develop on OS X and install via the [HomeBrew package manager](http://brew.sh): `brew install redis`
 
-MemCacahe:
+MemCache:
 On OSX, make sure to run `brew install libmemcached` otherwise you'll get an error about pylibmc failing to install (http://brew.sh)
  
 
@@ -50,7 +50,7 @@ You will make your life easier by installing these tools to help you develop bet
  * [Redux DevTools Chrome extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd)
  * [React Developer Tools Chrome Extension](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi).
  * Set up your environment with [SublimeText](https://www.sublimetext.com) and linting following [these instructions](https://medium.com/planet-arkency/catch-mistakes-before-you-run-you-javascript-code-6e524c36f0c8#.1mela5864).
- * - Essentially, you need to tell Sublime to install the Sublime package control manager and then you need to install the necessary packages using Sublime's command line. That's all there in the link, just make sure you follow the prompts explicity.
+ * Essentially, you need to tell Sublime to install the Sublime package control manager and then you need to install the necessary packages using Sublime's command line. That's all there in the link, just make sure you follow the prompts explicity.
  * To browse your local DB on a Mac use [MongoHub](https://github.com/bububa/MongoHub-Mac), or [MongoExpress for a web-based UI](https://github.com/mongo-express/mongo-express)
 
 Running
@@ -79,7 +79,7 @@ Releasing
 Updating npm Depedencies
 ------------------------ 
 
-It is important to occasionally we upgrade to the latest verison of the npm libraries we use.
+It is important to occasionally we upgrade to the latest version of the npm libraries we use.
 This is something to do every month or so, to make sure we don't fall behind the rapid development 
 in this libraries.  
 

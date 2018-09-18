@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { reduxForm, Field } from 'redux-form';
-import MenuItem from 'material-ui/MenuItem';
+import MenuItem from '@material-ui/core/MenuItem';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
@@ -16,7 +16,7 @@ const localMessages = {
 };
 
 const StoryDetailForm = (props) => {
-  const { initialValues, buttonLabel, pristine, submitting, handleSubmit, onSave, renderTextField, renderCheckbox, renderSelectField, language } = props;
+  const { initialValues, buttonLabel, pristine, submitting, handleSubmit, onSave, renderTextField, renderCheckbox, renderSelect, language } = props;
   const { formatMessage } = props.intl;
   // need to init initialValues a bit on the way in to make lower-level logic work right
   const cleanedInitialValues = initialValues ? { ...initialValues } : {};
@@ -31,9 +31,8 @@ const StoryDetailForm = (props) => {
             name="title"
             component={renderTextField}
             fullWidth
-            floatingLabelText={formatMessage(messages.storyTitle)}
             label={formatMessage(messages.storyTitle)}
-            hintText={formatMessage(messages.storyTitle)}
+            placeholder={formatMessage(messages.storyTitle)}
           />
         </Col>
       </Row>
@@ -43,9 +42,8 @@ const StoryDetailForm = (props) => {
             name="description"
             component={renderTextField}
             fullWidth
-            floatingLabelText={formatMessage(messages.storyDescription)}
             label={formatMessage(messages.storyDescription)}
-            hintText={formatMessage(messages.storyDescription)}
+            placeholder={formatMessage(messages.storyDescription)}
           />
         </Col>
       </Row>
@@ -56,9 +54,8 @@ const StoryDetailForm = (props) => {
             component={renderTextField}
             type="inline"
             fullWidth
-            floatingLabelText={formatMessage(messages.storyUrl)}
             label={formatMessage(messages.storyUrl)}
-            hintText={formatMessage(messages.storyUrl)}
+            placeholder={formatMessage(messages.storyUrl)}
           />
         </Col>
       </Row>
@@ -66,12 +63,11 @@ const StoryDetailForm = (props) => {
         <Col lg={6}>
           <Field
             name="language"
-            component={renderSelectField}
+            component={renderSelect}
             type="inline"
             fullWidth
-            floatingLabelText={formatMessage(messages.language)}
             label={formatMessage(messages.language)}
-            hintText={formatMessage(messages.language)}
+            placeholder={formatMessage(messages.language)}
           >
             {language.map(t => <MenuItem key={t} value={t} primaryText={t} />)}
           </Field>
@@ -84,9 +80,8 @@ const StoryDetailForm = (props) => {
             component={renderTextField}
             type="inline"
             fullWidth
-            floatingLabelText={formatMessage(messages.storyDate)}
             label={formatMessage(messages.storyDate)}
-            hintText={formatMessage(messages.storyDate)}
+            placeholder={formatMessage(messages.storyDate)}
           />
         </Col>
       </Row>
@@ -97,9 +92,8 @@ const StoryDetailForm = (props) => {
             component={renderCheckbox}
             type="inline"
             fullWidth
-            floatingLabelText={formatMessage(messages.storyCustomDate)}
             label={formatMessage(messages.storyCustomDate)}
-            hintText={formatMessage(messages.storyCustomDate)}
+            placeholder={formatMessage(messages.storyCustomDate)}
           />
         </Col>
       </Row>
@@ -110,9 +104,8 @@ const StoryDetailForm = (props) => {
             component={renderCheckbox}
             type="inline"
             fullWidth
-            floatingLabelText={formatMessage(messages.storyUndateable)}
             label={formatMessage(messages.storyUndateable)}
-            hintText={formatMessage(messages.storyUndateable)}
+            placeholder={formatMessage(messages.storyUndateable)}
           />
         </Col>
       </Row>
@@ -123,7 +116,7 @@ const StoryDetailForm = (props) => {
             type="submit"
             label={buttonLabel}
             disabled={pristine || submitting}
-            primary
+            color="primary"
           />
         </Col>
       </Row>
@@ -141,7 +134,7 @@ StoryDetailForm.propTypes = {
   intl: PropTypes.object.isRequired,
   renderTextField: PropTypes.func.isRequired,
   renderCheckbox: PropTypes.func.isRequired,
-  renderSelectField: PropTypes.func.isRequired,
+  renderSelect: PropTypes.func.isRequired,
   collections: PropTypes.array,
   // from form healper
   handleSubmit: PropTypes.func,
@@ -166,10 +159,10 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        StoryDetailForm
-      ),
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      StoryDetailForm
     ),
-  );
+  ),
+);

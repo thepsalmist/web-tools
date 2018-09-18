@@ -16,23 +16,25 @@ const localMessages = {
 };
 
 class LinkMapContainer extends React.Component {
-
   state = {
     viewMap: false,
   }
+
   componentWillReceiveProps(nextProps) {
     const { fetchData, filters } = this.props;
-    if (nextProps.filters.snapshotId !== filters.snapshotId ||
-      nextProps.filters.timespanId !== filters.timespanId ||
-      nextProps.filters.focusId !== filters.focusId) {
+    if (nextProps.filters.snapshotId !== filters.snapshotId
+      || nextProps.filters.timespanId !== filters.timespanId
+      || nextProps.filters.focusId !== filters.focusId) {
       fetchData(nextProps);
     }
   }
+
   enableViewMap = () => {
     this.setState({
       viewMap: true,
     });
   }
+
   render() {
     const { handleFetchMapData, filters, topicId } = this.props;
     const { formatMessage } = this.props.intl;
@@ -61,7 +63,6 @@ class LinkMapContainer extends React.Component {
       </Grid>
     );
   }
-
 }
 
 LinkMapContainer.propTypes = {
@@ -93,7 +94,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchData: () => {
     dispatch(selectTopic(ownProps.params.topicId));
     // select any filters that are there
-    const query = ownProps.location.query;
+    const { query } = ownProps.location;
     if (ownProps.location.query.snapshotId) {
       dispatch(filterBySnapshot(query.snapshotId));
     }
@@ -107,8 +108,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      LinkMapContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    LinkMapContainer
+  )
+);

@@ -27,6 +27,6 @@ RecentNews.propTypes = {
 };
 
 export default
-  injectIntl(
-    RecentNews
-  );
+injectIntl(
+  RecentNews
+);

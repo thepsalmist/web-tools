@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, FormattedNumber, injectIntl } from 'react-intl';
-import ArrowDropDownIcon from 'material-ui/svg-icons/navigation/arrow-drop-down';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import messages from '../../resources/messages';
 import LinkWithFilters from './LinkWithFilters';
 import { googleFavIconUrl } from '../../lib/urlUtil';
@@ -9,7 +9,6 @@ import { googleFavIconUrl } from '../../lib/urlUtil';
 const ICON_STYLE = { margin: 0, padding: 0, width: 12, height: 12 };
 
 class MediaTable extends React.Component {
-
   sortableHeader = (sortKey, textMsg) => {
     const { onChangeSort, sortedBy } = this.props;
     const { formatMessage } = this.props.intl;
@@ -54,9 +53,14 @@ class MediaTable extends React.Component {
               <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
               <th className="numeric"><FormattedMessage {...messages.outlinks} /></th>
               <th className="numeric">{this.sortableHeader('facebook', messages.facebookShares)}</th>
+              <th><FormattedMessage {...messages.mediaType} /></th>
+              <th><FormattedMessage {...messages.primaryLanguage} /></th>
+              <th><FormattedMessage {...messages.pubCountry} /></th>
+              <th><FormattedMessage {...messages.pubState} /></th>
+              <th><FormattedMessage {...messages.countryOfFocus} /></th>
             </tr>
-            {media.map((m, idx) =>
-              (<tr key={m.media_id} className={(idx % 2 === 0) ? 'even' : 'odd'}>
+            {media.map((m, idx) => (
+              <tr key={m.media_id} className={(idx % 2 === 0) ? 'even' : 'odd'}>
                 <td>
                   <img src={googleFavIconUrl(m.url)} alt={m.name} />
                 </td>
@@ -69,14 +73,18 @@ class MediaTable extends React.Component {
                 <td className="numeric"><FormattedNumber value={m.media_inlink_count !== undefined ? m.media_inlink_count : '?'} /></td>
                 <td className="numeric"><FormattedNumber value={m.outlink_count !== undefined ? m.outlink_count : '?'} /></td>
                 <td className="numeric"><FormattedNumber value={m.facebook_share_count !== undefined ? m.facebook_share_count : '?'} /></td>
-              </tr>)
-            )}
+                <td>{m.metadata.media_type ? m.metadata.media_type.label : '?'}</td>
+                <td>{m.metadata.language ? m.metadata.language.label : '?'}</td>
+                <td>{m.metadata.pub_country ? m.metadata.pub_country.label : '?'}</td>
+                <td>{m.metadata.pub_state ? m.metadata.pub_state.label : '?'}</td>
+                <td>{m.metadata.about_country ? m.metadata.about_country.label : '?'}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
     );
   }
-
 }
 
 MediaTable.propTypes = {

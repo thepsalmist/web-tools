@@ -18,7 +18,7 @@ from server.views.sources.words import word_count, stream_wordcount_csv
 from server.views.sources.geocount import stream_geo_csv, cached_geotag_count
 from server.views.sources.stories_split_by_time import stream_split_stories_csv
 import server.views.sources.apicache as apicache
-# from server.views.sources.favorites import add_user_favorite_flag_to_sources, add_user_favorite_flag_to_collections
+from server.views.favorites import add_user_favorite_flag_to_sources, add_user_favorite_flag_to_collections
 
 logger = logging.getLogger(__name__)
 
@@ -161,16 +161,25 @@ def source_split_stories_csv(media_id):
 @flask_login.login_required
 @api_error_handler
 def api_media_source_split_stories(media_id):
-    q ='media_id:' + str(media_id)
-    health = _cached_media_source_health(user_mediacloud_key(), media_id)
-    results = apicache.last_year_split_story_count(user_mediacloud_key(), q)
+    media_query = 'media_id:' + str(media_id)
+    exclude_spidered_stories = " media_id:{} AND NOT tags_id_stories:{}".format(str(media_id), 8875452) if 'separate_spidered' in request.args else media_query
 
-    info = {
-        'total_story_count' : results['total_story_count'],
+    health = _cached_media_source_health(user_mediacloud_key(), media_id)
+
+    all_results = apicache.last_year_split_story_count(user_mediacloud_key(), media_query)
+    non_spidered_results = apicache.last_year_split_story_count(user_mediacloud_key(), exclude_spidered_stories) #same if request.args doesn't ask to exclude_spidered
+
+    all_stories = {
+        'total_story_count' : all_results['total_story_count'],
         'health': health,
-        'list': results['counts'],
+        'list': all_results['counts'],
     }
-    return jsonify({'results':info})
+    partial_stories = {
+        'total_story_count': non_spidered_results['total_story_count'],
+        'health': health,
+        'list': non_spidered_results['counts'],
+    }
+    return jsonify({'results': {'all_stories':all_stories, 'partial_stories': partial_stories}})
 
 
 @app.route('/api/sources/<media_id>/geography')

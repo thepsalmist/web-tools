@@ -25,10 +25,9 @@ const FavoriteSourcesAndCollectionsContainer = (props) => {
   if (favoritedSources && favoritedSources.length > 0) {
     favSourcesContent = (
       <ul className="fav-sources">
-        { favoritedSources.slice(0, NUMBER_TO_SHOW).map(c =>
-            (<li key={c.media_id} ><Link to={`/sources/${c.media_id}`}>{c.name}</Link></li>)
-          )
-        }
+        { favoritedSources.slice(0, NUMBER_TO_SHOW).map(c => (
+          <li key={c.media_id}><Link to={`/sources/${c.media_id}`}>{c.name}</Link></li>
+        ))}
       </ul>
     );
   }
@@ -36,10 +35,9 @@ const FavoriteSourcesAndCollectionsContainer = (props) => {
   if (favoritedCollections && favoritedCollections.length > 0) {
     favCollectionsContent = (
       <ul className="fav-collections">
-        { favoritedCollections.slice(0, NUMBER_TO_SHOW).map(c =>
-            (<li key={c.tags_id} ><Link to={`/collections/${c.tags_id}`}>{c.label}</Link></li>)
-          )
-      }
+        { favoritedCollections.slice(0, NUMBER_TO_SHOW).map(c => (
+          <li key={c.tags_id}><Link to={`/collections/${c.tags_id}`}>{c.label}</Link></li>
+        ))}
       </ul>
     );
   }
@@ -50,7 +48,7 @@ const FavoriteSourcesAndCollectionsContainer = (props) => {
   return (
     <DataCard className="favorite-sources-collections">
       <div className="actions">
-        <ExploreButton linkTo={'/favorites'} tooltip={formatMessage(localMessages.seeAll)} />
+        <ExploreButton linkTo="/favorites" tooltip={formatMessage(localMessages.seeAll)} />
       </div>
       <h2>
         <FormattedMessage {...localMessages.mainTitle} />
@@ -87,10 +85,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        FavoriteSourcesAndCollectionsContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      FavoriteSourcesAndCollectionsContainer
     )
-  );
+  )
+);

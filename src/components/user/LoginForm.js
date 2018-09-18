@@ -24,7 +24,7 @@ const localMessages = {
   needsToActivate: { id: 'user.needsToActivate', defaultMessage: 'You still need to activate your account. Check out email and click the link we sent you, or <a href="/#/user/resend-activation">send the link again</a> if you didn\'t get it.' },
 };
 
-const LoginFormComponent = (props) => {
+const LoginForm = (props) => {
   const { handleSubmit, onSubmitLoginForm, fetchStatus, renderTextField } = props;
   const { formatMessage } = props.intl;
   return (
@@ -34,7 +34,8 @@ const LoginFormComponent = (props) => {
           <Field
             name="email"
             component={renderTextField}
-            floatingLabelText={messages.userEmail}
+            label={messages.userEmail}
+            fullWidth
           />
         </Col>
       </Row>
@@ -44,13 +45,13 @@ const LoginFormComponent = (props) => {
             name="password"
             type="password"
             component={renderTextField}
-            floatingLabelText={messages.userPassword}
+            label={messages.userPassword}
+            fullWidth
           />
         </Col>
       </Row>
       <Row>
         <Col lg={12}>
-          <br />
           <AppButton
             type="submit"
             label={formatMessage(messages.userLogin)}
@@ -61,18 +62,19 @@ const LoginFormComponent = (props) => {
       </Row>
       <Row>
         <Col lg={12}>
-          <br />
           <Link to="/user/signup">
             <AppButton
-              flat
+              variant="outlined"
               label={formatMessage(localMessages.signUpNow)}
             />
           </Link>
         </Col>
+      </Row>
+      <Row>
         <Col lg={12}>
           <Link to="/user/request-password-reset">
             <AppButton
-              flat
+              variant="outlined"
               label={formatMessage(localMessages.forgotPassword)}
             />
           </Link>
@@ -82,7 +84,7 @@ const LoginFormComponent = (props) => {
   );
 };
 
-LoginFormComponent.propTypes = {
+LoginForm.propTypes = {
   // from composition
   intl: PropTypes.object.isRequired,
   location: PropTypes.object,
@@ -102,26 +104,27 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   onSubmitLoginForm: (values) => {
     dispatch(loginWithPassword(values.email, values.password))
-    .then((response) => {
-      if (response.key) {
-        // redirect to destination if there is one
-        const loc = ownProps.location;
-        let redirect;
-        if (ownProps.redirect) {
-          redirect = ownProps.redirect;
-        } else {
-          redirect = (loc && loc.state && loc.state.nextPathname) ? loc.state.nextPathname : '';
+      .then((response) => {
+        if (response.key) {
+          // redirect to destination if there is one
+          const loc = ownProps.location;
+          let redirectTo;
+          if (ownProps.redirect) {
+            const { redirect } = ownProps.redirect;
+            redirectTo = redirect;
+          } else {
+            redirectTo = (loc && loc.state && loc.state.nextPathname) ? loc.state.nextPathname : '';
+          }
+          if (redirectTo) {
+            dispatch(push(redirectTo));
+          }
+        } else if ((response.message) && (response.message.includes('is not active'))) {
+          // user has signed up, but not activated their account
+          dispatch(addNotice({ htmlMessage: ownProps.intl.formatMessage(localMessages.needsToActivate), level: LEVEL_ERROR }));
+        } else if (response.status) {
+          dispatch(addNotice({ message: localMessages.loginFailed, level: LEVEL_ERROR }));
         }
-        if (redirect) {
-          dispatch(push(redirect));
-        }
-      } else if ((response.message) && (response.message.includes('is not active'))) {
-        // user has signed up, but not activated their account
-        dispatch(addNotice({ htmlMessage: ownProps.intl.formatMessage(localMessages.needsToActivate), level: LEVEL_ERROR }));
-      } else if (response.status) {
-        dispatch(addNotice({ message: localMessages.loginFailed, level: LEVEL_ERROR }));
-      }
-    });
+      });
   },
 });
 
@@ -143,10 +146,10 @@ const reduxFormConfig = {
 };
 
 export default
-  withIntlForm(
-    reduxForm(reduxFormConfig)(
-      connect(mapStateToProps, mapDispatchToProps)(
-        LoginFormComponent
-      )
+withIntlForm(
+  reduxForm(reduxFormConfig)(
+    connect(mapStateToProps, mapDispatchToProps)(
+      LoginForm
     )
-  );
+  )
+);

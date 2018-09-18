@@ -1,22 +1,26 @@
 @import '../_constants';
 
-div.stat {
-  small {
-    display: block;
-    color: $material-grey900;
-    font-size: 12px;
-    font-weight: bold;
-    padding-bottom: 5px;
-    button {
-      width: auto !important;
-      height: auto !important;
-      margin-left: 8px important;
+.stat-bar {
+
+  .stat {
+    small {
+      display: block;
+      color: $material-grey900;
+      font-size: 12px;
+      font-weight: bold;
+      padding-bottom: 5px;
+      button {
+        width: auto !important;
+        height: auto !important;
+        margin-left: 8px important;
+      }
+    }
+    em {
+      display: block;
+      color: $material-grey900;
+      font-size: 28px;
+      font-style: normal;
     }
   }
-  em {
-    display: block;
-    color: $material-grey900;
-    font-size: 28px;
-    font-style: normal;
-  }
+
 }

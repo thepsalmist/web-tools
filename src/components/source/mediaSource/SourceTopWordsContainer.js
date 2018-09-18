@@ -22,6 +22,7 @@ class SourceTopWordsContainer extends React.Component {
     const { fetchData } = this.props;
     fetchData(timePeriod, dateQuery);
   }
+
   defaultOnWordClick = (word) => {
     const { source } = this.props;
     const endDate = getCurrentDate();
@@ -30,6 +31,7 @@ class SourceTopWordsContainer extends React.Component {
     const explorerUrl = urlToExplorerQuery(source.name || source.url, searchStr, [source.media_id], [], startDate, endDate);
     window.open(explorerUrl, '_blank');
   }
+
   render() {
     const { source, words, helpButton, timePeriod } = this.props;
     const { formatMessage } = this.props.intl;
@@ -88,12 +90,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(localMessages.helpTitle, [localMessages.intro, messages.wordSpaceLayoutHelp])(
-        withAsyncFetch(
-          SourceTopWordsContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(localMessages.helpTitle, [localMessages.intro, messages.wordSpaceLayoutHelp])(
+      withAsyncFetch(
+        SourceTopWordsContainer
       )
     )
-  );
+  )
+);

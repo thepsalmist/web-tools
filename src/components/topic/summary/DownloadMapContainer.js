@@ -3,8 +3,7 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import withDescription from '../../common/hocs/DescribedDataCard';
-import DataCard from '../../common/DataCard';
+import withSummary from '../../common/hocs/SummarizedVizualization';
 import LinkWithFilters from '../LinkWithFilters';
 import { fetchTopicMapFiles } from '../../../actions/topicActions';
 
@@ -30,6 +29,7 @@ class DownloadMapContainer extends React.Component {
       fetchData(nextProps);
     }
   }
+
   render() {
     const { topicId, filters, wordMapStatus } = this.props;
     let content;
@@ -64,24 +64,20 @@ class DownloadMapContainer extends React.Component {
           );
           break;
         default:
-
       }
       content = (
-        <div>
+        <React.Fragment>
           <h3><FormattedMessage {...localMessages.linkMap} />:</h3>
-          <p><LinkWithFilters to={`/topics/${topicId}/link-map`} ><FormattedMessage {...localMessages.linkMapDownload} /></LinkWithFilters></p>
+          <p><LinkWithFilters to={`/topics/${topicId}/link-map`}><FormattedMessage {...localMessages.linkMapDownload} /></LinkWithFilters></p>
           <h3><FormattedMessage {...localMessages.wordMap} />:</h3>
           {wordMapContent}
-        </div>
+        </React.Fragment>
       );
     }
     return (
-      <DataCard>
-        <h2>
-          <FormattedMessage {...localMessages.title} />
-        </h2>
+      <React.Fragment>
         {content}
-      </DataCard>
+      </React.Fragment>
     );
   }
 }
@@ -117,12 +113,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withDescription(localMessages.helpIntro, localMessages.helpText)(
-        withAsyncFetch(
-          DownloadMapContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withSummary(localMessages.title, localMessages.helpIntro, localMessages.helpText)(
+      withAsyncFetch(
+        DownloadMapContainer
       )
     )
-  );
+  )
+);

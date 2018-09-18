@@ -8,7 +8,7 @@ import { notEmptyString } from '../../../../lib/formValidators';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.collections.title', defaultMessage: 'Collections matching "{name}"' },
-  countrySearchHintText: { id: 'system.mediaPicker.collections.countryHint', defaultMessage: 'Search for media published in a country or state/province by name' },
+  countrySearchHintText: { id: 'system.mediaPicker.collections.countryHint', defaultMessage: 'Search curated collections of country & state sources' },
   noResults: { id: 'system.mediaPicker.collections.noResults', defaultMessage: 'No results. Try searching for issues like online news, health, blogs, conservative to see if we have collections made up of those types of sources.' },
 };
 
@@ -19,6 +19,7 @@ class CountryCollectionSearchResultsContainer extends React.Component {
     const updatedQueryObj = Object.assign({}, values, { type: selectedMediaQueryType });
     updateMediaQuerySelection(updatedQueryObj);
   }
+
   render() {
     const { selectedMediaQueryType, selectedMediaQueryKeyword, collectionResults, handleToggleAndSelectMedia, fetchCountryStatus } = this.props;
     return (
@@ -70,9 +71,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      CountryCollectionSearchResultsContainer
-    )
-  );
-
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    CountryCollectionSearchResultsContainer
+  )
+);

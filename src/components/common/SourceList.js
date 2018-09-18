@@ -41,9 +41,11 @@ const SourceList = (props) => {
   }
   return (
     <DataCard className="source-list">
-      {downloadUrl && <div className="actions">
-        <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => { window.location = downloadUrl; onDownload(); }} />
-      </div>}
+      {downloadUrl && (
+        <div className="actions">
+          <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => { window.location = downloadUrl; onDownload(); }} />
+        </div>
+      )}
       <h2>{titleRefactor}</h2>
       <p>
         {introRefactor}
@@ -67,6 +69,6 @@ SourceList.propTypes = {
 };
 
 export default
-  injectIntl(
-    SourceList
-  );
+injectIntl(
+  SourceList
+);

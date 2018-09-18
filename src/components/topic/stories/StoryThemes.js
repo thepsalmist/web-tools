@@ -55,8 +55,8 @@ StoryThemes.propTypes = {
 };
 
 export default
-  injectIntl(
-    withHelp(messages.themeHelpTitle, messages.themeHelpContent)(
-      StoryThemes
-    )
-  );
+injectIntl(
+  withHelp(messages.themeHelpTitle, messages.themeHelpContent)(
+    StoryThemes
+  )
+);

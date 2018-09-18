@@ -43,7 +43,7 @@ export function fetchDemoQueryTopWordsComparison(queryA, queryB) {
   if (testParams.search_id !== undefined) { // by demo search id
     acceptedParamsA = acceptParams(queryA, ['index', 'search_id', 'query_id', 'q']);
     acceptedParamsB = acceptParams(queryB, ['index', 'search_id', 'query_id', 'q']);
-  } else {  // by demo keyword
+  } else { // by demo keyword
     acceptedParamsA = acceptParams(queryA, ['index', 'q', 'start_date', 'end_date', 'sources', 'collections']);
     acceptedParamsB = acceptParams(queryB, ['index', 'q', 'start_date', 'end_date', 'sources', 'collections']);
   }

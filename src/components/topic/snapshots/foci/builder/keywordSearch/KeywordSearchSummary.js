@@ -41,7 +41,4 @@ KeywordSearchSummary.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    KeywordSearchSummary
-  );
+export default injectIntl(KeywordSearchSummary);

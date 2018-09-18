@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import FlatButton from 'material-ui/FlatButton';
-import Dialog from 'material-ui/Dialog';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
 import messages from '../../resources/messages';
 
 const localMessages = {
@@ -13,27 +13,33 @@ class CopyAllComponent extends React.Component {
   state = {
     open: false,
   };
+
   handleOpen = () => {
     this.setState({ open: true });
   };
+
   handleClose = () => {
     const { onOk } = this.props;
     this.setState({ open: false });
     onOk();
   };
+
   handleCancel = () => {
     this.setState({ open: false });
   };
+
   render() {
     const { label, title, msg } = this.props;
     const { formatMessage } = this.props.intl;
     const dialogActions = [
-      <FlatButton
+      <Button
+        variant="outlined"
         label={formatMessage(messages.cancel)}
         primary
         onClick={this.handleCancel}
       />,
-      <FlatButton
+      <Button
+        variant="outlined"
         label={formatMessage(messages.ok)}
         primary
         onClick={this.handleClose}
@@ -50,8 +56,9 @@ class CopyAllComponent extends React.Component {
 
     const dialogTitle = title ? formatMessage(localMessages.title) : '';
     return (
-      <span className="copy-all">
-        <label htmlFor="q">{label}</label><a role="button" title={formatMessage(localMessages.title)} tabIndex="0" onClick={this.handleOpen}>&nbsp;&#x00BB;</a>
+      <div className="copy-all">
+        <label htmlFor="q">{label}</label>
+        <a href="#" role="button" title={formatMessage(localMessages.title)} tabIndex="0" onClick={this.handleOpen}>&nbsp;&#x00BB;</a>
         <Dialog
           title={dialogTitle}
           actions={dialogActions}
@@ -62,7 +69,7 @@ class CopyAllComponent extends React.Component {
         >
           {content}
         </Dialog>
-      </span>
+      </div>
     );
   }
 }

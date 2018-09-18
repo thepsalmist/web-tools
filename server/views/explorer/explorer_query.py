@@ -4,7 +4,7 @@ import flask_login
 from server import app, mc
 from server.auth import user_admin_mediacloud_client, user_has_auth_role, is_user_logged_in, ROLE_MEDIA_EDIT
 from server.util.request import form_fields_required, api_error_handler, arguments_required
-from server.views.explorer import read_sample_searches
+from server.views.explorer import read_sample_searches, ALL_MEDIA
 from operator import itemgetter
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,10 @@ def api_explorer_sources_by_ids():
 @api_error_handler
 def api_explorer_collections_by_ids():
     client_mc = user_admin_mediacloud_client()
-    collection_ids = request.args['collections[]'].split(',')
+    if int(request.args['collections[]']) == -1:
+        return jsonify([{ 'id': ALL_MEDIA, 'label': "All Media", 'tag_sets_id': ALL_MEDIA}])
+    else:
+        collection_ids = request.args['collections[]'].split(',')
     collection_list = []
     for tags_id in collection_ids:
         info = client_mc.tag(tags_id)

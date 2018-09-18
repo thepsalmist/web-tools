@@ -13,6 +13,7 @@ import { selectBySearchParams, fetchSampleSearches, updateQuerySourceLookupInfo,
 import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, generateQueryParamString, decodeQueryParamString } from '../../lib/explorerUtil';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../lib/dateUtil';
 import { notEmptyString } from '../../lib/formValidators';
+import { ALL_MEDIA } from '../../lib/mediaUtil';
 
 const localMessages = {
   errorInURLParams: { id: 'explorer.queryBuilder.urlParams',
@@ -242,7 +243,7 @@ function composeUrlBasedQueryContainer() {
             startDate: q.startDate,
             endDate: q.endDate,
             sources: q.sources, // de-aggregate media bucket into sources and collections
-            collections: q.collections,
+            collections: q.collections && q.collections[0].id === ALL_MEDIA ? '' : q.collections,
           })));
           dispatch(push({ pathname: '/queries/search', search: `?q=${search}` })); // query adds a '?query='
         }

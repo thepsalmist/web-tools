@@ -7,7 +7,7 @@ from server import app
 from server.views import WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_UI_NUM_WORDS
 from server.util.request import api_error_handler
 import server.util.csv as csv
-from server.views.explorer import parse_as_sample, parse_query_with_args_and_sample_search, parse_query_with_keywords, \
+from server.views.explorer import parse_as_sample, parse_query_with_keywords, \
     load_sample_searches, file_name_for_download
 import server.views.explorer.apicache as apicache
 
@@ -33,7 +33,7 @@ def _get_word_count():
     if search_id not in [None, -1]:
         sample_searches = load_sample_searches()
         current_search = sample_searches[search_id]['queries']
-        solr_q, solr_fq = parse_query_with_args_and_sample_search(request.args, current_search)
+        solr_q, solr_fq = parse_as_sample(search_id, request.args['index'])
     else:
         solr_q, solr_fq = parse_query_with_keywords(request.args)
     word_data = query_wordcount(solr_q, solr_fq, sample_size=sample_size)

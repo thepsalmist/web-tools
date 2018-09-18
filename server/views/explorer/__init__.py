@@ -90,6 +90,8 @@ def parse_query_with_keywords(args):
     # try statement will fail?
     try:    # if user arguments are present and allowed by the client endpoint, use them, otherwise use defaults
         current_query = args['q']
+        if (current_query == ''):
+            current_query = "*"
         if 'startDate' in args:
             start_date = args['startDate']
         elif 'start_date' in args:

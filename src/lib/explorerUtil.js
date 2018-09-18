@@ -50,7 +50,7 @@ export function generateQueryParamString(queries) {
 export function decodeQueryParamString(queryString) {
   const queriesForUrl = JSON.parse(queryString).map(query => ({
     label: notEmptyString(query.label) ? decodeURIComponent(query.label) : '',
-    q: notEmptyString(query.q) ? decodeURIComponent(query.q) : '*',
+    q: notEmptyString(query.q) ? decodeURIComponent(query.q) : '',
     color: notEmptyString(query.color) ? decodeURIComponent(query.color) : '',
     startDate: query.startDate,
     endDate: query.endDate,

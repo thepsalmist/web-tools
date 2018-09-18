@@ -9,7 +9,7 @@ import server.util.csv as csv
 from server.auth import user_mediacloud_key, is_user_logged_in
 import server.util.tags as tag_util
 from server.util.request import api_error_handler
-from server.views.explorer import parse_as_sample, parse_query_with_args_and_sample_search,\
+from server.views.explorer import parse_as_sample, \
     parse_query_with_keywords, load_sample_searches, file_name_for_download
 import server.views.explorer.apicache as apicache
 
@@ -37,7 +37,7 @@ def api_explorer_demo_story_sample():
     if search_id not in [None, -1]:
         sample_searches = load_sample_searches()
         current_search = sample_searches[search_id]['queries']
-        solr_q, solr_fq = parse_query_with_args_and_sample_search(request.args, current_search)
+        solr_q, solr_fq = parse_as_sample(search_id, request.args['index'])
     else:
         solr_q, solr_fq = parse_query_with_keywords(request.args)
 

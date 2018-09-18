@@ -110,6 +110,7 @@ const messages = {
   mediaName: { id: 'media.name', defaultMessage: 'Name' },
 
   mediaPickerHelpText: { id: 'mediaPicker', defaultMessage: 'Media Picker Help' },
+  allMedia: { id: 'allMedia', defaultMessage: 'All Media' },
 
   focus: { id: 'focus', defaultMessage: 'Subtopic' },
   focusHeader: { id: 'focus', defaultMessage: 'Subtopics' },

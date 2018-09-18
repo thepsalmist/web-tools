@@ -55,13 +55,15 @@ class QueryForm extends React.Component {
     childDialogOpen: false,
   }
 
+  getAllActiveQueries = queries => (queries.filter(q => q.deleted !== true));
+
   setQueryFormChildDialogOpen = () => {
     this.setState(prevState => ({ childDialogOpen: !prevState.childDialogOpen }));
   }
 
   evalAllQueriesForValidMedia = () => {
     const { queries, mediaUpdates } = this.props;
-    const anyQueriesNoMedia = queries.filter(q => (q.index !== mediaUpdates.index) && q.media && q.media.length === 0).length; // if any query is missing media
+    const anyQueriesNoMedia = this.getAllActiveQueries(queries).filter(q => (q.index !== mediaUpdates.index) && q.media && q.media.length === 0).length; // if any query is missing media
     const thisCurrentQueryFormNoMedia = mediaUpdates && (mediaUpdates.media === undefined || mediaUpdates.media.length === 0) && mediaUpdates.sources.length === 0 && mediaUpdates.collections.length === 0;
     return anyQueriesNoMedia || thisCurrentQueryFormNoMedia;
   }

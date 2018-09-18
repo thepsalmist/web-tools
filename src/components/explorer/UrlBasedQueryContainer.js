@@ -243,7 +243,7 @@ function composeUrlBasedQueryContainer() {
             startDate: q.startDate,
             endDate: q.endDate,
             sources: q.sources, // de-aggregate media bucket into sources and collections
-            collections: q.collections && q.collections[0].id === ALL_MEDIA ? '' : q.collections,
+            collections: q.collections,
           })));
           dispatch(push({ pathname: '/queries/search', search: `?q=${search}` })); // query adds a '?query='
         }

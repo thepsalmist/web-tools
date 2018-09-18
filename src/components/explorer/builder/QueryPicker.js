@@ -15,7 +15,7 @@ import QueryHelpDialog from '../../common/help/QueryHelpDialog';
 import { selectQuery, updateQuery, addCustomQuery, loadUserSearches, saveUserSearch, deleteUserSearch, markAsDeletedQuery, copyAndReplaceQueryField } from '../../../actions/explorerActions';
 import { AddQueryButton } from '../../common/IconButton';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
-import { autoMagicQueryLabel, generateQueryParamString, KEYWORD, DATES, MEDIA } from '../../../lib/explorerUtil';
+import { autoMagicQueryLabel, generateQueryParamString, KEYWORD, DATES, MEDIA, DEFAULT_COLLECTION_OBJECT_ARRAY } from '../../../lib/explorerUtil';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
 
@@ -74,7 +74,7 @@ class QueryPicker extends React.Component {
       updatedQuery.sources = updatedSources;
       updateCurrentQueryThenReselect(updatedQuery);
     } else {
-      updatedQuery.collections = sourceAndCollections;
+      updatedQuery.collections = sourceAndCollections; // push ALL_MEDIA selection into query so it shows up
       updatedQuery.sources = [];
       updateCurrentQueryThenReselect(updatedQuery);
     }
@@ -220,6 +220,7 @@ class QueryPicker extends React.Component {
         const genDefColor = colorPallette(newIndex);
         const newQueryLabel = `Query ${String.fromCharCode('A'.charCodeAt(0) + newIndex)}`;
         const defaultQueryField = isLoggedIn ? '*' : '';
+        const defaultDemoQuery = { index: newIndex, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
         const defaultQuery = { index: newIndex, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: [], sources: [], color: genDefColor, autoNaming: true };
 
         const emptyQuerySlide = (
@@ -229,9 +230,9 @@ class QueryPicker extends React.Component {
                 <AddQueryButton
                   key={fixedQuerySlides.length} // this isn't working
                   tooltip={formatMessage(localMessages.addQuery)}
-                  onClick={() => addAQuery(defaultQuery)}
+                  onClick={() => addAQuery(isLoggedIn ? defaultQuery : defaultDemoQuery)}
                 />
-                <a href="" onTouchTap={() => addAQuery(defaultQuery)}><FormattedMessage {...localMessages.addQuery} /></a>
+                <a href="" onTouchTap={() => addAQuery(isLoggedIn ? defaultQuery : defaultDemoQuery)}><FormattedMessage {...localMessages.addQuery} /></a>
               </div>
             </div>
           </div>

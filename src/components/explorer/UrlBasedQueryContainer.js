@@ -13,7 +13,6 @@ import { selectBySearchParams, fetchSampleSearches, updateQuerySourceLookupInfo,
 import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, generateQueryParamString, decodeQueryParamString } from '../../lib/explorerUtil';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../lib/dateUtil';
 import { notEmptyString } from '../../lib/formValidators';
-import { ALL_MEDIA } from '../../lib/mediaUtil';
 
 const localMessages = {
   errorInURLParams: { id: 'explorer.queryBuilder.urlParams',

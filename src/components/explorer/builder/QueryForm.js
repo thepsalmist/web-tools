@@ -16,6 +16,7 @@ import SavedSearchControls from './SavedSearchControls';
 import { emptyString, validDate } from '../../../lib/formValidators';
 import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil';
 import { KEYWORD, MEDIA, DATES } from '../../../lib/explorerUtil';
+import { ALL_MEDIA } from '../../../lib/mediaUtil';
 import messages from '../../../resources/messages';
 
 const formSelector = formValueSelector('queryForm');
@@ -73,10 +74,14 @@ class QueryForm extends React.Component {
     if (cleanedInitialValues.disabled === undefined) {
       cleanedInitialValues.disabled = false;
     }
-    cleanedInitialValues.media = [ // merge intial sources and collections into one list for display with `renderFields`
-      ...initialValues.sources,
-      ...initialValues.collections,
-    ];
+    if (initialValues.collections && initialValues.collections.length && initialValues.collections[0].tags_id === ALL_MEDIA) {
+      cleanedInitialValues.media = [{ id: ALL_MEDIA, label: formatMessage(messages.allMedia) }];
+    } else {
+      cleanedInitialValues.media = [ // merge intial sources and collections into one list for display with `renderFields`
+        ...initialValues.sources,
+        ...initialValues.collections,
+      ];
+    }
     selected.media = [ // merge sources and collections into one list for display with `renderFields`
       ...selected.sources,
       ...selected.collections,

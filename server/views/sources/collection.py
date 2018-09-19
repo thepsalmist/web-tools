@@ -169,14 +169,20 @@ def api_collection_sources(collection_id):
     add_user_favorite_flag_to_sources(media_in_collection)
     if add_in_details and user_has_auth_role(ROLE_MEDIA_EDIT):
         # for editing users, add in last scrape and active feed count (if requested)
-        pool = Pool(processes=FEED_SCRAPE_JOB_POOL_SIZE)
+        use_pool = False
         jobs = [m['media_id'] for m in media_in_collection]
-        job_results = pool.map(_media_list_edit_worker, jobs)  # blocks until they are all done
+        if use_pool:
+            pool = Pool(processes=FEED_SCRAPE_JOB_POOL_SIZE)
+            job_results = pool.map(_media_list_edit_worker, jobs)  # blocks until they are all done
+        else:
+            job_results = [_media_list_edit_worker(job) for job in jobs]
+
         job_by_media_id = {j['media_id']: j for j in job_results}
         for m in media_in_collection:
             m['latest_scrape_job'] = job_by_media_id[m['media_id']]['latest_scrape_job']
             m['active_feed_count'] = job_by_media_id[m['media_id']]['active_feed_count']
-        pool.terminate()
+        if use_pool:
+            pool.terminate()
     results['sources'] = media_in_collection
     return jsonify(results)
 

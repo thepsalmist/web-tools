@@ -3,6 +3,8 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import FlatButton from 'material-ui/FlatButton';
+import { googleFavIconUrl, storyDomainName } from '../../../lib/urlUtil';
+import { trimToMaxLength } from '../../../lib/stringUtil';
 
 const selectionOptions = {
   none: 'none',
@@ -16,7 +18,6 @@ const localMessages = {
 };
 
 class StoryFeedbackRow extends React.Component {
-
   state = {
     selection: selectionOptions.none,
   };
@@ -54,10 +55,10 @@ class StoryFeedbackRow extends React.Component {
   render() {
     const { story, maxTitleLength } = this.props;
     const { formatMessage, formatDate } = this.props.intl;
-    const storyTitle = maxTitleLength !== undefined ? `${story.title.substr(0, maxTitleLength)}...` : story.title;
-
+    const storyTitle = maxTitleLength !== undefined ? trimToMaxLength(story.title, maxTitleLength) : story.title;
+    const domain = storyDomainName(story);
     return (
-      <Row className={`story ${this.state.selection}`} middle="lg">
+      <Row className={`story story-feedback-row ${this.state.selection}`} middle="lg">
         <Col lg={8}>
           <Row>
             <Col lg={12}>
@@ -66,7 +67,10 @@ class StoryFeedbackRow extends React.Component {
           </Row>
           <Row>
             <Col lg={12}>
-              { story.media_url }
+              <a href={story.media_url} rel="noopener noreferrer" target="_blank">
+                <img className="google-icon" src={googleFavIconUrl(domain)} alt={domain} />
+              </a>
+              { domain }
             </Col>
           </Row>
           <Row>
@@ -108,7 +112,4 @@ StoryFeedbackRow.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    StoryFeedbackRow
-  );
+export default injectIntl(StoryFeedbackRow);

@@ -21,8 +21,15 @@ $not-match-darker: #9e3d3f;
   }
 
   .topic-create-sample-story-container {
-    overflow-y: scroll;
-    height: 500px;
+    .story-feedback-row {
+      b {
+        font-size: 18px;
+      }
+    }
+    .google-icon {
+      margin-right: 8px;
+      vertical-align: middle;
+    }
   }
 
   // match and no-match button styling

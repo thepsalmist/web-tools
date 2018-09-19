@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { injectIntl, FormattedHTMLMessage } from 'react-intl';
+import { injectIntl, FormattedHTMLMessage, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
@@ -9,22 +9,23 @@ import AppButton from '../../common/AppButton';
 import StoryFeedbackRow from './StoryFeedbackRow';
 import { WarningNotice } from '../../common/Notice';
 import { goToCreateTopicStep, fetchStorySampleByQuery } from '../../../actions/topicActions';
-import messages from '../../../resources/messages';
 
 const NUM_TO_SHOW = 30;
 const VALIDATION_CUTOFF = 0.9;
 
 const localMessages = {
-  title: { id: 'topic.create.validate.title', defaultMessage: 'Step 3: Validate 30 Sample Stories' },
+  title: { id: 'topic.create.validate.title', defaultMessage: 'Step 3: Validate 30 Random Stories' },
   about: { id: 'topic.create.validate.about',
-    defaultMessage: 'To make sure your stories are relevant, you need to review this sample to see if these are the kinds of stories you want.' },
+    defaultMessage: 'To make sure the stories that match your seed query are relevant to your research, you need to review this random sample to see if these are the kinds of stories you want. For each story, click "yes" if it is about the topic you are interested in.  Click "no" if it is not about the topic you are intereseted in.' },
   warning: { id: 'topic.create.validate.warning',
-    defaultMessage: 'Sorry, but you need to have at least 90% of the random stories we\'ve shown you be relevant for the topic to work well. ' +
-                    'Please go back and modify your seed query to try and eliminate the irrelevant stories.' },
+    defaultMessage: 'At least 90% of the random stories we\'ve shown you must be relevant for the topic to work well. Please go back and modify your seed query to try and eliminate the irrelevant stories.' },
+  randomStory: { id: 'topic.create.validate.randomStory', defaultMessage: 'Random Story' },
+  usefulStory: { id: 'topic.create.validate.randomStory', defaultMessage: 'Is this Relevant?' },
+  prev: { id: 'topic.create.preview.prev', defaultMessage: 'back to preview' },
+  next: { id: 'topic.create.preview.next', defaultMessage: 'review and confirm' },
 };
 
 class TopicCreate3ValidateContainer extends React.Component {
-
   state = {
     matchCount: 0,
     showWarning: false,
@@ -32,15 +33,15 @@ class TopicCreate3ValidateContainer extends React.Component {
 
   handleYesClick = (options, prevSelection) => {
     if (prevSelection === options.match) {
-      this.setState({ matchCount: this.state.matchCount - 1 });
+      this.setState(prevState => ({ matchCount: prevState.matchCount - 1 }));
     } else {
-      this.setState({ matchCount: this.state.matchCount + 1 });
+      this.setState(prevState => ({ matchCount: prevState.matchCount + 1 }));
     }
   }
 
   handleNoClick = (options, prevSelection) => {
     if (prevSelection === options.match) {
-      this.setState({ matchCount: this.state.matchCount - 1 });
+      this.setState(prevState => ({ matchCount: prevState.matchCount - 1 }));
     }
   }
 
@@ -62,7 +63,7 @@ class TopicCreate3ValidateContainer extends React.Component {
     if (this.state.showWarning) {
       warningContent = (
         <WarningNotice>
-          <p><FormattedHTMLMessage {...localMessages.warning} /></p>
+          <FormattedHTMLMessage {...localMessages.warning} />
         </WarningNotice>
       );
     } else {
@@ -82,25 +83,25 @@ class TopicCreate3ValidateContainer extends React.Component {
           <Col lg={12}>
             <Row start="lg" className="topic-create-sample-story-table-header">
               <Col lg={8} className="topic-create-story-title-col">
-                <b>Sample story</b>
+                <b><FormattedMessage {...localMessages.randomStory} /></b>
               </Col>
               <Col lg={4} className="topic-create-match-col">
-                <b>Is this a useful story?</b>
+                <b><FormattedMessage {...localMessages.usefulStory} /></b>
               </Col>
             </Row>
           </Col>
           <Col lg={12}>
             <Row start="lg" className="topic-create-sample-story-container">
               <Col lg={12}>
-                {stories.map(story =>
+                {stories.map(story => (
                   <StoryFeedbackRow
                     key={story.stories_id}
                     story={story}
-                    maxTitleLength={75}
+                    maxTitleLength={85}
                     handleYesClick={this.handleYesClick}
                     handleNoClick={this.handleNoClick}
                   />
-                )}
+                ))}
               </Col>
             </Row>
           </Col>
@@ -112,10 +113,10 @@ class TopicCreate3ValidateContainer extends React.Component {
         </Row>
         <br />
         <Row>
-          <Col lg={12} md={12} sm={12} >
-            <AppButton flat label={formatMessage(messages.previous)} onClick={() => handlePreviousStep()} />
+          <Col lg={12} md={12} sm={12}>
+            <AppButton flat label={formatMessage(localMessages.prev)} onClick={() => handlePreviousStep()} />
             &nbsp; &nbsp;
-            <AppButton type="submit" label={formatMessage(messages.confirm)} primary onClick={this.handleConfirm} />
+            <AppButton type="submit" label={formatMessage(localMessages.next)} primary onClick={this.handleConfirm} />
           </Col>
         </Row>
       </Grid>
@@ -167,7 +168,7 @@ const mapDispatchToProps = dispatch => ({
     infoForQuery['collections[]'] = [];
     infoForQuery['sources[]'] = [];
 
-    if ('sourcesAndCollections' in query) {  // in FieldArrays on the form
+    if ('sourcesAndCollections' in query) { // in FieldArrays on the form
       infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
       infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
     }
@@ -184,12 +185,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    withIntlForm(
-      connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-        withAsyncFetch(
-          TopicCreate3ValidateContainer
-        )
+injectIntl(
+  withIntlForm(
+    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+      withAsyncFetch(
+        TopicCreate3ValidateContainer
       )
     )
-  );
+  )
+);

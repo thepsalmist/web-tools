@@ -26,7 +26,7 @@ const renderCollectionSelector = ({ allowRemoval, fields, meta }) => (
         }}
       />
     ))}
-    <p className="error">{meta.error}</p>
+    <div className="error">{meta.error}</div>
   </div>
 );
 

@@ -134,8 +134,8 @@ export function topicGenerateSnapshot(topicId, params) {
   return createPostingApiPromise(`/api/topics/${topicId}/snapshots/generate`, acceptedParams);
 }
 
-export function topicUpdatePermission(topicId, email, permission) {
-  return createPostingApiPromise(`/api/topics/${topicId}/permissions/update`, { email, permission }, 'put');
+export function topicUpdatePermissions(topicId, permissions) {
+  return createPostingApiPromise(`/api/topics/${topicId}/permissions/update`, { permissions: JSON.stringify(permissions) }, 'put');
 }
 
 export function topicListPermissions(topicId) {

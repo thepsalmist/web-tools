@@ -10,12 +10,13 @@ class AppMenu extends React.Component {
   constructor(props) {
     super(props);
     this.state = { open: false, iconDown: true };
+    this.buttonRef = React.createRef();
   }
 
   toggleMenu = (event) => {
+    event.persist();
     this.setState(prevState => ({
       open: !prevState.open,
-      anchorEl: event.currentTarget,
       iconDown: !prevState.iconDown,
     }));
   };
@@ -53,14 +54,12 @@ class AppMenu extends React.Component {
     if (showMenu) {
       const whichIcon = (this.state.iconDown) ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />;
       menuHeader = (
-        <div>
-          <AppButton
-            variant="text"
-            onClick={this.toggleMenu}
-            label={formatMessage(titleMsg)}
-            icon={whichIcon}
-          />
-        </div>
+        <AppButton
+          variant="text"
+          onClick={this.toggleMenu}
+          label={formatMessage(titleMsg)}
+          icon={whichIcon}
+        />
       );
     } else {
       menuHeader = (
@@ -73,11 +72,14 @@ class AppMenu extends React.Component {
     }
     return (
       <div className="app-menu">
-        {menuHeader}
+        <div ref={this.buttonRef}>{menuHeader}</div>
         <Menu
           open={this.state.open}
-          anchorEl={this.state.anchorEl}
+          anchorEl={this.buttonRef.current}
+          getContentAnchorEl={null}
           onClose={this.close}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
         >
           {newItems}
         </Menu>

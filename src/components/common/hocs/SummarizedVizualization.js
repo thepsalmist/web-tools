@@ -17,19 +17,22 @@ function withSummary(titleMessage, introMessage, detailedMessage, wide) {
         showingDetails: false,
         extraContent: null,
       };
+
       toggleShowingDetails = () => {
-        this.setState({ showingDetails: !this.state.showingDetails });
+        this.setState(prevState => ({ showingDetails: !prevState.showingDetails }));
       }
+
       handleExtraContent = (extraContent) => {
         this.setState({ extraContent });
       }
+
       render() {
         const { handleExplore } = this.props;
         const { formatMessage } = this.props.intl;
         let detailsContent;
         let showDetailsButton;
 
-        if (detailedMessage) {  // only toggle extra text if there is any
+        if (detailedMessage) { // only toggle extra text if there is any
           if (this.state.showingDetails) {
             if (Array.isArray(detailedMessage)) {
               detailsContent = detailedMessage.map(msgId => <FormattedHTMLMessage key={msgId.id} {...msgId} />);

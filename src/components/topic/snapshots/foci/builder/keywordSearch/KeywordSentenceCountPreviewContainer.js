@@ -27,6 +27,7 @@ class KeywordSentenceCountPreviewContainer extends React.Component {
       fetchData(nextProps.keywords);
     }
   }
+
   render() {
     const { total, counts, helpButton } = this.props;
     return (
@@ -83,12 +84,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(localMessages.helpTitle, localMessages.helpText)(
-        withAsyncFetch(
-          KeywordSentenceCountPreviewContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(localMessages.helpTitle, localMessages.helpText)(
+      withAsyncFetch(
+        KeywordSentenceCountPreviewContainer
       )
     )
-  );
+  )
+);

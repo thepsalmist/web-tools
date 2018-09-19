@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage, injectIntl, FormattedNumber, FormattedDate } from 'react-intl';
-import FilledStarIcon from '../common/icons/FilledStarIcon';
+import FilledStarIcon from './icons/FilledStarIcon';
 import messages from '../../resources/messages';
 import { googleFavIconUrl } from '../../lib/urlUtil';
 import { parseSolrShortDate } from '../../lib/dateUtil';
@@ -27,8 +27,8 @@ const SourceTable = (props) => {
             <th className="numeric"><FormattedMessage {...messages.sourceStartDate} /></th>
             { extraHeaderColumns && extraHeaderColumns()}
           </tr>
-          {sources.map((source, idx) =>
-            (<tr key={source.id ? source.id : source.media_id} className={(idx % 2 === 0) ? 'even' : 'odd'}>
+          {sources.map((source, idx) => (
+            <tr key={source.id ? source.id : source.media_id} className={(idx % 2 === 0) ? 'even' : 'odd'}>
               <td>
                 <img className="google-icon" src={googleFavIconUrl(source.url)} alt={source.name} />
               </td>
@@ -40,8 +40,7 @@ const SourceTable = (props) => {
               <td className="numeric"><FormattedDate value={parseSolrShortDate(source.start_date)} /></td>
               { extraColumns && extraColumns(source, idx)}
             </tr>
-            )
-          )}
+          ))}
         </tbody>
       </table>
     </div>

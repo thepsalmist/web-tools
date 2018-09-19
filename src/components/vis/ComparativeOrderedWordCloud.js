@@ -23,7 +23,7 @@ const ComparativeOrderedWordCloud = (props) => {
   topRight.forEach((d) => {
     if (!(d.stem in terms)) { // doesn't exist so just add it
       terms[d.stem] = d;
-    } else {  // on the left side so we gotta normalize it
+    } else { // on the left side so we gotta normalize it
       terms[d.stem].tfnorm = (terms[d.stem].count + d.count) / (leftSum + rightSum);
     }
     terms[d.stem].right = true;
@@ -76,8 +76,8 @@ const ComparativeOrderedWordCloud = (props) => {
 };
 
 ComparativeOrderedWordCloud.propTypes = {
-  leftWords: PropTypes.array,   // array of { count, stem, term }
-  rightWords: PropTypes.array,  // array of { count, stem, term }
+  leftWords: PropTypes.array, // array of { count, stem, term }
+  rightWords: PropTypes.array, // array of { count, stem, term }
   leftTitleMsg: PropTypes.object,
   centerTitleMsg: PropTypes.object,
   rightTitleMsg: PropTypes.object,
@@ -93,7 +93,4 @@ ComparativeOrderedWordCloud.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    ComparativeOrderedWordCloud
-  );
+export default injectIntl(ComparativeOrderedWordCloud);

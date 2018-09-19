@@ -26,6 +26,6 @@ StatBar.propTypes = {
 };
 
 export default
-  injectIntl(
-    StatBar
-  );
+injectIntl(
+  StatBar
+);

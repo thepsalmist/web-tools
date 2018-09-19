@@ -24,7 +24,7 @@ const AdvancedSearchForm = (props) => {
       <Row>
         <Col lg={10}>
           <Field
-            name={'advancedSearchQueryString'}
+            name="advancedSearchQueryString"
             value={initialValues}
             component={renderTextField}
             label={formatMessage(localMessages.searchSuggestion)}
@@ -37,7 +37,7 @@ const AdvancedSearchForm = (props) => {
           <MetadataPickerContainer
             autocomplete
             id={TAG_SET_PUBLICATION_COUNTRY}
-            name={'publicationCountry'}
+            name="publicationCountry"
             form="advancedQueryForm"
             label={formatMessage(localMessages.pubCountrySuggestion)}
           />
@@ -46,7 +46,7 @@ const AdvancedSearchForm = (props) => {
           <MetadataPickerContainer
             autocomplete
             id={TAG_SET_PUBLICATION_STATE}
-            name={'publicationState'}
+            name="publicationState"
             form="advancedQueryForm"
             label={formatMessage(localMessages.pubStateSuggestion)}
           />
@@ -55,7 +55,7 @@ const AdvancedSearchForm = (props) => {
           <MetadataPickerContainer
             autocomplete
             id={TAG_SET_PRIMARY_LANGUAGE}
-            name={'primaryLanguage'}
+            name="primaryLanguage"
             form="advancedQueryForm"
             label={formatMessage(localMessages.pLanguageSuggestion)}
           />
@@ -64,7 +64,7 @@ const AdvancedSearchForm = (props) => {
           <MetadataPickerContainer
             autocomplete
             id={TAG_SET_COUNTRY_OF_FOCUS}
-            name={'countryOfFocus'}
+            name="countryOfFocus"
             form="advancedQueryForm"
             label={formatMessage(localMessages.pCountryOfFocusSuggestion)}
           />
@@ -115,10 +115,10 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        AdvancedSearchForm
-      )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      AdvancedSearchForm
     )
-  );
+  )
+);

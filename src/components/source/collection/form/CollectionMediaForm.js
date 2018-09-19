@@ -57,11 +57,10 @@ TabContainer.propTypes = {
 };
 
 class SourceSelectionRendererRaw extends React.Component {
-
   state = {
-    tabValue: 0,
+    value: 0,
     collectionId: null, // the id of a collection to copy
-    sourceUrls: null,   // an array of source urls to add by hand
+    sourceUrls: null, // an array of source urls to add by hand
   };
 
   handleChange = (event, value) => {
@@ -69,6 +68,7 @@ class SourceSelectionRendererRaw extends React.Component {
   };
 
   resetCollectionId = () => this.setState({ collectionId: null });
+
   resetSourceUrls = () => this.setState({ sourceUrls: null });
 
   pickCollectionToCopy = (collectionId) => {
@@ -105,6 +105,7 @@ class SourceSelectionRendererRaw extends React.Component {
       this.addSources(searchResults);
     }
   }
+
   render() {
     const { submitButton, fields, meta: { error }, currentSources, editCollectionId, renderTextField } = this.props;
     const { formatMessage } = this.props.intl;
@@ -223,7 +224,7 @@ class SourceSelectionRendererRaw extends React.Component {
                     <th><FormattedMessage {...messages.sourceUrlProp} /></th>
                     <th />
                   </tr>
-                  {fields.map((source, idx) =>
+                  {fields.map((source, idx) => (
                     <Field
                       key={idx}
                       name={source}
@@ -244,7 +245,7 @@ class SourceSelectionRendererRaw extends React.Component {
                         </tr>
                       )}
                     />
-                  )}
+                  ))}
                 </tbody>
               </table>
             </Col>
@@ -275,10 +276,7 @@ SourceSelectionRendererRaw.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-const SourceSelectionRenderer =
-  withIntlForm(
-    SourceSelectionRendererRaw
-  );
+const SourceSelectionRenderer = withIntlForm(SourceSelectionRendererRaw);
 
 const CollectionMediaForm = props => (
   <div>
@@ -334,10 +332,10 @@ const reduxFormConfig = {
 };
 
 export default
-  withIntlForm(
-    reduxForm(reduxFormConfig)(
-      connect(mapStateToProps, mapDispatchToProps)(
-        CollectionMediaForm
-      )
+withIntlForm(
+  reduxForm(reduxFormConfig)(
+    connect(mapStateToProps, mapDispatchToProps)(
+      CollectionMediaForm
     )
-  );
+  )
+);

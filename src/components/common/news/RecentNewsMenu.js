@@ -13,7 +13,6 @@ const localMessages = {
 };
 
 class RecentNewsMenu extends React.Component {
-
   state = {
     anchorEl: null,
   };
@@ -35,7 +34,7 @@ class RecentNewsMenu extends React.Component {
     const { newsItems, subTitle } = this.props;
     return (
       <div className="recent-news-menu">
-        <NotificationsButton onClick={this.handleToggle} color={'#FFFFFF'} />
+        <NotificationsButton onClick={this.handleToggle} color="#FFFFFF" />
         <Popover
           open={Boolean(this.state.anchorEl)}
           anchorEl={this.state.anchorEl}
@@ -55,7 +54,6 @@ class RecentNewsMenu extends React.Component {
       </div>
     );
   }
-
 }
 
 RecentNewsMenu.propTypes = {
@@ -65,6 +63,6 @@ RecentNewsMenu.propTypes = {
 };
 
 export default
-  injectIntl(
-    RecentNewsMenu
-  );
+injectIntl(
+  RecentNewsMenu
+);

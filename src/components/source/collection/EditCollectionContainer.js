@@ -92,10 +92,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     return dispatch(updateCollection(infoToSave))
       .then(() => {
         dispatch(fetchCollectionDetails(ownProps.params.collectionId))
-        .then(() => {
-          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
-          return dispatch(push(`/collections/${ownProps.params.collectionId}`));
-        });
+          .then(() => {
+            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+            return dispatch(push(`/collections/${ownProps.params.collectionId}`));
+          });
       });
   },
   fetchData: (collectionId) => {
@@ -114,10 +114,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        EditCollectionContainer
-      )
-    ),
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      EditCollectionContainer
+    )
+  ),
+);

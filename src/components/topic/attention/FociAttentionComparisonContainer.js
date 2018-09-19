@@ -41,6 +41,7 @@ class FociAttentionComparisonContainer extends React.Component {
       fetchData(nextProps.topicId, nextProps.selectedFocalSetId, nextProps.filters);
     }
   }
+
   render() {
     const { foci, overallTotal, overallCounts } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
@@ -63,11 +64,11 @@ class FociAttentionComparisonContainer extends React.Component {
       ];
     }
     // stich together line chart data
-    const overallData = dataAsSeries(overallCounts);      // now add a series for the whole thing
+    const overallData = dataAsSeries(overallCounts); // now add a series for the whole thing
     let series = [];
     if (foci !== undefined) {
       series = [
-        ...foci.map((focus, idx) => {    // add series for all the foci
+        ...foci.map((focus, idx) => { // add series for all the foci
           const data = dataAsSeries(focus.counts);
           return {
             id: idx,
@@ -167,10 +168,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    asyncContainerize(
-      injectIntl(
-        FociAttentionComparisonContainer
-      )
+connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  asyncContainerize(
+    injectIntl(
+      FociAttentionComparisonContainer
     )
-  );
+  )
+);

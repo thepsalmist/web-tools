@@ -105,16 +105,16 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordCloudTopicWord2VecLayoutHelp])(
-        withSampleSize(
-          withAsyncFetch(
-            withCsvDownloadNotifyContainer(
-              MediaWordsContainer
-            )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordCloudTopicWord2VecLayoutHelp])(
+      withSampleSize(
+        withAsyncFetch(
+          withCsvDownloadNotifyContainer(
+            MediaWordsContainer
           )
         )
       )
     )
-  );
+  )
+);

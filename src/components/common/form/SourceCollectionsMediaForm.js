@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { reduxForm, FieldArray, Field, propTypes } from 'redux-form';
-import withIntlForm from '../../common/hocs/IntlForm';
-import SourceOrCollectionWidget from '../../common/SourceOrCollectionWidget';
+import withIntlForm from '../hocs/IntlForm';
+import SourceOrCollectionWidget from '../SourceOrCollectionWidget';
 
 const renderCollectionSelector = ({ allowRemoval, fields, meta }) => (
   <div>
@@ -12,10 +12,7 @@ const renderCollectionSelector = ({ allowRemoval, fields, meta }) => (
         key={name}
         name={name}
         component={(info) => {
-          const handleDelete = (allowRemoval || info.meta.dirty)
-          && fields.length > 1 ? () => {
-            fields.remove(index);
-          } : undefined;
+          const handleDelete = ((allowRemoval || info.meta.dirty) && fields.length > 1) ? () => { fields.remove(index); } : undefined;
           const val = info.input.value;
           let tempObj = {};
           if (val && typeof val === 'number') {
@@ -29,9 +26,10 @@ const renderCollectionSelector = ({ allowRemoval, fields, meta }) => (
         }}
       />
     ))}
-    <p className="error">{meta.error}</p>
+    <div className="error">{meta.error}</div>
   </div>
 );
+
 renderCollectionSelector.propTypes = {
   fields: PropTypes.object,
   meta: PropTypes.object,
@@ -68,11 +66,10 @@ SourceCollectionsMediaForm.propTypes = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm({ propTypes })(
-        SourceCollectionsMediaForm
-      )
+injectIntl(
+  withIntlForm(
+    reduxForm({ propTypes })(
+      SourceCollectionsMediaForm
     )
-  );
-
+  )
+);

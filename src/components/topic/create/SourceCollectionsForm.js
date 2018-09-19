@@ -98,8 +98,8 @@ SourceCollectionsForm.propTypes = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      SourceCollectionsForm
-    )
-  );
+injectIntl(
+  withIntlForm(
+    SourceCollectionsForm
+  )
+);

@@ -32,9 +32,11 @@ class SourceSplitStoryCountContainer extends React.Component {
   state = {
     storyCollection: VIEW_REGULARLY_COLLECTED,
   }
+
   onIncludeSpidered = (d) => {
-    this.setState({ storyCollection: d });  // reset this to trigger a re-render
+    this.setState({ storyCollection: d }); // reset this to trigger a re-render
   }
+
   handleDataPointClick = (startDate, endDate) => {
     const { sourceId, sourceName } = this.props;
     const startDateStr = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`;
@@ -42,11 +44,13 @@ class SourceSplitStoryCountContainer extends React.Component {
     const url = urlToExplorerQuery(sourceName, '*', [sourceId], [], startDateStr, endDateStr);
     window.open(url, '_blank');
   }
+
   downloadCsv = () => {
     const { sourceId } = this.props;
     const url = `/api/sources/${sourceId}/story-split/count.csv`;
     window.location = url;
   }
+
   render() {
     const { allStories, partialStories, filename, helpButton, sourceName } = this.props;
     let stories = partialStories;
@@ -134,12 +138,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withHelp(localMessages.helpTitle, [localMessages.helpText, messages.attentionChartHelpText])(
-        withAsyncFetch(
-          SourceSplitStoryCountContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withHelp(localMessages.helpTitle, [localMessages.helpText, messages.attentionChartHelpText])(
+      withAsyncFetch(
+        SourceSplitStoryCountContainer
       )
     )
-  );
+  )
+);

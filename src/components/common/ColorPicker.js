@@ -9,16 +9,12 @@ const localMessages = {
 };
 
 class ColorPicker extends React.Component {
-
   state = {
-    color: null,
     displayColorPicker: false,
   };
 
   handleClick = () => {
-    // const { color, onClick } = props;
-    this.setState({ displayColorPicker: !this.state.displayColorPicker });
-    // onClick({ color });
+    this.setState(prevState => ({ displayColorPicker: !prevState.displayColorPicker }));
   };
 
   handleClose = (color) => {
@@ -36,6 +32,7 @@ class ColorPicker extends React.Component {
       if (this.state.displayColorPicker === false) {
         colorPicker = (
           <button
+            type="button"
             onClick={this.handleClick}
             style={{ cursor: 'pointer', width: 10, height: 10, borderRadius: 10, backgroundColor: `${color}`, display: 'inline-block' }}
           />
@@ -44,6 +41,7 @@ class ColorPicker extends React.Component {
         colorPicker = (
           <div>
             <button
+              type="button"
               onClick={this.handleClick}
               style={{ cursor: 'pointer', width: 10, height: 10, borderRadius: 10, backgroundColor: `${color}`, display: 'inline-block' }}
             />
@@ -66,6 +64,7 @@ class ColorPicker extends React.Component {
     );
   }
 }
+
 ColorPicker.propTypes = {
   onClick: PropTypes.func,
   onChange: PropTypes.func.isRequired,

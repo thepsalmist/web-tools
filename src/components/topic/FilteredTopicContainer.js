@@ -13,12 +13,12 @@ const localMessages = {
 };
 
 class FilteredTopicContainer extends React.Component {
-
   hasUsableSnapshot() {
     const { snapshots } = this.props;
     const hasUsableSnapshot = snapshots.filter(d => d.isUsable);
     return (hasUsableSnapshot.length > 0);
   }
+
   snapshotIsSet() {
     const { filters, topicId } = this.props;
     return (topicId && (filters.snapshotId && this.hasUsableSnapshot()));
@@ -26,7 +26,7 @@ class FilteredTopicContainer extends React.Component {
 
   render() {
     const { children, location, topicId, topicInfo, filters, fetchStatusInfo,
-            fetchStatusSnapshot } = this.props;
+      fetchStatusSnapshot } = this.props;
     let subContent = null;
     // If the generation process is still ongoing, ask the user to wait a few minutes
     if (this.snapshotIsSet()) {
@@ -48,13 +48,13 @@ class FilteredTopicContainer extends React.Component {
           {childContent}
         </div>
       );
-    } else if (fetchStatusInfo !== fetchConstants.FETCH_SUCCEEDED &&
-      fetchStatusSnapshot !== fetchConstants.FETCH_SUCCEEDED) {
+    } else if (fetchStatusInfo !== fetchConstants.FETCH_SUCCEEDED
+      && fetchStatusSnapshot !== fetchConstants.FETCH_SUCCEEDED) {
       // how to distinguish between fetch-ongoing and a generating snapshot?
       subContent = <LoadingSpinner />;
-    } else if (fetchStatusInfo === fetchConstants.FETCH_SUCCEEDED &&
-      fetchStatusSnapshot === fetchConstants.FETCH_INVALID &&
-      !this.hasUsableSnapshot()) {
+    } else if (fetchStatusInfo === fetchConstants.FETCH_SUCCEEDED
+      && fetchStatusSnapshot === fetchConstants.FETCH_INVALID
+      && !this.hasUsableSnapshot()) {
       // how to distinguish between fetch-ongoing and a generating snapshot?
       if (topicInfo && topicInfo.message) {
         if (topicInfo.message.includes('exceeds')) {
@@ -66,7 +66,6 @@ class FilteredTopicContainer extends React.Component {
     }
     return (subContent);
   }
-
 }
 
 FilteredTopicContainer.propTypes = {
@@ -95,8 +94,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps)(
-      FilteredTopicContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps)(
+    FilteredTopicContainer
+  )
+);

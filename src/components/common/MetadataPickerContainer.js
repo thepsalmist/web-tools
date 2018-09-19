@@ -17,7 +17,8 @@ const localMessages = {
 };
 
 const MetadataPickerContainer = (props) => {
-  const { label, name, tags, renderSelect, renderAutoComplete, autocomplete, disabled, showDescription } = props;
+  const { initialValues, label, name, tags, isClearable, renderSelect, autocompleteHideOptions,
+    renderSimpleAutoComplete, autocomplete, disabled, showDescription } = props;
   const { formatMessage } = props.intl;
   const mode = autocomplete ? MODE_AUTOCOMPLETE : MODE_SELECT;
   let content = null;
@@ -33,7 +34,7 @@ const MetadataPickerContainer = (props) => {
             label={label}
           >
             <MenuItem className="header-primary-menu" value={null} />
-            {tags.map(t =>
+            {tags.map(t => (
               <MenuItem
                 className="header-primary-menu"
                 key={t.tags_id}
@@ -43,13 +44,14 @@ const MetadataPickerContainer = (props) => {
                   <br /><span className="header-primary-description">{t.description}</span>
                 </div>
               </MenuItem>
-            )}
+            ))}
           </Field>
         );
       } else {
         content = (
           <Field
-            fullWidth name={name}
+            fullWidth
+            name={name}
             component={renderSelect}
             disabled={disabled}
             label={label}
@@ -61,15 +63,14 @@ const MetadataPickerContainer = (props) => {
       }
       break;
     case MODE_AUTOCOMPLETE:
-      // commented out because the initialvalues are interfering with the display of the selected values
-      /* let initialText = '';
-      if ((initialValues) && (initialValues[name]) && (tags.length > 0)) {
-        const matchingItem = tags.find(t => t.tags_id === initialValues[name]);
-        if (matchingItem) {
-          initialText = matchingItem.label;
-        }
-      }*/
+      let styles = {};
+      if (autocompleteHideOptions) {
+        styles = {
+          dropdownIndicator: () => ({ display: 'none' }),
+        };
+      }
       content = (
+<<<<<<< HEAD
         <div>
           <Field
             className="metadata-picker"
@@ -85,13 +86,31 @@ const MetadataPickerContainer = (props) => {
             maxSearchResults={10}
           />
         </div>
+=======
+        <React.Fragment>
+          <label>{label}</label>
+          <Field
+            styles={styles}
+            name={name}
+            component={renderSimpleAutoComplete}
+            placeholder={formatMessage(localMessages.hintText, { label })}
+            fullWidth
+            isDisabled={disabled}
+            options={tags}
+            defaultValue={initialValues}
+            getOptionLabel={tag => tag.label}
+            getOptionValue={tag => tag.tags_id}
+            isClearable={isClearable}
+          />
+        </React.Fragment>
+>>>>>>> 9a6736d812bbf0c056d52306800f98a316fdf6ce
       );
       break;
     default:
       content = '';
       break;
   }
-  return (<div className={`metadata-picker-${name}`}>{content}</div>);
+  return (<div className={`metadata-picker metadata-picker-${name}`}>{content}</div>);
 };
 
 MetadataPickerContainer.propTypes = {
@@ -101,11 +120,13 @@ MetadataPickerContainer.propTypes = {
   initialValues: PropTypes.object,
   disabled: PropTypes.bool,
   autocomplete: PropTypes.bool,
+  autocompleteHideOptions: PropTypes.bool,
+  isClearable: PropTypes.bool,
   showDescription: PropTypes.bool,
   // from compositional chain
   intl: PropTypes.object.isRequired,
   renderSelect: PropTypes.func.isRequired,
-  renderAutoComplete: PropTypes.func.isRequired,
+  renderSimpleAutoComplete: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string,
   tags: PropTypes.array,
@@ -155,10 +176,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withIntlForm(
-      withAsyncFetch(
-        MetadataPickerContainer
-      )
+connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  withIntlForm(
+    withAsyncFetch(
+      MetadataPickerContainer
     )
-  );
+  )
+);

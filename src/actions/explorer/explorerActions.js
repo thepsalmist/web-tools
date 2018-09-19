@@ -168,4 +168,3 @@ export const resetSentenceDataPoint = createAction(RESET_SELECTED_DATA_POINT);
 
 export const COPY_AND_REPLACE_QUERY_FIELD = 'COPY_AND_REPLACE_QUERY_FIELD';
 export const copyAndReplaceQueryField = createAction(COPY_AND_REPLACE_QUERY_FIELD, params => params);
-

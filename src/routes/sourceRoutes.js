@@ -44,7 +44,7 @@ const sourceRoutes = (
       <Route path="/favorites" component={FavoritedContainer} onEnter={requireAuth} />
     </Route>
 
-    <Route path="/sources" >
+    <Route path="/sources">
       <Route path="create" component={CreateSourceContainer} onEnter={requireAuth} />
       <Route path="suggest" component={SuggestSourceContainer} onEnter={requireAuth} />
       <Route path="suggestions" component={PendingSuggestionsContainer} onEnter={requireAuth} />
@@ -52,7 +52,7 @@ const sourceRoutes = (
       <Route path="feeds/create" component={EditSourceFeedContainer} onEnter={requireAuth} />
 
       <Redirect from="details" to=":sourceId" />
-      <Route path="/sources/:sourceId" component={SelectSourceContainer} >
+      <Route path="/sources/:sourceId" component={SelectSourceContainer}>
         <IndexRoute component={SourceDetailsContainer} onEnter={requireAuth} />
         <Route path="edit" component={EditSourceContainer} onEnter={requireAuth} />
         <Route path="feeds" component={SourceFeedContainer} onEnter={requireAuth} />
@@ -61,14 +61,14 @@ const sourceRoutes = (
       </Route>
     </Route>
 
-    <Route path="/collections" >
+    <Route path="/collections">
       <Route component={PageWrapper}>
         <Route path="media-cloud" component={MCCollectionListContainer} onEnter={requireAuth} />
         <Route path="country-and-state" component={CountryCollectionListContainer} onEnter={requireAuth} />
       </Route>
       <Route path="create" component={CreateCollectionContainer} onEnter={requireAuth} />
       <Redirect from="details" to=":collectionId" />
-      <Route path=":collectionId" component={SelectCollectionContainer} >
+      <Route path=":collectionId" component={SelectCollectionContainer}>
         <IndexRoute component={CollectionDetailsContainer} onEnter={requireAuth} />
         <Route path="edit" component={EditCollectionContainer} onEnter={requireAuth} />
         <Route path="content-history" component={CollectionContentHistory} onEnter={requireAuth} />

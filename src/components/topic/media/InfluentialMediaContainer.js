@@ -24,20 +24,23 @@ class InfluentialMediaContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { fetchData, filters, sort, links } = this.props;
     // can't compare filters the object here because it changes on load
-    if ((nextProps.filters.timespanId !== filters.timespanId) || (nextProps.filters.q !== filters.q) ||
-      (nextProps.sort !== sort) || (nextProps.links.current !== links.current)) {
+    if ((nextProps.filters.timespanId !== filters.timespanId) || (nextProps.filters.q !== filters.q)
+      || (nextProps.sort !== sort) || (nextProps.links.current !== links.current)) {
       fetchData(nextProps);
     }
   }
+
   onChangeSort = (newSort) => {
     const { sortData } = this.props;
     sortData(newSort);
   }
+
   downloadCsv = () => {
     const { topicId, filters, sort } = this.props;
     const url = `/api/topics/${topicId}/media.csv?snapshotId=${filters.snapshotId}&timespanId=${filters.timespanId}&sort=${sort}`;
     window.location = url;
   }
+
   render() {
     const { media, sort, topicId, previousButton, nextButton } = this.props;
     const { formatMessage } = this.props.intl;
@@ -134,12 +137,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withPaging(
-        withAsyncFetch(
-          InfluentialMediaContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withPaging(
+      withAsyncFetch(
+        InfluentialMediaContainer
       )
     )
-  );
+  )
+);

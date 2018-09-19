@@ -24,7 +24,4 @@ ToolsApp.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    ToolsApp
-  );
+export default injectIntl(ToolsApp);

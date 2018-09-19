@@ -73,7 +73,7 @@ const SourceMgrHeaderContainer = (props) => {
 SourceMgrHeaderContainer.propTypes = {
   // from parent
   // from context
-  params: PropTypes.object,       // params from router
+  params: PropTypes.object, // params from router
   location: PropTypes.object,
   intl: PropTypes.object.isRequired,
   // state
@@ -117,8 +117,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withRouter(SourceMgrHeaderContainer)
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withRouter(SourceMgrHeaderContainer)
+  )
+);

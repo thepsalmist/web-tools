@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import CollectionResultsTable from './CollectionResultsTable';
 import MediaPickerSearchForm from '../MediaPickerSearchForm';
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
-import LoadingSpinner from '../../../common/LoadingSpinner';
+import LoadingSpinner from '../../LoadingSpinner';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.collections.title', defaultMessage: 'Collections matching "{name}"' },
@@ -64,9 +64,8 @@ CollectionSearchResultsContainer.propTypes = {
 };
 
 export default
-  injectIntl(
-    connect()(
-      CollectionSearchResultsContainer
-    )
-  );
-
+injectIntl(
+  connect()(
+    CollectionSearchResultsContainer
+  )
+);

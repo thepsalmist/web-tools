@@ -52,7 +52,7 @@ class QueryForm extends React.Component {
   }
 
   setQueryFormChildDialogOpen = () => {
-    this.setState({ childDialogOpen: !this.state.childDialogOpen });
+    this.setState(prevState => ({ childDialogOpen: !prevState.childDialogOpen }));
   }
 
   render() {
@@ -63,11 +63,11 @@ class QueryForm extends React.Component {
     if (cleanedInitialValues.disabled === undefined) {
       cleanedInitialValues.disabled = false;
     }
-    cleanedInitialValues.media = [  // merge intial sources and collections into one list for display with `renderFields`
+    cleanedInitialValues.media = [ // merge intial sources and collections into one list for display with `renderFields`
       ...initialValues.sources,
       ...initialValues.collections,
     ];
-    selected.media = [  // merge sources and collections into one list for display with `renderFields`
+    selected.media = [ // merge sources and collections into one list for display with `renderFields`
       ...selected.sources,
       ...selected.collections,
     ];
@@ -191,7 +191,7 @@ class QueryForm extends React.Component {
           <Grid>
             <Row>
               <Col lg={6} />
-              <Col lg={6} >
+              <Col lg={6}>
                 <div className="query-form-actions">
                   <SavedSearchControls
                     searchNickname={searchNickname}
@@ -276,21 +276,21 @@ function validate(values, props) {
 function warn(values, props) {
   const { formatMessage } = props.intl;
   const warnings = {};
-  if ((!values.collections || !values.collections.length) &&
-    (!values.sources || !values.sources.length) &&
-    (!values.media || !values.media.length)) {
+  if ((!values.collections || !values.collections.length)
+    && (!values.sources || !values.sources.length)
+    && (!values.media || !values.media.length)) {
     warnings.media = { _warning: formatMessage(localMessages.noMediaSpecified) };
   }
   return warnings;
 }
 
 export default
-  injectIntl(
-    withIntlForm(
-      withHelp(localMessages.queryHelpTitle, localMessages.queryHelpContent)(
-        reduxForm({ propTypes, validate, warn })(
-          QueryForm
-        ),
+injectIntl(
+  withIntlForm(
+    withHelp(localMessages.queryHelpTitle, localMessages.queryHelpContent)(
+      reduxForm({ propTypes, validate, warn })(
+        QueryForm
       ),
     ),
-  );
+  ),
+);

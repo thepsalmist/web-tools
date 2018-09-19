@@ -19,7 +19,6 @@ const localMessages = {
 };
 
 class GeoChart extends React.Component {
-
   getConfig() {
     const { data, countryMinColorScale, countryMaxColorScale, hoverColor, hideLegend, backgroundColor } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
@@ -125,7 +124,7 @@ class GeoChart extends React.Component {
             point: {
               events: {
                 click: function handleCountryClick(event) {
-                  onCountryClick(event, this);  // preserve the highcharts "this", which is the chart
+                  onCountryClick(event, this); // preserve the highcharts "this", which is the chart
                 },
               },
             },

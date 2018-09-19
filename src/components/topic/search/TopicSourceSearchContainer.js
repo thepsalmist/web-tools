@@ -62,9 +62,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      TopicSourceSearchContainer
-    )
-  );
-
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    TopicSourceSearchContainer
+  )
+);

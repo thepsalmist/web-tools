@@ -21,7 +21,6 @@ function resetRavenUserContext() {
 
 export default function user(state = INITIAL_STATE, action) {
   switch (action.type) {
-
     case LOGIN_WITH_PASSWORD:
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.FETCH_ONGOING,

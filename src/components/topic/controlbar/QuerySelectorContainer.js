@@ -28,8 +28,8 @@ const mapStateToProps = state => ({
 });
 
 export default
-  connect(mapStateToProps)(
-    injectIntl(
-      QuerySelectorContainer
-    )
-  );
+connect(mapStateToProps)(
+  injectIntl(
+    QuerySelectorContainer
+  )
+);

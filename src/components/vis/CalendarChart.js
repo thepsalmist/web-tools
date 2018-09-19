@@ -12,7 +12,7 @@ const CalendarChart = (props) => {
         chartType="Calendar"
         data={[['date', 'count'], ...props.data]}
         graph_id={props.domId}
-        width={'100%'}
+        width="100%"
         height={`${height}px`}
         legend_toggle
         options={{
@@ -31,7 +31,7 @@ const CalendarChart = (props) => {
 
 CalendarChart.propTypes = {
   domId: PropTypes.string.isRequired,
-  data: PropTypes.array.isRequired,  // an array of [jsDateObj, countInteger]
+  data: PropTypes.array.isRequired, // an array of [jsDateObj, countInteger]
   cellSize: PropTypes.number.isRequired,
 };
 

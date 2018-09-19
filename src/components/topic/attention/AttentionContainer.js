@@ -19,17 +19,21 @@ const AttentionContainer = (props) => {
   let content = null;
   const defaultFocalSet = focalSets.length > 0 ? focalSets[0].focal_sets_id : NO_FOCAL_SET_SELECTED;
   if (selectedFocalSetId !== NO_FOCAL_SET_SELECTED) {
-    content = (<FociAttentionComparisonContainer
-      topicId={topicId}
-      filters={filters}
-      selectedFocalSetId={selectedFocalSetId}
-    />);
+    content = (
+      <FociAttentionComparisonContainer
+        topicId={topicId}
+        filters={filters}
+        selectedFocalSetId={selectedFocalSetId}
+      />
+    );
   } else if (focalSets.length > 0) { // handle case for default if we do have any focal sets
-    content = (<FociAttentionComparisonContainer
-      topicId={topicId}
-      filters={filters}
-      selectedFocalSetId={defaultFocalSet}
-    />);
+    content = (
+      <FociAttentionComparisonContainer
+        topicId={topicId}
+        filters={filters}
+        selectedFocalSetId={defaultFocalSet}
+      />
+    );
   }
   return (
     <div>
@@ -84,8 +88,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      AttentionContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    AttentionContainer
+  )
+);

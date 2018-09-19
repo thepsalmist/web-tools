@@ -26,6 +26,6 @@ ReleaseNotes.propTypes = {
 };
 
 export default
-  injectIntl(
-    ReleaseNotes
-  );
+injectIntl(
+  ReleaseNotes
+);

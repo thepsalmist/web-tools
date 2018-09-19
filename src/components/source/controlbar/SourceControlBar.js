@@ -57,9 +57,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      SourceControlBar
-    )
-  );
-
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    SourceControlBar
+  )
+);

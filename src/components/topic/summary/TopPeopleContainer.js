@@ -35,11 +35,13 @@ class TopPeopleContainer extends React.Component {
       fetchData(nextProps.topicId, nextProps.filters);
     }
   }
+
   downloadCsv = () => {
     const { topicId, filters } = this.props;
     const url = `/api/topics/${topicId}/entities/people/entities.csv?${filtersAsUrlParams(filters)}`;
     window.location = url;
   }
+
   handleEntityClick = (tagId) => {
     const { filters, updateQueryFilter } = this.props;
     const queryFragment = `tags_id_stories: ${tagId}`;
@@ -49,6 +51,7 @@ class TopPeopleContainer extends React.Component {
       updateQueryFilter(queryFragment);
     }
   }
+
   render() {
     const { coverage, entities } = this.props;
     const { formatNumber } = this.props.intl;
@@ -136,12 +139,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withSummary(localMessages.title, messages.entityHelpContent)(
-        withAsyncFetch(
-          TopPeopleContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withSummary(localMessages.title, messages.entityHelpContent)(
+      withAsyncFetch(
+        TopPeopleContainer
       )
     )
-  );
+  )
+);

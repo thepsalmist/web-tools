@@ -24,18 +24,23 @@ function withHelp(contentTitleMsg, contentHTMLTextMsg, showHelpSidebar) {
         titleMsg: contentTitleMsg,
         contentMsg: contentHTMLTextMsg,
       };
+
       setTitleMsg = (titleMsg) => {
         this.setState({ titleMsg });
       };
+
       setContentMsg = (contentMsg) => {
         this.setState({ contentMsg });
       };
+
       handleOpen = () => {
         this.setState({ open: true });
       };
+
       handleClose = () => {
         this.setState({ open: false });
       };
+
       render() {
         const { formatMessage } = this.props.intl;
         const dialogActions = [

@@ -1,3 +1,5 @@
+/* eslint react/no-unused-state: 0 */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
@@ -9,7 +11,6 @@ const localMessages = {
 };
 
 class QuerySelector extends React.Component {
-
   state = {
     focused: false,
     value: '',
@@ -81,7 +82,6 @@ class QuerySelector extends React.Component {
       </div>
     );
   }
-
 }
 
 QuerySelector.propTypes = {
@@ -93,6 +93,6 @@ QuerySelector.propTypes = {
 };
 
 export default
-  injectIntl(
-    QuerySelector
-  );
+injectIntl(
+  QuerySelector
+);

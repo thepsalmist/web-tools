@@ -13,4 +13,3 @@ const collectionSimilar = createAsyncReducer({
   }),
 });
 export default collectionSimilar;
-

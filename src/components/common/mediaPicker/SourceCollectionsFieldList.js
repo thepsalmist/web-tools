@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
-// import ErrorIcon from '@material-ui/core/SvgIcons/alert/error';
 import { reduxForm, FieldArray, Field, propTypes } from 'redux-form';
 import withHelp from '../hocs/HelpfulContainer';
-import withIntlForm from '../../common/hocs/IntlForm';
-import SourceOrCollectionWidget from '../../common/SourceOrCollectionWidget';
+import withIntlForm from '../hocs/IntlForm';
+import SourceOrCollectionWidget from '../SourceOrCollectionWidget';
 import { urlToSource, urlToCollection } from '../../../lib/urlUtil';
 
 const localMessages = {
@@ -59,6 +58,7 @@ const renderCollectionSelector = ({ allowRemoval, showWarningIfEmpty, helpButton
     </div>
   );
 };
+
 renderCollectionSelector.propTypes = {
   fields: PropTypes.object,
   meta: PropTypes.object,
@@ -101,13 +101,12 @@ SourceCollectionsFieldList.propTypes = {
 };
 
 export default
-  injectIntl(
-    withHelp(localMessages.helpTitleMsg, localMessages.helpContentMsg)(
-      withIntlForm(
-        reduxForm({ propTypes })(
-          SourceCollectionsFieldList
-        )
+injectIntl(
+  withHelp(localMessages.helpTitleMsg, localMessages.helpContentMsg)(
+    withIntlForm(
+      reduxForm({ propTypes })(
+        SourceCollectionsFieldList
       )
     )
-  );
-
+  )
+);

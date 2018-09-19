@@ -33,10 +33,10 @@ const TopicCreate2PreviewContainer = (props) => {
       { content }
       <br />
       <Row>
-        <Col lg={12} md={12} sm={12} >
-          <AppButton color="secondary" variant="outlined" label={formatMessage(messages.previous)} onClick={() => handlePreviousStep()} />
+        <Col lg={12} md={12} sm={12}>
+          <AppButton variant="outlined" label={formatMessage(messages.previous)} onClick={() => handlePreviousStep()} />
           &nbsp; &nbsp;
-          <AppButton color="primary" type="submit" label={formatMessage(messages.confirm)} onClick={() => handleNextStep()} />
+          <AppButton primary type="submit" label={formatMessage(messages.confirm)} onClick={() => handleNextStep()} />
         </Col>
       </Row>
     </Grid>
@@ -83,10 +83,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    withIntlForm(
-      connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-        TopicCreate2PreviewContainer
-      )
+injectIntl(
+  withIntlForm(
+    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+      TopicCreate2PreviewContainer
     )
-  );
+  )
+);

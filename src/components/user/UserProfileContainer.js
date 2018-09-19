@@ -42,20 +42,24 @@ const UserProfileContainer = (props) => {
           <ul>
             <li><FormattedHTMLMessage {...localMessages.email} values={{ email: profile.email }} /></li>
             <li><FormattedHTMLMessage {...localMessages.name} values={{ name: profile.full_name }} /></li>
-            <li><FormattedHTMLMessage
-              {...localMessages.apiRequests}
-              values={{
-                requested: profile.weekly_requests_sum,
-                allowed: (profile.weekly_requests_limit === API_REQUESTS_UNLIMITED) ? formatMessage(messages.unlimited) : profile.weekly_requests_limit,
-              }}
-            /></li>
-            <li><FormattedHTMLMessage
-              {...localMessages.apiRequestedItems}
-              values={{
-                requested: profile.weekly_requested_items_sum,
-                allowed: (profile.weekly_requested_items_limit === API_REQUESTS_UNLIMITED) ? formatMessage(messages.unlimited) : profile.weekly_requests_limit,
-              }}
-            /></li>
+            <li>
+              <FormattedHTMLMessage
+                {...localMessages.apiRequests}
+                values={{
+                  requested: profile.weekly_requests_sum,
+                  allowed: (profile.weekly_requests_limit === API_REQUESTS_UNLIMITED) ? formatMessage(messages.unlimited) : profile.weekly_requests_limit,
+                }}
+              />
+            </li>
+            <li>
+              <FormattedHTMLMessage
+                {...localMessages.apiRequestedItems}
+                values={{
+                  requested: profile.weekly_requested_items_sum,
+                  allowed: (profile.weekly_requested_items_limit === API_REQUESTS_UNLIMITED) ? formatMessage(messages.unlimited) : profile.weekly_requests_limit,
+                }}
+              />
+            </li>
             <li><FormattedHTMLMessage {...localMessages.apiKey} values={{ key: profile.api_key }} /></li>
           </ul>
           <br /><br />
@@ -85,19 +89,19 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleResetApiKey: () => {
     dispatch(resetApiKey())
-    .then((results) => {
-      if (results.error) {
-        dispatch(addNotice({ message: results.error, level: LEVEL_ERROR }));
-      } else {
-        dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.resetWorked) }));
-      }
-    });
+      .then((results) => {
+        if (results.error) {
+          dispatch(addNotice({ message: results.error, level: LEVEL_ERROR }));
+        } else {
+          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.resetWorked) }));
+        }
+      });
   },
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      UserProfileContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    UserProfileContainer
+  )
+);

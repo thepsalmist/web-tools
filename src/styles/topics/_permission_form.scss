@@ -1,6 +1,17 @@
+.topic-permissions-list {
+  margin-bottom: 20px;
 
-.permission-form {
-  .app-icon {
-    margin-left: 10px;
+  .topic-permission-item {
+    
+    margin-top: 20px;
+
+    .form-field-text {
+      margin-top: 0px;
+    }
+    
+    .icon-button {
+      margin-left: 15px;
+    }
+
   }
 }

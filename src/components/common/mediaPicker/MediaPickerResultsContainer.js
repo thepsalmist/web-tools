@@ -15,21 +15,24 @@ class MediaPickerResultsContainer extends React.Component {
   componentWillMount() {
     this.correlateSelection(this.props);
   }
+
   componentWillReceiveProps(nextProps) {
     // const { handleMediaConcurrency } = this.props;
     if (nextProps.selectedMediaQueryType !== this.props.selectedMediaQueryType) {
       this.updateMediaQuery({ type: nextProps.selectedMediaQueryType });
     }
-    if (nextProps.selectedMedia !== this.props.selectedMedia ||
+    if (nextProps.selectedMedia !== this.props.selectedMedia
       // if the results have changed from a keyword entry, we need to update the UI
-      (nextProps.sourceResults && nextProps.sourceResults.lastFetchSuccess !== this.props.sourceResults.lastFetchSuccess)) {
+      || (nextProps.sourceResults && nextProps.sourceResults.lastFetchSuccess !== this.props.sourceResults.lastFetchSuccess)) {
       this.correlateSelection(nextProps);
     }
   }
+
   componentWillUnmount() {
     const { resetComponents } = this.props;
     resetComponents();
   }
+
   correlateSelection(whichProps) {
     let whichList = {};
 
@@ -47,9 +50,9 @@ class MediaPickerResultsContainer extends React.Component {
         break;
     }
     // if selected media has changed, update current results
-    if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0 &&
+    if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0
       // we can't be sure we have received results yet
-      whichList.list && whichList.list.length > 0) {
+      && whichList.list && whichList.list.length > 0) {
       // sync up selectedMedia and push to result sets.
       whichList.list.map((m) => {
         const mediaIndex = whichProps.selectedMedia.findIndex(q => q.id === m.id);
@@ -63,10 +66,12 @@ class MediaPickerResultsContainer extends React.Component {
     }
     return 0;
   }
+
   updateMediaQuery(values) {
     const { updateMediaQuerySelection } = this.props;
     updateMediaQuerySelection(values);
   }
+
   handleToggleAndSelectMedia(media) {
     const { handleToggleAndSelectMedia } = this.props;
     handleToggleAndSelectMedia(media);
@@ -171,9 +176,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      MediaPickerResultsContainer
-    )
-  );
-
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    MediaPickerResultsContainer
+  )
+);

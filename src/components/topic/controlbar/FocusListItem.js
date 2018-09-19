@@ -3,7 +3,6 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 
 class FocusListItem extends React.Component {
-
   handleClick = (evt) => {
     evt.preventDefault();
     const { focus, onSelected } = this.props;
@@ -29,7 +28,6 @@ class FocusListItem extends React.Component {
       </div>
     );
   }
-
 }
 
 FocusListItem.propTypes = {

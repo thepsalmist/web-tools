@@ -10,12 +10,13 @@ const RIGHT = 1;
 class WordSelectWrapper extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { selectComparativeWords, leftQuery, rightQuery } = this.props;
-    if (nextProps.leftQuery !== leftQuery ||
-      nextProps.rightQuery !== rightQuery) {
+    if (nextProps.leftQuery !== leftQuery
+      || nextProps.rightQuery !== rightQuery) {
       selectComparativeWords(nextProps.leftQuery, LEFT);
       selectComparativeWords(nextProps.rightQuery, RIGHT);
     }
   }
+
   selectThisQuery = (targetIndex, value) => {
     // get value and which menu (left or right) and then run comparison
     // get query out of queries at queries[targetIndex] and pass "q" to fetch
@@ -29,11 +30,10 @@ class WordSelectWrapper extends React.Component {
       selectComparativeWords(queryObj, RIGHT);
     }
   }
+
   render() {
     const { queries, leftQuery, rightQuery } = this.props;
-    const menuItems = queries.map((q, idx) =>
-      <MenuItem key={idx} value={idx}>{q.label}</MenuItem>
-    );
+    const menuItems = queries.map((q, idx) => <MenuItem key={idx} value={idx}>{q.label}</MenuItem>);
     let content = null;
     if (leftQuery !== null) {
       content = (
@@ -62,7 +62,6 @@ class WordSelectWrapper extends React.Component {
     }
     return content;
   }
-
 }
 
 WordSelectWrapper.propTypes = {

@@ -20,7 +20,7 @@ const DEFAULT_TEXT_COLOR = '#333333';
 const DEFAULT_LINK_COLOR = '#ff0000';
 
 function listCloudLayout(wordNodes, width, extent, sizeRange) {
-  const canvas = document.getElementById('canvas');   // TODO: replace with a con`stant
+  const canvas = document.getElementById('canvas'); // TODO: replace with a con`stant
   const canvasContext2d = canvas.getContext('2d');
   let x = 0;
   if (typeof (wordNodes) === 'undefined') {
@@ -28,11 +28,11 @@ function listCloudLayout(wordNodes, width, extent, sizeRange) {
   }
   wordNodes.attr('x', (d) => {
     const fs = fontSizeComputer(d, extent, sizeRange);
-    canvasContext2d.font = `bold ${fs}px Lato`;    // crazy hack for IE compat, instead of simply this.getComputedTextLength()
+    canvasContext2d.font = `bold ${fs}px Lato`; // crazy hack for IE compat, instead of simply this.getComputedTextLength()
     const metrics = canvasContext2d.measureText(d.term);
     const textLength = metrics.width;
     let lastX = x;
-    if (x + textLength + 10 > width) {  // TODO: replace 10 with state property for padding
+    if (x + textLength + 10 > width) { // TODO: replace 10 with state property for padding
       lastX = 0;
     }
     x = lastX + textLength + (0.3 * fs);
@@ -42,7 +42,7 @@ function listCloudLayout(wordNodes, width, extent, sizeRange) {
   let lastAdded = 0;
   wordNodes.attr('y', (d, index, data) => { // need closure here for d3.select to work right on the element
     const xPosition = d3.select(data[index]).attr('x');
-    if (xPosition === '0') {  // WTF does this come out as a string???!?!?!?!
+    if (xPosition === '0') { // WTF does this come out as a string???!?!?!?!
       const height = 1.5 * fontSizeComputer(d, extent, sizeRange);
       y += height;
       lastAdded = height;
@@ -70,7 +70,7 @@ function drawViz(wrapperElement, {
     fullExtent,
     selectedTerm,
   };
-  const data = [...words];  // so we can modify them for visualization
+  const data = [...words]; // so we can modify them for visualization
   // add in tf normalization
   const allSum = d3.sum(data, term => parseInt(term.count, 10));
   if (!options.alreadyNormalized) {
@@ -86,23 +86,23 @@ function drawViz(wrapperElement, {
   }
   // start layout calculations
   const node = d3.select(wrapperElement)
-    .html('')   // important to empty it out first
+    .html('') // important to empty it out first
     .append('svg:svg'); // then add in the SVG wrapper we will be rendering to;
   if (options.fullExtent === undefined) {
     options.fullExtent = d3.extent(data, d => d.tfnorm);
   }
   const innerWidth = options.width - (2 * options.padding);
   const svg = node
-      .attr('height', options.height)
-      .attr('width', options.width)
-      .attr('id', domId)
-      .attr('class', 'word-cloud');
+    .attr('height', options.height)
+    .attr('width', options.width)
+    .attr('id', domId)
+    .attr('class', 'word-cloud');
   let y = options.height;
   const sizeRange = { min: options.minFontSize, max: options.maxFontSize };
   let wordNodes;
   const wordListHeight = options.height - (2 * options.padding);
   const wordWrapper = svg.append('g')
-      .attr('transform', `translate(${2 * options.padding},0)`);
+    .attr('transform', `translate(${2 * options.padding},0)`);
 
   while (y >= wordListHeight && sizeRange.max > sizeRange.min) {
     // Create words
@@ -110,18 +110,18 @@ function drawViz(wrapperElement, {
       .data(data.slice(0, DEFAULT_WORD_COUNT), d => d.stem)
       .enter()
       .append('text') // for incoming data
-        .attr('class', '')
-        .attr('fill', options.textColor)
-        .attr('font-family', 'Lato, Helvetica, sans')
-        .classed('word', true)
-        .classed('hide', d => d.display === false)
-        .classed('show', d => d.display !== false)
-        .classed('selected', d => d.term === selectedTerm)
+      .attr('class', '')
+      .attr('fill', options.textColor)
+      .attr('font-family', 'Lato, Helvetica, sans')
+      .classed('word', true)
+      .classed('hide', d => d.display === false)
+      .classed('show', d => d.display !== false)
+      .classed('selected', d => d.term === selectedTerm)
       .attr('font-size', d => fontSizeComputer(d, options.fullExtent, sizeRange))
       .text(d => d.term)
       .attr('font-weight', 'bold')
       .on('mouseover', (d) => {
-        const event = d3.event;
+        const { event } = d3;
         d3.select(event.target).attr('fill', options.linkColor)
           .attr('cursor', 'pointer');
         if (options.showTooltips) {
@@ -139,7 +139,7 @@ function drawViz(wrapperElement, {
         }
       })
       .on('mouseout', () => {
-        const event = d3.event;
+        const { event } = d3;
         d3.select(event.target).attr('fill', options.textColor)
           .attr('cursor', 'arrow');
         if (options.showTooltips) {
@@ -149,7 +149,7 @@ function drawViz(wrapperElement, {
         }
       })
       .on('click', (d) => {
-        const event = d3.event;
+        const { event } = d3;
         // d3.selectAll('text').classed('selected', false);
         if ((onWordClick !== null) && (onWordClick !== undefined)) {
           // d3.select(event.target).classed('selected', true);
@@ -172,7 +172,6 @@ function drawViz(wrapperElement, {
 
 
 class OrderedWordCloud extends React.Component {
-
   constructor(props) {
     super(props);
     this.chartWrapperRef = React.createRef();
@@ -197,7 +196,6 @@ class OrderedWordCloud extends React.Component {
     }
     return (<div><i><FormattedMessage {...localMessages.wordCloudError} /></i></div>);
   }
-
 }
 
 OrderedWordCloud.propTypes = {

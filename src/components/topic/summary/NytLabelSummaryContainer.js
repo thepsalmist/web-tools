@@ -20,7 +20,7 @@ import { WarningNotice } from '../../common/Notice';
 const BUBBLE_CHART_DOM_ID = 'nyt-tag-representation-bubble-chart';
 const COLORS = schemeCategory10;
 const PERCENTAGE_MIN_VALUE = 0.03; // anything lower than this goes into an "other" bubble
-const COVERAGE_REQUIRED = 0.8;  // need > this many of the stories tagged to show the results
+const COVERAGE_REQUIRED = 0.8; // need > this many of the stories tagged to show the results
 const BUBBLES_TO_SHOW = 5;
 
 const localMessages = {
@@ -41,6 +41,7 @@ class NytLabelSummaryContainer extends React.Component {
       fetchData(nextProps);
     }
   }
+
   downloadCsv = (evt) => {
     const { topicId, filters } = this.props;
     if (evt) {
@@ -49,6 +50,7 @@ class NytLabelSummaryContainer extends React.Component {
     const url = `/api/topics/${topicId}/nyt-tags/counts.csv?${filtersAsUrlParams(filters)}`;
     window.location = url;
   }
+
   handleBubbleClick = (data) => {
     const { filters, updateQueryFilter } = this.props;
     const queryFragment = `tags_id_stories: ${data.tagsId}`;
@@ -58,6 +60,7 @@ class NytLabelSummaryContainer extends React.Component {
       updateQueryFilter(queryFragment);
     }
   }
+
   render() {
     const { data, coverage } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
@@ -172,12 +175,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withSummary(localMessages.title, localMessages.descriptionIntro, messages.nytThemeHelpDetails)(
-        withAsyncFetch(
-          NytLabelSummaryContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withSummary(localMessages.title, localMessages.descriptionIntro, messages.nytThemeHelpDetails)(
+      withAsyncFetch(
+        NytLabelSummaryContainer
       )
     )
-  );
+  )
+);

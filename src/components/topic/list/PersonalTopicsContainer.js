@@ -72,12 +72,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        withPaging(
-          PersonalTopicsContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      withPaging(
+        PersonalTopicsContainer
       )
     )
-  );
+  )
+);

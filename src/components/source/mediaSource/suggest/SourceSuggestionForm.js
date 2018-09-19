@@ -108,10 +108,10 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        SourceSuggestionForm
-      )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      SourceSuggestionForm
     )
-  );
+  )
+);

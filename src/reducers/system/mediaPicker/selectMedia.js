@@ -10,7 +10,6 @@ const INITIAL_STATE = {
 function selectMedia(state = INITIAL_STATE, action) {
   let updatedSelectedList = [];
   switch (action.type) {
-
     // recieving a whole new list of media to show
     case MEDIA_PICKER_INITIALIZE_ALREADY_SELECTED_MEDIA:
       updatedSelectedList = [...action.payload];

@@ -1,0 +1,13 @@
+@import '../../_constants';
+
+div.viz-tooltip {   
+  position: absolute;
+  width: 100px;
+  height: 38px;
+  padding: 8px;
+  font-family: $font-families;
+  font-size: 11px;
+  background: $material-grey400;
+  border: 1px solid $material-grey200;
+  pointer-events: none;
+}

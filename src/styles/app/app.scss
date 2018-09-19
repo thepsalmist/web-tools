@@ -1,3 +1,4 @@
+@import '_base.scss';
 @import '_branding';
 @import '_actions';
 @import '_controlbar';
@@ -23,7 +24,6 @@
 @import '_user_login';
 @import '_faq';
 @import '_document_download';
-@import 'mediapicker/_media_picker';
 @import '_app_dialog';
 @import '_entities';
 @import '_metadata_media_type';
@@ -39,22 +39,5 @@
 @import '_about';
 @import '_error_boundary';
 @import '_signup_form';
-
-#content { 
-  min-height: 400px;
-  padding-bottom: 30px;
-  background-color: $white;
-
-  .notice {
-    padding: 10px;
-  }
-
-}
-
-.warning {
-  color: $warning-color;
-}
-
-.warning-background {
-  background-color: $warning-color;
-}
+@import 'mediapicker/media_picker';
+@import 'viz/viz';

@@ -19,6 +19,7 @@ class AllCollectionSearchResultsContainer extends React.Component {
     const updatedQueryObj = Object.assign({}, values, { type: selectedMediaQueryType });
     updateMediaQuerySelection(updatedQueryObj);
   }
+
   render() {
     const { selectedMediaQueryType, selectedMediaQueryKeyword, collectionResults, handleToggleAndSelectMedia, fetchStatus } = this.props;
     return (
@@ -70,9 +71,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      AllCollectionSearchResultsContainer
-    )
-  );
-
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    AllCollectionSearchResultsContainer
+  )
+);

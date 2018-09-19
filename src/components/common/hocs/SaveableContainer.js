@@ -9,8 +9,8 @@ import { SaveButton } from '../IconButton';
 import { saveToNotebook } from '../../../actions/notebookActions';
 import { getAppName } from '../../../config';
 import { updateFeedback } from '../../../actions/appActions';
-import ConfirmationDialog from '../../common/ConfirmationDialog';
-import { WarningNotice, InfoNotice, ErrorNotice } from '../../common/Notice';
+import ConfirmationDialog from '../ConfirmationDialog';
+import { WarningNotice, InfoNotice, ErrorNotice } from '../Notice';
 
 const localMessages = {
   saving: { id: 'notebook.save.inProgress', defaultMessage: 'Saving to the server...' },
@@ -30,19 +30,24 @@ const localMessages = {
  */
 const withSaving = (ChildComponent) => {
   class SaveableContainer extends React.Component {
+    dataToSave = null;
+
     state = {
       open: false,
     };
+
     setDataToSave = (data) => {
       this.dataToSave = data;
     };
-    dataToSave = null;
+
     handleSaveButtonClick = () => this.setState({ open: true });
+
     handleSave = () => {
       const { handleSaveToNotebook } = this.props;
       this.setState({ open: false });
       handleSaveToNotebook(this.dataToSave);
     };
+
     render() {
       const { fetchStatus, notebookEntryId } = this.props;
       const { formatMessage } = this.props.intl;
@@ -112,7 +117,7 @@ const withSaving = (ChildComponent) => {
       const notes = document.getElementById('saveToNotebookNotes').value;
       const contentToSave = {
         ...info,
-        app: getAppName(),  // add app name in for filtering later
+        app: getAppName(), // add app name in for filtering later
         notes,
         // TODO: add in url hash
       };

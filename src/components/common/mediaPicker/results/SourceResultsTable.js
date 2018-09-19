@@ -63,7 +63,6 @@ SourceResultsTable.propTypes = {
 };
 
 export default
-  injectIntl(
-    SourceResultsTable
-  );
-
+injectIntl(
+  SourceResultsTable
+);

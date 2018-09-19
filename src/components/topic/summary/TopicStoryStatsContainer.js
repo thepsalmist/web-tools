@@ -55,7 +55,4 @@ TopicStoryStatsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    TopicStoryStatsContainer
-  );
+export default injectIntl(TopicStoryStatsContainer);

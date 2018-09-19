@@ -33,7 +33,6 @@ function makePercentage(value) { return value * 100; }
  * Pass in "data" if you are using one series, otherwise configure them yourself and pass in "series".
  */
 class AttentionOverTimeChart extends React.Component {
-
   getConfig() {
     const { backgroundColor, normalizeYAxis } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
@@ -125,7 +124,7 @@ class AttentionOverTimeChart extends React.Component {
             // handle clicking on last point
             const point1 = (point0.index < (point0.series.data.length - 1)) ? point0.series.data[evt.point.index + 1] : point0;
             const date1 = new Date(point1.x);
-            onDataPointClick(date0, date1, evt, this);   // preserve the highcharts "this", which is the chart
+            onDataPointClick(date0, date1, evt, this); // preserve the highcharts "this", which is the chart
           },
         },
       };
@@ -176,7 +175,6 @@ class AttentionOverTimeChart extends React.Component {
       </div>
     );
   }
-
 }
 
 AttentionOverTimeChart.propTypes = {
@@ -190,7 +188,7 @@ AttentionOverTimeChart.propTypes = {
   interval: PropTypes.string,
   onDataPointClick: PropTypes.func, // (date0, date1, evt, chartObj)
   total: PropTypes.number,
-  introText: PropTypes.string,  // overrides automatic total string generation
+  introText: PropTypes.string, // overrides automatic total string generation
   filename: PropTypes.string,
   showLegend: PropTypes.bool,
   normalizeYAxis: PropTypes.bool,

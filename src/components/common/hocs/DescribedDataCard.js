@@ -17,13 +17,15 @@ function withDescription(introMessage, descriptionMessage) {
       state = {
         showDescription: false,
       };
+
       toggleVisible = () => {
-        this.setState({ showDescription: !this.state.showDescription });
+        this.setState(prevState => ({ showDescription: !prevState.showDescription }));
       }
+
       render() {
         let descriptionContent;
         let toggleButton;
-        if (descriptionMessage) {  // only toggle extra text if there is any
+        if (descriptionMessage) { // only toggle extra text if there is any
           if (this.state.showDescription) {
             toggleButton = (
               <a onTouchTap={this.toggleVisible}>

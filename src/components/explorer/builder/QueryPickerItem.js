@@ -32,7 +32,7 @@ const focusUsernameInputField = (input) => {
 class QueryPickerItem extends React.Component {
   state = {
     labelChangeDialogOpen: false,
-    labelInDialog: '',  // the actual label they type into the change-label popup dialog
+    labelInDialog: '', // the actual label they type into the change-label popup dialog
   };
 
   handleBlurAndSelection = () => {
@@ -49,7 +49,7 @@ class QueryPickerItem extends React.Component {
 
   handleLabelEditRequest = () => {
     const { query } = this.props;
-    this.setState({ showIconMenu: false, labelChangeDialogOpen: true, labelInDialog: query.label });
+    this.setState({ labelChangeDialogOpen: true, labelInDialog: query.label });
   };
 
   handleLabelClose = () => {
@@ -235,6 +235,6 @@ QueryPickerItem.propTypes = {
 
 
 export default
-  injectIntl(
-    QueryPickerItem
-  );
+injectIntl(
+  QueryPickerItem
+);

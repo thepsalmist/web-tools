@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
-import DataCard from '../../common/DataCard';
+import DataCard from '../DataCard';
 import { storyPubDateToTimestamp } from '../../../lib/dateUtil';
 import messages from '../../../resources/messages';
 
@@ -97,6 +97,4 @@ StoryDetails.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default injectIntl(
-  StoryDetails
-);
+export default injectIntl(StoryDetails);

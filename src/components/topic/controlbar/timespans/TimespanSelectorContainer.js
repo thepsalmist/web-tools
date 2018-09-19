@@ -11,16 +11,18 @@ import TimespanSelector from './TimespanSelector';
 class TimespanSelectorContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { filters, fetchData, selectedTimespan } = this.props;
-    if (((nextProps.filters.snapshotId !== filters.snapshotId) ||
-         (nextProps.filters.focusId !== filters.focusId)) &&
-        (nextProps.topicId !== null) && (nextProps.filters.snapshotId !== null)) {
+    if (((nextProps.filters.snapshotId !== filters.snapshotId)
+      || (nextProps.filters.focusId !== filters.focusId))
+      && (nextProps.topicId !== null) && (nextProps.filters.snapshotId !== null)) {
       fetchData(nextProps.topicId, nextProps.filters.snapshotId, nextProps.filters.focusId, nextProps.timespanId, selectedTimespan);
     }
   }
+
   refetchData = () => {
     const { topicId, filters, timespanId, fetchData, selectedTimespan } = this.props;
     fetchData(topicId, filters.snapshotId, filters.focusId, timespanId, selectedTimespan);
   }
+
   render() {
     const { timespans, selectedTimespan, setExpanded, handleTimespanSelected, handlePeriodSelected, isVisible, selectedPeriod } = this.props;
     let content = null;
@@ -105,11 +107,11 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(toggleTimespanControls(isExpanded));
   },
   fetchData: (topicId, snapshotId, focusId, timespanId, selectedTimespan) => {
-    const cleanedFocus = isNaN(focusId) ? null : focusId;
+    const cleanedFocus = Number.isNaN(focusId) ? null : focusId;
     dispatch(fetchTopicTimespansList(topicId, snapshotId, { focusId: cleanedFocus }))
       .then((response) => {
         let pickDefault = false;
-        if (timespanId === null || isNaN(timespanId)) {
+        if (timespanId === null || Number.isNaN(timespanId)) {
           // no timespan selected so we'll default to one
           pickDefault = true;
         } else if ((selectedTimespan !== null) && (selectedTimespan.foci_id !== cleanedFocus)) {
@@ -150,8 +152,8 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
-      TimespanSelectorContainer
-    )
-  );
+connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  withAsyncFetch(
+    TimespanSelectorContainer
+  )
+);

@@ -45,7 +45,4 @@ SourceManagerFaq.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    SourceManagerFaq
-  );
+export default injectIntl(SourceManagerFaq);

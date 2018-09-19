@@ -29,6 +29,7 @@ class DownloadMapContainer extends React.Component {
       fetchData(nextProps);
     }
   }
+
   render() {
     const { topicId, filters, wordMapStatus } = this.props;
     let content;
@@ -63,12 +64,11 @@ class DownloadMapContainer extends React.Component {
           );
           break;
         default:
-
       }
       content = (
         <React.Fragment>
           <h3><FormattedMessage {...localMessages.linkMap} />:</h3>
-          <p><LinkWithFilters to={`/topics/${topicId}/link-map`} ><FormattedMessage {...localMessages.linkMapDownload} /></LinkWithFilters></p>
+          <p><LinkWithFilters to={`/topics/${topicId}/link-map`}><FormattedMessage {...localMessages.linkMapDownload} /></LinkWithFilters></p>
           <h3><FormattedMessage {...localMessages.wordMap} />:</h3>
           {wordMapContent}
         </React.Fragment>
@@ -113,12 +113,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withSummary(localMessages.title, localMessages.helpIntro, localMessages.helpText)(
-        withAsyncFetch(
-          DownloadMapContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withSummary(localMessages.title, localMessages.helpIntro, localMessages.helpText)(
+      withAsyncFetch(
+        DownloadMapContainer
       )
     )
-  );
+  )
+);

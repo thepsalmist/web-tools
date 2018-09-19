@@ -20,25 +20,24 @@ const TopicsMarketingFeatureList = () => (
     <MarketingFeatureItem
       titleMsg={localMessages.moreContentTitle}
       contentMsg={localMessages.moreContentDescription}
-      imageName={'discover-content-2x.png'}
+      imageName="discover-content-2x.png"
       imageOnLeft
     />
 
     <MarketingFeatureItem
       titleMsg={localMessages.influenceTitle}
       contentMsg={localMessages.influenceDescription}
-      imageName={'influence-2x.png'}
+      imageName="influence-2x.png"
     />
 
     <MarketingFeatureItem
       titleMsg={localMessages.sliceAndDiceTitle}
       contentMsg={localMessages.sliceAndDiceDescription}
-      imageName={'slide-and-dice-2x.png'}
+      imageName="slide-and-dice-2x.png"
       imageOnLeft
     />
 
   </div>
 );
 
-export default
-  TopicsMarketingFeatureList;
+export default TopicsMarketingFeatureList;

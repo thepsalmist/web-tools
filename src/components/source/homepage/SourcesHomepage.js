@@ -77,7 +77,7 @@ const SourcesHomepage = (props) => {
             <h1><FormattedMessage {...localMessages.intro} /></h1>
             <p>
               <FormattedHTMLMessage {...localMessages.about} />
-              <Link to={'/sources/suggest'}><FormattedMessage {...localMessages.suggestLink} /></Link>
+              <Link to="/sources/suggest"><FormattedMessage {...localMessages.suggestLink} /></Link>
             </p>
           </Col>
           <Col lg={1} xs={0} />
@@ -105,7 +105,7 @@ SourcesHomepage.propTypes = {
   intl: PropTypes.object.isRequired,
   // from context
   location: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired,       // params from router
+  params: PropTypes.object.isRequired, // params from router
   // from state
   user: PropTypes.object.isRequired,
   // from dispatch
@@ -123,8 +123,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      SourcesHomepage
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    SourcesHomepage
+  )
+);

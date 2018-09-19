@@ -30,7 +30,6 @@ const localMessages = {
 };
 
 class ModifyTopicDialog extends React.Component {
-
   state = {
     open: false,
   };
@@ -63,7 +62,7 @@ class ModifyTopicDialog extends React.Component {
         <Dialog
           open={this.state.open}
           onClose={this.handleRemoveDialogClose}
-          className={'modify-topic-dialog'}
+          className="modify-topic-dialog"
         >
           <DialogTitle>
             {formatMessage(localMessages.modifyTopic)}
@@ -119,7 +118,6 @@ class ModifyTopicDialog extends React.Component {
       </div>
     );
   }
-
 }
 
 ModifyTopicDialog.propTypes = {
@@ -133,7 +131,4 @@ ModifyTopicDialog.propTypes = {
   onUrlChange: PropTypes.func.isRequired,
 };
 
-export default
-  injectIntl(
-    ModifyTopicDialog
-  );
+export default injectIntl(ModifyTopicDialog);

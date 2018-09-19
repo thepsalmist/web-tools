@@ -17,7 +17,6 @@ const localMessages = {
 };
 
 class AddByUrlConfirmer extends Component {
-
   state = {
     showNew: false,
     showExisting: false,
@@ -41,7 +40,7 @@ class AddByUrlConfirmer extends Component {
       <div className="add-by-url-confirm">
         <p>
           <FormattedHTMLMessage {...localMessages.newCount} values={{ count: newSources.length }} />
-          <a href="#showNew" onClick={(evt) => { evt.preventDefault(); this.setState({ showNew: !this.state.showNew }); }} >
+          <a href="#showNew" onClick={(evt) => { evt.preventDefault(); this.setState(prevState => ({ showNew: !prevState.showNew })); }}>
             <FormattedMessage {...localMessages.showNew} />
           </a>
           <br />
@@ -49,7 +48,7 @@ class AddByUrlConfirmer extends Component {
         </p>
         <p>
           <FormattedHTMLMessage {...localMessages.existingCount} values={{ count: existingSources.length }} />
-          <a href="#showExisting" onClick={(evt) => { evt.preventDefault(); this.setState({ showExisting: !this.state.showExisting }); }} >
+          <a href="#showExisting" onClick={(evt) => { evt.preventDefault(); this.setState(prevState => ({ showExisting: !prevState.showExisting })); }}>
             <FormattedMessage {...localMessages.showExisting} />
           </a>
           <br />
@@ -57,7 +56,7 @@ class AddByUrlConfirmer extends Component {
         </p>
         <p>
           <FormattedHTMLMessage {...localMessages.errorCount} values={{ count: errorSources.length }} />
-          <a href="#showError" onClick={(evt) => { evt.preventDefault(); this.setState({ showError: !this.state.showError }); }} >
+          <a href="#showError" onClick={(evt) => { evt.preventDefault(); this.setState(prevState => ({ showError: !prevState.showError })); }}>
             <FormattedMessage {...localMessages.showError} />
           </a>
           <br />
@@ -76,7 +75,6 @@ class AddByUrlConfirmer extends Component {
       </div>
     );
   }
-
 }
 
 AddByUrlConfirmer.propTypes = {
@@ -115,10 +113,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        AddByUrlConfirmer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      AddByUrlConfirmer
     )
-  );
+  )
+);

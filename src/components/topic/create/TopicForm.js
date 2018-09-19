@@ -13,7 +13,6 @@ import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil'
 import { fetchTopicWithNameExists } from '../../../actions/topicActions';
 import { assetUrl } from '../../../lib/assetUtil';
 
-export const TOPIC_FORM_MODE_EDIT = 'TOPIC_FORM_MODE_EDIT';
 export const TOPIC_FORM_MODE_CREATE = 'TOPIC_FORM_MODE_CREATE';
 
 const localMessages = {
@@ -33,9 +32,10 @@ const localMessages = {
 class TopicForm extends React.Component {
   shouldComponentUpdate = (nextProps) => {
     const { initialValues } = this.props;
-    return (initialValues.sourcesAndCollections !== nextProps.initialValues.sourcesAndCollections ||
-      initialValues !== nextProps.initialValues);
+    return (initialValues.sourcesAndCollections !== nextProps.initialValues.sourcesAndCollections
+      || initialValues !== nextProps.initialValues);
   }
+
   render() {
     const { initialValues, topicId, onSubmit, handleSubmit, pristine, submitting, asyncValidating, title, intro, mode, onMediaChange } = this.props;
     const { formatMessage } = this.props.intl;
@@ -71,22 +71,24 @@ class TopicForm extends React.Component {
           </Col>
         </Row>
         <Row><Col lg={12}><hr /></Col></Row>
-        <Row><Col lg={6}>
-          <div className="media-field-wrapper">
-            {mediaLabel}
-            <SourceCollectionsMediaForm
-              title={title}
-              intro={intro}
-              className="query-field"
-              form="topicForm"
-              destroyOnUnmount={false}
-              name="sourcesAndCollections"
-              defaultValue={initialValues.sourcesAndCollections} // to and from MediaPicker
-              allowRemoval
-            />
-            {mediaPicker}
-          </div>
-        </Col></Row>
+        <Row>
+          <Col lg={6}>
+            <div className="media-field-wrapper">
+              {mediaLabel}
+              <SourceCollectionsMediaForm
+                title={title}
+                intro={intro}
+                className="query-field"
+                form="topicForm"
+                destroyOnUnmount={false}
+                name="sourcesAndCollections"
+                defaultValue={initialValues.sourcesAndCollections} // to and from MediaPicker
+                allowRemoval
+              />
+              {mediaPicker}
+            </div>
+          </Col>
+        </Row>
         <Row><Col lg={12}><hr /></Col></Row>
         <Row>
           <Col lg={12}>
@@ -95,7 +97,7 @@ class TopicForm extends React.Component {
               type="submit"
               disabled={pristine || submitting || asyncValidating === true}
               label={initialValues.buttonLabel}
-              color="primary"
+              primary
             />
           </Col>
         </Row>
@@ -182,8 +184,8 @@ const reduxFormConfig = {
 };
 
 export default
-  withIntlForm(
-    reduxForm(reduxFormConfig)(
-      TopicForm
-    )
-  );
+withIntlForm(
+  reduxForm(reduxFormConfig)(
+    TopicForm
+  )
+);

@@ -20,7 +20,7 @@ const renderCollectionSelector = ({ fields, meta: { error } }) => (
         <span className="label chip-label"><FormattedMessage {...localMessages.existing} /></span>
       </Col>
       <Col sm={6} xs={12}>
-        {fields.map((collection, index) =>
+        {fields.map((collection, index) => (
           <Field
             key={collection}
             name={collection}
@@ -28,7 +28,7 @@ const renderCollectionSelector = ({ fields, meta: { error } }) => (
               <SourceOrCollectionChip object={info.input.value} onDelete={() => fields.remove(index)} />
             )}
           />
-        )}
+        ))}
         {error && <div className="error">{error}</div>}
       </Col>
     </Row>
@@ -73,10 +73,10 @@ PickCollectionsForm.propTypes = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm({ propTypes })(
-        PickCollectionsForm
-      )
+injectIntl(
+  withIntlForm(
+    reduxForm({ propTypes })(
+      PickCollectionsForm
     )
-  );
+  )
+);

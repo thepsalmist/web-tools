@@ -17,6 +17,7 @@ const withSampleSize = (ChildComponent) => {
       this.setState({ sampleSize: nextSize });
       fetchData({ filters, sample_size: nextSize });
     }
+
     render() {
       const { sampleSize } = this.state; // must instantiate here and pass as props to child component - this.state.sampleSize doesn't work
       return (

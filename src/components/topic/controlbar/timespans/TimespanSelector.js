@@ -29,13 +29,17 @@ const TimespanSelector = (props) => {
   let expandControl = null;
   if (isExpanded) {
     // we have to set back the selected period to match the selectedTimespan's period when they collapse the UI
-    expandControl = (<a href="#hide-timespans" className="greyed" onClick={(evt) => { evt.preventDefault(); setExpanded(false); }}>
-      <FormattedMessage {...localMessages.timespansHide} />
-    </a>);
+    expandControl = (
+      <a href="#hide-timespans" className="greyed" onClick={(evt) => { evt.preventDefault(); setExpanded(false); }}>
+        <FormattedMessage {...localMessages.timespansHide} />
+      </a>
+    );
   } else {
-    expandControl = (<a href="#show-timespans" className="greyed" onClick={(evt) => { evt.preventDefault(); setExpanded(true); }}>
-      <FormattedMessage {...localMessages.timespansShow} />
-    </a>);
+    expandControl = (
+      <a href="#show-timespans" className="greyed" onClick={(evt) => { evt.preventDefault(); setExpanded(true); }}>
+        <FormattedMessage {...localMessages.timespansShow} />
+      </a>
+    );
   }
   let expandedContent = null;
   if (isExpanded) {
@@ -69,7 +73,7 @@ const TimespanSelector = (props) => {
           <Col lg={8} sm={8} xs={12} className="center">
             <TimespanDateRange timespan={selectedTimespan} />
           </Col>
-          <Col lg={2} sm={2} xs={12} >
+          <Col lg={2} sm={2} xs={12}>
             <div className="toggle-control">
               {expandControl}
               {helpButton}
@@ -96,8 +100,8 @@ TimespanSelector.propTypes = {
 };
 
 export default
-  injectIntl(
-    withHelp(localMessages.timespansHelpTitle, localMessages.timespansHelpText)(
-      TimespanSelector
-    )
-  );
+injectIntl(
+  withHelp(localMessages.timespansHelpTitle, localMessages.timespansHelpText)(
+    TimespanSelector
+  )
+);

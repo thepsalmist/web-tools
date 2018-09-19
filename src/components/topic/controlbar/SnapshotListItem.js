@@ -9,7 +9,6 @@ const localMessages = {
 };
 
 class SnapshotListItem extends React.Component {
-
   handleClick = (evt) => {
     evt.preventDefault();
     const { id, onSelected } = this.props;
@@ -21,7 +20,7 @@ class SnapshotListItem extends React.Component {
     const { formatMessage } = this.props.intl;
     const label = snapshot.snapshot_date.substr(0, 16);
     const date = snapshot.snapshot_date.substr(0, 16);
-    const isUsable = snapshot.isUsable;
+    const { isUsable } = snapshot;
     const stateMessage = (isUsable) ? '' : formatMessage(localMessages.snapshotNotReady);
     const clickHandler = (isUsable) ? this.handleClick : null;
     const disabledClass = (isUsable) ? '' : 'disabled';
@@ -36,7 +35,6 @@ class SnapshotListItem extends React.Component {
       </div>
     );
   }
-
 }
 
 SnapshotListItem.propTypes = {

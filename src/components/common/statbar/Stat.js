@@ -5,8 +5,7 @@ import DataCard from '../DataCard';
 import withHelp from '../hocs/HelpfulContainer';
 
 class Stat extends React.Component {
-
-  componentWillMount = () => {
+  componentWillMount() {
     const { helpTitleMsg, helpContentMsg, setHelpTitleMsg, setHelpContentMsg } = this.props;
     if (helpTitleMsg) {
       setHelpTitleMsg(helpTitleMsg);
@@ -18,7 +17,7 @@ class Stat extends React.Component {
 
   render() {
     const { helpTitleMsg, message, data, content, helpButton } = this.props;
-    const helpDisplayContent = (helpTitleMsg) ? helpButton : null;  // only show help button if there is any help
+    const helpDisplayContent = (helpTitleMsg) ? helpButton : null; // only show help button if there is any help
     let contentToShow = null;
     if (content) {
       contentToShow = content;
@@ -60,8 +59,8 @@ Stat.propTypes = {
 };
 
 export default
-  injectIntl(
-    withHelp()(
-      Stat
-    )
-  );
+injectIntl(
+  withHelp()(
+    Stat
+  )
+);

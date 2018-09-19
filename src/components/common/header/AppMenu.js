@@ -7,18 +7,18 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import AppButton from '../AppButton';
 
 class AppMenu extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = { open: false, iconDown: true };
+    this.buttonRef = React.createRef();
   }
 
   toggleMenu = (event) => {
-    this.setState({
-      open: !this.state.open,
-      anchorEl: event.currentTarget,
-      iconDown: !this.state.iconDown,
-    });
+    event.persist();
+    this.setState(prevState => ({
+      open: !prevState.open,
+      iconDown: !prevState.iconDown,
+    }));
   };
 
   close = () => this.setState({ open: false, iconDown: true });
@@ -27,6 +27,7 @@ class AppMenu extends React.Component {
   flatten = list => list.reduce(
     (a, b) => a.concat(Array.isArray(b) ? this.flatten(b) : b), []
   );
+
   render() {
     const { titleMsg, showMenu, onTitleClick, menuComponent } = this.props;
     const { formatMessage } = this.props.intl;
@@ -53,14 +54,12 @@ class AppMenu extends React.Component {
     if (showMenu) {
       const whichIcon = (this.state.iconDown) ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />;
       menuHeader = (
-        <div>
-          <AppButton
-            variant="text"
-            onClick={this.toggleMenu}
-            label={formatMessage(titleMsg)}
-            icon={whichIcon}
-          />
-        </div>
+        <AppButton
+          variant="text"
+          onClick={this.toggleMenu}
+          label={formatMessage(titleMsg)}
+          icon={whichIcon}
+        />
       );
     } else {
       menuHeader = (
@@ -73,14 +72,14 @@ class AppMenu extends React.Component {
     }
     return (
       <div className="app-menu">
-        {menuHeader}
+        <div ref={this.buttonRef}>{menuHeader}</div>
         <Menu
           open={this.state.open}
-          anchorEl={this.state.anchorEl}
+          anchorEl={this.buttonRef.current}
+          getContentAnchorEl={null}
           onClose={this.close}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
           transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-          getContentAnchorEl={null}
         >
           {newItems}
         </Menu>
@@ -102,6 +101,6 @@ AppMenu.propTypes = {
 };
 
 export default
-  injectIntl(
-    AppMenu
-  );
+injectIntl(
+  AppMenu
+);

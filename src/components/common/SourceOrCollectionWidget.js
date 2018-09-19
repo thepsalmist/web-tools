@@ -16,7 +16,7 @@ const SourceOrCollectionWidget = (props) => {
       key={`media-widget${objectId}`}
     >
       <Col>
-        <a role="button" tabIndex="0" onClick={onClick}>{name}</a>
+        <a href="#" onClick={onClick}>{name}</a>
         {children}
       </Col>
       <Col>

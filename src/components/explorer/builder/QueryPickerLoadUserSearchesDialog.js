@@ -92,7 +92,7 @@ class QueryPickerLoadUserSearchesDialog extends React.Component {
         <Dialog
           open={this.state.loadSearchDialogOpen}
           onClose={this.handleDialogClose}
-          maxWidth={'md'}
+          maxWidth="md"
         >
           <DialogTitle><FormattedMessage {...localMessages.loadSearchTitle} /></DialogTitle>
           <DialogContent>
@@ -134,6 +134,6 @@ QueryPickerLoadUserSearchesDialog.propTypes = {
 
 
 export default
-  injectIntl(
-    QueryPickerLoadUserSearchesDialog
-  );
+injectIntl(
+  QueryPickerLoadUserSearchesDialog
+);

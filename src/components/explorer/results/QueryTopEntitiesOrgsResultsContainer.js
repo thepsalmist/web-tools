@@ -29,6 +29,7 @@ class QueryTopEntitiesOrgsResultsContainer extends React.Component {
   downloadCsv = (query) => {
     postToDownloadUrl(`/api/explorer/tags/${TAG_SET_CLIFF_ORGS}/top-tags.csv`, query);
   }
+
   render() {
     const { results, queries, handleEntitySelection, selectedTabIndex, tabSelector } = this.props;
     const { formatNumber } = this.props.intl;
@@ -39,7 +40,7 @@ class QueryTopEntitiesOrgsResultsContainer extends React.Component {
       if (coverageRatio > COVERAGE_REQUIRED) {
         content = (
           <div>
-            {rawData &&
+            {rawData && (
               <EntitiesTable
                 className="explorer-entity"
                 entityColNameMsg={localMessages.organization}
@@ -47,7 +48,7 @@ class QueryTopEntitiesOrgsResultsContainer extends React.Component {
                 onClick={e => handleEntitySelection(e, queries[0].searchId)}
                 maxTitleLength={50}
               />
-            }
+            )}
           </div>
         );
       } else {
@@ -157,14 +158,14 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withSummary(localMessages.title, localMessages.helpIntro, [messages.entityHelpDetails])(
-        withAsyncFetch(
-          withQueryResults(
-            QueryTopEntitiesOrgsResultsContainer
-          )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withSummary(localMessages.title, localMessages.helpIntro, [messages.entityHelpDetails])(
+      withAsyncFetch(
+        withQueryResults(
+          QueryTopEntitiesOrgsResultsContainer
         )
       )
     )
-  );
+  )
+);

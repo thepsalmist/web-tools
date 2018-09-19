@@ -20,7 +20,7 @@ const localMessages = {
 const Activated = (props) => {
   const { formatMessage } = props.intl;
   const success = props.location.query.success === '1';
-  const msg = props.location.query.msg;
+  const { msg } = props.location.query;
   const titleMsg = (success) ? localMessages.workedTitle : localMessages.failedTitle;
   let content = null;
   const resendContent = (

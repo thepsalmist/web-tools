@@ -36,7 +36,7 @@ const WordTree = (props) => {
 
 WordTree.propTypes = {
   domId: PropTypes.string.isRequired,
-  sentences: PropTypes.array.isRequired,  // an array sentences
+  sentences: PropTypes.array.isRequired, // an array sentences
   startWord: PropTypes.string.isRequired,
   height: PropTypes.string.isRequired,
   type: PropTypes.string, // double (default), suffix or prefix

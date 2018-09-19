@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import ErrorTryAgain from '../../common/ErrorTryAgain';
-import LoadingSpinner from '../../common/LoadingSpinner';
+import ErrorTryAgain from '../ErrorTryAgain';
+import LoadingSpinner from '../LoadingSpinner';
 import * as fetchConstants from '../../../lib/fetchConstants';
 
 // pass this in as the second arg to not show a spinner
@@ -21,16 +21,19 @@ export const asyncContainerize = (ChildComponent, loadingSpinnerSize) => {
       asyncFetchResult: undefined,
       hasShowResults: false,
     };
+
     componentDidMount() {
       const { asyncFetch } = this.props;
       const asyncFetchResult = asyncFetch();
       this.state = { asyncFetchResult };
     }
+
     componentWillReceiveProps(nextProps) {
       if (nextProps.fetchStatus === fetchConstants.FETCH_SUCCEEDED) {
         this.setState({ hasShowResults: true });
       }
     }
+
     render() {
       const { fetchStatus, asyncFetch } = this.props;
       if (fetchStatus === undefined) {
@@ -95,7 +98,6 @@ export const asyncContainerize = (ChildComponent, loadingSpinnerSize) => {
   return ComposedAsyncContainer;
 };
 
-const withAsyncFetch = asyncContainerize;  // the method can't be used as the name of the default import
+const withAsyncFetch = asyncContainerize; // the method can't be used as the name of the default import
 
 export default withAsyncFetch;
-

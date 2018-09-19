@@ -12,6 +12,7 @@ import messages from '../../../../resources/messages';
 import { urlToSource } from '../../../../lib/urlUtil';
 import { TAG_SET_NYT_THEMES } from '../../../../lib/tagUtil';
 import { trimToMaxLength } from '../../../../lib/stringUtil';
+import { storyPubDateToTimestamp } from '../../../../lib/dateUtil';
 import StatBar from '../../../common/statbar/StatBar';
 
 const localMessages = {
@@ -27,19 +28,23 @@ class SelectedStoryDrillDownContainer extends React.Component {
     super(props);
     this.rootRef = React.createRef();
   }
+
   shouldComponentUpdate(nextProps) {
     const { selectedStory, lastSearchTime } = this.props;
     return (nextProps.lastSearchTime !== lastSearchTime || nextProps.selectedStory !== selectedStory);
   }
+
   componentDidUpdate() {
     const rootNode = this.rootRef.current;
     if (rootNode) {
       rootNode.scrollIntoView();
     }
   }
+
   openNewPage = (url) => {
     window.open(url, '_blank');
   }
+
   render() {
     const { selectedStory, storyInfo, handleClose } = this.props;
     const { formatDate } = this.props.intl;
@@ -73,7 +78,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
                       ),
                     },
                     { message: messages.storyDate,
-                      data: formatDate(storyInfo.publish_date),
+                      data: formatDate(storyPubDateToTimestamp(storyInfo.publish_date)),
                     },
                     { message: messages.language,
                       data: storyInfo.language ? storyInfo.language : '?',
@@ -139,11 +144,9 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      SelectedStoryDrillDownContainer
-    )
-  );
-
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    SelectedStoryDrillDownContainer
+  )
+);

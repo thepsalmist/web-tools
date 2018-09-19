@@ -38,11 +38,11 @@ const QueryAttentionOverTimeDrillDownDataCard = (props) => {
       </Row>
       <Row>
         <Col lg={6}>
-          <h3 style={{ color }} ><FormattedMessage {...localMessages.sampleStories} /></h3>
+          <h3 style={{ color }}><FormattedMessage {...localMessages.sampleStories} /></h3>
           <StorySentencePreview sentences={stories.slice(0, 8)} />
         </Col>
         <Col lg={6}>
-          <h3 style={{ color }} ><FormattedMessage {...localMessages.topWords} /></h3>
+          <h3 style={{ color }}><FormattedMessage {...localMessages.topWords} /></h3>
           <OrderedWordCloud words={words} textColor={`rgb(${rgbColor[0]}, ${rgbColor[1]}, ${rgbColor[2]})`} />
         </Col>
       </Row>
@@ -61,7 +61,4 @@ QueryAttentionOverTimeDrillDownDataCard.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    QueryAttentionOverTimeDrillDownDataCard
-  );
+export default injectIntl(QueryAttentionOverTimeDrillDownDataCard);

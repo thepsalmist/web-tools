@@ -73,10 +73,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        FavoritedContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      FavoritedContainer
     )
-  );
+  )
+);

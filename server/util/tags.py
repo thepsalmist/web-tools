@@ -18,6 +18,7 @@ STORY_UNDATEABLE_TAG = 8877812  # if a story has this tag, that means it was und
 NYT_LABELER_1_0_0_TAG_ID = 9360669  # the tag that indicates a story was tagged by the NYT labeller version 1
 NYT_LABELS_TAG_SET_ID = 1963  # the tag set all the descriptor tags are in
 NYT_LABELS_SAMPLE_SIZE = 10000  # the sample size to use for looking at NYT descriptor tags
+BAD_THEMES = [9360842, 9360856]
 
 # constants for versioning of geo-tagged stories
 TAG_SET_GEOCODER_VERSION = 1937
@@ -63,7 +64,15 @@ VALID_METADATA_IDS = [
 ]
 
 
-def processed_by_cliff_query_clause():
+def processed_for_themes_query_clause():
+    '''
+    :return: A solr query clause you can use to filter for stories that have been tagged by any version
+     of our CLIFF geotagging engine (ie. tagged with people, places, and organizations)
+    '''
+    return u"(tags_id_stories:{})".format(NYT_LABELER_1_0_0_TAG_ID)
+
+
+def processed_for_entities_query_clause():
     '''
     :return: A solr query clause you can use to filter for stories that have been tagged by any version
      of our CLIFF geotagging engine (ie. tagged with people, places, and organizations)
@@ -71,7 +80,7 @@ def processed_by_cliff_query_clause():
     return u"(tags_id_stories:({} {}))".format(CLIFF_CLAVIN_2_4_1_TAG_ID, CLIFF_CLAVIN_2_3_0_TAG_ID)
 
 
-def processed_by_cliff_tag_ids():
+def processed_for_entities_tag_ids():
     '''
     :return: A list of the tags that mean a story has been processed by some version of CLIFF (ie. the story
      has been tagged with people, places, and organizations)
@@ -87,6 +96,18 @@ def is_metadata_tag_set(tag_sets_id):
     '''
     for name_to_tags_sets_id in VALID_METADATA_IDS:
         if int(tag_sets_id) in name_to_tags_sets_id.values():
+            return True
+    return False
+
+
+def is_bad_theme(tag_id):
+    '''
+    Find out if a tag set is one used to hold metadata on a Source.
+    :param tag_sets_id: the id of tag set
+    :return: True if it is a valid metadata tag set, False if it is not
+    '''
+
+    if int(tag_id) in BAD_THEMES:
             return True
     return False
 

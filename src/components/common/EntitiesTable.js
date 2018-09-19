@@ -23,8 +23,8 @@ const EntitiesTable = (props) => {
             <th><FormattedMessage {...columnHeaderMsg} /></th>
             <th className="numeric"><FormattedMessage {...messages.entityPercentage} /></th>
           </tr>
-          {entities.map((entity, idx) =>
-            (<tr key={entity.tags_id} className={(idx % 2 === 0) ? 'even' : 'odd'}>
+          {entities.map((entity, idx) => (
+            <tr key={entity.tags_id} className={(idx % 2 === 0) ? 'even' : 'odd'}>
               <td>
                 <a
                   className="entity-table"
@@ -39,8 +39,7 @@ const EntitiesTable = (props) => {
                 { formatNumber(entity.pct, { style: 'percent', maximumFractionDigits: 0 }) }
               </td>
             </tr>
-            )
-          )}
+          ))}
         </tbody>
       </table>
     </div>

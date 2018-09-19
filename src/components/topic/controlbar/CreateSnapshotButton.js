@@ -37,8 +37,8 @@ CreateSnapshotButton.propTypes = {
 };
 
 export default
-  injectIntl(
-    withHelp(localMessages.helpTitle, localMessages.helpText)(
-      CreateSnapshotButton
-    )
-  );
+injectIntl(
+  withHelp(localMessages.helpTitle, localMessages.helpText)(
+    CreateSnapshotButton
+  )
+);

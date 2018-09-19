@@ -18,7 +18,6 @@ const localMessages = {
 const SearchForm = (props) => {
   const { handleSubmit, onSearch, renderTextField } = props;
   // need to init initialValues a bit on the way in to make lower-level logic work right
-
   return (
     <form className="app-form search-form" name="searchForm" onSubmit={handleSubmit(onSearch.bind(this))}>
       <Row>
@@ -73,10 +72,10 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        SearchForm
-      ),
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      SearchForm
     ),
-  );
+  ),
+);

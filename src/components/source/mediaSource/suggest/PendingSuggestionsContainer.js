@@ -35,7 +35,7 @@ const PendingSuggestionsContainer = (props) => {
       </Row>
       <Row>
         { suggestions.map(s => (
-          <Col key={s.media_suggestions_id} lg={12} >
+          <Col key={s.media_suggestions_id} lg={12}>
             <SourceSuggestion suggestion={s} markable onApprove={handleApprove} onReject={handleReject} />
           </Col>
         ))}
@@ -82,10 +82,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        PendingSuggestionsContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      PendingSuggestionsContainer
     )
-  );
+  )
+);

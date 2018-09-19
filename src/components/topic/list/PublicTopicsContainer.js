@@ -25,6 +25,7 @@ const PublicTopicsContainer = (props) => {
         }}
         onSetFavorited={(id, isFav) => { onSetFavorited(id, isFav); asyncFetch(); }}
         emptyMsg={localMessages.empty}
+        hideState
       />
     </div>
   );
@@ -55,10 +56,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        PublicTopicsContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      PublicTopicsContainer
     )
-  );
+  )
+);

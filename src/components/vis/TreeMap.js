@@ -1,3 +1,5 @@
+/* eslint react/no-this-in-sfc: 0 */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
@@ -47,7 +49,7 @@ const TreeMap = (props) => {
         point: {
           events: {
             click: function handleLeafClick(event) {
-              onLeafClick(event, this);  // preserve the highcharts "this", which is the chart
+              onLeafClick(event, this); // preserve the highcharts "this", which is the chart
             },
           },
         },
@@ -71,7 +73,4 @@ TreeMap.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default
-  injectIntl(
-    TreeMap
-  );
+export default injectIntl(TreeMap);

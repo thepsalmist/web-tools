@@ -62,9 +62,9 @@ const TopicCreate3ConfirmContainer = (props) => {
       <p>
         <b><FormattedHTMLMessage {...messages.topicSourceCollectionsProp} /></b>:
       </p>
-      {formValues.sourcesAndCollections.map(object =>
+      {formValues.sourcesAndCollections.map(object => (
         <SourceOrCollectionChip key={object.tags_id || object.media_id} object={object} />
-      )}
+      ))}
     </div>
   );
   if (submitting) {
@@ -88,7 +88,7 @@ const TopicCreate3ConfirmContainer = (props) => {
         <Row>
           <Col lg={10}>
             <h2><FormattedMessage {...localMessages.title} /></h2>
-            <WarningNotice ><FormattedMessage {...localMessages.state} /></WarningNotice>
+            <WarningNotice><FormattedMessage {...localMessages.state} /></WarningNotice>
             {topicDetailsContent}
             <br />
             <AppButton flat label={formatMessage(messages.previous)} onClick={() => handlePreviousStep()} />
@@ -136,7 +136,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   handleCreateTopic: (storyCount, user, values) => {
     if (((storyCount > MIN_RECOMMENDED_STORIES) && (storyCount < MAX_RECOMMENDED_STORIES))
-      || hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {  // min/max limits dont apply to admin users
+      || hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) { // min/max limits dont apply to admin users
       // all good, so submit!
       const queryInfo = {
         name: values.name,
@@ -166,15 +166,18 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         }
         return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
       });
-    } else if (!hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {
+    }
+    if (!hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {
       // min/max don't apply to admins
       if (storyCount > WARNING_LIMIT_RECOMMENDED_STORIES && storyCount < MAX_RECOMMENDED_STORIES) {
         dispatch(updateFeedback({ classes: 'warning-notice', open: true, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
         return dispatch(addNotice({ level: LEVEL_WARNING, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
-      } else if (storyCount > MAX_RECOMMENDED_STORIES) {
+      }
+      if (storyCount > MAX_RECOMMENDED_STORIES) {
         dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
         return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
-      } else if (storyCount < MIN_RECOMMENDED_STORIES) {
+      }
+      if (storyCount < MIN_RECOMMENDED_STORIES) {
         dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.notEnoughStories) }));
         return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.notEnoughStories) }));
       }
@@ -191,15 +194,15 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 
 const reduxFormConfig = {
   form: 'topicForm',
-  destroyOnUnmount: false,  // so the wizard works
+  destroyOnUnmount: false, // so the wizard works
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
 };
 
 export default
-  withIntlForm(
-    reduxForm(reduxFormConfig)(
-      connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-        TopicCreate3ConfirmContainer
-      )
+withIntlForm(
+  reduxForm(reduxFormConfig)(
+    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+      TopicCreate3ConfirmContainer
     )
-  );
+  )
+);

@@ -55,8 +55,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      PublicTopicSummaryContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    PublicTopicSummaryContainer
+  )
+);

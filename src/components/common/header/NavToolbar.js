@@ -102,6 +102,6 @@ NavToolbar.propTypes = {
 };
 
 export default
-  injectIntl(
-    NavToolbar
-  );
+injectIntl(
+  NavToolbar
+);

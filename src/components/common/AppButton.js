@@ -9,7 +9,6 @@ import Button from '@material-ui/core/Button';
  * @see http://stackoverflow.com/questions/39458150/is-it-possible-to-add-a-custom-hover-color-to-raised-buttons
  */
 class AppButton extends React.Component {
-
   state = {
     hoverClass: '',
   };
@@ -65,7 +64,6 @@ class AppButton extends React.Component {
 
     return content;
   }
-
 }
 
 AppButton.propTypes = {
@@ -80,6 +78,6 @@ AppButton.propTypes = {
 };
 
 export default
-  injectIntl(
-    AppButton
-  );
+injectIntl(
+  AppButton
+);

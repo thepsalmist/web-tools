@@ -1,15 +1,14 @@
 @import '../_constants';
 
 .metadata-picker {
+  margin-bottom: 15px;
 
-  background-color: #ff0000;
-
-  input:focus {
-    background-color: $material-orange500 !important;
-  }
-
-  &:focus {
-    background-color: #fff000;
+  label {
+    font-size: 16px;
+    font-family: Lato;
+    margin-bottom: 10px;
+    display: block;
+    font-weight: bold;
   }
 
 }

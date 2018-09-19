@@ -26,7 +26,7 @@ const localMessages = {
 };
 
 const TopicPreviewList = (props) => {
-  const { topics, linkGenerator, onSetFavorited, emptyMsg } = props;
+  const { topics, linkGenerator, onSetFavorited, emptyMsg, hideState } = props;
   let content = null;
   if (topics && topics.length > 0) {
     content = (
@@ -85,7 +85,7 @@ const TopicPreviewList = (props) => {
                   </div>
                 </div>
               </DataCard>
-              {topicStateNotice}
+              {!hideState && topicStateNotice}
             </div>
           </Col>
         );
@@ -111,14 +111,14 @@ TopicPreviewList.propTypes = {
   topics: PropTypes.array.isRequired,
   onSetFavorited: PropTypes.func,
   emptyMsg: PropTypes.object,
+  hideState: PropTypes.bool,
   // from compositional chain
   intl: PropTypes.object.isRequired,
 };
 
-
 export default
-  injectIntl(
-    connect(null)(
-      TopicPreviewList
-    )
-  );
+injectIntl(
+  connect(null)(
+    TopicPreviewList
+  )
+);

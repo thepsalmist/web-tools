@@ -7,16 +7,16 @@ import { queryChangedEnoughToUpdate } from '../../../lib/explorerUtil';
 function withQueryResults(ChildComponent) {
   class QueryResultsSelector extends React.Component {
     state = {
-      fetchedData: undefined,
       selectedQueryIndex: 0,
     };
+
     componentWillReceiveProps(nextProps) {
       const { lastSearchTime, fetchData } = this.props;
       if (nextProps.lastSearchTime !== lastSearchTime) {
         fetchData(nextProps.queries);
-        this.setState({ fetchedData: true });
       }
     }
+
     shouldComponentUpdate(nextProps) {
       const { results, queries, shouldUpdate } = this.props;
       // ask the child if internal repainting is needed
@@ -24,10 +24,12 @@ function withQueryResults(ChildComponent) {
       const childShouldUpdate = (shouldUpdate && shouldUpdate(nextProps));
       return childShouldUpdate || defaultShouldUpdate;
     }
+
     setView(nextView) {
       this.setState({ selectedQueryIndex: nextView });
       this.forceUpdate();
     }
+
     render() {
       const { queries } = this.props;
       const tabSelector = <TabSelector onViewSelected={idx => this.setView(idx)} tabLabels={queries} />;
@@ -35,7 +37,7 @@ function withQueryResults(ChildComponent) {
         <div className="query-results-selector">
           <ChildComponent
             {...this.props}
-            selectedTabIndex={this.state.selectedQueryIndex}  // for backwards compatability
+            selectedTabIndex={this.state.selectedQueryIndex} // for backwards compatability
             selectedQueryIndex={this.state.selectedQueryIndex}
             selectedQuery={queries[this.state.selectedQueryIndex]}
             tabSelector={tabSelector}

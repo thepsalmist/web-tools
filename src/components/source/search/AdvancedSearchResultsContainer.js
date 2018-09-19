@@ -5,13 +5,10 @@ import { connect } from 'react-redux';
 import { Grid } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import AdvancedSearchResults from './AdvancedSearchResults';
+import AdvancedSearchResults, { ADD_ALL_THIS_PAGE, ADD_ALL_PAGES } from './AdvancedSearchResults';
 import { fetchSourceByMetadata, fetchCollectionByMetadata,
   selectAdvancedSearchCollection, selectAdvancedSearchSource } from '../../../actions/sourceActions';
 
-export const ADD_ALL_THIS_PAGE = 1;
-export const REMOVE_ALL = 0;
-export const ADD_ALL_PAGES = 2;
 
 // TODO when paging is implemented, we'll have to set these booleans...
 const FIRST_PAGE = true;
@@ -20,28 +17,33 @@ class AdvancedSearchResultsContainer extends React.Component {
   componentDidMount = () => {
     this.setState({ allOrNoneCheck: false });
   }
+
   componentWillReceiveProps(nextProps) {
     const { searchString, tags, fetchData } = this.props;
     if ((nextProps.searchString !== searchString) || (nextProps.tags !== tags)) {
       fetchData(nextProps.searchString, nextProps.tags);
     }
   }
+
   addOrRemoveToSelectedSources= (mediaId, checked) => {
     const { dispatchSourceSelection } = this.props;
     dispatchSourceSelection([mediaId], checked);
   };
+
   addOrRemoveToSelectedCollections = (tagId, checked) => {
     const { dispatchCollectionSelection } = this.props;
     dispatchCollectionSelection([tagId], checked);
   };
+
   evalStateAndPage = () => {
-    if (this.state &&
-      (this.state.allOrNoneCheck === ADD_ALL_PAGES ||
-      (this.state.allOrNoneCheck === ADD_ALL_THIS_PAGE && FIRST_PAGE))) {
+    if (this.state
+      && (this.state.allOrNoneCheck === ADD_ALL_PAGES
+        || (this.state.allOrNoneCheck === ADD_ALL_THIS_PAGE && FIRST_PAGE))) {
       return true;
     }
     return false;
   };
+
   addOrRemoveAllSelected = (values) => {
     const { dispatchSourceSelection, dispatchCollectionSelection } = this.props;
     this.setState({ allOrNoneCheck: values });
@@ -52,6 +54,7 @@ class AdvancedSearchResultsContainer extends React.Component {
     dispatchCollectionSelection([], values);
     // dispatch a click to all the checkboxes to checked somehow
   };
+
   pushToCreateCollectionPage = () => {
     const { searchString, queriedSources, queriedCollections, dispatchToCreate, dispatchToCreateWithSearch } = this.props;
     if (this.state && this.state.allOrNoneCheck === ADD_ALL_PAGES) {
@@ -60,6 +63,7 @@ class AdvancedSearchResultsContainer extends React.Component {
       dispatchToCreate(queriedSources, queriedCollections);
     }
   };
+
   render() {
     const { queriedSources, queriedCollections } = this.props;
     return (
@@ -163,10 +167,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        AdvancedSearchResultsContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      AdvancedSearchResultsContainer
     )
-  );
+  )
+);

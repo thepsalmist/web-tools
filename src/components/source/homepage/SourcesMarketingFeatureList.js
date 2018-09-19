@@ -19,22 +19,21 @@ const SourcesMarketingFeatureList = () => (
     <MarketingFeatureItem
       titleMsg={localMessages.globalCollectionsTitle}
       contentMsg={localMessages.globalCollectionsDescription}
-      imageName={'global-collections-2x.png'}
+      imageName="global-collections-2x.png"
       imageOnLeft
     />
     <MarketingFeatureItem
       titleMsg={localMessages.liveSourcesTitle}
       contentMsg={localMessages.liveSourcesDescription}
-      imageName={'live-sources-2x.png'}
+      imageName="live-sources-2x.png"
     />
     <MarketingFeatureItem
       titleMsg={localMessages.metadataTitle}
       contentMsg={localMessages.metadataDescription}
-      imageName={'metadata-2x.png'}
+      imageName="metadata-2x.png"
       imageOnLeft
     />
   </div>
 );
 
-export default
-  SourcesMarketingFeatureList;
+export default SourcesMarketingFeatureList;

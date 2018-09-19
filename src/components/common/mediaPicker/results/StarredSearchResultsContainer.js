@@ -4,7 +4,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import CollectionResultsTable from './CollectionResultsTable';
 import SourceResultsTable from './SourceResultsTable';
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
-import LoadingSpinner from '../../../common/LoadingSpinner';
+import LoadingSpinner from '../../LoadingSpinner';
 
 const localMessages = {
   collTitle: { id: 'system.mediaPicker.favorited.title', defaultMessage: 'My Starred Collections' },
@@ -58,7 +58,6 @@ StarredSearchResultsContainer.propTypes = {
 
 
 export default
-  injectIntl(
-    StarredSearchResultsContainer
-  );
-
+injectIntl(
+  StarredSearchResultsContainer
+);

@@ -5,7 +5,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
+import AppButton from './AppButton';
 import messages from '../../resources/messages';
 
 class SimpleDialog extends React.Component {
@@ -13,7 +13,8 @@ class SimpleDialog extends React.Component {
     open: false,
   };
 
-  handleClickOpen = () => {
+  handleClickOpen = (evt) => {
+    evt.preventDefault();
     this.setState({ open: true });
   };
 
@@ -26,7 +27,7 @@ class SimpleDialog extends React.Component {
     const { formatMessage } = this.props.intl;
     return (
       <span>
-        <a role="button" tabIndex="0" onClick={this.handleClickOpen}>{trigger}</a>
+        <a href="#" role="button" tabIndex="0" onClick={this.handleClickOpen}>{trigger}</a>
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
@@ -37,13 +38,13 @@ class SimpleDialog extends React.Component {
             {children}
           </DialogContent>
           <DialogActions>
-            <Button
-              variant="outlined"
+            <AppButton
+              primary
               label={formatMessage(messages.ok)}
               onClick={this.handleClose}
             >
               <FormattedMessage {...messages.ok} />
-            </Button>,
+            </AppButton>,
           </DialogActions>
         </Dialog>
       </span>
@@ -60,7 +61,4 @@ SimpleDialog.propTypes = {
 };
 
 
-export default
-  injectIntl(
-    SimpleDialog
-  );
+export default injectIntl(SimpleDialog);

@@ -13,7 +13,7 @@ import messages from '../../resources/messages';
 import { emptyString, invalidEmail, passwordTooShort, stringsDoNotMatch } from '../../lib/formValidators';
 import withIntlForm from '../common/hocs/IntlForm';
 import { addNotice } from '../../actions/appActions';
-import { LEVEL_ERROR } from '../../components/common/Notice';
+import { LEVEL_ERROR } from '../common/Notice';
 
 const localMessages = {
   intro: { id: 'user.signup.intro', defaultMessage: 'Create an account to use all our tools for free.' },
@@ -26,19 +26,20 @@ const localMessages = {
   subscribeToNewsletter: { id: 'user.signUp.subscribeToNewsletter', defaultMessage: 'Subscribe to Newsletter?' },
   userAlreadyExists: { id: 'user.signUp.error.alreadyExists', defaultMessage: 'Sorry, but a user with that email already exists! Did you <a href="/#/request-password-reset">need to reset your password</a>?' },
   signupSuccess: { id: 'user.signUp.success',
-    defaultMessage: '<h1>Clink the link we just emailed you</h1>' +
-    '<p>To make sure your email is valid, we have sent you a message with a magic link for you to click.  Click the link in the email to confirm that we got your email right.<p>' +
-    '<p><a href="post-to-recover-password">Click here to send the email again</a>.</p>.' },
+    defaultMessage: '<h1>Clink the link we just emailed you</h1>'
+    + '<p>To make sure your email is valid, we have sent you a message with a magic link for you to click.  Click the link in the email to confirm that we got your email right.<p>'
+    + '<p><a href="post-to-recover-password">Click here to send the email again</a>.</p>.' },
 };
 
 class SignupContainer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { allowSignup: false };
+  state = {
+    passedCaptcha: false,
   }
+
   passedCaptcha() {
     this.setState({ passedCaptcha: true });
   }
+
   render() {
     const { handleSubmit, handleSignupSubmission, pristine, submitting, renderTextField, renderCheckbox } = this.props;
     const { formatMessage } = this.props.intl;
@@ -157,8 +158,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleSignupSubmission: values =>
-    dispatch(signupUser(values))
+  handleSignupSubmission: values => dispatch(signupUser(values))
     .then((response) => {
       if (response.success !== 1) {
         if (response.message.includes('already exists')) {
@@ -205,10 +205,10 @@ const reduxFormConfig = {
 };
 
 export default
-  withIntlForm(
-    reduxForm(reduxFormConfig)(
-      connect(mapStateToProps, mapDispatchToProps)(
-        SignupContainer
-      )
+withIntlForm(
+  reduxForm(reduxFormConfig)(
+    connect(mapStateToProps, mapDispatchToProps)(
+      SignupContainer
     )
-  );
+  )
+);

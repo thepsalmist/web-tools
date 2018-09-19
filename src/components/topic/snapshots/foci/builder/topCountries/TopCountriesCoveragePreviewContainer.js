@@ -22,6 +22,7 @@ class TopCountriesCoveragePreviewContainer extends React.Component {
       fetchData(topicId, nextProps.numCountries);
     }
   }
+
   render() {
     const { count, total } = this.props;
     const { formatMessage } = this.props.intl;
@@ -88,10 +89,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        TopCountriesCoveragePreviewContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      TopCountriesCoveragePreviewContainer
     )
-  );
+  )
+);

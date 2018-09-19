@@ -18,14 +18,11 @@ ToolDescription.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
   // from parent
-  name: PropTypes.object.isRequired,  // a msg to intl
-  description: PropTypes.object.isRequired,  // a msg to intl
+  name: PropTypes.object.isRequired, // a msg to intl
+  description: PropTypes.object.isRequired, // a msg to intl
   screenshotUrl: PropTypes.string.isRequired,
   className: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
 };
 
-export default
-  injectIntl(
-    ToolDescription
-  );
+export default injectIntl(ToolDescription);

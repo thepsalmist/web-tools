@@ -29,6 +29,6 @@ Masthead.propTypes = {
 };
 
 export default
-  injectIntl(
-    Masthead
-  );
+injectIntl(
+  Masthead
+);

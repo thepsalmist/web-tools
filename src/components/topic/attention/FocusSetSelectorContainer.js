@@ -30,9 +30,7 @@ const FocusSetSelectorContainer = (props) => {
           onChange={onFocalSetSelected}
           fullWidth
         >
-          {focalSets.map(fs =>
-            <MenuItem key={fs.focal_sets_id} value={fs.focal_sets_id}>{fs.name}</MenuItem>)
-          }
+          {focalSets.map(fs => <MenuItem key={fs.focal_sets_id} value={fs.focal_sets_id}>{fs.name}</MenuItem>)}
           {noneOption}
         </Select>
       </React.Fragment>
@@ -70,4 +68,9 @@ const mapStateToProps = state => ({
   focalSets: state.topics.selected.focalSets.all.list,
 });
 
-export default connect(mapStateToProps)(injectIntl(FocusSetSelectorContainer));
+export default
+connect(mapStateToProps)(
+  injectIntl(
+    FocusSetSelectorContainer
+  )
+);

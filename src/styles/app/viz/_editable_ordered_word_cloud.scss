@@ -1,0 +1,33 @@
+@import '../../_constants';
+
+.editable-word-cloud-datacard {
+  .ordered-word-cloud > svg {
+    text {
+      cursor: pointer;
+    }
+  }
+}
+
+.editable-word-cloud-datacard.editing {
+ .ordered-word-cloud > svg {
+    text.word.show{
+    	opacity: 1;
+    }
+    text.word.hide{
+    	opacity: .2;
+    }
+    text {
+      &:hover {
+        text-decoration: line-through;
+        fill: #000000 !important;
+        opacity: .2 !important;
+      }
+    }
+  }
+}
+
+.editable-word-cloud-datacard.editing {
+  border: 5px solid $material-orange500;
+}
+
+

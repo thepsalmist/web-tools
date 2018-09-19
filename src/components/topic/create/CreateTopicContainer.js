@@ -23,7 +23,7 @@ const CreateTopicContainer = (props) => {
   return (
     <TopicBuilderWizard
       startStep={0}
-      location={location}
+      location={window.location}
     />
   );
 };
@@ -50,10 +50,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncFetch(
-        CreateTopicContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncFetch(
+      CreateTopicContainer
     )
-  );
+  )
+);

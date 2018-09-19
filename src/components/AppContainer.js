@@ -30,6 +30,7 @@ class AppContainer extends React.Component {
       this.setState({ open: true });
     }
   }
+
   handleClose = () => {
     this.setState({ open: false });
   };
@@ -66,20 +67,21 @@ class AppContainer extends React.Component {
           </div>
         </ErrorBoundary>
         <footer>
-          <p><small>
-            {'Created by the '}
-            <a href="https://civic.mit.edu/">
-              <FormattedMessage {...messages.c4cmName} />
-            </a>
-            {' and the '}
-            <a href="https://cyber.law.harvard.edu">
-              <FormattedMessage {...messages.berkmanName} />
-            </a>.
-            <br />
-            <FormattedHTMLMessage {...localMessages.supportOptions} />
-            <br />
-            v{getVersion()}
-          </small>
+          <p>
+            <small>
+              {'Created by the '}
+              <a href="https://civic.mit.edu/">
+                <FormattedMessage {...messages.c4cmName} />
+              </a>
+              {' and the '}
+              <a href="https://cyber.law.harvard.edu">
+                <FormattedMessage {...messages.berkmanName} />
+              </a>.
+              <br />
+              <FormattedHTMLMessage {...localMessages.supportOptions} />
+              <br />
+              v{getVersion()}
+            </small>
           </p>
         </footer>
         <Snackbar
@@ -120,8 +122,8 @@ const mapStateToProps = state => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps)(
-      AppContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps)(
+    AppContainer
+  )
+);

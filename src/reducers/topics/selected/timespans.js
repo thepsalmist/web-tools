@@ -37,8 +37,8 @@ const timespans = createAsyncReducer({
     const selected = getTimespanFromListById(list, state.selectedId);
     return { list, selected };
   },
-  [TOPIC_FILTER_BY_SNAPSHOT]: () => initialState,  // when snapshot changes reset these
-  [TOPIC_FILTER_BY_FOCUS]: () => initialState,  // when focus changes reset these
+  [TOPIC_FILTER_BY_SNAPSHOT]: () => initialState, // when snapshot changes reset these
+  [TOPIC_FILTER_BY_FOCUS]: () => initialState, // when focus changes reset these
   [TOGGLE_TIMESPAN_CONTROLS]: payload => ({ isVisible: payload }),
   [SET_TIMESPAN_VISIBLE_PERIOD]: payload => ({ selectedPeriod: payload }),
   [TOPIC_FILTER_BY_TIMESPAN]: (payload, state) => {
@@ -51,7 +51,7 @@ const timespans = createAsyncReducer({
     // for some reason when the user hits the back button we need to manually re-render
     // if the timespan has changed
     const updates = {};
-    if (state.list.length === 0) {  // bail if we haven't fetched list from server yet (ie. page load)
+    if (state.list.length === 0) { // bail if we haven't fetched list from server yet (ie. page load)
       return updates;
     }
     if (payload.query.timespanId) {

@@ -50,6 +50,6 @@ ItemSlider.propTypes = {
 };
 
 export default
-  injectIntl(
-    ItemSlider
-  );
+injectIntl(
+  ItemSlider
+);

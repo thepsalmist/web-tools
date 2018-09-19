@@ -3,15 +3,15 @@ import React from 'react';
 import { Field, reduxForm, FormSection } from 'redux-form';
 import { injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
-import withIntlForm from '../../common/hocs/IntlForm';
-import MetadataPickerContainer from '../../common/MetadataPickerContainer';
+import withIntlForm from '../hocs/IntlForm';
+import MetadataPickerContainer from '../MetadataPickerContainer';
 import MediaPickerSearchForm from './MediaPickerSearchForm';
-import AppButton from '../../common/AppButton';
+import AppButton from '../AppButton';
 import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE } from '../../../lib/tagUtil';
 
 const localMessages = {
   searchSuggestion: { id: 'search.advanced.searchTip', defaultMessage: 'match these words' },
-  pubCountrySuggestion: { id: 'search.advanced.pubCountryTip', defaultMessage: 'published in' },
+  pubCountrySuggestion: { id: 'search.advanced.pubCountryTip', defaultMessage: 'country published in' },
   pubStateSuggestion: { id: 'search.advanced.pubStateTip', defaultMessage: 'state published in' },
   pLanguageSuggestion: { id: 'search.advanced.pLanguageTip', defaultMessage: 'primary language' },
   pCountryOfFocusSuggestion: { id: 'search.advanced.pCountryOfFocusTip', defaultMessage: 'country of focus' },
@@ -23,9 +23,10 @@ class AdvancedMediaPickerSearchForm extends React.Component {
   handleSearchButtonClick = (evt) => {
     const { onSearch } = this.props;
     evt.preventDefault();
-    const searchStr = document.getElementsByTagName('input')[0].value;  // note: this is a brittle hack
+    const searchStr = document.getElementsByTagName('input')[0].value; // note: this is a brittle hack
     onSearch({ mediaKeyword: searchStr });
   }
+
   render() {
     const { initValues, renderTextField, hintText } = this.props;
     const { formatMessage } = this.props.intl;
@@ -35,7 +36,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         <Row>
           <Col lg={10}>
             <Field
-              name={'advancedSearchQueryString'}
+              name="advancedSearchQueryString"
               value={initValues}
               component={renderTextField}
               label={formatMessage(localMessages.searchSuggestion)}
@@ -47,8 +48,9 @@ class AdvancedMediaPickerSearchForm extends React.Component {
           <Col lg={6}>
             <MetadataPickerContainer
               autocomplete
+              isClearable
               id={TAG_SET_PUBLICATION_COUNTRY}
-              name={'publicationCountry'}
+              name="publicationCountry"
               form="advancedQueryForm"
               label={formatMessage(localMessages.pubCountrySuggestion)}
             />
@@ -56,8 +58,9 @@ class AdvancedMediaPickerSearchForm extends React.Component {
           <Col lg={6}>
             <MetadataPickerContainer
               autocomplete
+              isClearable
               id={TAG_SET_PUBLICATION_STATE}
-              name={'publicationState'}
+              name="publicationState"
               form="advancedQueryForm"
               label={formatMessage(localMessages.pubStateSuggestion)}
             />
@@ -65,8 +68,9 @@ class AdvancedMediaPickerSearchForm extends React.Component {
           <Col lg={6}>
             <MetadataPickerContainer
               autocomplete
+              isClearable
               id={TAG_SET_PRIMARY_LANGUAGE}
-              name={'primaryLanguage'}
+              name="primaryLanguage"
               form="advancedQueryForm"
               label={formatMessage(localMessages.pLanguageSuggestion)}
             />
@@ -74,8 +78,9 @@ class AdvancedMediaPickerSearchForm extends React.Component {
           <Col lg={6}>
             <MetadataPickerContainer
               autocomplete
+              isClearable
               id={TAG_SET_COUNTRY_OF_FOCUS}
-              name={'countryOfFocus'}
+              name="countryOfFocus"
               form="advancedQueryForm"
               label={formatMessage(localMessages.pCountryOfFocusSuggestion)}
             />
@@ -83,6 +88,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
           <Col lg={6}>
             <MetadataPickerContainer
               autocomplete
+              isClearable
               id={TAG_SET_MEDIA_TYPE}
               showDescription
               name="mediaType"
@@ -135,10 +141,10 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        AdvancedMediaPickerSearchForm
-      )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      AdvancedMediaPickerSearchForm
     )
-  );
+  )
+);

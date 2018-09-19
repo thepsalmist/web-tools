@@ -26,7 +26,7 @@ const localMessages = {
   },
 };
 
-const COVERAGE_REQUIRED = 0.7;  // need > this many of the stories tagged to show the results
+const COVERAGE_REQUIRED = 0.7; // need > this many of the stories tagged to show the results
 
 class GeoTagSummaryContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
@@ -35,11 +35,13 @@ class GeoTagSummaryContainer extends React.Component {
       fetchData(nextProps.filters);
     }
   }
+
   downloadCsv = () => {
     const { topicId, filters } = this.props;
     const url = `/api/topics/${topicId}/geo-tags/counts.csv?${filtersAsUrlParams(filters)}`;
     window.location = url;
   }
+
   render() {
     const { data, coverage } = this.props;
     const { formatNumber } = this.props.intl;
@@ -76,7 +78,6 @@ class GeoTagSummaryContainer extends React.Component {
       </React.Fragment>
     );
   }
-
 }
 
 GeoTagSummaryContainer.propTypes = {
@@ -110,12 +111,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withSummary(localMessages.title, localMessages.helpIntro, messages.heatMapHelpText)(
-        withAsyncFetch(
-          GeoTagSummaryContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withSummary(localMessages.title, localMessages.helpIntro, messages.heatMapHelpText)(
+      withAsyncFetch(
+        GeoTagSummaryContainer
       )
     )
-  );
+  )
+);

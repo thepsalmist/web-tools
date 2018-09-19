@@ -90,7 +90,7 @@ function drawViz(wrapperElement, {
 
   if (circles && circles.length > 0) {
     // render it all
-    const node = d3.select(wrapperElement).html('');  // important to empty this out
+    const node = d3.select(wrapperElement).html(''); // important to empty this out
     const div = node.append('div').attr('id', 'bubble-chart-wrapper');
     const svg = div.append('svg:svg');
     svg.attr('id', domId)
@@ -119,10 +119,10 @@ function drawViz(wrapperElement, {
     }
     // now add the bubbles on top
     const bubbles = svg.append('g')
-        .attr('transform', `translate(${horizontalTranslaton},${options.height / 2})`)
-        .selectAll('.bubble')
-        .data(circles)
-        .enter();
+      .attr('transform', `translate(${horizontalTranslaton},${options.height / 2})`)
+      .selectAll('.bubble')
+      .data(circles)
+      .enter();
     const cursor = onBubbleClick ? 'pointer' : '';
     bubbles.append('circle')
       .attr('class', 'pct')
@@ -137,8 +137,8 @@ function drawViz(wrapperElement, {
       .on('mouseover', (d) => {
         const pixel = 'px';
         rollover.html(d.rolloverText ? d.rolloverText : '')
-        .style('left', d3.event.pageX + pixel)
-        .style('top', d3.event.pageY + pixel);
+          .style('left', d3.event.pageX + pixel)
+          .style('top', d3.event.pageY + pixel);
         rollover.transition().duration(200).style('opacity', 0.9);
       })
       .on('mouseout', () => {
@@ -184,7 +184,6 @@ function drawViz(wrapperElement, {
  * Draw a bubble chart with labels.  Values are mapped to area, not radius.
  */
 class BubbleRowChart extends React.Component {
-
   constructor(props) {
     super(props);
     this.chartWrapperRef = React.createRef();
@@ -213,7 +212,6 @@ class BubbleRowChart extends React.Component {
       <div className="bubble-row-chart-wrapper" ref={this.chartWrapperRef} />
     );
   }
-
 }
 
 BubbleRowChart.propTypes = {
@@ -233,7 +231,7 @@ BubbleRowChart.propTypes = {
   */
   onBubbleClick: PropTypes.func,
   data: PropTypes.array.isRequired,
-  domId: PropTypes.string.isRequired,  // to make download work
+  domId: PropTypes.string.isRequired, // to make download work
   width: PropTypes.number,
   height: PropTypes.number,
   placement: PropTypes.string,

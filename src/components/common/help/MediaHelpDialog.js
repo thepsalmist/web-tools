@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import SimpleDialog from '../../common/SimpleDialog';
+import SimpleDialog from '../SimpleDialog';
 
 const localMessages = {
   invitation: { id: 'help.media.invitation', defaultMessage: 'Learn about writing search terms.' },
@@ -41,7 +41,4 @@ MediaHelpDialog.propTypes = {
   title: PropTypes.string,
 };
 
-export default
-  injectIntl(
-    MediaHelpDialog
-  );
+export default injectIntl(MediaHelpDialog);

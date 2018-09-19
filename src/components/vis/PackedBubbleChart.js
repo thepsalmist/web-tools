@@ -67,10 +67,10 @@ function drawViz(wrapperElement, {
     // only center align if auto layout
     const horizontalTranslaton = options.width / 2;
     const bubbles = svg.append('g')
-        .attr('transform', `translate(${horizontalTranslaton},${options.height / 2})`)
-        .selectAll('.bubble')
-        .data(circles)
-        .enter();
+      .attr('transform', `translate(${horizontalTranslaton},${options.height / 2})`)
+      .selectAll('.bubble')
+      .data(circles)
+      .enter();
 
     // create the bubbles
     const midW = options.width / 2;
@@ -83,25 +83,25 @@ function drawViz(wrapperElement, {
       .style('display', d => (d.parent !== null ? 'inline' : 'none'))
       .attr('transform', d => `translate(${d.x - midW},${d.y - midH})`)
       .attr('r', d => d.r);
-          // add tooltip to bubbles
+    // add tooltip to bubbles
     bubbles.selectAll('circle')
-    .on('click', (d) => {
-      const event = d3.event;
-      if ((onClick !== null) && (onClick !== undefined)) {
-        onClick(d, d3.select(event.target));
-      }
-      return null;
-    })
-    .on('mouseover', (d) => {
-      const pixel = 'px';
-      rollover.transition().duration(200).style('opacity', 0.9);
-      rollover.html(d.data && d.data.rolloverText ? d.data.rolloverText : '')
-      .style('left', d3.event.pageX + pixel)
-      .style('top', d3.event.pageY + pixel);
-    })
-    .on('mouseout', () => {
-      rollover.transition().duration(500).style('opacity', 0);
-    });
+      .on('click', (d) => {
+        const { event } = d3;
+        if ((onClick !== null) && (onClick !== undefined)) {
+          onClick(d, d3.select(event.target));
+        }
+        return null;
+      })
+      .on('mouseover', (d) => {
+        const pixel = 'px';
+        rollover.transition().duration(200).style('opacity', 0.9);
+        rollover.html(d.data && d.data.rolloverText ? d.data.rolloverText : '')
+          .style('left', d3.event.pageX + pixel)
+          .style('top', d3.event.pageY + pixel);
+      })
+      .on('mouseout', () => {
+        rollover.transition().duration(500).style('opacity', 0);
+      });
 
     // add center labels
     bubbles.append('text')
@@ -138,7 +138,6 @@ function drawViz(wrapperElement, {
  * Draw a bubble chart with labels.  Values are mapped to area, not radius.
  */
 class PackedBubbleChart extends React.Component {
-
   constructor(props) {
     super(props);
     this.chartWrapperRef = React.createRef();
@@ -182,7 +181,7 @@ PackedBubbleChart.propTypes = {
   }]
   */
   data: PropTypes.array.isRequired,
-  domId: PropTypes.string.isRequired,  // to make download work
+  domId: PropTypes.string.isRequired, // to make download work
   width: PropTypes.number,
   height: PropTypes.number,
   placement: PropTypes.string,

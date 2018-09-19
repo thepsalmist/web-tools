@@ -4,11 +4,11 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import { connect } from 'react-redux';
 import { fetchStoryEntities } from '../../../actions/storyActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import withHelp from '../../common/hocs/HelpfulContainer';
+import withAsyncFetch from '../hocs/AsyncContainer';
+import withHelp from '../hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
-import DataCard from '../../common/DataCard';
-import { DownloadButton } from '../../common/IconButton';
+import DataCard from '../DataCard';
+import { DownloadButton } from '../IconButton';
 import NamedEntitiesTable from './NamedEntitiesTable';
 
 const localMessages = {
@@ -25,11 +25,13 @@ class StoryEntitiesContainer extends React.Component {
       fetchData(nextProps.storyId);
     }
   }
+
   downloadCsv = () => {
     const { storyId } = this.props;
     const url = `/api/stories/${storyId}/entities.csv`;
     window.location = url;
   }
+
   render() {
     const { entities, helpButton } = this.props;
     const { formatMessage } = this.props.intl;
@@ -103,12 +105,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withHelp(localMessages.helpTitle, localMessages.helpIntro)(
-        withAsyncFetch(
-          StoryEntitiesContainer
-        )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withHelp(localMessages.helpTitle, localMessages.helpIntro)(
+      withAsyncFetch(
+        StoryEntitiesContainer
       )
     )
-  );
+  )
+);

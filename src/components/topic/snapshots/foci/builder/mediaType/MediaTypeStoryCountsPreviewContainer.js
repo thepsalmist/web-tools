@@ -25,12 +25,14 @@ const MediaTypeStoryCountsPreviewContainer = (props) => {
       fill: mapD3Top10Colors(idx),
       rolloverText: `${info.label}: ${formatNumber(info.count)}`,
     }));
-    content = (<BubbleRowChart
-      data={data}
-      domId={BUBBLE_CHART_DOM_ID}
-      width={700}
-      padding={30}
-    />);
+    content = (
+      <BubbleRowChart
+        data={data}
+        domId={BUBBLE_CHART_DOM_ID}
+        width={700}
+        padding={30}
+      />
+    );
   }
   return (
     <DataCard>
@@ -77,10 +79,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        MediaTypeStoryCountsPreviewContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      MediaTypeStoryCountsPreviewContainer
     )
-  );
+  )
+);

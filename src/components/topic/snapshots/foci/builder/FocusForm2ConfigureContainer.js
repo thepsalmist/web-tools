@@ -19,44 +19,54 @@ const FocusForm2ConfigureContainer = (props) => {
   let content = null;
   switch (currentFocalTechnique) {
     case FOCAL_TECHNIQUE_BOOLEAN_QUERY:
-      content = (<EditKeywordSearchContainer
-        topicId={topicId}
-        initialValues={initialValues}
-        onPreviousStep={handlePreviousStep}
-        onNextStep={handleNextStep}
-      />);
+      content = (
+        <EditKeywordSearchContainer
+          topicId={topicId}
+          initialValues={initialValues}
+          onPreviousStep={handlePreviousStep}
+          onNextStep={handleNextStep}
+        />
+      );
       break;
     case FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP:
-      content = (<EditRetweetPartisanshipContainer
-        topicId={topicId}
-        initialValues={initialValues}
-        onPreviousStep={handlePreviousStep}
-        onNextStep={handleNextStep}
-      />);
+      content = (
+        <EditRetweetPartisanshipContainer
+          topicId={topicId}
+          initialValues={initialValues}
+          onPreviousStep={handlePreviousStep}
+          onNextStep={handleNextStep}
+        />
+      );
       break;
     case FOCAL_TECHNIQUE_TOP_COUNTRIES:
-      content = (<EditTopCountriesContainer
-        topicId={topicId}
-        initialValues={initialValues}
-        onPreviousStep={handlePreviousStep}
-        onNextStep={handleNextStep}
-      />);
+      content = (
+        <EditTopCountriesContainer
+          topicId={topicId}
+          initialValues={initialValues}
+          onPreviousStep={handlePreviousStep}
+          onNextStep={handleNextStep}
+        />
+      );
       break;
     case FOCAL_TECHNIQUE_NYT_THEME:
-      content = (<EditNytThemeContainer
-        topicId={topicId}
-        initialValues={initialValues}
-        onPreviousStep={handlePreviousStep}
-        onNextStep={handleNextStep}
-      />);
+      content = (
+        <EditNytThemeContainer
+          topicId={topicId}
+          initialValues={initialValues}
+          onPreviousStep={handlePreviousStep}
+          onNextStep={handleNextStep}
+        />
+      );
       break;
     case FOCAL_TECHNIQUE_MEDIA_TYPE:
-      content = (<EditMediaTypeContainer
-        topicId={topicId}
-        initialValues={initialValues}
-        onPreviousStep={handlePreviousStep}
-        onNextStep={handleNextStep}
-      />);
+      content = (
+        <EditMediaTypeContainer
+          topicId={topicId}
+          initialValues={initialValues}
+          onPreviousStep={handlePreviousStep}
+          onNextStep={handleNextStep}
+        />
+      );
       break;
     default:
       content = <FormattedMessage {...messages.unimplemented} />;
@@ -96,8 +106,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default
-  connect(mapStateToProps, mapDispatchToProps)(
-    injectIntl(
-      FocusForm2ConfigureContainer
-    )
-  );
+connect(mapStateToProps, mapDispatchToProps)(
+  injectIntl(
+    FocusForm2ConfigureContainer
+  )
+);

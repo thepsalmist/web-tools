@@ -61,8 +61,8 @@ class SourceFeedTable extends React.Component {
               <th><FormattedMessage {...messages.feedIsActive} /></th>
               <th><FormattedMessage {...messages.feedUrl} /></th>
             </tr>
-            {tabFeeds.map((feed, idx) =>
-              (<tr key={feed.feeds_id} className={`${(idx % 2 === 0) ? 'even' : 'odd'} feed-${(feed.active) ? 'active' : 'disabled'}`}>
+            {tabFeeds.map((feed, idx) => (
+              <tr key={feed.feeds_id} className={`${(idx % 2 === 0) ? 'even' : 'odd'} feed-${(feed.active) ? 'active' : 'disabled'}`}>
                 <td>
                   {feed.name}
                 </td>
@@ -76,13 +76,12 @@ class SourceFeedTable extends React.Component {
                   <a href={feed.url}>{feed.url}</a>
                 </td>
                 <td>
-                  <Link to={`/sources/${feed.media_id}/feeds/${feed.feeds_id}/edit`} >
+                  <Link to={`/sources/${feed.media_id}/feeds/${feed.feeds_id}/edit`}>
                     <EditButton />
                   </Link>
                 </td>
               </tr>
-              )
-            )}
+            ))}
           </tbody>
         </table>
       </div>

@@ -8,7 +8,7 @@ const initialState = {
 const all = createAsyncReducer({
   initialState,
   action: FETCH_TOPIC_FOCAL_SETS_LIST,
-  [TOPIC_FILTER_BY_SNAPSHOT]: () => initialState,  // when snapshot changes reset these
+  [TOPIC_FILTER_BY_SNAPSHOT]: () => initialState, // when snapshot changes reset these
   handleSuccess: payload => ({
     list: payload,
   }),

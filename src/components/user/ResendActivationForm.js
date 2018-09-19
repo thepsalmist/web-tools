@@ -77,15 +77,15 @@ const mapStateToProps = () => ({
 const mapDispatchToProps = dispatch => ({
   handleFormSubmission: (values) => {
     dispatch(resendActivation(values))
-    .then((response) => {
-      if (response.success === 1) {
-        dispatch(push('/user/resend-activation-success'));
-      } else if (response.error) {
-        dispatch(addNotice({ message: response.error, level: LEVEL_ERROR }));
-      } else if (response.success !== 1) {
-        dispatch(addNotice({ message: localMessages.failed, level: LEVEL_ERROR }));
-      }
-    });
+      .then((response) => {
+        if (response.success === 1) {
+          dispatch(push('/user/resend-activation-success'));
+        } else if (response.error) {
+          dispatch(addNotice({ message: response.error, level: LEVEL_ERROR }));
+        } else if (response.success !== 1) {
+          dispatch(addNotice({ message: localMessages.failed, level: LEVEL_ERROR }));
+        }
+      });
   },
 });
 
@@ -104,12 +104,12 @@ const reduxFormConfig = {
 };
 
 export default
-  injectIntl(
-    withIntlForm(
-      reduxForm(reduxFormConfig)(
-        connect(mapStateToProps, mapDispatchToProps)(
-          ResendActivationForm
-        )
+injectIntl(
+  withIntlForm(
+    reduxForm(reduxFormConfig)(
+      connect(mapStateToProps, mapDispatchToProps)(
+        ResendActivationForm
       )
     )
-  );
+  )
+);

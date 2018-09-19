@@ -73,7 +73,6 @@ CollectionResultsTable.propTypes = {
 };
 
 export default
-  injectIntl(
-    CollectionResultsTable
-  );
-
+injectIntl(
+  CollectionResultsTable
+);

@@ -36,8 +36,4 @@ SampleSearchItem.propTypes = {
   user: PropTypes.object,
 };
 
-
-export default
-  injectIntl(
-    SampleSearchItem
-  );
+export default injectIntl(SampleSearchItem);

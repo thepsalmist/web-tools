@@ -36,6 +36,6 @@ RetweetPartisanshipSummary.propTypes = {
 };
 
 export default
-  injectIntl(
-    RetweetPartisanshipSummary
-  );
+injectIntl(
+  RetweetPartisanshipSummary
+);

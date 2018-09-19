@@ -41,8 +41,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 export default
-  injectIntl(
-    connect(mapStateToProps, null)(
-      ManageTimespansContainer
-    )
-  );
+injectIntl(
+  connect(mapStateToProps, null)(
+    ManageTimespansContainer
+  )
+);

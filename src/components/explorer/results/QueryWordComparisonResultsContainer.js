@@ -32,18 +32,20 @@ class QueryWordComparisonResultsContainer extends React.Component {
       selectComparativeWords(rightQ, RIGHT);
     }
   }
+
   componentWillReceiveProps(nextProps) {
     const { lastSearchTime, selectComparativeWords, leftQuery, rightQuery } = this.props;
     let leftQ = null;
     let rightQ = null;
     if (nextProps.lastSearchTime !== lastSearchTime) {
       // if a search query change from the top
-      leftQ = nextProps.queries[0];
+      const { temp } = nextProps.queries[0];
+      leftQ = temp;
       rightQ = nextProps.queries.length > 1 ? nextProps.queries[1] : nextProps.queries[0];
       selectComparativeWords(leftQ, LEFT);
       selectComparativeWords(rightQ, RIGHT);
-    } else if ((nextProps.leftQuery && nextProps.leftQuery !== leftQuery) ||
-      (nextProps.rightQuery && nextProps.rightQuery !== rightQuery)) {
+    } else if ((nextProps.leftQuery && nextProps.leftQuery !== leftQuery)
+      || (nextProps.rightQuery && nextProps.rightQuery !== rightQuery)) {
       // if a change in the comparison UI selection
       leftQ = nextProps.leftQuery;
       rightQ = nextProps.rightQuery;
@@ -51,6 +53,7 @@ class QueryWordComparisonResultsContainer extends React.Component {
       selectComparativeWords(rightQ, RIGHT);
     }
   }
+
   shouldComponentUpdate(nextProps) {
     const { results, queries, leftQuery, rightQuery } = this.props;
     const shouldChange = queryChangedEnoughToUpdate(queries, nextProps.queries, results, nextProps.results);
@@ -67,17 +70,6 @@ class QueryWordComparisonResultsContainer extends React.Component {
     } else if (target === RIGHT && queryObj !== leftQuery) {
       selectComparativeWords(queryObj, RIGHT);
     }
-  }
-
-  /* not currently utilized */
-  downloadCsv = (query) => {
-    let url = null;
-    if (parseInt(query.searchId, 10) >= 0) {
-      url = `/api/explorer/sentences/count.csv/${query.searchId}/${query.index}`;
-    } else {
-      url = `/api/explorer/sentences/count.csv/[{"q":"${query.q}"}]/${query.index}`;
-    }
-    window.location = url;
   }
 
   render() {
@@ -97,7 +89,8 @@ class QueryWordComparisonResultsContainer extends React.Component {
           </Row>
         </Grid>
       );
-    } else if (results && results.length > 1) {
+    }
+    if (results && results.length > 1) {
       let wordSelectorContent;
       if (queries.length > 2) {
         // only show selector if more than two queries
@@ -134,7 +127,6 @@ class QueryWordComparisonResultsContainer extends React.Component {
     }
     return <div>Error</div>;
   }
-
 }
 
 QueryWordComparisonResultsContainer.propTypes = {
@@ -191,10 +183,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 export default
-  injectIntl(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
-        QueryWordComparisonResultsContainer
-      )
+injectIntl(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    withAsyncFetch(
+      QueryWordComparisonResultsContainer
     )
-  );
+  )
+);

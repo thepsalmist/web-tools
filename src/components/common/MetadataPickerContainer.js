@@ -70,6 +70,23 @@ const MetadataPickerContainer = (props) => {
         };
       }
       content = (
+<<<<<<< HEAD
+        <div>
+          <Field
+            className="metadata-picker"
+            // searchText={initialText}
+            name={name}
+            component={renderAutoComplete}
+            label={formatMessage(localMessages.hintText, { label })}
+            hintText={formatMessage(localMessages.hintText, { label })}
+            openOnFocus
+            fullWidth
+            dataSource={tags}
+            dataSourceConfig={{ text: 'label', value: 'tags_id' }}
+            maxSearchResults={10}
+          />
+        </div>
+=======
         <React.Fragment>
           <label>{label}</label>
           <Field
@@ -86,6 +103,7 @@ const MetadataPickerContainer = (props) => {
             isClearable={isClearable}
           />
         </React.Fragment>
+>>>>>>> 9a6736d812bbf0c056d52306800f98a316fdf6ce
       );
       break;
     default:

@@ -216,7 +216,7 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
     as_attachment = kwargs['as_attachment'] if 'as_attachment' in kwargs else True
     fb_data = kwargs['fb_data'] if 'fb_data' in kwargs else False
     all_stories = []
-    params=kwargs.copy()
+    params = kwargs.copy()
 
     merged_args = {
         'snapshots_id': request.args['snapshotId'],
@@ -233,7 +233,7 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
         del params['fb_data']
     if 'q' in params:
         params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
-    params['limit'] = 1000  # an arbitrary value to let us page through with big topics
+    params['limit'] = 100  # an arbitrary value to let us page through with big topics
 
     props = [
         'stories_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',
@@ -302,7 +302,7 @@ def stream_story_link_list_csv(user_key, filename, topics_id, **kwargs):
     params.update(merged_args)
     if 'q' in params:
         params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
-    params['limit'] = 1000  # an arbitrary value to let us page through with big topics
+    params['limit'] = 100  # an arbitrary value to let us page through with big topics
 
     props = [
         'stories_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',

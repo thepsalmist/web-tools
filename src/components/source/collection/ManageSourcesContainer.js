@@ -26,6 +26,7 @@ const localMessages = {
   lastScrapeRunningSince: { id: 'source.basicInfo.feed.lastScrapeRunningSince', defaultMessage: 'Scrape running since {date}' },
   lastScrapeWorkedOn: { id: 'source.basicInfo.feed.lastScrapeWorkedOn', defaultMessage: 'Last scrape worked on {date}' },
   lastScrapeFailedOn: { id: 'source.basicInfo.feed.lastScrapeFailedOn', defaultMessage: 'Last scrape failed on {date}) ' },
+  neverScraped: { id: 'source.basicInfo.feed.neverScraped', defaultMessage: 'Never been scraped :-(' },
   activeFeedCount: { id: 'collection.manageSources.column.activeFeedCount', defaultMessage: 'Active Feeds' },
 };
 
@@ -97,33 +98,43 @@ class ManageSourcesContainer extends React.Component {
                     );
                     let scrapeContent;
                     const lastScrapeUpdatedDate = source.latest_scrape_job ? formatDate(jobStatusDateToMoment(source.latest_scrape_job.last_updated)) : 'n/a';
-                    if (source && source.latest_scrape_job && source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_QUEUED) {
+                    if (source && source.latest_scrape_job) {
+                      if (source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_QUEUED) {
+                        scrapeContent = (
+                          <React.Fragment>
+                            <FormattedMessage {...localMessages.lastScrapeQueuedSince} values={{ date: lastScrapeUpdatedDate }} />
+                          </React.Fragment>
+                        );
+                      } else if (source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_RUNNING) {
+                        scrapeContent = (
+                          <React.Fragment>
+                            <FormattedMessage {...localMessages.lastScrapeRunningSince} values={{ date: lastScrapeUpdatedDate }} />
+                          </React.Fragment>
+                        );
+                      } else if (source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_COMPLETED) {
+                        scrapeContent = (
+                          <React.Fragment>
+                            {scrapeButton}
+                            <br />
+                            <FormattedMessage {...localMessages.lastScrapeWorkedOn} values={{ date: lastScrapeUpdatedDate }} />
+                          </React.Fragment>
+                        );
+                      } else if (source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_ERROR) {
+                        scrapeContent = (
+                          <React.Fragment>
+                            {scrapeButton}
+                            <br />
+                            <FormattedMessage {...localMessages.lastScrapeFailedOn} values={{ date: lastScrapeUpdatedDate }} />
+                          </React.Fragment>
+                        );
+                      }
+                    } else {
                       scrapeContent = (
-                        <span>
-                          <FormattedMessage {...localMessages.lastScrapeQueuedSince} values={{ date: lastScrapeUpdatedDate }} />
-                        </span>
-                      );
-                    } else if (source && source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_RUNNING) {
-                      scrapeContent = (
-                        <span>
-                          <FormattedMessage {...localMessages.lastScrapeRunningSince} values={{ date: lastScrapeUpdatedDate }} />
-                        </span>
-                      );
-                    } else if (source && source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_COMPLETED) {
-                      scrapeContent = (
-                        <span>
+                        <React.Fragment>
                           {scrapeButton}
                           <br />
-                          <FormattedMessage {...localMessages.lastScrapeWorkedOn} values={{ date: lastScrapeUpdatedDate }} />
-                        </span>
-                      );
-                    } else if (source && source.latest_scrape_job.state === SOURCE_SCRAPE_STATE_ERROR) {
-                      scrapeContent = (
-                        <span>
-                          {scrapeButton}
-                          <br />
-                          <FormattedMessage {...localMessages.lastScrapeFailedOn} values={{ date: lastScrapeUpdatedDate }} />
-                        </span>
+                          <FormattedMessage {...localMessages.neverScraped} />
+                        </React.Fragment>
                       );
                     }
                     return (

@@ -8,6 +8,11 @@
           "apps": [ "topics" ],
           "type": "Fix",
           "note": "Solved problem preventing some users from downloading topic story CSV files."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Reviewing sources in a collection works even if they've never been scraped."
         }
       ]
     },

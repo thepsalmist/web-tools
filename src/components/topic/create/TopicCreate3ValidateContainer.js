@@ -3,11 +3,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedHTMLMessage, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
 import withIntlForm from '../../common/hocs/IntlForm';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import AppButton from '../../common/AppButton';
 import StoryFeedbackRow from './StoryFeedbackRow';
-import { WarningNotice } from '../../common/Notice';
 import { goToCreateTopicStep, fetchStorySampleByQuery } from '../../../actions/topicActions';
 
 const NUM_TO_SHOW = 30;
@@ -17,19 +20,33 @@ const localMessages = {
   title: { id: 'topic.create.validate.title', defaultMessage: 'Step 3: Validate 30 Random Stories' },
   about: { id: 'topic.create.validate.about',
     defaultMessage: 'To make sure the stories that match your seed query are relevant to your research, you need to review this random sample to see if these are the kinds of stories you want. For each story, click "yes" if it is about the topic you are interested in.  Click "no" if it is not about the topic you are intereseted in.' },
+  warningTitle: { id: 'topic.create.validate.warningTitle', defaultMessage: 'Relevance Low' },
   warning: { id: 'topic.create.validate.warning',
-    defaultMessage: 'At least 90% of the random stories we\'ve shown you must be relevant for the topic to work well. Please go back and modify your seed query to try and eliminate the irrelevant stories.' },
+    defaultMessage: 'Not enough of your stories are relevant to your topic. We recommend at least 90% of the random stories we\'ve shown you must be relevant for the topic to work well, otherwise you end up with too many stories about irrelevant things. We suggest going back and changing your seed query (to narrow in a bit more), your time period (to focus around any key events), or media sources (to specify media from the place you care about).' },
   randomStory: { id: 'topic.create.validate.randomStory', defaultMessage: 'Random Story' },
   usefulStory: { id: 'topic.create.validate.randomStory', defaultMessage: 'Is this Relevant?' },
-  prev: { id: 'topic.create.preview.prev', defaultMessage: 'back to preview' },
-  next: { id: 'topic.create.preview.next', defaultMessage: 'review and confirm' },
+  prev: { id: 'topic.create.warning.prev', defaultMessage: 'back to preview' },
+  next: { id: 'topic.create.warning.next', defaultMessage: 'review and confirm' },
+  warningIgnore: { id: 'topic.create.warning.warningIgnore', defaultMessage: 'Ignore and Create Topic Anway' },
+  warningOk: { id: 'topic.create.warning.warningOk', defaultMessage: 'I\'ll edit my seed query' },
 };
 
 class TopicCreate3ValidateContainer extends React.Component {
   state = {
     matchCount: 0,
-    showWarning: false,
+    warningOpen: false,
   };
+
+  handleWarningOk = () => {
+    const { handleEditSeedQueryRequest } = this.props;
+    this.setState({ warningOpen: false });
+    handleEditSeedQueryRequest();
+  }
+
+  handleWarningIgnore = () => {
+    const { handleNextStep } = this.props;
+    handleNextStep();
+  }
 
   handleYesClick = (options, prevSelection) => {
     if (prevSelection === options.match) {
@@ -48,27 +65,15 @@ class TopicCreate3ValidateContainer extends React.Component {
   handleConfirm = () => {
     const { handleNextStep, total } = this.props;
     if (this.state.matchCount >= (VALIDATION_CUTOFF * total)) {
-      this.setState({ showWarning: false });
       handleNextStep();
     } else {
-      this.setState({ showWarning: true });
+      this.setState({ warningOpen: true });
     }
   }
 
   render = () => {
     const { handlePreviousStep, stories } = this.props;
     const { formatMessage } = this.props.intl;
-
-    let warningContent;
-    if (this.state.showWarning) {
-      warningContent = (
-        <WarningNotice>
-          <FormattedHTMLMessage {...localMessages.warning} />
-        </WarningNotice>
-      );
-    } else {
-      warningContent = (<div />);
-    }
 
     return (
       <Grid>
@@ -106,19 +111,43 @@ class TopicCreate3ValidateContainer extends React.Component {
             </Row>
           </Col>
         </Row>
-        <Row>
-          <Col lg={12}>
-            { warningContent }
-          </Col>
-        </Row>
         <br />
         <Row>
           <Col lg={12} md={12} sm={12}>
-            <AppButton flat label={formatMessage(localMessages.prev)} onClick={() => handlePreviousStep()} />
+            <AppButton label={formatMessage(localMessages.prev)} onClick={() => handlePreviousStep()} />
             &nbsp; &nbsp;
-            <AppButton type="submit" label={formatMessage(localMessages.next)} primary onClick={this.handleConfirm} />
+            <AppButton
+              type="submit"
+              label={formatMessage(localMessages.next)}
+              primary
+              onClick={this.handleConfirm}
+            />
           </Col>
         </Row>
+        <Dialog
+          disableBackdropClick
+          disableEscapeKeyDown
+          aria-labelledby="confirmation-dialog-title"
+          open={this.state.warningOpen}
+          onClose={this.handleWarningOk}
+        >
+          <DialogTitle id="confirmation-dialog-title">
+            <FormattedMessage {...localMessages.warningTitle} />
+          </DialogTitle>
+          <DialogContent>
+            <p>
+              <FormattedMessage {...localMessages.warning} />
+            </p>
+          </DialogContent>
+          <DialogActions>
+            <AppButton onClick={this.handleWarningIgnore}>
+              <FormattedMessage {...localMessages.warningIgnore} />
+            </AppButton>
+            <AppButton onClick={this.handleWarningOk} primary>
+              <FormattedMessage {...localMessages.warningOk} />
+            </AppButton>
+          </DialogActions>
+        </Dialog>
       </Grid>
     );
   }
@@ -137,6 +166,7 @@ TopicCreate3ValidateContainer.propTypes = {
   // from dispatch
   handlePreviousStep: PropTypes.func.isRequired,
   handleNextStep: PropTypes.func.isRequired,
+  handleEditSeedQueryRequest: PropTypes.func.isRequired,
   asyncFetch: PropTypes.func.isRequired,
   fetchData: PropTypes.func.isRequired,
   // from form
@@ -152,6 +182,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  handleEditSeedQueryRequest: () => {
+    dispatch(goToCreateTopicStep(0));
+  },
   handlePreviousStep: () => {
     dispatch(goToCreateTopicStep(1));
   },

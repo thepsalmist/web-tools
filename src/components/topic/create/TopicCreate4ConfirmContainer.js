@@ -34,7 +34,7 @@ const localMessages = {
   creatingDetail: { id: 'topic.creating.detail', defaultMessage: 'We are creating your topic now.  This can take a minute or so, just to make sure everyting is in order.  Once it is created, you\'ll be shown a page telling you we are gathering the stories.' },
 };
 
-const TopicCreate3ConfirmContainer = (props) => {
+const TopicCreate4ConfirmContainer = (props) => {
   const { formValues, finishStep, handlePreviousStep, storyCount, handleSubmit, pristine, submitting } = props;
   const { formatMessage } = props.intl;
   let sourcesAndCollections = [];
@@ -106,7 +106,7 @@ const TopicCreate3ConfirmContainer = (props) => {
   );
 };
 
-TopicCreate3ConfirmContainer.propTypes = {
+TopicCreate4ConfirmContainer.propTypes = {
   // from parent
   initialValues: PropTypes.object,
   // form context
@@ -202,7 +202,7 @@ export default
 withIntlForm(
   reduxForm(reduxFormConfig)(
     connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      TopicCreate3ConfirmContainer
+      TopicCreate4ConfirmContainer
     )
   )
 );

@@ -8,12 +8,13 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
 import { goToCreateTopicStep } from '../../../actions/topicActions';
 import TopicCreatePreview from './preview/TopicCreatePreview';
-import messages from '../../../resources/messages';
 
 const localMessages = {
   title: { id: 'topic.create.preview.title', defaultMessage: 'Step 2: Preview Your Topic' },
   about: { id: 'topic.create.preview.about',
     defaultMessage: '<b>Make sure your topic looks right before you create it</b>.  We start your topic by finding all the stories in our database that match your query. From there we follow all the links and download them. We check if they match your keywords, and if they do then we add them to your topic (this is called "spidering"). Check the result below and make sure your topic is finding you the stories you want before creating it.' },
+  prev: { id: 'topic.create.preview.prev', defaultMessage: 'back to seed query' },
+  next: { id: 'topic.create.preview.next', defaultMessage: 'Validate Some Stories' },
 };
 
 const TopicCreate2PreviewContainer = (props) => {
@@ -34,9 +35,9 @@ const TopicCreate2PreviewContainer = (props) => {
       <br />
       <Row>
         <Col lg={12} md={12} sm={12}>
-          <AppButton variant="outlined" label={formatMessage(messages.previous)} onClick={() => handlePreviousStep()} />
+          <AppButton variant="outlined" label={formatMessage(localMessages.prev)} onClick={() => handlePreviousStep()} />
           &nbsp; &nbsp;
-          <AppButton primary type="submit" label={formatMessage(messages.confirm)} onClick={() => handleNextStep()} />
+          <AppButton primary type="submit" label={formatMessage(localMessages.next)} onClick={() => handleNextStep()} />
         </Col>
       </Row>
     </Grid>

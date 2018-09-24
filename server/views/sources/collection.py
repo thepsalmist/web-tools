@@ -179,7 +179,7 @@ def api_collection_sources(collection_id):
 
 def fetch_collection_source_feed_info(media_in_collection):
         # for editing users, add in last scrape and active feed count (if requested)
-        use_pool = False
+        use_pool = True
         jobs = [m['media_id'] for m in media_in_collection]
         if use_pool:
             pool = Pool(processes=FEED_SCRAPE_JOB_POOL_SIZE)

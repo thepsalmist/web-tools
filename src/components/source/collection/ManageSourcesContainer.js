@@ -6,7 +6,7 @@ import { FormattedMessage, FormattedNumber, injectIntl, FormattedDate } from 're
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
-import { fetchCollectionSourceList, scrapeSourceFeeds } from '../../../actions/sourceActions';
+import { fetchCollectionSourceList, scrapeSourceFeeds, removeSourcesFromCollection } from '../../../actions/sourceActions';
 import AppButton from '../../common/AppButton';
 import { DownloadButton } from '../../common/IconButton';
 import messages from '../../../resources/messages';
@@ -40,7 +40,9 @@ const localMessages = {
   review: { id: 'collection.manageSources.tab.review', defaultMessage: 'Review' },
   reviewDesc: { id: 'collection.manageSources.tab.review.desc', defaultMessage: 'These sources have no feeds (scrape failed) or feeds with no stories (bad feeds). Click each URL to check if the website is still live (or parked with ads). If they are valid sites with news content, poke around the source code to look for any RSS feeds that might have been missed by the feed scraper.' },
   remove: { id: 'collection.manageSources.tab.remove', defaultMessage: 'Remove' },
+  removeAllFeeds: { id: 'collection.manageSources.tab.removeAll', defaultMessage: 'Remove These Sources From This Collection' },
   removeDesc: { id: 'collection.manageSources.tab.remove.desc', defaultMessage: 'These sources have no feeds and no recent stories, or trying to scrape them failed, and are candidates to remove from the collection. If the scrape job failed, that probably means the website is down (i.e. gone out of business or moved to a new URL). They will stay in Media Cloud, but won\'t be part of this collection.' },
+  removedFeed: { id: 'collection.manageSources.tab.removedFeed', defaultMessage: 'We removed the feed as requested' },
   unscrapeable: { id: 'collection.manageSources.tab.unscrapeable', defaultMessage: 'Unscrapeable' },
   unscrapeableDesc: { id: 'collection.manageSources.tab.unscrapeable.desc', defaultMessage: 'These sources have content (that we have probably spidered), but we can\'t find any RSS feeds for them.' },
   working: { id: 'collection.manageSources.tab.working', defaultMessage: 'Working' },
@@ -75,7 +77,7 @@ class ManageSourcesContainer extends React.Component {
   }
 
   render() {
-    const { scrapeFeeds, sources } = this.props;
+    const { collectionId, scrapeFeeds, sources, removeSource } = this.props;
     const { formatMessage, formatDate } = this.props.intl;
     let viewSources = '';
     let viewDesc = '';
@@ -93,13 +95,27 @@ class ManageSourcesContainer extends React.Component {
         break;
       case REMOVE:
         viewSources = sources.filter(s => (s.active_feed_count > 0 && s.num_stories_90 === 0 && s.num_stories_last_year === 0) || (s.latest_scrape_job.state === 'failed'));
+        const removeAllButton = (
+          <AppButton
+            color="secondary"
+            variant="outlined"
+            className="source-remove-feeds-button"
+            label={formatMessage(localMessages.removeAllFeeds)}
+            onClick={() => removeSource(collectionId, viewSources)}
+          />
+        );
         viewDesc = (
-          <Row>
-            <Col lg={11}>
-              <p><FormattedMessage {...localMessages.reviewDesc} /></p>
-            </Col>
-            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.remove))} />
-          </Row>
+          <div>
+            <Row>
+              <Col lg={11}>
+                <p><FormattedMessage {...localMessages.reviewDesc} /></p>
+              </Col>
+              <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.remove))} />
+            </Row>
+            <Row>
+              {removeAllButton}
+            </Row>
+          </div>
         );
         break;
       case UNSCRAPEABLE:
@@ -205,7 +221,7 @@ class ManageSourcesContainer extends React.Component {
                         variant="outlined"
                         className="source-remove-feeds-button"
                         label={formatMessage(localMessages.remove)}
-                        onClick={() => scrapeFeeds(source.media_id)}
+                        onClick={() => removeSource(collectionId, [source])}
                       />
                     );
                     let removeContent;
@@ -301,6 +317,7 @@ ManageSourcesContainer.propTypes = {
   fetchData: PropTypes.func.isRequired,
   scrapeFeeds: PropTypes.func.isRequired,
   scrapeAllFeeds: PropTypes.func.isRequired,
+  removeSource: PropTypes.func.isRequired,
   // from hoc
   notifyOfCsvDownload: PropTypes.func.isRequired,
 };
@@ -326,6 +343,18 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           window.location.reload();
         } else {
           dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(messages.sourceScrapeFailed) }));
+        }
+      });
+  },
+  removeSource: (collectionId, sources) => {
+    const removeInfo = { id: collectionId };
+    if (sources && sources.length > 0) {
+      removeInfo['sources[]'] = sources.map(s => (s.id ? s.id : s.media_id));
+    }
+    dispatch(removeSourcesFromCollection(removeInfo))
+      .then((result) => {
+        if (result === 'success') {
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.removedFeed) }));
         }
       });
   },

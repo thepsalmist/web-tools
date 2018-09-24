@@ -118,6 +118,11 @@ export function updateCollection(params) {
   return createPostingApiPromise(`/api/collections/${acceptedParams.id}/update`, acceptedParams);
 }
 
+export function removeSourcesFromCollection(params) {
+  const acceptedParams = acceptParams(params, ['id', 'sources[]']);
+  return createPostingApiPromise(`/api/collections/${acceptedParams.id}/remove-sources`, acceptedParams);
+}
+
 export function addSourceToCollection(params) {
   const acceptedParams = acceptParams(params, ['sourceObj']);
   return acceptedParams;

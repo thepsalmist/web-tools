@@ -77,7 +77,7 @@ class QueryThemesResultsContainer extends React.Component {
         <div className="actions">
           <ActionMenu actionTextMsg={messages.downloadOptions}>
             <SVGAndCSVMenu
-              downloadCsv={() => this.downloadCsv(queries[selectedTabIndex].label)}
+              downloadCsv={() => this.downloadCsv(queries[selectedTabIndex])}
               downloadSvg={() => downloadExplorerSvg(queries[selectedTabIndex].label, 'sampled-nyt_themes', BUBBLE_CHART_DOM_ID)}
               label={queries[selectedTabIndex].label}
             />

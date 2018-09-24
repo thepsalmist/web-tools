@@ -355,6 +355,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       .then((result) => {
         if (result.success === 1) {
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.removedFeed) }));
+        } else {
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(messages.removeSourceError) }));
         }
       });
   },

@@ -61,6 +61,7 @@ const messages = {
   sourceScraping: { id: 'source.deatils.feeds.scraping', defaultMessage: 'We\'ve started to scrape this source' },
   sourceScrapeFailed: { id: 'source.deatils.feeds.failed', defaultMessage: 'Sorry, for some reason we couldn\'t start the scraping job' },
   sourceScrapeStatus: { id: 'source.deatils.feeds.scrapeStatus', defaultMessage: 'Feed Scrape Status' },
+  removeSourceError: { id: 'source.remove.error', defaultMessage: 'We failed to remove a source from this collection' },
 
   favoritedCollectionsTitle: { id: 'favorited.collections.title', defaultMessage: 'My Starred Collections' },
   favoritedSourcesTitle: { id: 'favorited.souces.title', defaultMessage: 'Starred Sources' },

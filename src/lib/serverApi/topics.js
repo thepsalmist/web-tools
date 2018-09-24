@@ -213,7 +213,7 @@ export function fetchAttentionByQuery(params) {
 }
 
 export function fetchStorySampleByQuery(params) {
-  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources[]', 'collections[]']);
+  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources[]', 'collections[]', 'rows']);
   return createPostingApiPromise('/api/topics/create/preview/stories/sample', acceptedParams);
 }
 

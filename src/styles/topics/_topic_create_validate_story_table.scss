@@ -1,0 +1,92 @@
+@import '../constants';
+
+$match-background: #f2fbf9;
+$match-darker: #20756b;
+
+$not-match-background: #fff4f4;
+$not-match: #fb6568;
+$not-match-dark: #ce5456;
+$not-match-darker: #9e3d3f;
+
+.topic-create-sample-story-table {
+
+  margin: 10px 0px 60px 0px;
+  border-bottom: 1px solid $material-grey200;
+
+  .topic-create-sample-story-table-header {
+    background-color: $material-grey200;
+    line-height: 2;
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  .topic-create-sample-story-container {
+    .story-feedback-row {
+      b {
+        font-size: 18px;
+      }
+    }
+    .google-icon {
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+  }
+
+  // match and no-match button styling
+  .match-btn {
+    background-color: $topics-primary !important;
+    color: white !important;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+  }
+
+  // override default AppButton behavior
+  .match-btn :hover {
+    background-color: $topics-darker !important;
+  }
+
+  .not-match-btn {
+    background-color: $not-match !important;
+    color: white !important;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+  }
+
+  // override default AppButton behavior
+  .not-match-btn :hover {
+    background-color: $not-match-dark !important;
+  }
+
+  .match-btn-selected {
+    background-color: $match-darker !important;
+    color: white !important;
+    box-shadow: none !important;
+  }
+
+  .not-match-btn-selected {
+    background-color: $not-match-darker !important;
+    color: white !important;
+    box-shadow: none !important;
+  }
+
+  .story {
+    border-bottom: 1px solid $material-grey200;
+    border-top: 1px solid $material-grey200;
+    background-color: white;
+    padding: 30px 10px 30px 10px;
+  }
+
+  // Styling for StoryFeedbackRow background on selection
+  .match {
+    background-color: $match-background;
+    border-left: 5px solid $topics-primary;
+  }
+
+  .not-match {
+    background-color: $not-match-background;
+    border-left: 5px solid $not-match;
+  }
+
+  .none {
+    background-color: white;
+    border-left: 5px solid transparent;
+  }
+}

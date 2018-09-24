@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2018-09-24",
+      "version": "v3.4.4",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Downloading top themes in Explorer works again."
+        }
+      ]
+    },
+    {
       "date": "2018-09-17",
       "version": "v3.4.3",
       "notes": [

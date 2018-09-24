@@ -353,7 +353,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
     dispatch(removeSourcesFromCollection(removeInfo))
       .then((result) => {
-        if (result === 'success') {
+        if (result.success === 1) {
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.removedFeed) }));
         }
       });

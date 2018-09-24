@@ -75,9 +75,13 @@ def remove_sources_from_collection(collection_id):
     existing_source_ids = [int(m['media_id']) for m in media_with_tag(user_mediacloud_key(), collection_id)]
     source_ids_to_remain = list(set(existing_source_ids) - set(source_ids_to_remove))
 
-    media_to_remain = [MediaTag(sid, tags_id=collection_id, action=TAG_ACTION_ADD) for sid in source_ids_to_remain] # do I need to run similar or TAG_ACTION_REMOVE?
-    if len(media_to_remain) > 0:
-        results = user_mc.tagMedia(media_to_remain)
+    media_to_remove = [MediaTag(sid, tags_id=collection_id, action=TAG_ACTION_REMOVE) for sid in source_ids_to_remove]
+    media_to_remain = [MediaTag(sid, tags_id=collection_id, action=TAG_ACTION_ADD) for sid in
+                       source_ids_to_remain]  # do I need to run similar or TAG_ACTION_REMOVE?
+    current_media = media_to_remove + media_to_remain
+
+    if len(current_media) > 0:
+        results = user_mc.tagMedia(current_media)
     return jsonify(results)
 
 

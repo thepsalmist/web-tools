@@ -5,8 +5,10 @@ import Link from 'react-router/lib/Link';
 import { FormattedMessage, FormattedNumber, injectIntl, FormattedDate } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import { fetchCollectionSourceList, scrapeSourceFeeds } from '../../../actions/sourceActions';
 import AppButton from '../../common/AppButton';
+import { DownloadButton } from '../../common/IconButton';
 import messages from '../../../resources/messages';
 import Permissioned from '../../common/Permissioned';
 import TabSelector from '../../common/TabSelector';
@@ -64,6 +66,13 @@ class ManageSourcesContainer extends React.Component {
     this.setState({ scrapedAll: true });
   }
 
+  downloadCsv = (type) => {
+    const { collectionId } = this.props;
+    const url = `/api/collections/${collectionId}/sources/${type}.csv`;
+    window.location = url;
+    this.props.notifyOfCsvDownload();
+  }
+
   render() {
     const { scrapeFeeds, sources } = this.props;
     const { formatMessage, formatDate } = this.props.intl;
@@ -71,23 +80,57 @@ class ManageSourcesContainer extends React.Component {
     let viewDesc = '';
     switch (this.state.selectedViewIndex) {
       case REVIEW:
-        viewSources = sources.filter(s => (s.active_feed_count === 0 && s.num_stories_90 === 0) || (s.active_feed_count > 0 && s.num_stories_90 === 0 && s.storiesInLastYear > 0));
-        viewDesc = <FormattedMessage {...localMessages.reviewDesc} />;
+        viewSources = sources.filter(s => (s.active_feed_count === 0 && s.num_stories_90 === 0) || (s.active_feed_count > 0 && s.num_stories_90 === 0 && s.num_stories_last_year > 0));
+        viewDesc = (
+          <Row>
+            <Col lg={11}>
+              <p><FormattedMessage {...localMessages.reviewDesc} /></p>
+            </Col>
+            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.review))} />
+          </Row>
+        );
         break;
       case REMOVE:
-        viewSources = sources.filter(s => (s.active_feed_count > 0 && s.num_stories_90 === 0 && s.storiesInLastYear === 0) || (s.latest_scrape_job.state === 'failed'));
-        viewDesc = <FormattedMessage {...localMessages.removeDesc} />;
+        viewSources = sources.filter(s => (s.active_feed_count > 0 && s.num_stories_90 === 0 && s.num_stories_last_year === 0) || (s.latest_scrape_job.state === 'failed'));
+        viewDesc = (
+          <Row>
+            <Col lg={11}>
+              <p><FormattedMessage {...localMessages.reviewDesc} /></p>
+            </Col>
+            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.remove))} />
+          </Row>
+        );
         break;
       case UNSCRAPEABLE:
         viewSources = sources.filter(s => (s.active_feed_count === 0 && s.num_stories_90 > 0));
-        viewDesc = <FormattedMessage {...localMessages.unscrapeableDesc} />;
+        viewDesc = (
+          <Row>
+            <Col lg={11}>
+              <p><FormattedMessage {...localMessages.unscrapeableDesc} /></p>
+            </Col>
+            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.unscrapeable))} />
+          </Row>
+        );
         break;
       case WORKING:
-        viewSources = sources.filter(s => (s.active_feed_count > 0 && s.storiesInLast90 > 0));
-        viewDesc = <FormattedMessage {...localMessages.workingDesc} />;
+        viewSources = sources.filter(s => (s.active_feed_count > 0 && s.num_stories_last_year > 0));
+        viewDesc = (
+          <Row>
+            <Col lg={11}>
+              <p><FormattedMessage {...localMessages.workingDesc} /></p>
+            </Col>
+            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.working))} />
+          </Row>
+        );
         break;
       case ALL:
         viewSources = sources;
+        viewDesc = (
+          <Row>
+            <Col lg={11} />
+            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.all))} />
+          </Row>
+        );
         break;
       default:
         break;
@@ -106,9 +149,7 @@ class ManageSourcesContainer extends React.Component {
             onViewSelected={index => this.setState({ selectedViewIndex: index })}
           />
         </Row>
-        <Row>
-          <p>{viewDesc}</p>
-        </Row>
+        {viewDesc}
       </div>
     );
     return (
@@ -249,6 +290,8 @@ ManageSourcesContainer.propTypes = {
   fetchData: PropTypes.func.isRequired,
   scrapeFeeds: PropTypes.func.isRequired,
   scrapeAllFeeds: PropTypes.func.isRequired,
+  // from hoc
+  notifyOfCsvDownload: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -294,7 +337,9 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withAsyncFetch(
-      ManageSourcesContainer
+      withCsvDownloadNotifyContainer(
+        ManageSourcesContainer
+      )
     )
   )
 );

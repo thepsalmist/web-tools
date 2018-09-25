@@ -39,6 +39,7 @@ const localMessages = {
   sourcesAddedFeedback: { id: 'collection.media.sources.addedFeedback',
     defaultMessage: 'Added {sourceCount, plural,\n =0 {nothing}\n =1 {one source}\n other {# sources}}',
   },
+  verify: { id: 'collection.media.verify', defaultMessage: 'Verify' },
 };
 
 function TabContainer(props) {
@@ -112,7 +113,7 @@ class SourceSelectionRendererRaw extends React.Component {
   }
 
   render() {
-    const { submitButton, fields, meta: { error }, currentSources, editCollectionId, renderTextField } = this.props;
+    const { sourceUrlsToAdd, submitButton, fields, meta: { error }, currentSources, editCollectionId, renderTextField } = this.props;
     const { formatMessage } = this.props.intl;
     let copyConfirmation = null;
     if (this.state.collectionId) {
@@ -133,10 +134,11 @@ class SourceSelectionRendererRaw extends React.Component {
           onCancel={this.resetSourceUrls}
         />
       );
-    } else {
-      addByUrlConfirmer = <AppButton onClick={this.processSourcesByUrl} label='Test' />;
     }
-
+    let verifyBtn = null;
+    if (sourceUrlsToAdd) {
+      verifyBtn = <AppButton onClick={this.processSourcesByUrl} label={formatMessage(localMessages.verify)} />;
+    }
     const firstTab = (
       <TabContainer text={localMessages.tabSource} intro={localMessages.tabSourceIntro}>
         <SourceSearchContainer
@@ -165,6 +167,7 @@ class SourceSelectionRendererRaw extends React.Component {
           rows={4}
           label={formatMessage(localMessages.sourceUrlHint)}
         />
+        {verifyBtn}
         {addByUrlConfirmer}
       </TabContainer>
     );

@@ -13,6 +13,7 @@ import SourceSearchContainer from '../../controlbar/SourceSearchContainer';
 import CollectionUploadSourceContainer from '../CollectionUploadSourceContainer';
 import { googleFavIconUrl } from '../../../../lib/urlUtil';
 import { RemoveButton } from '../../../common/IconButton';
+import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
 import CollectionCopyConfirmer from './CollectionCopyConfirmer';
 // import AppButton from '../../../common/AppButton';
@@ -94,7 +95,11 @@ class SourceSelectionRendererRaw extends React.Component {
     onSourcesAdded(countAdded);
   }
 
-  addSourcesByUrl = () => {
+  showConfirmer = () => {
+    this.setState({ sourceUrls: true });
+  }
+
+  processSourcesByUrl = () => {
     const { sourceUrlsToAdd } = this.props;
     const urls = sourceUrlsToAdd.split('\n');
     this.setState({ sourceUrls: urls });
@@ -123,11 +128,13 @@ class SourceSelectionRendererRaw extends React.Component {
     if (this.state.sourceUrls) {
       addByUrlConfirmer = (
         <AddByUrlConfirmer
-          urls={this.state.sourceUrls}
-          onConfirm={this.addSources}
+          urls={this.state.sourceUrls} // split out from /n
+          onConfirm={this.addSources} // go try to create these sources - then received by formSelector into fieldarray
           onCancel={this.resetSourceUrls}
         />
       );
+    } else {
+      addByUrlConfirmer = <AppButton onClick={this.processSourcesByUrl} label='Test' />;
     }
 
     const firstTab = (
@@ -149,7 +156,7 @@ class SourceSelectionRendererRaw extends React.Component {
       </TabContainer>
     );
     const thirdTab = (
-      <TabContainer text={localMessages.tabCollection} intro={localMessages.tabCollectionIntro}>
+      <TabContainer text={localMessages.tabCollection} intro={localMessages.tabUrlsIntro}>
         <Field
           name="sourceUrls"
           component={renderTextField}
@@ -284,7 +291,7 @@ const CollectionMediaForm = props => (
       name="sources"
       component={SourceSelectionRenderer}
       currentSources={props.currentSources}
-      sourceUrlsToAdd={props.sourceUrlsToAdd}
+      sourceUrlsToAdd={props.sourceUrlsToAdd} // from form - one long string, not an array
       editCollectionId={props.initialValues.id}
       onSourcesAdded={props.handleSourceAdded}
       submitButton={props.submitButton}

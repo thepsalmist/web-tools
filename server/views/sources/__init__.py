@@ -6,6 +6,10 @@ SOURCE_LIST_CSV_EDIT_PROPS = ['media_id', 'url', 'name'] + \
                              SOURCE_LIST_CSV_METADATA_PROPS + \
                              ['public_notes', 'editor_notes', 'stories_per_day', 'first_story']
 
+
+SOURCE_FEED_LIST_CSV_PROPS = ['media_id', 'url', 'name'] + \
+                             ['public_notes', 'editor_notes', 'stories_per_day', 'first_story', 'active_feed_count', 'num_stories_90', 'latest_scrape_job', 'num_stories_last_year']
+
 # hand-made whitelist of collections to show up as "featured" on source mgr homepage and in the media picker
 FEATURED_COLLECTION_LIST = [
     58722749,  # US top 50 PEW 2017

@@ -58,7 +58,7 @@ class SelectSourceContainer extends React.Component {
             <ExploreButton useBackgroundColor />
             <FormattedMessage {...localMessages.searchNow} />
           </a>
-          <a href={source.url}>
+          <a href={source.url} target="_blank" rel="noopener noreferrer">
             <ExploreButton />
             <FormattedMessage {...localMessages.visitHomepage} values={{ url: source.url }} />
           </a>

@@ -5,6 +5,22 @@
       "version": "v3.4.4",
       "notes": [
         {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Hide inaccurate story count when using a query filter within a topic."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Editing topic word clouds works again."
+        },
+      ]
+    },
+    {
+      "date": "2018-09-24",
+      "version": "v3.4.4",
+      "notes": [
+        {
           "apps": [ "explorer" ],
           "type": "Fix",
           "note": "Downloading top themes in Explorer works again."

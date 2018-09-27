@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import AppButton from './AppButton';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import messages from '../../resources/messages';
+import AppButton from './AppButton';
 
 const localMessages = {
   title: { id: 'title', defaultMessage: 'Copy To All Queries' },

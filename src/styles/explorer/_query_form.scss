@@ -19,9 +19,9 @@
     }
   }
 
-  span.copy-all a {
+  .copy-all a {
     font-weight: bold;
-    cursor: pointer;
+    cursor: pointer !important;
     margin-bottom: 5px;
   }
 }

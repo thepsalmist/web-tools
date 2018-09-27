@@ -13,7 +13,7 @@
           "apps": [ "topics" ],
           "type": "Fix",
           "note": "Editing topic word clouds works again."
-        },
+        }
       ]
     },
     {

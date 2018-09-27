@@ -17,6 +17,7 @@ from server.util.tags import TAG_SETS_ID_COLLECTIONS, is_metadata_tag_set, forma
 from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS, SOURCE_FEED_LIST_CSV_PROPS
 from server.views.favorites import add_user_favorite_flag_to_collections, add_user_favorite_flag_to_sources
 
+from server.views.sources.feeds import source_feed_list
 from server.views.sources.geocount import stream_geo_csv, cached_geotag_count
 from server.views.stories import QUERY_LAST_YEAR
 from server.views.sources.stories_split_by_time import stream_split_stories_csv
@@ -146,7 +147,7 @@ def _media_list_edit_worker(media_id):
     if len(scrape_jobs['job_states']) > 0:
         latest_scrape_job = scrape_jobs['job_states'][0]
     # active feed count
-    feeds = user_mc.feedList(media_id)
+    feeds = source_feed_list(media_id)
     active_syndicated_feeds = [f for f in feeds if f['active'] and f['type'] == 'syndicated']
     active_feed_count = len(active_syndicated_feeds)
     query = "media_id:{}".format(media_id)

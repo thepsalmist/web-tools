@@ -4,6 +4,7 @@ import words from './words';
 import stories from './stories';
 import splitStoryCount from './splitStoryCount';
 import sampleSentences from './sampleSentences';
+import similarWords from './similarWords';
 
 const wordReducer = combineReducers({
   info,
@@ -11,6 +12,7 @@ const wordReducer = combineReducers({
   stories,
   splitStoryCount,
   sampleSentences,
+  similarWords,
 });
 
 export default wordReducer;

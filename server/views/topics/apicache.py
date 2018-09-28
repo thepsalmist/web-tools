@@ -216,7 +216,9 @@ def topic_similar_words(topics_id, word):
     # no need for user-specific cache on this
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     results = _word2vec_topic_similar_words(topics_id, snapshots_id, [word])
-    return results[0]['results']
+    if len(results):
+        return results[0]['results']
+    return []
 
 
 def _word2vec_topic_similar_words(topics_id, snapshots_id, words):

@@ -1,9 +1,9 @@
-from flask import jsonify
 import requests
 
 from server import config
 
 # Helpers for accessing data from the Media Cloud Word Embeddings server
+
 
 def google_news_2d(words):
     results = _query_for_json("/api/v2/google-news/2d",
@@ -26,4 +26,6 @@ def topic_similar_words(topics_id, snapshots_id, words):
 def _query_for_json(endpoint, data):
     response = requests.post("{}{}".format(config.get('WORD_EMBEDDINGS_SERVER_URL'), endpoint), data=data)
     response_json = response.json()
-    return response_json['results']
+    if 'results' in response_json:
+        return response_json['results']
+    return []

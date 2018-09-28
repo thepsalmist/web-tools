@@ -25,7 +25,7 @@ const TopicStoryStatsContainer = (props) => {
   if (filters.q) {
     // if there is a query filter in place, then we can't get many of these stats easily :-(
     stats = [
-      { message: localMessages.storyCount, data: formatNumber(timespan.story_count) },
+      { message: localMessages.storyCount, data: formatMessage(messages.unknown) },
       { message: localMessages.mediumCount, data: formatMessage(messages.unknown) },
       { message: localMessages.storyLinkCount, data: formatMessage(messages.unknown) },
       { message: localMessages.mediumLinkCount, data: formatMessage(messages.unknown) },

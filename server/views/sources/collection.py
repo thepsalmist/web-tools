@@ -10,13 +10,16 @@ import server.util.csv as csv
 from server import app, mc, db
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client, user_name,\
     user_has_auth_role, ROLE_MEDIA_EDIT
+from server.cache import cache, key_generator
 from server.util.request import arguments_required, form_fields_required, api_error_handler
 
 from server.util.tags import TAG_SETS_ID_COLLECTIONS, is_metadata_tag_set, format_name_from_label, media_with_tag
-from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS
+from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS, SOURCE_FEED_LIST_CSV_PROPS
 from server.views.favorites import add_user_favorite_flag_to_collections, add_user_favorite_flag_to_sources
 
+from server.views.sources.feeds import source_feed_list
 from server.views.sources.geocount import stream_geo_csv, cached_geotag_count
+from server.views.stories import QUERY_LAST_YEAR
 from server.views.sources.stories_split_by_time import stream_split_stories_csv
 import server.views.sources.apicache as apicache
 from server.views.sources.words import word_count, stream_wordcount_csv
@@ -136,7 +139,6 @@ def api_collection_details(collection_id):
         info['sources'] = media_in_collection
     return jsonify({'results': info})
 
-
 def _media_list_edit_worker(media_id):
     user_mc = user_admin_mediacloud_client()
     # latest scrape job
@@ -145,13 +147,16 @@ def _media_list_edit_worker(media_id):
     if len(scrape_jobs['job_states']) > 0:
         latest_scrape_job = scrape_jobs['job_states'][0]
     # active feed count
-    feeds = user_mc.feedList(media_id)
+    feeds = source_feed_list(media_id)
     active_syndicated_feeds = [f for f in feeds if f['active'] and f['type'] == 'syndicated']
     active_feed_count = len(active_syndicated_feeds)
+    query = "media_id:{}".format(media_id)
+    full_count = apicache.cached_timeperiod_story_count(user_mc, query, QUERY_LAST_YEAR)['count']
     return {
         'media_id': media_id,
         'latest_scrape_job': latest_scrape_job,
         'active_feed_count': active_feed_count,
+        'num_stories_last_year': full_count,
     }
 
 
@@ -168,18 +173,29 @@ def api_collection_sources(collection_id):
     media_in_collection = media_with_tag(user_mediacloud_key(), collection_id)
     add_user_favorite_flag_to_sources(media_in_collection)
     if add_in_details and user_has_auth_role(ROLE_MEDIA_EDIT):
-        # for editing users, add in last scrape and active feed count (if requested)
-        pool = Pool(processes=FEED_SCRAPE_JOB_POOL_SIZE)
-        jobs = [m['media_id'] for m in media_in_collection]
-        job_results = pool.map(_media_list_edit_worker, jobs)  # blocks until they are all done
-        job_by_media_id = {j['media_id']: j for j in job_results}
-        for m in media_in_collection:
-            m['latest_scrape_job'] = job_by_media_id[m['media_id']]['latest_scrape_job']
-            m['active_feed_count'] = job_by_media_id[m['media_id']]['active_feed_count']
-        pool.terminate()
+        media_in_collection = fetch_collection_source_feed_info(media_in_collection)
+
     results['sources'] = media_in_collection
     return jsonify(results)
 
+def fetch_collection_source_feed_info(media_in_collection):
+        # for editing users, add in last scrape and active feed count (if requested)
+        use_pool = True
+        jobs = [m['media_id'] for m in media_in_collection]
+        if use_pool:
+            pool = Pool(processes=FEED_SCRAPE_JOB_POOL_SIZE)
+            job_results = pool.map(_media_list_edit_worker, jobs)  # blocks until they are all done
+        else:
+            job_results = [_media_list_edit_worker(job) for job in jobs]
+
+        job_by_media_id = {j['media_id']: j for j in job_results}
+        for m in media_in_collection:
+            m['num_stories_last_year'] = job_by_media_id[m['media_id']]['num_stories_last_year']
+            m['latest_scrape_job'] = job_by_media_id[m['media_id']]['latest_scrape_job']
+            m['active_feed_count'] = job_by_media_id[m['media_id']]['active_feed_count']
+        if use_pool:
+            pool.terminate()
+        return media_in_collection
 
 @app.route('/api/template/sources.csv')
 @flask_login.login_required
@@ -202,6 +218,32 @@ def api_collection_sources_csv(collection_id):
     file_prefix = "Collection {} ({}) - sources ".format(collection_id, collection['tag'])
     properties_to_include = SOURCE_LIST_CSV_EDIT_PROPS
     return csv.download_media_csv(all_media, file_prefix, properties_to_include)
+
+@app.route('/api/collections/<collection_id>/sources/<source_type>.csv')
+@flask_login.login_required
+@api_error_handler
+def api_collection_sources_feed_status_csv(collection_id, source_type):
+    user_mc = user_mediacloud_client()
+    results = {
+        'tags_id': collection_id
+    }
+    collection = user_mc.tag(collection_id)
+    type = str(source_type).lower()
+    media_in_collection = media_with_tag(user_mediacloud_key(), collection_id)
+    media_info_in_collection = fetch_collection_source_feed_info(media_in_collection)
+    if type == 'review':
+        filtered_media = [m for m in media_info_in_collection if m['active_feed_count'] > 0 and m['num_stories_90'] == 0 and m['num_stories_last_year'] > 0]
+    elif type == 'remove':
+        filtered_media = [m for m in media_info_in_collection if m['active_feed_count'] > 0 and m['num_stories_90'] == 0 and m['num_stories_last_year'] == 0 and m['latest_scrape_job.state'] == 'failed']
+    elif type == 'unscrapeable':
+        filtered_media = [m for m in media_info_in_collection if m['active_feed_count'] == 0 and m['num_stories_90'] > 0]
+    elif type == 'working':
+        filtered_media = [m for m in media_info_in_collection if m['active_feed_count'] > 0 and m['num_stories_last_year'] > 0]
+    else:
+        filtered_media = media_info_in_collection
+    file_prefix = "Collection {} ({}) - sources feed {}".format(collection_id, collection['tag'], source_type)
+    properties_to_include = SOURCE_FEED_LIST_CSV_PROPS
+    return csv.download_media_csv(filtered_media, file_prefix, properties_to_include)
 
 
 @app.route('/api/collections/<collection_id>/sources/story-split/historical-counts')

@@ -68,19 +68,18 @@ def _cached_sentence_list(mc_api_key, q, fq, rows, include_stories=True):
         stories = user_mediacloud_client().storyList("stories_id:({})".format(" ".join(stories_id_list)))
         stories_by_id = {s['stories_id']: s for s in stories}  # build a quick lookup table by stories_id
         for s in sentences:
-            local_mc = _mc_client()
             s['story'] = stories_by_id[s['stories_id']]
     return sentences
 
 
 def top_tags_with_coverage(q, fq, tag_sets_id, limit=TAG_COUNT_UI_LENGTH):
     tag_counts = _most_used_tags(q, fq, tag_sets_id)
-    if tag_sets_id in [GEO_TAG_SET, CLIFF_ORGS, CLIFF_PEOPLE]:
+    if int(tag_sets_id) in [GEO_TAG_SET, CLIFF_ORGS, CLIFF_PEOPLE]:
         coverage = _entity_coverage(q, fq)
-    elif tag_sets_id is NYT_LABELS_TAG_SET_ID:
+    elif int(tag_sets_id) == NYT_LABELS_TAG_SET_ID:
         coverage = _theme_coverage(q, fq)
     else:
-        raise RuntimeError("Unknown tag set it for computing coverage: {}".format(tag_sets_id))
+        raise RuntimeError("Unknown tag_sets_id for computing coverage: {}".format(tag_sets_id))
     for t in tag_counts:  # add in pct of what's been run through CLIFF to total results
         try:
             t['pct'] = float(t['count']) / coverage['counts']

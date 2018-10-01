@@ -168,7 +168,7 @@ def _parse_sources_from_csv_upload(filepath):
                                 newline_decoded['url'][:8] not in [u'https://', 'https://']:
                     newline_decoded['url'] = u'http://{}'.format(newline_decoded['url'])
 
-                # sources must have a name
+                # sources must have a name for updates
                 if updatedSrc:
                     if 'name' not in newline_decoded:
                         raise Exception("Missing name for source " + str(newline_decoded['media_id'] + " " + str(newline_decoded['url'])))

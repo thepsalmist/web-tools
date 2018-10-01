@@ -169,9 +169,9 @@ def _parse_sources_from_csv_upload(filepath):
                     newline_decoded['url'] = u'http://{}'.format(newline_decoded['url'])
 
                 # sources must have a name
-                if 'name' not in newline_decoded:
-                    raise Exception("Missing name for a source id " + str(newline_decoded['media_id']) + " " + str(newline_decoded['url']))
                 if updatedSrc:
+                    if 'name' not in newline_decoded:
+                        raise Exception("Missing name for source " + str(newline_decoded['media_id'] + " " + str(newline_decoded['url'])))
                     newline_decoded.update(empties)
                     sources_to_update.append(newline_decoded)
                 else:
@@ -251,7 +251,7 @@ def _create_or_update_sources(source_list_from_csv, create_new):
             results.append(src)
     # process all the entries we think are updates in parallel so it happens quickly
     if len(sources_to_update) > 0:
-        use_pool = True
+        use_pool = False
         if use_pool:
             pool = Pool(processes=MEDIA_UPDATE_POOL_SIZE)    # process updates in parallel with worker function
             update_responses = pool.map(_update_source_worker, sources_to_update)  # blocks until they are all done
@@ -346,7 +346,7 @@ def update_metadata_for_sources(source_list):
     # now do all the tags in parallel batches so it happens quickly
     if len(tags) > 0:
         chunks = [tags[x:x + 50] for x in xrange(0, len(tags), 50)]  # do 50 tags in each request
-        use_pool = True
+        use_pool = False
         if use_pool:
             pool = Pool(processes=MEDIA_METADATA_UPDATE_POOL_SIZE )  # process updates in parallel with worker function
             pool.map(_tag_media_worker, chunks)  # blocks until they are all done

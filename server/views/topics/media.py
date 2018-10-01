@@ -2,6 +2,7 @@ import logging
 import json
 from flask import jsonify, request, Response
 import flask_login
+from multiprocessing import Pool
 
 from server import app, TOOL_API_KEY
 from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS
@@ -126,12 +127,6 @@ def media_outlinks_csv(topics_id, media_id):
                                  link_from_media_id=media_id, timespans_id=timespans_id, q=q)
 
 
-def _media_info_worker(media_topic_data):
-    media_info = apicache.get_media(media_topic_data['media_id'])
-    media_topic_data.update(media_info)
-    return media_topic_data
-
-
 @app.route('/api/topics/<topics_id>/media/media_links.csv', methods=['GET'])
 @flask_login.login_required
 def get_topic_media_links_csv(topics_id):
@@ -154,55 +149,60 @@ def stream_media_link_list_csv(user_mc_key, filename, topics_id, **kwargs):
     params.update(merged_args)
     if 'q' in params:
         params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
-    params['limit'] = 1000  # an arbitrary value to let us page through with big topics
+    params['limit'] = 10  # an arbitrary value to let us page through with big topics
 
     timestamped_filename = csv.safe_filename(filename)
     headers = {
         "Content-Disposition": "attachment;filename=" + timestamped_filename
     }
-    return Response(_topic_media_link_list_by_page_as_csv_row(user_mc_key, topics_id, TOPIC_MEDIA_CSV_PROPS, **params),
+    columns = ['src_media_id', 'src_media_name', 'src_media_url', 'ref_media_id', 'ref_media_name', 'ref_media_url']
+    return Response(_topic_media_link_list_by_page_as_csv_row(user_mc_key, topics_id, columns, **params),
                     mimetype='text/csv; charset=utf-8', headers=headers)
+
+
+def _media_info_worker(info):
+    return apicache.get_media(info['key'], info['media_id'])
 
 
 # generator you can use to handle a long list of stories row by row (one row per story)
 def _topic_media_link_list_by_page_as_csv_row(user_mc_key, topics_id, props, **kwargs):
-    local_mc = user_admin_mediacloud_client(user_mc_key) #having issues with calling apicache call.. so trying directly
     yield u','.join(props) + u'\n'  # first send the column names
-    all_media = []
     more_media = True
-    link_id =0
-    params = kwargs
-    params['limit'] = 1000  # an arbitrary value to let us page through with big pages
+    use_pool = True
+    link_id = 0
+    basic_media_props = ['media_id', 'name', 'url']
     while more_media:
-        media_link_page = apicache.topic_media_link_list_by_page(TOOL_API_KEY, topics_id, link_ids=link_id, **kwargs)
-        media_list = media_link_page['links']
-
+        # fetch one page of data
+        media_link_page = apicache.topic_media_link_list_by_page(TOOL_API_KEY, topics_id, link_id, **kwargs)
+        # get the media info for all the media sources
         media_src_ids = [str(s['source_media_id']) for s in media_link_page['links']]
         media_ref_ids = [str(s['ref_media_id']) for s in media_link_page['links']]
-        media_src_ids = media_src_ids + media_ref_ids
-# user_mc_key isn't working
-        #
-
-        for m in media_link_page['links']:
-            q = "media_id:{[61164, 4434, 18380]}"
-            params['q'] = q
-            # TODO - CSB this currently doesn't work the way we need it to. waiting for hal to respond
-            media_info = local_mc.topicMediaList(topics_id, **params)
-            for m_info in media_info['media']:
-                if m['source_media_id'] == m_info['media_id']:
-                    m['source_info'] = m_info
-                if m['ref_media_id'] == m_info['media_id']:
-                    m['ref_info'] = m_info
-
+        media_src_ids = set(media_src_ids + media_ref_ids)  # make it distinct
+        if use_pool:
+            # for editing users, add in last scrape and active feed count (if requested)
+            jobs = [{'key': user_mc_key, 'media_id': mid} for mid in media_src_ids]
+            pool = Pool(processes=15)
+            page_media_info = pool.map(_media_info_worker, jobs)  # blocks until they are all done
+            media_lookup = {int(m['media_id']): m for m in page_media_info}
+        else:
+            media_lookup = {int(mid): _media_info_worker({'key': user_mc_key, 'media_id': mid})
+                            for mid in media_src_ids}
+        # connect the link data to the media info data
+        for link_pair in media_link_page['links']:
+            link_pair['source_info'] = media_lookup[int(link_pair['source_media_id'])]
+            link_pair['ref_info'] = media_lookup[int(link_pair['ref_media_id'])]
+        # stream this page's results to the client
+        for s in media_link_page['links']:
+            cleaned_source_info = csv.dict2row(basic_media_props, s['source_info'])
+            cleaned_ref_info = csv.dict2row(basic_media_props, s['ref_info'])
+            row_string = u','.join(cleaned_source_info) + ',' + u','.join(cleaned_ref_info) + u'\n'
+            yield row_string
+        # set up to grab the next page
         if 'next' in media_link_page['link_ids']:
             link_id = media_link_page['link_ids']['next']
         else:
             more_media = False
-            for s in media_link_page['links']:
-                cleaned_source_info = csv.dict2row(TOPIC_MEDIA_CSV_PROPS, s['source_info'])
-                cleaned_ref_info = csv.dict2row(TOPIC_MEDIA_CSV_PROPS, s['ref_info'])
-                row_string = u','.join(cleaned_source_info) + ',' + u','.join(cleaned_ref_info) + u'\n'
-                yield row_string
+
 
 def _stream_media_list_csv(user_mc_key, filename, topics_id, **kwargs):
     # Helper method to stream a list of media back to the client as a csv.  Any args you pass in will be

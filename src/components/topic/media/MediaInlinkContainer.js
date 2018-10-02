@@ -40,13 +40,18 @@ class MediaInlinksContainer extends React.Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return (this.state.view !== nextState.view);
+  }
+
   onChangeSort = (newSort) => {
     const { sortData } = this.props;
     sortData(newSort);
   }
 
-  setView = (nextView) => {
-    this.setState({ view: nextView });
+  setView = (viewMode) => {
+    const { fetchAllInlinksForTreeMap, filters, sort } = this.props;
+    this.setState({ view: viewMode });
   }
 
   downloadCsv = () => {
@@ -60,7 +65,7 @@ class MediaInlinksContainer extends React.Component {
     const { inlinkedStories, topicId, helpButton, showTweetCounts } = this.props;
     let content = <TopicStoryTable stories={inlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={this.onChangeSort} />;
     if (this.state.view === VIEW_TREE) {
-      const inlinkedVals = inlinkedStories.map(i => ({ name: i.media_name, value: i.inlink_count }));
+      const inlinkedVals = inlinkedStories.map(i => ({ name: i.title, value: i.inlink_count }));
       content = <TreeMap data={inlinkedVals} title="test" />;
     }
     return (
@@ -114,6 +119,7 @@ MediaInlinksContainer.propTypes = {
   asyncFetch: PropTypes.func.isRequired,
   // from fetchData
   fetchData: PropTypes.func.isRequired,
+  fetchAllInlinksForTreeMap: PropTypes.func.isRequired,
   sortData: PropTypes.func.isRequired,
   // from state
   sort: PropTypes.string.isRequired,
@@ -136,7 +142,14 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     const params = {
       ...stateProps.filters,
       sort: stateProps.sort,
-      limit: STORIES_TO_SHOW,
+      limit: stateProps.view === VIEW_TABLE ? STORIES_TO_SHOW : '',
+    };
+    dispatch(fetchMediaInlinks(ownProps.topicId, ownProps.mediaId, params));
+  },
+  fetchAllInlinksForTreeMap: (stateProps) => {
+    const params = {
+      ...stateProps.filters,
+      sort: stateProps.sort,
     };
     dispatch(fetchMediaInlinks(ownProps.topicId, ownProps.mediaId, params));
   },

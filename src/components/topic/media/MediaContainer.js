@@ -60,6 +60,7 @@ class MediaContainer extends React.Component {
     const titleHandler = parentTitle => `${media.name} | ${parentTitle}`;
     const dialogActions = [
       <Button
+        key="1"
         variant="outlined"
         label={formatMessage(messages.ok)}
         primary

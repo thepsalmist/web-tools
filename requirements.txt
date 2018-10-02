@@ -10,7 +10,7 @@ redis==2.10.6
 networkx==1.9
 Flask-Mail==0.9.1
 mediacloud-cliff==2.0.2
-gunicorn==19.8.1
-dogpile.cache==0.6.5
+gunicorn==19.9.0
+dogpile.cache==0.6.7
 python-dateutil==2.7.3
-python-slugify==1.2.5
+python-slugify==1.2.6

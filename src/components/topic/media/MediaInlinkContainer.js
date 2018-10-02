@@ -50,7 +50,6 @@ class MediaInlinksContainer extends React.Component {
   }
 
   setView = (viewMode) => {
-    const { fetchAllInlinksForTreeMap, filters, sort } = this.props;
     this.setState({ view: viewMode });
   }
 
@@ -119,7 +118,6 @@ MediaInlinksContainer.propTypes = {
   asyncFetch: PropTypes.func.isRequired,
   // from fetchData
   fetchData: PropTypes.func.isRequired,
-  fetchAllInlinksForTreeMap: PropTypes.func.isRequired,
   sortData: PropTypes.func.isRequired,
   // from state
   sort: PropTypes.string.isRequired,
@@ -143,13 +141,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       ...stateProps.filters,
       sort: stateProps.sort,
       limit: stateProps.view === VIEW_TABLE ? STORIES_TO_SHOW : '',
-    };
-    dispatch(fetchMediaInlinks(ownProps.topicId, ownProps.mediaId, params));
-  },
-  fetchAllInlinksForTreeMap: (stateProps) => {
-    const params = {
-      ...stateProps.filters,
-      sort: stateProps.sort,
     };
     dispatch(fetchMediaInlinks(ownProps.topicId, ownProps.mediaId, params));
   },

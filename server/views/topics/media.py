@@ -149,7 +149,7 @@ def stream_media_link_list_csv(user_mc_key, filename, topics_id, **kwargs):
     params.update(merged_args)
     if 'q' in params:
         params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
-    params['limit'] = 10  # an arbitrary value to let us page through with big topics
+    params['limit'] = 1000  # an arbitrary value to let us page through with big topics
 
     timestamped_filename = csv.safe_filename(filename)
     headers = {

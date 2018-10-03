@@ -19,6 +19,7 @@ const localMessages = {
 const TreeMap = (props) => {
   const { title, data, onLeafClick } = props;
   const { formatNumber, formatMessage } = props.intl;
+  const totalCount = data.map(d => d.value).reduce((acc, d) => acc + d);
   const config = {
     colorAxis: {
       minColor: getBrandDarkColor(),
@@ -35,7 +36,8 @@ const TreeMap = (props) => {
     tooltip: {
       pointFormatter: function afmtxn() {
         // important to name this, rather than use arrow function, so `this` is preserved to be what highcharts gives us
-        const rounded = formatNumber(this.value, { style: 'percent', maximumFractionDigits: 2 });
+        const fraction = this.value / totalCount;
+        const rounded = formatNumber(fraction, { style: 'percent', maximumFractionDigits: 2 });
         const pct = formatMessage(localMessages.tooltipText, { count: rounded, name: this.name });
         return pct;
       },

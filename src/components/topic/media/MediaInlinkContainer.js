@@ -64,7 +64,7 @@ class MediaInlinksContainer extends React.Component {
     const { inlinkedStories, topicId, helpButton, showTweetCounts } = this.props;
     let content = <TopicStoryTable stories={inlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={this.onChangeSort} />;
     if (this.state.view === VIEW_TREE) {
-      const inlinkedVals = inlinkedStories.map(i => ({ name: i.title, value: i.inlink_count }));
+      const inlinkedVals = inlinkedStories.map(i => ({ name: i.media_name, value: i.inlink_count }));
       content = <TreeMap data={inlinkedVals} title="test" />;
     }
     return (

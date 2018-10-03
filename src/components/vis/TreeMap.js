@@ -5,6 +5,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import ReactHighcharts from 'react-highcharts';
 import initHighcharts from './initHighcharts';
+import { getBrandDarkColor, getBrandDarkerColor } from '../../styles/colors';
 
 initHighcharts();
 
@@ -20,8 +21,8 @@ const TreeMap = (props) => {
   const { formatNumber, formatMessage } = props.intl;
   const config = {
     colorAxis: {
-      minColor: '#FF0000',
-      maxColor: '#FFFFFF',
+      minColor: getBrandDarkColor(),
+      maxColor: getBrandDarkerColor(),
     },
     title: {
       text: title,

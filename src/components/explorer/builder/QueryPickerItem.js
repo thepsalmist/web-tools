@@ -15,7 +15,7 @@ import { QUERY_LABEL_CHARACTER_LIMIT } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 
 const localMessages = {
-  emptyMedia: { id: 'explorer.querypicker.emptyMedia', defaultMessage: 'All media (generally not a good idea)' },
+  emptyMedia: { id: 'explorer.querypicker.emptyMedia', defaultMessage: 'No media selected' },
   sourcesSummary: { id: 'explorer.querypicker.sources', defaultMessage: '{sourceCount, plural, \n =0 {``} \n =1 {# source} \n other {# sources }\n}' },
   collectionsSummary: { id: 'explorer.querypicker.coll', defaultMessage: '{collectionCount, plural, \n =0 {``} \n =1 {# collection} \n other {# collections }\n}' },
   searchHint: { id: 'explorer.querypicker.searchHint', defaultMessage: 'keywords' },

@@ -4,9 +4,8 @@ import flask_login
 import json
 from mediacloud.api import MediaCloud
 
-from server import app, TOOL_API_KEY
+from server import app
 import server.util.csv as csv
-from server.auth import user_mediacloud_key, is_user_logged_in
 import server.util.tags as tag_util
 from server.util.request import api_error_handler
 from server.views.explorer import parse_as_sample, parse_query_with_args_and_sample_search,\
@@ -96,6 +95,8 @@ def _story_list_by_page(q, fq, stories_per_page, sort, page_limit=None):
         if (page_limit is not None) and (page_count >= page_limit):
             break
         story_page = apicache.story_list_page(q, fq, last_processed_stories_id, stories_per_page, sort)
+        if len(story_page) is 0: # this is the last page so bail out
+            break
         for s in story_page:
             # add in media metadata to the story (from lazy cache)
             media_id = s['media_id']
@@ -112,7 +113,5 @@ def _story_list_by_page(q, fq, stories_per_page, sort, page_limit=None):
                         s['themes'] = ", ".join([t['tag'] for t in s['story_tags']
                                                 if t['tag_sets_id'] == tag_util.NYT_LABELS_TAG_SET_ID])
         yield story_page
-        if len(story_page) < stories_per_page:  # this is the last page so bail out
-            break
         last_processed_stories_id = story_page[-1]['processed_stories_id']
         page_count += 1

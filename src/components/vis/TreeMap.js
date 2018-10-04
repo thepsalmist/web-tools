@@ -30,18 +30,18 @@ const TreeMap = (props) => {
     },
     series: [{
       layoutAlgorithm: 'squarified',
-      color: 'red',
+      color: getBrandDarkColor(),
       type: 'treemap',
       dataLabels: {
         enabled: true,
         style: {
-          fontSize: '15px',
-          fontWeight: 'bold',
+          fontFamily: 'Lato, Helvetica, sans',
+          fontSize: '12px',
+          fontWeight: 'normal',
+          stroke: 'white',
         },
       },
-      data: {
-        ...data,
-      },
+      data,
     }],
     tooltip: {
       pointFormatter: function afmtxn() {

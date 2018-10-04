@@ -26,6 +26,7 @@ const localMessages = {
   downloadLinkCSV: { id: 'media.inlinks.download.csv', defaultMessage: 'Download InLink Csv' },
   modeTree: { id: 'media.inlinks.tree', defaultMessage: 'View Tree Map' },
   modeTable: { id: 'media.inlinks.table', defaultMessage: 'View Table' },
+  treeMap: { id: 'media.inlinks.treemap', defaultMessage: 'Tree Map for {name}' },
 };
 
 class MediaInlinksContainer extends React.Component {
@@ -61,7 +62,8 @@ class MediaInlinksContainer extends React.Component {
   }
 
   render() {
-    const { inlinkedStories, topicId, helpButton, showTweetCounts } = this.props;
+    const { inlinkedStories, topicId, helpButton, showTweetCounts, topicName } = this.props;
+    const { formatMessage } = this.props.intl;
     let content = <TopicStoryTable stories={inlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={this.onChangeSort} />;
     if (this.state.view === VIEW_TREE) {
       // setup data so the TreeMap can consume it
@@ -69,7 +71,7 @@ class MediaInlinksContainer extends React.Component {
       const groups = justIds.map(id => ({ id, elements: inlinkedStories.filter(e => e.media_id === id) }));
       const summedInlinks = groups.map(g => ({ id: g.id, name: g.elements[0].media_name, value: g.elements.reduce((acc, ele) => acc + ele.inlink_count, 0) }));
 
-      content = <TreeMap data={summedInlinks} title="test" />;
+      content = <TreeMap data={summedInlinks} title={formatMessage(localMessages.treeMap, { name: topicName })} />;
     }
     return (
       <DataCard>
@@ -118,6 +120,7 @@ MediaInlinksContainer.propTypes = {
   // from parent
   mediaId: PropTypes.number.isRequired,
   topicId: PropTypes.number.isRequired,
+  topicName: PropTypes.number.isRequired,
   // from mergeProps
   asyncFetch: PropTypes.func.isRequired,
   // from fetchData

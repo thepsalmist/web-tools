@@ -61,16 +61,16 @@ class MediaOutlinksContainer extends React.Component {
   }
 
   render() {
-    const { outlinkedStories, topicId, helpButton, showTweetCounts } = this.props;
+    const { outlinkedStories, topicId, topicName, helpButton, showTweetCounts } = this.props;
     const { formatMessage } = this.props.intl;
     let content = <TopicStoryTable stories={outlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={this.onChangeSort} />;
     if (this.state.view === VIEW_TREE) {
       // setup data so the TreeMap can consume it
-      const justIds = [...new Set(outlinkedStories.map(d => d.media_id))];
-      const groups = justIds.map(id => ({ id, elements: outlinkedStories.filter(e => e.media_id === id) }));
+      const justIds = [...new Set(inlinkedStories.map(d => d.media_id))];
+      const groups = justIds.map(id => ({ id, elements: inlinkedStories.filter(e => e.media_id === id) }));
       const summedInlinks = groups.map(g => ({ id: g.id, name: g.elements[0].media_name, value: g.elements.reduce((acc, ele) => acc + ele.inlink_count, 0) }));
 
-      content = <TreeMap data={summedInlinks} title="test" />;
+      content = <TreeMap data={summedInlinks} title={formatMessage(localMessages.treeMap, { name: topicName })} />;
     }
     return (
       <DataCard>

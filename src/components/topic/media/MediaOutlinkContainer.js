@@ -26,6 +26,7 @@ const localMessages = {
   downloadLinkCSV: { id: 'media.inlinks.download.csv', defaultMessage: 'Download InLink Csv' },
   modeTree: { id: 'media.inlinks.tree', defaultMessage: 'View Tree Map' },
   modeTable: { id: 'media.inlinks.table', defaultMessage: 'View Table' },
+  treeMap: { id: 'media.inlinks.treemap', defaultMessage: 'Outlink Tree Map for {name}' },
 };
 
 class MediaOutlinksContainer extends React.Component {
@@ -66,8 +67,8 @@ class MediaOutlinksContainer extends React.Component {
     let content = <TopicStoryTable stories={outlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={this.onChangeSort} />;
     if (this.state.view === VIEW_TREE) {
       // setup data so the TreeMap can consume it
-      const justIds = [...new Set(inlinkedStories.map(d => d.media_id))];
-      const groups = justIds.map(id => ({ id, elements: inlinkedStories.filter(e => e.media_id === id) }));
+      const justIds = [...new Set(outlinkedStories.map(d => d.media_id))];
+      const groups = justIds.map(id => ({ id, elements: outlinkedStories.filter(e => e.media_id === id) }));
       const summedInlinks = groups.map(g => ({ id: g.id, name: g.elements[0].media_name, value: g.elements.reduce((acc, ele) => acc + ele.inlink_count, 0) }));
 
       content = <TreeMap data={summedInlinks} title={formatMessage(localMessages.treeMap, { name: topicName })} />;
@@ -119,6 +120,7 @@ MediaOutlinksContainer.propTypes = {
   // from parent
   mediaId: PropTypes.number.isRequired,
   topicId: PropTypes.number.isRequired,
+  topicName: PropTypes.string.isRequired,
   // from mergeProps
   asyncFetch: PropTypes.func.isRequired,
   // from dispatch

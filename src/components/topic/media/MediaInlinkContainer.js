@@ -26,7 +26,7 @@ const localMessages = {
   downloadLinkCSV: { id: 'media.inlinks.download.csv', defaultMessage: 'Download InLink Csv' },
   modeTree: { id: 'media.inlinks.tree', defaultMessage: 'View Tree Map' },
   modeTable: { id: 'media.inlinks.table', defaultMessage: 'View Table' },
-  treeMap: { id: 'media.inlinks.treemap', defaultMessage: 'Tree Map for {name}' },
+  treeMap: { id: 'media.inlinks.treemap', defaultMessage: 'Inlink Tree Map for {name}' },
 };
 
 class MediaInlinksContainer extends React.Component {
@@ -120,7 +120,7 @@ MediaInlinksContainer.propTypes = {
   // from parent
   mediaId: PropTypes.number.isRequired,
   topicId: PropTypes.number.isRequired,
-  topicName: PropTypes.number.isRequired,
+  topicName: PropTypes.string.isRequired,
   // from mergeProps
   asyncFetch: PropTypes.func.isRequired,
   // from fetchData

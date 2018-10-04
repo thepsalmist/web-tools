@@ -166,7 +166,8 @@ class QueryPicker extends React.Component {
   }
 
   render() {
-    const { isLoggedIn, selected, queries, isEditable, addAQuery, handleLoadUserSearches, handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll } = this.props;
+    const { isLoggedIn, selected, queries, isEditable, addAQuery, handleLoadUserSearches, formQuery,
+      handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
     let queryPickerContent; // editable if demo mode
     let queryFormContent; // hidden if demo mode
@@ -285,7 +286,7 @@ class QueryPicker extends React.Component {
             handleLoadSelectedSearch={handleLoadSelectedSearch}
             handleSaveSearch={l => this.saveThisSearch(l)}
             handleDeleteSearch={l => handleDeleteUserSearch(l)}
-            handleCopyAll={property => handleCopyAll(property, selected, queries)}
+            handleCopyAll={property => handleCopyAll(property, selected.index, queries, formQuery)}
             isEditable={canSelectMedia}
             focusRequested={field => field.focus()}
             // TODO change to on
@@ -368,19 +369,22 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       dispatch(selectQuery(query));
     }
   },
-  handleCopyAll: (whichFilter, selected, queries) => {
+  handleCopyAll: (whichFilter, selectedIndex, queries, currentFormValues) => {
     // formQuery
-    let field = null;
+    let newValues = null;
     if (whichFilter === KEYWORD) {
-      field = { q: selected[whichFilter] };
+      newValues = { q: currentFormValues.q };
     } else if (whichFilter === DATES) {
-      field = { startDate: selected.startDate, endDate: selected.endDate };
+      newValues = { startDate: currentFormValues.startDate, endDate: currentFormValues.endDate };
     } else if (whichFilter === MEDIA) {
-      field = { collections: selected.collections, sources: selected.sources };
+      newValues = {
+        collections: currentFormValues.media.filter(obj => obj.tags_id),
+        sources: currentFormValues.media.filter(obj => obj.media_id),
+      };
     }
     queries.map((query) => {
-      if (selected.index !== query.index) {
-        return dispatch(copyAndReplaceQueryField({ whichFilter, index: query.index, field }));
+      if (selectedIndex !== query.index) {
+        return dispatch(copyAndReplaceQueryField({ whichFilter, index: query.index, newValues }));
       }
       return null;
     });

@@ -22,16 +22,26 @@ const TreeMap = (props) => {
   const totalCount = data.map(d => d.value).reduce((acc, d) => acc + d);
   const config = {
     colorAxis: {
-      minColor: getBrandDarkColor(),
+      minColor: getBrandDarkColor(), // not working
       maxColor: getBrandDarkerColor(),
     },
     title: {
       text: title,
     },
     series: [{
-      type: 'treemap',
       layoutAlgorithm: 'squarified',
-      data,
+      color: 'red',
+      type: 'treemap',
+      dataLabels: {
+        enabled: true,
+        style: {
+          fontSize: '15px',
+          fontWeight: 'bold',
+        },
+      },
+      data: {
+        ...data,
+      },
     }],
     tooltip: {
       pointFormatter: function afmtxn() {

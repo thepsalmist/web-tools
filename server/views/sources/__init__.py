@@ -1,5 +1,3 @@
-from server.auth import user_admin_mediacloud_client
-from server.cache import cache, key_generator
 from server.util.csv import SOURCE_LIST_CSV_METADATA_PROPS
 
 SOURCE_LIST_CSV_EDIT_PROPS = ['media_id', 'url', 'name'] + \
@@ -27,9 +25,3 @@ FEATURED_COLLECTION_LIST = [
     9360523,
     9360524
 ]
-
-
-@cache.cache_on_arguments(function_key_generator=key_generator)
-def cached_source_story_count(user_mc_key, query):
-    user_mc = user_admin_mediacloud_client()
-    return user_mc.storyCount(query)['count']

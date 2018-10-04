@@ -13,7 +13,6 @@ from server.util.request import arguments_required, form_fields_required, api_er
 from server.util.tags import TAG_SETS_ID_PUBLICATION_COUNTRY, TAG_SETS_ID_PUBLICATION_STATE, VALID_COLLECTION_TAG_SETS_IDS, \
     TAG_SETS_ID_PRIMARY_LANGUAGE, TAG_SETS_ID_COUNTRY_OF_FOCUS, TAG_SETS_ID_MEDIA_TYPE, TAG_SET_GEOCODER_VERSION, \
     TAG_SET_NYT_LABELS_VERSION, is_metadata_tag_set
-from server.views.sources import cached_source_story_count
 from server.views.sources.words import word_count, stream_wordcount_csv
 from server.views.sources.geocount import stream_geo_csv, cached_geotag_count
 from server.views.sources.stories_split_by_time import stream_split_stories_csv
@@ -60,7 +59,7 @@ def source_stats(media_id):
     results = {}
     # story count
     media_query = "(media_id:{})".format(media_id)
-    source_specific_story_count = cached_source_story_count(username, media_query)
+    source_specific_story_count = apicache.source_story_count(user_mediacloud_key(), media_query)
     results['story_count'] = source_specific_story_count
     # health
     media_health = _cached_media_source_health(username, media_id)
@@ -140,6 +139,7 @@ def api_media_source_details(media_id):
     add_user_favorite_flag_to_sources([info])
     add_user_favorite_flag_to_collections(info['media_source_tags'])
     return jsonify(info)
+
 
 @app.route('/api/sources/<media_id>/scrape', methods=['POST'])
 @flask_login.login_required

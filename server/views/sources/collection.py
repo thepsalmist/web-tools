@@ -10,10 +10,9 @@ import server.util.csv as csv
 from server import app, mc, db
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client, user_name,\
     user_has_auth_role, ROLE_MEDIA_EDIT
-from server.cache import cache, key_generator
 from server.util.request import arguments_required, form_fields_required, api_error_handler
 
-from server.util.tags import TAG_SETS_ID_COLLECTIONS, is_metadata_tag_set, format_name_from_label, media_with_tag
+from server.util.tags import TAG_SETS_ID_COLLECTIONS, format_name_from_label, media_with_tag
 from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS, SOURCE_FEED_LIST_CSV_PROPS
 from server.views.favorites import add_user_favorite_flag_to_collections, add_user_favorite_flag_to_sources
 

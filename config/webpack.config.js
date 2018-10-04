@@ -2,7 +2,7 @@
 const path = require('path');
 const merge = require('webpack-merge');
 const devConfig = require('./webpack.dev.config');
-//const { prodConfig, extraProdConfig } = require('./webpack.prod.config');
+const { prodConfig, prodConfigGenerator } = require('./webpack.prod.config');
 
 // many of the webpack directives need an absolute path
 const basedir = path.resolve(__dirname, '../');
@@ -24,10 +24,8 @@ const appConfig = {
 };
 
 // special config for production builds
-// const extraProdConfig = isDevMode ? {} : prodConfigGenerator(basedir, mcAppName);
+const extraProdConfig = isDevMode ? {} : prodConfigGenerator(basedir, mcAppName);
 
 // combine the appropriate configurations based on dev or prod
-//module.exports = merge.smart(isDevMode ? devConfig : prodConfig, appConfig,
-//  isDevMode ? {} : extraProdConfig);
-
-module.exports = merge.smart(devConfig, appConfig);
+module.exports = merge.smart(isDevMode ? devConfig : prodConfig, appConfig,
+  isDevMode ? {} : extraProdConfig);

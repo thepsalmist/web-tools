@@ -1,6 +1,4 @@
-import codecs
 import datetime
-import json
 import operator
 
 import server.util.tags as tags
@@ -12,24 +10,16 @@ from server.views.sources import FEATURED_COLLECTION_LIST
 from server.views.stories import QUERY_LAST_MONTH
 
 
-def tags_in_tag_set(mc_api_key, tag_sets_id, only_public_tags, use_file_cache=False):
-    return tags.tag_set_with_tags(mc_api_key, tag_sets_id, only_public_tags, use_file_cache)
-
-
-@cache.cache_on_arguments(function_key_generator=key_generator)
-def cached_tag_set_file(file_path):
-    # hold the file in memory to reduce reads
-    with codecs.open(file_path, 'r', 'utf-8') as json_data:
-        data = json.load(json_data)
-        return data
-
-
 def tag_set_with_private_collections(mc_api_key, tag_sets_id):
-    return tags_in_tag_set(mc_api_key, tag_sets_id, False, True)
+    return tags.tag_set_with_tags(mc_api_key, tag_sets_id, False)
 
 
 def tag_set_with_public_collections(mc_api_key, tag_sets_id):
-    return tags_in_tag_set(mc_api_key, tag_sets_id, True, True)
+    return tags.tag_set_with_tags(mc_api_key, tag_sets_id, True)
+
+
+def tags_in_tag_set(mc_api_key, tag_sets_id, only_public_tags, use_file_cache=False):
+    return tags.tag_set_with_tags(mc_api_key, tag_sets_id, only_public_tags, use_file_cache)
 
 
 def featured_collections():

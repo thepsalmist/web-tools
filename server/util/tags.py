@@ -140,6 +140,7 @@ def tags_in_tag_set(mc_api_key, tag_sets_id):
 
 
 def tag_set_with_tags(mc_api_key, tag_sets_id, only_public_tags=False, use_file_cache=False):
+    # don't need to cache here, because either you are reading from a file, or each page is cached
     local_mc = MediaCloud(mc_api_key)
     if use_file_cache:
         file_name = "tags_in_{}.json".format(tag_sets_id)
@@ -152,23 +153,24 @@ def tag_set_with_tags(mc_api_key, tag_sets_id, only_public_tags=False, use_file_
     all_tags = []
     last_tags_id = 0
     while more_tags:
-        tags = _cached_tag_page(mc_api_key, tag_set['tag_sets_id'], last_tags_id, 100, only_public_tags)
+        tags = _cached_tag_page(tag_set['tag_sets_id'], last_tags_id, 100, only_public_tags)
         all_tags = all_tags + tags
         if len(tags) > 0:
             last_tags_id = tags[-1]['tags_id']
         more_tags = len(tags) != 0
+    # double check the show_on_media because that controls public or not
     tag_list = [t for t in all_tags if (only_public_tags is False) or
-                (t['show_on_media'] is 1 or t['show_on_media'] is True)]  # double check the show_on_media because that controls public or not
+                (t['show_on_media'] is 1 or t['show_on_media'] is True)]
     tag_list = sorted(tag_list, key=itemgetter('label'))
     tag_set['tags'] = tag_list
-    tag_set['name'] = tag_set['label']  # for backwards compatability
+    tag_set['name'] = tag_set['label']  # for backwards compatibility
     return tag_set
 
 
 @cache.cache_on_arguments(function_key_generator=key_generator)
-def _cached_tag_page(mc_api_key, tag_sets_id, last_tags_id, rows, public_only):
-    local_mc = MediaCloud(mc_api_key)
-    # user agnostic cache here, because it isn't user-dependent
+def _cached_tag_page(tag_sets_id, last_tags_id, rows, public_only):
+    # user agnositic here because the list of tags in a collection only changes for users based on public_only
+    local_mc = user_mediacloud_client()
     tag_list = local_mc.tagList(tag_sets_id=tag_sets_id, last_tags_id=last_tags_id, rows=rows, public_only=public_only)
     return tag_list
 

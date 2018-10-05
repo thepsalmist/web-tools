@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { fetchMediaOutlinks, sortMediaOutlinks } from '../../../actions/topicActions';
+import { fetchMediaOutlinks, sortMediaOutlinks, fetchAllMediaOutlinks } from '../../../actions/topicActions';
 import ActionMenu from '../../common/ActionMenu';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
@@ -82,7 +82,7 @@ class MediaOutlinksContainer extends React.Component {
         <div className="actions">
           <ActionMenu actionTextMsg={messages.downloadOptions}>
             <SVGAndCSVMenu
-              downloadCsv={() => this.downloadCsv}
+              downloadCsv={this.downloadCsv}
               downloadSvg={this.state.view === VIEW_TREE ? () => downloadSvg(svgFilename, TREE_MAP_DOM_ID) : null}
               label={formatMessage(localMessages.title)}
             />
@@ -151,6 +151,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       limit: stateProps.view === VIEW_TABLE ? STORIES_TO_SHOW : '',
     };
     dispatch(fetchMediaOutlinks(ownProps.topicId, ownProps.mediaId, params)); // fetch the info we need
+  },
+  fetchAllOutlinks: (stateProps) => {
+    const params = {
+      ...stateProps.filters,
+      sort: stateProps.sort,
+    };
+    dispatch(fetchAllMediaOutlinks(ownProps.topicId, ownProps.mediaId, params));
   },
   sortData: (sort) => {
     dispatch(sortMediaOutlinks(sort));

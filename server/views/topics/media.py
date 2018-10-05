@@ -100,6 +100,27 @@ def media_inlinks(topics_id, media_id):
     return jsonify(inlinks)
 
 
+@app.route('/api/topics/<topics_id>/media/<media_id>/inlinks/all', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def all_media_inlinks(topics_id, media_id):
+    all_stories = []
+    more_stories = True
+    link_id = 0
+    sort = validated_sort(request.args.get('sort'))
+    while more_stories:
+        page = apicache.topic_story_list(user_mediacloud_key(), topics_id, link_to_media_id=media_id, sort=sort, link_id = link_id)
+        story_list = page['stories']
+
+        all_stories = all_stories + story_list
+        if 'next' in page['link_ids']:
+            link_id = page['link_ids']['next']
+            more_stories = True
+        else:
+            more_stories = False
+
+    return jsonify(all_stories)
+
 @app.route('/api/topics/<topics_id>/media/<media_id>/inlinks.csv', methods=['GET'])
 @flask_login.login_required
 def media_inlinks_csv(topics_id, media_id):
@@ -117,6 +138,27 @@ def media_outlinks(topics_id, media_id):
     outlinks = apicache.topic_story_list(user_mediacloud_key(), topics_id,
                                 link_from_media_id=media_id, sort=sort, limit=limit)
     return jsonify(outlinks)
+
+@app.route('/api/topics/<topics_id>/media/<media_id>/outlinks/all', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def all_media_outlinks(topics_id, media_id):
+    all_stories = []
+    more_stories = True
+    link_id = 0
+    sort = validated_sort(request.args.get('sort'))
+    while more_stories:
+        page = apicache.topic_story_list(user_mediacloud_key(), topics_id, link_to_media_id=media_id, sort=sort, link_id = link_id)
+        story_list = page['stories']
+
+        all_stories = all_stories + story_list
+        if 'next' in page['link_ids']:
+            link_id = page['link_ids']['next']
+            more_stories = True
+        else:
+            more_stories = False
+
+    return jsonify(all_stories)
 
 
 @app.route('/api/topics/<topics_id>/media/<media_id>/outlinks.csv', methods=['GET'])

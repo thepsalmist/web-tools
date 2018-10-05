@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { fetchMediaInlinks, sortMediaInlinks } from '../../../actions/topicActions';
+import { fetchMediaInlinks, sortMediaInlinks, fetchAllMediaInlinks } from '../../../actions/topicActions';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
@@ -16,6 +16,7 @@ import DataCard from '../../common/DataCard';
 import { downloadSvg } from '../../util/svg';
 import { filtersAsUrlParams } from '../../util/location';
 import { topicDownloadFilename } from '../../util/topicUtil';
+import { trimToMaxLength } from '../../../lib/stringUtil';
 
 const STORIES_TO_SHOW = 10;
 const VIEW_TABLE = 'VIEW_TABLE';
@@ -38,8 +39,11 @@ class MediaInlinksContainer extends React.Component {
     view: VIEW_TABLE, // which view to show (see view constants above)
   };
 
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, filters, sort } = this.props;
+  componentWillReceiveProps(nextProps, nextState) {
+    const { fetchData, fetchAllInlinks, filters, sort } = this.props;
+    if (nextState.view === VIEW_TREE) {
+      fetchAllInlinks(nextState);
+    }
     if ((nextProps.filters !== filters) || (nextProps.sort !== sort)) {
       fetchData(nextProps);
     }
@@ -55,7 +59,13 @@ class MediaInlinksContainer extends React.Component {
   }
 
   setView = (viewMode) => {
+    const { fetchData, fetchAllInlinks } = this.props;
     this.setState({ view: viewMode });
+    if (viewMode === VIEW_TREE) {
+      fetchAllInlinks(this.props);
+    } else {
+      fetchData(this.props);
+    }
   }
 
   downloadCsv = () => {
@@ -66,7 +76,7 @@ class MediaInlinksContainer extends React.Component {
   }
 
   render() {
-    const { inlinkedStories, topicId, mediaId, helpButton, showTweetCounts, topicName, filters } = this.props;
+    const { inlinkedStories, topicId, mediaId, media, helpButton, showTweetCounts, topicName, filters } = this.props;
     const { formatMessage } = this.props.intl;
     let content = <TopicStoryTable stories={inlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={this.onChangeSort} />;
     if (this.state.view === VIEW_TREE) {
@@ -74,8 +84,8 @@ class MediaInlinksContainer extends React.Component {
       const justIds = [...new Set(inlinkedStories.map(d => d.media_id))];
       const groups = justIds.map(id => ({ id, elements: inlinkedStories.filter(e => e.media_id === id) }));
       const summedInlinks = groups.map(g => ({ id: g.id, name: g.elements[0].media_name, value: g.elements.reduce((acc, ele) => acc + ele.inlink_count, 0) }));
-
-      content = <TreeMap domId={TREE_MAP_DOM_ID} data={summedInlinks} title={formatMessage(localMessages.treeMap, { name: topicName })} />;
+      const concatTitle = `${trimToMaxLength(media.name, 30)} (${topicName})`;
+      content = <TreeMap domId={TREE_MAP_DOM_ID} data={summedInlinks} title={formatMessage(localMessages.treeMap, { name: concatTitle })} />;
     }
     const svgFilename = `${topicDownloadFilename(topicName, filters)}-inlinks-to-${mediaId})`;
     return (
@@ -123,10 +133,12 @@ MediaInlinksContainer.propTypes = {
   mediaId: PropTypes.number.isRequired,
   topicId: PropTypes.number.isRequired,
   topicName: PropTypes.string.isRequired,
+  media: PropTypes.object.isRequired,
   // from mergeProps
   asyncFetch: PropTypes.func.isRequired,
   // from fetchData
   fetchData: PropTypes.func.isRequired,
+  fetchAllInlinks: PropTypes.func.isRequired,
   sortData: PropTypes.func.isRequired,
   // from state
   sort: PropTypes.string.isRequired,
@@ -142,6 +154,7 @@ const mapStateToProps = state => ({
   sort: state.topics.selected.mediaSource.inlinks.sort,
   filters: state.topics.selected.filters,
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
+  media: state.topics.selected.mediaSource.info,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -152,6 +165,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       limit: stateProps.view === VIEW_TABLE ? STORIES_TO_SHOW : '',
     };
     dispatch(fetchMediaInlinks(ownProps.topicId, ownProps.mediaId, params));
+  },
+  fetchAllInlinks: (stateProps) => {
+    const params = {
+      ...stateProps.filters,
+      sort: stateProps.sort,
+    };
+    dispatch(fetchAllMediaInlinks(ownProps.topicId, ownProps.mediaId, params));
   },
   sortData: (sort) => {
     dispatch(sortMediaInlinks(sort));

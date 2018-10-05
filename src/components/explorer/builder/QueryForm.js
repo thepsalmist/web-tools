@@ -38,7 +38,7 @@ const localMessages = {
   queryHelpTitle: { id: 'explorer.queryBuilder.queryHelp.title', defaultMessage: 'Building Query Strings' },
   queryHelpContent: { id: 'explorer.queryBuilder.queryHelp.content', defaultMessage: '<p>You can write boolean queries to search against out database. To search for a single word, just enter that word:</p><code>gender</code><p>You can also use boolean and phrase searches like this:</p><code>"gender equality" OR "gender equity"</code>' },
   saveSearch: { id: 'explorer.queryBuilder.saveQueries', defaultMessage: 'Save Search...' },
-  queryStringError: { id: 'explorer.queryBuilder.queryStringError', defaultMessage: 'Your {name} query is missing keywords.' },
+  queryStringError: { id: 'explorer.queryBuilder.queryStringError', defaultMessage: 'Using no keywords will match all the stories we have (within the dates and media you pick).' },
   startDateWarning: { id: 'explorer.queryBuilder.warning.startDate', defaultMessage: 'Start Date must be before End Date' },
   invalidDateWarning: { id: 'explorer.queryBuilder.warning.invalidDate', defaultMessage: 'Use the YYYY-MM-DD format' },
   noMediaSpecified: { id: 'explorer.queryBuilder.warning.noMediaSpecified', defaultMessage: 'No media selected' },
@@ -103,6 +103,7 @@ class QueryForm extends React.Component {
     }
     const queriesMissingMedia = this.evalAllQueriesForValidMedia();
     if (!selected) { return null; }
+
     return (
       <form className="app-form query-form" name="queryForm" onSubmit={handleSubmit(onSave)}>
         <div className="query-form-wrapper">
@@ -284,10 +285,6 @@ const mapStateToProps = state => ({
 function validate(values, props) {
   const { formatMessage } = props.intl;
   const errors = {};
-  if (emptyString(values.q)) {
-    const errString = formatMessage(localMessages.queryStringError, { name: values.label });
-    errors.q = { _error: errString };
-  }
   if (!validDate(values.startDate) || !isValidSolrDate(values.startDate)) {
     errors.startDate = { _error: formatMessage(localMessages.invalidDateWarning) };
   }
@@ -312,6 +309,10 @@ function warn(values, props) {
     && (!values.sources || !values.sources.length)
     && (!values.media || !values.media.length)) {
     warnings.media = { _warning: formatMessage(localMessages.noMediaSpecified) };
+  }
+  if (emptyString(values.q)) {
+    const errString = formatMessage(localMessages.queryStringError, { name: values.label });
+    warnings.q = { _warning: errString };
   }
   return warnings;
 }

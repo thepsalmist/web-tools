@@ -13,11 +13,9 @@
     }
     .add-media {
       margin-bottom: 8px;
-      border: 1px solid $material-grey200;
       border-top: 0px;
-      padding: 10px;
       button {
-        margin: 15px 0 !important;
+        margin-bottom: 5px;
       }
     }
     .error {
@@ -69,6 +67,7 @@
 
   .query-field-desc {
     color: $material-grey500;
+    opacity: 0.75;
   }
 
   .q-field-wrapper {
@@ -85,26 +84,24 @@
       margin-top: 0px;
       vertical-align: top;
       input {
-        padding: 20px 0;
+        padding: 10px 0px;
       }
     }
     .date-for-wrapper {
       padding: 0px 10px;
-      margin-top: 20px;
       display: inline-block;
-      line-height: 41px;
       vertical-align: top;
+      margin-top: 14px;
     }
     .end-date-wrapper {
       width: 108px !important;
       margin-top: 0px;
       vertical-align: top;
       input {
-        padding: 20px 0;
+        padding: 10px 0px;
       }
     }
     .query-field-desc {
-      padding-top: 20px;
     }
   }
 

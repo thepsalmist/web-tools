@@ -21,9 +21,10 @@ const VIEW_TABLE = 'VIEW_TABLE';
 const VIEW_TREE = 'VIEW_TREE';
 
 const localMessages = {
+  title: { id: 'media.outlinks.title', defaultMessage: 'Top Outlinks' },
   helpTitle: { id: 'media.outlinks.help.title', defaultMessage: 'About Media Outlinks' },
   helpIntro: { id: 'media.outlinks.help.intro', defaultMessage: '<p>This is a table of stories linked to in stories published by this Media Source within the Topic.</p>' },
-  downloadLinkCSV: { id: 'media.inlinks.download.csv', defaultMessage: 'Download InLink Csv' },
+  downloadLinkCSV: { id: 'media.inlinks.download.csv', defaultMessage: 'Download CSV with All Outlinks' },
   modeTree: { id: 'media.inlinks.tree', defaultMessage: 'View Tree Map' },
   modeTable: { id: 'media.inlinks.table', defaultMessage: 'View Table' },
   treeMap: { id: 'media.inlinks.treemap', defaultMessage: 'Outlink Tree Map for {name}' },
@@ -104,7 +105,7 @@ class MediaOutlinksContainer extends React.Component {
           </ActionMenu>
         </div>
         <h2>
-          <FormattedMessage {...messages.outlinks} />
+          <FormattedMessage {...localMessages.title} />
           {helpButton}
         </h2>
         {content}

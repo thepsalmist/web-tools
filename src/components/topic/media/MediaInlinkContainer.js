@@ -21,9 +21,10 @@ const VIEW_TABLE = 'VIEW_TABLE';
 const VIEW_TREE = 'VIEW_TREE';
 
 const localMessages = {
+  title: { id: 'media.inlinks.title', defaultMessage: 'Top Inlinks' },
   helpTitle: { id: 'media.inlinks.help.title', defaultMessage: 'About Media Inlinks' },
   helpIntro: { id: 'media.inlinks.help.intro', defaultMessage: '<p>This is a table of stories that link to stories published by this Media Source within the Topic.</p>' },
-  downloadLinkCSV: { id: 'media.inlinks.download.csv', defaultMessage: 'Download InLink Csv' },
+  downloadLinkCSV: { id: 'media.inlinks.download.csv', defaultMessage: 'Download CSV with All Inlinks' },
   modeTree: { id: 'media.inlinks.tree', defaultMessage: 'View Tree Map' },
   modeTable: { id: 'media.inlinks.table', defaultMessage: 'View Table' },
   treeMap: { id: 'media.inlinks.treemap', defaultMessage: 'Inlink Tree Map for {name}' },
@@ -104,7 +105,7 @@ class MediaInlinksContainer extends React.Component {
           </ActionMenu>
         </div>
         <h2>
-          <FormattedMessage {...messages.inlinks} />
+          <FormattedMessage {...localMessages.title} />
           {helpButton}
         </h2>
         {content}

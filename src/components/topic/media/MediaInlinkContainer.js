@@ -75,6 +75,13 @@ class MediaInlinksContainer extends React.Component {
     window.location = url;
   }
 
+  handleDownloadSvg = (fileName) => {
+    // a little crazy, but it works (we have to just walk the DOM rendered by the library we are using)
+    const domId = TREE_MAP_DOM_ID;
+    const svgNode = document.getElementById(domId).children[0].children[0];
+    downloadSvg(fileName, svgNode);
+  }
+
   render() {
     const { inlinkedStories, topicId, mediaId, media, helpButton, showTweetCounts, topicName, filters } = this.props;
     const { formatMessage } = this.props.intl;
@@ -94,7 +101,7 @@ class MediaInlinksContainer extends React.Component {
           <ActionMenu actionTextMsg={messages.downloadOptions}>
             <SVGAndCSVMenu
               downloadCsv={this.downloadCsv}
-              downloadSvg={this.state.view === VIEW_TREE ? () => downloadSvg(svgFilename, TREE_MAP_DOM_ID) : null}
+              downloadSvg={this.state.view === VIEW_TREE ? () => this.handleDownloadSvg(svgFilename) : null}
               label={formatMessage(localMessages.title)}
             />
           </ActionMenu>

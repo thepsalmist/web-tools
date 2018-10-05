@@ -1,6 +1,7 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 const path = require('path');
 const merge = require('webpack-merge');
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const baseConfig = require('./webpack.base.config');
 
 // many of the webpack directives need an absolute path
@@ -19,6 +20,10 @@ const devConfig = {
     chunkFilename: '[id].[hash].js',
     publicPath: 'http://localhost:2992/', // needed to get correct path in dev manifest file
   },
+  plugins: [
+    // add an intermediate caching step to speed up builds (expect the first one)
+    new HardSourceWebpackPlugin(),
+  ],
 };
 
 module.exports = merge.smart(baseConfig, devConfig);

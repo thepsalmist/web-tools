@@ -30,8 +30,6 @@ function prodConfigGenerator(basedir, toolName) {
 const prodConfig = {
   // tells Webpack to do some stuff, including setting NODE_ENV
   mode: 'production',
-  // recommended to leave this on to aid in prod debugging
-  devtool: 'source-map',
   // do some code optimization for production builds
   optimization: {
     minimizer: [

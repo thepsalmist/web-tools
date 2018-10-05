@@ -150,7 +150,7 @@ def _media_list_edit_worker(media_id):
     active_syndicated_feeds = [f for f in feeds if f['active'] and f['type'] == 'syndicated']
     active_feed_count = len(active_syndicated_feeds)
     query = "media_id:{}".format(media_id)
-    full_count = apicache.cached_timeperiod_story_count(user_mc, query, QUERY_LAST_YEAR)['count']
+    full_count = apicache.timeperiod_story_count(user_mc, query, QUERY_LAST_YEAR)['count']
     return {
         'media_id': media_id,
         'latest_scrape_job': latest_scrape_job,

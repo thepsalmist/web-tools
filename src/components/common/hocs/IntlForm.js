@@ -50,7 +50,6 @@ function withIntlForm(Component) {
     };
 
     renderTextFieldWithFocus = ({ input, saveRef, meta: { touched, error, warning }, ...custom }) => {
-      console.log(warning);
       const intlCustom = this.intlCustomProps(custom);
       if (intlCustom.helpertext !== undefined) {
         intlCustom.helperText = intlCustom.helpertext;

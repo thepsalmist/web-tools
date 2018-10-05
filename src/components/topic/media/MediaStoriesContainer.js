@@ -17,6 +17,8 @@ import { HELP_STORIES_CSV_COLUMNS } from '../../../lib/helpConstants';
 const STORIES_TO_SHOW = 10;
 
 const localMessages = {
+  title: { id: 'media.stories.title', defaultMessage: 'Top Stories' },
+  download: { id: 'media.stories.title', defaultMessage: 'Download CSV of all Stories' },
   helpTitle: { id: 'media.stories.help.title', defaultMessage: 'About Media Stories' },
   helpIntro: { id: 'media.stories.help.intro', defaultMessage: '<p>This is a table of stories published by this Media Source within the Topic.</p>' },
 };
@@ -48,10 +50,10 @@ class MediaStoriesContainer extends React.Component {
     return (
       <DataCard>
         <div className="actions">
-          <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.downloadCsv} />
+          <DownloadButton tooltip={formatMessage(localMessages.download)} onClick={this.downloadCsv} />
         </div>
         <h2>
-          <FormattedMessage {...messages.storyPlural} />
+          <FormattedMessage {...localMessages.title} />
           {helpButton}
         </h2>
         <TopicStoryTable

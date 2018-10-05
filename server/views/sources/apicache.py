@@ -58,7 +58,7 @@ def _cached_collection_source_representation(mc_api_key, collection_id):
 
 
 def random_story_list(mc_api_key, q, fq=None, rows=1000):
-    return _cached_random_story_list(mc_api_key, q, fq, rows)
+    return _cached_random_story_list(q, fq, rows)
 
 
 @cache.cache_on_arguments(function_key_generator=key_generator)
@@ -71,8 +71,12 @@ def last_year_split_story_count(user_mc_key, q='*'):
     return _cached_last_year_split_story_count(user_mc_key, q)
 
 
+def timeperiod_story_count(user_mc, query, time_period):
+    return _cached_timeperiod_story_count(query, time_period)
+
+
 @cache.cache_on_arguments(function_key_generator=key_generator)
-def cached_timeperiod_story_count(q='*', time_period=QUERY_LAST_MONTH):
+def _cached_timeperiod_story_count(q='*', time_period=QUERY_LAST_MONTH):
     # sources are open to everyone, so no need for user-specific cache
     # Helper to fetch split story counts over a timeframe for an arbitrary query
     user_mc = user_mediacloud_client()

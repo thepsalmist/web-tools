@@ -3,7 +3,6 @@ const path = require('path');
 const webpack = require('webpack');
 const ManifestRevisionPlugin = require('manifest-revision-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 // many of the webpack directives need an absolute path
 const basedir = path.resolve(__dirname, '../');
@@ -25,8 +24,6 @@ const baseConfig = {
     new MiniCssExtractPlugin({
       filename: '[name].[hash].css',
     }),
-    // add an intermediate caching step to speed up builds (expect the first one)
-    new HardSourceWebpackPlugin(),
   ],
   module: {
     rules: [

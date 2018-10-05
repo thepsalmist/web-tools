@@ -58,7 +58,7 @@ def _cached_collection_source_representation(mc_api_key, collection_id):
 
 
 def random_story_list(mc_api_key, q, fq=None, rows=1000):
-    return _cached_random_story_list(mc_api_key, q, fq, rows)
+    return _cached_random_story_list(q, fq, rows)
 
 
 @cache.cache_on_arguments(function_key_generator=key_generator)

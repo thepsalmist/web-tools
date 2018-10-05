@@ -69,8 +69,6 @@ class User(flask_login.UserMixin):
             # be safer here... if anything goes wrong make them login again
             return None
 
-#User.cached = {}
-
 
 @login_manager.user_loader
 def load_user(userid):

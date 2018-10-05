@@ -17,18 +17,24 @@ const localMessages = {
   pCountryOfFocusSuggestion: { id: 'search.advanced.pCountryOfFocusTip', defaultMessage: 'country of focus' },
   pMediaType: { id: 'search.advanced.pMediaType', defaultMessage: 'media type' },
   search: { id: 'system.mediaPicker.select.search', defaultMessage: 'Search' },
+  allMedia: { id: 'system.mediaPicker.select.allMedia', defaultMessage: 'Search All Media (not advised)' },
 };
 
 class AdvancedMediaPickerSearchForm extends React.Component {
   handleSearchButtonClick = (evt) => {
-    const { onSearch } = this.props;
+    const { onAdvancedSelection } = this.props;
     evt.preventDefault();
     const searchStr = document.getElementsByTagName('input')[0].value; // note: this is a brittle hack
-    onSearch({ mediaKeyword: searchStr });
+    onAdvancedSelection({ mediaKeyword: searchStr });
+  }
+
+  handleSearchAll = (evt) => {
+    const { onAdvancedSelection } = this.props;
+    onAdvancedSelection({ allMedia: evt.target.checked });
   }
 
   render() {
-    const { initValues, renderTextField, hintText } = this.props;
+    const { initValues, renderTextField, hintText, renderCheckbox } = this.props;
     const { formatMessage } = this.props.intl;
 
     const content = (
@@ -107,6 +113,18 @@ class AdvancedMediaPickerSearchForm extends React.Component {
             />
           </Col>
         </Row>
+        <Row>
+          <Col lg={6}>
+            <Field
+              name="allMedia"
+              component={renderCheckbox}
+              fullWidth
+              label={localMessages.allMedia}
+              helpertext={localMessages.allMedia}
+              onChange={this.handleSearchAll}
+            />
+          </Col>
+        </Row>
       </FormSection>
     );
     return (
@@ -130,9 +148,10 @@ AdvancedMediaPickerSearchForm.propTypes = {
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   renderTextField: PropTypes.func.isRequired,
+  renderCheckbox: PropTypes.func.isRequired,
   hintText: PropTypes.string,
   // from parent
-  onSearch: PropTypes.func.isRequired,
+  onAdvancedSelection: PropTypes.func.isRequired,
   searchString: PropTypes.string,
 };
 

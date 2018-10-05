@@ -30,7 +30,7 @@ class TabSelector extends React.Component {
               onViewSelected(idx);
             }}
           >
-            {trimToMaxLength(label.label || label, MAX_TAB_LABEL_LENGTH)}
+            {trimToMaxLength(label.label !== undefined ? label.label : label || label, MAX_TAB_LABEL_LENGTH)}
           </li>
         ))}
       </ul>

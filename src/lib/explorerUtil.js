@@ -50,7 +50,7 @@ export function generateQueryParamString(queries) {
 export function decodeQueryParamString(queryString) {
   const queriesForUrl = JSON.parse(queryString).map(query => ({
     label: notEmptyString(query.label) ? decodeURIComponent(query.label) : '',
-    q: notEmptyString(query.q) ? decodeURIComponent(query.q) : '*',
+    q: notEmptyString(query.q) ? decodeURIComponent(query.q) : '',
     color: notEmptyString(query.color) ? decodeURIComponent(query.color) : '',
     startDate: query.startDate,
     endDate: query.endDate,
@@ -82,8 +82,12 @@ export function queryChangedEnoughToUpdate(queries, nextQueries, results, nextRe
 }
 
 // TODO: implement this logic from Dashboard
-export const autoMagicQueryLabel = query => decodeURIComponent(trimToMaxLength(query.q, QUERY_LABEL_AUTOMAGIC_DISPLAY_LIMIT));
-
+export const autoMagicQueryLabel = (query) => {
+  if (query.q.length === 0) {
+    return '(all stories)';
+  }
+  return trimToMaxLength(query.q, QUERY_LABEL_AUTOMAGIC_DISPLAY_LIMIT);
+};
 
 // This handles downloading a single query (samples or user-generated) for you.  To handle quotes and utf and such, we do this
 // via a form submission (after trying lots of other options).

@@ -9,7 +9,7 @@ from server import app
 from server.views import TAG_COUNT_DOWNLOAD_LENGTH
 from server.util.request import api_error_handler
 from server.util.tags import CLIFF_PEOPLE, CLIFF_ORGS, NYT_LABELS_TAG_SET_ID, is_bad_theme
-from server.views.explorer import parse_as_sample, parse_query_with_args_and_sample_search, parse_query_with_keywords, \
+from server.views.explorer import parse_as_sample, parse_query_with_keywords, \
     load_sample_searches, file_name_for_download
 import server.views.explorer.apicache as apicache
 
@@ -55,10 +55,11 @@ def api_explorer_demo_top_entities_organizations():
 def demo_top_tags_with_coverage(tag_sets_id,):
     # parses the query for you
     search_id = int(request.args['search_id']) if 'search_id' in request.args else None
+    query_id = int(request.args['id']) if 'id' in request.args else None
     if search_id not in [None, -1]:
         sample_searches = load_sample_searches()
         current_search = sample_searches[search_id]['queries']
-        solr_q, solr_fq = parse_query_with_args_and_sample_search(request.args, current_search)
+        solr_q, solr_fq = parse_as_sample(search_id, request.args)
     else:
         solr_q, solr_fq = parse_query_with_keywords(request.args)
     return apicache.top_tags_with_coverage(solr_q, solr_fq, tag_sets_id)

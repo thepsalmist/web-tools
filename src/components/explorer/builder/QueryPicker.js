@@ -15,7 +15,9 @@ import QueryHelpDialog from '../../common/help/QueryHelpDialog';
 import { selectQuery, updateQuery, addCustomQuery, loadUserSearches, saveUserSearch, deleteUserSearch, markAsDeletedQuery, copyAndReplaceQueryField } from '../../../actions/explorerActions';
 import { AddQueryButton } from '../../common/IconButton';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
-import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, generateQueryParamString, KEYWORD, DATES, MEDIA } from '../../../lib/explorerUtil';
+import { autoMagicQueryLabel, generateQueryParamString, KEYWORD, DATES, MEDIA, DEFAULT_COLLECTION_OBJECT_ARRAY } from '../../../lib/explorerUtil';
+import { ALL_MEDIA } from '../../../lib/mediaUtil';
+
 
 const localMessages = {
   mainTitle: { id: 'explorer.querypicker.mainTitle', defaultMessage: 'Query List' },
@@ -29,6 +31,8 @@ const localMessages = {
 const formSelector = formValueSelector('queryForm');
 
 class QueryPicker extends React.Component {
+  getAllActiveQueries = queries => (queries.filter(q => q.deleted !== true));
+
   handleColorChange = (newColorInfo) => {
     // when user changes color we want to change it on all charts right away
     const { selected, formQuery, updateCurrentQuery } = this.props;
@@ -63,11 +67,17 @@ class QueryPicker extends React.Component {
       ...selected,
       ...formQuery,
     };
-    const updatedSources = sourceAndCollections.filter(m => m.type === 'source' || m.media_id);
-    const updatedCollections = sourceAndCollections.filter(m => m.type === 'collection' || m.tags_id);
-    updatedQuery.collections = updatedCollections;
-    updatedQuery.sources = updatedSources;
-    updateCurrentQueryThenReselect(updatedQuery);
+    if (sourceAndCollections.filter(m => m.id === ALL_MEDIA).length === 0) {
+      const updatedSources = sourceAndCollections.filter(m => m.type === 'source' || m.media_id);
+      const updatedCollections = sourceAndCollections.filter(m => m.type === 'collection' || m.tags_id);
+      updatedQuery.collections = updatedCollections;
+      updatedQuery.sources = updatedSources;
+      updateCurrentQueryThenReselect(updatedQuery);
+    } else {
+      updatedQuery.collections = sourceAndCollections; // push ALL_MEDIA selection into query so it shows up
+      updatedQuery.sources = [];
+      updateCurrentQueryThenReselect(updatedQuery);
+    }
   }
 
   saveAndSearch = () => {
@@ -174,7 +184,7 @@ class QueryPicker extends React.Component {
     let fixedQuerySlides;
     let canSelectMedia = false;
 
-    const unDeletedQueries = queries.filter(q => q.deleted !== true);
+    const unDeletedQueries = this.getAllActiveQueries(queries);
     if (unDeletedQueries && unDeletedQueries.length > 0 && selected) {
       fixedQuerySlides = unDeletedQueries.map((query, index) => (
         <div key={index}>
@@ -191,6 +201,7 @@ class QueryPicker extends React.Component {
             updateDemoQueryLabel={newValue => this.updateDemoQueryLabel(query, newValue)}
             onSearch={this.saveAndSearch}
             onDelete={() => this.handleDeleteAndSelectQuery(query)}
+            /* onDuplicate={() => handleDuplicateQuery(query, queries)} */
             // loadDialog={loadQueryEditDialog}
           />
         </div>
@@ -209,8 +220,9 @@ class QueryPicker extends React.Component {
         const newIndex = queries.length; // all queries, including 'deleted' ones
         const genDefColor = colorPallette(newIndex);
         const newQueryLabel = `Query ${String.fromCharCode('A'.charCodeAt(0) + newIndex)}`;
-        const defaultQueryField = isLoggedIn ? '*' : '';
-        const defaultQuery = { index: newIndex, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
+        const defaultQueryField = '';
+        const defaultDemoQuery = { index: newIndex, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
+        const defaultQuery = { index: newIndex, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: [], sources: [], color: genDefColor, autoNaming: true };
 
         const emptyQuerySlide = (
           <div key={fixedQuerySlides.length}>
@@ -219,9 +231,9 @@ class QueryPicker extends React.Component {
                 <AddQueryButton
                   key={fixedQuerySlides.length} // this isn't working
                   tooltip={formatMessage(localMessages.addQuery)}
-                  onClick={() => addAQuery(defaultQuery)}
+                  onClick={() => addAQuery(isLoggedIn ? defaultQuery : defaultDemoQuery)}
                 />
-                <a href="" onTouchTap={() => addAQuery(defaultQuery)}><FormattedMessage {...localMessages.addQuery} /></a>
+                <a href="" onTouchTap={() => addAQuery(isLoggedIn ? defaultQuery : defaultDemoQuery)}><FormattedMessage {...localMessages.addQuery} /></a>
               </div>
             </div>
           </div>
@@ -323,6 +335,7 @@ QueryPicker.propTypes = {
   addAQuery: PropTypes.func.isRequired,
   handleLoadUserSearches: PropTypes.func.isRequired,
   handleLoadSelectedSearch: PropTypes.func.isRequired,
+  handleDuplicateQuery: PropTypes.func.isRequired,
   savedSearches: PropTypes.array.isRequired,
   sendAndSaveUserSearch: PropTypes.func.isRequired,
   handleDeleteUserSearch: PropTypes.func.isRequired,
@@ -422,6 +435,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     if (query) {
       dispatch(markAsDeletedQuery(query));
       dispatch(selectQuery(replacementSelectionQuery));
+    }
+  },
+  handleDuplicateQuery: (query, queries) => {
+    const dupeQuery = Object.assign({}, query, { index: queries.length }); // this will be an issue
+    if (query) {
+      dispatch(addCustomQuery(dupeQuery));
+      dispatch(selectQuery(dupeQuery));
     }
   },
 });

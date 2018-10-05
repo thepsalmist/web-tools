@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedMessage } from 'react-intl';
-import { reduxForm, Field, propTypes } from 'redux-form';
+import { connect } from 'react-redux';
+import { FormattedMessage } from 'react-intl';
+import { reduxForm, Field, propTypes, formValueSelector } from 'redux-form';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import CopyAllComponent from '../../common/CopyAllComponent';
-import SourceCollectionsFieldList from '../../common/mediaPicker/SourceCollectionsFieldList';
+import SourceCollectionsMediaForm from '../../common/form/SourceCollectionsMediaForm';
 import MediaPickerDialog from '../../common/mediaPicker/MediaPickerDialog';
 import QueryHelpDialog from '../../common/help/QueryHelpDialog';
 import MediaHelpDialog from '../../common/help/MediaHelpDialog';
@@ -15,7 +16,10 @@ import SavedSearchControls from './SavedSearchControls';
 import { emptyString, validDate } from '../../../lib/formValidators';
 import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil';
 import { KEYWORD, MEDIA, DATES } from '../../../lib/explorerUtil';
+import { ALL_MEDIA } from '../../../lib/mediaUtil';
 import messages from '../../../resources/messages';
+
+const formSelector = formValueSelector('queryForm');
 
 const localMessages = {
   mainTitle: { id: 'explorer.queryBuilder.maintitle', defaultMessage: 'Create Query' },
@@ -34,10 +38,10 @@ const localMessages = {
   queryHelpTitle: { id: 'explorer.queryBuilder.queryHelp.title', defaultMessage: 'Building Query Strings' },
   queryHelpContent: { id: 'explorer.queryBuilder.queryHelp.content', defaultMessage: '<p>You can write boolean queries to search against out database. To search for a single word, just enter that word:</p><code>gender</code><p>You can also use boolean and phrase searches like this:</p><code>"gender equality" OR "gender equity"</code>' },
   saveSearch: { id: 'explorer.queryBuilder.saveQueries', defaultMessage: 'Save Search...' },
-  queryStringError: { id: 'explorer.queryBuilder.queryStringError', defaultMessage: 'Your {name} query is missing keywords.' },
+  queryStringError: { id: 'explorer.queryBuilder.queryStringError', defaultMessage: 'Using no keywords will match all the stories we have (within the dates and media you pick).' },
   startDateWarning: { id: 'explorer.queryBuilder.warning.startDate', defaultMessage: 'Start Date must be before End Date' },
   invalidDateWarning: { id: 'explorer.queryBuilder.warning.invalidDate', defaultMessage: 'Use the YYYY-MM-DD format' },
-  noMediaSpecified: { id: 'explorer.queryBuilder.warning.noMediaSpecified', defaultMessage: 'Searching all media - generally not a great idea' },
+  noMediaSpecified: { id: 'explorer.queryBuilder.warning.noMediaSpecified', defaultMessage: 'No media selected' },
   copyQueryKeywordTitle: { id: 'explorer.queryform.copyQueryQ', defaultMessage: 'Copy Query Keywords' },
   copyQueryDatesTitle: { id: 'explorer.queryform.copyQueryDates', defaultMessage: 'Copy Query Dates' },
   copyQueryMediaTitle: { id: 'explorer.queryform.copyQueryMedia', defaultMessage: 'Copy Query Media' },
@@ -51,8 +55,17 @@ class QueryForm extends React.Component {
     childDialogOpen: false,
   }
 
+  getAllActiveQueries = queries => (queries.filter(q => q.deleted !== true));
+
   setQueryFormChildDialogOpen = () => {
     this.setState(prevState => ({ childDialogOpen: !prevState.childDialogOpen }));
+  }
+
+  evalAllQueriesForValidMedia = () => {
+    const { queries, mediaUpdates } = this.props;
+    const anyQueriesNoMedia = this.getAllActiveQueries(queries).filter(q => (q.index !== mediaUpdates.index) && q.media && q.media.length === 0).length; // if any query is missing media
+    const thisCurrentQueryFormNoMedia = mediaUpdates && (mediaUpdates.media === undefined || mediaUpdates.media.length === 0) && mediaUpdates.sources.length === 0 && mediaUpdates.collections.length === 0;
+    return anyQueriesNoMedia || thisCurrentQueryFormNoMedia;
   }
 
   render() {
@@ -63,10 +76,14 @@ class QueryForm extends React.Component {
     if (cleanedInitialValues.disabled === undefined) {
       cleanedInitialValues.disabled = false;
     }
-    cleanedInitialValues.media = [ // merge intial sources and collections into one list for display with `renderFields`
-      ...initialValues.sources,
-      ...initialValues.collections,
-    ];
+    if (initialValues.collections && initialValues.collections.length && initialValues.collections[0].tags_id === ALL_MEDIA) {
+      cleanedInitialValues.media = [{ id: ALL_MEDIA, label: formatMessage(messages.allMedia) }];
+    } else {
+      cleanedInitialValues.media = [ // merge intial sources and collections into one list for display with `renderFields`
+        ...initialValues.sources,
+        ...initialValues.collections,
+      ];
+    }
     selected.media = [ // merge sources and collections into one list for display with `renderFields`
       ...selected.sources,
       ...selected.collections,
@@ -84,7 +101,9 @@ class QueryForm extends React.Component {
       );
       mediaLabel = formatMessage(localMessages.selectSandC);
     }
+    const queriesMissingMedia = this.evalAllQueriesForValidMedia();
     if (!selected) { return null; }
+
     return (
       <form className="app-form query-form" name="queryForm" onSubmit={handleSubmit(onSave)}>
         <div className="query-form-wrapper">
@@ -131,15 +150,16 @@ class QueryForm extends React.Component {
                       onOk={() => handleCopyAll(MEDIA)}
                     />
                   </div>
-                  <SourceCollectionsFieldList
+                  <SourceCollectionsMediaForm
                     className="query-field"
                     form="queryForm"
                     destroyOnUnmount={false}
-                    enableReinitialize
                     onDelete={onMediaDelete}
-                    initialValues={cleanedInitialValues}
+                    initialValues={cleanedInitialValues.media}
                     allowRemoval={isEditable}
-                    showWarningIfEmpty
+                    name="media"
+                    title="title"
+                    intro="intro"
                   />
                   {mediaPicker}
                   <div className="query-field-desc">
@@ -181,8 +201,8 @@ class QueryForm extends React.Component {
                     disabled={!isEditable}
                     onChange={onDateChange}
                   />
+                  <div className="query-field-desc"><FormattedMessage {...localMessages.datesDesc} /></div>
                 </div>
-                <div className="query-field-desc"><FormattedMessage {...localMessages.datesDesc} /></div>
               </Col>
             </Row>
           </Grid>
@@ -206,7 +226,7 @@ class QueryForm extends React.Component {
                   <AppButton
                     type="submit"
                     label={buttonLabel}
-                    disabled={submitting}
+                    disabled={queriesMissingMedia || submitting}
                     onClick={onWillSearch}
                     primary
                   />
@@ -244,22 +264,27 @@ QueryForm.propTypes = {
   handleCopyAll: PropTypes.func.isRequired,
   onMediaDelete: PropTypes.func.isRequired,
   onDateChange: PropTypes.func.isRequired,
-  // from form healper
+  // from state
+  queries: PropTypes.array,
+  // from form helper
   updateQuery: PropTypes.func,
   handleSubmit: PropTypes.func,
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   isEditable: PropTypes.bool.isRequired,
   focusRequested: PropTypes.func.isRequired,
+  mediaUpdates: PropTypes.object,
 };
+
+
+const mapStateToProps = state => ({
+  mediaUpdates: formSelector(state, 'index', 'media', 'sources', 'collections'),
+  queries: state.explorer.queries.queries ? state.explorer.queries.queries : null,
+});
 
 function validate(values, props) {
   const { formatMessage } = props.intl;
   const errors = {};
-  if (emptyString(values.q)) {
-    const errString = formatMessage(localMessages.queryStringError, { name: values.label });
-    errors.q = { _error: errString };
-  }
   if (!validDate(values.startDate) || !isValidSolrDate(values.startDate)) {
     errors.startDate = { _error: formatMessage(localMessages.invalidDateWarning) };
   }
@@ -269,7 +294,11 @@ function validate(values, props) {
   if (validDate(values.startDate) && validDate(values.endDate) && isStartDateAfterEndDate(values.startDate, values.endDate)) {
     errors.startDate = { _error: formatMessage(localMessages.startDateWarning) };
   }
-
+  if ((!values.collections || !values.collections.length)
+    && (!values.sources || !values.sources.length)
+    && (!values.media || !values.media.length)) {
+    errors.media = { _error: formatMessage(localMessages.noMediaSpecified) };
+  }
   return errors;
 }
 
@@ -281,14 +310,18 @@ function warn(values, props) {
     && (!values.media || !values.media.length)) {
     warnings.media = { _warning: formatMessage(localMessages.noMediaSpecified) };
   }
+  if (emptyString(values.q)) {
+    const errString = formatMessage(localMessages.queryStringError, { name: values.label });
+    warnings.q = { _warning: errString };
+  }
   return warnings;
 }
 
 export default
-injectIntl(
-  withIntlForm(
-    withHelp(localMessages.queryHelpTitle, localMessages.queryHelpContent)(
-      reduxForm({ propTypes, validate, warn })(
+withIntlForm(
+  withHelp(localMessages.queryHelpTitle, localMessages.queryHelpContent)(
+    reduxForm({ propTypes, validate, warn })(
+      connect(mapStateToProps, null)(
         QueryForm
       ),
     ),

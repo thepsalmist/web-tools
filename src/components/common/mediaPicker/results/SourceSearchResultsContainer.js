@@ -10,6 +10,7 @@ import AdvancedMediaPickerSearchForm from '../AdvancedMediaPickerSearchForm';
 import MediaPickerSearchForm from '../MediaPickerSearchForm';
 import LoadingSpinner from '../../LoadingSpinner';
 import { notEmptyString } from '../../../../lib/formValidators';
+import { ALL_MEDIA } from '../../../../lib/mediaUtil';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching "{name}"' },
@@ -17,6 +18,7 @@ const localMessages = {
   noResults: { id: 'system.mediaPicker.sources.noResults', defaultMessage: 'No results. Try searching for the name or URL of a specific source to see if we cover it, like Washington Post, Hindustan Times, or guardian.co.uk.' },
   showAdvancedOptions: { id: 'system.mediaPicker.sources.showAdvancedOptions', defaultMessage: 'Show Advanced Options' },
   hideAdvancedOptions: { id: 'system.mediaPicker.sources.hideAdvancedOptions', defaultMessage: 'Hide Advanced Options' },
+  allMedia: { id: 'system.mediaPicker.sources.allMedia', defaultMessage: 'All Media (not advised)' },
 };
 
 const formSelector = formValueSelector('advanced-media-picker-search');
@@ -43,6 +45,9 @@ class SourceSearchResultsContainer extends React.Component {
           updatedQueryObj.tags.push(formValues[key]);
         }
       });
+      if ('allMedia' in values) {
+        updatedQueryObj.tags.push(values.allMedia);
+      }
       this.setState(updatedQueryObj);
       updateAdvancedMediaQuerySelection(updatedQueryObj);
     } else {
@@ -60,7 +65,7 @@ class SourceSearchResultsContainer extends React.Component {
         <div>
           <AdvancedMediaPickerSearchForm
             initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
-            onSearch={val => this.updateMediaQuery(val)}
+            onAdvancedSelection={val => this.updateMediaQuery(val)}
             hintText={formatMessage(localMessages.hintText)}
           />
           <a onTouchTap={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.hideAdvancedOptions} /></a>
@@ -124,10 +129,11 @@ const mapStateToProps = state => ({
     'advanced-media-picker-search.primaryLanguage',
     'advanced-media-picker-search.countryOfFocus',
     'advanced-media-picker-search.mediaType',
+    'advanced-media-picker-search.allMedia',
   ),
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   updateMediaQuerySelection: (values) => {
     if (values && notEmptyString(values.mediaKeyword)) {
       dispatch(selectMediaPickerQueryArgs(values));
@@ -136,8 +142,12 @@ const mapDispatchToProps = dispatch => ({
   },
   updateAdvancedMediaQuerySelection: (values) => {
     if (values.tags && values.tags.length > 0) {
-      dispatch(selectMediaPickerQueryArgs(values));
-      dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: values.tags.map(tag => tag.tags_id) }));
+      if (values.allMedia) { // handle the "all media" placeholder selection
+        ownProps.handleToggleAndSelectMedia({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
+      } else {
+        dispatch(selectMediaPickerQueryArgs(values));
+        dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: values.tags.map(tag => tag.tags_id) }));
+      }
     }
   },
 });

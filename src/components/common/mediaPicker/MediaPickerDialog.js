@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import Modal from '@material-ui/core/Modal';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -9,9 +9,9 @@ import PickedMediaContainer from './PickedMediaContainer';
 import MediaPickerResultsContainer from './MediaPickerResultsContainer';
 import { fetchMediaPickerFeaturedCollections, initializePreviouslySelectedMedia, clearSelectedMedia } from '../../../actions/systemActions';
 import AppButton from '../AppButton';
-import { AddQueryButton } from '../IconButton';
 import { PICK_FEATURED } from '../../../lib/explorerUtil';
 import { TAG_SET_MC_ID } from '../../../lib/tagUtil';
+import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.select.title', defaultMessage: 'title' },
@@ -65,7 +65,12 @@ class MediaPickerDialog extends React.Component {
     const { onConfirmSelection, selectedMedia, setQueryFormChildDialogOpen, reset } = this.props;
     this.setState({ open: false });
     if (confirm) {
-      onConfirmSelection(selectedMedia); // passed in from containing element
+      const allTest = selectedMedia.filter(m => m.id === ALL_MEDIA);
+      if (allTest.length > 0) {
+        onConfirmSelection(allTest); // if selected, this takes precedence
+      } else {
+        onConfirmSelection(selectedMedia); // passed in from containing element
+      }
     }
     reset();
     if (setQueryFormChildDialogOpen) {
@@ -109,14 +114,12 @@ class MediaPickerDialog extends React.Component {
 
     return (
       <div className="add-media">
-        <AddQueryButton
+        <AppButton
           onClick={() => this.handleModifyClick(initMedia)}
           tooltip={formatMessage(localMessages.addMedia)}
+          label="Add Media"
         />
         {modalContent}
-        <div className="add-media-label">
-          <FormattedMessage {...localMessages.addMedia} />
-        </div>
       </div>
     );
   }

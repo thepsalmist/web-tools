@@ -1,6 +1,62 @@
 {
   "releases": [
     {
+      "date": "2018-10-05",
+      "version": "v3.5.0",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "You can delete saved searches again."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "Now you can validate some sample stories while creating a topic."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "See inlinks to a media source within a topic as a treemap."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Clicking a sample story in Explorer no longer resets the page."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "You can edit word clouds in Explorer again."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Copying a field to all queries in Explorer works better."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Explorer story list download shouldn't stop in the middle anymore."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Adding media sources to collections works more reliably."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Active feed count for a source is more accurate."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Feature",
+          "note": "Reviewing a collection for valid/invalid sources is easier."
+        }
+      ]
+    },
+    {
       "date": "2018-09-24",
       "version": "v3.4.4",
       "notes": [

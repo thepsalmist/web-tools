@@ -3,7 +3,6 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { fetchMediaOutlinks, sortMediaOutlinks } from '../../../actions/topicActions';
 import ActionMenu from '../../common/ActionMenu';
@@ -13,12 +12,15 @@ import messages from '../../../resources/messages';
 import TopicStoryTable from '../TopicStoryTable';
 import TreeMap from '../../vis/TreeMap';
 import DataCard from '../../common/DataCard';
+import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
+import { downloadSvg } from '../../util/svg';
 import { filtersAsUrlParams } from '../../util/location';
-import { DownloadButton } from '../../common/IconButton';
+import { topicDownloadFilename } from '../../util/topicUtil';
 
 const STORIES_TO_SHOW = 10;
 const VIEW_TABLE = 'VIEW_TABLE';
 const VIEW_TREE = 'VIEW_TREE';
+const TREE_MAP_DOM_ID = 'tree-map';
 
 const localMessages = {
   title: { id: 'media.outlinks.title', defaultMessage: 'Top Outlinks' },
@@ -63,7 +65,7 @@ class MediaOutlinksContainer extends React.Component {
   }
 
   render() {
-    const { outlinkedStories, topicId, topicName, helpButton, showTweetCounts } = this.props;
+    const { outlinkedStories, topicId, topicName, filters, mediaId, helpButton, showTweetCounts } = this.props;
     const { formatMessage } = this.props.intl;
     let content = <TopicStoryTable stories={outlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={this.onChangeSort} />;
     if (this.state.view === VIEW_TREE) {
@@ -72,11 +74,19 @@ class MediaOutlinksContainer extends React.Component {
       const groups = justIds.map(id => ({ id, elements: outlinkedStories.filter(e => e.media_id === id) }));
       const summedInlinks = groups.map(g => ({ id: g.id, name: g.elements[0].media_name, value: g.elements.reduce((acc, ele) => acc + ele.inlink_count, 0) }));
 
-      content = <TreeMap data={summedInlinks} title={formatMessage(localMessages.treeMap, { name: topicName })} />;
+      content = <TreeMap domId={TREE_MAP_DOM_ID} data={summedInlinks} title={formatMessage(localMessages.treeMap, { name: topicName })} />;
     }
+    const svgFilename = `${topicDownloadFilename(topicName, filters)}-inlinks-to-${mediaId})`;
     return (
       <DataCard>
         <div className="actions">
+          <ActionMenu actionTextMsg={messages.downloadOptions}>
+            <SVGAndCSVMenu
+              downloadCsv={() => this.downloadCsv}
+              downloadSvg={this.state.view === VIEW_TREE ? () => downloadSvg(svgFilename, TREE_MAP_DOM_ID) : null}
+              label={formatMessage(localMessages.title)}
+            />
+          </ActionMenu>
           <ActionMenu actionTextMsg={messages.viewOptions}>
             <MenuItem
               className="action-icon-menu-item"
@@ -91,16 +101,6 @@ class MediaOutlinksContainer extends React.Component {
               onClick={() => this.setView(VIEW_TABLE)}
             >
               <ListItemText><FormattedMessage {...localMessages.modeTable} /> </ListItemText>
-            </MenuItem>
-            <MenuItem
-              className="action-icon-menu-item"
-              disabled={this.state.editing} // can't download until done editing
-              onClick={() => this.downloadCsv(1)}
-            >
-              <ListItemText><FormattedMessage {...localMessages.downloadLinkCSV} /></ListItemText>
-              <ListItemIcon>
-                <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.review))} />
-              </ListItemIcon>
             </MenuItem>
           </ActionMenu>
         </div>

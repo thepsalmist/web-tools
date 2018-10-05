@@ -17,7 +17,7 @@ const localMessages = {
  * Pass in data - an array of `name`/`value` objects
  */
 const TreeMap = (props) => {
-  const { title, data, onLeafClick } = props;
+  const { title, data, onLeafClick, domId } = props;
   const { formatNumber, formatMessage } = props.intl;
   const totalCount = data.map(d => d.value).reduce((acc, d) => acc + d);
   const config = {
@@ -70,7 +70,7 @@ const TreeMap = (props) => {
     };
   }
   return (
-    <div className="tree-map">
+    <div className="tree-map" id={domId}>
       <ReactHighcharts config={config} />
     </div>
   );
@@ -82,6 +82,7 @@ TreeMap.propTypes = {
   data: PropTypes.array.isRequired,
   onLeafClick: PropTypes.func,
   color: PropTypes.string,
+  domId: PropTypes.string.isRequired, // to make download work
   // from composition chain
   intl: PropTypes.object.isRequired,
 };

@@ -34,6 +34,7 @@ const SVGAndCSVMenu = (props) => {
         key={`${idx}-svg`}
         className={ACTION_MENU_ITEM_CLASS}
         onClick={() => downloadSvg(label)}
+        disabled={downloadSvg === null}
       >
         <ListItemText>
           <FormattedMessage {...localMessages.downloadSVG} values={{ name: label }} />

@@ -1,0 +1,11 @@
+@import '../../_constants';
+
+svg {
+    text {
+        stroke: 'white';
+        font-family: Lato, Helvetica, sans !important;
+        tspan {
+            stroke: none !important;
+        }
+    }
+}

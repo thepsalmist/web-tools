@@ -57,9 +57,9 @@ class MediaContainer extends React.Component {
   render() {
     const { media, topicId, mediaId, filters, topicName } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
-    const titleHandler = parentTitle => `${media.name} | ${parentTitle}`;
     const dialogActions = [
       <Button
+        key="1"
         variant="outlined"
         label={formatMessage(messages.ok)}
         primary
@@ -87,7 +87,7 @@ class MediaContainer extends React.Component {
     }
     return (
       <div>
-        <Helmet><title>{titleHandler()}</title></Helmet>
+        <Helmet><title>{`${media.name} | ${topicName} | ${formatMessage(messages.topicsToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
         <Grid>
           <Row>
             <Col lg={12} md={12} sm={12}>
@@ -139,12 +139,12 @@ class MediaContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={12} md={12} sm={12}>
-              <MediaInlinkContainer topicId={topicId} mediaId={mediaId} />
+              <MediaInlinkContainer topicId={topicId} mediaId={mediaId} topicName={topicName} />
             </Col>
           </Row>
           <Row>
             <Col lg={12} md={12} sm={12}>
-              <MediaOutlinkContainer topicId={topicId} mediaId={mediaId} />
+              <MediaOutlinkContainer topicId={topicId} mediaId={mediaId} topicName={topicName} />
             </Col>
           </Row>
           <Row>

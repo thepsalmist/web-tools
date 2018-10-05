@@ -57,7 +57,6 @@ class MediaContainer extends React.Component {
   render() {
     const { media, topicId, mediaId, filters, topicName } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
-    const titleHandler = parentTitle => `${media.name} | ${parentTitle}`;
     const dialogActions = [
       <Button
         key="1"
@@ -88,7 +87,7 @@ class MediaContainer extends React.Component {
     }
     return (
       <div>
-        <Helmet><title>{titleHandler()}</title></Helmet>
+        <Helmet><title>{`${media.name} | ${topicName} | ${formatMessage(messages.topicsToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
         <Grid>
           <Row>
             <Col lg={12} md={12} sm={12}>

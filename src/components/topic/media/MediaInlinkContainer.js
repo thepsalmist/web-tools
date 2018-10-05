@@ -169,7 +169,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     const params = {
       ...stateProps.filters,
       sort: stateProps.sort,
-      limit: stateProps.view === VIEW_TABLE ? STORIES_TO_SHOW : '',
+      limit: STORIES_TO_SHOW,
     };
     dispatch(fetchMediaInlinks(ownProps.topicId, ownProps.mediaId, params));
   },

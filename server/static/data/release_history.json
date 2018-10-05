@@ -1,8 +1,143 @@
 {
   "releases": [
     {
+      "date": "2018-10-05",
+      "version": "v3.5.0",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "You can delete saved searches again."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "Now you can validate some sample stories while creating a topic."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "See inlinks to a media source within a topic as a treemap."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Clicking a sample story in Explorer no longer resets the page."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "You can edit word clouds in Explorer again."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Copying a field to all queries in Explorer works better."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Explorer story list download shouldn't stop in the middle anymore."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Adding media sources to collections works more reliably."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Active feed count for a source is more accurate."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Feature",
+          "note": "Reviewing a collection for valid/invalid sources is easier."
+        }
+      ]
+    },
+    {
+      "date": "2018-09-24",
+      "version": "v3.4.4",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Hide inaccurate story count when using a query filter within a topic."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Editing topic word clouds works again."
+        }
+      ]
+    },
+    {
+      "date": "2018-09-24",
+      "version": "v3.4.4",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Downloading top themes in Explorer works again."
+        }
+      ]
+    },
+    {
+      "date": "2018-09-17",
+      "version": "v3.4.3",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Solved problem preventing some users from downloading topic story CSV files."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Reviewing sources in a collection works even if they've never been scraped."
+        }
+      ]
+    },
+    {
+      "date": "2018-09-14",
+      "version": "v3.4.2",
+      "notes": [
+        {
+          "apps": [ "topics", "sources", "explorer" ],
+          "type": "Fix",
+          "note": "Password reset link works again."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Topic creation page looks better."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Copy-to-all button in Explorer works again."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Explorer can now show NYT themes more often."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Topic permission no longer blank out after you change them."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "We show clear labels again while editing source metadata."
+        }
+      ]
+    },
+    {
       "date": "2018-09-05",
-      "version": "v3.4.0",
+      "version": "v3.4.1",
       "notes": [
         {
           "apps": [ "sources" ],

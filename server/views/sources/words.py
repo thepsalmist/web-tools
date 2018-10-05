@@ -6,7 +6,6 @@ import server.util.csv as csv
 from server.util.wordembeddings import google_news_2d
 from server.cache import cache, key_generator
 from server.auth import user_admin_mediacloud_client
-from server.views.stories import QUERY_LAST_WEEK
 
 logger = logging.getLogger(__name__)
 

@@ -42,11 +42,6 @@ class QuerySampleStoriesResultsContainer extends React.Component {
     postToDownloadUrl('/api/explorer/stories/samples.csv', query);
   }
 
-  gotoStory = (url) => {
-    window.open(url, '_blank');
-    // handleStorySelection: (query, story)?
-  }
-
   render() {
     const { results, queries, selectedTabIndex, tabSelector, internalItemSelected } = this.props;
     const showMoreInfoColHdr = <th />;
@@ -59,7 +54,6 @@ class QuerySampleStoriesResultsContainer extends React.Component {
         <StoryTable
           className="story-table"
           stories={results[selectedTabIndex] ? results[selectedTabIndex].slice(0, 10) : []}
-          onChangeFocusSelection={story => this.gotoStory(story.url)}
           onMoreInfo={story => this.onStorySelection(story)}
           maxTitleLength={90}
           selectedStory={internalItemSelected}

@@ -44,7 +44,7 @@ def _cached_topic_media_list_with_metadata(user_mc_key, topics_id, **kwargs):
     if user_mc_key == TOOL_API_KEY:
         local_mc = mc
     else:
-        local_mc = user_admin_mediacloud_client()
+        local_mc = user_mediacloud_client()
     return local_mc.topicMediaList(topics_id, **kwargs)
 
 
@@ -73,7 +73,7 @@ def _cached_topic_story_count(user_mc_key, topics_id, **kwargs):
     if user_mc_key == TOOL_API_KEY:
         local_mc = mc
     else:
-        local_mc = user_admin_mediacloud_client()
+        local_mc = user_mediacloud_client()
     return local_mc.topicStoryCount(topics_id, **kwargs)
 
 
@@ -85,7 +85,7 @@ def _cached_story_list(user_mc_key, q, rows):
     if user_mc_key == TOOL_API_KEY:
         local_mc = mc
     else:
-        local_mc = user_admin_mediacloud_client(user_mc_key)
+        local_mc = user_mediacloud_client(user_mc_key)
     return local_mc.storyList(q, rows=rows)
 
 
@@ -212,6 +212,20 @@ def _word2vec_topic_2d_results(topics_id, snapshots_id, words):
     return word2vec_results
 
 
+def topic_similar_words(topics_id, word):
+    # no need for user-specific cache on this
+    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    results = _word2vec_topic_similar_words(topics_id, snapshots_id, [word])
+    if len(results):
+        return results[0]['results']
+    return []
+
+
+def _word2vec_topic_similar_words(topics_id, snapshots_id, words):
+    word2vec_results = wordembeddings.topic_similar_words(topics_id, snapshots_id, words)
+    return word2vec_results
+
+
 @cache.cache_on_arguments(function_key_generator=key_generator)
 def _cached_word2vec_google_2d_results(words):
     word2vec_results = wordembeddings.google_news_2d(words)
@@ -227,7 +241,7 @@ def _cached_topic_word_counts(user_mc_key, topics_id, **kwargs):
     if user_mc_key == TOOL_API_KEY:
         local_mc = mc
     else:
-        local_mc = user_admin_mediacloud_client()
+        local_mc = user_mediacloud_client()
     return local_mc.topicWordCount(topics_id, **kwargs)
 
 
@@ -268,7 +282,7 @@ def _cached_topic_split_story_counts(user_mc_key, topics_id, **kwargs):
     if user_mc_key == TOOL_API_KEY:
         local_mc = mc
     else:
-        local_mc = user_admin_mediacloud_client()
+        local_mc = user_mediacloud_client()
 
     results = local_mc.topicStoryCount(topics_id,
         split=True,
@@ -283,7 +297,7 @@ def _cached_topic_split_story_counts(user_mc_key, topics_id, **kwargs):
 @cache.cache_on_arguments(function_key_generator=key_generator)
 def topic_foci_list(user_mc_key, topics_id, focal_sets_id):
     # This needs user_mc_key in the function signature to make sure the caching is keyed correctly.
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
     response = user_mc.topicFociList(topics_id, focal_sets_id)
     return response
 
@@ -291,7 +305,7 @@ def topic_foci_list(user_mc_key, topics_id, focal_sets_id):
 @cache.cache_on_arguments(function_key_generator=key_generator)
 def topic_focal_sets(user_mc_key, topics_id, snapshots_id):
     # This needs user_mc_key in the function signature to make sure the caching is keyed correctly.
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
     response = user_mc.topicFocalSetList(topics_id, snapshots_id=snapshots_id)
     return response
 
@@ -308,7 +322,7 @@ def topic_focal_set(user_mc_key, topics_id, snapshots_id, focal_sets_id):
 @cache.cache_on_arguments(function_key_generator=key_generator)
 def cached_topic_timespan_list(user_mc_key, topics_id, snapshots_id=None, foci_id=None):
     # this includes the user_mc_key as a first param so the cache works right
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
     timespans = user_mc.topicTimespanList(topics_id, snapshots_id=snapshots_id, foci_id=foci_id)
     return timespans
 
@@ -390,6 +404,7 @@ def _cached_topic_sentence_sample(user_mc_key, topics_id, sample_size=1000, **kw
     if user_mc_key == TOOL_API_KEY:
         local_mc = mc
     else:
+        # important for this to be an admin client
         local_mc = user_admin_mediacloud_client()
 
     sentences = local_mc.sentenceList(kwargs['q'], "timespans_id:{}".format(kwargs['timespans_id']),
@@ -436,7 +451,7 @@ def _mc_client(user_mc_key):
     if user_mc_key == TOOL_API_KEY:
         local_mc = mc
     else:
-        local_mc = user_admin_mediacloud_client(user_mc_key)
+        local_mc = user_mediacloud_client(user_mc_key)
     return local_mc
 
 

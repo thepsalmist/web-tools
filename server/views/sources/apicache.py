@@ -1,6 +1,4 @@
-import codecs
 import datetime
-import json
 import operator
 
 import server.util.tags as tags
@@ -11,24 +9,17 @@ from server.util.api_helper import add_missing_dates_to_split_story_counts
 from server.views.sources import FEATURED_COLLECTION_LIST
 from server.views.stories import QUERY_LAST_MONTH
 
-def tags_in_tag_set(mc_api_key, tag_sets_id, only_public_tags, use_file_cache=False):
-    return tags.tag_set_with_tags(mc_api_key, tag_sets_id, only_public_tags, use_file_cache)
-
-
-@cache.cache_on_arguments(function_key_generator=key_generator)
-def cached_tag_set_file(file_path):
-    # hold the file in memory to reduce reads
-    with codecs.open(file_path, 'r', 'utf-8') as json_data:
-        data = json.load(json_data)
-        return data
-
 
 def tag_set_with_private_collections(mc_api_key, tag_sets_id):
-    return tags_in_tag_set(mc_api_key, tag_sets_id, False, True)
+    return tags.tag_set_with_tags(mc_api_key, tag_sets_id, False)
 
 
 def tag_set_with_public_collections(mc_api_key, tag_sets_id):
-    return tags_in_tag_set(mc_api_key, tag_sets_id, True, True)
+    return tags.tag_set_with_tags(mc_api_key, tag_sets_id, True)
+
+
+def tags_in_tag_set(mc_api_key, tag_sets_id, only_public_tags, use_file_cache=False):
+    return tags.tag_set_with_tags(mc_api_key, tag_sets_id, only_public_tags, use_file_cache)
 
 
 def featured_collections():
@@ -46,6 +37,7 @@ def collection_source_representation(mc_api_key, collection_id):
 
 @cache.cache_on_arguments(function_key_generator=key_generator)
 def _cached_collection_source_representation(mc_api_key, collection_id):
+    # have to respect the api here here because only some folks can see private collections
     sample_size = 1000
     stories = random_story_list(mc_api_key, 'tags_id_media:' + str(collection_id), rows=sample_size)
     media_representation = {}
@@ -70,22 +62,27 @@ def random_story_list(mc_api_key, q, fq=None, rows=1000):
 
 
 @cache.cache_on_arguments(function_key_generator=key_generator)
-def _cached_random_story_list(mc_api_key, q, fq, rows):
+def _cached_random_story_list(q, fq, rows):
+    # sources are open to everyone, so no need for user-specific cache
     return mc.storyList(q, fq, rows=rows, sort=mc.SORT_RANDOM)
 
 
 def last_year_split_story_count(user_mc_key, q='*'):
     return _cached_last_year_split_story_count(user_mc_key, q)
 
+
 @cache.cache_on_arguments(function_key_generator=key_generator)
-def cached_timeperiod_story_count(user_mc_key, q='*', time_period=QUERY_LAST_MONTH):
+def cached_timeperiod_story_count(q='*', time_period=QUERY_LAST_MONTH):
+    # sources are open to everyone, so no need for user-specific cache
     # Helper to fetch split story counts over a timeframe for an arbitrary query
     user_mc = user_mediacloud_client()
     results = user_mc.storyCount(solr_query=q, solr_filter=time_period)
     return results
 
+
 @cache.cache_on_arguments(function_key_generator=key_generator)
-def _cached_last_year_split_story_count(user_mc_key, q='*'):
+def _cached_last_year_split_story_count(q='*'):
+    # sources are open to everyone, so no need for user-specific cache
     # Helper to fetch split story counts over a timeframe for an arbitrary query
     user_mc = user_mediacloud_client()
     last_n_days = 365
@@ -96,3 +93,14 @@ def _cached_last_year_split_story_count(user_mc_key, q='*'):
     results['counts'] = add_missing_dates_to_split_story_counts(results['counts'], start_date, end_date)
     results['total_story_count'] = sum([r['count'] for r in results['counts']])
     return results
+
+
+def source_story_count(user_mc_key, query):
+    return cached_source_story_count(query)
+
+
+@cache.cache_on_arguments(function_key_generator=key_generator)
+def cached_source_story_count(query):
+    # sources are open to everyone, so no need for user-specific cache
+    user_mc = user_mediacloud_client()
+    return user_mc.storyCount(query)['count']

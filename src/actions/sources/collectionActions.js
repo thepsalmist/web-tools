@@ -21,6 +21,7 @@ export const RESET_COLLECTIONS_BY_IDS = 'RESET_COLLECTIONS_BY_IDS';
 export const UPLOAD_SOURCE_LIST_FROM_TEMPLATE = 'UPLOAD_SOURCE_LIST_FROM_TEMPLATE';
 export const CREATE_SOURCES_FROM_URLS = 'CREATE_SOURCES_FROM_URLS';
 export const FETCH_COLLECTION_SOURCE_LIST = 'FETCH_COLLECTION_SOURCE_LIST';
+export const REMOVE_SOURCES_FROM_COLLECTION = 'REMOVE_SOURCES_FROM_COLLECTION';
 
 export const fetchCollectionSourcesByIds = createAsyncAction(FETCH_COLLECTION_SOURCES_BY_IDS, api.collectionsByIds, props => props);
 
@@ -59,3 +60,5 @@ export const fetchFeaturedCollectionList = createAsyncAction(FETCH_FEATURED_COLL
 export const uploadSourceListFromTemplate = createAsyncAction(UPLOAD_SOURCE_LIST_FROM_TEMPLATE, api.collectionUploadSourceListFromTemplate, props => props);
 
 export const createSourcesByUrl = createAsyncAction(CREATE_SOURCES_FROM_URLS, api.createSourcesByUrl, urls => urls);
+
+export const removeSourcesFromCollection = createAsyncAction(REMOVE_SOURCES_FROM_COLLECTION, api.removeSourcesFromCollection, props => props);

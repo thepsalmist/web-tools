@@ -1,13 +1,12 @@
 from networkx.readwrite import json_graph
 import networkx as nx
-#import community
 import json
-import os
 import logging
 
-from server import mc, base_dir
+from server import mc
 
 logger = logging.getLogger(__name__)
+
 
 def build_top_words(media_list, topics_id, timespans_id, remove_words=None, word_count=100):
     # TODO: Add parameters for wordCount resolution (sample size, etc.)
@@ -28,6 +27,7 @@ def build_top_words(media_list, topics_id, timespans_id, remove_words=None, word
     logger.debug('\nAll Words Complete!')
     return top_words
 
+
 def clean_top_words(word_set, remove_words_list, word_limit=100):
     for media_source in word_set:
         # remove stopwords        
@@ -38,6 +38,7 @@ def clean_top_words(word_set, remove_words_list, word_limit=100):
         
         # maybe output some summary data
         return word_set
+
 
 def build_network(top_words, sources, media_attribs=None):
     source_ids = [ms['media_id'] for ms in sources]
@@ -98,20 +99,24 @@ def build_network(top_words, sources, media_attribs=None):
 
     return msw_network
 
+
 def export_gexf_network(network, filename):
     logger.debug('Writing %d nodes to network in %s.' % (network.number_of_nodes(), filename))
     nx.write_gexf(network, filename)
-    
+
+
 def export_d3_network(network, filename):
     logger.debug('Writing %d nodes to network as D3 JSON graph.' % (network.number_of_nodes()))
     data = json_graph.node_link_data(network)
     with open(filename + '.json', 'w') as f:
         f.write(json.dumps(data))
-    
+
+
 def get_top_x_sources(topics_id, source_count, timespans_id):
     top = mc.topicMediaList(topics_id, timespans_id=timespans_id, limit=source_count)['media']
     return top
-                
+
+
 # Remove Media Source from Network 
 def remove_word_source_from_network(ms_name, word_list):
     ms = mc.mediaList(name_like=ms_name)
@@ -124,7 +129,8 @@ def remove_word_source_from_network(ms_name, word_list):
         logger.debug('No match for %s.' % ms_name)
     else:
         logger.debug('Multiple matches for Media Source. No action taken.')
-        
+
+
 # Remove Media Source from Media Source List
 def remove_media_source(remove_name, media_sources):
     for idx, ms in enumerate(media_sources):
@@ -134,6 +140,7 @@ def remove_media_source(remove_name, media_sources):
             return media_sources
     logger.debug('Media Source %s Not Present.' % remove_name)
     return media_sources
+
 
 # TODO: Enable media source range based on significance, and allow selection of social or inlink, 
 def generate_network_of_frames(topics_id, timespans_id, num_of_sources, out_name, remove_media_list=None, remove_word_list=[], generate_word_lists=False, include_media_list=None, media_attribs=None, num_words=None):
@@ -185,6 +192,7 @@ def generate_network_of_frames(topics_id, timespans_id, num_of_sources, out_name
     #     logger.debug line
 
     return s
+
 
 def create_word_map_files(topics_id, timespans_id, filepath):
     # Defaults

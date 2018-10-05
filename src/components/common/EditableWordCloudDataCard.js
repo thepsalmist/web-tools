@@ -86,7 +86,7 @@ class EditableWordCloudDataCard extends React.Component {
       const displayOnlyWords = modifiableWords.filter(w => w.display === true);
       this.setState({ displayOnlyWords });
     }
-    this.setState(prevState => ({ editing: prevState.editing }));
+    this.setState(prevState => ({ editing: !prevState.editing }));
   };
 
   downloadCsv = (ngramSize) => {

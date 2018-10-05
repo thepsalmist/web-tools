@@ -61,6 +61,7 @@ const messages = {
   sourceScraping: { id: 'source.deatils.feeds.scraping', defaultMessage: 'We\'ve started to scrape this source' },
   sourceScrapeFailed: { id: 'source.deatils.feeds.failed', defaultMessage: 'Sorry, for some reason we couldn\'t start the scraping job' },
   sourceScrapeStatus: { id: 'source.deatils.feeds.scrapeStatus', defaultMessage: 'Feed Scrape Status' },
+  removeSourceError: { id: 'source.remove.error', defaultMessage: 'We failed to remove a source from this collection' },
 
   favoritedCollectionsTitle: { id: 'favorited.collections.title', defaultMessage: 'My Starred Collections' },
   favoritedSourcesTitle: { id: 'favorited.souces.title', defaultMessage: 'Starred Sources' },
@@ -134,7 +135,8 @@ const messages = {
   heatMapHelpText: { id: 'heatmap.help.text',
     defaultMessage: '<p>The country map shows you an intensity of how often countries are the main focus of stories. This uses our <a href="https://cliff.mediacloud.org" target="_top">CLIFF-CLAVIN</a> geolocation engine to determine which countries each story is about (based on the places mentioned). The darker the color, the more a country was focused on. Note that this is using a sampling of the stories, not all of them. If you download a CSV of the results, the counts you see are also based on this sampling.</p><p>We have been tagging all english language stories with the places they mention since June 1, 2016.</p>',
   },
-  word: { id: 'word', defaultMessage: 'Word Source' },
+  word: { id: 'word', defaultMessage: 'Word' },
+  score: { id: 'score', defaultMessage: 'Score' },
   ok: { id: 'ok', defaultMessage: 'OK' },
   apply: { id: 'apply', defaultMessage: 'Apply' },
   cancel: { id: 'cancel', defaultMessage: 'Cancel' },

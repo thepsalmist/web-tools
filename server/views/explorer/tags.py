@@ -51,6 +51,7 @@ def api_explorer_demo_top_entities_organizations():
     results = demo_top_tags_with_coverage(CLIFF_ORGS)
     return jsonify(results)
 
+
 def demo_top_tags_with_coverage(tag_sets_id,):
     # parses the query for you
     search_id = int(request.args['search_id']) if 'search_id' in request.args else None

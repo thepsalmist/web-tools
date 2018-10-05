@@ -67,7 +67,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     };
     metadataTagFormKeys.forEach((key) => { // the metdata tags are encoded in individual properties on the form
       if (key in values) {
-        infoToSave[key] = !nullOrUndefined(values[key]) ? values[key] : '';
+        infoToSave[key] = !nullOrUndefined(values[key]) ? values[key].tags_id : '';
       }
     });
     if ('collections' in values) { // the collections are a FieldArray on the form

@@ -11,6 +11,7 @@ import WordStoriesContainer from './WordStoriesContainer';
 import WordSplitStoryCountContainer from './WordSplitStoryCountContainer';
 import WordInContextContainer from './WordInContextContainer';
 import messages from '../../../resources/messages';
+import WordSimilarWordsContainer from './WordSimilarWordsContainer';
 
 const localMessages = {
   mainTitle: { id: 'word.details.mainTitle', defaultMessage: 'Word: "{title}"' },
@@ -35,7 +36,7 @@ class WordContainer extends React.Component {
     const { formatMessage } = this.props.intl;
     return (
       <div>
-        <Helmet><title>{formatMessage(messages.word)}</title></Helmet>
+        <Helmet><title>{`${formatMessage(localMessages.mainTitle, { title: term })} | ${topicName} | ${formatMessage(messages.topicsToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
         <Grid>
           <Row>
             <Col lg={12}>
@@ -67,6 +68,9 @@ class WordContainer extends React.Component {
           <Row>
             <Col lg={6} xs={12}>
               <WordDetails topicId={topicId} term={term} stem={stem} />
+            </Col>
+            <Col lg={6} xs={12}>
+              <WordSimilarWordsContainer topicId={topicId} term={term} stem={stem} filters={filters} />
             </Col>
           </Row>
         </Grid>

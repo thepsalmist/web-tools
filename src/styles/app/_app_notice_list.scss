@@ -8,6 +8,9 @@
   &.app-notice-list-warnings {
     background-color: $material-orange500;
   }
+  &.app-notice-list-info {
+    background-color: $material-green500;
+  }
 
   padding-top: 5px;
   padding-bottom: 5px;

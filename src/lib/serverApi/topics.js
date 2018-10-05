@@ -134,8 +134,8 @@ export function topicGenerateSnapshot(topicId, params) {
   return createPostingApiPromise(`/api/topics/${topicId}/snapshots/generate`, acceptedParams);
 }
 
-export function topicUpdatePermission(topicId, email, permission) {
-  return createPostingApiPromise(`/api/topics/${topicId}/permissions/update`, { email, permission }, 'put');
+export function topicUpdatePermissions(topicId, permissions) {
+  return createPostingApiPromise(`/api/topics/${topicId}/permissions/update`, { permissions: JSON.stringify(permissions) }, 'put');
 }
 
 export function topicListPermissions(topicId) {
@@ -213,7 +213,7 @@ export function fetchAttentionByQuery(params) {
 }
 
 export function fetchStorySampleByQuery(params) {
-  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources[]', 'collections[]']);
+  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources[]', 'collections[]', 'rows']);
   return createPostingApiPromise('/api/topics/create/preview/stories/sample', acceptedParams);
 }
 
@@ -354,4 +354,9 @@ export function topicTopPeople(topicId, params) {
 export function topicTopOrgs(topicId, params) {
   const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'sort', 'limit', 'q', 'linkId']);
   return createApiPromise(`/api/topics/${topicId}/entities/organizations`, acceptedParams);
+}
+
+export function topicSimilarWords(topicId, theWord, params) {
+  const acceptedParams = acceptParams(params, ['snapshotId']);
+  return createApiPromise(`/api/topics/${topicId}/words/${theWord}/similar`, acceptedParams);
 }

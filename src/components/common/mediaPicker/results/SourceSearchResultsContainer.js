@@ -39,25 +39,12 @@ class SourceSearchResultsContainer extends React.Component {
     if (this.state.showAdvancedOptions) {
       const formValues = formQuery['advanced-media-picker-search'];
       updatedQueryObj.tags = [];
-
-      if (formValues) {
-        if ('publicationCountry' in formValues) {
-          updatedQueryObj.tags.push(formValues.publicationCountry);
+      const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType'];
+      metadataQueryFields.forEach((key) => {
+        if (key in formValues) {
+          updatedQueryObj.tags.push(formValues[key]);
         }
-        if ('publicationState' in formValues) {
-          updatedQueryObj.tags.push(formValues.publicationState);
-        }
-        if ('primaryLanguage' in formValues) {
-          updatedQueryObj.tags.push(formValues.primaryLanguage);
-        }
-        if ('countryOfFocus' in formValues) {
-          updatedQueryObj.tags.push(formValues.countryOfFocus);
-        }
-        if ('mediaType' in formValues) {
-          updatedQueryObj.tags.push(formValues.mediaType);
-        }
-      }
-
+      });
       if ('allMedia' in values) {
         updatedQueryObj.tags.push(values.allMedia);
       }
@@ -155,12 +142,11 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   updateAdvancedMediaQuerySelection: (values) => {
     if (values.tags && values.tags.length > 0) {
-      if (values.allMedia) {
-        // handle selection
+      if (values.allMedia) { // handle the "all media" placeholder selection
         ownProps.handleToggleAndSelectMedia({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
       } else {
         dispatch(selectMediaPickerQueryArgs(values));
-        dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: values.tags }));
+        dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: values.tags.map(tag => tag.tags_id) }));
       }
     }
   },

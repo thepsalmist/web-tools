@@ -5,6 +5,7 @@ import { PERMISSION_TOPIC_ADMIN } from '../../../lib/auth';
 import messages from '../../../resources/messages';
 import Permissioned from '../../common/Permissioned';
 import SourceOrCollectionChip from '../../common/SourceOrCollectionChip';
+import TopicOwnerList from '../TopicOwnerList';
 
 const localMessages = {
   state: { id: 'topic.state', defaultMessage: 'State' },
@@ -51,6 +52,7 @@ const TopicInfo = (props) => {
         <b><FormattedHTMLMessage {...messages.topicValidationProp} /></b>
         <code>{topic.pattern}</code>
       </p>
+      <TopicOwnerList owners={topic.owners} />
     </React.Fragment>
   );
 };

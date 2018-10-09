@@ -1,12 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { fetchMediaOutlinks, sortMediaOutlinks } from '../../../actions/topicActions';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import TopicStoryTable from '../TopicStoryTable';
 
 const STORIES_TO_SHOW = 10;
+
+const localMessages = {
+  localTitle: { id: 'media.outlinks.table', defaultMessage: 'Top Outlinks' },
+};
 
 class MediaOutlinkTableContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
@@ -23,17 +27,21 @@ class MediaOutlinkTableContainer extends React.Component {
 
   render() {
     const { outlinkedStories, topicId, showTweetCounts } = this.props;
-    return <TopicStoryTable stories={outlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={this.onChangeSort} />;
+    return (
+      <div>
+        <h3><FormattedMessage {...localMessages.localTitle} /></h3>
+        <TopicStoryTable stories={outlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={this.onChangeSort} />;
+      </div>
+    );
   }
 }
 
 MediaOutlinkTableContainer.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
-  helpButton: PropTypes.node.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
-  mediaId: PropTypes.number.isRequired,
+  media: PropTypes.object.isRequired,
   // from mergeProps
   asyncFetch: PropTypes.func.isRequired,
   // from fetchData
@@ -48,9 +56,9 @@ MediaOutlinkTableContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.selected.mediaSource.inlinks.fetchStatus,
-  outlinkedStories: state.topics.selected.mediaSource.inlinks.stories,
-  sort: state.topics.selected.mediaSource.inlinks.sort,
+  fetchStatus: state.topics.selected.mediaSource.outlinks.fetchStatus,
+  outlinkedStories: state.topics.selected.mediaSource.outlinks.stories,
+  sort: state.topics.selected.mediaSource.outlinks.sort,
   filters: state.topics.selected.filters,
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
 });
@@ -62,7 +70,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       sort: stateProps.sort,
       limit: STORIES_TO_SHOW,
     };
-    dispatch(fetchMediaOutlinks(ownProps.topicId, ownProps.mediaId, params));
+    dispatch(fetchMediaOutlinks(ownProps.topicId, ownProps.media.media_id, params));
   },
   sortData: (sort) => {
     dispatch(sortMediaOutlinks(sort));

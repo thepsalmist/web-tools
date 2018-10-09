@@ -20,7 +20,7 @@ const VIEW_TREE = 'VIEW_TREE';
 const TREE_MAP_DOM_ID = 'tree-map';
 
 const localMessages = {
-  title: { id: 'media.outlinks.title', defaultMessage: 'Top Outlinks' },
+  title: { id: 'media.outlinks.title', defaultMessage: 'Outlinks' },
   helpTitle: { id: 'media.outlinks.help.title', defaultMessage: 'About Media Outlinks' },
   helpIntro: { id: 'media.outlinks.help.intro', defaultMessage: '<p>This is a table of stories linked to in stories published by this Media Source within the Topic.</p>' },
   downloadLinkCSV: { id: 'media.outlinks.download.csv', defaultMessage: 'Download CSV with All Outlinks' },
@@ -28,17 +28,10 @@ const localMessages = {
   modeTable: { id: 'media.outlinks.table', defaultMessage: 'View Table' },
 };
 
-class MediaOutlinksContainer extends React.Component {
+class MediaOutlinkContainer extends React.Component {
   state = {
     view: VIEW_TABLE, // which view to show (see view constants above)
   };
-
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, filters, sort } = this.props;
-    if ((nextProps.filters !== filters) || (nextProps.sort !== sort)) {
-      fetchData(nextProps);
-    }
-  }
 
   shouldComponentUpdate(nextProps, nextState) {
     return (this.state.view !== nextState.view);
@@ -65,7 +58,7 @@ class MediaOutlinksContainer extends React.Component {
   render() {
     const { topicId, topicName, filters, media, helpButton, showTweetCounts } = this.props;
     const { formatMessage } = this.props.intl;
-    let content = <MediaOutlinkTableContainer showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={this.onChangeSort} />;
+    let content = <MediaOutlinkTableContainer showTweetCounts={showTweetCounts} media={media} topicId={topicId} onChangeSort={this.onChangeSort} />;
     if (this.state.view === VIEW_TREE) {
       content = <MediaOutlinkTreeMapContainer topicId={topicId} topicName={topicName} media={media} />;
     }
@@ -107,7 +100,7 @@ class MediaOutlinksContainer extends React.Component {
   }
 }
 
-MediaOutlinksContainer.propTypes = {
+MediaOutlinkContainer.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
@@ -115,31 +108,23 @@ MediaOutlinksContainer.propTypes = {
   media: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   topicName: PropTypes.string.isRequired,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
-  // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  sortData: PropTypes.func.isRequired,
-  // from state
-  sort: PropTypes.string.isRequired,
+
   filters: PropTypes.object.isRequired,
-  fetchStatus: PropTypes.string.isRequired,
-  outlinkedStories: PropTypes.array,
   showTweetCounts: PropTypes.bool.isRequired,
   allOutlinks: PropTypes.array,
 };
 
 const mapStateToProps = state => ({
-  sort: state.topics.selected.mediaSource.outlinks.sort,
   filters: state.topics.selected.filters,
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
+  media: state.topics.selected.mediaSource.info,
 });
 
 export default
 injectIntl(
   connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpIntro, messages.storiesTableHelpText])(
-      MediaOutlinksContainer
+      MediaOutlinkContainer
     )
   )
 );

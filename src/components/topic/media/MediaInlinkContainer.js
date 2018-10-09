@@ -21,7 +21,7 @@ const TREE_MAP_DOM_ID = 'tree-map';
 
 
 const localMessages = {
-  title: { id: 'media.inlinks.title', defaultMessage: 'Top Inlinks' },
+  title: { id: 'media.inlinks.title', defaultMessage: 'Inlinks' },
   helpTitle: { id: 'media.inlinks.help.title', defaultMessage: 'About Media Inlinks' },
   helpIntro: { id: 'media.inlinks.help.intro', defaultMessage: '<p>This is a table of stories that link to stories published by this Media Source within the Topic.</p>' },
   downloadLinkCSV: { id: 'media.inlinks.download.csv', defaultMessage: 'Download CSV with All Inlinks' },

@@ -14,7 +14,7 @@ import LoadingSpinner from '../../common/LoadingSpinner';
 const TREE_MAP_DOM_ID = 'tree-map';
 
 const localMessages = {
-  treeMap: { id: 'media.inlinks.treemap', defaultMessage: 'Inlink Tree Map for {name}' },
+  treeMap: { id: 'media.inlinks.treemap', defaultMessage: 'Outlink Tree Map for {name}' },
 };
 
 class MediaOutlinkTreeMapContainer extends React.Component {
@@ -61,7 +61,7 @@ MediaOutlinkTreeMapContainer.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.mediaSource.allOutlinks.fetchStatus,
   allOutlinks: state.topics.selected.mediaSource.allOutlinks.stories,
-  sort: state.topics.selected.mediaSource.inlinks.sort,
+  sort: state.topics.selected.mediaSource.outlinks.sort,
   filters: state.topics.selected.filters,
   media: state.topics.selected.mediaSource.info,
 });

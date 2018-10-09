@@ -158,7 +158,7 @@ def all_media_outlinks(topics_id, media_id):
         else:
             more_stories = False
 
-    return jsonify(all_stories)
+    return jsonify({"stories": all_stories})
 
 
 @app.route('/api/topics/<topics_id>/media/<media_id>/outlinks.csv', methods=['GET'])

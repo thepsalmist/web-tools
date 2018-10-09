@@ -15,7 +15,6 @@ import { downloadSvg } from '../../util/svg';
 import { filtersAsUrlParams } from '../../util/location';
 import { topicDownloadFilename } from '../../util/topicUtil';
 
-const STORIES_TO_SHOW = 10;
 const VIEW_TABLE = 'VIEW_TABLE';
 const VIEW_TREE = 'VIEW_TREE';
 const TREE_MAP_DOM_ID = 'tree-map';

@@ -119,7 +119,7 @@ def all_media_inlinks(topics_id, media_id):
         else:
             more_stories = False
 
-    return jsonify(all_stories)
+    return jsonify({"stories": all_stories})
 
 @app.route('/api/topics/<topics_id>/media/<media_id>/inlinks.csv', methods=['GET'])
 @flask_login.login_required

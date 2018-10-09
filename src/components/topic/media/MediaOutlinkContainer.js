@@ -72,13 +72,13 @@ class MediaOutlinksContainer extends React.Component {
   }
 
   render() {
-    const { outlinkedStories, topicId, topicName, filters, mediaId, helpButton, showTweetCounts } = this.props;
+    const { outlinkedStories, allOutlinks, topicId, topicName, filters, mediaId, helpButton, showTweetCounts } = this.props;
     const { formatMessage } = this.props.intl;
     let content = <TopicStoryTable stories={outlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={this.onChangeSort} />;
     if (this.state.view === VIEW_TREE) {
       // setup data so the TreeMap can consume it
-      const justIds = [...new Set(outlinkedStories.map(d => d.media_id))];
-      const groups = justIds.map(id => ({ id, elements: outlinkedStories.filter(e => e.media_id === id) }));
+      const justIds = [...new Set(allOutlinks.map(d => d.media_id))];
+      const groups = justIds.map(id => ({ id, elements: allOutlinks.filter(e => e.media_id === id) }));
       const summedInlinks = groups.map(g => ({ id: g.id, name: g.elements[0].media_name, value: g.elements.reduce((acc, ele) => acc + ele.inlink_count, 0) }));
 
       content = <TreeMap domId={TREE_MAP_DOM_ID} data={summedInlinks} title={formatMessage(localMessages.treeMap, { name: topicName })} />;
@@ -138,13 +138,15 @@ MediaOutlinksContainer.propTypes = {
   sort: PropTypes.string.isRequired,
   filters: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string.isRequired,
-  outlinkedStories: PropTypes.array.isRequired,
+  outlinkedStories: PropTypes.array,
   showTweetCounts: PropTypes.bool.isRequired,
+  allOutlinks: PropTypes.array,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.mediaSource.outlinks.fetchStatus,
   outlinkedStories: state.topics.selected.mediaSource.outlinks.stories,
+  allOutlinks: state.topics.selected.mediaSource.allOutlinks.stories,
   sort: state.topics.selected.mediaSource.outlinks.sort,
   filters: state.topics.selected.filters,
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),

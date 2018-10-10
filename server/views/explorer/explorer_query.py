@@ -40,6 +40,8 @@ def api_explorer_collections_by_ids():
     try:
         if int(request.args['collections[]']) == -1:
             return jsonify([{'id': ALL_MEDIA, 'label': "All Media", 'tag_sets_id': ALL_MEDIA}])
+        else:
+            collection_ids = request.args['collections[]'].split(',')
     except ValueError as ve:
         # ie. request.args['collections[]'] is not an int
         collection_ids = request.args['collections[]'].split(',')

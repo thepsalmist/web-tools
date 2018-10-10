@@ -10,6 +10,11 @@
           "note": "Clicking the Explorer attention chart multiple times now works."
         },
         {
+          "apps": [ "topics", "explorer", "sources" ],
+          "type": "Fix",
+          "note": "Add back in chart exporting (jpeg, etc)."
+        },
+        {
           "apps": [ "topics" ],
           "type": "Feature",
           "note": "Now you can validate some sample stories while creating a topic."

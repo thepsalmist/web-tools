@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2018-10-09",
+      "version": "v3.5.1",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "See inlinks to a media source within a topic as a treemap."
+        }
+      ]
+    },
+    {
       "date": "2018-10-05",
       "version": "v3.5.0",
       "notes": [
@@ -8,16 +19,6 @@
           "apps": [ "explorer" ],
           "type": "Fix",
           "note": "You can delete saved searches again."
-        },
-        {
-          "apps": [ "topics" ],
-          "type": "Feature",
-          "note": "Now you can validate some sample stories while creating a topic."
-        },
-        {
-          "apps": [ "topics" ],
-          "type": "Feature",
-          "note": "See inlinks to a media source within a topic as a treemap."
         },
         {
           "apps": [ "explorer" ],

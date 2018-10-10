@@ -12,7 +12,7 @@ import { TAG_SET_ABYZ_GEO_COLLECTIONS } from '../../../../lib/tagUtil';
 const CountryCollectionListContainer = (props) => {
   const { name, description, collections, user } = props;
   // collection parsing here - maybe move into reducer or back end
-  const nationalCollections = collections.filter(c => c.label.endsWith('National'));
+  const nationalCollections = collections.filter(c => c.label).filter(c => c.label.endsWith('National'));
   return (
     <div className="country-collections-table">
       <Grid>
@@ -32,7 +32,7 @@ const CountryCollectionListContainer = (props) => {
               <Col lg={10}>
                 <div>
                   <CollectionList
-                    collections={collections.filter(c => c.label.includes(countryName))}
+                    collections={collections.filter(c => c.label).filter(c => c.label.includes(countryName))}
                     title={countryName}
                     user={user}
                     dataCard={false}

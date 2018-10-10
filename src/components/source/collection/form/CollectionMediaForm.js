@@ -102,7 +102,7 @@ class SourceSelectionRendererRaw extends React.Component {
 
   processSourcesByUrl = () => {
     const { sourceUrlsToAdd } = this.props;
-    const urls = sourceUrlsToAdd.split('\n').filter(s => s !== "" && s !== undefined); // in case of empty lines
+    const urls = sourceUrlsToAdd.split('\n').filter(s => s !== '' && s !== undefined); // in case of empty lines
     this.setState({ sourceUrls: urls });
   }
 

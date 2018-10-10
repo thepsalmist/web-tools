@@ -8,18 +8,17 @@ import DataCard from '../../common/DataCard';
 import FavoriteToggler from '../../common/FavoriteToggler';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
-import messages from '../../../resources/messages';
 import { TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
   TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED, TOPIC_SNAPSHOT_STATE_COMPLETED }
   from '../../../reducers/topics/selected/snapshots';
 import { ErrorNotice, DetailNotice, InfoNotice } from '../../common/Notice';
 import { trimToMaxLength } from '../../../lib/stringUtil';
+import TopicOwnerList from '../TopicOwnerList';
 
 const MAX_TOPIC_STATUS_DETAILS_LEN = 120;
 
 const localMessages = {
   range: { id: 'topitopic.list.range', defaultMessage: '{start} - {end}' },
-  createdBy: { id: 'topitopic.list.createdBy', defaultMessage: 'Created by: ' },
   topicStatusNote: { id: 'topitopic.list.state', defaultMessage: 'This topic is {state}' },
   topicErrorNote: { id: 'topitopic.list.error', defaultMessage: 'This topic has an error' },
   topicReadyNote: { id: 'topitopic.list.completed', defaultMessage: 'This topic is ready to use!' },
@@ -31,13 +30,6 @@ const TopicPreviewList = (props) => {
   if (topics && topics.length > 0) {
     content = (
       topics.map((topic, idx) => {
-        let ownerListContent;
-        if (topic.owners.length > 0) {
-          ownerListContent = topic.owners.map(u => u.full_name).join(', ');
-        } else {
-          ownerListContent = <FormattedMessage {...messages.unknown} />;
-        }
-
         let topicStateNotice;
         if (topic.state === TOPIC_SNAPSHOT_STATE_ERROR) {
           topicStateNotice = (
@@ -81,7 +73,7 @@ const TopicPreviewList = (props) => {
                       }}
                     />
                     <p>{topic.description}</p>
-                    <p><FormattedMessage {...localMessages.createdBy} /><i>{ownerListContent}</i></p>
+                    <TopicOwnerList owners={topic.owners} />
                   </div>
                 </div>
               </DataCard>

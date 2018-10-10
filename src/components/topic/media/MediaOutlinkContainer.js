@@ -4,53 +4,37 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { fetchMediaOutlinks, sortMediaOutlinks, fetchAllMediaOutlinks } from '../../../actions/topicActions';
 import ActionMenu from '../../common/ActionMenu';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
-import TopicStoryTable from '../TopicStoryTable';
-import TreeMap from '../../vis/TreeMap';
+import MediaOutlinkTableContainer from './MediaOutlinkTableContainer';
+import MediaOutlinkTreeMapContainer from './MediaOutlinkTreeMapContainer';
 import DataCard from '../../common/DataCard';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 import { downloadSvg } from '../../util/svg';
 import { filtersAsUrlParams } from '../../util/location';
 import { topicDownloadFilename } from '../../util/topicUtil';
 
-const STORIES_TO_SHOW = 10;
 const VIEW_TABLE = 'VIEW_TABLE';
 const VIEW_TREE = 'VIEW_TREE';
 const TREE_MAP_DOM_ID = 'tree-map';
 
 const localMessages = {
-  title: { id: 'media.outlinks.title', defaultMessage: 'Top Outlinks' },
+  title: { id: 'media.outlinks.title', defaultMessage: 'Outlinks' },
   helpTitle: { id: 'media.outlinks.help.title', defaultMessage: 'About Media Outlinks' },
   helpIntro: { id: 'media.outlinks.help.intro', defaultMessage: '<p>This is a table of stories linked to in stories published by this Media Source within the Topic.</p>' },
-  downloadLinkCSV: { id: 'media.inlinks.download.csv', defaultMessage: 'Download CSV with All Outlinks' },
-  modeTree: { id: 'media.inlinks.tree', defaultMessage: 'View Tree Map' },
-  modeTable: { id: 'media.inlinks.table', defaultMessage: 'View Table' },
-  treeMap: { id: 'media.inlinks.treemap', defaultMessage: 'Outlink Tree Map for {name}' },
+  downloadLinkCSV: { id: 'media.outlinks.download.csv', defaultMessage: 'Download CSV with All Outlinks' },
+  modeTree: { id: 'media.outlinks.tree', defaultMessage: 'View Tree Map' },
+  modeTable: { id: 'media.outlinks.table', defaultMessage: 'View Table' },
 };
 
-class MediaOutlinksContainer extends React.Component {
+class MediaOutlinkContainer extends React.Component {
   state = {
     view: VIEW_TABLE, // which view to show (see view constants above)
   };
 
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, filters, sort } = this.props;
-    if ((nextProps.filters !== filters) || (nextProps.sort !== sort)) {
-      fetchData(nextProps);
-    }
-  }
-
   shouldComponentUpdate(nextProps, nextState) {
     return (this.state.view !== nextState.view);
-  }
-
-  onChangeSort = (newSort) => {
-    const { sortData } = this.props;
-    sortData(newSort);
   }
 
   setView = (viewMode) => {
@@ -58,9 +42,9 @@ class MediaOutlinksContainer extends React.Component {
   }
 
   downloadCsv = () => {
-    const { mediaId, topicId, filters } = this.props;
+    const { media, topicId, filters } = this.props;
     const filtersAsParams = filtersAsUrlParams(filters);
-    const url = `/api/topics/${topicId}/media/${mediaId}/outlinks.csv?${filtersAsParams}`;
+    const url = `/api/topics/${topicId}/media/${media.media_id}/outlinks.csv?${filtersAsParams}`;
     window.location = url;
   }
 
@@ -72,18 +56,13 @@ class MediaOutlinksContainer extends React.Component {
   }
 
   render() {
-    const { outlinkedStories, topicId, topicName, filters, mediaId, helpButton, showTweetCounts } = this.props;
+    const { topicId, topicName, filters, media, helpButton, showTweetCounts } = this.props;
     const { formatMessage } = this.props.intl;
-    let content = <TopicStoryTable stories={outlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={this.onChangeSort} />;
+    let content = <MediaOutlinkTableContainer showTweetCounts={showTweetCounts} media={media} topicId={topicId} onChangeSort={this.onChangeSort} />;
     if (this.state.view === VIEW_TREE) {
-      // setup data so the TreeMap can consume it
-      const justIds = [...new Set(outlinkedStories.map(d => d.media_id))];
-      const groups = justIds.map(id => ({ id, elements: outlinkedStories.filter(e => e.media_id === id) }));
-      const summedInlinks = groups.map(g => ({ id: g.id, name: g.elements[0].media_name, value: g.elements.reduce((acc, ele) => acc + ele.inlink_count, 0) }));
-
-      content = <TreeMap domId={TREE_MAP_DOM_ID} data={summedInlinks} title={formatMessage(localMessages.treeMap, { name: topicName })} />;
+      content = <MediaOutlinkTreeMapContainer topicId={topicId} topicName={topicName} media={media} />;
     }
-    const svgFilename = `${topicDownloadFilename(topicName, filters)}-inlinks-to-${mediaId})`;
+    const svgFilename = `${topicDownloadFilename(topicName, filters)}-inlinks-to-${media.media_id})`;
     return (
       <DataCard>
         <div className="actions">
@@ -121,71 +100,31 @@ class MediaOutlinksContainer extends React.Component {
   }
 }
 
-MediaOutlinksContainer.propTypes = {
+MediaOutlinkContainer.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
   // from parent
-  mediaId: PropTypes.number.isRequired,
+  media: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   topicName: PropTypes.string.isRequired,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
-  // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  sortData: PropTypes.func.isRequired,
-  // from state
-  sort: PropTypes.string.isRequired,
+
   filters: PropTypes.object.isRequired,
-  fetchStatus: PropTypes.string.isRequired,
-  outlinkedStories: PropTypes.array.isRequired,
   showTweetCounts: PropTypes.bool.isRequired,
+  allOutlinks: PropTypes.array,
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.selected.mediaSource.outlinks.fetchStatus,
-  outlinkedStories: state.topics.selected.mediaSource.outlinks.stories,
-  sort: state.topics.selected.mediaSource.outlinks.sort,
   filters: state.topics.selected.filters,
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
+  media: state.topics.selected.mediaSource.info,
 });
-
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (stateProps) => {
-    const params = {
-      ...stateProps.filters,
-      sort: stateProps.sort,
-      limit: STORIES_TO_SHOW,
-    };
-    dispatch(fetchMediaOutlinks(ownProps.topicId, ownProps.mediaId, params)); // fetch the info we need
-  },
-  fetchAllOutlinks: (stateProps) => {
-    const params = {
-      ...stateProps.filters,
-      sort: stateProps.sort,
-    };
-    dispatch(fetchAllMediaOutlinks(ownProps.topicId, ownProps.mediaId, params));
-  },
-  sortData: (sort) => {
-    dispatch(sortMediaOutlinks(sort));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(stateProps);
-    },
-  });
-}
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpIntro, messages.storiesTableHelpText])(
-      withAsyncFetch(
-        MediaOutlinksContainer
-      )
+      MediaOutlinkContainer
     )
   )
 );

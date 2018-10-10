@@ -19,7 +19,7 @@ const localMessages = {
 const TreeMap = (props) => {
   const { title, data, onLeafClick, domId } = props;
   const { formatNumber, formatMessage } = props.intl;
-  const totalCount = data.map(d => d.value).reduce((acc, d) => acc + d);
+  const totalCount = data.map(d => d.value).reduce((acc, d) => acc + d, 0);
   const config = {
     colorAxis: {
       minColor: getBrandDarkColor(), // not working

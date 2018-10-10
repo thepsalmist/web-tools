@@ -6,6 +6,16 @@
       "notes": [
         {
           "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Clicking the Explorer attention chart multiple times now works."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "Now you can validate some sample stories while creating a topic."
+        },
+        {
+          "apps": [ "topics" ],
           "type": "Feature",
           "note": "See inlinks to a media source within a topic as a treemap."
         }

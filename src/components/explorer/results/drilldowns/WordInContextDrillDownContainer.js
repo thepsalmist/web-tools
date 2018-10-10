@@ -46,8 +46,11 @@ class WordInContextDrillDownContainer extends React.Component {
   }
 
   componentDidUpdate() {
-    const rootNode = this.rootRef.current;
-    rootNode.scrollIntoView();
+    const rootNode = this.rootRef;
+    // have to treat this node carefully, because it might not be showing
+    if (rootNode && rootNode.current) {
+      rootNode.current.scrollIntoView();
+    }
   }
 
   getUniqueDomId = () => 'word-in-context-';

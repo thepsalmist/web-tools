@@ -233,7 +233,7 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
         del params['fb_data']
     if 'q' in params:
         params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
-    params['limit'] = 100  # an arbitrary value to let us page through with big topics
+    params['limit'] = 1000  # an arbitrary value to let us page through with big topics
 
     props = [
         'stories_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',

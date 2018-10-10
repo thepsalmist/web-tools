@@ -1,13 +1,18 @@
 {
   "releases": [
     {
-      "date": "2018-10-05",
-      "version": "v3.5.0",
+      "date": "2018-10-09",
+      "version": "v3.5.1",
       "notes": [
         {
-          "apps": [ "explorer" ],
+          "apps": [ "topics" ],
           "type": "Fix",
-          "note": "You can delete saved searches again."
+          "note": "Clicking the Explorer attention chart multiple times now works."
+        },
+        {
+          "apps": [ "topics", "explorer", "sources" ],
+          "type": "Fix",
+          "note": "Add back in chart exporting (jpeg, etc)."
         },
         {
           "apps": [ "topics" ],
@@ -18,6 +23,17 @@
           "apps": [ "topics" ],
           "type": "Feature",
           "note": "See inlinks to a media source within a topic as a treemap."
+        }
+      ]
+    },
+    {
+      "date": "2018-10-05",
+      "version": "v3.5.0",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "You can delete saved searches again."
         },
         {
           "apps": [ "explorer" ],

@@ -11,9 +11,9 @@ const urlsToAdd = createAsyncReducer({
   action: CREATE_SOURCES_FROM_URLS,
   handleSuccess: payload => ({
     results: payload,
-    new: payload.filter(s => s.status === 'new'),
-    existing: payload.filter(s => s.status === 'existing'),
-    error: payload.filter(s => s.status === 'error'),
+    new: payload.length ? payload.filter(s => s.status === 'new') : [],
+    existing: payload.length ? payload.filter(s => s.status === 'existing') : [],
+    error: payload.length ? payload.filter(s => s.status === 'error') : [],
   }),
 });
 

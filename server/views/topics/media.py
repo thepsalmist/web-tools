@@ -173,7 +173,7 @@ def media_outlinks_csv(topics_id, media_id):
                                  link_from_media_id=media_id, timespans_id=timespans_id, q=q)
 
 
-@app.route('/api/topics/<topics_id>/media/media_links.csv', methods=['GET'])
+@app.route('/api/topics/<topics_id>/media/media-links.csv', methods=['GET'])
 @flask_login.login_required
 def get_topic_media_links_csv(topics_id):
     user_mc = user_mediacloud_client()

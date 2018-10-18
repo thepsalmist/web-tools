@@ -18,7 +18,8 @@ const localMessages = {
   helpText: { id: 'collection.upload.help.text',
     defaultMessage: 'You can modify or add sources in batch using a CSV file.  First download the CSV template by clicking the Download button.  Then edit it, and upload it.',
   },
-  feedback: { id: 'collection.upload.feedback', defaultMessage: 'This upload was successful' },
+  feedbackGood: { id: 'collection.upload.feedbackGood', defaultMessage: 'This upload was successful' },
+  feedbackBad: { id: 'collection.upload.feedback.bad', defaultMessage: 'The upload failed ({message}).' },
 };
 
 class CollectionUploadSourceContainer extends React.Component {
@@ -118,10 +119,20 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(uploadSourceListFromTemplate({ file: csvFile }))
       .then((results) => {
         if (results.status === 'Error') {
-          updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage({ id: 'collection.upload.error', defaultMessage: results.message }) });
-        } else if (results.status === 'Success') {
-          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          return dispatch(updateFeedback({
+            classes: 'error-notice',
+            open: true,
+            message: ownProps.intl.formatMessage(localMessages.feedbackBad, { message: results.message }),
+          }));
         }
+        if (results.status === 'Success') {
+          return dispatch(updateFeedback({
+            classes: 'info-notice',
+            open: true,
+            message: ownProps.intl.formatMessage(localMessages.feedbackGood),
+          }));
+        }
+        return null;
       });
   },
 });

@@ -30,8 +30,7 @@ function queries(state = INITIAL_STATE, action) {
     case COPY_AND_REPLACE_QUERY_FIELD: // replace property
       if (action.payload.index !== undefined && action.payload.field) {
         updatedState = [...state];
-
-        updatedState[action.payload.index] = Object.assign({}, updatedState[action.payload.index], action.payload.field);
+        updatedState[action.payload.index] = Object.assign({}, updatedState[action.payload.index], action.payload.newValues);
         return updatedState;
       }
       return null;

@@ -273,8 +273,7 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
                     mimetype='text/csv; charset=utf-8', headers=headers)
 
 
-
-@app.route('/api/topics/<topics_id>/stories/story_links.csv', methods=['GET'])
+@app.route('/api/topics/<topics_id>/stories/story-links.csv', methods=['GET'])
 @flask_login.login_required
 def get_topic_story_links_csv(topics_id):
     user_mc = user_mediacloud_client()
@@ -331,7 +330,7 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
     link_id = 0
     more_pages = True
     while more_pages:
-        story_link_page = apicache.topic_story_link_list_by_page(user_key, topics_id, link_ids=link_id, **kwargs)
+        story_link_page = apicache.topic_story_link_list_by_page(user_key, topics_id, link_id=link_id, **kwargs)
 
         story_src_ids = [str(s['source_stories_id']) for s in story_link_page['links']]
         story_ref_ids = [str(s['ref_stories_id']) for s in story_link_page['links']]

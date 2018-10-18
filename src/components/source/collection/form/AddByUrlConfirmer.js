@@ -6,6 +6,7 @@ import AppButton from '../../../common/AppButton';
 import withAsyncFetch from '../../../common/hocs/AsyncContainer';
 import { createSourcesByUrl } from '../../../../actions/sourceActions';
 import messages from '../../../../resources/messages';
+import { updateFeedback } from '../../../../actions/appActions';
 
 const localMessages = {
   newCount: { id: 'source.status.new', defaultMessage: '<b>New Sources</b>: {count} ' },
@@ -105,7 +106,12 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchData: (urls) => {
-    dispatch(createSourcesByUrl(urls));
+    dispatch(createSourcesByUrl(urls))
+      .then((results) => {
+        if (results.status !== 1) {
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: results.message }));
+        }
+      });
   },
   asyncFetch: () => {
     dispatch(createSourcesByUrl(ownProps.urls));

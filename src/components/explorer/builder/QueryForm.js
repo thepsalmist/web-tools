@@ -226,7 +226,7 @@ class QueryForm extends React.Component {
                   <AppButton
                     type="submit"
                     label={buttonLabel}
-                    disabled={queriesMissingMedia || submitting}
+                    disabled={(queriesMissingMedia > 0) || submitting}
                     onClick={onWillSearch}
                     primary
                   />

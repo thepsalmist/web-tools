@@ -50,11 +50,12 @@ function drawViz(wrapperElement, {
 
   // prep the data and some config (scale by sqrt of value so we map to area, not radius)
   const maxValue = d3.max(data.map(d => d.value));
-  let radius;
+  let radiusScale;
+  // We size bubbles based on area instead of radius
   if (asPercentage) {
-    radius = d3.scaleSqrt().domain([0, 1]).range([0, options.maxBubbleRadius]);
+    radiusScale = d3.scaleSqrt().domain([0, 1]).range([0, options.maxBubbleRadius]);
   } else {
-    radius = d3.scaleSqrt().domain([0, maxValue]).range([0, options.maxBubbleRadius]);
+    radiusScale = d3.scaleSqrt().domain([0, maxValue]).range([0, options.maxBubbleRadius]);
   }
 
   const trimmedData = data.filter(d => (d.value > options.minCutoffValue ? d : null));
@@ -65,7 +66,7 @@ function drawViz(wrapperElement, {
       xOffset = options.maxBubbleRadius + (((options.maxBubbleRadius * 2) + PADDING_BETWEEN_BUBBLES) * idx);
       return {
         ...d,
-        r: radius(d.value),
+        scaledRadius: radiusScale(d.value),
         y: 0,
         x: xOffset,
       };
@@ -73,15 +74,16 @@ function drawViz(wrapperElement, {
   } else {
     circles = trimmedData.map((d, idx, list) => {
       let xOffset = 0;
+      const scaledRadius = radiusScale(d.value);
       if (idx > 0) {
         const preceeding = list.slice(0, idx);
-        const diameters = preceeding.map(d2 => (radius(d2.value) * 2) + PADDING_BETWEEN_BUBBLES);
+        const diameters = preceeding.map(d2 => (radiusScale(d2.value) * 2) + PADDING_BETWEEN_BUBBLES);
         xOffset = d3.sum(diameters);
       }
-      xOffset += radius(d.value);
+      xOffset += scaledRadius;
       return {
         ...d,
-        r: radius(d.value),
+        scaledRadius,
         y: 0,
         x: xOffset,
       };
@@ -126,7 +128,7 @@ function drawViz(wrapperElement, {
     const cursor = onBubbleClick ? 'pointer' : '';
     bubbles.append('circle')
       .attr('class', 'pct')
-      .attr('r', d => d.r)
+      .attr('r', d => d.scaledRadius)
       .attr('cx', d => d.x)
       .attr('cy', d => d.y)
       .style('fill', d => d.fill || '')
@@ -162,7 +164,7 @@ function drawViz(wrapperElement, {
     // add top labels
     bubbles.append('text')
       .attr('x', d => d.x)
-      .attr('y', d => (asPercentage ? d.y - options.maxBubbleRadius - 12 : d.y - d.r - 12))
+      .attr('y', d => (asPercentage ? d.y - options.maxBubbleRadius - 12 : d.y - d.scaledRadius - 12))
       .attr('text-anchor', 'middle')
       .attr('fill', d => `${d.aboveTextColor} !important` || '')
       .attr('font-family', 'Lato, Helvetica, sans')
@@ -171,7 +173,7 @@ function drawViz(wrapperElement, {
     // add bottom labels
     bubbles.append('text')
       .attr('x', d => d.x)
-      .attr('y', d => (asPercentage ? d.y + options.maxBubbleRadius + 20 : d.y + d.r + 20))
+      .attr('y', d => (asPercentage ? d.y + options.maxBubbleRadius + 20 : d.y + d.scaledRadius + 20))
       .attr('text-anchor', 'middle')
       .attr('fill', d => `${d.belowTextColor} !important` || '')
       .attr('font-family', 'Lato, Helvetica, sans')

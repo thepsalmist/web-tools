@@ -88,7 +88,7 @@ class SourceSelectionRendererRaw extends React.Component {
     const existingSourceIds = currentSources ? currentSources.map(source => source.media_id) : [];
     let countAdded = 0;
     sources.forEach((m) => {
-      if (!existingSourceIds.includes(m.id)) {
+      if (!existingSourceIds.includes(m.media_id)) {
         fields.unshift(m);
         countAdded += 1;
       }
@@ -102,7 +102,7 @@ class SourceSelectionRendererRaw extends React.Component {
 
   processSourcesByUrl = () => {
     const { sourceUrlsToAdd } = this.props;
-    const urls = sourceUrlsToAdd.split('\n');
+    const urls = sourceUrlsToAdd.split('\n').filter(s => s !== '' && s !== undefined); // in case of empty lines
     this.setState({ sourceUrls: urls });
   }
 

@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { push } from 'react-router-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
@@ -23,7 +22,6 @@ const localMessages = {
 const EditCollectionContainer = (props) => {
   const { handleSave, collection, collectionId, sources } = props;
   const { formatMessage } = props.intl;
-  const titleHandler = parentTitle => `${formatMessage(localMessages.mainTitle)} | ${parentTitle}`;
   const intialValues = {
     ...collection,
     name: collection.label,
@@ -35,7 +33,6 @@ const EditCollectionContainer = (props) => {
   };
   return (
     <div className="edit-collection">
-      <Helmet><title>{titleHandler()}</title></Helmet>
       <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
         <Grid>
           <Row>

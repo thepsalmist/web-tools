@@ -397,7 +397,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
     queries.map((query) => {
       if (selectedIndex !== query.index) {
-        return dispatch(copyAndReplaceQueryField({ whichFilter, index: query.index, newValues }));
+        return dispatch(copyAndReplaceQueryField({ field: whichFilter, index: query.index, newValues }));
       }
       return null;
     });

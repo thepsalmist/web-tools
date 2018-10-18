@@ -57,7 +57,7 @@ class StoriesSummaryContainer extends React.Component {
   }
 
   downloadLinkCsv = () => {
-    const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
+    const { filters, sort, topicId } = this.props;
     const url = `/api/topics/${topicId}/stories/story-links.csv?${filtersAsUrlParams(filters)}&sort=${sort}&fbData=1`;
     window.location = url;
   }
@@ -108,7 +108,7 @@ class StoriesSummaryContainer extends React.Component {
                 <ListItemIcon>
                   <DownloadButton />
                 </ListItemIcon>
-              </MenuItem>              
+              </MenuItem>
             </ActionMenu>
           </div>
         </Permissioned>

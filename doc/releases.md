@@ -18,7 +18,7 @@ In the meantime, development on master has moved along and you're ready to prep 
 Process
 -------
 
-When you're ready to make a release, first follow the intructions in `version-control.md` to set the version numbers correcty.  At the end of that process you should have a tag that you can deploy.
+When you're ready to make a release, first follow the intructions above to set the version numbers correcty.  At the end of that process you should have a tag that you can deploy.
 
 We manage our web apps with container on a [Dokku server](http://dokku.viewdocs.io/dokku/) (on Ubuntu). To push new releases, you first have to have a key set up on our production server (see [the dokku instructions for adding keys](http://dokku.viewdocs.io/dokku/deployment/user-management/#adding-ssh-keys)).
 

@@ -68,7 +68,7 @@ def _cached_random_story_list(q, fq, rows):
 
 
 def last_year_split_story_count(user_mc_key, q='*'):
-    return _cached_last_year_split_story_count(user_mc_key, q)
+    return _cached_last_year_split_story_count(q)
 
 
 def timeperiod_story_count(user_mc, query, time_period):

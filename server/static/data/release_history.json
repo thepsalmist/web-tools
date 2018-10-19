@@ -2,6 +2,32 @@
   "releases": [
     {
       "date": "2018-10-09",
+      "version": "v3.5.2",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Fixed our list of geographic collections in Source Manager."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Feature",
+          "note": "You an download all media links and story links in Topic Manager."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Copy-to-all works in Explorer again."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Viewing the content history for each source in a collection works again."
+        }
+      ]
+    },
+    {
+      "date": "2018-10-09",
       "version": "v3.5.1",
       "notes": [
         {

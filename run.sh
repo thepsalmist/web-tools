@@ -1,2 +1,1 @@
-source venv/bin/activate
-gunicorn server:app
+gunicorn server:app -k gevent

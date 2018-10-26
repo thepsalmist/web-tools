@@ -1,7 +1,18 @@
 {
   "releases": [
     {
-      "date": "2018-10-09",
+      "date": "2018-10-26",
+      "version": "v3.5.3",
+      "notes": [
+        {
+          "apps": [ "sources", "explorer", "topics" ],
+          "type": "Fix",
+          "note": "Fixed problem that led to blank error notices showing up."
+        }
+      ]
+    },
+    {
+      "date": "2018-10-19",
       "version": "v3.5.2",
       "notes": [
         {

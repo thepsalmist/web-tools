@@ -71,10 +71,12 @@ class SourceFeedContainer extends React.Component {
           </Col>
           <Col lg={1} xs={1}>
             <div className="actions" style={{ marginTop: 40 }}>
-              <AddButton
-                tooltip={formatMessage(localMessages.add)}
-                onClick={() => { pushToUrl(`/sources/${sourceId}/feeds/create`); }}
-              />
+              <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
+                <AddButton
+                  tooltip={formatMessage(localMessages.add)}
+                  onClick={() => { pushToUrl(`/sources/${sourceId}/feeds/create`); }}
+                />
+              </Permissioned>
               <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.downloadCsv} />
             </div>
           </Col>

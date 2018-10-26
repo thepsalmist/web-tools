@@ -5,6 +5,8 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import messages from '../../resources/messages';
 import { EditButton } from '../common/IconButton';
 import TabSelector from '../common/TabSelector';
+import { PERMISSION_MEDIA_EDIT } from '../../lib/auth';
+import Permissioned from '../common/Permissioned';
 
 const localMessages = {
   activeTabLabel: { id: 'source.feed.active', defaultMessage: 'Active ({num})' },
@@ -76,9 +78,11 @@ class SourceFeedTable extends React.Component {
                   <a href={feed.url}>{feed.url}</a>
                 </td>
                 <td>
-                  <Link to={`/sources/${feed.media_id}/feeds/${feed.feeds_id}/edit`}>
-                    <EditButton />
-                  </Link>
+                  <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
+                    <Link to={`/sources/${feed.media_id}/feeds/${feed.feeds_id}/edit`}>
+                      <EditButton />
+                    </Link>
+                  </Permissioned>
                 </td>
               </tr>
             ))}

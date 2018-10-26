@@ -18,6 +18,7 @@ const localMessages = {
   title: { id: 'user.resendActivation.title', defaultMessage: 'Didn\'t get the activation email?' },
   intro: { id: 'user.resendActivation.intro', defaultMessage: 'Sorry about that! Enter your email address again and we\'ll send you another activation email.' },
   failed: { id: 'user.resendActivation.failed', defaultMessage: 'Sorry, something went wrong.' },
+  resendActivation: { id: 'user.resendActivation.button', defaultMessage: 'Resend' },
 };
 
 const ResendActivationForm = (props) => {
@@ -46,7 +47,7 @@ const ResendActivationForm = (props) => {
           <Col lg={12}>
             <AppButton
               type="submit"
-              label={formatMessage(messages.resendActivation)}
+              label={formatMessage(localMessages.resendActivation)}
               primary
               disabled={pristine || submitting}
             />

@@ -12,6 +12,8 @@ import { selectSourceFeed, updateFeed, fetchSourceFeed } from '../../../actions/
 import { updateFeedback, addNotice } from '../../../actions/appActions';
 import { LEVEL_ERROR } from '../../common/Notice';
 import SourceFeedForm from './form/SourceFeedForm';
+import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
+import Permissioned from '../../common/Permissioned';
 
 const localMessages = {
   sourceFeedsTitle: { id: 'source.details.feeds.title', defaultMessage: '{name}: ' },
@@ -60,12 +62,14 @@ class EditSourceFeedContainer extends React.Component {
           </Link>
           <FormattedMessage {...localMessages.updateFeedsTitle} />
         </h2>
-        <SourceFeedForm
-          initialValues={intialValues}
-          sourceName={sourceName}
-          onSave={handleSave}
-          buttonLabel={formatMessage(localMessages.updateButton)}
-        />
+        <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
+          <SourceFeedForm
+            initialValues={intialValues}
+            sourceName={sourceName}
+            onSave={handleSave}
+            buttonLabel={formatMessage(localMessages.updateButton)}
+          />
+        </Permissioned>
       </Grid>
     );
   }

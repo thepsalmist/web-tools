@@ -6,15 +6,22 @@ import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import { fetchTopicStoryCounts } from '../../../actions/topicActions';
 
 const localMessages = {
-  seedQueryCount: { id: 'topic.state.seedQueryCount', defaultMessage: 'Seed Query Count: {count}' },
-  spideredQueryCount: { id: 'topic.summary.timespan', defaultMessage: 'Spidered Query Count: {count}' },
+  seedQueryCount: { id: 'topic.state.seedQueryCount', defaultMessage: 'Seed Query Count:' },
+  spideredQueryCount: { id: 'topic.summary.timespan', defaultMessage: 'Spidered Query Count:' },
 };
 
 const TopicStoryInfo = (props) => {
   const { seedQueryCount, spideredQueryCount } = props;
   return (
-    <FormattedMessage {...localMessages.seedQueryCount} values={{ count: seedQueryCount }} />
-    <FormattedMessage {...localMessages.spideredQueryCount} values={{ count: spideredQueryCount }} />
+    <React.Fragment>
+      <p>
+        <b><FormattedMessage {...localMessages.seedQueryCount} /></b>
+        <code>{seedQueryCount}</code>
+        <br />
+        <b><FormattedMessage {...localMessages.spideredQueryCount} /></b>
+        <code>{spideredQueryCount}</code>
+      </p>
+    </React.Fragment>
   );
 };
 
@@ -40,7 +47,20 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   fetchData: (props) => {
-    dispatch(fetchTopicStoryCounts(props.topic.topics_id, props.filters));
+    let infoForQuery = {
+      q: props.topic.solr_seed_query,
+      start_date: props.topic.start_date,
+      end_date: props.topic.end_date,
+    };
+    infoForQuery['collections[]'] = [];
+    infoForQuery['sources[]'] = [];
+
+    if ('media_tags' in props.topic) { // in FieldArrays on the form
+      infoForQuery['collections[]'] = props.topic.media_tags.map(s => s.tags_id);
+      infoForQuery['sources[]'] = props.topic.media_tags.map(s => s.media_id);
+    }
+    infoForQuery = Object.assign({}, infoForQuery, ...props.filters);
+    dispatch(fetchTopicStoryCounts(props.topic.topics_id, infoForQuery ));
   },
 });
 

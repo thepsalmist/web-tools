@@ -10,10 +10,11 @@ from server.cache import cache, key_generator
 from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS
 import server.util.csv as csv
 import server.util.tags as tag_util
+from server.util.stringutil import ids_from_comma_separated_str
 from server.util.request import api_error_handler
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
 import server.views.topics.apicache as apicache
-from server.views.topics import access_public_topic
+from server.views.topics import access_public_topic, concatenate_query_for_solr, concatenate_solr_dates
 
 logger = logging.getLogger(__name__)
 
@@ -106,8 +107,16 @@ def story_counts(topics_id):
         local_key = user_mediacloud_key()
     else:
         return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
-    total = apicache.topic_story_count(local_key, topics_id, timespans_id=None, snapshots_id=None, q=None)
-    filtered = apicache.topic_story_count(local_key, topics_id)  # force a count with just the query -as long as the query is passed in
+    total = apicache.topic_story_count(local_key, topics_id, timespans_id=None, snapshots_id=None, q=None, foci_id=None)
+
+    solr_query = concatenate_query_for_solr(solr_seed_query=request.args['q'],
+                                            media_ids=ids_from_comma_separated_str(
+                                                request.args['sources[]']) if 'sources[]' in request.args else None,
+                                            tags_ids=ids_from_comma_separated_str(request.args[
+                                                                                      'collections[]'])) if 'collections[]' in request.args else None,
+    fq = concatenate_solr_dates(start_date=request.args['start_date'],
+                                end_date=request.args['end_date'])
+    filtered = apicache.topic_story_count(local_key, topics_id)  # force a count with just the solr_query, fq
     return jsonify({'counts': {'count': filtered['count'], 'total': total['count']}})
 
 

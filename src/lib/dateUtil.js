@@ -136,31 +136,41 @@ function gapDateToMomemt(gapDateString, strict = true) {
 }
 
 export function groupDatesByWeek(dates) {
-  let groups = dates.reduce((acc, date) => {
+  const groups = dates.reduce((acc, date) => {
+    const weekPeriod = moment(date.date).week();
     const yearWeek = `${moment(date.date).year()}-${moment(date.date).week()}`;
     if (typeof acc[yearWeek] === 'undefined') {
       acc[yearWeek] = [];
     }
+    acc[yearWeek].dateIndex = weekPeriod;
     acc[yearWeek].push({ ...date });
     return acc;
   }, {});
 
   const extractedSums = Object.values(groups).map(d => d.map(e => e.count).reduce((acc, c) => acc + c));
-  Object.keys(groups).forEach(function(key, index) { groups[key].sum = extractedSums[index] });
+  Object.keys(groups).forEach((key, index) => {
+    groups[key].sum = extractedSums[index];
+    groups[key].date = groups[key][0].date; // first date in groups - use as date
+  });
 
   return groups;
 }
 export function groupDatesByMonth(dates) {
   const groups = dates.reduce((acc, date) => {
-    const yearMonth = `${moment(date).year()}-${moment(date).month()}`;
+    const yearPeriod = moment(date.date).year();
+    const yearMonth = `${moment(date.date).year()}-${moment(date.date).month()}`;
     if (typeof acc[yearMonth] === 'undefined') {
       acc[yearMonth] = [];
     }
-    acc[yearMonth].push(date);
+    acc[yearMonth].dateIndex = yearPeriod;
+    acc[yearMonth].push({ ...date });
     return acc;
   }, {});
   const extractedSums = Object.values(groups).map(d => d.map(e => e.count).reduce((acc, c) => acc + c));
-  Object.keys(groups).forEach(function(key, index) { groups[key].sum = extractedSums[index] });
+  Object.keys(groups).forEach((key, index) => {
+    groups[key].sum = extractedSums[index];
+    groups[key].date = groups[key][0].date; // first date in groups - use as date
+  });
 
   return groups;
 }

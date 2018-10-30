@@ -148,17 +148,17 @@ class AttentionOverTimeChart extends React.Component {
     if (data !== undefined) {
       config.plotOptions.series.marker.enabled = (data.length < SERIES_MARKER_THRESHOLD);
       // clean up the data
-      const dates = data.map(d => d.date);
       // turning variable time unit into days
       let extractedDateBy = data;
-      if (config.interval === PAST_WEEK){
+      if (config.interval === PAST_WEEK) {
         extractedDateBy = groupDatesByWeek(data);
-      } else if (config.interval === PAST_MONTH){
+      } else if (config.interval === PAST_MONTH) {
         extractedDateBy = groupDatesByMonth(data);
       }
+      const dates = Object.values(extractedDateBy).map(d => d.date);
       // const extractedMonth = groupDatesByMonth(data);
       const intervalMs = SECS_PER_DAY * config.intervalVal;
-      const values = Object.values(extractedDateBy).map(d => d.sum || d.count);
+      const values = Object.values(extractedDateBy).map(d => (d.sum !== undefined ? d.sum : d.count));
       allSeries = [{
         id: 0,
         name: filename,

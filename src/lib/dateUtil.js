@@ -135,6 +135,35 @@ function gapDateToMomemt(gapDateString, strict = true) {
   return moment(gapDateString, GAP_DATE_FORMAT, strict);
 }
 
+export function groupDatesByWeek(dates) {
+  let groups = dates.reduce((acc, date) => {
+    const yearWeek = `${moment(date.date).year()}-${moment(date.date).week()}`;
+    if (typeof acc[yearWeek] === 'undefined') {
+      acc[yearWeek] = [];
+    }
+    acc[yearWeek].push({ ...date });
+    return acc;
+  }, {});
+
+  const extractedSums = Object.values(groups).map(d => d.map(e => e.count).reduce((acc, c) => acc + c));
+  Object.keys(groups).forEach(function(key, index) { groups[key].sum = extractedSums[index] });
+
+  return groups;
+}
+export function groupDatesByMonth(dates) {
+  const groups = dates.reduce((acc, date) => {
+    const yearMonth = `${moment(date).year()}-${moment(date).month()}`;
+    if (typeof acc[yearMonth] === 'undefined') {
+      acc[yearMonth] = [];
+    }
+    acc[yearMonth].push(date);
+    return acc;
+  }, {});
+  const extractedSums = Object.values(groups).map(d => d.map(e => e.count).reduce((acc, c) => acc + c));
+  Object.keys(groups).forEach(function(key, index) { groups[key].sum = extractedSums[index] });
+
+  return groups;
+}
 
 // Helper to change solr dates (2015-12-14T00:00:00Z) into javascript date ojects
 export function calcStories(countsMap) {

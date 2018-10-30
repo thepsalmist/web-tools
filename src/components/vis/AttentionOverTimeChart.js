@@ -149,9 +149,17 @@ class AttentionOverTimeChart extends React.Component {
       // clean up the data
       const dates = data.map(d => d.date);
       // turning variable time unit into days
-      const intervalMs = SECS_PER_DAY * config.interval; // default is a day...
-      const intervalDays = intervalMs / SECS_PER_DAY;
-      const values = data.map(d => (d.count / intervalDays));
+      const extractedDates = [];
+      let aggregatedCount = 0;
+      data.forEach((d, index) => {
+        aggregatedCount += d.count;
+        if (index % config.interval === 0) {
+          extractedDates.push({ date: d.date, count: aggregatedCount });
+          aggregatedCount = 0;
+        }
+      });
+      const intervalMs = SECS_PER_DAY * config.interval;
+      const values = extractedDates.map(d => (d.count));
       allSeries = [{
         id: 0,
         name: filename,

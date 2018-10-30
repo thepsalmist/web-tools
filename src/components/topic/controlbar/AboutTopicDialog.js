@@ -52,7 +52,7 @@ class AboutTopicDialog extends React.Component {
           <DialogTitle><FormattedMessage {...localMessages.aboutTopic} /></DialogTitle>
           <DialogContent>
             <TopicInfo topic={topicInfo} />
-            <TopicStoryInfo topic={topicInfo} filters={filters}/>
+            <TopicStoryInfo topic={topicInfo} filters={filters} />
           </DialogContent>
           <DialogActions>
             <AppButton

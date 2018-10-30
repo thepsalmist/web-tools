@@ -22,6 +22,7 @@ const SNAPSHOT_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss.SSSSSS';
 
 export const ONE_DAY_RANGE = '+1DAY';
 
+export const PAST_DAY = 'day';
 export const PAST_WEEK = 'week';
 export const PAST_TWO_WEEKS = 'two_weeks';
 export const PAST_MONTH = 'month';

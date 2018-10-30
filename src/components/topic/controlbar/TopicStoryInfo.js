@@ -60,7 +60,7 @@ const mapDispatchToProps = dispatch => ({
       infoForQuery['sources[]'] = props.topic.media_tags.map(s => s.media_id);
     }
     infoForQuery = Object.assign({}, infoForQuery, ...props.filters);
-    dispatch(fetchTopicStoryCounts(props.topic.topics_id, infoForQuery ));
+    dispatch(fetchTopicStoryCounts(props.topic.topics_id, infoForQuery));
   },
 });
 

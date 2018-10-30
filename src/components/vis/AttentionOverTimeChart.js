@@ -4,7 +4,7 @@ import { FormattedMessage, FormattedNumber, injectIntl } from 'react-intl';
 import ReactHighcharts from 'react-highcharts';
 import initHighcharts from './initHighcharts';
 import { getBrandDarkColor } from '../../styles/colors';
-import { getVisDate } from '../../lib/dateUtil';
+import { getVisDate, PAST_DAY, PAST_WEEK, PAST_MONTH } from '../../lib/dateUtil';
 
 initHighcharts();
 
@@ -39,7 +39,7 @@ class AttentionOverTimeChart extends React.Component {
     const config = {
       title: formatMessage(localMessages.chartTitle),
       lineColor: getBrandDarkColor(),
-      interval: 1,
+      interval: 1, // defaulting to by day
       chart: {
         type: 'spline',
         zoomType: 'x',
@@ -112,7 +112,20 @@ class AttentionOverTimeChart extends React.Component {
       config.lineColor = lineColor;
     }
     if ((interval !== null) && (interval !== undefined)) {
-      config.interval = interval === 'day' ? 1 : 1; // does nothing right now
+      switch (interval) {
+        case PAST_DAY:
+          config.interval = 1;
+          break;
+        case PAST_WEEK:
+          config.interval = 7;
+          break;
+        case PAST_MONTH:
+          config.interval = 30;
+          break;
+        default:
+          config.interval = 1;
+          break;
+      }
     }
     if (onDataPointClick) {
       config.plotOptions.series.allowPointSelect = true;

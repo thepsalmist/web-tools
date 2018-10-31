@@ -4,6 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import Link from 'react-router/lib/Link';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import messages from '../../resources/messages';
+import withHelp from '../common/hocs/HelpfulContainer';
 import LinkWithFilters from './LinkWithFilters';
 import { storyPubDateToTimestamp, STORY_PUB_DATE_UNDATEABLE } from '../../lib/dateUtil';
 import { googleFavIconUrl, storyDomainName } from '../../lib/urlUtil';
@@ -51,7 +52,7 @@ class TopicStoryTable extends React.Component {
   }
 
   render() {
-    const { stories, showTweetCounts, onChangeFocusSelection, topicId, maxTitleLength } = this.props;
+    const { stories, showTweetCounts, onChangeFocusSelection, topicId, maxTitleLength, helpButton } = this.props;
     const { formatMessage, formatDate } = this.props.intl;
     const tweetHeader = showTweetCounts ? <th className="numeric">{this.sortableHeader('twitter', messages.tweetCounts)}</th> : null;
     return (
@@ -62,7 +63,7 @@ class TopicStoryTable extends React.Component {
               <th><FormattedMessage {...messages.storyTitle} /></th>
               <th>{}</th>
               <th><FormattedMessage {...messages.media} /></th>
-              <th><FormattedMessage {...messages.storyDate} /></th>
+              <th>{helpButton}<FormattedMessage {...messages.storyDate} /></th>
               <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
               <th className="numeric"><FormattedMessage {...messages.outlinks} /></th>
               <th className="numeric">{this.sortableHeader('facebook', messages.facebookShares)}</th>
@@ -142,6 +143,7 @@ TopicStoryTable.propTypes = {
   stories: PropTypes.array.isRequired,
   showTweetCounts: PropTypes.bool,
   intl: PropTypes.object.isRequired,
+  helpButton: PropTypes.node.isRequired,
   topicId: PropTypes.number, // not required as this table is now also used by query routine
   onChangeSort: PropTypes.func,
   onChangeFocusSelection: PropTypes.func,
@@ -149,4 +151,8 @@ TopicStoryTable.propTypes = {
   maxTitleLength: PropTypes.number,
 };
 
-export default injectIntl(TopicStoryTable);
+export default injectIntl(
+  withHelp(messages.pubDateTableHelpTitle, messages.pubDateTableHelpText)(
+    TopicStoryTable
+  )
+);

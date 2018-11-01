@@ -1,16 +1,25 @@
-Releases
-========
+Releasing
+=========
 
-Our release process relies on git branches.  Some notes:
-* each *major* or *minor* release gets a new branch;
-* *patch* releases are done on the minor release branch;
-* each release gets tagged before it is pushed to the servers.
+We release our web-apps in containers on a server running the [Dokku PaaS](http://dokku.viewdocs.io/dokku/).
 
-Examples
---------
+One-Time Setup
+--------------
 
-This is easier to understand with some exmaples.
+To be able to release, you first need to setup your keys so that you can push to the Dokku server.  Once that is setup for you, then you need to add git remotes for each app that you want to release.  On your machine, that looks something like this:
 
-Say your current release is `v2.0.0`. That should be on a `v2.0.x` branch. The topic mapper release should be tagged on there as `topics-v2.0.0`. A minor bug happens that you need to fix quickly, so you fix it on that branch and tag it `topics-v2.0.1`.
+```
+git remote add prod-tools user@my.server.edu:mc-tools
+git remote add prod-topics user@my.server.edu:mc-topics
+git remote add prod-sources user@my.server.edu:mc-sources
+git remote add prod-explorer user@my.server.edu:mc-explorer
+```
 
-In the meantime, development on master has moved along and you're ready to prep a `v2.1.0` release.  For that you should make a new branch off of master called `v2.1.x`.  Build the files and bump version numbers in there, and then tag it as `topics-v2.1.0`, `sources-v2.1.0`, etc. and push those to the server.
+Building and Purshing a Release
+-------------------------------
+
+1. Test the changes locally to make sure they worked
+2. Update the version number in the appropriate `src/[tool]Index.js` file.
+3. Build the release version of the JS and CSS: `npm run topics-release`, or `npm run sources-release`, etc.
+4. Tag it with the appropriate release label (ie. "sources-v2.7.3" or "topics-v2.4.3") - see `version-control.md` for more details
+5. Push the tagged release to the appropriate production Dokku server with git: `git push prod-explorer explorer-v3.1.2:master`

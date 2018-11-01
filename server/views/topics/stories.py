@@ -385,41 +385,43 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
 
     story_page = apicache.topic_story_list_by_page(user_key, topics_id, link_id=link_id, **kwargs)
 
-    story_ids = [str(s['stories_id']) for s in story_page['stories']]
-    stories_with_tags = apicache.story_list(user_key, 'stories_id:(' + " ".join(story_ids) + ")", kwargs['limit'])
+    if len(story_page['stories']) > 0:  # be careful to not construct malformed query if no story ids
 
-    # build a media lookup table in parallel so it is faster
-    if add_media_fields:
-        pool = Pool(processes=MEDIA_INFO_POOL_SIZE)
-        jobs = [{'user_key': user_key, 'media_id': s['media_id']} for s in story_page['stories']]
-        job_results = pool.map(_media_info_worker, jobs)  # blocks until they are all done
-        media_lookup = {j['media_id']: j for j in job_results}
-        pool.terminate()
+        story_ids = [str(s['stories_id']) for s in story_page['stories']]
+        stories_with_tags = apicache.story_list(user_key, 'stories_id:(' + " ".join(story_ids) + ")", kwargs['limit'])
 
-    # update story info for each story in the page, put it into the [stories] field, send updated page with stories back
-    for s in story_page['stories']:
-
-        # add in media metadata to the story (from page-level cache built earlier)
+        # build a media lookup table in parallel so it is faster
         if add_media_fields:
-            media = media_lookup[s['media_id']]
+            pool = Pool(processes=MEDIA_INFO_POOL_SIZE)
+            jobs = [{'user_key': user_key, 'media_id': s['media_id']} for s in story_page['stories']]
+            job_results = pool.map(_media_info_worker, jobs)  # blocks until they are all done
+            media_lookup = {j['media_id']: j for j in job_results}
+            pool.terminate()
 
-            # add in foci/subtopic names
-            for k, v in media['metadata'].iteritems():
-                s[u'media_{}'.format(k)] = v['label'] if v is not None else None
+        # update story info for each story in the page, put it into the [stories] field, send updated page with stories back
+        for s in story_page['stories']:
 
-        # build lookup for id => story for all stories in stories with tags (non topic results)
-        for st in stories_with_tags:
+            # add in media metadata to the story (from page-level cache built earlier)
+            if add_media_fields:
+                media = media_lookup[s['media_id']]
 
-            if s['stories_id'] == st['stories_id']:
-                s.update(st)
+                # add in foci/subtopic names
+                for k, v in media['metadata'].iteritems():
+                    s[u'media_{}'.format(k)] = v['label'] if v is not None else None
 
-                foci_names = [f['name'] for f in s['foci']]
-                s['subtopics'] = ", ".join(foci_names)
+            # build lookup for id => story for all stories in stories with tags (non topic results)
+            for st in stories_with_tags:
 
-                s['themes'] = ''
-                story_tag_ids = [t['tags_id'] for t in s['story_tags']]
-                if tag_util.NYT_LABELER_1_0_0_TAG_ID in story_tag_ids:
-                    story_tag_ids = [t['tag'] for t in s['story_tags'] if t['tag_sets_id'] == tag_util.NYT_LABELS_TAG_SET_ID]
-                    s['themes'] = ", ".join(story_tag_ids)
+                if s['stories_id'] == st['stories_id']:
+                    s.update(st)
+
+                    foci_names = [f['name'] for f in s['foci']]
+                    s['subtopics'] = ", ".join(foci_names)
+
+                    s['themes'] = ''
+                    story_tag_ids = [t['tags_id'] for t in s['story_tags']]
+                    if tag_util.NYT_LABELER_1_0_0_TAG_ID in story_tag_ids:
+                        story_tag_ids = [t['tag'] for t in s['story_tags'] if t['tag_sets_id'] == tag_util.NYT_LABELS_TAG_SET_ID]
+                        s['themes'] = ", ".join(story_tag_ids)
 
     return story_page  # need links too

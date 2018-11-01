@@ -3,7 +3,7 @@ import operator
 
 import server.util.tags as tags
 from server import mc
-from server.auth import user_mediacloud_client
+from server.auth import user_mediacloud_client, user_mediacloud_key
 from server.cache import cache, key_generator
 from server.util.api_helper import add_missing_dates_to_split_story_counts
 from server.views.sources import FEATURED_COLLECTION_LIST
@@ -108,3 +108,21 @@ def cached_source_story_count(query):
     # sources are open to everyone, so no need for user-specific cache
     user_mc = user_mediacloud_client()
     return user_mc.storyCount(query)['count']
+
+
+def tag_coverage_pct(user_mc_key, query, tag_sets_id):
+    # What pct of stories matching the query been tagged with any tag in the set specified?
+    # cache can be user-agnostic here because source stats aren't permissioned
+    return _cached_tag_coverage_pct(query, tag_sets_id)
+
+
+@cache.cache_on_arguments(function_key_generator=key_generator)
+def _cached_tag_coverage_pct(query, tag_sets_id):
+    user_mc = user_mediacloud_client()
+    story_count = source_story_count(user_mediacloud_key(), query)
+    tagged_story_counts = user_mc.storyTagCount(solr_query=query, tag_sets_id=tag_sets_id)
+    # sum tagged articles because there are different versions
+    tagged_sum = sum([tag_info['count'] for tag_info in tagged_story_counts])
+    # compute coverage ratio (protect against div by zero)
+    ratio = float(tagged_sum) / float(story_count) if story_count > 0 else 0
+    return ratio

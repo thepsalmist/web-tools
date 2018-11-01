@@ -81,6 +81,7 @@ def story_list(user_mc_key, q, rows):
     return _cached_story_list(user_mc_key, q, rows)
 
 
+@cache.cache_on_arguments(function_key_generator=key_generator)
 def _cached_story_list(user_mc_key, q, rows):
     if user_mc_key == TOOL_API_KEY:
         local_mc = mc

@@ -72,13 +72,9 @@ def source_stats(media_id):
                                ((c['show_on_media'] == 1) or user_can_see_private_collections))]
     results['collection_count'] = len(visible_collections)
     # geography tags
-    tag_specific_story_count = user_mc.storyTagCount(solr_query=media_query, tag_sets_id=TAG_SET_GEOCODER_VERSION)
-    ratio_geo_tagged_count = float(tag_specific_story_count[0]['count']) / float(source_specific_story_count) if len(tag_specific_story_count) > 0 else 0
-    results['geoPct'] = ratio_geo_tagged_count
+    results['geoPct'] = apicache.tag_coverage_pct(user_mediacloud_key(), media_query, TAG_SET_GEOCODER_VERSION)
     # nyt theme
-    tag_specific_story_count = user_mc.storyTagCount(solr_query=media_query, tag_sets_id=TAG_SET_NYT_LABELS_VERSION)
-    ratio_nyt_tagged_count = float(tag_specific_story_count[0]['count']) / float(source_specific_story_count) if len(tag_specific_story_count) > 0 else 0
-    results['nytPct'] = ratio_nyt_tagged_count
+    results['nytPct'] = apicache.tag_coverage_pct(user_mediacloud_key(), media_query, TAG_SET_NYT_LABELS_VERSION)
     return jsonify(results)
 
 

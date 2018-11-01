@@ -63,7 +63,7 @@ class TopicStoryTable extends React.Component {
               <th><FormattedMessage {...messages.storyTitle} /></th>
               <th>{}</th>
               <th><FormattedMessage {...messages.media} /></th>
-              <th>{helpButton}<FormattedMessage {...messages.storyDate} /></th>
+              <th><FormattedMessage {...messages.storyDate} />{helpButton}</th>
               <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
               <th className="numeric"><FormattedMessage {...messages.outlinks} /></th>
               <th className="numeric">{this.sortableHeader('facebook', messages.facebookShares)}</th>

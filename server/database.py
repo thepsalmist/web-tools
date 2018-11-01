@@ -3,8 +3,6 @@ import logging
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-DB_NAME = 'mediacloud-app'  # use one standard name everywhere for simplicity
-
 logger = logging.getLogger(__name__)
 
 
@@ -17,7 +15,9 @@ class AppDatabase:
     def __init__(self, db_uri):
         self.uri = db_uri
         self.created = datetime.datetime.now()
-        self._conn = MongoClient(db_uri)[DB_NAME]
+        # pull db name off the end of the URI
+        self._db_name = db_uri.split('/')[-1]
+        self._conn = MongoClient(db_uri)[self._db_name]
 
     def check_connection(self):
         return self._conn.test.insert({'dummy': 'test'})

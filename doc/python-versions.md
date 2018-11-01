@@ -26,8 +26,7 @@ For managing a virtual enviromnent with a specific version of python for our pro
 ```
 brew install pyenv-virtualenv
 ```
-As noted in their readme, you'll need to add these two lines to your `.profile` file (and then open a new
-terminal session):
+As noted in their readme, you'll need to add these two lines to your `.bash_profile` file (or you `.profile` file). Then open a new terminal session:
 ```
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"

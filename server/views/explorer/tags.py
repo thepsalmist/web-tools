@@ -55,8 +55,8 @@ def api_explorer_demo_top_entities_organizations():
 def demo_top_tags_with_coverage(tag_sets_id,):
     # parses the query for you
     search_id = int(request.args['search_id']) if 'search_id' in request.args else None
-    query_id = int(request.args['id']) if 'id' in request.args else None
-    if search_id not in [None, -1]:
+    query_index = int(request.args['index']) if 'index' in request.args else None
+    if (query_index is None )and (search_id not in [None, -1]):
         sample_searches = load_sample_searches()
         current_search = sample_searches[search_id]['queries']
         solr_q, solr_fq = parse_as_sample(search_id, request.args)

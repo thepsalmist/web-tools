@@ -177,6 +177,7 @@ def api_collection_sources(collection_id):
     results['sources'] = media_in_collection
     return jsonify(results)
 
+
 def fetch_collection_source_feed_info(media_in_collection):
         # for editing users, add in last scrape and active feed count (if requested)
         use_pool = True
@@ -195,6 +196,7 @@ def fetch_collection_source_feed_info(media_in_collection):
         if use_pool:
             pool.terminate()
         return media_in_collection
+
 
 @app.route('/api/template/sources.csv')
 @flask_login.login_required

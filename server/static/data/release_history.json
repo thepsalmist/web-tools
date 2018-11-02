@@ -1,6 +1,34 @@
 {
   "releases": [
     {
+      "date": "2018-11-01",
+      "version": "v3.5.4",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Show correct source coverage stats.", 
+          "details": "Our calculation of geographic and theme coverage was undercounting due to a bug."
+        },
+        {
+          "apps": [ "explorer", "topics" ],
+          "type": "Fix",
+          "note": "Some bug fixes related to story list downloads.",
+          "details": "Some download were stopping in the middle; now those won't."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Fix some small bugs related to non-logged in use of Explorer."
+        },
+        {
+          "apps": [ "sources", "topics", "explorer" ],
+          "type": "Fix",
+          "note": "Various security-related updates to the core libraries from other people that we use."
+        }
+      ]
+    },
+    {
       "date": "2018-10-26",
       "version": "v3.5.3",
       "notes": [

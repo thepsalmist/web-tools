@@ -6,7 +6,6 @@ import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import { fetchCollectionSourceList } from '../../../actions/sourceActions';
 import SourceList from '../../common/SourceList';
-import { getUserRoles, hasPermissions, PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import { HELP_SOURCES_CSV_COLUMNS } from '../../../lib/helpConstants';
 
 const CollectionSourceListContainer = props => (

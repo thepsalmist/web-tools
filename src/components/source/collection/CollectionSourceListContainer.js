@@ -44,12 +44,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
     asyncFetch: () => {
-      const props = {};
-      // if it is an admin user, fetch the source list with extra details so they are there for the manage sources screen
-      if (hasPermissions(getUserRoles(stateProps.user), PERMISSION_MEDIA_EDIT)) {
-        props.details = true;
-      }
-      dispatchProps.fetchData(ownProps.collectionId, props);
+      dispatchProps.fetchData(ownProps.collectionId);
     },
   });
 }

@@ -23,6 +23,9 @@ export function sourceSearch(searchStr) {
 export function fetchSourceWithNameExists(searchStr, id) {
   return createApiPromise('/api/sources/search/name-exists', { searchStr, id });
 }
+export function fetchCollectionWithNameExists(searchStr, id) {
+  return createApiPromise('/api/collections/search/name-exists', { searchStr, id });
+}
 
 export function sourceAdvancedSearch(params) {
   const acceptedParams = acceptParams(params, ['searchString', 'tags']);

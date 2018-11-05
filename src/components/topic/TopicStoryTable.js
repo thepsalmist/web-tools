@@ -27,10 +27,10 @@ class TopicStoryTable extends React.Component {
       if (sortedBy === sortKey) {
         // currently sorted by this key
         content = (
-          <div>
+          <a>
             <b><FormattedMessage {...textMsg} /></b>
             <ArrowDropDownIcon style={ICON_STYLE} />
-          </div>
+          </a>
         );
       } else {
         // link to sort by this key

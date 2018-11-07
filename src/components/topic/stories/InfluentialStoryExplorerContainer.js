@@ -84,7 +84,7 @@ const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
   selectedTimespan: state.topics.selected.timespans.selected,
   fetchStatus: state.topics.selected.summary.storyTotals.fetchStatus,
-  counts: state.topics.selected.summary.storyTotals.counts,
+  counts: state.topics.selected.summary.storyTotals.counts.total, // total
 });
 
 

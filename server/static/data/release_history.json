@@ -7,8 +7,8 @@
         {
           "apps": [ "topics" ],
           "type": "Fix",
-          "note": "Periodic attention views and visual updates.",
-        },
+          "note": "Periodic attention views and visual updates."
+        }
       ]
     },
     {

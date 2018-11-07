@@ -9,7 +9,7 @@ from server import app, db, mc
 from server.util.stringutil import ids_from_comma_separated_str
 from server.util.request import form_fields_required, arguments_required, api_error_handler
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client, user_name, is_user_logged_in
-from server.views.topics.apicache import cached_topic_timespan_list, topic_word_counts, _cached_topic_word_counts
+from server.views.topics.apicache import cached_topic_timespan_list, topic_word_counts, _cached_topic_word_counts, topic_story_count
 from server.views.topics import access_public_topic
 
 logger = logging.getLogger(__name__)
@@ -106,6 +106,14 @@ def _topic_summary(topics_id):
     topic['spiderJobs'] = local_mc.topicSpiderStatus(topics_id)['job_states']
     if is_user_logged_in():
         _add_user_favorite_flag_to_topics([topic])
+
+    #add in story counts, overall seed and spidered
+    #seedTotal = topic_story_count(local_mc, topics_id) # with q - but not passed in for summary
+    #total = topic_story_count(local_mc, topics_id, timespans_id=None, q=None)  # spidered count.. how?
+    #spidered = total - seedTotal
+    #topic['seedStories'] = seedTotal
+    #topic['spideredStories'] = spidered
+    #topic['totaltories'] = total
     return topic
 
 

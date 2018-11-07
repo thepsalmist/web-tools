@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2018-11-07",
+      "version": "v3.5.5",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Periodic attention views and visual updates.",
+        },
+      ]
+    },
+    {
       "date": "2018-11-01",
       "version": "v3.5.4",
       "notes": [

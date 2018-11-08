@@ -22,6 +22,7 @@ const SNAPSHOT_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss.SSSSSS';
 
 export const ONE_DAY_RANGE = '+1DAY';
 
+export const PAST_DAY = 'day';
 export const PAST_WEEK = 'week';
 export const PAST_TWO_WEEKS = 'two_weeks';
 export const PAST_MONTH = 'month';
@@ -134,6 +135,45 @@ function gapDateToMomemt(gapDateString, strict = true) {
   return moment(gapDateString, GAP_DATE_FORMAT, strict);
 }
 
+export function groupDatesByWeek(dates) {
+  const groups = dates.reduce((acc, date) => {
+    const weekPeriod = moment(date.date).week();
+    const yearWeek = `${moment(date.date).year()}-${moment(date.date).week()}`;
+    if (typeof acc[yearWeek] === 'undefined') {
+      acc[yearWeek] = [];
+    }
+    acc[yearWeek].dateIndex = weekPeriod;
+    acc[yearWeek].push({ ...date });
+    return acc;
+  }, {});
+
+  const extractedSums = Object.values(groups).map(d => d.map(e => e.count).reduce((acc, c) => acc + c));
+  Object.keys(groups).forEach((key, index) => {
+    groups[key].sum = extractedSums[index];
+    groups[key].date = groups[key][0].date; // first date in groups - use as date
+  });
+
+  return groups;
+}
+export function groupDatesByMonth(dates) {
+  const groups = dates.reduce((acc, date) => {
+    const yearPeriod = moment(date.date).year();
+    const yearMonth = `${moment(date.date).year()}-${moment(date.date).month()}`;
+    if (typeof acc[yearMonth] === 'undefined') {
+      acc[yearMonth] = [];
+    }
+    acc[yearMonth].dateIndex = yearPeriod;
+    acc[yearMonth].push({ ...date });
+    return acc;
+  }, {});
+  const extractedSums = Object.values(groups).map(d => d.map(e => e.count).reduce((acc, c) => acc + c));
+  Object.keys(groups).forEach((key, index) => {
+    groups[key].sum = extractedSums[index];
+    groups[key].date = groups[key][0].date; // first date in groups - use as date
+  });
+
+  return groups;
+}
 
 // Helper to change solr dates (2015-12-14T00:00:00Z) into javascript date ojects
 export function calcStories(countsMap) {

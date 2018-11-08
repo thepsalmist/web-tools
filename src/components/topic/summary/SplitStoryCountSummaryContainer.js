@@ -9,14 +9,16 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
+import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
-import { fetchTopicSplitStoryCounts } from '../../../actions/topicActions';
+import { fetchTopicSplitStoryCounts, selectTimeAggregatePeriod } from '../../../actions/topicActions';
 import messages from '../../../resources/messages';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { DownloadButton } from '../../common/IconButton';
 import { getBrandDarkColor } from '../../../styles/colors';
 import { filteredLinkTo, filtersAsUrlParams } from '../../util/location';
+// import { PAST_WEEK } from '../../../lib/dateUtil';
 
 const localMessages = {
   title: { id: 'topic.summary.splitStoryCount.title', defaultMessage: 'Attention Over Time' },
@@ -48,6 +50,7 @@ class SplitStoryCountSummaryContainer extends React.Component {
           height={200}
           lineColor={getBrandDarkColor()}
           backgroundColor="#f5f5f5"
+          interval={this.props.selectedTimePeriod}
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
           <div className="actions">
@@ -59,6 +62,9 @@ class SplitStoryCountSummaryContainer extends React.Component {
                 <ListItemText><FormattedMessage {...localMessages.downloadCsv} /></ListItemText>
                 <ListItemIcon><DownloadButton /></ListItemIcon>
               </MenuItem>
+            </ActionMenu>
+            <ActionMenu actionTextMsg={messages.viewOptions}>
+              {this.props.attentionViewOptions}
             </ActionMenu>
           </div>
         </Permissioned>
@@ -81,12 +87,17 @@ SplitStoryCountSummaryContainer.propTypes = {
   asyncFetch: PropTypes.func.isRequired,
   fetchData: PropTypes.func.isRequired,
   handleExplore: PropTypes.func.isRequired,
+
+  handleTimePeriodClick: PropTypes.func,
+  attentionViewOptions: PropTypes.object.isRequired, // from hoc
+  selectedTimePeriod: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.summary.splitStoryCount.fetchStatus,
   total: state.topics.selected.summary.splitStoryCount.total,
   counts: state.topics.selected.summary.splitStoryCount.counts,
+  selectedTimePeriod: state.topics.selected.summary.splitStoryCount.selectedTimePeriod,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -96,6 +107,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleExplore: () => {
     const exploreUrl = filteredLinkTo(`/topics/${ownProps.topicId}/attention`, ownProps.filters);
     dispatch(push(exploreUrl));
+  },
+  handleTimePeriodClick: (timeperiod) => {
+    dispatch(selectTimeAggregatePeriod(timeperiod));
   },
 });
 
@@ -111,8 +125,10 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, [messages.attentionChartHelpText])(
-      withAsyncFetch(
-        SplitStoryCountSummaryContainer
+      withAttentionAggregation(
+        withAsyncFetch(
+          SplitStoryCountSummaryContainer
+        )
       )
     )
   )

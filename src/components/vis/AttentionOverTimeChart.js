@@ -4,7 +4,7 @@ import { FormattedMessage, FormattedNumber, injectIntl } from 'react-intl';
 import ReactHighcharts from 'react-highcharts';
 import initHighcharts from './initHighcharts';
 import { getBrandDarkColor } from '../../styles/colors';
-import { getVisDate } from '../../lib/dateUtil';
+import { getVisDate, PAST_DAY, PAST_WEEK, PAST_MONTH, groupDatesByWeek, groupDatesByMonth } from '../../lib/dateUtil';
 
 initHighcharts();
 
@@ -39,7 +39,7 @@ class AttentionOverTimeChart extends React.Component {
     const config = {
       title: formatMessage(localMessages.chartTitle),
       lineColor: getBrandDarkColor(),
-      interval: 1,
+      interval: PAST_DAY, // defaulting to by day
       chart: {
         type: 'spline',
         zoomType: 'x',
@@ -112,7 +112,21 @@ class AttentionOverTimeChart extends React.Component {
       config.lineColor = lineColor;
     }
     if ((interval !== null) && (interval !== undefined)) {
-      config.interval = interval === 'day' ? 1 : 1; // does nothing right now
+      config.interval = interval;
+      switch (interval) {
+        case PAST_DAY:
+          config.intervalVal = 1;
+          break;
+        case PAST_WEEK:
+          config.intervalVal = 7;
+          break;
+        case PAST_MONTH:
+          config.intervalVal = 30;
+          break;
+        default:
+          config.intervalVal = 1;
+          break;
+      }
     }
     if (onDataPointClick) {
       config.plotOptions.series.allowPointSelect = true;
@@ -134,11 +148,17 @@ class AttentionOverTimeChart extends React.Component {
     if (data !== undefined) {
       config.plotOptions.series.marker.enabled = (data.length < SERIES_MARKER_THRESHOLD);
       // clean up the data
-      const dates = data.map(d => d.date);
       // turning variable time unit into days
-      const intervalMs = SECS_PER_DAY * config.interval; // default is a day...
-      const intervalDays = intervalMs / SECS_PER_DAY;
-      const values = data.map(d => (d.count / intervalDays));
+      let extractedDateBy = data;
+      if (config.interval === PAST_WEEK) {
+        extractedDateBy = groupDatesByWeek(data);
+      } else if (config.interval === PAST_MONTH) {
+        extractedDateBy = groupDatesByMonth(data);
+      }
+      const dates = Object.values(extractedDateBy).map(d => d.date);
+      // const extractedMonth = groupDatesByMonth(data);
+      const intervalMs = SECS_PER_DAY * config.intervalVal;
+      const values = Object.values(extractedDateBy).map(d => (d.sum !== undefined ? d.sum : d.count));
       allSeries = [{
         id: 0,
         name: filename,

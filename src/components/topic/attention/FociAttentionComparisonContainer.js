@@ -130,6 +130,7 @@ class FociAttentionComparisonContainer extends React.Component {
         <AttentionOverTimeChart
           series={series}
           height={300}
+          display="stacked"
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
           <div className="actions">

@@ -11,6 +11,7 @@ initHighcharts();
 const SECS_PER_DAY = 1000 * 60 * 60 * 24;
 
 const DEFAULT_BACKGROUND_COLOR = '#FFFFFF';
+const DEFAULT_DISPLAY = 'stacked';
 
 // don't show dots on line if more than this many data points
 const SERIES_MARKER_THRESHOLD = 30;
@@ -29,28 +30,48 @@ const localMessages = {
 
 function makePercentage(value) { return value * 100; }
 
+const displays = {
+  line: {
+    chart: {
+      type: 'spline',
+      zoomType: 'x',
+      backgroundColor: backgroundColor || DEFAULT_BACKGROUND_COLOR,
+    },
+  },
+  area: {
+    chart: {
+      type: 'area',
+    },
+  },
+};
 /**
  * Pass in "data" if you are using one series, otherwise configure them yourself and pass in "series".
  */
 class AttentionOverTimeChart extends React.Component {
   getConfig() {
-    const { backgroundColor, normalizeYAxis } = this.props;
+    const { backgroundColor, normalizeYAxis, display } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
+    
     const config = {
       title: formatMessage(localMessages.chartTitle),
       lineColor: getBrandDarkColor(),
       interval: PAST_DAY, // defaulting to by day
-      chart: {
-        type: 'spline',
-        zoomType: 'x',
-        backgroundColor: backgroundColor || DEFAULT_BACKGROUND_COLOR,
-      },
+      display: displays.line.chart,
       plotOptions: {
         series: {
           connectNulls: false,
           marker: {
             enabled: true,
           },
+        },
+        area: {
+            stacking: 'normal',
+            lineColor: '#666666',
+            lineWidth: 1,
+            marker: {
+                lineWidth: 1,
+                lineColor: '#666666'
+            }
         },
       },
       xAxis: {
@@ -94,7 +115,7 @@ class AttentionOverTimeChart extends React.Component {
   }
 
   render() {
-    const { total, data, series, height, interval, onDataPointClick, lineColor, health, filename, showLegend, introText } = this.props;
+    const { total, data, series, height, interval, display, onDataPointClick, lineColor, health, filename, showLegend, introText } = this.props;
     const { formatMessage } = this.props.intl;
     // setup up custom chart configuration
     const config = this.getConfig();
@@ -110,6 +131,9 @@ class AttentionOverTimeChart extends React.Component {
     }
     if ((lineColor !== null) && (lineColor !== undefined)) {
       config.lineColor = lineColor;
+    }
+    if ((display !== null) && (display !== undefined)) {
+      config.chart = displays.area.chart;
     }
     if ((interval !== null) && (interval !== undefined)) {
       config.interval = interval;
@@ -206,6 +230,7 @@ AttentionOverTimeChart.propTypes = {
   backgroundColor: PropTypes.string,
   health: PropTypes.array,
   interval: PropTypes.string,
+  display: PropTypes.string,
   onDataPointClick: PropTypes.func, // (date0, date1, evt, chartObj)
   total: PropTypes.number,
   introText: PropTypes.string, // overrides automatic total string generation

@@ -34,9 +34,9 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (collectionId, props) => {
-    dispatch(fetchCollectionSourceList(ownProps.collectionId, props));
+const mapDispatchToProps = dispatch => ({
+  fetchData: (collectionId) => {
+    dispatch(fetchCollectionSourceList(collectionId));
   },
 });
 

@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2018-11-14",
+      "version": "v3.5.7",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "hotfix for review sources."
+        }
+      ]
+    },
+    {
       "date": "2018-11-07",
       "version": "v3.5.6",
       "notes": [

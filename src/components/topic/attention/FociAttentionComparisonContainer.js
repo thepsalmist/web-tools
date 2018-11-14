@@ -4,6 +4,12 @@ import * as d3 from 'd3';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ActionMenu from '../../common/ActionMenu';
+import Permissioned from '../../common/Permissioned';
+import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { fetchTopicSplitStoryCounts, fetchTopicFocalSetSplitStoryCounts } from '../../../actions/topicActions';
 import { asyncContainerize } from '../../common/hocs/AsyncContainer';
 import DataCard from '../../common/DataCard';
@@ -17,12 +23,16 @@ const localMessages = {
   overallSeries: { id: 'topic.attention.series.overall', defaultMessage: 'Whole Topic' },
   bubbleChartTitle: { id: 'topic.attention.bubbleChart.title', defaultMessage: 'Total Stories in Each Subtopic' },
   lineChartTitle: { id: 'topic.attention.lineChart.title', defaultMessage: 'Total Stories over Time in Each Subtopic' },
+  stackedView: { id: 'topic.attention.view.stacked', defaultMessage: 'Stacked Area View' },
+  lineView: { id: 'topic.attention.view.line', defaultMessage: 'Line View' },
 };
 
 const SECS_PER_DAY = 1000 * 60 * 60 * 24;
 const COLORS = d3.schemeCategory10;
 const BUBBLE_CHART_DOM_ID = 'total-attention-bubble-chart';
 const TOP_N_LABELS_TO_SHOW = 3; // only the top N bubbles will get a label visible on them (so the text is readable)
+const STACKED_VIEW = 0;
+const LINE_VIEW = 1;
 
 function dataAsSeries(data) {
   // clean up the data
@@ -35,6 +45,10 @@ function dataAsSeries(data) {
 }
 
 class FociAttentionComparisonContainer extends React.Component {
+  state = {
+    view: LINE_VIEW,
+  }
+
   componentWillReceiveProps(nextProps) {
     const { selectedFocalSetId, filters, fetchData } = this.props;
     if ((nextProps.selectedFocalSetId !== selectedFocalSetId) || (nextProps.filters.timespanId !== filters.timespanId)) {
@@ -42,10 +56,32 @@ class FociAttentionComparisonContainer extends React.Component {
     }
   }
 
+  setView = (nextView) => {
+    this.setState({ view: nextView });
+  }
+
   render() {
     const { foci, overallTotal, overallCounts } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
     // stich together bubble chart data
+    const stackedAreaView = (
+      <div>
+        <MenuItem
+          className="action-icon-menu-item"
+          ddisabled={this.state.view === LINE_VIEW}
+          onClick={() => this.setView(LINE_VIEW)}
+        >
+          <ListItemText><FormattedMessage {...localMessages.lineView} /></ListItemText>
+        </MenuItem>
+        <MenuItem
+          className="action-icon-menu-item"
+          disabled={this.state.view === STACKED_VIEW}
+          onClick={() => this.setView(STACKED_VIEW)}
+        >
+          <ListItemText><FormattedMessage {...localMessages.stackedView} /></ListItemText>
+        </MenuItem>
+      </div>
+    );
     let bubbleData = [];
     if (foci !== undefined && foci.length > 0) {
       bubbleData = [
@@ -90,34 +126,40 @@ class FociAttentionComparisonContainer extends React.Component {
       ];
     }
     return (
-      <div>
-        <Row>
-          <Col lg={12}>
-            <DataCard>
-              <h2><FormattedMessage {...localMessages.lineChartTitle} /></h2>
-              <AttentionOverTimeChart series={series} height={300} />
-            </DataCard>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={6} xs={12}>
-            <DataCard>
-              <div className="actions">
-                <DownloadButton
-                  tooltip={formatMessage(messages.download)}
-                  onClick={() => downloadSvg(BUBBLE_CHART_DOM_ID)}
+      <React.Fragment>
+        <AttentionOverTimeChart
+          series={series}
+          height={300}
+        />
+        <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
+          <div className="actions">
+            <ActionMenu actionTextMsg={messages.viewOptions}>
+              {this.props.attentionViewOptions}
+              {stackedAreaView}
+            </ActionMenu>
+          </div>
+        </Permissioned>
+        <div>
+          <Row>
+            <Col lg={6} xs={12}>
+              <DataCard>
+                <div className="actions">
+                  <DownloadButton
+                    tooltip={formatMessage(messages.download)}
+                    onClick={() => downloadSvg(BUBBLE_CHART_DOM_ID)}
+                  />
+                </div>
+                <h2><FormattedMessage {...localMessages.bubbleChartTitle} /></h2>
+                <PackedBubbleChart
+                  data={bubbleData}
+                  height={400}
+                  domId={BUBBLE_CHART_DOM_ID}
                 />
-              </div>
-              <h2><FormattedMessage {...localMessages.bubbleChartTitle} /></h2>
-              <PackedBubbleChart
-                data={bubbleData}
-                height={400}
-                domId={BUBBLE_CHART_DOM_ID}
-              />
-            </DataCard>
-          </Col>
-        </Row>
-      </div>
+              </DataCard>
+            </Col>
+          </Row>
+        </div>
+      </React.Fragment>
     );
   }
 }

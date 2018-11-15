@@ -68,7 +68,7 @@ class FociAttentionComparisonContainer extends React.Component {
       <div>
         <MenuItem
           className="action-icon-menu-item"
-          ddisabled={this.state.view === LINE_VIEW}
+          disabled={this.state.view === LINE_VIEW}
           onClick={() => this.setView(LINE_VIEW)}
         >
           <ListItemText><FormattedMessage {...localMessages.lineView} /></ListItemText>

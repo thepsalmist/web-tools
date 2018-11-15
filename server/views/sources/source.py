@@ -18,6 +18,8 @@ from server.views.sources.geocount import stream_geo_csv, cached_geotag_count
 from server.views.sources.stories_split_by_time import stream_split_stories_csv
 import server.views.sources.apicache as apicache
 from server.views.favorites import add_user_favorite_flag_to_sources, add_user_favorite_flag_to_collections
+from server.views.sources.feeds import source_feed_list
+from server.views.stories import QUERY_LAST_YEAR
 
 logger = logging.getLogger(__name__)
 
@@ -337,3 +339,28 @@ def tag_ids_from_collections_param():
     if len(collection_ids) > 0:
         tag_ids_to_add = [int(cid) for cid in collection_ids if len(cid) > 0]
     return list(set(tag_ids_to_add))
+
+
+@app.route('/api/sources/<media_id>/review-info')
+@flask_login.login_required
+@api_error_handler
+def api_source_review_info(media_id):
+    user_mc = user_admin_mediacloud_client()
+    # latest scrape job
+    scrape_jobs = user_mc.feedsScrapeStatus(media_id)
+    latest_scrape_job = None
+    if len(scrape_jobs['job_states']) > 0:
+        latest_scrape_job = scrape_jobs['job_states'][0]
+    # active feed count
+    feeds = source_feed_list(media_id)
+    active_syndicated_feeds = [f for f in feeds if f['active'] and f['type'] == 'syndicated']
+    active_feed_count = len(active_syndicated_feeds)
+    query = "media_id:{}".format(media_id)
+    full_count = apicache.timeperiod_story_count(user_mc, query, QUERY_LAST_YEAR)['count']
+    info = {
+        'media_id': int(media_id),
+        'latest_scrape_job': latest_scrape_job,
+        'active_feed_count': active_feed_count,
+        'num_stories_last_year': full_count,
+    }
+    return jsonify(info)

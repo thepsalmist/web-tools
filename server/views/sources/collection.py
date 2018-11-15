@@ -16,9 +16,7 @@ from server.util.tags import TAG_SETS_ID_COLLECTIONS, format_name_from_label, me
 from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS, SOURCE_FEED_LIST_CSV_PROPS
 from server.views.favorites import add_user_favorite_flag_to_collections, add_user_favorite_flag_to_sources
 
-from server.views.sources.feeds import source_feed_list
 from server.views.sources.geocount import stream_geo_csv, cached_geotag_count
-from server.views.stories import QUERY_LAST_YEAR
 from server.views.sources.stories_split_by_time import stream_split_stories_csv
 import server.views.sources.apicache as apicache
 from server.views.sources.words import word_count, stream_wordcount_csv
@@ -138,64 +136,18 @@ def api_collection_details(collection_id):
         info['sources'] = media_in_collection
     return jsonify({'results': info})
 
-def _media_list_edit_worker(media_id):
-    user_mc = user_admin_mediacloud_client()
-    # latest scrape job
-    scrape_jobs = user_mc.feedsScrapeStatus(media_id)
-    latest_scrape_job = None
-    if len(scrape_jobs['job_states']) > 0:
-        latest_scrape_job = scrape_jobs['job_states'][0]
-    # active feed count
-    feeds = source_feed_list(media_id)
-    active_syndicated_feeds = [f for f in feeds if f['active'] and f['type'] == 'syndicated']
-    active_feed_count = len(active_syndicated_feeds)
-    query = "media_id:{}".format(media_id)
-    full_count = apicache.timeperiod_story_count(user_mc, query, QUERY_LAST_YEAR)['count']
-    return {
-        'media_id': media_id,
-        'latest_scrape_job': latest_scrape_job,
-        'active_feed_count': active_feed_count,
-        'num_stories_last_year': full_count,
-    }
-
 
 @app.route('/api/collections/<collection_id>/sources')
 @flask_login.login_required
 @api_error_handler
 def api_collection_sources(collection_id):
-    add_in_details = False
-    if ('details' in request.args) and (request.args['details'] == 'true'):
-        add_in_details = True
     results = {
         'tags_id': collection_id
     }
     media_in_collection = media_with_tag(user_mediacloud_key(), collection_id)
     add_user_favorite_flag_to_sources(media_in_collection)
-    if add_in_details and user_has_auth_role(ROLE_MEDIA_EDIT):
-        media_in_collection = fetch_collection_source_feed_info(media_in_collection)
-
     results['sources'] = media_in_collection
     return jsonify(results)
-
-
-def fetch_collection_source_feed_info(media_in_collection):
-        # for editing users, add in last scrape and active feed count (if requested)
-        use_pool = True
-        jobs = [m['media_id'] for m in media_in_collection]
-        if use_pool:
-            pool = Pool(processes=FEED_SCRAPE_JOB_POOL_SIZE)
-            job_results = pool.map(_media_list_edit_worker, jobs)  # blocks until they are all done
-        else:
-            job_results = [_media_list_edit_worker(job) for job in jobs]
-
-        job_by_media_id = {j['media_id']: j for j in job_results}
-        for m in media_in_collection:
-            m['num_stories_last_year'] = job_by_media_id[m['media_id']]['num_stories_last_year']
-            m['latest_scrape_job'] = job_by_media_id[m['media_id']]['latest_scrape_job']
-            m['active_feed_count'] = job_by_media_id[m['media_id']]['active_feed_count']
-        if use_pool:
-            pool.terminate()
-        return media_in_collection
 
 
 @app.route('/api/template/sources.csv')

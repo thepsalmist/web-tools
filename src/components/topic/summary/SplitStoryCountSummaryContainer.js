@@ -20,22 +20,13 @@ import { getBrandDarkColor } from '../../../styles/colors';
 import { filteredLinkTo, filtersAsUrlParams } from '../../util/location';
 // import { PAST_WEEK } from '../../../lib/dateUtil';
 
-const STACKED_VIEW = 0
-const LINE_VIEW = 1
-
 const localMessages = {
   title: { id: 'topic.summary.splitStoryCount.title', defaultMessage: 'Attention Over Time' },
   descriptionIntro: { id: 'topic.summary.splitStoryCount.help.title', defaultMessage: '<p>Analyze attention to this topic over time to understand how it is covered. This chart shows the total number of stories that matched your topic query. Spikes in attention can reveal key events.  Plateaus can reveal stable, "normal", attention levels.</p>' },
   downloadCsv: { id: 'topic.summary.splitStoryCount.download', defaultMessage: 'Download daily story count CSV' },
-  stackedView: { id: 'topic.summary.splitStoryCount.view.stacked', defaultMessage: 'Stacked Area View' },
-  lineView: { id: 'topic.summary.splitStoryCount.view.line', defaultMessage: 'Line View' },
 };
 
 class SplitStoryCountSummaryContainer extends React.Component {
-  state = {
-    view: LINE_VIEW,
-  }
-
   componentWillReceiveProps(nextProps) {
     const { filters, fetchData } = this.props;
     if (nextProps.filters !== filters) {
@@ -49,30 +40,8 @@ class SplitStoryCountSummaryContainer extends React.Component {
     window.location = url;
   }
 
-  setView = (nextView) => {
-    this.setState({ view: nextView });
-  }
-
   render() {
     const { total, counts } = this.props;
-    const stackedAreaView = (
-      <div>
-        <MenuItem
-          className="action-icon-menu-item"
-          ddisabled={this.state.view === LINE_VIEW}
-          onClick={() => this.setView(LINE_VIEW)}
-        >
-          <ListItemText><FormattedMessage {...localMessages.lineView} /></ListItemText>
-        </MenuItem>
-        <MenuItem
-          className="action-icon-menu-item"
-          disabled={this.state.view === STACKED_VIEW}
-          onClick={() => this.setView(STACKED_VIEW)}
-        >
-          <ListItemText><FormattedMessage {...localMessages.stackedView} /></ListItemText>
-        </MenuItem>
-      </div>
-    );
     return (
       <React.Fragment>
         <AttentionOverTimeChart
@@ -96,7 +65,6 @@ class SplitStoryCountSummaryContainer extends React.Component {
             </ActionMenu>
             <ActionMenu actionTextMsg={messages.viewOptions}>
               {this.props.attentionViewOptions}
-              {stackedAreaView}
             </ActionMenu>
           </div>
         </Permissioned>

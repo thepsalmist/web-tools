@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
@@ -31,8 +30,9 @@ const SECS_PER_DAY = 1000 * 60 * 60 * 24;
 const COLORS = d3.schemeCategory10;
 const BUBBLE_CHART_DOM_ID = 'total-attention-bubble-chart';
 const TOP_N_LABELS_TO_SHOW = 3; // only the top N bubbles will get a label visible on them (so the text is readable)
-const STACKED_VIEW = 0;
-const LINE_VIEW = 1;
+
+const LINE_VIEW = 0;
+const STACKED_VIEW = 1;
 
 function dataAsSeries(data) {
   // clean up the data
@@ -130,12 +130,11 @@ class FociAttentionComparisonContainer extends React.Component {
         <AttentionOverTimeChart
           series={series}
           height={300}
-          display="stacked"
+          display={this.state.view}
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
           <div className="actions">
             <ActionMenu actionTextMsg={messages.viewOptions}>
-              {this.props.attentionViewOptions}
               {stackedAreaView}
             </ActionMenu>
           </div>

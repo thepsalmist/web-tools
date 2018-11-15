@@ -26,4 +26,5 @@ Building and Purshing a Release
 6. Commit those built files 
 7. Tag the new build with the appropriate release label (ie. "git tag sources-v2.7.3" or "git tag topics-v2.4.3") - see `version-control.md` for more details
 8. Push the tagged release to the appropriate production Dokku server with git (ie. `git push prod-explorer explorer-v3.1.2:master`)
-9. Create a PR on GitHub from your banch back to master (so the changes get merged in)
+9. Push the tag(s) "git push --tags"
+10. Create a PR on GitHub from your banch back to master (so the changes get merged in)

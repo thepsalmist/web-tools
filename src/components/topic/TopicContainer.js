@@ -112,7 +112,8 @@ class TopicContainer extends React.Component {
                   label={formatMessage(localMessages.updateMaxStories)}
                   onTouchTap={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo)}
                   type="submit"
-                  primary              />
+                  primary
+                />
               </Col>
             </Row>
           </Grid>

@@ -94,19 +94,24 @@ class TopicContainer extends React.Component {
             <Col lg={12}>
               <div className="topic-stuck-created-or-error">
                 <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
-                <TextField
-                  id="maxStories"
-                  label={formatMessage(localMessages.maxStories)}
-                  fullWidth
-                  rows={1}
-                />
-                <AppButton
-                  label={formatMessage(localMessages.updateMaxStories)}
-                  onTouchTap={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo)}
-                  type="submit"
-                  color="primary"
-                />
               </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={4}>
+              <TextField
+                id="maxStories"
+                label={formatMessage(localMessages.maxStories)}
+                fullWidth
+                rows={1}
+              />
+            </Col>
+            <Col lg={6}>
+              <AppButton
+                label={formatMessage(localMessages.updateMaxStories)}
+                onTouchTap={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo)}
+                type="submit"
+                primary              />
             </Col>
           </Row>
         </Grid>

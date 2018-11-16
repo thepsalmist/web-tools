@@ -5,10 +5,11 @@ import { push, replace } from 'react-router-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import TextField from '@material-ui/core/TextField';
 import { filteredLocation, urlWithFilters } from '../util/location';
 import withAsyncFetch from '../common/hocs/AsyncContainer';
 import AppButton from '../common/AppButton';
-import { selectTopic, filterBySnapshot, filterByTimespan, filterByFocus, fetchTopicSummary, filterByQuery,
+import { updateTopic, selectTopic, filterBySnapshot, filterByTimespan, filterByFocus, fetchTopicSummary, filterByQuery,
   topicStartSpider } from '../../actions/topicActions';
 import { addNotice } from '../../actions/appActions';
 import { snapshotIsUsable, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
@@ -35,6 +36,8 @@ const localMessages = {
   notUsingLatestSnapshot: { id: 'topic.notUsingLatestSnapshot', defaultMessage: 'You are not using the latest snapshot!  If you are not doing this on purpose, <a href="{url}">switch to the latest snapshot</a> to get the best data.' },
   otherError: { id: 'topic.state.otherError', defaultMessage: 'Sorry, this topic has an error.  It says it is "{state}".' },
   trySpidering: { id: 'topic.state.trySpidering', defaultMessage: 'Manually run this topic' },
+  updateMaxStories: { id: 'topic.state.updateMaxStories', defaultMessage: 'Increase Max Stories and Respider' },
+  maxStories: { id: 'topic.state.maxStories', defaultMessage: 'Max Stories' },
 };
 
 class TopicContainer extends React.Component {
@@ -72,7 +75,7 @@ class TopicContainer extends React.Component {
   }
 
   render() {
-    const { children, goToUrl, topicInfo, topicId, snapshotCount, handleSpiderRequest, filters, needsNewSnapshot } = this.props;
+    const { children, goToUrl, topicInfo, topicId, snapshotCount, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, filters, needsNewSnapshot } = this.props;
     const { formatMessage } = this.props.intl;
     // show a big error if there is one to show
     let contentToShow = children;
@@ -84,7 +87,31 @@ class TopicContainer extends React.Component {
           <TopicUnderConstruction />
         </div>
       );
-    } else if ((topicInfo.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) || (topicInfo.state === TOPIC_SNAPSHOT_STATE_ERROR)) {
+    } else if (topicInfo.state === TOPIC_SNAPSHOT_STATE_ERROR) {
+      contentToShow = (
+        <Grid>
+          <Row>
+            <Col lg={12}>
+              <div className="topic-stuck-created-or-error">
+                <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
+                <TextField
+                  id="maxStories"
+                  label={formatMessage(localMessages.maxStories)}
+                  fullWidth
+                  rows={1}
+                />
+                <AppButton
+                  label={formatMessage(localMessages.updateMaxStories)}
+                  onTouchTap={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo)}
+                  type="submit"
+                  color="primary"
+                />
+              </div>
+            </Col>
+          </Row>
+        </Grid>
+      );
+    } else if (topicInfo.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
       contentToShow = (
         <Grid>
           <Row>
@@ -143,6 +170,7 @@ TopicContainer.propTypes = {
   asyncFetch: PropTypes.func.isRequired,
   addAppNotice: PropTypes.func.isRequired,
   handleSpiderRequest: PropTypes.func.isRequired,
+  handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func.isRequired,
   // from state
   filters: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string.isRequired,
@@ -312,6 +340,23 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           }
         }
       });
+  },
+  handleUpdateMaxStoriesAndSpiderRequest: (topicInfo) => {
+    const maxStories = parseInt(document.getElementById('maxStories').value, 10);
+    const newTopicInfo = {
+      ...topicInfo,
+      max_stories: maxStories,
+    };
+    if ('media_tags' in topicInfo) {
+      newTopicInfo['sources[]'] = topicInfo.media_tags.filter(s => s.media_id).map(s => s.media_id);
+      newTopicInfo['collections[]'] = topicInfo.media_tags.filter(s => s.tags_id).map(s => s.tags_id);
+    } else {
+      newTopicInfo['sources[]'] = '';
+      newTopicInfo['collections[]'] = '';
+    }
+    dispatch(updateTopic(newTopicInfo.topics_id, { ...newTopicInfo }))
+      .then(dispatch(topicStartSpider(newTopicInfo.topics_id)))
+      .then(() => window.location.reload());
   },
   handleSpiderRequest: (topicId) => {
     dispatch(topicStartSpider(topicId))

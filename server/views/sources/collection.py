@@ -59,6 +59,13 @@ def api_metadata_download(collection_id):
                                ['metadata category', 'sources with info', 'sources missing info'])
 
 
+@app.route('/api/collection/set/geo-by-country', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def api_collection_set_geo():
+    return app.send_static_file(os.path.join('data', 'country-collections.json'))
+
+
 @app.route('/api/collections/set/<tag_sets_id>', methods=['GET'])
 @flask_login.login_required
 @api_error_handler

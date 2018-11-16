@@ -5,11 +5,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { PAST_DAY, PAST_WEEK, PAST_MONTH } from '../../../lib/dateUtil';
 
 const localMessages = {
-  pastDay: { id: 'wordcloud.time.pastDay', defaultMessage: 'past day' },
-  pastWeek: { id: 'wordcloud.time.pastWeek', defaultMessage: 'past week' },
-  pastMonth: { id: 'wordcloud.time.pastMonth', defaultMessage: 'past month' },
-  pastYear: { id: 'wordcloud.time.pastYear', defaultMessage: 'past year' },
-  all: { id: 'wordcloud.time.all', defaultMessage: 'all time' },
+  pastDay: { id: 'wordcloud.time.pastDay', defaultMessage: 'chart by day' },
+  pastWeek: { id: 'wordcloud.time.pastWeek', defaultMessage: 'chart by week' },
+  pastMonth: { id: 'wordcloud.time.pastMonth', defaultMessage: 'chart by month' },
+  pastYear: { id: 'wordcloud.time.pastYear', defaultMessage: 'chart by year' },
 };
 
 /**

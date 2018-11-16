@@ -169,6 +169,20 @@ class AttentionOverTimeChart extends React.Component {
         showInLegend: showLegend !== false,
       }];
     } else if (series !== undefined && series.length > 0) {
+      let extractedDateBy = series[0].data;
+      if (config.interval === PAST_WEEK) {
+        extractedDateBy = groupDatesByWeek(series[0].data);
+        const values = Object.values(extractedDateBy).map(d => (d.sum !== undefined ? d.sum : d.count));
+        series[0].data = values;
+      } else if (config.interval === PAST_MONTH) {
+        extractedDateBy = groupDatesByMonth(series[0].data);
+        const values = Object.values(extractedDateBy).map(d => (d.sum !== undefined ? d.sum : d.count));
+        series[0].data = values;
+      }
+      // const dates = Object.values(extractedDateBy).map(d => d.date);
+      // const extractedMonth = groupDatesByMonth(data);
+      // const intervalMs = SECS_PER_DAY * config.intervalVal;
+
       allSeries = series;
       config.plotOptions.series.marker.enabled = series[0].data ? (series[0].data.length < SERIES_MARKER_THRESHOLD) : false;
     }

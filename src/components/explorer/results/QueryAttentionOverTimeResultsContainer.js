@@ -5,9 +5,10 @@ import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import { fetchQuerySplitStoryCount, fetchDemoQuerySplitStoryCount, resetSentenceCounts, setSentenceDataPoint, resetSentenceDataPoint } from '../../../actions/explorerActions';
+import { fetchQuerySplitStoryCount, fetchDemoQuerySplitStoryCount, resetSentenceCounts, setSentenceDataPoint, resetSentenceDataPoint, selectExplorerTimeAggregate } from '../../../actions/explorerActions';
 import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import withQueryResults from './QueryResultsSelector';
 import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
@@ -97,13 +98,14 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
       ];
     }
     return (
-      <div>
+      <React.Fragment>
         <AttentionOverTimeChart
           series={series}
           height={300}
           backgroundColor="#f5f5f5"
           onDataPointClick={this.handleDataPointClick}
           normalizeYAxis={this.state.view === VIEW_NORMALIZED}
+          interval={this.props.selectedTimePeriod}
         />
         <div className="actions">
           <ActionMenu actionTextMsg={messages.downloadOptions}>
@@ -141,9 +143,10 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
                 <FormattedMessage {...localMessages.withoutKeywords} />
               </ListItemText>
             </MenuItem>
+            {this.props.attentionViewOptions}
           </ActionMenu>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }
@@ -156,6 +159,9 @@ QueryAttentionOverTimeResultsContainer.propTypes = {
   // from hocs
   intl: PropTypes.object.isRequired,
   onShowLoginDialog: PropTypes.func.isRequired,
+  handleTimePeriodClick: PropTypes.func,
+  attentionViewOptions: PropTypes.object.isRequired,
+  selectedTimePeriod: PropTypes.string.isRequired,
   // from dispatch
   fetchData: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
@@ -167,12 +173,14 @@ QueryAttentionOverTimeResultsContainer.propTypes = {
   selectDataPoint: PropTypes.func.isRequired,
   tabSelector: PropTypes.object,
   selectedTabIndex: PropTypes.number,
+
 };
 
 const mapStateToProps = state => ({
   lastSearchTime: state.explorer.lastSearchTime.time,
   fetchStatus: state.explorer.storySplitCount.fetchStatus || FETCH_INVALID,
   results: state.explorer.storySplitCount.results,
+  selectedTimePeriod: state.explorer.storySplitCount.selectedTimePeriod,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -210,12 +218,20 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(resetSentenceDataPoint());
     dispatch(setSentenceDataPoint(clickedDataPoint));
   },
+  handleTimePeriodClick: (timeperiod) => {
+    dispatch(selectExplorerTimeAggregate(timeperiod));
+  },
+
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
     asyncFetch: () => {
       dispatchProps.fetchData(ownProps.queries);
+    },
+    shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
+      const { selectedTimePeriod } = stateProps;
+      return nextProps.selectedTimePeriod !== selectedTimePeriod;
     },
   });
 }
@@ -224,10 +240,12 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withSummary(localMessages.lineChartTitle, localMessages.descriptionIntro, [localMessages.descriptionDetail, messages.countsVsPercentageHelp])(
-      withAsyncFetch(
-        withQueryResults(
-          withLoginRequired(
-            QueryAttentionOverTimeResultsContainer
+      withAttentionAggregation(
+        withAsyncFetch(
+          withQueryResults(
+            withLoginRequired(
+              QueryAttentionOverTimeResultsContainer
+            )
           )
         )
       )

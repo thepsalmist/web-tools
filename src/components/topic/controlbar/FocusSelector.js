@@ -6,7 +6,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
-import messages from '../../../resources/messages';
 
 export const REMOVE_FOCUS = 0;
 

@@ -196,3 +196,7 @@ export function fetchSourceStats(mediaId) {
 export function fetchSourceReviewInfo(mediaId) {
   return createApiPromise(`/api/sources/${mediaId}/review-info`);
 }
+
+export function fetchGeoCollectionsByCountry() {
+  return createApiPromise('/api/collection/set/geo-by-country');
+}

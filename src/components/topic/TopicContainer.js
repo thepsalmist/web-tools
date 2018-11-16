@@ -87,53 +87,55 @@ class TopicContainer extends React.Component {
           <TopicUnderConstruction />
         </div>
       );
-    } else if (topicInfo.state === TOPIC_SNAPSHOT_STATE_ERROR) {
-      contentToShow = (
-        <Grid>
-          <Row>
-            <Col lg={12}>
-              <div className="topic-stuck-created-or-error">
-                <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={4}>
-              <TextField
-                id="maxStories"
-                label={formatMessage(localMessages.maxStories)}
-                fullWidth
-                rows={1}
-              />
-            </Col>
-            <Col lg={6}>
-              <AppButton
-                label={formatMessage(localMessages.updateMaxStories)}
-                onTouchTap={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo)}
-                type="submit"
-                primary              />
-            </Col>
-          </Row>
-        </Grid>
-      );
-    } else if (topicInfo.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
-      contentToShow = (
-        <Grid>
-          <Row>
-            <Col lg={12}>
-              <div className="topic-stuck-created-or-error">
-                <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
-                <AppButton
-                  label={formatMessage(localMessages.trySpidering)}
-                  onTouchTap={() => handleSpiderRequest(topicInfo.topics_id)}
-                  type="submit"
-                  color="primary"
+    } else if ((topicInfo.state === TOPIC_SNAPSHOT_STATE_ERROR) || (topicInfo.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED)) {
+      if (topicInfo.message.indexOf('exceeds topic max') > -1) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
+        contentToShow = (
+          <Grid>
+            <Row>
+              <Col lg={12}>
+                <div className="topic-stuck-created-or-error">
+                  <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={4}>
+                <TextField
+                  id="maxStories"
+                  label={formatMessage(localMessages.maxStories)}
+                  fullWidth
+                  rows={1}
                 />
-              </div>
-            </Col>
-          </Row>
-        </Grid>
-      );
+              </Col>
+              <Col lg={6}>
+                <AppButton
+                  label={formatMessage(localMessages.updateMaxStories)}
+                  onTouchTap={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo)}
+                  type="submit"
+                  primary              />
+              </Col>
+            </Row>
+          </Grid>
+        );
+      } else {
+        contentToShow = (
+          <Grid>
+            <Row>
+              <Col lg={12}>
+                <div className="topic-stuck-created-or-error">
+                  <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
+                  <AppButton
+                    label={formatMessage(localMessages.trySpidering)}
+                    onTouchTap={() => handleSpiderRequest(topicInfo.topics_id)}
+                    type="submit"
+                    color="primary"
+                  />
+                </div>
+              </Col>
+            </Row>
+          </Grid>
+        );
+      }
     } else if (topicInfo.state === TOPIC_SNAPSHOT_STATE_QUEUED) {
       contentToShow = (
         <div>

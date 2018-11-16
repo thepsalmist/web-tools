@@ -21,7 +21,7 @@ class FocusSelector extends React.Component {
     const { formatMessage } = this.props.intl;
     let selected;
     if (evt.target.value === REMOVE_FOCUS) {
-      selected = { foci_id: REMOVE_FOCUS, name: formatMessage(messages.noFocus) };
+      selected = { foci_id: REMOVE_FOCUS, name: formatMessage(localMessages.removeFocus) };
     } else {
       selected = foci.find(focus => (focus.foci_id === evt.target.value));
     }

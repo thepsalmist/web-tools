@@ -8,8 +8,8 @@ import { updateQuery } from '../../../actions/explorerActions';
 import { notEmptyString } from '../../../lib/formValidators';
 
 const localMessages = {
-  updateDialogTitle: { id: 'updateQuery.update.title', defaultMessage: 'Update queries with selection' },
-  updateDialogText: { id: 'updateQuery.update.text', defaultMessage: 'Update all queries and re-run queries with \'{ type }?\'' },
+  updateDialogTitle: { id: 'updateQuery.update.title', defaultMessage: 'Add filter to all queries?' },
+  updateDialogText: { id: 'updateQuery.update.text', defaultMessage: 'Would you like to filter for stories that are tagged with "{ type }"? Click ok to add a clause to all your queries.' },
 };
 
 /**

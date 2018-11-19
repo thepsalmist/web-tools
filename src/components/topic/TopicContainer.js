@@ -5,7 +5,6 @@ import { push, replace } from 'react-router-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import TextField from '@material-ui/core/TextField';
 import { filteredLocation, urlWithFilters } from '../util/location';
 import withAsyncFetch from '../common/hocs/AsyncContainer';
 import AppButton from '../common/AppButton';
@@ -358,10 +357,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       .then(dispatch(topicStartSpider(topicInfo.topics_id)))
       .then(() => window.location.reload());
   },
-  handleSpiderRequest: (topicId) => {
-    return dispatch(topicStartSpider(topicId))
-      .then(() => window.location.reload());
-  },
+  handleSpiderRequest: topicId => dispatch(topicStartSpider(topicId)).then(() => window.location.reload()),
 });
 
 export default

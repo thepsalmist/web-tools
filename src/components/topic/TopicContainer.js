@@ -20,6 +20,7 @@ import TopicUnderConstruction from './TopicUnderConstruction';
 import TopicHeaderContainer from './TopicHeaderContainer';
 import Permissioned from '../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../lib/auth';
+import { ADMIN_MAX_RECOMMENDED_STORIES } from '../../lib/formValidators';
 import messages from '../../resources/messages';
 
 const localMessages = {
@@ -99,18 +100,19 @@ class TopicContainer extends React.Component {
               </Col>
             </Row>
             <Row>
-              <Col lg={4}>
-                <TextField
+              <Col lg={2}>
+                <input
                   id="maxStories"
+                  ref={(input) => { this.textInputRef = input; }}
                   label={formatMessage(localMessages.maxStories)}
-                  fullWidth
                   rows={1}
+                  value={ADMIN_MAX_RECOMMENDED_STORIES}
                 />
               </Col>
               <Col lg={6}>
                 <AppButton
                   label={formatMessage(localMessages.updateMaxStories)}
-                  onTouchTap={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo)}
+                  onTouchTap={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo, this.textInputRef)}
                   type="submit"
                   primary
                 />
@@ -349,8 +351,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         }
       });
   },
-  handleUpdateMaxStoriesAndSpiderRequest: (topicInfo) => {
-    const maxStories = parseInt(document.getElementById('maxStories').value, 10);
+  handleUpdateMaxStoriesAndSpiderRequest: (topicInfo, textInput) => {
+    const maxStories = parseInt(textInput.value, 10);
     const newTopicInfo = {
       ...topicInfo,
       max_stories: maxStories,

@@ -5,6 +5,7 @@ import ReactHighcharts from 'react-highcharts';
 import initHighcharts from './initHighcharts';
 import { getBrandDarkColor } from '../../styles/colors';
 import { getVisDate, PAST_DAY, PAST_WEEK, PAST_MONTH, groupDatesByWeek, groupDatesByMonth } from '../../lib/dateUtil';
+import { STACKED_VIEW } from '../../lib/visUtil';
 
 initHighcharts();
 
@@ -112,7 +113,7 @@ class AttentionOverTimeChart extends React.Component {
     if ((lineColor !== null) && (lineColor !== undefined)) {
       config.lineColor = lineColor;
     }
-    if ((display !== null) && (display !== undefined) && (display > 0)) {
+    if ((display !== null) && (display !== undefined) && (display === STACKED_VIEW)) {
       config.chart = {
         type: 'areaspline',
       };

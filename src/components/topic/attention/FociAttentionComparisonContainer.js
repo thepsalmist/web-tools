@@ -17,6 +17,7 @@ import PackedBubbleChart from '../../vis/PackedBubbleChart';
 import { DownloadButton } from '../../common/IconButton';
 import messages from '../../../resources/messages';
 import { downloadSvg } from '../../util/svg';
+import { LINE_VIEW, STACKED_VIEW } from '../../../lib/visUtil';
 
 const localMessages = {
   overallSeries: { id: 'topic.attention.series.overall', defaultMessage: 'Whole Topic' },
@@ -31,9 +32,6 @@ const SECS_PER_DAY = 1000 * 60 * 60 * 24;
 const COLORS = d3.schemeCategory10;
 const BUBBLE_CHART_DOM_ID = 'total-attention-bubble-chart';
 const TOP_N_LABELS_TO_SHOW = 3; // only the top N bubbles will get a label visible on them (so the text is readable)
-
-const LINE_VIEW = 0;
-const STACKED_VIEW = 1;
 
 function dataAsSeries(data) {
   // clean up the data

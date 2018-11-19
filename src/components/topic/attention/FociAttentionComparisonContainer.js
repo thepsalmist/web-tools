@@ -131,6 +131,7 @@ class FociAttentionComparisonContainer extends React.Component {
           series={series}
           height={300}
           display={this.state.view}
+          interval="week"
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
           <div className="actions">

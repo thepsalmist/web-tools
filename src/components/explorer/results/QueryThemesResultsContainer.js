@@ -28,10 +28,10 @@ const localMessages = {
 
 class QueryThemesResultsContainer extends React.Component {
   onThemeSelection = (selectedTheme) => {
-    const { handleItemSelected, isLoggedIn, onShowLoginDialog } = this.props;
+    const { openUpdateQueryDialog, isLoggedIn, onShowLoginDialog } = this.props;
     if (isLoggedIn) {
       const queryClauseToAdd = ` tags_id_stories:${selectedTheme.tags_id}`;
-      handleItemSelected(queryClauseToAdd, selectedTheme.name);
+      openUpdateQueryDialog(queryClauseToAdd, selectedTheme.name);
     } else {
       onShowLoginDialog();
     }
@@ -118,7 +118,7 @@ QueryThemesResultsContainer.propTypes = {
   asyncFetch: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
-  handleItemSelected: PropTypes.func.isRequired,
+  openUpdateQueryDialog: PropTypes.func.isRequired,
   selectedTabIndex: PropTypes.number.isRequired,
   tabSelector: PropTypes.object.isRequired,
   selectedQuery: PropTypes.object.isRequired,

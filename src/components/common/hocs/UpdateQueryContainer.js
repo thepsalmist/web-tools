@@ -12,26 +12,18 @@ const localMessages = {
   updateDialogText: { id: 'updateQuery.update.text', defaultMessage: 'Would you like to filter for stories that are tagged with "{ type }"? Click ok to add a clause to all your queries.' },
 };
 
-/**
- * Exposes two things to childen:
- * 1) setDataCallback: call this with a function that returns the data to save
- * 1) savedFeedback: a div with info about whether this has been saved or not
- * 2) saveToNotebookButton: a button that can be displayed to request this content be saved
- */
 const withUpdatingQuery = (ChildComponent) => {
   class UpdateQueryContainer extends React.Component {
     state = {
       open: false,
-      updatedQueryString: null,
+      updatedQueryClause: null,
       updatedDescription: '',
     };
 
-    handleWidgetClick = (updatedQueryString, updatedDescription) => this.setState({ open: true, updatedQueryString, updatedDescription });
-
-    handleSave = () => {
-      const { handleQueryModificationRequested } = this.props;
+    handleOk = () => {
+      const { modifyQuery } = this.props;
       this.setState({ open: false });
-      handleQueryModificationRequested(this.state.updatedQueryString);
+      modifyQuery(this.state.updatedQueryClause);
     };
 
     render() {
@@ -40,14 +32,13 @@ const withUpdatingQuery = (ChildComponent) => {
         <span className="saveable">
           <ChildComponent
             {...this.props}
-            handleItemSelected={this.handleWidgetClick}
-            setDataToSave={this.setDataToSave}
+            openUpdateQueryDialog={(updatedQueryClause, updatedDescription) => this.setState({ open: true, updatedQueryClause, updatedDescription })}
           />
           <ConfirmationDialog
             open={this.state.open}
             title={formatMessage(localMessages.updateDialogTitle)}
             okText={formatMessage(messages.ok)}
-            onOk={this.handleSave}
+            onOk={this.handleOk}
             onCancel={() => this.setState({ open: false })}
           >
             <p><FormattedMessage {...localMessages.updateDialogText} values={{ type: this.state.updatedDescription }} /></p>
@@ -58,15 +49,15 @@ const withUpdatingQuery = (ChildComponent) => {
   }
   UpdateQueryContainer.propTypes = {
     intl: PropTypes.object.isRequired,
-    handleQueryModificationRequested: PropTypes.func.isRequired,
-    fetchStatus: PropTypes.string.isRequired,
+    modifyQuery: PropTypes.func.isRequired,
+    queries: PropTypes.array,
   };
   const mapStateToProps = state => ({
-    fetchStatus: state.notebook.current.fetchStatus,
+    queries: state.explorer.queries.queries,
   });
   const mapDispatchToProps = (dispatch, ownProps) => ({
   // call this to add a clause to every query when something is clicked on
-    handleQueryModificationRequested: (queryClauseToAdd) => {
+    modifyQuery: (queryClauseToAdd) => {
       ownProps.queries.map((qry) => {
         const quryQ = notEmptyString(qry.q) ? `(${qry.q}) AND` : '';
         const updatedQry = {

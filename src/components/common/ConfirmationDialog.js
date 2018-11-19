@@ -28,7 +28,6 @@ class ConfirmationDialog extends React.Component {
       <AppButton
         label={okText}
         primary
-        keyboardFocused
         onTouchTap={this.handleOk}
       />,
     ];

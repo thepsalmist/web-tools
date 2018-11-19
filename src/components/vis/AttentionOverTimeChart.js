@@ -53,15 +53,6 @@ class AttentionOverTimeChart extends React.Component {
             enabled: true,
           },
         },
-        area: {
-          stacking: 'normal',
-          lineColor: '#666666',
-          lineWidth: 1,
-          marker: {
-            lineWidth: 1,
-            lineColor: '#666666',
-          },
-        },
       },
       xAxis: {
         type: 'datetime',
@@ -123,8 +114,13 @@ class AttentionOverTimeChart extends React.Component {
     }
     if ((display !== null) && (display !== undefined) && (display > 0)) {
       config.chart = {
-        type: 'area',
+        type: 'areaspline',
       };
+      config.plotOptions.areaspline = {
+        stacking: 'normal',
+        lineWidth: 0,
+      };
+      config.tooltip.split = true;
     }
     if ((interval !== null) && (interval !== undefined)) {
       config.interval = interval;
@@ -163,31 +159,41 @@ class AttentionOverTimeChart extends React.Component {
     if (data !== undefined) {
       config.plotOptions.series.marker.enabled = (data.length < SERIES_MARKER_THRESHOLD);
       // clean up the data
-      // turning variable time unit into days
-      let extractedDateBy = data;
-      if (config.interval === PAST_WEEK) {
-        extractedDateBy = groupDatesByWeek(data);
-      } else if (config.interval === PAST_MONTH) {
-        extractedDateBy = groupDatesByMonth(data);
-      }
-      const dates = Object.values(extractedDateBy).map(d => d.date);
-      // const extractedMonth = groupDatesByMonth(data);
-      const intervalMs = SECS_PER_DAY * config.intervalVal;
-      const values = Object.values(extractedDateBy).map(d => (d.sum !== undefined ? d.sum : d.count));
       allSeries = [{
         id: 0,
         name: filename,
         color: config.lineColor,
-        data: values,
-        pointStart: dates[0],
-        pointInterval: intervalMs,
+        data: data.map(d => d.count),
+        pointStart: data[0].date,
+        pointInterval: data[1].date - data[0].date,
         showInLegend: showLegend !== false,
       }];
     } else if (series !== undefined && series.length > 0) {
       allSeries = series;
       config.plotOptions.series.marker.enabled = series[0].data ? (series[0].data.length < SERIES_MARKER_THRESHOLD) : false;
     }
-    config.series = allSeries;
+    // now aggregate the dates if we need to
+    config.series = allSeries.map((thisSeries) => {
+      const dataAsList = thisSeries.data.map((d, idx) => ({
+        count: d,
+        date: thisSeries.pointStart + (idx * thisSeries.pointInterval),
+      }));
+      let groupedData = dataAsList;
+      if (config.interval === PAST_WEEK) {
+        groupedData = groupDatesByWeek(groupedData);
+      } else if (config.interval === PAST_MONTH) {
+        groupedData = groupDatesByMonth(groupedData);
+      }
+      const dates = Object.values(groupedData).map(d => d.date);
+      const intervalMs = SECS_PER_DAY * config.intervalVal;
+      const values = Object.values(groupedData).map(d => (d.sum !== undefined ? d.sum : d.count));
+      return {
+        ...thisSeries,
+        data: values,
+        pointStart: dates[0],
+        pointInterval: intervalMs,
+      };
+    });
     // show total if it is included
     let totalInfo = null;
     if (introText) {

@@ -20,7 +20,7 @@ import TopicUnderConstruction from './TopicUnderConstruction';
 import TopicHeaderContainer from './TopicHeaderContainer';
 import Permissioned from '../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../lib/auth';
-import { ADMIN_MAX_RECOMMENDED_STORIES } from '../../lib/formValidators';
+import { ADMIN_MAX_RECOMMENDED_STORIES, MAX_RECOMMENDED_STORIES } from '../../lib/formValidators';
 import messages from '../../resources/messages';
 
 const localMessages = {
@@ -106,7 +106,7 @@ class TopicContainer extends React.Component {
                   ref={(input) => { this.textInputRef = input; }}
                   label={formatMessage(localMessages.maxStories)}
                   rows={1}
-                  value={ADMIN_MAX_RECOMMENDED_STORIES}
+                  placeholder={ADMIN_MAX_RECOMMENDED_STORIES}
                 />
               </Col>
               <Col lg={6}>
@@ -224,7 +224,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       dispatch(filterByQuery(query.q));
     }
     // now that filters are set, fetch the topic summary info
-    dispatch(fetchTopicSummary(ownProps.params.topicId))
+    return dispatch(fetchTopicSummary(ownProps.params.topicId))
       .then((response) => {
         // show the subheader info
         // show any warnings based on the topic state
@@ -352,24 +352,14 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       });
   },
   handleUpdateMaxStoriesAndSpiderRequest: (topicInfo, textInput) => {
-    const maxStories = parseInt(textInput.value, 10);
-    const newTopicInfo = {
-      ...topicInfo,
-      max_stories: maxStories,
-    };
-    if ('media_tags' in topicInfo) {
-      newTopicInfo['sources[]'] = topicInfo.media_tags.filter(s => s.media_id).map(s => s.media_id);
-      newTopicInfo['collections[]'] = topicInfo.media_tags.filter(s => s.tags_id).map(s => s.tags_id);
-    } else {
-      newTopicInfo['sources[]'] = '';
-      newTopicInfo['collections[]'] = '';
-    }
-    dispatch(updateTopic(newTopicInfo.topics_id, { ...newTopicInfo }))
-      .then(dispatch(topicStartSpider(newTopicInfo.topics_id)))
+    const maxStories = parseInt(textInput.value, 10) > MAX_RECOMMENDED_STORIES ? parseInt(textInput.value, 10) : ADMIN_MAX_RECOMMENDED_STORIES;
+
+    return dispatch(updateTopic(topicInfo.topics_id, { max_stories: maxStories }))
+      .then(dispatch(topicStartSpider(topicInfo.topics_id)))
       .then(() => window.location.reload());
   },
   handleSpiderRequest: (topicId) => {
-    dispatch(topicStartSpider(topicId))
+    return dispatch(topicStartSpider(topicId))
       .then(() => window.location.reload());
   },
 });

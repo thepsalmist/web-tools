@@ -5,12 +5,12 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import MenuItem from '@material-ui/core/MenuItem';
+import Divider from '@material-ui/core/Divider';
 import ListItemText from '@material-ui/core/ListItemText';
 import ActionMenu from '../../common/ActionMenu';
-import Permissioned from '../../common/Permissioned';
-import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { fetchTopicSplitStoryCounts, fetchTopicFocalSetSplitStoryCounts } from '../../../actions/topicActions';
-import { asyncContainerize } from '../../common/hocs/AsyncContainer';
+import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import DataCard from '../../common/DataCard';
 import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
 import PackedBubbleChart from '../../vis/PackedBubbleChart';
@@ -20,6 +20,7 @@ import { downloadSvg } from '../../util/svg';
 
 const localMessages = {
   overallSeries: { id: 'topic.attention.series.overall', defaultMessage: 'Whole Topic' },
+  comparisonTitle: { id: 'topic.attention.comparisonTitle.title', defaultMessage: 'Compare Subtopic Attention Over Time' },
   bubbleChartTitle: { id: 'topic.attention.bubbleChart.title', defaultMessage: 'Total Stories in Each Subtopic' },
   lineChartTitle: { id: 'topic.attention.lineChart.title', defaultMessage: 'Total Stories over Time in Each Subtopic' },
   stackedView: { id: 'topic.attention.view.stacked', defaultMessage: 'Stacked Area View' },
@@ -61,7 +62,7 @@ class FociAttentionComparisonContainer extends React.Component {
   }
 
   render() {
-    const { foci, overallTotal, overallCounts } = this.props;
+    const { foci, overallTotal, overallCounts, attentionAggregationMenuItems, selectedTimePeriod } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
     // stich together bubble chart data
     const stackedAreaView = (
@@ -127,39 +128,44 @@ class FociAttentionComparisonContainer extends React.Component {
     }
     return (
       <React.Fragment>
-        <AttentionOverTimeChart
-          series={series}
-          height={300}
-          display={this.state.view}
-          interval="week"
-        />
-        <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-          <div className="actions">
-            <ActionMenu actionTextMsg={messages.viewOptions}>
-              {stackedAreaView}
-            </ActionMenu>
-          </div>
-        </Permissioned>
-        <div>
-          <Row>
-            <Col lg={12}>
-              <DataCard>
-                <div className="actions">
-                  <DownloadButton
-                    tooltip={formatMessage(messages.download)}
-                    onClick={() => downloadSvg(BUBBLE_CHART_DOM_ID)}
-                  />
-                </div>
-                <h2><FormattedMessage {...localMessages.bubbleChartTitle} /></h2>
-                <PackedBubbleChart
-                  data={bubbleData}
-                  height={400}
-                  domId={BUBBLE_CHART_DOM_ID}
+        <Row>
+          <Col lg={12}>
+            <DataCard>
+              <div className="actions">
+                <ActionMenu actionTextMsg={messages.viewOptions}>
+                  {stackedAreaView}
+                  <Divider />
+                  {attentionAggregationMenuItems}
+                </ActionMenu>
+              </div>
+              <h2><FormattedMessage {...localMessages.comparisonTitle} /></h2>
+              <AttentionOverTimeChart
+                series={series}
+                height={350}
+                display={this.state.view}
+                interval={selectedTimePeriod}
+              />
+            </DataCard>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={12}>
+            <DataCard>
+              <div className="actions">
+                <DownloadButton
+                  tooltip={formatMessage(messages.download)}
+                  onClick={() => downloadSvg(BUBBLE_CHART_DOM_ID)}
                 />
-              </DataCard>
-            </Col>
-          </Row>
-        </div>
+              </div>
+              <h2><FormattedMessage {...localMessages.bubbleChartTitle} /></h2>
+              <PackedBubbleChart
+                data={bubbleData}
+                height={400}
+                domId={BUBBLE_CHART_DOM_ID}
+              />
+            </DataCard>
+          </Col>
+        </Row>
       </React.Fragment>
     );
   }
@@ -172,6 +178,8 @@ FociAttentionComparisonContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
+  selectedTimePeriod: PropTypes.string.isRequired,
+  attentionAggregationMenuItems: PropTypes.object.isRequired, // from hoc
   // from dispatch
   fetchData: PropTypes.func.isRequired,
   // from mergeProps
@@ -212,9 +220,11 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 
 export default
 connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-  asyncContainerize(
-    injectIntl(
-      FociAttentionComparisonContainer
+  withAttentionAggregation(
+    withAsyncFetch(
+      injectIntl(
+        FociAttentionComparisonContainer
+      )
     )
   )
 );

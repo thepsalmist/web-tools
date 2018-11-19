@@ -100,46 +100,29 @@ class FociAttentionComparisonContainer extends React.Component {
       ];
     }
     // stich together line chart data
-
-    const overallData = dataAsSeries(overallCounts); // now add a series for the whole thing
     let series = [];
     if (foci !== undefined) {
-      if (this.state.view !== STACKED_VIEW) {
-        series = [
-          ...foci.map((focus, idx) => { // add series for all the foci
-            const data = dataAsSeries(focus.counts);
-            return {
-              id: idx,
-              name: focus.name,
-              data: data.values,
-              pointStart: data.start,
-              pointInterval: data.intervalMs,
-              color: COLORS[idx + 1],
-            };
-          }),
-          {
-            id: 9999,
-            name: formatMessage(localMessages.overallSeries),
-            data: overallData.values,
-            pointStart: overallData.start,
-            pointInterval: overallData.intervalMs,
-            color: COLORS[0],
-          },
-        ];
-      } else {
-        series = [
-          ...foci.map((focus, idx) => { // add series for all the foci
-            const data = dataAsSeries(focus.counts);
-            return {
-              id: idx,
-              name: focus.name,
-              data: data.values,
-              pointStart: data.start,
-              pointInterval: data.intervalMs,
-              color: COLORS[idx + 1],
-            };
-          }),
-        ];
+      series = foci.map((focus, idx) => { // add series for all the foci
+        const data = dataAsSeries(focus.counts);
+        return {
+          id: idx,
+          name: focus.name,
+          data: data.values,
+          pointStart: data.start,
+          pointInterval: data.intervalMs,
+          color: COLORS[idx + 1],
+        };
+      });
+      if (this.state.view !== STACKED_VIEW) { // now add a series for the whole thing (if not stacked)
+        const overallData = dataAsSeries(overallCounts);
+        series.push({
+          id: 9999,
+          name: formatMessage(localMessages.overallSeries),
+          data: overallData.values,
+          pointStart: overallData.start,
+          pointInterval: overallData.intervalMs,
+          color: COLORS[0],
+        });
       }
     }
     return (

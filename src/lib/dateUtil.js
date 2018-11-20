@@ -135,21 +135,18 @@ function gapDateToMomemt(gapDateString, strict = true) {
   return moment(gapDateString, GAP_DATE_FORMAT, strict);
 }
 
-// handles an array of dates of either date objects {date: #, count: #} or arrays [date#, count#]
+/**
+ * Send in an array of objects that have date and count keys.
+ */
 export function groupDatesByWeek(dates) {
   const groups = dates.reduce((acc, date) => {
-    const dateVal = Array.isArray(date) ? date[0] : date.date;
-    const weekPeriod = moment(dateVal).week();
-    const yearWeek = `${moment(dateVal).year()}-${moment(dateVal).week()}`;
+    const weekPeriod = moment(date.date).week();
+    const yearWeek = `${moment(date.date).year()}-${moment(date.date).week()}`;
     if (typeof acc[yearWeek] === 'undefined') {
       acc[yearWeek] = [];
     }
     acc[yearWeek].dateIndex = weekPeriod;
-    if (Array.isArray(date)) {
-      acc[yearWeek].push({ date: date[0], count: date[1] });
-    } else {
-      acc[yearWeek].push({ ...date });
-    }
+    acc[yearWeek].push({ ...date });
     return acc;
   }, {});
 
@@ -162,21 +159,18 @@ export function groupDatesByWeek(dates) {
   return groups;
 }
 
-// handles an array of dates of either date objects or arrays
+/**
+ * Send in an array of objects that have date and count keys.
+ */
 export function groupDatesByMonth(dates) {
   const groups = dates.reduce((acc, date) => {
-    const dateVal = Array.isArray(date) ? date[0] : date.date;
-    const yearPeriod = moment(dateVal).year();
-    const yearMonth = `${moment(dateVal).year()}-${moment(dateVal).month()}`;
+    const yearPeriod = moment(date.date).year();
+    const yearMonth = `${moment(date.date).year()}-${moment(date.date).month()}`;
     if (typeof acc[yearMonth] === 'undefined') {
       acc[yearMonth] = [];
     }
     acc[yearMonth].dateIndex = yearPeriod;
-    if (Array.isArray(date)) {
-      acc[yearMonth].push({ date: date[0], count: date[1] });
-    } else {
-      acc[yearMonth].push({ ...date });
-    }
+    acc[yearMonth].push({ ...date });
     return acc;
   }, {});
   const extractedSums = Object.values(groups).map(d => d.map(e => e.count).reduce((acc, c) => acc + c));

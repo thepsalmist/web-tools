@@ -30,6 +30,16 @@ const localMessages = {
 
 function makePercentage(value) { return value * 100; }
 
+export function dataAsSeries(data, fieldName = 'count') {
+  // clean up the data
+  const dates = data.map(d => d.date);
+  // turning variable time unit into days
+  const intervalMs = (dates[1] - dates[0]);
+  const intervalDays = intervalMs / SECS_PER_DAY;
+  const values = data.map(d => Math.round(d[fieldName] / intervalDays));
+  return { data: values, pointInterval: intervalMs, pointStart: dates[0] };
+}
+
 /**
  * Pass in "data" if you are using one series, otherwise configure them yourself and pass in "series".
  */
@@ -170,45 +180,33 @@ class AttentionOverTimeChart extends React.Component {
         showInLegend: showLegend !== false,
       }];
     } else if (series !== undefined && series.length > 0) {
-      let extractedDateBy = series[0].data;
-      if (config.interval === PAST_WEEK) {
-        extractedDateBy = groupDatesByWeek(series[0].data);
-        const values = Object.values(extractedDateBy).map(d => (d.sum !== undefined ? d.sum : d.count));
-        series[0].data = values;
-      } else if (config.interval === PAST_MONTH) {
-        extractedDateBy = groupDatesByMonth(series[0].data);
-        const values = Object.values(extractedDateBy).map(d => (d.sum !== undefined ? d.sum : d.count));
-        series[0].data = values;
-      }
-      // const dates = Object.values(extractedDateBy).map(d => d.date);
-      // const extractedMonth = groupDatesByMonth(data);
-      // const intervalMs = SECS_PER_DAY * config.intervalVal;
-
       allSeries = series;
       config.plotOptions.series.marker.enabled = series[0].data ? (series[0].data.length < SERIES_MARKER_THRESHOLD) : false;
     }
-    // now aggregate the dates if we need to
-    config.series = allSeries.map((thisSeries) => {
-      const dataAsList = thisSeries.data.map((d, idx) => ({
-        count: d,
-        date: thisSeries.pointStart + (idx * thisSeries.pointInterval),
-      }));
-      let groupedData = dataAsList;
-      if (config.interval === PAST_WEEK) {
-        groupedData = groupDatesByWeek(groupedData);
-      } else if (config.interval === PAST_MONTH) {
-        groupedData = groupDatesByMonth(groupedData);
-      }
-      const dates = Object.values(groupedData).map(d => d.date);
-      const intervalMs = SECS_PER_DAY * config.intervalVal;
-      const values = Object.values(groupedData).map(d => (d.sum !== undefined ? d.sum : d.count));
-      return {
-        ...thisSeries,
-        data: values,
-        pointStart: dates[0],
-        pointInterval: intervalMs,
-      };
-    });
+    // now aggregate the dates as specified
+    if (allSeries) { // being careful about situations in between renders
+      config.series = allSeries.map((thisSeries) => {
+        const dataAsList = thisSeries.data.map((d, idx) => ({
+          count: d,
+          date: thisSeries.pointStart + (idx * thisSeries.pointInterval),
+        }));
+        let groupedData = dataAsList;
+        if (config.interval === PAST_WEEK) {
+          groupedData = groupDatesByWeek(groupedData);
+        } else if (config.interval === PAST_MONTH) {
+          groupedData = groupDatesByMonth(groupedData);
+        }
+        const dates = Object.values(groupedData).map(d => d.date);
+        const intervalMs = SECS_PER_DAY * config.intervalVal;
+        const values = Object.values(groupedData).map(d => (d.sum !== undefined ? d.sum : d.count));
+        return {
+          ...thisSeries,
+          data: values,
+          pointStart: dates[0],
+          pointInterval: intervalMs,
+        };
+      });
+    }
     // show total if it is included
     let totalInfo = null;
     if (introText) {

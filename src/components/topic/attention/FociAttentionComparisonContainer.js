@@ -12,7 +12,7 @@ import { fetchTopicSplitStoryCounts, fetchTopicFocalSetSplitStoryCounts } from '
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import DataCard from '../../common/DataCard';
-import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
+import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTimeChart';
 import PackedBubbleChart from '../../vis/PackedBubbleChart';
 import { DownloadButton } from '../../common/IconButton';
 import messages from '../../../resources/messages';
@@ -28,20 +28,9 @@ const localMessages = {
   lineView: { id: 'topic.attention.view.line', defaultMessage: 'Line View' },
 };
 
-const SECS_PER_DAY = 1000 * 60 * 60 * 24;
 const COLORS = d3.schemeCategory10;
 const BUBBLE_CHART_DOM_ID = 'total-attention-bubble-chart';
 const TOP_N_LABELS_TO_SHOW = 3; // only the top N bubbles will get a label visible on them (so the text is readable)
-
-function dataAsSeries(data) {
-  // clean up the data
-  const dates = data.map(d => d.date);
-  // turning variable time unit into days
-  const intervalMs = (dates[1] - dates[0]);
-  const intervalDays = intervalMs / SECS_PER_DAY;
-  const values = data.map(d => Math.round(d.count / intervalDays));
-  return { values, intervalMs, start: dates[0] };
-}
 
 class FociAttentionComparisonContainer extends React.Component {
   state = {
@@ -106,9 +95,7 @@ class FociAttentionComparisonContainer extends React.Component {
         return {
           id: idx,
           name: focus.name,
-          data: data.values,
-          pointStart: data.start,
-          pointInterval: data.intervalMs,
+          ...data,
           color: COLORS[idx + 1],
         };
       });
@@ -117,9 +104,7 @@ class FociAttentionComparisonContainer extends React.Component {
         series.push({
           id: 9999,
           name: formatMessage(localMessages.overallSeries),
-          data: overallData.values,
-          pointStart: overallData.start,
-          pointInterval: overallData.intervalMs,
+          ...overallData,
           color: COLORS[0],
         });
       }

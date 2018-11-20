@@ -3,15 +3,16 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
+import Divider from '@material-ui/core/Divider';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import { fetchQuerySplitStoryCount, fetchDemoQuerySplitStoryCount, resetSentenceCounts, setSentenceDataPoint, resetSentenceDataPoint, selectExplorerTimeAggregate } from '../../../actions/explorerActions';
+import { fetchQuerySplitStoryCount, fetchDemoQuerySplitStoryCount, resetSentenceCounts, setSentenceDataPoint, resetSentenceDataPoint } from '../../../actions/explorerActions';
 import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import withQueryResults from './QueryResultsSelector';
-import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
+import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTimeChart';
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import { oneDayLater, solrFormat } from '../../../lib/dateUtil';
@@ -68,7 +69,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
   }
 
   render() {
-    const { results, queries } = this.props;
+    const { results, queries, selectedTimePeriod } = this.props;
     // stich together bubble chart data
 
     // because these results are indexed, we can merge these two arrays
@@ -83,14 +84,14 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
           if (query.counts || query.normalizedCounts) {
             let data;
             if (this.state.view === VIEW_NORMALIZED) {
-              data = query.counts.map(d => [d.date, d.ratio]);
+              data = dataAsSeries(query.counts, 'ratio');
             } else {
-              data = query.counts.map(d => [d.date, d.count]);
+              data = dataAsSeries(query.counts);
             }
             return {
               id: idx,
               name: query.label,
-              data,
+              ...data,
               color: query.color,
             };
           } return {};
@@ -105,7 +106,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
           backgroundColor="#f5f5f5"
           onDataPointClick={this.handleDataPointClick}
           normalizeYAxis={this.state.view === VIEW_NORMALIZED}
-          interval={this.props.selectedTimePeriod}
+          interval={selectedTimePeriod}
         />
         <div className="actions">
           <ActionMenu actionTextMsg={messages.downloadOptions}>
@@ -143,7 +144,8 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
                 <FormattedMessage {...localMessages.withoutKeywords} />
               </ListItemText>
             </MenuItem>
-            {this.props.attentionViewOptions}
+            <Divider />
+            {this.props.attentionAggregationMenuItems}
           </ActionMenu>
         </div>
       </React.Fragment>
@@ -159,8 +161,7 @@ QueryAttentionOverTimeResultsContainer.propTypes = {
   // from hocs
   intl: PropTypes.object.isRequired,
   onShowLoginDialog: PropTypes.func.isRequired,
-  handleTimePeriodClick: PropTypes.func,
-  attentionViewOptions: PropTypes.object.isRequired,
+  attentionAggregationMenuItems: PropTypes.array.isRequired,
   selectedTimePeriod: PropTypes.string.isRequired,
   // from dispatch
   fetchData: PropTypes.func.isRequired,
@@ -217,9 +218,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   selectDataPoint: (clickedDataPoint) => {
     dispatch(resetSentenceDataPoint());
     dispatch(setSentenceDataPoint(clickedDataPoint));
-  },
-  handleTimePeriodClick: (timeperiod) => {
-    dispatch(selectExplorerTimeAggregate(timeperiod));
   },
 
 });

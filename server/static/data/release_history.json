@@ -53,7 +53,7 @@
           "apps": [ "topics" ],
           "type": "fix",
           "note": "Fix subtopic selection link."
-        },
+        }
       ]
     },
     {

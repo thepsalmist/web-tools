@@ -1,6 +1,62 @@
 {
   "releases": [
     {
+      "date": "2018-11-20",
+      "version": "v3.6.0",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Enhancement",
+          "note": "Attention bar chart allows selection by day, week, month"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Enhancement",
+          "note": "Clicking on a theme offers ability to add to query"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Geographic coverage CSV file includes better view of coverage"
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "More accurate source infomation and story reporting on Review Sources page"
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Prevent duplicate names for Collections"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Add stacked bar chart to attention bar chart"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Enhancement",
+          "note": "Attention bar chart allows selection by day, week, month"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Story count page no longer re-rendering"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Enhancement",
+          "note": "Allow admins to edit max stories in failed topics and re-spider."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "fix",
+          "note": "Fix subtopic selection link."
+        },
+      ]
+    },
+    {
       "date": "2018-11-16",
       "version": "v3.5.8",
       "notes": [

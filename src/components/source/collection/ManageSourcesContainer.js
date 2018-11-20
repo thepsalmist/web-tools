@@ -352,7 +352,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchData: (collectionId) => {
     // fetch source list again here, but this time with details about feed count and scrape status
-    dispatch(fetchCollectionSourceList(collectionId)).then(
+    const collId = collectionId !== null ? collectionId : ownProps.collectionId;
+    dispatch(fetchCollectionSourceList(collId)).then(
       results => results.sources.forEach(source => dispatch(fetchSourceReviewInfo(source.media_id)))
     );
   },

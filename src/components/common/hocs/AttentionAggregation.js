@@ -29,31 +29,32 @@ const withAttentionAggregation = (ChildComponent) => {
     }
 
     render() {
-      const attentionAggregationMenuItems = (
-        <React.Fragment>
-          <MenuItem
-            className="action-icon-menu-item"
-            disabled={this.state.selectedTimePeriod === PAST_DAY}
-            onClick={() => this.saveStateAndReorder(PAST_DAY)}
-          >
-            <FormattedMessage {...localMessages.pastDay} />
-          </MenuItem>
-          <MenuItem
-            className="action-icon-menu-item"
-            disabled={this.state.selectedTimePeriod === PAST_WEEK}
-            onClick={() => this.saveStateAndReorder(PAST_WEEK)}
-          >
-            <FormattedMessage {...localMessages.pastWeek} />
-          </MenuItem>
-          <MenuItem
-            className="action-icon-menu-item"
-            disabled={this.state.selectedTimePeriod === PAST_MONTH}
-            onClick={() => this.saveStateAndReorder(PAST_MONTH)}
-          >
-            <FormattedMessage {...localMessages.pastMonth} />
-          </MenuItem>
-        </React.Fragment>
-      );
+      const attentionAggregationMenuItems = [
+        <MenuItem
+          key="chartByDay"
+          className="action-icon-menu-item"
+          disabled={this.state.selectedTimePeriod === PAST_DAY}
+          onClick={() => this.saveStateAndReorder(PAST_DAY)}
+        >
+          <FormattedMessage {...localMessages.pastDay} />
+        </MenuItem>,
+        <MenuItem
+          key="chartByWeek"
+          className="action-icon-menu-item"
+          disabled={this.state.selectedTimePeriod === PAST_WEEK}
+          onClick={() => this.saveStateAndReorder(PAST_WEEK)}
+        >
+          <FormattedMessage {...localMessages.pastWeek} />
+        </MenuItem>,
+        <MenuItem
+          key="chartByMonth"
+          className="action-icon-menu-item"
+          disabled={this.state.selectedTimePeriod === PAST_MONTH}
+          onClick={() => this.saveStateAndReorder(PAST_MONTH)}
+        >
+          <FormattedMessage {...localMessages.pastMonth} />
+        </MenuItem>,
+      ];
       return (
         <span className="periodic-container">
           <ChildComponent

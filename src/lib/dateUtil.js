@@ -135,6 +135,9 @@ function gapDateToMomemt(gapDateString, strict = true) {
   return moment(gapDateString, GAP_DATE_FORMAT, strict);
 }
 
+/**
+ * Send in an array of objects that have date and count keys.
+ */
 export function groupDatesByWeek(dates) {
   const groups = dates.reduce((acc, date) => {
     const weekPeriod = moment(date.date).week();
@@ -155,6 +158,10 @@ export function groupDatesByWeek(dates) {
 
   return groups;
 }
+
+/**
+ * Send in an array of objects that have date and count keys.
+ */
 export function groupDatesByMonth(dates) {
   const groups = dates.reduce((acc, date) => {
     const yearPeriod = moment(date.date).year();

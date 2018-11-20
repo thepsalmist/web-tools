@@ -4,6 +4,8 @@ import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withUpdatingQuery from '../../common/hocs/UpdateQueryContainer';
+import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import ActionMenu from '../../common/ActionMenu';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 import { resetThemes, fetchTopThemes, fetchDemoTopThemes } from '../../../actions/explorerActions';
@@ -25,12 +27,23 @@ const localMessages = {
 };
 
 class QueryThemesResultsContainer extends React.Component {
+  onThemeSelection = (selectedTheme) => {
+    const { openUpdateQueryDialog, isLoggedIn, onShowLoginDialog } = this.props;
+    if (isLoggedIn) {
+      const queryClauseToAdd = ` tags_id_stories:${selectedTheme.tags_id}`;
+      openUpdateQueryDialog(queryClauseToAdd, selectedTheme.name);
+    } else {
+      onShowLoginDialog();
+    }
+  }
+
   downloadCsv = (query) => {
     postToDownloadUrl(`/api/explorer/tags/${TAG_SET_NYT_THEMES}/top-tags.csv`, query);
   }
 
+
   render() {
-    const { results, queries, handleThemeClicked, selectedTabIndex, tabSelector } = this.props;
+    const { results, queries, selectedTabIndex, tabSelector } = this.props;
     const { formatNumber } = this.props.intl;
     let rawData = [];
     let content = null;
@@ -43,7 +56,9 @@ class QueryThemesResultsContainer extends React.Component {
           fill: mapD3Top10Colors(idx),
           aboveText: (idx % 2 === 0) ? info.label : null,
           belowText: (idx % 2 !== 0) ? info.label : null,
+          name: info.label,
           rolloverText: `${info.label}: ${formatNumber(info.pct, { style: 'percent', maximumFractionDigits: 2 })}`,
+          tags_id: info.tags_id,
         }));
         content = (
           <div>
@@ -53,7 +68,7 @@ class QueryThemesResultsContainer extends React.Component {
               domId={BUBBLE_CHART_DOM_ID}
               width={650}
               padding={0}
-              onClick={handleThemeClicked}
+              onBubbleClick={this.onThemeSelection}
               asPercentage
               minCutoffValue={0.05}
             />
@@ -95,6 +110,7 @@ QueryThemesResultsContainer.propTypes = {
   isLoggedIn: PropTypes.bool.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
+  onShowLoginDialog: PropTypes.func.isRequired,
   // from dispatch
   fetchData: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
@@ -102,9 +118,10 @@ QueryThemesResultsContainer.propTypes = {
   asyncFetch: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
-  handleThemeClicked: PropTypes.func.isRequired,
+  openUpdateQueryDialog: PropTypes.func.isRequired,
   selectedTabIndex: PropTypes.number.isRequired,
   tabSelector: PropTypes.object.isRequired,
+  selectedQuery: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -144,12 +161,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       });
     }
   },
-  handleThemeClicked: (entity, isCannedSearch) => {
-    const queryClauseToAdd = ` tags_id_stories:${entity}`;
-    if (isCannedSearch === undefined) {
-      ownProps.onQueryModificationRequested(queryClauseToAdd);
-    }
-  },
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
@@ -166,7 +177,11 @@ injectIntl(
     withSummary(localMessages.title, localMessages.helpIntro, [localMessages.helpDetail, messages.nytThemeHelpDetails])(
       withAsyncFetch(
         withQueryResults(
-          QueryThemesResultsContainer
+          withLoginRequired(
+            withUpdatingQuery(
+              QueryThemesResultsContainer
+            )
+          )
         )
       )
     )

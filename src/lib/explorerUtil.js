@@ -22,6 +22,7 @@ export const COVERAGE_REQUIRED = 0.8;
 
 export const QUERY_LABEL_CHARACTER_LIMIT = 30;
 export const QUERY_LABEL_AUTOMAGIC_DISPLAY_LIMIT = 27;
+export const ENTITY_DISPLAY_TOP_TEN = 10;
 
 export const KEYWORD = 'q';
 export const MEDIA = 'media';

@@ -30,7 +30,8 @@ const localMessages = {
   title: { id: 'collection.manageSources.title', defaultMessage: 'Review Sources' },
   scrape: { id: 'collection.manageSources.scrape', defaultMessage: 'Scrape' }, // using this so we have a smaller button
   scrapeAll: { id: 'collection.manageSources.scrapeAll', defaultMessage: 'Scrape all For New Feeds' },
-  inLast90Days: { id: 'collection.manageSources.column.last90', defaultMessage: '90 Day Story Count' },
+  inLast90Days: { id: 'collection.manageSources.column.last90', defaultMessage: 'Last 90 Days' },
+  inLastYear: { id: 'collection.manageSources.column.lastYear', defaultMessage: 'Last Year' },
   startedScrapingAll: { id: 'collection.manageSources.startedScrapingAll', defaultMessage: 'Started scraping all sources for RSS feeds' },
   lastScrapeQueuedSince: { id: 'source.basicInfo.feed.lastScrapeQueuedSince', defaultMessage: 'Scrape queued since {date}' },
   lastScrapeRunningSince: { id: 'source.basicInfo.feed.lastScrapeRunningSince', defaultMessage: 'Scrape running since {date}' },
@@ -56,7 +57,7 @@ function needReview(sources) {
 }
 
 function areWorking(sources) {
-  return sources.filter(s => (s.active_feed_count > 0 && (s.num_stories_last_year && s.num_stories_last_year > 0)));
+  return sources.filter(s => (s.active_feed_count > 0 && (s.num_stories_90 && s.num_stories_90 > 0)));
 }
 
 function maybeRemove(sources) {
@@ -219,6 +220,7 @@ class ManageSourcesContainer extends React.Component {
                     <th className="numeric"><FormattedMessage {...messages.storiesPerDay} /></th>
                     <th className="numeric"><FormattedMessage {...messages.sourceStartDate} /></th>
                     <th className="numeric"><FormattedMessage {...localMessages.inLast90Days} /></th>
+                    <th className="numeric"><FormattedMessage {...localMessages.inLastYear} /></th>
                     <th className="numeric"><FormattedMessage {...localMessages.activeFeedCount} /></th>
                     <th><FormattedMessage {...messages.sourceScrapeStatus} /></th>
                   </tr>
@@ -297,10 +299,11 @@ class ManageSourcesContainer extends React.Component {
                         </td>
                         <td><a href={source.url} rel="noopener noreferrer" target="_blank">{source.url}</a></td>
                         <td className="numeric"><FormattedNumber value={Math.round(source.num_stories_90)} /></td>
-                        <td className="numeric"><FormattedDate value={parseSolrShortDate(source.start_date)} /></td>
+                        <td className="date"><FormattedDate value={parseSolrShortDate(source.start_date)} /></td>
                         <td className={`numeric ${Math.round(source.num_stories_90 * 90) === 0 ? 'error' : ''}`}>
                           <FormattedNumber value={Math.round(source.num_stories_90 * 90)} />
                         </td>
+                        <td className="numeric"><FormattedNumber value={source.num_stories_last_year} /></td>
                         <td className={`numeric ${source.active_feed_count === 0 ? 'error' : ''}`}>
                           <FormattedNumber value={source.active_feed_count} />
                         </td>

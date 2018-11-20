@@ -67,7 +67,7 @@ def public_topics_list():
 def topic_personal():
     user_mc = user_admin_mediacloud_client()
     link_id = request.args.get('linkId')
-    results = user_mc.topicList(link_id=link_id, limit=51)
+    results = user_mc.topicList(link_id=link_id, limit=500)
     results['topcs'] = _add_user_favorite_flag_to_topics(results['topics'])
     return jsonify(results)
 
@@ -189,29 +189,28 @@ def topic_set_favorited(topics_id):
 
 @app.route('/api/topics/<topics_id>/update', methods=['PUT'])
 @flask_login.login_required
-@form_fields_required('name', 'description', 'solr_seed_query', 'start_date', 'end_date')
 @api_error_handler
 def topic_update(topics_id):
 
     user_mc = user_admin_mediacloud_client()
     # top five cannot be empty fyi
     args = {
-        'name': request.form['name'],
-        'description': request.form['description'],
-        'solr_seed_query': request.form['solr_seed_query'],
-        'start_date': request.form['start_date'],
-        'end_date': request.form['end_date'],
+        'name': request.form['name'] if 'name' in request.form else None,
+        'description': request.form['description'] if 'description' in request.form else None,
+        'solr_seed_query': request.form['solr_seed_query'] if 'solr_seed_query' in request.form else None,
+        'start_date': request.form['start_date'] if 'start_date' in request.form else None,
+        'end_date': request.form['end_date'] if 'end_date' in request.form else None,
         'is_public': request.form['is_public'] if 'is_public' in request.form else None,
         'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
-        'ch_monitor_id': request.form['ch_monitor_id'] if len(request.form['ch_monitor_id']) > 0 and request.form['ch_monitor_id'] != 'null' else None,
+        'ch_monitor_id': request.form['ch_monitor_id'] if 'ch_monitor_id' in request.form and request.form['ch_monitor_id']!= 'null' and len(request.form['ch_monitor_id']) > 0 else None,
         'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
         'max_stories': request.form['max_stories'] if 'max_stories' in request.form else None,
         'twitter_topics_id': request.form['twitter_topics_id'] if 'twitter_topics_id' in request.form else None
     }
 
     # parse out any sources and collections to add
-    media_ids_to_add = ids_from_comma_separated_str(request.form['sources[]'])
-    tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]'])
+    media_ids_to_add = ids_from_comma_separated_str(request.form['sources[]'] if 'sources[]' in request.form else '')
+    tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]'] if 'collections[]' in request.form else '')
     # hack to support twitter-only topics
     if (len(media_ids_to_add) is 0) and (len(tag_ids_to_add) is 0):
         media_ids_to_add = None

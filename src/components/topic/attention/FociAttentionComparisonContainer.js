@@ -4,19 +4,28 @@ import * as d3 from 'd3';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
+import MenuItem from '@material-ui/core/MenuItem';
+import Divider from '@material-ui/core/Divider';
+import ListItemText from '@material-ui/core/ListItemText';
+import ActionMenu from '../../common/ActionMenu';
 import { fetchTopicSplitStoryCounts, fetchTopicFocalSetSplitStoryCounts } from '../../../actions/topicActions';
-import { asyncContainerize } from '../../common/hocs/AsyncContainer';
+import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import DataCard from '../../common/DataCard';
 import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
 import PackedBubbleChart from '../../vis/PackedBubbleChart';
 import { DownloadButton } from '../../common/IconButton';
 import messages from '../../../resources/messages';
 import { downloadSvg } from '../../util/svg';
+import { LINE_VIEW, STACKED_VIEW } from '../../../lib/visUtil';
 
 const localMessages = {
   overallSeries: { id: 'topic.attention.series.overall', defaultMessage: 'Whole Topic' },
+  comparisonTitle: { id: 'topic.attention.comparisonTitle.title', defaultMessage: 'Compare Subtopic Attention Over Time' },
   bubbleChartTitle: { id: 'topic.attention.bubbleChart.title', defaultMessage: 'Total Stories in Each Subtopic' },
   lineChartTitle: { id: 'topic.attention.lineChart.title', defaultMessage: 'Total Stories over Time in Each Subtopic' },
+  stackedView: { id: 'topic.attention.view.stacked', defaultMessage: 'Stacked Area View' },
+  lineView: { id: 'topic.attention.view.line', defaultMessage: 'Line View' },
 };
 
 const SECS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -35,6 +44,10 @@ function dataAsSeries(data) {
 }
 
 class FociAttentionComparisonContainer extends React.Component {
+  state = {
+    view: LINE_VIEW,
+  }
+
   componentWillReceiveProps(nextProps) {
     const { selectedFocalSetId, filters, fetchData } = this.props;
     if ((nextProps.selectedFocalSetId !== selectedFocalSetId) || (nextProps.filters.timespanId !== filters.timespanId)) {
@@ -42,10 +55,32 @@ class FociAttentionComparisonContainer extends React.Component {
     }
   }
 
+  setView = (nextView) => {
+    this.setState({ view: nextView });
+  }
+
   render() {
-    const { foci, overallTotal, overallCounts } = this.props;
+    const { foci, overallTotal, overallCounts, attentionAggregationMenuItems, selectedTimePeriod } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
     // stich together bubble chart data
+    const stackedAreaView = (
+      <div>
+        <MenuItem
+          className="action-icon-menu-item"
+          disabled={this.state.view === LINE_VIEW}
+          onClick={() => this.setView(LINE_VIEW)}
+        >
+          <ListItemText><FormattedMessage {...localMessages.lineView} /></ListItemText>
+        </MenuItem>
+        <MenuItem
+          className="action-icon-menu-item"
+          disabled={this.state.view === STACKED_VIEW}
+          onClick={() => this.setView(STACKED_VIEW)}
+        >
+          <ListItemText><FormattedMessage {...localMessages.stackedView} /></ListItemText>
+        </MenuItem>
+      </div>
+    );
     let bubbleData = [];
     if (foci !== undefined && foci.length > 0) {
       bubbleData = [
@@ -64,43 +99,55 @@ class FociAttentionComparisonContainer extends React.Component {
       ];
     }
     // stich together line chart data
-    const overallData = dataAsSeries(overallCounts); // now add a series for the whole thing
     let series = [];
     if (foci !== undefined) {
-      series = [
-        ...foci.map((focus, idx) => { // add series for all the foci
-          const data = dataAsSeries(focus.counts);
-          return {
-            id: idx,
-            name: focus.name,
-            data: data.values,
-            pointStart: data.start,
-            pointInterval: data.intervalMs,
-            color: COLORS[idx + 1],
-          };
-        }),
-        {
+      series = foci.map((focus, idx) => { // add series for all the foci
+        const data = dataAsSeries(focus.counts);
+        return {
+          id: idx,
+          name: focus.name,
+          data: data.values,
+          pointStart: data.start,
+          pointInterval: data.intervalMs,
+          color: COLORS[idx + 1],
+        };
+      });
+      if (this.state.view !== STACKED_VIEW) { // now add a series for the whole thing (if not stacked)
+        const overallData = dataAsSeries(overallCounts);
+        series.push({
           id: 9999,
           name: formatMessage(localMessages.overallSeries),
           data: overallData.values,
           pointStart: overallData.start,
           pointInterval: overallData.intervalMs,
           color: COLORS[0],
-        },
-      ];
+        });
+      }
     }
     return (
-      <div>
+      <React.Fragment>
         <Row>
           <Col lg={12}>
             <DataCard>
-              <h2><FormattedMessage {...localMessages.lineChartTitle} /></h2>
-              <AttentionOverTimeChart series={series} height={300} />
+              <div className="actions">
+                <ActionMenu actionTextMsg={messages.viewOptions}>
+                  {stackedAreaView}
+                  <Divider />
+                  {attentionAggregationMenuItems}
+                </ActionMenu>
+              </div>
+              <h2><FormattedMessage {...localMessages.comparisonTitle} /></h2>
+              <AttentionOverTimeChart
+                series={series}
+                height={350}
+                display={this.state.view}
+                interval={selectedTimePeriod}
+              />
             </DataCard>
           </Col>
         </Row>
         <Row>
-          <Col lg={6} xs={12}>
+          <Col lg={12}>
             <DataCard>
               <div className="actions">
                 <DownloadButton
@@ -117,7 +164,7 @@ class FociAttentionComparisonContainer extends React.Component {
             </DataCard>
           </Col>
         </Row>
-      </div>
+      </React.Fragment>
     );
   }
 }
@@ -129,6 +176,8 @@ FociAttentionComparisonContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
+  selectedTimePeriod: PropTypes.string.isRequired,
+  attentionAggregationMenuItems: PropTypes.object.isRequired, // from hoc
   // from dispatch
   fetchData: PropTypes.func.isRequired,
   // from mergeProps
@@ -169,9 +218,11 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 
 export default
 connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-  asyncContainerize(
-    injectIntl(
-      FociAttentionComparisonContainer
+  withAttentionAggregation(
+    withAsyncFetch(
+      injectIntl(
+        FociAttentionComparisonContainer
+      )
     )
   )
 );

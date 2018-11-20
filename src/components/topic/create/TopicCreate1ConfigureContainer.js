@@ -11,7 +11,8 @@ import TopicForm, { TOPIC_FORM_MODE_CREATE } from './TopicForm';
 import { goToCreateTopicStep } from '../../../actions/topicActions';
 import messages from '../../../resources/messages';
 import { getCurrentDate, getMomentDateSubtraction } from '../../../lib/dateUtil';
-import { MAX_RECOMMENDED_STORIES } from '../../../lib/formValidators';
+import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/auth';
+import { MAX_RECOMMENDED_STORIES, ADMIN_MAX_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 
 
 const localMessages = {
@@ -27,12 +28,13 @@ const localMessages = {
 const formSelector = formValueSelector('topicForm');
 
 const TopicCreate1ConfigureContainer = (props) => {
-  const { finishStep, handleMediaChange, handleMediaDelete, formData } = props;
+  const { finishStep, handleMediaChange, handleMediaDelete, formData, user } = props;
   const { formatMessage } = props.intl;
+  const isAdmin = hasPermissions(getUserRoles(user), PERMISSION_ADMIN);
   const endDate = getCurrentDate();
   const startDate = getMomentDateSubtraction(endDate, 3, 'months');
   const sAndC = (formData && formData.sourcesAndCollections) || [];
-  const initialValues = { start_date: startDate, end_date: endDate, max_iterations: 15, max_stories: MAX_RECOMMENDED_STORIES, buttonLabel: formatMessage(messages.preview), sourcesAndCollections: sAndC };
+  const initialValues = { start_date: startDate, end_date: endDate, max_iterations: 15, max_stories: isAdmin ? ADMIN_MAX_RECOMMENDED_STORIES : MAX_RECOMMENDED_STORIES, buttonLabel: formatMessage(messages.preview), sourcesAndCollections: sAndC };
   return (
     <Grid>
       <Helmet><title>{formatMessage(localMessages.title)}</title></Helmet>
@@ -67,6 +69,7 @@ TopicCreate1ConfigureContainer.propTypes = {
   // from state
   currentStep: PropTypes.number,
   formData: PropTypes.object,
+  user: PropTypes.object,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
   handleMediaChange: PropTypes.func.isRequired,
@@ -75,6 +78,7 @@ TopicCreate1ConfigureContainer.propTypes = {
 
 const mapStateToProps = state => ({
   formData: formSelector(state, 'solr_seed_query', 'start_date', 'end_date', 'sourcesAndCollections'),
+  user: state.user,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

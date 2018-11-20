@@ -5,59 +5,61 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { PAST_DAY, PAST_WEEK, PAST_MONTH } from '../../../lib/dateUtil';
 
 const localMessages = {
-  pastDay: { id: 'wordcloud.time.pastDay', defaultMessage: 'past day' },
-  pastWeek: { id: 'wordcloud.time.pastWeek', defaultMessage: 'past week' },
-  pastMonth: { id: 'wordcloud.time.pastMonth', defaultMessage: 'past month' },
-  pastYear: { id: 'wordcloud.time.pastYear', defaultMessage: 'past year' },
-  all: { id: 'wordcloud.time.all', defaultMessage: 'all time' },
+  pastDay: { id: 'wordcloud.time.pastDay', defaultMessage: 'Chart by day' },
+  pastWeek: { id: 'wordcloud.time.pastWeek', defaultMessage: 'Chart by week' },
+  pastMonth: { id: 'wordcloud.time.pastMonth', defaultMessage: 'Chart by month' },
+  pastYear: { id: 'wordcloud.time.pastYear', defaultMessage: 'Chart by year' },
 };
 
 /**
- * Give this:
- * 1. `selectedTimePeriod` string
- * 2. `handleTimePeriodClick` callback handler
- * It gives the child:
- * 1. `timePeriodControls` UI elements
+ * This gives the child:
+ * * `attentionAggregationMenuItems` UI elements
+ * * `selectedTimePeriod` string for the selected aggregation tme period
  */
 const withAttentionAggregation = (ChildComponent) => {
   class AttentionAggregation extends React.Component {
-    saveStateAndReorder = (timePeriod) => {
-      const { handleTimePeriodClick } = this.props;
-      handleTimePeriodClick(timePeriod);
+    state = {
+      selectedTimePeriod: PAST_DAY,
+    }
+
+    saveStateAndReorder = (newTimePeriod) => {
+      // const { handleTimePeriodClick } = this.props;
+      this.setState({ selectedTimePeriod: newTimePeriod });
+      // handleTimePeriodClick(this.state.selectedTimePeriod);
     }
 
     render() {
-      const { selectedTimePeriod } = this.props;
-      const attentionViewOptions = (
-        <div className="periodic-controls">
+      const attentionAggregationMenuItems = (
+        <React.Fragment>
           <MenuItem
             className="action-icon-menu-item"
-            disabled={selectedTimePeriod === PAST_DAY}
-            onClick={e => this.saveStateAndReorder(PAST_DAY, e)}
+            disabled={this.state.selectedTimePeriod === PAST_DAY}
+            onClick={() => this.saveStateAndReorder(PAST_DAY)}
           >
             <FormattedMessage {...localMessages.pastDay} />
           </MenuItem>
           <MenuItem
             className="action-icon-menu-item"
-            disabled={selectedTimePeriod === PAST_WEEK}
-            onClick={e => this.saveStateAndReorder(PAST_WEEK, e)}
+            disabled={this.state.selectedTimePeriod === PAST_WEEK}
+            onClick={() => this.saveStateAndReorder(PAST_WEEK)}
           >
             <FormattedMessage {...localMessages.pastWeek} />
           </MenuItem>
           <MenuItem
             className="action-icon-menu-item"
-            disabled={selectedTimePeriod === PAST_MONTH}
-            onClick={e => this.saveStateAndReorder(PAST_MONTH, e)}
+            disabled={this.state.selectedTimePeriod === PAST_MONTH}
+            onClick={() => this.saveStateAndReorder(PAST_MONTH)}
           >
             <FormattedMessage {...localMessages.pastMonth} />
           </MenuItem>
-        </div>
+        </React.Fragment>
       );
       return (
         <span className="periodic-container">
           <ChildComponent
             {...this.props}
-            attentionViewOptions={attentionViewOptions}
+            selectedTimePeriod={this.state.selectedTimePeriod}
+            attentionAggregationMenuItems={attentionAggregationMenuItems}
           />
         </span>
       );
@@ -65,8 +67,6 @@ const withAttentionAggregation = (ChildComponent) => {
   }
   AttentionAggregation.propTypes = {
     intl: PropTypes.object.isRequired,
-    selectedTimePeriod: PropTypes.string.isRequired,
-    handleTimePeriodClick: PropTypes.func, // call into child definition
   };
   return injectIntl(
     AttentionAggregation

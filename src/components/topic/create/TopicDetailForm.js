@@ -15,6 +15,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_MEDIA_EDIT, PERMISSION_ADMIN } from '../../../lib/auth';
 import QueryHelpDialog from '../../common/help/QueryHelpDialog';
 import messages from '../../../resources/messages';
+import { ADMIN_MAX_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 
 export const TOPIC_FORM_MODE_EDIT = 'TOPIC_FORM_MODE_EDIT';
 
@@ -158,7 +159,7 @@ const TopicDetailForm = (props) => {
                   fullWidth
                   // defaultValue="100000"
                   label={formatMessage(localMessages.maxStories)}
-                  helpertext={100000}
+                  helpertext={ADMIN_MAX_RECOMMENDED_STORIES}
                 />
                 <Typography><small><FormattedMessage {...localMessages.maxSeedStoriesHelp} /></small></Typography>
               </ExpansionPanelDetails>

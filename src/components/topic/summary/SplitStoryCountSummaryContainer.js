@@ -11,7 +11,7 @@ import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
-import { fetchTopicSplitStoryCounts, selectTimeAggregatePeriod } from '../../../actions/topicActions';
+import { fetchTopicSplitStoryCounts } from '../../../actions/topicActions';
 import messages from '../../../resources/messages';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
@@ -41,7 +41,7 @@ class SplitStoryCountSummaryContainer extends React.Component {
   }
 
   render() {
-    const { total, counts } = this.props;
+    const { total, counts, selectedTimePeriod, attentionAggregationMenuItems } = this.props;
     return (
       <React.Fragment>
         <AttentionOverTimeChart
@@ -50,7 +50,7 @@ class SplitStoryCountSummaryContainer extends React.Component {
           height={200}
           lineColor={getBrandDarkColor()}
           backgroundColor="#f5f5f5"
-          interval={this.props.selectedTimePeriod}
+          interval={selectedTimePeriod}
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
           <div className="actions">
@@ -64,7 +64,7 @@ class SplitStoryCountSummaryContainer extends React.Component {
               </MenuItem>
             </ActionMenu>
             <ActionMenu actionTextMsg={messages.viewOptions}>
-              {this.props.attentionViewOptions}
+              {attentionAggregationMenuItems}
             </ActionMenu>
           </div>
         </Permissioned>
@@ -76,6 +76,8 @@ class SplitStoryCountSummaryContainer extends React.Component {
 SplitStoryCountSummaryContainer.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
+  selectedTimePeriod: PropTypes.string.isRequired,
+  attentionAggregationMenuItems: PropTypes.object.isRequired, // from hoc
   // passed in
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
@@ -87,17 +89,13 @@ SplitStoryCountSummaryContainer.propTypes = {
   asyncFetch: PropTypes.func.isRequired,
   fetchData: PropTypes.func.isRequired,
   handleExplore: PropTypes.func.isRequired,
-
   handleTimePeriodClick: PropTypes.func,
-  attentionViewOptions: PropTypes.object.isRequired, // from hoc
-  selectedTimePeriod: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.summary.splitStoryCount.fetchStatus,
   total: state.topics.selected.summary.splitStoryCount.total,
   counts: state.topics.selected.summary.splitStoryCount.counts,
-  selectedTimePeriod: state.topics.selected.summary.splitStoryCount.selectedTimePeriod,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -107,9 +105,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleExplore: () => {
     const exploreUrl = filteredLinkTo(`/topics/${ownProps.topicId}/attention`, ownProps.filters);
     dispatch(push(exploreUrl));
-  },
-  handleTimePeriodClick: (timeperiod) => {
-    dispatch(selectTimeAggregatePeriod(timeperiod));
   },
 });
 

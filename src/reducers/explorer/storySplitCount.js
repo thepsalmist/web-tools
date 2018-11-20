@@ -1,11 +1,12 @@
 import { createIndexedAsyncReducer } from '../../lib/reduxHelpers';
-import { FETCH_QUERY_SPLIT_STORY_COUNT, RESET_STORY_SPLIT_COUNTS, SELECT_DATA_POINT,
+import { FETCH_QUERY_SPLIT_STORY_COUNT, RESET_STORY_SPLIT_COUNTS, SELECT_DATA_POINT, SELECT_EXPLORER_TIME_AGGREGATE,
   RESET_SELECTED_DATA_POINT } from '../../actions/explorerActions';
-import { cleanDateCounts } from '../../lib/dateUtil';
+import { cleanDateCounts, PAST_DAY } from '../../lib/dateUtil';
 
 const storySplitCount = createIndexedAsyncReducer({
   initialState: ({
     counts: [],
+    selectedTimePeriod: PAST_DAY,
   }),
   action: FETCH_QUERY_SPLIT_STORY_COUNT,
   handleSuccess: payload => ({
@@ -22,6 +23,9 @@ const storySplitCount = createIndexedAsyncReducer({
   }),
   [RESET_STORY_SPLIT_COUNTS]: () => ({
     fetchStatus: '', fetchStatuses: [], results: [], dateRangeSpread: 0, dataPoint: null,
+  }),
+  [SELECT_EXPLORER_TIME_AGGREGATE]: payload => ({
+    selectedTimePeriod: payload,
   }),
 });
 

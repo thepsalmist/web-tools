@@ -1,47 +1,46 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { connect } from 'react-redux';
 import withAsyncFetch from '../../../common/hocs/AsyncContainer';
 import CollectionIcon from '../../../common/icons/CollectionIcon';
-import { fetchCollectionList } from '../../../../actions/sourceActions';
+import { fetchGeoCollectionsByCountry } from '../../../../actions/sourceActions';
 import CollectionList from '../../../common/CollectionList';
-import { TAG_SET_ABYZ_GEO_COLLECTIONS } from '../../../../lib/tagUtil';
+
+const localMessages = {
+  title: { id: 'sources.collections.geo.title', defaultMessage: 'Collections by Country' },
+  description: { id: 'sources.collections.geo.description', defaultMessage: 'We have curated a set of collections by geography.  For each country below we have a national collection, which includes media sources that report about the whole country.  For many countries we also have state- or province-level collections, for media sources that are published in and focus on that part of the country.' },
+};
 
 const CountryCollectionListContainer = (props) => {
-  const { name, description, collections, user } = props;
-  // collection parsing here - maybe move into reducer or back end
-  const nationalCollections = collections.filter(c => c.label).filter(c => c.label.endsWith('National'));
+  const { collectionsByCountry, user } = props;
   return (
     <div className="country-collections-table">
       <Grid>
         <Row>
-          <Col lg={12}>
+          <Col lg={10}>
             <h1>
               <CollectionIcon height={32} />
-              {name}
+              <FormattedMessage {...localMessages.title} />
             </h1>
-            <p>{description}</p>
+            <p><FormattedMessage {...localMessages.description} /></p>
           </Col>
         </Row>
-        {nationalCollections.map((nationalCollection) => {
-          const countryName = nationalCollection.label.substring(0, nationalCollection.label.length - 11);
-          return (
-            <Row key={nationalCollection.tags_id}>
-              <Col lg={10}>
-                <div>
-                  <CollectionList
-                    collections={collections.filter(c => c.label).filter(c => c.label.includes(countryName))}
-                    title={countryName}
-                    user={user}
-                    dataCard={false}
-                  />
-                </div>
-              </Col>
-            </Row>
-          );
-        })}
+        {collectionsByCountry.map((countryInfo, idx) => (
+          <Row key={idx}>
+            <Col lg={10}>
+              <div>
+                <CollectionList
+                  collections={countryInfo.collections}
+                  title={countryInfo.country.name}
+                  user={user}
+                  dataCard={false}
+                />
+              </div>
+            </Col>
+          </Row>
+        ))}
       </Grid>
     </div>
   );
@@ -49,11 +48,9 @@ const CountryCollectionListContainer = (props) => {
 
 CountryCollectionListContainer.propTypes = {
   // from state
-  collections: PropTypes.array.isRequired,
-  name: PropTypes.string,
-  description: PropTypes.string,
   fetchStatus: PropTypes.string.isRequired,
   user: PropTypes.object.isRequired,
+  collectionsByCountry: PropTypes.array.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
   // from dispatch
@@ -61,16 +58,14 @@ CountryCollectionListContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.sources.collections.all.fetchStatus,
+  fetchStatus: state.sources.collections.geo.fetchStatus,
   user: state.user,
-  name: state.sources.collections.all.name,
-  description: state.sources.collections.all.description,
-  collections: state.sources.collections.all.collections,
+  collectionsByCountry: state.sources.collections.geo.byCountry,
 });
 
 const mapDispatchToProps = dispatch => ({
   asyncFetch: () => {
-    dispatch(fetchCollectionList(TAG_SET_ABYZ_GEO_COLLECTIONS));
+    dispatch(fetchGeoCollectionsByCountry());
   },
 });
 

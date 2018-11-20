@@ -1,6 +1,127 @@
 {
   "releases": [
     {
+      "date": "2018-11-16",
+      "version": "v3.6.1.5",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "minor"
+        }
+      ]
+    },
+    {
+      "date": "2018-11-20",
+      "version": "v3.6.0",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Enhancement",
+          "note": "Attention bar chart allows selection by day, week, month"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Enhancement",
+          "note": "Clicking on a theme offers ability to add to query"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Geographic coverage CSV file includes better view of coverage"
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "More accurate source infomation and story reporting on Review Sources page"
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Prevent duplicate names for Collections"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Add stacked bar chart to attention bar chart"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Enhancement",
+          "note": "Attention bar chart allows selection by day, week, month"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Story count page no longer re-rendering"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Enhancement",
+          "note": "Allow admins to edit max stories in failed topics and re-spider."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "fix",
+          "note": "Fix subtopic selection link."
+        }
+      ]
+    },
+    {
+      "date": "2018-11-16",
+      "version": "v3.5.8",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "The geographic collections page in Source Manager works again."
+        }
+      ]
+    },
+    {
+      "date": "2018-11-14",
+      "version": "v3.5.7",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "The review sources page in Source Manager works again."
+        }
+      ]
+    },
+    {
+      "date": "2018-11-07",
+      "version": "v3.5.6",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Handle duplicate source names better while editing sources."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Speed up the collection page in Source Manager."
+        },
+        {
+          "apps": [ "tools" ],
+          "type": "Fix",
+          "note": "Better feedback if there's an error when you try to change your password."
+        }
+      ]
+    },
+    {
+      "date": "2018-11-07",
+      "version": "v3.5.5",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Chart attention in a Topic by day, week, or month."
+        }
+      ]
+    },
+    {
       "date": "2018-11-01",
       "version": "v3.5.4",
       "notes": [
@@ -47,11 +168,6 @@
           "apps": [ "sources" ],
           "type": "Fix",
           "note": "Fixed our list of geographic collections in Source Manager."
-        },
-        {
-          "apps": [ "topics" ],
-          "type": "Feature",
-          "note": "You an download all media links and story links in Topic Manager."
         },
         {
           "apps": [ "explorer" ],

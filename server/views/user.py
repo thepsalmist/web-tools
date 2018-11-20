@@ -127,12 +127,19 @@ def reset_password():
 @api_error_handler
 def change_password():
     user_mc = user_mediacloud_client()
+    results = {}
     try:
         results = user_mc.authChangePassword(request.form['old_password'], request.form['new_password'])
     except MCException as e:
         logger.exception(e)
-        if 'Unable to change password: Old password is incorrect' in e.message:
-            return json_error_response('Unable to change password: Old password is incorrect')
+        if 'Unable to change password' in e.message:
+            if 'Old password is incorrect' in e.message or 'Unable to log in with old password' in e.message:
+                return json_error_response('Unable to change password - old password is incorrect')
+            if 'not found or password is incorrect' in e.message:
+                return json_error_response('Unable to change password - user not found or password is incorrect')
+        else:
+            return json_error_response('Unable to change password - see log for more details')
+
     return jsonify(results)
 
 

@@ -1,11 +1,12 @@
 import { FETCH_TOPIC_SPLIT_STORY_COUNT } from '../../../../actions/topicActions';
 import { createAsyncReducer } from '../../../../lib/reduxHelpers';
-import { cleanDateCounts } from '../../../../lib/dateUtil';
+import { cleanDateCounts, PAST_DAY } from '../../../../lib/dateUtil';
 
 const splitStoryCount = createAsyncReducer({
   initialState: {
     total: null,
     counts: [],
+    selectedTimePeriod: PAST_DAY,
   },
   action: FETCH_TOPIC_SPLIT_STORY_COUNT,
   handleSuccess: payload => ({

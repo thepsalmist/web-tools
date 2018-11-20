@@ -117,6 +117,7 @@ class QueryResultsContainer extends React.Component {
             lastSearchTime={lastSearchTime}
             queries={queries}
             isLoggedIn={isLoggedIn}
+            onQueryModificationRequested={handleQueryModificationRequested}
           />
         </Col>
       </Row>

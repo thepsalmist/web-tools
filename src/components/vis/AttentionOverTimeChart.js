@@ -4,7 +4,8 @@ import { FormattedMessage, FormattedNumber, injectIntl } from 'react-intl';
 import ReactHighcharts from 'react-highcharts';
 import initHighcharts from './initHighcharts';
 import { getBrandDarkColor } from '../../styles/colors';
-import { getVisDate } from '../../lib/dateUtil';
+import { getVisDate, PAST_DAY, PAST_WEEK, PAST_MONTH, groupDatesByWeek, groupDatesByMonth } from '../../lib/dateUtil';
+import { STACKED_VIEW } from '../../lib/visUtil';
 
 initHighcharts();
 
@@ -29,6 +30,16 @@ const localMessages = {
 
 function makePercentage(value) { return value * 100; }
 
+export function dataAsSeries(data, fieldName = 'count') {
+  // clean up the data
+  const dates = data.map(d => d.date);
+  // turning variable time unit into days
+  const intervalMs = (dates[1] - dates[0]);
+  const intervalDays = intervalMs / SECS_PER_DAY;
+  const values = data.map(d => Math.round(d[fieldName] / intervalDays));
+  return { data: values, pointInterval: intervalMs, pointStart: dates[0] };
+}
+
 /**
  * Pass in "data" if you are using one series, otherwise configure them yourself and pass in "series".
  */
@@ -36,10 +47,11 @@ class AttentionOverTimeChart extends React.Component {
   getConfig() {
     const { backgroundColor, normalizeYAxis } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
+
     const config = {
       title: formatMessage(localMessages.chartTitle),
       lineColor: getBrandDarkColor(),
-      interval: 1,
+      interval: PAST_DAY, // defaulting to by day
       chart: {
         type: 'spline',
         zoomType: 'x',
@@ -94,7 +106,7 @@ class AttentionOverTimeChart extends React.Component {
   }
 
   render() {
-    const { total, data, series, height, interval, onDataPointClick, lineColor, health, filename, showLegend, introText } = this.props;
+    const { total, data, series, height, interval, display, onDataPointClick, lineColor, health, filename, showLegend, introText } = this.props;
     const { formatMessage } = this.props.intl;
     // setup up custom chart configuration
     const config = this.getConfig();
@@ -111,8 +123,32 @@ class AttentionOverTimeChart extends React.Component {
     if ((lineColor !== null) && (lineColor !== undefined)) {
       config.lineColor = lineColor;
     }
+    if ((display !== null) && (display !== undefined) && (display === STACKED_VIEW)) {
+      config.chart = {
+        type: 'areaspline',
+      };
+      config.plotOptions.areaspline = {
+        stacking: 'normal',
+        lineWidth: 0,
+      };
+      config.tooltip.split = true;
+    }
     if ((interval !== null) && (interval !== undefined)) {
-      config.interval = interval === 'day' ? 1 : 1; // does nothing right now
+      config.interval = interval;
+      switch (interval) {
+        case PAST_DAY:
+          config.intervalVal = 1;
+          break;
+        case PAST_WEEK:
+          config.intervalVal = 7;
+          break;
+        case PAST_MONTH:
+          config.intervalVal = 30;
+          break;
+        default:
+          config.intervalVal = 1;
+          break;
+      }
     }
     if (onDataPointClick) {
       config.plotOptions.series.allowPointSelect = true;
@@ -134,25 +170,43 @@ class AttentionOverTimeChart extends React.Component {
     if (data !== undefined) {
       config.plotOptions.series.marker.enabled = (data.length < SERIES_MARKER_THRESHOLD);
       // clean up the data
-      const dates = data.map(d => d.date);
-      // turning variable time unit into days
-      const intervalMs = SECS_PER_DAY * config.interval; // default is a day...
-      const intervalDays = intervalMs / SECS_PER_DAY;
-      const values = data.map(d => (d.count / intervalDays));
       allSeries = [{
         id: 0,
         name: filename,
         color: config.lineColor,
-        data: values,
-        pointStart: dates[0],
-        pointInterval: intervalMs,
+        data: data.map(d => d.count),
+        pointStart: data[0].date,
+        pointInterval: data[1].date - data[0].date,
         showInLegend: showLegend !== false,
       }];
     } else if (series !== undefined && series.length > 0) {
       allSeries = series;
       config.plotOptions.series.marker.enabled = series[0].data ? (series[0].data.length < SERIES_MARKER_THRESHOLD) : false;
     }
-    config.series = allSeries;
+    // now aggregate the dates as specified
+    if (allSeries) { // being careful about situations in between renders
+      config.series = allSeries.map((thisSeries) => {
+        const dataAsList = thisSeries.data.map((d, idx) => ({
+          count: d,
+          date: thisSeries.pointStart + (idx * thisSeries.pointInterval),
+        }));
+        let groupedData = dataAsList;
+        if (config.interval === PAST_WEEK) {
+          groupedData = groupDatesByWeek(groupedData);
+        } else if (config.interval === PAST_MONTH) {
+          groupedData = groupDatesByMonth(groupedData);
+        }
+        const dates = Object.values(groupedData).map(d => d.date);
+        const intervalMs = SECS_PER_DAY * config.intervalVal;
+        const values = Object.values(groupedData).map(d => (d.sum !== undefined ? d.sum : d.count));
+        return {
+          ...thisSeries,
+          data: values,
+          pointStart: dates[0],
+          pointInterval: intervalMs,
+        };
+      });
+    }
     // show total if it is included
     let totalInfo = null;
     if (introText) {
@@ -186,6 +240,7 @@ AttentionOverTimeChart.propTypes = {
   backgroundColor: PropTypes.string,
   health: PropTypes.array,
   interval: PropTypes.string,
+  display: PropTypes.number,
   onDataPointClick: PropTypes.func, // (date0, date1, evt, chartObj)
   total: PropTypes.number,
   introText: PropTypes.string, // overrides automatic total string generation

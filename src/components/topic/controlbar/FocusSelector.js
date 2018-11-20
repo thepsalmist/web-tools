@@ -6,7 +6,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
-import messages from '../../../resources/messages';
 
 export const REMOVE_FOCUS = 0;
 
@@ -21,7 +20,7 @@ class FocusSelector extends React.Component {
     const { formatMessage } = this.props.intl;
     let selected;
     if (evt.target.value === REMOVE_FOCUS) {
-      selected = { foci_id: REMOVE_FOCUS, name: formatMessage(messages.noFocus) };
+      selected = { foci_id: REMOVE_FOCUS, name: formatMessage(localMessages.removeFocus) };
     } else {
       selected = foci.find(focus => (focus.foci_id === evt.target.value));
     }

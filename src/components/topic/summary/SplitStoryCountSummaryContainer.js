@@ -9,6 +9,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
+import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
 import { fetchTopicSplitStoryCounts } from '../../../actions/topicActions';
 import messages from '../../../resources/messages';
@@ -17,6 +18,7 @@ import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { DownloadButton } from '../../common/IconButton';
 import { getBrandDarkColor } from '../../../styles/colors';
 import { filteredLinkTo, filtersAsUrlParams } from '../../util/location';
+// import { PAST_WEEK } from '../../../lib/dateUtil';
 
 const localMessages = {
   title: { id: 'topic.summary.splitStoryCount.title', defaultMessage: 'Attention Over Time' },
@@ -39,7 +41,7 @@ class SplitStoryCountSummaryContainer extends React.Component {
   }
 
   render() {
-    const { total, counts } = this.props;
+    const { total, counts, selectedTimePeriod, attentionAggregationMenuItems } = this.props;
     return (
       <React.Fragment>
         <AttentionOverTimeChart
@@ -48,6 +50,7 @@ class SplitStoryCountSummaryContainer extends React.Component {
           height={200}
           lineColor={getBrandDarkColor()}
           backgroundColor="#f5f5f5"
+          interval={selectedTimePeriod}
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
           <div className="actions">
@@ -60,6 +63,9 @@ class SplitStoryCountSummaryContainer extends React.Component {
                 <ListItemIcon><DownloadButton /></ListItemIcon>
               </MenuItem>
             </ActionMenu>
+            <ActionMenu actionTextMsg={messages.viewOptions}>
+              {attentionAggregationMenuItems}
+            </ActionMenu>
           </div>
         </Permissioned>
       </React.Fragment>
@@ -70,6 +76,8 @@ class SplitStoryCountSummaryContainer extends React.Component {
 SplitStoryCountSummaryContainer.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
+  selectedTimePeriod: PropTypes.string.isRequired,
+  attentionAggregationMenuItems: PropTypes.object.isRequired, // from hoc
   // passed in
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
@@ -81,6 +89,7 @@ SplitStoryCountSummaryContainer.propTypes = {
   asyncFetch: PropTypes.func.isRequired,
   fetchData: PropTypes.func.isRequired,
   handleExplore: PropTypes.func.isRequired,
+  handleTimePeriodClick: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
@@ -111,8 +120,10 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, [messages.attentionChartHelpText])(
-      withAsyncFetch(
-        SplitStoryCountSummaryContainer
+      withAttentionAggregation(
+        withAsyncFetch(
+          SplitStoryCountSummaryContainer
+        )
       )
     )
   )

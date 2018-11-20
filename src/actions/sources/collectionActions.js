@@ -46,7 +46,7 @@ export const fetchCollectionSourceRepresentation = createAsyncAction(FETCH_COLLE
 
 export const fetchCollectionSourceSplitStoryHistoricalCounts = createAsyncAction(FETCH_COLLECTION_SOURCE_SPLIT_STORY_HISTORICAL_COUNTS, api.collectionSourceSplitStoryHistoricalCounts, id => id);
 
-export const fetchCollectionSourceList = createAsyncAction(FETCH_COLLECTION_SOURCE_LIST, api.collectionSourceList, details => details);
+export const fetchCollectionSourceList = createAsyncAction(FETCH_COLLECTION_SOURCE_LIST, api.collectionSourceList);
 
 export const setCollectionSourceHistoryTimePeriod = createAction(SET_COLLECTION_SOURCE_HISTORY_TIME_PERIOD, timePeriod => timePeriod);
 

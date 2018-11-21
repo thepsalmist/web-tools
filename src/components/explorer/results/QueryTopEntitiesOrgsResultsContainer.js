@@ -35,8 +35,8 @@ class QueryTopEntitiesOrgsResultsContainer extends React.Component {
     const { formatNumber } = this.props.intl;
     let content = null;
     if (results) {
-      const rawData = results[selectedTabIndex] ? results[selectedTabIndex].results.slice(0, ENTITY_DISPLAY_TOP_TEN) : [];
-      const coverageRatio = rawData[selectedTabIndex] ? rawData[selectedTabIndex].pct : 0;
+      const rawData = (results[selectedTabIndex] && results[selectedTabIndex].results) ? results[selectedTabIndex].results.slice(0, ENTITY_DISPLAY_TOP_TEN) : [];
+      const coverageRatio = results[selectedTabIndex] ? results[selectedTabIndex].coverage_percentage : 0;
       if (coverageRatio > COVERAGE_REQUIRED) {
         content = (
           <div>

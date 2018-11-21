@@ -1,17 +1,6 @@
 {
   "releases": [
     {
-      "date": "2018-11-16",
-      "version": "v3.6.1.5",
-      "notes": [
-        {
-          "apps": [ "topics" ],
-          "type": "Fix",
-          "note": "minor"
-        }
-      ]
-    },
-    {
       "date": "2018-11-20",
       "version": "v3.6.0",
       "notes": [

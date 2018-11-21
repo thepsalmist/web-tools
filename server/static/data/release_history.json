@@ -1,12 +1,68 @@
 {
   "releases": [
     {
+      "date": "2018-11-20",
+      "version": "v3.6.0",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Attention bar chart allows selection by day, week, month"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Clicking on a theme offers ability to add to query"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Geographic coverage CSV file includes better view of coverage"
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "More accurate source infomation and story reporting on Review Sources page"
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Prevent duplicate names for Collections"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Add stacked bar chart to attention bar chart"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Attention bar chart allows selection by day, week, month"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Story count page no longer re-rendering"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Allow admins to edit max stories in failed topics and re-spider."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Fixed subtopic selection link."
+        }
+      ]
+    },
+    {
       "date": "2018-11-16",
       "version": "v3.5.8",
       "notes": [
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "The geographic collections page in Source Manager works again."
         }
       ]
@@ -17,7 +73,7 @@
       "notes": [
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "The review sources page in Source Manager works again."
         }
       ]
@@ -28,17 +84,17 @@
       "notes": [
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Handle duplicate source names better while editing sources."
         },
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Speed up the collection page in Source Manager."
         },
         {
           "apps": [ "tools" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better feedback if there's an error when you try to change your password."
         }
       ]
@@ -49,7 +105,7 @@
       "notes": [
         {
           "apps": [ "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Chart attention in a Topic by day, week, or month."
         }
       ]
@@ -60,24 +116,24 @@
       "notes": [
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Show correct source coverage stats.", 
           "details": "Our calculation of geographic and theme coverage was undercounting due to a bug."
         },
         {
           "apps": [ "explorer", "topics" ],
-          "type": "Fix",
-          "note": "Some bug fixes related to story list downloads.",
+          "type": "Fixed",
+          "note": "Some bug Fixedes related to story list downloads.",
           "details": "Some download were stopping in the middle; now those won't."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
-          "note": "Fix some small bugs related to non-logged in use of Explorer."
+          "type": "Fixed",
+          "note": "Fixed some small bugs related to non-logged in use of Explorer."
         },
         {
           "apps": [ "sources", "topics", "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Various security-related updates to the core libraries from other people that we use."
         }
       ]
@@ -88,8 +144,8 @@
       "notes": [
         {
           "apps": [ "sources", "explorer", "topics" ],
-          "type": "Fix",
-          "note": "Fixed problem that led to blank error notices showing up."
+          "type": "Fixed",
+          "note": "Fixeded problem that led to blank error notices showing up."
         }
       ]
     },
@@ -99,17 +155,17 @@
       "notes": [
         {
           "apps": [ "sources" ],
-          "type": "Fix",
-          "note": "Fixed our list of geographic collections in Source Manager."
+          "type": "Fixed",
+          "note": "Fixeded our list of geographic collections in Source Manager."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Copy-to-all works in Explorer again."
         },
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Viewing the content history for each source in a collection works again."
         }
       ]
@@ -120,22 +176,22 @@
       "notes": [
         {
           "apps": [ "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Clicking the Explorer attention chart multiple times now works."
         },
         {
           "apps": [ "topics", "explorer", "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Add back in chart exporting (jpeg, etc)."
         },
         {
           "apps": [ "topics" ],
-          "type": "Feature",
+          "type": "New",
           "note": "Now you can validate some sample stories while creating a topic."
         },
         {
           "apps": [ "topics" ],
-          "type": "Feature",
+          "type": "New",
           "note": "See inlinks to a media source within a topic as a treemap."
         }
       ]
@@ -146,42 +202,42 @@
       "notes": [
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "You can delete saved searches again."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Clicking a sample story in Explorer no longer resets the page."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "You can edit word clouds in Explorer again."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Copying a field to all queries in Explorer works better."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Explorer story list download shouldn't stop in the middle anymore."
         },
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Adding media sources to collections works more reliably."
         },
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Active feed count for a source is more accurate."
         },
         {
           "apps": [ "sources" ],
-          "type": "Feature",
+          "type": "New",
           "note": "Reviewing a collection for valid/invalid sources is easier."
         }
       ]
@@ -192,12 +248,12 @@
       "notes": [
         {
           "apps": [ "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Hide inaccurate story count when using a query filter within a topic."
         },
         {
           "apps": [ "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Editing topic word clouds works again."
         }
       ]
@@ -208,7 +264,7 @@
       "notes": [
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Downloading top themes in Explorer works again."
         }
       ]
@@ -219,12 +275,12 @@
       "notes": [
         {
           "apps": [ "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Solved problem preventing some users from downloading topic story CSV files."
         },
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Reviewing sources in a collection works even if they've never been scraped."
         }
       ]
@@ -235,32 +291,32 @@
       "notes": [
         {
           "apps": [ "topics", "sources", "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Password reset link works again."
         },
         {
           "apps": [ "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Topic creation page looks better."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Copy-to-all button in Explorer works again."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Explorer can now show NYT themes more often."
         },
         {
           "apps": [ "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Topic permission no longer blank out after you change them."
         },
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "We show clear labels again while editing source metadata."
         }
       ]
@@ -271,27 +327,27 @@
       "notes": [
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Searching for sources and collections from the homepage works again."
         },
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Approving suggested sources works again."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Removed some errant themes from the list of themes that show up."
         },
         {
           "apps": [ "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Admins can see full cached HTML of a story in Topic Mapper."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Date shows up correctly now when looking at detailed info about a story in Explorer."
         }
       ]
@@ -302,113 +358,113 @@
       "notes": [
         {
           "apps": [ "sources", "explorer", "topics" ],
-          "type": "Feature",
+          "type": "New",
           "note": "Lots of polish to all the buttons, text, etc. widgets that we use."
         },
         {
           "apps": [ "topics" ],
-          "type": "Feature",
+          "type": "New",
           "note": "The topic summary page is split into categories like Explorer now."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Clicking for details in explorer now scrolls right to the details."
         },
         {
           "apps": [ "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "The selecting media window no longer shows up weirdly off-screen."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Feature",
+          "type": "New",
           "note": "Move themes results from attention to langauge tab."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Word trees in explorer show all the words again."
         },
         {
           "apps": [ "topics", "explorer", "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Feedback after you do something now shows up on top of screen."
         },
         {
           "apps": [ "topics" ],
-          "type": "Feature",
+          "type": "New",
           "note": "You can search for a specific media source in a topic."
         },
         {
           "apps": [ "topics" ],
-          "type": "Feature",
+          "type": "New",
           "note": "Admins can now see our cached copy of the story within a Topic."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "You can now download total attention for all queries in Explorer in one CSV."
         },
         {
           "apps": [ "topics" ],
-          "type": "Feature",
+          "type": "New",
           "note": "You can download a CSV comparing top words in each subtopic."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Download total attention for all queries in Explorer in one CSV."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Deleting saved searches in Explorer works again."
         },
         {
           "apps": [ "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Removed some unused columns from the Topic story CSV download."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Download total attention for all queries in Explorer in one CSV."
         },
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Favoriting sources and collections in Source Mgr works again."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Download total attention for all queries in Explorer in one CSV."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "The sample story title in Explorer links to its webpage again."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Download total attention for all queries in Explorer in one CSV."
         },
         {
           "apps": [ "explorer", "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Renamed 'representation' to 'entities', because that's what they are."
         },
         {
           "apps": [ "sources" ],
-          "type": "Feature",
+          "type": "New",
           "note": "The feeds for a source now are split between active and inactive on two tabs."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
-          "note": "Fixed a bug preventing some sample story dates from showing up correctly."
+          "type": "Fixed",
+          "note": "Fixeded a bug preventing some sample story dates from showing up correctly."
         }
       ]
     },
@@ -418,12 +474,12 @@
       "notes": [
         {
           "apps": [ "sources" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Now you can edit sources again."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Show entities for a story correctly in Explorer."
         }
       ]
@@ -434,37 +490,37 @@
       "notes": [
         {
           "apps": [ "explorer" ],
-          "type": "Feature",
+          "type": "New",
           "note": "Click a sample story in Explorer to learn more about the data we have on it."
         },
         {
           "apps": [ "topics" ],
-          "type": "Feature",
+          "type": "New",
           "note": "Add media metadata to topic top media lists."
         },
         {
           "apps": [ "topics", "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Remove duplicate entries from list of locations mentioned in a story."
         },
         {
           "apps": [ "sources" ],
-          "type": "Feature",
+          "type": "New",
           "note": "Split view of RSS and spidered stories in Source Manager charts."
         },
         {
           "apps": [ "topics", "explorer", "sources" ],
-          "type": "Feature",
+          "type": "New",
           "note": "Better about pages for every tool."
         },
         {
           "apps": [ "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Remove duplicate subtopic info from topic story download CSV."
         },
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Use a better color palette for Explorer geographic representation maps."
         }
       ]
@@ -475,8 +531,8 @@
       "notes": [
         {
           "apps": [ "topics" ],
-          "type": "Fix",
-          "note": "Fix bug that was showing super long lists of stories in Topic Mapper."
+          "type": "Fixed",
+          "note": "Fixed bug that was showing super long lists of stories in Topic Mapper."
         }
       ]
     },
@@ -486,17 +542,17 @@
       "notes": [
         {
           "apps": [ "explorer" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "You can toggle between tabs in the Explorer Top Words results again."
         },
         {
           "apps": [ "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "The Topic Mapper homepage works again for logged-out users."
         },
         {
           "apps": [ "topics" ],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "You can use the back button while created a new Topic."
         }
       ]
@@ -507,27 +563,27 @@
       "notes": [
         {
           "apps": ["explorer"],
-          "type": "Feature",
+          "type": "New",
           "note": "Click a top word to see a 'Word Tree' showing how it is used in context."
         },
         {
           "apps": ["explorer"],
-          "type": "Feature",
+          "type": "New",
           "note": "Renamed 'People & Places' to 'Representation'."
         },
         {
           "apps": ["explorer", "topics"],
-          "type": "Feature",
+          "type": "New",
           "note": "Switch between 1k and 10k sample sizes for word clouds."
         },
         {
           "apps": ["explorer"],
-          "type": "Feature",
+          "type": "New",
           "note": "Quickly choose from your starred sources & collections while picking media."
         },
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Links to source articles in Topic Mapper show up better."
         }
       ]
@@ -538,8 +594,8 @@
       "notes": [
         {
           "apps": ["sources"],
-          "type": "Fix",
-          "note": "Fix editing and adding feeds to a source."
+          "type": "Fixed",
+          "note": "Fixed editing and adding feeds to a source."
         }
       ]
     },
@@ -549,12 +605,12 @@
       "notes": [
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Viewing total stories as a percentage in Explorer works again."
         },
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better page titles in Topic Mapper."
         }
       ]
@@ -565,17 +621,17 @@
       "notes": [
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Clicking on a story in Topic Mapper now shows the correct story information."
         },
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Option to restart a topic that has had an error."
         },
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Added influence data back to story CSV download in Topic Mapper."
         }
       ]
@@ -586,42 +642,42 @@
       "notes": [
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Filtering a Topic by a search string works better, and doesn't allow network mapping."
         },
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Don't show themes on Explorer if not enough stories have them set."
         },
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better display when you use lots of sources/collections in Explorer."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better consistent columns in the various places you can download a list of sources."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better feedback for errors when uploading a list of sources to a collection in Source Manager."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Media source feeds are now either active or disabled (no skipped or other confusing states)."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better handling and display of internal private collections."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Source and Collections pages now show better geographic attention maps."
         }
       ]
@@ -632,7 +688,7 @@
       "notes": [
         {
           "apps": ["explorer", "topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Add CSV download for word space charts (<a href=\"https://mediacloud.org/news/2018/5/23/word-spaces-visualizing-word2vec-to-support-media-analysis\">the blog post for more details</a>)"
         }
       ]
@@ -643,12 +699,12 @@
       "notes": [
         {
           "apps": ["explorer","sources", "topics"],
-          "type": "Feature",
+          "type": "New",
           "note": "Rolls out our new \"word space\" visualization! Read <a href=\"https://mediacloud.org/news/2018/5/23/word-spaces-visualizing-word2vec-to-support-media-analysis\">the blog post for more details</a>."
         },
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Resolved problem where some topic attention charts didn't draw all the dates."
         }
       ]
@@ -659,12 +715,12 @@
       "notes": [
         {
           "apps": ["sources", "topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Links to explorer in Source Manager and Topic Mapper work again."
         },
         {
           "apps": ["sources", "explorer", "topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Updated some of our plumbing."
         }
       ]
@@ -675,12 +731,12 @@
       "notes": [
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better download of entities and geography in Explorer."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Show last year of coverage for sources and collections correctly."
         }
       ]
@@ -691,17 +747,17 @@
       "notes": [
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Downloading story-list and story-count CSVs in Explorer works again."
         },
         {
           "apps": ["explorer"],
-          "type": "Feature",
+          "type": "New",
           "note": "See normalized total attention in Explorer (based on the same query, without the keywords)."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Links in the various Source Manager pages to \"seach in Explorer\" work again."
         }
       ]
@@ -712,7 +768,7 @@
       "notes": [
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Clicking on attention chart to drill down with sentence excerpts for the day works again."
         }
       ]
@@ -723,23 +779,23 @@
       "notes": [
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Make sure attention chart only show stories within the topic timespan you are looking at."
         },
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Correctly show chart of word use within a topic over time."
         },
         {
           "apps": ["explorer"],
-          "type": "Feature",
+          "type": "New",
           "note": "See normalized attention charts in Explorer (based on the same query, without the keywords)."
         },
         {
           "apps": ["explorer"],
-          "type": "Fix",
-          "note": "Fix attention chart to render 0s correctly when there are no stories matching your query."
+          "type": "Fixed",
+          "note": "Fixed attention chart to render 0s correctly when there are no stories matching your query."
         }
       ]
     },
@@ -749,17 +805,17 @@
       "notes": [
         {
           "apps": ["explorer", "topics", "sources"],
-          "type": "Feature",
+          "type": "New",
           "note": "Switched to story-based searching (<a href=\"https://mediacloud.org/news/2018/4/12/switching-to-story-based-searching-on-may-12th\" target=\"_new\">learn more</a>)."
         },
         {
           "apps": ["topics", "explorer", "sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "The default sample size for word clouds is now 1,000 stories (for performance reasons). More details coming soon as we validate that."
         },
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Saved searches from Dashboard now show up in Explorer."
         }
       ]
@@ -770,22 +826,22 @@
       "notes": [
         {
           "apps": ["explorer", "topics"],
-          "type": "Feature",
+          "type": "New",
           "note": "Warn people that <a href=\"https://mediacloud.org/news/2018/4/12/switching-to-story-based-searching-on-may-12th\" target=\"_new\">we are switching to story-based searches</a>."
         },
         {
           "apps": ["topics"],
-          "type": "Fix",
-          "note": "Fix shortcut that lets you seach a Topic in Explorer."
+          "type": "Fixed",
+          "note": "Fixed shortcut that lets you seach a Topic in Explorer."
         },
         {
           "apps": ["sources", "explorer", "topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Use the same word-count, and tag-count, sample sizes everywhere."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "You can import sources from one collection into another again."
         }
       ]
@@ -796,37 +852,37 @@
       "notes": [
         {
           "apps": ["explorer", "topics"],
-          "type": "Feature",
+          "type": "New",
           "note": "Link to list of <a href=\"https://mediacloud.org/support/theme-list\">the 600 themes</a> we code for."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Clarify attention chart on collection page."
         },
         {
           "apps": ["sources", "explorer", "topics"],
-          "type": "Feature",
+          "type": "New",
           "note": "Update default collection to new Pew US Mainstream list for 2017."
         },
         {
           "apps": ["topics", "explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Remove some confusing internal data from story list CSV download."
         },
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Layout and text improvements on word comparison chart."
         },
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Speedup on showing languaeg results in Explorer."
         },
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Re-organized topic homepage to load faster."
         }        
       ]
@@ -837,22 +893,22 @@
       "notes": [
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Downloading topic story lists works again, and includes more data."
         },
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better explanatory text next to visualizations in Explorer."
         },
         {
           "apps": ["sources", "explorer", "topics"],
-          "type": "Fix",
-          "note": "Updated our featured collections to be more current."
+          "type": "Fixed",
+          "note": "Updated our Newd collections to be more current."
         },
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Picking media sources and collections while creating a topic works better."
         }
       ]
@@ -863,22 +919,22 @@
       "notes": [
         {
           "apps": ["sources", "explorer"],
-          "type": "Feature",
+          "type": "New",
           "note": "Sources now show the number of stories per day, and the date of the first story."
         },
         {
           "apps": ["sources"],
-          "type": "Feature",
+          "type": "New",
           "note": "New screen to help admins review sources within a collection."
         },
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Changed 'Sample Stories' to 'Random Stories' to clarify what is on the list."
         },
         {
           "apps": ["explorer"],
-          "type": "Feature",
+          "type": "New",
           "note": "Story list download CSV now includes the themes detected."
         }
       ]
@@ -889,33 +945,33 @@
       "notes": [
         {
           "apps": ["sources", "topics"],
-          "type": "Feature",
+          "type": "New",
           "note": "New Source Manager & Topic Mapper homepage sections try to explain what they do better."
         },
         {
           "apps": ["sources", "explorer"],
-          "type": "Feature",
-          "note": "Better list of featured collections.",
-          "details": "The list of featured collections that see on the Source Manager homepage, and when picking media, was getting a bit stale.  We've updated that list to include more recent collections, and to help you get a sense of what is available for you to use in Media Cloud."
+          "type": "New",
+          "note": "Better list of Newd collections.",
+          "details": "The list of Newd collections that see on the Source Manager homepage, and when picking media, was getting a bit stale.  We've updated that list to include more recent collections, and to help you get a sense of what is available for you to use in Media Cloud."
         },
         {
           "apps": ["sources"],
-          "type": "Feature",
+          "type": "New",
           "note": "Now Source Manager menu item to see all of our geographic collections."
         },
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Trying to add media to an Explorer query no longer resets the keywords."
         },
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Demo Explorer searches default to the past month now (instead of the past two weeks)."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "The source page in Source Manager now shows story counts over the last year.",
           "details": "This is a better way to understand if a source is current or not."
         }
@@ -927,12 +983,12 @@
       "notes": [
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "You can the sources in a collection again."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Collections now show public/private status correctly."
         }
       ]
@@ -943,12 +999,12 @@
       "notes": [
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better feedback about min/max sizes while creating topics."
         },
         {
           "apps": ["sources"],
-          "type": "Feature",
+          "type": "New",
           "note": "Redid the source and collection homepages."
         }
       ]
@@ -959,12 +1015,12 @@
       "notes": [
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Support multiple quoted phrases in searches."
         },
         {
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better feedback when a topic you create is in the queue to run.",
           "details": "This is not an error; you're just in line behind some other topics to run.  The note at the top tells you details about that."
         }
@@ -976,7 +1032,7 @@
       "notes": [
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Update sample searches and example images."
         }
       ]
@@ -987,49 +1043,49 @@
       "notes": [
         {
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Sped up source searching."
         },
         {
           "apps": ["explorer"],
-          "type": "Fix",
-          "note": "Fixed default collection names on new Explorer queries."
+          "type": "Fixed",
+          "note": "Fixeded default collection names on new Explorer queries."
         },
         {
           "apps": ["topics"],
-          "type": "Feature",
+          "type": "New",
           "note": "Add option to view topic in Explorer to Topic control bar."
         },
         {
           "apps": ["sources"],
-          "type": "Feature",
+          "type": "New",
           "note": "List geographic collections by country.",
           "details": "Visit the Source Manager, then click the menu and select the 'Browse Geographic Collections' menu option."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Speed up uploading a CSV of sources to a collection."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Link from source/collection page to Explorer, not Dashboard."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Automatically add http:// to source urls when uploaded in CSV."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Add stories per week to source detail page.",
           "details": "This is really helpful if you are trying to find the most useful sources in our system."
         },
         {
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Remove misleading source health indications.",
           "details": "The health measurement was based on some math about average stories per week that didn't work well.  Until we come up with a better solution we have removed that for now, so you're not told a source is 'unhealthy' when in fact it is working quite well."
         }
@@ -1041,52 +1097,52 @@
       "notes": [
         { 
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Media stories/inlinks/outlinks are downloadable again."
         },
         { 
           "apps": ["explorer"],
-          "type": "Feature",
+          "type": "New",
           "note": "Allow you to copy keywords/date/media to all queries."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Return more results while searching for sources."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Faster langauge results when comparing multiple queries."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better cursor when clicking a day on the attention over time chart."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Force short query names so the UI doesn't wrap weirdly."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Consistent text when renaming queries."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better summaries on the little query tabs about sources/collections."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "When you add a new query it copies the date from the last one."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Lets you edit query names after adding new queries."
         }        
       ]
@@ -1097,7 +1153,7 @@
       "notes": [
         { 
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Users can save new collections again."
         }
       ]
@@ -1108,76 +1164,76 @@
       "notes": [
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Click on a point on the attention chart to see more details.",
-          "details": "This replicates a feature we used to have on the Dashboard tool.  Click a data point on an Explorer attention chart and you'll see a sample of stories and a word cloud for just that time period.  This can help you identify what happened on a specific day."
+          "details": "This replicates a New we used to have on the Dashboard tool.  Click a data point on an Explorer attention chart and you'll see a sample of stories and a word cloud for just that time period.  This can help you identify what happened on a specific day."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Comparative word cloud now reloads after new search is run."
         },
         { 
           "apps": ["explorer", "topics"],
-          "type": "Feature",
+          "type": "New",
           "note": "Theme charts are now normalized so they aren't misleading.",
           "details": "Sometimes the bubbles were really big, even though the number of stories with a certain theme were quite small.  We're now showing these as a ratio on top of a grey circle that represents the total number of stories, so you won't be misled by a big bubble only showing a small quantity.  This also helps compare theme results across different Explorer searches."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Theme downloads now work for multiple queries."
         },
         { 
           "apps": ["explorer", "topics", "sources"],
-          "type": "Feature",
+          "type": "New",
           "note": "New release notes menu and webpage to show recent changes."
         },
         { 
           "apps": ["sources"],
-          "type": "Feature",
+          "type": "New",
           "note": "Created <a href=\"https://github.com/mitmedialab/MediaCloud-Web-Tools/blob/master/doc/collections-csv-data-dictonary.md\">a data-dictionary</a> to document the collections CSV file format."
         },
         { 
           "apps": ["explorer"],
-          "type": "Feature",
+          "type": "New",
           "note": "You can now search in all Media Cloud sources, even though this is a bad idea.",
           "details": "Our collection of media sources is closely aligned with topics we have researched before, and doesn't represent a balanced list of media sources that represent the media ecosystem online. For instance, because we have done deep research on gender and reproductive rights, we have an over-representation of blogs and media outlets that cover those issues. The same is true for public health and international development. You should try to avoid searching all sources. Click 'Add Media' and pick some specific sources, or country-based collections to localize your search and get more representative results."
         },
         { 
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Maps and entity lists now work for larger topics."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
-          "note": "Fix reloading explorer results pages."
+          "type": "Fixed",
+          "note": "Fixed reloading explorer results pages."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Save search button now works in Firefox."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better handling of unicode file names."
         },
         { 
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Reduce jumpiness of source search autocomplete."
         },
         { 
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Listing geographic collections and metadata is much faster."
         },
         { 
           "apps": ["sources"],
-          "type": "Fix",
-          "note": "Fixed link to Sources app on the Tools page."
+          "type": "Fixed",
+          "note": "Fixeded link to Sources app on the Tools page."
         }
       ]
     },
@@ -1187,7 +1243,7 @@
       "notes": [
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Download files without popups."
         }
       ]
@@ -1199,32 +1255,32 @@
         { 
           "apps": ["explorer"],
           "note": "Show top themes results.",
-          "type": "Feature",
+          "type": "New",
           "details": "These themes can help you identify the types of narratives the media is telling about your query. This is based on a transfer-learning model we built with the Google News word2vec model and the New York Times annotated corpus."
         },
         { 
           "apps": ["sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Show more results on advanced search."
         },
         { 
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better feedback when creating topics."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Correctly handle searches using \"quoted phrases\"."
         },
         { 
           "apps": ["explorer"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Use more consistent names for downloaded files."
         },
         { 
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Show more inlinks and outlinks on story details page."
         }
       ]
@@ -1235,8 +1291,8 @@
       "notes": [
         { 
           "apps": ["explorer"],
-          "type": "Fix",
-          "note": "Fix bug that wouldn't let you edit dates sometimes."
+          "type": "Fixed",
+          "note": "Fixed bug that wouldn't let you edit dates sometimes."
         }
       ]
     },
@@ -1246,7 +1302,7 @@
       "notes": [
         { 
           "apps": ["explorer"],
-          "type": "Feature",
+          "type": "New",
           "note": "More columns in story list CSV download."
         }
       ]
@@ -1257,7 +1313,7 @@
       "notes": [
         { 
           "apps": ["topics", "explorer", "sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Show better high level error messages."
         }
       ]
@@ -1268,7 +1324,7 @@
       "notes": [
         { 
           "apps": ["topics", "explorer", "sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Password reset works again."
         }
       ]
@@ -1279,7 +1335,7 @@
       "notes": [
         { 
           "apps": ["topics", "explorer", "sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better signup errors."
         }
       ]
@@ -1290,7 +1346,7 @@
       "notes": [
         { 
           "apps": ["topics", "explorer", "sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Work on cache errors some folks are seeing."
         }
       ]
@@ -1301,7 +1357,7 @@
       "notes": [
         { 
           "apps": ["topics", "explorer", "sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Work on cache errors some folks are seeing."
         }
       ]
@@ -1312,7 +1368,7 @@
       "notes": [
         { 
           "apps": ["topics", "explorer", "sources"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Better nav-bar links between the tools."
         }
       ]
@@ -1323,41 +1379,41 @@
       "notes": [
         { 
           "apps": ["topics", "explorer", "sources"],
-          "type": "Feature",
+          "type": "New",
           "note": "Single sign on! Once you log in, you're logged into all the tools."
         },
         { 
           "apps": ["topics", "sources", "explorer"],
-          "type": "Feature",
+          "type": "New",
           "note": "New homepages for all the tools.",
           "details": "We did some user testing and have a new approach to the homepages. Hopefully this design clears up what each tool is for."
         },
         { 
           "apps": ["topics"],
-          "type": "Feature",
+          "type": "New",
           "note": "Create subtopics by media type.",
           "details": "You can now automatically divide up a topic based on the type of each media the stories are published by. Use this to compare print vs. online coverage, for instance.  We have this information for lots of sources (from <a href=\"http://abyznewslinks.com\">abyznewslinks.com</a>), but definitely not all sources."
         },
         { 
           "apps": ["topics"],
-          "type": "Fix",
+          "type": "Fixed",
           "note": "Use the new media picker when creating topics."
         },
         { 
           "apps": ["topics"],
-          "type": "Feature",
+          "type": "New",
           "note": "Link to let you query the a topic in the Dashboard.",
           "details": "Find this new link on the control bar on your topic's summary page."
         },
         { 
           "apps": ["explorer"],
-          "type": "Feature",
+          "type": "New",
           "note": "Support empty searches.",
           "details": "These automatically turn into a \"wildcard\" search - ie. a search for \"*\"."
         },
         { 
           "apps": ["topics"],
-          "type": "Feature",
+          "type": "New",
           "note": "Show tweet counts on story tables (if twitter data available)",
           "deatils": "For topics that been augmented by discovering links shared in related tweets, you can now see that twitter count on any story lists."
         }

@@ -13,12 +13,13 @@ from server.util.request import arguments_required, form_fields_required, api_er
 from server.util.tags import TAG_SETS_ID_PUBLICATION_COUNTRY, TAG_SETS_ID_PUBLICATION_STATE, VALID_COLLECTION_TAG_SETS_IDS, \
     TAG_SETS_ID_PRIMARY_LANGUAGE, TAG_SETS_ID_COUNTRY_OF_FOCUS, TAG_SETS_ID_MEDIA_TYPE, TAG_SET_GEOCODER_VERSION, \
     TAG_SET_NYT_LABELS_VERSION, is_metadata_tag_set
-from server.views.sources import cached_source_story_count
 from server.views.sources.words import word_count, stream_wordcount_csv
 from server.views.sources.geocount import stream_geo_csv, cached_geotag_count
 from server.views.sources.stories_split_by_time import stream_split_stories_csv
 import server.views.sources.apicache as apicache
 from server.views.favorites import add_user_favorite_flag_to_sources, add_user_favorite_flag_to_collections
+from server.views.sources.feeds import source_feed_list
+from server.views.stories import QUERY_LAST_YEAR
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +61,7 @@ def source_stats(media_id):
     results = {}
     # story count
     media_query = "(media_id:{})".format(media_id)
-    source_specific_story_count = cached_source_story_count(username, media_query)
+    source_specific_story_count = apicache.source_story_count(user_mediacloud_key(), media_query)
     results['story_count'] = source_specific_story_count
     # health
     media_health = _cached_media_source_health(username, media_id)
@@ -73,13 +74,9 @@ def source_stats(media_id):
                                ((c['show_on_media'] == 1) or user_can_see_private_collections))]
     results['collection_count'] = len(visible_collections)
     # geography tags
-    tag_specific_story_count = user_mc.storyTagCount(solr_query=media_query, tag_sets_id=TAG_SET_GEOCODER_VERSION)
-    ratio_geo_tagged_count = float(tag_specific_story_count[0]['count']) / float(source_specific_story_count) if len(tag_specific_story_count) > 0 else 0
-    results['geoPct'] = ratio_geo_tagged_count
+    results['geoPct'] = apicache.tag_coverage_pct(user_mediacloud_key(), media_query, TAG_SET_GEOCODER_VERSION)
     # nyt theme
-    tag_specific_story_count = user_mc.storyTagCount(solr_query=media_query, tag_sets_id=TAG_SET_NYT_LABELS_VERSION)
-    ratio_nyt_tagged_count = float(tag_specific_story_count[0]['count']) / float(source_specific_story_count) if len(tag_specific_story_count) > 0 else 0
-    results['nytPct'] = ratio_nyt_tagged_count
+    results['nytPct'] = apicache.tag_coverage_pct(user_mediacloud_key(), media_query, TAG_SET_NYT_LABELS_VERSION)
     return jsonify(results)
 
 
@@ -140,6 +137,7 @@ def api_media_source_details(media_id):
     add_user_favorite_flag_to_sources([info])
     add_user_favorite_flag_to_collections(info['media_source_tags'])
     return jsonify(info)
+
 
 @app.route('/api/sources/<media_id>/scrape', methods=['POST'])
 @flask_login.login_required
@@ -341,3 +339,28 @@ def tag_ids_from_collections_param():
     if len(collection_ids) > 0:
         tag_ids_to_add = [int(cid) for cid in collection_ids if len(cid) > 0]
     return list(set(tag_ids_to_add))
+
+
+@app.route('/api/sources/<media_id>/review-info')
+@flask_login.login_required
+@api_error_handler
+def api_source_review_info(media_id):
+    user_mc = user_admin_mediacloud_client()
+    # latest scrape job
+    scrape_jobs = user_mc.feedsScrapeStatus(media_id)
+    latest_scrape_job = None
+    if len(scrape_jobs['job_states']) > 0:
+        latest_scrape_job = scrape_jobs['job_states'][0]
+    # active feed count
+    feeds = source_feed_list(media_id)
+    active_syndicated_feeds = [f for f in feeds if f['active'] and f['type'] == 'syndicated']
+    active_feed_count = len(active_syndicated_feeds)
+    query = "media_id:{}".format(media_id)
+    full_count = apicache.timeperiod_story_count(user_mc, query, QUERY_LAST_YEAR)['count']
+    info = {
+        'media_id': int(media_id),
+        'latest_scrape_job': latest_scrape_job,
+        'active_feed_count': active_feed_count,
+        'num_stories_last_year': full_count,
+    }
+    return jsonify(info)

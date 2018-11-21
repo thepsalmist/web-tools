@@ -49,20 +49,23 @@ function withIntlForm(Component) {
       );
     };
 
-    renderTextFieldWithFocus = ({ input, saveRef, meta: { touched, error }, ...custom }) => {
+    renderTextFieldWithFocus = ({ input, saveRef, meta: { touched, error, warning }, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
       if (intlCustom.helpertext !== undefined) {
         intlCustom.helperText = intlCustom.helpertext;
       }
       return (
-        <TextField
-          className="form-field-text"
-          error={error !== undefined}
-          ref={saveRef}
-          {...input}
-          {...intlCustom}
-          helperText={touched ? this.intlIfObject(error) : ''}
-        />
+        <React.Fragment>
+          <TextField
+            className="form-field-text"
+            error={error !== undefined}
+            ref={saveRef}
+            {...input}
+            {...intlCustom}
+            helperText={touched ? this.intlIfObject(error) : ''}
+          />
+          {warning && (<div className="textfield-warning">{warning}</div>)}
+        </React.Fragment>
       );
     };
 

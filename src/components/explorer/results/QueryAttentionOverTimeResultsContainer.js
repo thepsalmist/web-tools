@@ -3,14 +3,16 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
+import Divider from '@material-ui/core/Divider';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { fetchQuerySplitStoryCount, fetchDemoQuerySplitStoryCount, resetSentenceCounts, setSentenceDataPoint, resetSentenceDataPoint } from '../../../actions/explorerActions';
 import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import withQueryResults from './QueryResultsSelector';
-import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
+import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTimeChart';
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import { oneDayLater, solrFormat } from '../../../lib/dateUtil';
@@ -67,7 +69,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
   }
 
   render() {
-    const { results, queries } = this.props;
+    const { results, queries, selectedTimePeriod } = this.props;
     // stich together bubble chart data
 
     // because these results are indexed, we can merge these two arrays
@@ -82,14 +84,14 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
           if (query.counts || query.normalizedCounts) {
             let data;
             if (this.state.view === VIEW_NORMALIZED) {
-              data = query.counts.map(d => [d.date, d.ratio]);
+              data = dataAsSeries(query.counts, 'ratio');
             } else {
-              data = query.counts.map(d => [d.date, d.count]);
+              data = dataAsSeries(query.counts);
             }
             return {
               id: idx,
               name: query.label,
-              data,
+              ...data,
               color: query.color,
             };
           } return {};
@@ -97,13 +99,14 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
       ];
     }
     return (
-      <div>
+      <React.Fragment>
         <AttentionOverTimeChart
           series={series}
           height={300}
           backgroundColor="#f5f5f5"
           onDataPointClick={this.handleDataPointClick}
           normalizeYAxis={this.state.view === VIEW_NORMALIZED}
+          interval={selectedTimePeriod}
         />
         <div className="actions">
           <ActionMenu actionTextMsg={messages.downloadOptions}>
@@ -141,9 +144,11 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
                 <FormattedMessage {...localMessages.withoutKeywords} />
               </ListItemText>
             </MenuItem>
+            <Divider />
+            {this.props.attentionAggregationMenuItems}
           </ActionMenu>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }
@@ -156,6 +161,8 @@ QueryAttentionOverTimeResultsContainer.propTypes = {
   // from hocs
   intl: PropTypes.object.isRequired,
   onShowLoginDialog: PropTypes.func.isRequired,
+  attentionAggregationMenuItems: PropTypes.array.isRequired,
+  selectedTimePeriod: PropTypes.string.isRequired,
   // from dispatch
   fetchData: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
@@ -167,12 +174,14 @@ QueryAttentionOverTimeResultsContainer.propTypes = {
   selectDataPoint: PropTypes.func.isRequired,
   tabSelector: PropTypes.object,
   selectedTabIndex: PropTypes.number,
+
 };
 
 const mapStateToProps = state => ({
   lastSearchTime: state.explorer.lastSearchTime.time,
   fetchStatus: state.explorer.storySplitCount.fetchStatus || FETCH_INVALID,
   results: state.explorer.storySplitCount.results,
+  selectedTimePeriod: state.explorer.storySplitCount.selectedTimePeriod,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -210,12 +219,17 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(resetSentenceDataPoint());
     dispatch(setSentenceDataPoint(clickedDataPoint));
   },
+
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
     asyncFetch: () => {
       dispatchProps.fetchData(ownProps.queries);
+    },
+    shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
+      const { selectedTimePeriod } = stateProps;
+      return nextProps.selectedTimePeriod !== selectedTimePeriod;
     },
   });
 }
@@ -224,10 +238,12 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withSummary(localMessages.lineChartTitle, localMessages.descriptionIntro, [localMessages.descriptionDetail, messages.countsVsPercentageHelp])(
-      withAsyncFetch(
-        withQueryResults(
-          withLoginRequired(
-            QueryAttentionOverTimeResultsContainer
+      withAttentionAggregation(
+        withAsyncFetch(
+          withQueryResults(
+            withLoginRequired(
+              QueryAttentionOverTimeResultsContainer
+            )
           )
         )
       )

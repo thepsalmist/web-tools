@@ -50,7 +50,7 @@ export function topicSplitStoryCounts(topicId, params) {
 }
 
 export function topicStoryCounts(topicId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q']);
+  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'start_date', 'end_date', 'sources[]', 'collections[]']);
   return createApiPromise(`/api/topics/${topicId}/stories/counts`, acceptedParams);
 }
 
@@ -99,9 +99,19 @@ export function mediaInlinks(topicId, mediaId, params) {
   return createApiPromise(`/api/topics/${topicId}/media/${mediaId}/inlinks`, acceptedParams);
 }
 
+export function allMediaInlinks(topicId, mediaId, params) {
+  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'sort']);
+  return createApiPromise(`/api/topics/${topicId}/media/${mediaId}/inlinks/all`, acceptedParams);
+}
+
 export function mediaOutlinks(topicId, mediaId, params) {
   const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'sort', 'limit']);
   return createApiPromise(`/api/topics/${topicId}/media/${mediaId}/outlinks`, acceptedParams);
+}
+
+export function allMediaOutlinks(topicId, mediaId, params) {
+  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'sort']);
+  return createApiPromise(`/api/topics/${topicId}/media/${mediaId}/outlinks/all`, acceptedParams);
 }
 
 export function topicFocalSetsList(topicId, snapshotId) {
@@ -354,4 +364,9 @@ export function topicTopPeople(topicId, params) {
 export function topicTopOrgs(topicId, params) {
   const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'sort', 'limit', 'q', 'linkId']);
   return createApiPromise(`/api/topics/${topicId}/entities/organizations`, acceptedParams);
+}
+
+export function topicSimilarWords(topicId, theWord, params) {
+  const acceptedParams = acceptParams(params, ['snapshotId']);
+  return createApiPromise(`/api/topics/${topicId}/words/${theWord}/similar`, acceptedParams);
 }

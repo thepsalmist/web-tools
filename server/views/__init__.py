@@ -9,6 +9,6 @@ WORD_COUNT_DOWNLOAD_NUM_WORDS = 1000   # how mant words to include in a word cou
 # awaiting validation...
 TAG_COUNT_SAMPLE_SIZE = 5000
 
-TAG_COUNT_UI_LENGTH = 10  # the number of top tags to pull for display in the UI
+TAG_SAMPLE_SIZE = 50  # the number of top tags to pull so we get enough tags for critial mass
 
 TAG_COUNT_DOWNLOAD_LENGTH = 1000  # when downloading you want all of them (there are only 600 total)

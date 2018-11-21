@@ -43,12 +43,11 @@ def api_collection_search(search_str):
     add_user_favorite_flag_to_collections(trimmed)
     return jsonify({'list': trimmed})
 
-
 @app.route('/api/sources/search/name-exists', methods=['GET'])
 @flask_login.login_required
 @arguments_required('searchStr')
 @api_error_handler
-def api_source_name_exists():
+def api_sources_name_exists():
     '''Check if source with name/url exists already
     :return: boolean indicating if source with this name exists or not (case insensive check)
     '''
@@ -57,10 +56,31 @@ def api_source_name_exists():
     id = int(request.args['id']) if 'id' in request.args else None
     matching_sources = mc.mediaList(name_like=search_str)[:MAX_SOURCES]
     if id:
-        matching_source_names = [s['name'].lower().strip() for s in matching_sources if s['media_id'] != id]
+        matching_source_names = [s['name'].lower().strip() for s in matching_sources if s['media_id'] != id and s['name'].strip().lower() != search_str.strip().lower() ]
     else:
         matching_source_names = [s['name'].lower().strip() for s in matching_sources]
 
     name_in_use = search_str.lower() in matching_source_names
     return jsonify({'nameInUse': name_in_use})
 
+
+@app.route('/api/collections/search/name-exists', methods=['GET'])
+@flask_login.login_required
+@arguments_required('searchStr')
+@api_error_handler
+def api_collections_name_exists():
+    '''Check if source with name/url exists already
+    :return: boolean indicating if source with this name exists or not (case insensive check)
+    '''
+    mc = user_mediacloud_client()
+    search_str = request.args['searchStr']
+    id = int(request.args['id']) if 'id' in request.args else None
+    #tag_sets_id_list, public_only=public_only, name_like=search_str
+    matching_collections = mc.tagList(name_like=search_str)[:MAX_SOURCES]
+    if id:
+        matching_collections_names = [s['label'].lower().strip() for s in matching_collections if s['tags_id'] != id]
+    else:
+        matching_collections_names = [s['label'].lower().strip() for s in matching_collections]
+
+    name_in_use = search_str.lower() in matching_collections_names
+    return jsonify({'nameInUse': name_in_use})

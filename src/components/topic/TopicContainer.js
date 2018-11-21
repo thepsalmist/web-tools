@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { filteredLocation, urlWithFilters } from '../util/location';
 import withAsyncFetch from '../common/hocs/AsyncContainer';
 import AppButton from '../common/AppButton';
-import { selectTopic, filterBySnapshot, filterByTimespan, filterByFocus, fetchTopicSummary, filterByQuery,
+import { updateTopic, selectTopic, filterBySnapshot, filterByTimespan, filterByFocus, fetchTopicSummary, filterByQuery,
   topicStartSpider } from '../../actions/topicActions';
 import { addNotice } from '../../actions/appActions';
 import { snapshotIsUsable, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
@@ -19,6 +19,7 @@ import TopicUnderConstruction from './TopicUnderConstruction';
 import TopicHeaderContainer from './TopicHeaderContainer';
 import Permissioned from '../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../lib/auth';
+import { ADMIN_MAX_RECOMMENDED_STORIES, MAX_RECOMMENDED_STORIES } from '../../lib/formValidators';
 import messages from '../../resources/messages';
 
 const localMessages = {
@@ -27,14 +28,16 @@ const localMessages = {
   hasAnError: { id: 'topic.hasError', defaultMessage: 'Sorry, this topic has an error!' },
   spiderQueued: { id: 'topic.spiderQueued', defaultMessage: 'This topic is in the queue for spidering stories.  Please reload after a bit to see if it has started spidering.' },
   queueAge: { id: 'topic.spiderQueuedAge', defaultMessage: 'In the {queueName} queue since {lastUpdated}' },
-  snapshotQueued: { id: 'snapshotGenerating.warning.queued', defaultMessage: 'We will start creating the new snapshot soon. Please reload this page in a minute to automatically see the freshest data.' },
-  snapshotRunning: { id: 'snapshotGenerating.warning.running', defaultMessage: 'We are creating a new snapshot right now. Please reload this page in a minute to automatically see the freshest data.' },
-  snapshotImporting: { id: 'snapshotGenerating.warning.importing', defaultMessage: 'We are importing the new snapshot now. Please reload this page in a minute to automatically see the freshest data.' },
+  snapshotQueued: { id: 'snapshotGenerating.warning.queued', defaultMessage: 'We will start creating the new snapshot soon. Please reload this page in a few hours to check if your data is ready.' },
+  snapshotRunning: { id: 'snapshotGenerating.warning.running', defaultMessage: 'We are creating a new snapshot right now. Please reload this page in a few hours to check if your data is ready.' },
+  snapshotImporting: { id: 'snapshotGenerating.warning.importing', defaultMessage: 'We are importing the new snapshot now. Please reload this page in a few hours to check if your data is ready.' },
   snapshotFailed: { id: 'snapshotFailed.warning', defaultMessage: 'We tried to generate a new snapshot, but it failed.' },
   topicRunning: { id: 'topic.topicRunning', defaultMessage: 'We are scraping the web for all the stories in include in your topic.' },
   notUsingLatestSnapshot: { id: 'topic.notUsingLatestSnapshot', defaultMessage: 'You are not using the latest snapshot!  If you are not doing this on purpose, <a href="{url}">switch to the latest snapshot</a> to get the best data.' },
   otherError: { id: 'topic.state.otherError', defaultMessage: 'Sorry, this topic has an error.  It says it is "{state}".' },
   trySpidering: { id: 'topic.state.trySpidering', defaultMessage: 'Manually run this topic' },
+  updateMaxStories: { id: 'topic.state.updateMaxStories', defaultMessage: 'Increase Max Stories and Respider' },
+  maxStories: { id: 'topic.state.maxStories', defaultMessage: 'Max Stories' },
 };
 
 class TopicContainer extends React.Component {
@@ -72,7 +75,7 @@ class TopicContainer extends React.Component {
   }
 
   render() {
-    const { children, goToUrl, topicInfo, topicId, snapshotCount, handleSpiderRequest, filters, needsNewSnapshot } = this.props;
+    const { children, goToUrl, topicInfo, topicId, snapshotCount, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, filters, needsNewSnapshot } = this.props;
     const { formatMessage } = this.props.intl;
     // show a big error if there is one to show
     let contentToShow = children;
@@ -84,24 +87,57 @@ class TopicContainer extends React.Component {
           <TopicUnderConstruction />
         </div>
       );
-    } else if ((topicInfo.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) || (topicInfo.state === TOPIC_SNAPSHOT_STATE_ERROR)) {
-      contentToShow = (
-        <Grid>
-          <Row>
-            <Col lg={12}>
-              <div className="topic-stuck-created-or-error">
-                <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
-                <AppButton
-                  label={formatMessage(localMessages.trySpidering)}
-                  onTouchTap={() => handleSpiderRequest(topicInfo.topics_id)}
-                  type="submit"
-                  color="primary"
+    } else if ((topicInfo.state === TOPIC_SNAPSHOT_STATE_ERROR) || (topicInfo.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED)) {
+      if (topicInfo.message.indexOf('exceeds topic max') > -1) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
+        contentToShow = (
+          <Grid>
+            <Row>
+              <Col lg={12}>
+                <div className="topic-stuck-created-or-error">
+                  <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={2}>
+                <input
+                  id="maxStories"
+                  ref={(input) => { this.textInputRef = input; }}
+                  label={formatMessage(localMessages.maxStories)}
+                  rows={1}
+                  placeholder={ADMIN_MAX_RECOMMENDED_STORIES}
                 />
-              </div>
-            </Col>
-          </Row>
-        </Grid>
-      );
+              </Col>
+              <Col lg={6}>
+                <AppButton
+                  label={formatMessage(localMessages.updateMaxStories)}
+                  onTouchTap={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo, this.textInputRef)}
+                  type="submit"
+                  primary
+                />
+              </Col>
+            </Row>
+          </Grid>
+        );
+      } else {
+        contentToShow = (
+          <Grid>
+            <Row>
+              <Col lg={12}>
+                <div className="topic-stuck-created-or-error">
+                  <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
+                  <AppButton
+                    label={formatMessage(localMessages.trySpidering)}
+                    onTouchTap={() => handleSpiderRequest(topicInfo.topics_id)}
+                    type="submit"
+                    color="primary"
+                  />
+                </div>
+              </Col>
+            </Row>
+          </Grid>
+        );
+      }
     } else if (topicInfo.state === TOPIC_SNAPSHOT_STATE_QUEUED) {
       contentToShow = (
         <div>
@@ -143,6 +179,7 @@ TopicContainer.propTypes = {
   asyncFetch: PropTypes.func.isRequired,
   addAppNotice: PropTypes.func.isRequired,
   handleSpiderRequest: PropTypes.func.isRequired,
+  handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func.isRequired,
   // from state
   filters: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string.isRequired,
@@ -186,7 +223,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       dispatch(filterByQuery(query.q));
     }
     // now that filters are set, fetch the topic summary info
-    dispatch(fetchTopicSummary(ownProps.params.topicId))
+    return dispatch(fetchTopicSummary(ownProps.params.topicId))
       .then((response) => {
         // show the subheader info
         // show any warnings based on the topic state
@@ -313,10 +350,14 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         }
       });
   },
-  handleSpiderRequest: (topicId) => {
-    dispatch(topicStartSpider(topicId))
+  handleUpdateMaxStoriesAndSpiderRequest: (topicInfo, textInput) => {
+    const maxStories = parseInt(textInput.value, 10) > MAX_RECOMMENDED_STORIES ? parseInt(textInput.value, 10) : ADMIN_MAX_RECOMMENDED_STORIES;
+
+    return dispatch(updateTopic(topicInfo.topics_id, { max_stories: maxStories }))
+      .then(dispatch(topicStartSpider(topicInfo.topics_id)))
       .then(() => window.location.reload());
   },
+  handleSpiderRequest: topicId => dispatch(topicStartSpider(topicId)).then(() => window.location.reload()),
 });
 
 export default

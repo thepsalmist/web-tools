@@ -1,7 +1,7 @@
 from operator import itemgetter
 
 from server import mc, TOOL_API_KEY
-from server.views import TAG_COUNT_UI_LENGTH
+from server.views import TAG_SAMPLE_SIZE
 from server.cache import cache, key_generator
 from server.auth import user_mediacloud_client, user_mediacloud_key, is_user_logged_in, user_admin_mediacloud_client
 from server.util.tags import processed_for_entities_query_clause, processed_for_themes_query_clause, is_bad_theme,\
@@ -72,7 +72,7 @@ def _cached_sentence_list(mc_api_key, q, fq, rows, include_stories=True):
     return sentences
 
 
-def top_tags_with_coverage(q, fq, tag_sets_id, limit=TAG_COUNT_UI_LENGTH):
+def top_tags_with_coverage(q, fq, tag_sets_id, limit=TAG_SAMPLE_SIZE):
     tag_counts = _most_used_tags(q, fq, tag_sets_id)
     if int(tag_sets_id) in [GEO_TAG_SET, CLIFF_ORGS, CLIFF_PEOPLE]:
         coverage = _entity_coverage(q, fq)

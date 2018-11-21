@@ -23,10 +23,10 @@ const localMessages = {
 
 class WordStoriesContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
-    const { fetchData, filters, sort } = this.props;
+    const { fetchData, filters, sort, stem } = this.props;
     if ((nextProps.filters !== filters)
       || (nextProps.sort !== sort)
-      || (nextProps.stem !== this.props.stem)) {
+      || (nextProps.stem !== stem)) {
       fetchData(nextProps.filters, nextProps.sort, nextProps.stem);
     }
   }

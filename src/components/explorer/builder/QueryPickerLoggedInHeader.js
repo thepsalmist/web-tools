@@ -10,7 +10,8 @@ import { QUERY_LABEL_CHARACTER_LIMIT, ACTION_MENU_ITEM_CLASS } from '../../../li
 import { defaultMenuOriginProps } from '../../util/uiUtil';
 
 const localMessages = {
-  title: { id: 'explorer.querypicker.title', defaultMessage: 'Rename Query' },
+  rename: { id: 'explorer.querypicker.title', defaultMessage: 'Rename Query' },
+  duplicate: { id: 'explorer.querypicker.title', defaultMessage: 'Duplicate Query' },
   delete: { id: 'explorer.querypicker.delete', defaultMessage: 'Delete Query' },
 };
 
@@ -28,21 +29,23 @@ class QueryPickerLoggedInHeader extends React.Component {
   };
 
   render() {
-    const { query, isDeletable, onColorChange, onDelete, onLabelEditRequest } = this.props;
+    const { query, isDeletable, onColorChange, /* onDuplicate */ onDelete, onLabelEditRequest } = this.props;
     let nameInfo = <div />;
     let menuChildren = null;
     let iconOptions = null;
     if (isDeletable()) { // if this is not the only QueryPickerItem
       menuChildren = (
         <div>
-          <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onLabelEditRequest(); this.handleClose(); }}><FormattedMessage {...localMessages.title} /></MenuItem>
+          <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onLabelEditRequest(); this.handleClose(); }}><FormattedMessage {...localMessages.rename} /></MenuItem>
+          { /* <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onDuplicate(); this.handleClose(); }}><FormattedMessage {...localMessages.duplicate} /></MenuItem> */ }
           <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onDelete(query); this.handleClose(); }}><FormattedMessage {...localMessages.delete} /></MenuItem>
         </div>
       );
     } else {
       menuChildren = (
         <div>
-          <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onLabelEditRequest(); this.handleClose(); }}><FormattedMessage {...localMessages.title} /></MenuItem>
+          <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onLabelEditRequest(); this.handleClose(); }}><FormattedMessage {...localMessages.rename} /></MenuItem>
+          { /* <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onDuplicate(); this.handleClose(); }}><FormattedMessage {...localMessages.duplicate} /></MenuItem> */ }
         </div>
       );
     }
@@ -101,6 +104,7 @@ QueryPickerLoggedInHeader.propTypes = {
   query: PropTypes.object,
   isDeletable: PropTypes.func.isRequired,
   onColorChange: PropTypes.func.isRequired,
+  /* onDuplicate: PropTypes.func.isRequired, */
   onDelete: PropTypes.func,
   onLabelEditRequest: PropTypes.func,
   // from composition

@@ -10,12 +10,11 @@ from server.cache import cache, key_generator
 from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS
 import server.util.csv as csv
 import server.util.tags as tag_util
+from server.util.stringutil import ids_from_comma_separated_str
 from server.util.request import api_error_handler
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
-from server.views.topics.apicache import topic_story_count, topic_word_counts, add_to_user_query, \
-    WORD_COUNT_DOWNLOAD_COLUMNS, topic_ngram_counts, topic_story_list_by_page, topic_story_link_list_by_page, \
-    get_media, topic_story_list, story_list
-from server.views.topics import access_public_topic
+import server.views.topics.apicache as apicache
+from server.views.topics import access_public_topic, concatenate_query_for_solr, concatenate_solr_dates
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +29,7 @@ MEDIA_INFO_POOL_SIZE = 15
 def story(topics_id, stories_id):
     if is_user_logged_in():
         local_mc = user_mediacloud_client()
-        story_topic_info = topic_story_list(user_mediacloud_key(), topics_id, stories_id=stories_id)
+        story_topic_info = apicache.topic_story_list(user_mediacloud_key(), topics_id, stories_id=stories_id)
         story_topic_info = story_topic_info['stories'][0]
         '''
         all_fb_count = []
@@ -108,8 +107,16 @@ def story_counts(topics_id):
         local_key = user_mediacloud_key()
     else:
         return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
-    total = topic_story_count(local_key, topics_id, timespans_id=None, q=None)
-    filtered = topic_story_count(local_key, topics_id)  # force a count with just the query
+    total = apicache.topic_story_count(local_key, topics_id, timespans_id=None, snapshots_id=None, q=None, foci_id=None)
+
+    solr_query = concatenate_query_for_solr(solr_seed_query=request.args['q'],
+                                            media_ids=ids_from_comma_separated_str(
+                                                request.args['sources[]']) if 'sources[]' in request.args else None,
+                                            tags_ids=ids_from_comma_separated_str(request.args[
+                                                                                      'collections[]'])) if 'collections[]' in request.args else None,
+    fq = concatenate_solr_dates(start_date=request.args['start_date'],
+                                end_date=request.args['end_date'])
+    filtered = apicache.topic_story_count(local_key, topics_id)  # force a count with just the solr_query, fq
     return jsonify({'counts': {'count': filtered['count'], 'total': total['count']}})
 
 
@@ -131,11 +138,11 @@ def story_english_counts(topics_id):
 
 def _public_safe_topic_story_count(topics_id, q):
     if access_public_topic(topics_id):
-        total = topic_story_count(TOOL_API_KEY, topics_id, q=add_to_user_query(None))
-        matching = topic_story_count(TOOL_API_KEY, topics_id, q=add_to_user_query(q))  # force a count with just the query
+        total = apicache.topic_story_count(TOOL_API_KEY, topics_id, q=apicache.add_to_user_query(None))
+        matching = apicache.topic_story_count(TOOL_API_KEY, topics_id, q=apicache.add_to_user_query(q))  # force a count with just the query
     elif is_user_logged_in():
-        total = topic_story_count(user_mediacloud_key(), topics_id, q=add_to_user_query(None))
-        matching = topic_story_count(user_mediacloud_key(), topics_id, q=add_to_user_query(q))  # force a count with just the query
+        total = apicache.topic_story_count(user_mediacloud_key(), topics_id, q=apicache.add_to_user_query(None))
+        matching = apicache.topic_story_count(user_mediacloud_key(), topics_id, q=apicache.add_to_user_query(q))  # force a count with just the query
     else:
         return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
     return jsonify({'counts': {'count': matching['count'], 'total': total['count']}})
@@ -145,26 +152,28 @@ def _public_safe_topic_story_count(topics_id, q):
 @flask_login.login_required
 @api_error_handler
 def story_words(topics_id, stories_id):
-    word_list = topic_word_counts(user_mediacloud_key(), topics_id, q='stories_id:'+stories_id)[:100]
+    word_list = apicache.topic_word_counts(user_mediacloud_key(), topics_id, q='stories_id:'+stories_id)[:100]
     return jsonify(word_list)
 
 
 @app.route('/api/topics/<topics_id>/stories/<stories_id>/words.csv', methods=['GET'])
 @flask_login.login_required
 def story_words_csv(topics_id, stories_id):
-    query = add_to_user_query('stories_id:'+stories_id)
+    query = apicache.add_to_user_query('stories_id:'+stories_id)
     ngram_size = request.args['ngram_size'] if 'ngram_size' in request.args else 1  # default to word count
-    word_counts = topic_ngram_counts(user_mediacloud_key(), topics_id, ngram_size, q=query,
-                                     num_words=WORD_COUNT_DOWNLOAD_NUM_WORDS)
-    return csv.stream_response(word_counts, WORD_COUNT_DOWNLOAD_COLUMNS,
-                               'topic-{}-story-{}-sampled-ngrams-{}-word'.format(topics_id, stories_id, ngram_size))
+    word_counts = apicache.topic_ngram_counts(user_mediacloud_key(), topics_id, ngram_size, q=query,
+                                              num_words=WORD_COUNT_DOWNLOAD_NUM_WORDS)
+    return csv.stream_response(word_counts, apicache.WORD_COUNT_DOWNLOAD_COLUMNS,
+                               'topic-{}-story-{}-sampled-ngrams-{}-word'.format(
+                                   topics_id, stories_id, ngram_size))
 
 
 @app.route('/api/topics/<topics_id>/stories/<stories_id>/inlinks', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
 def story_inlinks(topics_id, stories_id):
-    inlinks = topic_story_list(user_mediacloud_key(), topics_id, link_to_stories_id=stories_id, limit=50)
+    inlinks = apicache.topic_story_list(user_mediacloud_key(), topics_id,
+                                        link_to_stories_id=stories_id, limit=50)
     return jsonify(inlinks)
 
 
@@ -179,7 +188,7 @@ def story_inlinks_csv(topics_id, stories_id):
 @flask_login.login_required
 @api_error_handler
 def story_outlinks(topics_id, stories_id):
-    outlinks = topic_story_list(user_mediacloud_key(), topics_id, link_from_stories_id=stories_id, limit=50)
+    outlinks = apicache.topic_story_list(user_mediacloud_key(), topics_id, link_from_stories_id=stories_id, limit=50)
     return jsonify(outlinks)
 
 
@@ -194,9 +203,9 @@ def story_outlinks_csv(topics_id, stories_id):
 @api_error_handler
 def topic_stories(topics_id):
     if access_public_topic(topics_id):
-        stories = topic_story_list(TOOL_API_KEY, topics_id, snapshots_id=None, timespans_id=None, foci_id=None, q=None)
+        stories = apicache.topic_story_list(TOOL_API_KEY, topics_id, snapshots_id=None, timespans_id=None, foci_id=None, q=None)
     elif is_user_logged_in():
-        stories = topic_story_list(user_mediacloud_key(), topics_id)
+        stories = apicache.topic_story_list(user_mediacloud_key(), topics_id)
     else:
         return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
 
@@ -233,7 +242,7 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
         del params['fb_data']
     if 'q' in params:
         params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
-    params['limit'] = 100  # an arbitrary value to let us page through with big topics
+    params['limit'] = 1000  # an arbitrary value to let us page through with big topics
 
     props = [
         'stories_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',
@@ -273,8 +282,7 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
                     mimetype='text/csv; charset=utf-8', headers=headers)
 
 
-
-@app.route('/api/topics/<topics_id>/stories/story_links.csv', methods=['GET'])
+@app.route('/api/topics/<topics_id>/stories/story-links.csv', methods=['GET'])
 @flask_login.login_required
 def get_topic_story_links_csv(topics_id):
     user_mc = user_mediacloud_client()
@@ -331,7 +339,7 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
     link_id = 0
     more_pages = True
     while more_pages:
-        story_link_page = topic_story_link_list_by_page(user_key, topics_id, link_ids=link_id, **kwargs)
+        story_link_page = apicache.topic_story_link_list_by_page(user_key, topics_id, link_id=link_id, **kwargs)
 
         story_src_ids = [str(s['source_stories_id']) for s in story_link_page['links']]
         story_ref_ids = [str(s['ref_stories_id']) for s in story_link_page['links']]
@@ -377,50 +385,52 @@ def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
 
 
 def _media_info_worker(info):
-    return get_media(info['user_key'], info['media_id'])
+    return apicache.get_media(info['user_key'], info['media_id'])
 
 
 # generator you can use to do something for each page of story results
 def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
     add_media_fields = False  # switch for including all the media metadata in each row (ie. story)
 
-    story_page = topic_story_list_by_page(user_key, topics_id, link_id=link_id, **kwargs)
+    story_page = apicache.topic_story_list_by_page(user_key, topics_id, link_id=link_id, **kwargs)
 
-    story_ids = [str(s['stories_id']) for s in story_page['stories']]
-    stories_with_tags = story_list(user_key, 'stories_id:(' + " ".join(story_ids) + ")", kwargs['limit'])
+    if len(story_page['stories']) > 0:  # be careful to not construct malformed query if no story ids
 
-    # build a media lookup table in parallel so it is faster
-    if add_media_fields:
-        pool = Pool(processes=MEDIA_INFO_POOL_SIZE)
-        jobs = [{'user_key': user_key, 'media_id': s['media_id']} for s in story_page['stories']]
-        job_results = pool.map(_media_info_worker, jobs)  # blocks until they are all done
-        media_lookup = {j['media_id']: j for j in job_results}
-        pool.terminate()
+        story_ids = [str(s['stories_id']) for s in story_page['stories']]
+        stories_with_tags = apicache.story_list(user_key, 'stories_id:(' + " ".join(story_ids) + ")", kwargs['limit'])
 
-    # update story info for each story in the page, put it into the [stories] field, send updated page with stories back
-    for s in story_page['stories']:
-
-        # add in media metadata to the story (from page-level cache built earlier)
+        # build a media lookup table in parallel so it is faster
         if add_media_fields:
-            media = media_lookup[s['media_id']]
+            pool = Pool(processes=MEDIA_INFO_POOL_SIZE)
+            jobs = [{'user_key': user_key, 'media_id': s['media_id']} for s in story_page['stories']]
+            job_results = pool.map(_media_info_worker, jobs)  # blocks until they are all done
+            media_lookup = {j['media_id']: j for j in job_results}
+            pool.terminate()
 
-            # add in foci/subtopic names
-            for k, v in media['metadata'].iteritems():
-                s[u'media_{}'.format(k)] = v['label'] if v is not None else None
+        # update story info for each story in the page, put it into the [stories] field, send updated page with stories back
+        for s in story_page['stories']:
 
-        # build lookup for id => story for all stories in stories with tags (non topic results)
-        for st in stories_with_tags:
+            # add in media metadata to the story (from page-level cache built earlier)
+            if add_media_fields:
+                media = media_lookup[s['media_id']]
 
-            if s['stories_id'] == st['stories_id']:
-                s.update(st)
+                # add in foci/subtopic names
+                for k, v in media['metadata'].iteritems():
+                    s[u'media_{}'.format(k)] = v['label'] if v is not None else None
 
-                foci_names = [f['name'] for f in s['foci']]
-                s['subtopics'] = ", ".join(foci_names)
+            # build lookup for id => story for all stories in stories with tags (non topic results)
+            for st in stories_with_tags:
 
-                s['themes'] = ''
-                story_tag_ids = [t['tags_id'] for t in s['story_tags']]
-                if tag_util.NYT_LABELER_1_0_0_TAG_ID in story_tag_ids:
-                    story_tag_ids = [t['tag'] for t in s['story_tags'] if t['tag_sets_id'] == tag_util.NYT_LABELS_TAG_SET_ID]
-                    s['themes'] = ", ".join(story_tag_ids)
+                if s['stories_id'] == st['stories_id']:
+                    s.update(st)
+
+                    foci_names = [f['name'] for f in s['foci']]
+                    s['subtopics'] = ", ".join(foci_names)
+
+                    s['themes'] = ''
+                    story_tag_ids = [t['tags_id'] for t in s['story_tags']]
+                    if tag_util.NYT_LABELER_1_0_0_TAG_ID in story_tag_ids:
+                        story_tag_ids = [t['tag'] for t in s['story_tags'] if t['tag_sets_id'] == tag_util.NYT_LABELS_TAG_SET_ID]
+                        s['themes'] = ", ".join(story_tag_ids)
 
     return story_page  # need links too

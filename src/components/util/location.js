@@ -28,13 +28,17 @@ export function filteredLocation(location, filters) {
   });
 }
 
+function numberIfNotIsNan(potentialNumber) {
+  return !Number.isNaN(parseInt(potentialNumber, 10)) ? potentialNumber : '';
+}
+
 export function filteredLinkTo(to, filters) {
   return {
     pathname: to,
     query: {
-      snapshotId: filters.snapshotId,
-      timespanId: filters.timespanId,
-      focusId: filters.focusId,
+      snapshotId: numberIfNotIsNan(filters.snapshotId),
+      timespanId: numberIfNotIsNan(filters.timespanId),
+      focusId: numberIfNotIsNan(filters.focusId),
       q: filters.q,
     },
   };

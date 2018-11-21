@@ -20,11 +20,7 @@ const middlewares = [
 
 function configDevelopmentStore(appName) {
   return createStore(getRootReducer(appName), {}, compose(
-    applyMiddleware(
-      promiseMiddleware(),
-      reduxRouterMiddleware,
-      thunkMiddleware,
-    ),
+    applyMiddleware(...middlewares),
     window.devToolsExtension ? window.devToolsExtension() : f => f
   ));
 }

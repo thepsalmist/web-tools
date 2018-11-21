@@ -6,7 +6,8 @@ import { FormattedMessage, FormattedNumber, injectIntl, FormattedDate } from 're
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
-import { fetchCollectionSourceList, scrapeSourceFeeds, removeSourcesFromCollection } from '../../../actions/sourceActions';
+import { fetchCollectionSourceList, scrapeSourceFeeds, removeSourcesFromCollection, fetchSourceReviewInfo }
+  from '../../../actions/sourceActions';
 import AppButton from '../../common/AppButton';
 import { DownloadButton } from '../../common/IconButton';
 import messages from '../../../resources/messages';
@@ -29,7 +30,8 @@ const localMessages = {
   title: { id: 'collection.manageSources.title', defaultMessage: 'Review Sources' },
   scrape: { id: 'collection.manageSources.scrape', defaultMessage: 'Scrape' }, // using this so we have a smaller button
   scrapeAll: { id: 'collection.manageSources.scrapeAll', defaultMessage: 'Scrape all For New Feeds' },
-  inLast90Days: { id: 'collection.manageSources.column.last90', defaultMessage: '90 Day Story Count' },
+  inLast90Days: { id: 'collection.manageSources.column.last90', defaultMessage: 'Last 90 Days' },
+  inLastYear: { id: 'collection.manageSources.column.lastYear', defaultMessage: 'Last Year' },
   startedScrapingAll: { id: 'collection.manageSources.startedScrapingAll', defaultMessage: 'Started scraping all sources for RSS feeds' },
   lastScrapeQueuedSince: { id: 'source.basicInfo.feed.lastScrapeQueuedSince', defaultMessage: 'Scrape queued since {date}' },
   lastScrapeRunningSince: { id: 'source.basicInfo.feed.lastScrapeRunningSince', defaultMessage: 'Scrape running since {date}' },
@@ -37,18 +39,34 @@ const localMessages = {
   lastScrapeFailedOn: { id: 'source.basicInfo.feed.lastScrapeFailedOn', defaultMessage: 'Last scrape failed on {date}) ' },
   neverScraped: { id: 'source.basicInfo.feed.neverScraped', defaultMessage: 'Never been scraped :-(' },
   activeFeedCount: { id: 'collection.manageSources.column.activeFeedCount', defaultMessage: 'Active Feeds' },
-  review: { id: 'collection.manageSources.tab.review', defaultMessage: 'Review' },
+  review: { id: 'collection.manageSources.tab.review', defaultMessage: 'Review ({count})' },
   reviewDesc: { id: 'collection.manageSources.tab.review.desc', defaultMessage: 'These sources have no feeds (scrape failed) or feeds with no stories (bad feeds). Click each URL to check if the website is still live (or parked with ads). If they are valid sites with news content, poke around the source code to look for any RSS feeds that might have been missed by the feed scraper.' },
-  remove: { id: 'collection.manageSources.tab.remove', defaultMessage: 'Remove' },
+  remove: { id: 'collection.manageSources.tab.remove', defaultMessage: 'Remove ({count})' },
   removeAllFeeds: { id: 'collection.manageSources.tab.removeAll', defaultMessage: 'Remove These Sources From This Collection' },
   removeDesc: { id: 'collection.manageSources.tab.remove.desc', defaultMessage: 'These sources have no feeds and no recent stories, or trying to scrape them failed, and are candidates to remove from the collection. If the scrape job failed, that probably means the website is down (i.e. gone out of business or moved to a new URL). They will stay in Media Cloud, but won\'t be part of this collection.' },
   removedFeed: { id: 'collection.manageSources.tab.removedFeed', defaultMessage: 'We removed the feed as requested' },
-  unscrapeable: { id: 'collection.manageSources.tab.unscrapeable', defaultMessage: 'Unscrapeable' },
+  unscrapeable: { id: 'collection.manageSources.tab.unscrapeable', defaultMessage: 'Unscrapeable ({count})' },
   unscrapeableDesc: { id: 'collection.manageSources.tab.unscrapeable.desc', defaultMessage: 'These sources have content (that we have probably spidered), but we can\'t find any RSS feeds for them.' },
-  working: { id: 'collection.manageSources.tab.working', defaultMessage: 'Working' },
+  working: { id: 'collection.manageSources.tab.working', defaultMessage: 'Working ({count})' },
   workingDesc: { id: 'collection.manageSources.tab.working.desc', defaultMessage: 'These are sources we think are working well and do not need to be checked' },
-  all: { id: 'collection.manageSources.tab.all', defaultMessage: 'All' },
+  all: { id: 'collection.manageSources.tab.all', defaultMessage: 'All ({count})' },
 };
+
+function needReview(sources) {
+  return sources.filter(s => (s.active_feed_count === 0 && s.num_stories_90 === 0) || ((s.active_feed_count && s.active_feed_count > 0) && s.num_stories_90 === 0 && (s.num_stories_last_year && s.num_stories_last_year > 0)));
+}
+
+function areWorking(sources) {
+  return sources.filter(s => (s.active_feed_count > 0 && (s.num_stories_90 && s.num_stories_90 > 0)));
+}
+
+function maybeRemove(sources) {
+  return sources.filter(s => (s.active_feed_count > 0 && s.num_stories_90 === 0 && (s.num_stories_last_year && s.num_stories_last_year === 0)) || (s.latest_scrape_job && s.latest_scrape_job.state === 'failed'));
+}
+
+function areUnscrapeable(sources) {
+  return sources.filter(s => (s.active_feed_count === 0 && s.num_stories_90 > 0));
+}
 
 class ManageSourcesContainer extends React.Component {
   state = {
@@ -83,7 +101,7 @@ class ManageSourcesContainer extends React.Component {
     let viewDesc = '';
     switch (this.state.selectedViewIndex) {
       case REVIEW:
-        viewSources = sources.filter(s => (s.active_feed_count === 0 && s.num_stories_90 === 0) || (s.active_feed_count > 0 && s.num_stories_90 === 0 && s.num_stories_last_year > 0));
+        viewSources = needReview(sources);
         viewDesc = (
           <Row>
             <Col lg={11}>
@@ -94,7 +112,7 @@ class ManageSourcesContainer extends React.Component {
         );
         break;
       case REMOVE:
-        viewSources = sources.filter(s => (s.active_feed_count > 0 && s.num_stories_90 === 0 && s.num_stories_last_year === 0) || (s.latest_scrape_job.state === 'failed'));
+        viewSources = maybeRemove(sources);
         const removeAllButton = (
           <AppButton
             color="secondary"
@@ -119,7 +137,7 @@ class ManageSourcesContainer extends React.Component {
         );
         break;
       case UNSCRAPEABLE:
-        viewSources = sources.filter(s => (s.active_feed_count === 0 && s.num_stories_90 > 0));
+        viewSources = areUnscrapeable(sources);
         viewDesc = (
           <Row>
             <Col lg={11}>
@@ -130,7 +148,7 @@ class ManageSourcesContainer extends React.Component {
         );
         break;
       case WORKING:
-        viewSources = sources.filter(s => (s.active_feed_count > 0 && s.num_stories_last_year > 0));
+        viewSources = areWorking(sources);
         viewDesc = (
           <Row>
             <Col lg={11}>
@@ -157,11 +175,11 @@ class ManageSourcesContainer extends React.Component {
         <Row>
           <TabSelector
             tabLabels={[
-              formatMessage(localMessages.review),
-              formatMessage(localMessages.remove),
-              formatMessage(localMessages.unscrapeable),
-              formatMessage(localMessages.working),
-              formatMessage(localMessages.all),
+              formatMessage(localMessages.review, { count: needReview(sources).length }),
+              formatMessage(localMessages.remove, { count: maybeRemove(sources).length }),
+              formatMessage(localMessages.unscrapeable, { count: areUnscrapeable(sources).length }),
+              formatMessage(localMessages.working, { count: areWorking(sources).length }),
+              formatMessage(localMessages.all, { count: sources.length }),
             ]}
             onViewSelected={index => this.setState({ selectedViewIndex: index })}
           />
@@ -202,6 +220,7 @@ class ManageSourcesContainer extends React.Component {
                     <th className="numeric"><FormattedMessage {...messages.storiesPerDay} /></th>
                     <th className="numeric"><FormattedMessage {...messages.sourceStartDate} /></th>
                     <th className="numeric"><FormattedMessage {...localMessages.inLast90Days} /></th>
+                    <th className="numeric"><FormattedMessage {...localMessages.inLastYear} /></th>
                     <th className="numeric"><FormattedMessage {...localMessages.activeFeedCount} /></th>
                     <th><FormattedMessage {...messages.sourceScrapeStatus} /></th>
                   </tr>
@@ -280,10 +299,11 @@ class ManageSourcesContainer extends React.Component {
                         </td>
                         <td><a href={source.url} rel="noopener noreferrer" target="_blank">{source.url}</a></td>
                         <td className="numeric"><FormattedNumber value={Math.round(source.num_stories_90)} /></td>
-                        <td className="numeric"><FormattedDate value={parseSolrShortDate(source.start_date)} /></td>
+                        <td className="date"><FormattedDate value={parseSolrShortDate(source.start_date)} /></td>
                         <td className={`numeric ${Math.round(source.num_stories_90 * 90) === 0 ? 'error' : ''}`}>
                           <FormattedNumber value={Math.round(source.num_stories_90 * 90)} />
                         </td>
+                        <td className="numeric"><FormattedNumber value={source.num_stories_last_year} /></td>
                         <td className={`numeric ${source.active_feed_count === 0 ? 'error' : ''}`}>
                           <FormattedNumber value={source.active_feed_count} />
                         </td>
@@ -331,7 +351,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchData: (collectionId) => {
-    dispatch(fetchCollectionSourceList(collectionId, { details: true }));
+    // fetch source list again here, but this time with details about feed count and scrape status
+    const collId = collectionId !== null ? collectionId : ownProps.collectionId;
+    dispatch(fetchCollectionSourceList(collId)).then(
+      results => results.sources.forEach(source => dispatch(fetchSourceReviewInfo(source.media_id)))
+    );
   },
   scrapeFeeds: (sourceId) => {
     dispatch(scrapeSourceFeeds(sourceId))

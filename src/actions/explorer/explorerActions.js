@@ -168,3 +168,6 @@ export const resetSentenceDataPoint = createAction(RESET_SELECTED_DATA_POINT);
 
 export const COPY_AND_REPLACE_QUERY_FIELD = 'COPY_AND_REPLACE_QUERY_FIELD';
 export const copyAndReplaceQueryField = createAction(COPY_AND_REPLACE_QUERY_FIELD, params => params);
+
+export const SELECT_EXPLORER_TIME_AGGREGATE = 'SELECT_EXPLORER_TIME_AGGREGATE';
+export const selectExplorerTimeAggregate = createAction(SELECT_EXPLORER_TIME_AGGREGATE, timeperiod => timeperiod);

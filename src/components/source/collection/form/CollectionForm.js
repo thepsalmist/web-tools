@@ -9,11 +9,13 @@ import CollectionDetailsForm from './CollectionDetailsForm';
 import CollectionMediaForm from './CollectionMediaForm';
 import SourceList from '../../../common/SourceList';
 import { emptyString } from '../../../../lib/formValidators';
+import { fetchCollectionWithNameExists } from '../../../../actions/sourceActions';
 
 const localMessages = {
   mainTitle: { id: 'collection.maintitle', defaultMessage: 'Create New Collection' },
   collectionName: { id: 'collection.add.name', defaultMessage: 'New Collection Name' },
   collectionDescription: { id: 'collection.add.description', defaultMessage: 'New Collection Description' },
+  nameInUseError: { id: 'source.add.duplicateName', defaultMessage: 'Sorry this name is already taken' },
 };
 
 const CollectionForm = (props) => {
@@ -87,9 +89,21 @@ function validate(values) {
   return errors;
 }
 
+const asyncValidate = (values, dispatch) => (
+  // verify topic name is unique (should we check URL too?)
+  dispatch(fetchCollectionWithNameExists(values.name, values.id))
+    .then((results) => {
+      if (results.nameInUse === true) {
+        const error = { name: localMessages.nameInUseError };
+        throw error;
+      }
+    })
+);
+
 const reduxFormConfig = {
   form: 'collectionForm',
   validate,
+  asyncValidate,
 };
 
 export default

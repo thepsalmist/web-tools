@@ -204,7 +204,7 @@ export function errorReportingMiddleware({ dispatch }) {
       }
     }
     if (messageToShow) {
-      dispatch(addNotice({ level: LEVEL_ERROR, messageToShow }));
+      dispatch(addNotice({ level: LEVEL_ERROR, message: messageToShow }));
     }
     return next(action); // Call the next dispatch method in the middleware chain.
   };

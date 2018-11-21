@@ -8,8 +8,8 @@ import SourceOrCollectionWidget from '../SourceOrCollectionWidget';
 import { urlToSource, urlToCollection } from '../../../lib/urlUtil';
 
 const localMessages = {
-  noMedia: { id: 'explorer.results.attention.noMedia', defaultMessage: 'All media (generally not a good idea)' },
-  helpTitleMsg: { id: 'explorer.results.attention.helpTitle', defaultMessage: 'Don\'t Search All Media' },
+  noMedia: { id: 'explorer.results.attention.noMedia', defaultMessage: 'no media selected' },
+  helpTitleMsg: { id: 'explorer.results.attention.helpTitle', defaultMessage: 'Select Media' },
   helpContentMsg: { id: 'explorer.results.attention.helpMessage', defaultMessage: 'Our collection of media sources is closely aligned with topics we have researched before, and doesn\'t represent a balanced list of media sources that represent the media ecosystem online. For instance, because we have done deep research on gender and reproductive rights, we have an over-representation of blogs and media outlets that cover those issues. The same is true for public health and international development. You should try to avoid searching all sources. Click \'Add Media\' and pick some specific sources, or country-based collections to localize your search and get more representative results.' },
 };
 

@@ -81,6 +81,7 @@ def story_list(user_mc_key, q, rows):
     return _cached_story_list(user_mc_key, q, rows)
 
 
+@cache.cache_on_arguments(function_key_generator=key_generator)
 def _cached_story_list(user_mc_key, q, rows):
     if user_mc_key == TOOL_API_KEY:
         local_mc = mc
@@ -133,28 +134,26 @@ def _cached_topic_story_list_page(user_mc_key, topics_id, link_id, **kwargs):
     return local_mc.topicStoryList(topics_id, link_id=link_id, **kwargs)
 
 
-def topic_story_link_list_by_page(user_mc_key, topics_id, link_ids, **kwargs):
-    return _cached_topic_story_link_list_page(user_mc_key, topics_id, link_ids, **kwargs)
+def topic_story_link_list_by_page(user_mc_key, topics_id, link_id, **kwargs):
+    return _cached_topic_story_link_list_page(user_mc_key, topics_id, link_id, **kwargs)
 
 
 @cache.cache_on_arguments(function_key_generator=key_generator)
-def _cached_topic_story_link_list_page(user_mc_key, topics_id, link_ids, **kwargs):
+def _cached_topic_story_link_list_page(user_mc_key, topics_id, link_id, **kwargs):
     # api_key passed in just to make this a user-level cache
     local_mc = _mc_client(user_mc_key)
-    return local_mc.topicStoryLinks(topics_id, link_ids=link_ids, **kwargs)
+    return local_mc.topicStoryLinks(topics_id, link_id=link_id, **kwargs)
 
 
-def topic_media_link_list_by_page(user_mc_key, topics_id, link_ids, **kwargs):
-    return _cached_topic_media_link_list_page(user_mc_key, topics_id, link_ids, **kwargs)
+def topic_media_link_list_by_page(user_mc_key, topics_id, link_id, **kwargs):
+    return _cached_topic_media_link_list_page(user_mc_key, topics_id, link_id, **kwargs)
 
 
 @cache.cache_on_arguments(function_key_generator=key_generator)
-def _cached_topic_media_link_list_page(user_mc_key, topics_id, link_ids, **kwargs):
+def _cached_topic_media_link_list_page(user_mc_key, topics_id, link_id, **kwargs):
     # api_key passed in just to make this a user-level cache
     local_mc = _mc_client(user_mc_key)
-    return local_mc.topicMediaLinks(topics_id, link_ids=link_ids, **kwargs)
-
-
+    return local_mc.topicMediaLinks(topics_id, link_id=link_id, **kwargs)
 
 
 def get_media(user_mc_key, media_id):
@@ -209,6 +208,20 @@ def topic_word_counts(user_mc_key, topics_id, **kwargs):
 def _word2vec_topic_2d_results(topics_id, snapshots_id, words):
     # can't cache this because the first time it is called we usually don't have results
     word2vec_results = wordembeddings.topic_2d(topics_id, snapshots_id, words)
+    return word2vec_results
+
+
+def topic_similar_words(topics_id, word):
+    # no need for user-specific cache on this
+    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    results = _word2vec_topic_similar_words(topics_id, snapshots_id, [word])
+    if len(results):
+        return results[0]['results']
+    return []
+
+
+def _word2vec_topic_similar_words(topics_id, snapshots_id, words):
+    word2vec_results = wordembeddings.topic_similar_words(topics_id, snapshots_id, words)
     return word2vec_results
 
 

@@ -11,7 +11,7 @@ from server.cache import cache, key_generator
 from server.util.request import api_error_handler
 from server.util.geo import COUNTRY_GEONAMES_ID_TO_APLHA3, HIGHCHARTS_KEYS
 import server.util.tags as tags
-from server.views.explorer import parse_as_sample, parse_query_with_args_and_sample_search, parse_query_with_keywords, \
+from server.views.explorer import parse_as_sample, parse_query_with_keywords, \
     load_sample_searches, file_name_for_download
 import server.views.explorer.apicache as apicache
 
@@ -26,7 +26,7 @@ def api_explorer_geotag_count():
     if search_id not in [None, -1]:
         SAMPLE_SEARCHES = load_sample_searches()
         current_search = SAMPLE_SEARCHES[search_id]['queries']
-        solr_q, solr_fq = parse_query_with_args_and_sample_search(request.args, current_search)
+        solr_q, solr_fq = parse_as_sample(search_id, request.args['index'])
     else:
         solr_q, solr_fq = parse_query_with_keywords(request.args)
     data = apicache.top_tags_with_coverage(solr_q, solr_fq, tags.GEO_TAG_SET)
@@ -41,7 +41,7 @@ def api_explorer_demo_geotag_count():
     if search_id not in [None, -1]:
         SAMPLE_SEARCHES = load_sample_searches()
         current_search = SAMPLE_SEARCHES[search_id]['queries']
-        solr_q, solr_fq = parse_query_with_args_and_sample_search(request.args, current_search)
+        solr_q, solr_fq = parse_as_sample(search_id, request.args['index'])
     else:
         solr_q, solr_fq= parse_query_with_keywords(request.args)
     data = apicache.top_tags_with_coverage(solr_q, solr_fq, tags.GEO_TAG_SET)

@@ -11,7 +11,7 @@ import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import EntitiesTable from '../../common/EntitiesTable';
 import { resetEntitiesOrgs, fetchTopEntitiesOrgs, fetchDemoTopEntitiesOrgs } from '../../../actions/explorerActions';
-import { postToDownloadUrl, COVERAGE_REQUIRED } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, COVERAGE_REQUIRED, ENTITY_DISPLAY_TOP_TEN } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
 import { TAG_SET_CLIFF_ORGS } from '../../../lib/tagUtil';
@@ -35,7 +35,7 @@ class QueryTopEntitiesOrgsResultsContainer extends React.Component {
     const { formatNumber } = this.props.intl;
     let content = null;
     if (results) {
-      const rawData = results[selectedTabIndex] ? results[selectedTabIndex].results : [];
+      const rawData = (results[selectedTabIndex] && results[selectedTabIndex].results) ? results[selectedTabIndex].results.slice(0, ENTITY_DISPLAY_TOP_TEN) : [];
       const coverageRatio = results[selectedTabIndex] ? results[selectedTabIndex].coverage_percentage : 0;
       if (coverageRatio > COVERAGE_REQUIRED) {
         content = (

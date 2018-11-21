@@ -54,6 +54,9 @@ function drawViz(wrapperElement, {
   if (circles && circles.length > 0) {
     // render it all
     const node = d3.select(wrapperElement);
+    if (!node.empty()) { // make sure you don't render the chart more than once
+      node.html('');
+    }
     const div = node.append('div').attr('id', 'bubble-chart-wrapper');
     const svg = div.append('svg:svg');
     svg.attr('id', domId)

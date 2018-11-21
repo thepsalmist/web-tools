@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 def cached_geotag_count(user_mc_key, query):
     user_mc = user_admin_mediacloud_client()
     res = user_mc.storyTagCount(query, [QUERY_LAST_MONTH, QUERY_ENGLISH_LANGUAGE], tag_sets_id=tag_utl.GEO_TAG_SET)
-    full_count = apicache.cached_timeperiod_story_count(user_mc, query, QUERY_LAST_MONTH)['count']
+    full_count = apicache.timeperiod_story_count(user_mc, query, QUERY_LAST_MONTH)['count']
     res = [r for r in res if int(r['tag'].split('_')[1]) in COUNTRY_GEONAMES_ID_TO_APLHA3.keys()]
     for r in res:
         geonamesId = int(r['tag'].split('_')[1])

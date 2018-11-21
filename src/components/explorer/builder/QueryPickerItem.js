@@ -15,7 +15,7 @@ import { QUERY_LABEL_CHARACTER_LIMIT } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 
 const localMessages = {
-  emptyMedia: { id: 'explorer.querypicker.emptyMedia', defaultMessage: 'All media (generally not a good idea)' },
+  emptyMedia: { id: 'explorer.querypicker.emptyMedia', defaultMessage: 'No media selected' },
   sourcesSummary: { id: 'explorer.querypicker.sources', defaultMessage: '{sourceCount, plural, \n =0 {``} \n =1 {# source} \n other {# sources }\n}' },
   collectionsSummary: { id: 'explorer.querypicker.coll', defaultMessage: '{collectionCount, plural, \n =0 {``} \n =1 {# collection} \n other {# collections }\n}' },
   searchHint: { id: 'explorer.querypicker.searchHint', defaultMessage: 'keywords' },
@@ -82,7 +82,7 @@ class QueryPickerItem extends React.Component {
   }
 
   render() {
-    const { isLoggedIn, query, isSelected, isDeletable, displayLabel, isLabelEditable, updateDemoQueryLabel, onDelete } = this.props;
+    const { isLoggedIn, query, isSelected, isDeletable, displayLabel, isLabelEditable, updateDemoQueryLabel, /* onDuplicate, */ onDelete } = this.props;
     const { formatMessage } = this.props.intl;
     let subT = null;
     let headerInfo = null;
@@ -95,6 +95,7 @@ class QueryPickerItem extends React.Component {
           <QueryPickerLoggedInHeader
             query={query}
             onLabelEditRequest={this.handleLabelEditRequest}
+            /* onDuplicate={onDuplicate} */
             isDeletable={isDeletable}
             displayLabel={displayLabel}
             onDelete={onDelete}
@@ -127,7 +128,7 @@ class QueryPickerItem extends React.Component {
       oneSourceLabel = sourceCount === 1 ? oneSourceLabel : '';
 
       const oneCollStatus = oneCollLabel;
-      subT = <FormattedMessage {...localMessages.emptyMedia} values={{ totalMediaCount }} />;
+      subT = <span className="error"><FormattedMessage {...localMessages.emptyMedia} values={{ totalMediaCount }} /></span>;
 
       if (sourceCount === 0 && collectionCount === 1) {
         subT = (
@@ -226,6 +227,7 @@ QueryPickerItem.propTypes = {
   updateQueryProperty: PropTypes.func.isRequired,
   updateDemoQueryLabel: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
+  /* onDuplicate: PropTypes.func.isRequired, */
   onDelete: PropTypes.func.isRequired,
   loadEditLabelDialog: PropTypes.func,
   isLoggedIn: PropTypes.bool.isRequired,

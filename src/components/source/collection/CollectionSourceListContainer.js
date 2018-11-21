@@ -6,7 +6,6 @@ import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import { fetchCollectionSourceList } from '../../../actions/sourceActions';
 import SourceList from '../../common/SourceList';
-import { getUserRoles, hasPermissions, PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import { HELP_SOURCES_CSV_COLUMNS } from '../../../lib/helpConstants';
 
 const CollectionSourceListContainer = props => (
@@ -35,21 +34,16 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (collectionId, props) => {
-    dispatch(fetchCollectionSourceList(ownProps.collectionId, props));
+const mapDispatchToProps = dispatch => ({
+  fetchData: (collectionId) => {
+    dispatch(fetchCollectionSourceList(collectionId));
   },
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
     asyncFetch: () => {
-      const props = {};
-      // if it is an admin user, fetch the source list with extra details so they are there for the manage sources screen
-      if (hasPermissions(getUserRoles(stateProps.user), PERMISSION_MEDIA_EDIT)) {
-        props.details = true;
-      }
-      dispatchProps.fetchData(ownProps.collectionId, props);
+      dispatchProps.fetchData(ownProps.collectionId);
     },
   });
 }

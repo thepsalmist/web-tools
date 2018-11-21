@@ -11,6 +11,7 @@ import messages from '../../../resources/messages';
 import AppButton from '../../common/AppButton';
 import { HelpButton } from '../../common/IconButton';
 import TopicInfo from './TopicInfo';
+import TopicStoryInfo from './TopicStoryInfo';
 
 const localMessages = {
   aboutTopic: { id: 'topic.controlBar.about', defaultMessage: 'About this Topic' },
@@ -33,7 +34,7 @@ class AboutTopicDialog extends React.Component {
   };
 
   render() {
-    const { topicInfo } = this.props;
+    const { topicInfo, filters } = this.props;
     const { formatMessage } = this.props.intl;
     return (
       <div className="about-topic">
@@ -51,6 +52,7 @@ class AboutTopicDialog extends React.Component {
           <DialogTitle><FormattedMessage {...localMessages.aboutTopic} /></DialogTitle>
           <DialogContent>
             <TopicInfo topic={topicInfo} />
+            <TopicStoryInfo topic={topicInfo} filters={filters} />
           </DialogContent>
           <DialogActions>
             <AppButton
@@ -70,10 +72,12 @@ AboutTopicDialog.propTypes = {
   intl: PropTypes.object.isRequired,
   // from state
   topicInfo: PropTypes.object,
+  filters: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   topicInfo: state.topics.selected.info,
+  filters: state.topics.selected.filters,
 });
 
 export default

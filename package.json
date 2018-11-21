@@ -2,6 +2,9 @@
   "name": "mediacloud-web-tools",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=10.13.0"
+  },
   "scripts": {
     "explorer-dev": "MC_APP_NAME=explorer webpack-serve --config config/webpack.config.js --port 2992 --content build/public",
     "explorer-release": "NODE_ENV=production MC_APP_NAME=explorer webpack --config config/webpack.config.js",
@@ -11,7 +14,9 @@
     "topics-release": "NODE_ENV=production MC_APP_NAME=topics webpack --config config/webpack.config.js",
     "tools-dev": "MC_APP_NAME=tools webpack-serve --config config/webpack.config.js --port 2992 --content build/public",
     "tools-release": "NODE_ENV=production MC_APP_NAME=tools webpack --config config/webpack.config.js",
-    "test-acceptance": "react-scripts test --env=jsdom test/acceptance"
+    "test-acceptance": "react-scripts test --env=jsdom test/acceptance",
+    "requirements-check": "node check-version.js",
+    "preinstall": "npm run requirements-check"
   },
   "jest": {
     "testPathDirs": [
@@ -30,16 +35,14 @@
     "d3-scale-chromatic": "^1.1.1",
     "dc": "^2.0.0-beta.33",
     "flexboxgrid": "6.3.1",
-    "highcharts-exporting": "0.1.2",
-    "highcharts-more": "0.1.2",
-    "highcharts-offline-exporting": "0.1.2",
-    "highcharts-treemap": "^0.1.2",
+    "highcharts": "^6.1.4",
+    "highcharts-treemap": "^0.1.7",
     "intl": "1.2.5",
     "isomorphic-fetch": "2.2.1",
     "material-ui": "^0.20.2",
     "moment": "2.19.3",
     "nightmare-inline-download": "^0.2.2",
-    "npm": "^6.2.0",
+    "npm": "^6.4.1",
     "prop-types": "15.6.1",
     "raven-for-redux": "^1.3.1",
     "raven-js": "^3.26.3",
@@ -120,7 +123,7 @@
     "script-loader": "0.7.0",
     "style-loader": "^0.21.0",
     "uglifyjs-webpack-plugin": "^1.2.7",
-    "webpack": "^4.18.0",
+    "webpack": "^4.20.2",
     "webpack-cli": "^3.0.8",
     "webpack-config": "^6.1.2",
     "webpack-md5-hash": "^0.0.6",

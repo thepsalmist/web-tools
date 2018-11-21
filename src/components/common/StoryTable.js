@@ -12,7 +12,7 @@ const localMessages = {
 };
 
 const StoryTable = (props) => {
-  const { stories, maxTitleLength, onChangeFocusSelection, selectedStory, extraColumns, extraHeaderColumns } = props;
+  const { stories, maxTitleLength, selectedStory, extraColumns, extraHeaderColumns } = props;
   const { formatMessage, formatDate } = props.intl;
   return (
     <div className="story-table">
@@ -43,7 +43,7 @@ const StoryTable = (props) => {
             return (
               <tr key={`${story.stories_id}${idx}`} className={(idx % 2 === 0) ? `even${isSelected}` : `odd${isSelected}`}>
                 <td>
-                  <a tabIndex="0" role="button" href="#" onClick={() => onChangeFocusSelection(story)}>{title}</a>
+                  <a href={story.url} target="_blank" rel="noopener noreferrer">{title}</a>
                 </td>
                 <td>
                   <a href={story.media_url} rel="noopener noreferrer" target="_blank">
@@ -67,7 +67,6 @@ const StoryTable = (props) => {
 StoryTable.propTypes = {
   stories: PropTypes.array.isRequired,
   intl: PropTypes.object.isRequired,
-  onChangeFocusSelection: PropTypes.func,
   extraColumns: PropTypes.func,
   extraHeaderColumns: PropTypes.object,
   sortedBy: PropTypes.string,

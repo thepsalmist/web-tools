@@ -19,7 +19,7 @@ def api_metadata_values(tag_sets_id):
     Source metadata is encoded in various tag sets - this returns the set and the list of
     available tags you can use
     '''
-    data = tags_in_tag_set(user_mediacloud_key(), tag_sets_id, False, True) # use the file-based cache here
+    data = tags_in_tag_set(user_mediacloud_key(), tag_sets_id, False, True)  # use the file-based cache here
     return jsonify(data)
 
 

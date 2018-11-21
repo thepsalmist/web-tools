@@ -2,6 +2,9 @@
   "name": "mediacloud-web-tools",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=10.13.0"
+  },
   "scripts": {
     "explorer-dev": "MC_APP_NAME=explorer webpack-serve --config config/webpack.config.js --port 2992 --content build/public",
     "explorer-release": "NODE_ENV=production MC_APP_NAME=explorer webpack --config config/webpack.config.js",
@@ -11,7 +14,9 @@
     "topics-release": "NODE_ENV=production MC_APP_NAME=topics webpack --config config/webpack.config.js",
     "tools-dev": "MC_APP_NAME=tools webpack-serve --config config/webpack.config.js --port 2992 --content build/public",
     "tools-release": "NODE_ENV=production MC_APP_NAME=tools webpack --config config/webpack.config.js",
-    "test-acceptance": "react-scripts test --env=jsdom test/acceptance"
+    "test-acceptance": "react-scripts test --env=jsdom test/acceptance",
+    "requirements-check": "node check-version.js",
+    "preinstall": "npm run requirements-check"
   },
   "jest": {
     "testPathDirs": [

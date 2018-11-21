@@ -67,7 +67,7 @@ def create_media_type_focal_set(topics_id):
     for tag in media_type_tags:
         params = {
             'name': tag['label'],
-            'description': u"Stories from {} sources".format(tag['label']),
+            'description': "Stories from {} sources".format(tag['label']),
             'query': "tags_id_media:{}".format(tag['tags_id']),
             'focal_set_definitions_id': new_focal_set['focal_set_definitions_id'],
         }

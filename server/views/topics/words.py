@@ -41,7 +41,7 @@ def topic_compare_subtopic_top_words(topics_id):
     data = []
     headers = [f['name'] for f in focal_set['foci']]
     for idx in range(0, word_count):
-        row = {f['name']: u"{} ({})".format(f['top_words'][idx]['term'], f['top_words'][idx]['count'])
+        row = {f['name']: "{} ({})".format(f['top_words'][idx]['term'], f['top_words'][idx]['count'])
                for f in focal_set['foci']}
         data.append(row)
     return csv.stream_response(data, headers,

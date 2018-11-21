@@ -69,7 +69,7 @@ def processed_for_themes_query_clause():
     :return: A solr query clause you can use to filter for stories that have been tagged by any version
      of our CLIFF geotagging engine (ie. tagged with people, places, and organizations)
     '''
-    return u"(tags_id_stories:{})".format(NYT_LABELER_1_0_0_TAG_ID)
+    return "(tags_id_stories:{})".format(NYT_LABELER_1_0_0_TAG_ID)
 
 
 def processed_for_entities_query_clause():
@@ -77,7 +77,7 @@ def processed_for_entities_query_clause():
     :return: A solr query clause you can use to filter for stories that have been tagged by any version
      of our CLIFF geotagging engine (ie. tagged with people, places, and organizations)
     '''
-    return u"(tags_id_stories:({} {}))".format(CLIFF_CLAVIN_2_4_1_TAG_ID, CLIFF_CLAVIN_2_3_0_TAG_ID)
+    return "(tags_id_stories:({} {}))".format(CLIFF_CLAVIN_2_4_1_TAG_ID, CLIFF_CLAVIN_2_3_0_TAG_ID)
 
 
 def processed_for_entities_tag_ids():
@@ -95,7 +95,7 @@ def is_metadata_tag_set(tag_sets_id):
     :return: True if it is a valid metadata tag set, False if it is not
     '''
     for name_to_tags_sets_id in VALID_METADATA_IDS:
-        if int(tag_sets_id) in name_to_tags_sets_id.values():
+        if int(tag_sets_id) in list(name_to_tags_sets_id.values()):
             return True
     return False
 

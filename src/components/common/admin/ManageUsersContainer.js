@@ -9,7 +9,7 @@ const ManageUsersContainer = props => <UserTable users={props.users} />;
 
 ManageUsersContainer.propTypes = {
   // from state
-  fetchStatus: PropTypes.object,
+  fetchStatus: PropTypes.string,
   users: PropTypes.array,
 };
 

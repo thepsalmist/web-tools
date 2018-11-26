@@ -65,6 +65,6 @@ export function sourceSystemSearch(searchStr) {
   return createApiPromise(`/api/sources/search/${searchStr}`);
 }
 
-export function fetchSystemUsers() {
-  return createApiPromise('/api/admin/users/');
+export function fetchSystemUsers(searchStr) {
+  return createApiPromise(`/api/admin/users/${searchStr}`);
 }

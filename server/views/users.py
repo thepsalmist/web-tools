@@ -1,13 +1,13 @@
 import logging
-from flask import jsonify, request
+from flask import jsonify, request, redirect
 import flask_login
+from mediacloud.error import MCException
 
-from server import app, mc
-from server.auth import user_mediacloud_key, user_admin_mediacloud_client
+from server import app, auth, mc
+from server.auth import user_admin_mediacloud_client
 from server.util.request import api_error_handler
 
 logger = logging.getLogger(__name__)
-
 
 @app.route('/api/admin/users', methods=['GET'])
 @api_error_handler
@@ -32,7 +32,7 @@ def api_system_users_list():
     return jsonify({"users": all_users})
 
 
-@app.route('/api/admin/users/search/<search_str>', methods=['GET'])
+@app.route('/api/admin/users/<search_str>', methods=['GET'])
 @api_error_handler
 @flask_login.login_required
 def api_system_user_search(search_str):

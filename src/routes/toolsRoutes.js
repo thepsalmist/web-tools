@@ -6,6 +6,7 @@ import ToolsHomeContainer from '../components/tools/ToolsHomeContainer';
 import ManageUsersContainer from '../components/common/admin/ManageUsersContainer';
 import userRoutes from './userRoutes';
 import systemRoutes from './systemRoutes';
+import { requireAuth } from './routes';
 
 const toolsRoutes = (
   <Route path="/" component={ToolsApp}>
@@ -13,7 +14,12 @@ const toolsRoutes = (
     <IndexRedirect to="/home" />
 
     <Route path="home" component={ToolsHomeContainer} />
-    <Route path="admin" component={ManageUsersContainer} />
+    <Route path="/admin" component={ManageUsersContainer} >
+      <Route path="/admin/users" component={ManageUsersContainer} onEnter={requireAuth} >
+        <Route path="/admin/users/:searchStr" component={ManageUsersContainer} onEnter={requireAuth} />
+        <Route path="/admin/users/:id/edit" component={ManageUsersContainer} onEnter={requireAuth} />
+      </Route>
+    </Route>
     {userRoutes}
     {systemRoutes}
 

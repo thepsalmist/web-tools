@@ -64,3 +64,7 @@ export function metadataValuesForCountryOfFocus(id) {
 export function sourceSystemSearch(searchStr) {
   return createApiPromise(`/api/sources/search/${searchStr}`);
 }
+
+export function fetchSystemUsers() {
+  return createApiPromise('/api/admin/users/');
+}

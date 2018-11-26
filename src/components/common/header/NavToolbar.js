@@ -19,6 +19,7 @@ const SUPPORT_URL = 'https://mediacloud.org/tools/';
 
 const localMessages = {
   goHome: { id: 'nav.home', defaultMessage: 'Home' },
+  admin: { id: 'nav.admin', defaultMessage: 'Admin' },
   support: { id: 'nav.support', defaultMessage: 'Support' },
   about: { id: 'nav.about', defaultMessage: 'About' },
 };
@@ -57,6 +58,14 @@ const NavToolbar = (props) => {
           </Col>
           <Col lg={6}>
             <ul className="right">
+              <li className="admin">
+                <AppButton
+                  variant="text"
+                  href="#/admin"
+                  target="new"
+                  label={formatMessage(localMessages.admin)}
+                />
+              </li>
               <li className="support">
                 <AppButton
                   variant="text"

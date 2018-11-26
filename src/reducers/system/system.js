@@ -6,6 +6,7 @@ import topEntitiesPeople from './topEntitiesPeople';
 import topEntitiesOrgs from './topEntitiesOrgs';
 import recentNews from './recentNews';
 import sourceSearch from './sourceSearch';
+import users from './users/users';
 
 const system = combineReducers({
   stats,
@@ -15,6 +16,7 @@ const system = combineReducers({
   topEntitiesOrgs,
   recentNews,
   sourceSearch,
+  users,
 });
 
 export default system;

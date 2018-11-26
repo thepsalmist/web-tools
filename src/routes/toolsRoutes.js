@@ -16,7 +16,7 @@ const toolsRoutes = (
     <Route path="home" component={ToolsHomeContainer} />
     <Route path="/admin" component={ManageUsersContainer} >
       <Route path="/admin/users" component={ManageUsersContainer} onEnter={requireAuth} >
-        <Route path="/admin/users/:searchStr" component={ManageUsersContainer} onEnter={requireAuth} />
+        <Route path="/admin/users/search/:searchStr" component={ManageUsersContainer} onEnter={requireAuth} />
         <Route path="/admin/users/:id/edit" component={ManageUsersContainer} onEnter={requireAuth} />
       </Route>
     </Route>

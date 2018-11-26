@@ -70,7 +70,7 @@ export function fetchSystemUsers() {
 }
 
 export function searchForUser(searchStr) {
-  return createApiPromise(`/api/admin/users/${searchStr}`);
+  return createApiPromise(`/api/admin/users/search/${searchStr}`);
 }
 
 export function updateUser(userId) {

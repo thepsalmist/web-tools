@@ -49,6 +49,16 @@ def feed_create(media_id):
     return jsonify(result)
 
 
+@app.route('/api/sources/feeds/<feed_id>/recent-stories', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def feed_recent_stories(feed_id):
+    user_mc = user_admin_mediacloud_client()
+    # don't want to cache here, because we want this list to be of the most recent stories from this feed
+    result = user_mc.storyList(feeds_id=feed_id, sort=user_mc.SORT_PUBLISH_DATE_DESC)
+    return jsonify({'list': result})
+
+
 @app.route('/api/sources/feeds/<feed_id>/update', methods=['POST'])
 @flask_login.login_required
 @api_error_handler

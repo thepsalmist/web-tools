@@ -55,6 +55,15 @@ def api_system_user_search(search_str):
 
     return jsonify({"users": all_users})
 
+@app.route('/api/admin/users/<user_id>', methods=['GET'])
+@api_error_handler
+@flask_login.login_required
+def api_system_user_by_id(user_id):
+    mc = user_admin_mediacloud_client()
+    # needed to put this behind an endpoint so browser doesn't cache it
+    results = mc.userList(auth_users_id=user_id)
+    return jsonify(results)
+
 
 @app.route('/api/admin/users/<user_id>/update', methods=['GET'])
 @api_error_handler

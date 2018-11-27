@@ -215,6 +215,7 @@ const messages = {
   userSignup: { id: 'user.signup', defaultMessage: 'Sign Up' },
   userFullName: { id: 'user.fullName', defaultMessage: 'Full Name' },
   userNotes: { id: 'user.notes', defaultMessage: 'Notes' },
+  userPermissions: { id: 'user.permissions', defaultMessage: 'Permissions' },
   passwordsMismatch: { id: 'user.mismatchPassword', defaultMessage: 'Passwords do not match.' },
   passwordTooShort: { id: 'user.passwordTooShort', defaultMessage: 'Passwords must be at least 8 characters long.' },
 

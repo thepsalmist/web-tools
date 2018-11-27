@@ -3,12 +3,13 @@ from flask import jsonify, request
 import flask_login
 
 from server import app, mc
+from server.cache import cache, key_generator
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client
 from server.util.request import api_error_handler
 
 logger = logging.getLogger(__name__)
 
-
+@cache.cache_on_arguments(function_key_generator=key_generator)
 @app.route('/api/admin/users', methods=['GET'])
 @api_error_handler
 @flask_login.login_required

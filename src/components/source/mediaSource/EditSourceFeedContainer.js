@@ -14,6 +14,7 @@ import { LEVEL_ERROR } from '../../common/Notice';
 import SourceFeedForm from './form/SourceFeedForm';
 import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import Permissioned from '../../common/Permissioned';
+import FeedRecentStoriesContainer from './FeedRecentStoriesContainer';
 
 const localMessages = {
   sourceFeedsTitle: { id: 'source.details.feeds.title', defaultMessage: '{name}: ' },
@@ -70,6 +71,7 @@ class EditSourceFeedContainer extends React.Component {
             buttonLabel={formatMessage(localMessages.updateButton)}
           />
         </Permissioned>
+        <FeedRecentStoriesContainer feedId={feed.feeds_id} />
       </Grid>
     );
   }
@@ -98,6 +100,7 @@ const mapStateToProps = (state, ownProps) => ({
   feedId: parseInt(ownProps.params.feedId, 10),
   sourceName: state.sources.sources.selected.sourceDetails.name,
 });
+
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleSave: (values) => {
     const infoToSave = {

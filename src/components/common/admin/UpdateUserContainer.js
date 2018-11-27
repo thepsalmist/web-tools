@@ -62,11 +62,8 @@ UpdateUserContainer.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  fetchStatus: state.users.users.selected.feed.info.fetchStatus,
-  feed: state.users.users.selected.feed.info.feed,
-  userId: parseInt(ownProps.params.userId, 10),
-  feedId: parseInt(ownProps.params.feedId, 10),
-  userName: state.users.users.selected.userDetails.name,
+  fetchStatus: state.system.users.userDetails.fetchStatus,
+  user: state.system.users.userDetails.user,
 });
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleSave: (values) => {

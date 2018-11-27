@@ -1,5 +1,5 @@
-import { FETCH_SYSTEM_USER } from '../../../../actions/sourceActions';
-import { createAsyncReducer } from '../../../../lib/reduxHelpers';
+import { FETCH_SYSTEM_USER } from '../../../actions/systemActions';
+import { createAsyncReducer } from '../../../lib/reduxHelpers';
 
 const userDetails = createAsyncReducer({
   initialState: {

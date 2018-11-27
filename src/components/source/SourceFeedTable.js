@@ -1,16 +1,20 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Link from 'react-router/lib/Link';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage, FormattedDate, injectIntl } from 'react-intl';
 import messages from '../../resources/messages';
 import { EditButton } from '../common/IconButton';
 import TabSelector from '../common/TabSelector';
 import { PERMISSION_MEDIA_EDIT } from '../../lib/auth';
 import Permissioned from '../common/Permissioned';
+import { parseSolrShortDate } from '../../lib/dateUtil';
 
 const localMessages = {
   activeTabLabel: { id: 'source.feed.active', defaultMessage: 'Active ({num})' },
   inactiveTabLabel: { id: 'source.feed.inactive', defaultMessage: 'Disabled ({num})' },
+  lastNewStory: { id: 'source.feed.lastNewStory', defaultMessage: 'Last New Story' },
+  lastDownloadAttempt: { id: 'source.feed.lastDownloadAttempt', defaultMessage: 'Last Attempt' },
+  lastDownloadSuccess: { id: 'source.feed.lastDownloadSuccess', defaultMessage: 'Last Success' },
 };
 
 class SourceFeedTable extends React.Component {
@@ -62,6 +66,10 @@ class SourceFeedTable extends React.Component {
               <th><FormattedMessage {...messages.feedType} /></th>
               <th><FormattedMessage {...messages.feedIsActive} /></th>
               <th><FormattedMessage {...messages.feedUrl} /></th>
+              <th><FormattedMessage {...localMessages.lastNewStory} /></th>
+              <th><FormattedMessage {...localMessages.lastDownloadAttempt} /></th>
+              <th><FormattedMessage {...localMessages.lastDownloadSuccess} /></th>
+              <th />
             </tr>
             {tabFeeds.map((feed, idx) => (
               <tr key={feed.feeds_id} className={`${(idx % 2 === 0) ? 'even' : 'odd'} feed-${(feed.active) ? 'active' : 'disabled'}`}>
@@ -76,6 +84,15 @@ class SourceFeedTable extends React.Component {
                 </td>
                 <td>
                   <a href={feed.url}>{feed.url}</a>
+                </td>
+                <td>
+                  <FormattedDate value={parseSolrShortDate(feed.last_new_story_time)} />
+                </td>
+                <td>
+                  <FormattedDate value={parseSolrShortDate(feed.last_attempted_download_time)} />
+                </td>
+                <td>
+                  <FormattedDate value={parseSolrShortDate(feed.last_successful_download_time)} />
                 </td>
                 <td>
                   <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>

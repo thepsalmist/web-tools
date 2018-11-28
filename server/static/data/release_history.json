@@ -13,7 +13,7 @@
           "apps": [ "explorer" ],
           "type": "Fixed",
           "note": "Regular users couldn't view story info drill-down"
-        },
+        }
       ]
     },
     {

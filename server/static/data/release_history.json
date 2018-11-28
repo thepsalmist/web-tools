@@ -1,6 +1,22 @@
 {
   "releases": [
     {
+      "date": "2018-11-28",
+      "version": "v3.6.1",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Show more info on sources feed"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Regular users couldn't view story info drill-down"
+        },
+      ]
+    },
+    {
       "date": "2018-11-20",
       "version": "v3.6.0",
       "notes": [

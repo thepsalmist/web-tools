@@ -7,7 +7,7 @@ import withIntlForm from '../../hocs/IntlForm';
 
 const localMessages = {
   nameLabel: { id: 'user.update.name.label', defaultMessage: 'User Name' },
-  urlLabel: { id: 'user.update.url.label', defaultMessage: 'Email' },
+  emailLabel: { id: 'user.update.email.label', defaultMessage: 'Email' },
   notesLabel: { id: 'user.update.notes.label', defaultMessage: 'Notes' },
   activeLabel: { id: 'user.update.active.label', defaultMessage: 'Active?' },
   pwdLabel: { id: 'user.update.pwd.hint', defaultMessage: 'Password' },
@@ -28,7 +28,7 @@ const UserDetailsForm = (props) => {
         </Col>
         <Col md={4}>
           <Field
-            name="name"
+            name="full_name"
             component={renderTextField}
             fullWidth
           />
@@ -51,14 +51,14 @@ const UserDetailsForm = (props) => {
       <Row>
         <Col md={2}>
           <span className="label unlabeled-field-label">
-            <FormattedMessage {...localMessages.publicNotesLabel} />
+            <FormattedMessage {...localMessages.notesLabel} />
           </span>
         </Col>
         <Col md={8}>
           <Field
             name="public_notes"
             component={renderTextField}
-            label={localMessages.publicNotesHint}
+            label={localMessages.notesLabel}
             fullWidth
             disabled={initialValues.disabled}
             rows={2}
@@ -85,7 +85,7 @@ const UserDetailsForm = (props) => {
         <Col md={2}>
           <Field
             name="password"
-            component={renderCheckbox}
+            component={renderTextField}
             fullWidth
             label={localMessages.pwdLabel}
             disabled={initialValues.disabled}
@@ -96,7 +96,7 @@ const UserDetailsForm = (props) => {
         <Col md={2}>
           <Field
             name="confirmPassword"
-            component={renderCheckbox}
+            component={renderTextField}
             fullWidth
             label={localMessages.confirmPwdLabel}
             disabled={initialValues.disabled}

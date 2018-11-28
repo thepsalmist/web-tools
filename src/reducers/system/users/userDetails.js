@@ -7,7 +7,7 @@ const userDetails = createAsyncReducer({
   },
   action: FETCH_SYSTEM_USER,
   handleSuccess: payload => ({
-    user: payload.results,
+    user: payload.user,
   }),
 });
 

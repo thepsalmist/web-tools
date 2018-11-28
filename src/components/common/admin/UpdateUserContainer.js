@@ -64,6 +64,7 @@ UpdateUserContainer.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   fetchStatus: state.system.users.userDetails.fetchStatus,
   user: state.system.users.userDetails.user,
+  userId: ownProps.params.id,
 });
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleSave: (values) => {
@@ -85,8 +86,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       });
   },
   asyncFetch: () => {
-    dispatch(selectSystemUser(ownProps.params.userId));
-    dispatch(fetchSystemUser(ownProps.params.userId));
+    dispatch(selectSystemUser(ownProps.params.id));
+    dispatch(fetchSystemUser(ownProps.params.id));
   },
 });
 

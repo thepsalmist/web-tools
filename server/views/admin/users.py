@@ -62,7 +62,7 @@ def api_system_user_by_id(user_id):
     mc = user_admin_mediacloud_client()
     # needed to put this behind an endpoint so browser doesn't cache it
     results = mc.userList(auth_users_id=user_id)
-    return jsonify(results)
+    return jsonify({"user": results['users'][0]})
 
 
 @app.route('/api/admin/users/<user_id>/update', methods=['GET'])

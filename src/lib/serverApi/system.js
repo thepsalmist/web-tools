@@ -69,14 +69,11 @@ export function fetchSystemUser(userId) {
   return createApiPromise(`/api/admin/users/${userId}`);
 }
 
-export function fetchSystemUsers() {
-  return createApiPromise('/api/admin/users');
+export function fetchSystemUsers(searchStr) {
+  return createApiPromise(`/api/admin/users/list/${searchStr}`);
 }
 
-export function searchForUser(searchStr) {
-  return createApiPromise(`/api/admin/users/search/${searchStr}`);
-}
-
-export function updateUser(userId) {
-  return createApiPromise(`/api/admin/users/${userId}/update`);
+export function updateSystemUser(userId, params) {
+  const acceptedParams = acceptParams(params, ['full_name', 'email', 'active', 'roles[]', 'notes']);
+  return createPostingApiPromise(`/api/admin/users/${userId}/update`, acceptedParams);
 }

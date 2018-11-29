@@ -71,20 +71,20 @@ const mapStateToProps = (state, ownProps) => ({
 });
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleSave: (values) => {
+    const roles = Object.keys(values.roles);
     const infoToSave = {
-      name: values.name,
-      url: values.url,
-      active: values.active,
-      type: values.type,
+      ...values,
+      'roles[]': roles,
+      // TODO: if password is changed, track that
     };
-    dispatch(updateSystemUser(ownProps.params.feedId, infoToSave))
+    return dispatch(updateSystemUser(ownProps.params.id, infoToSave))
       .then((result) => {
         if (result !== undefined) {
           // let them know it worked
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
           // need to fetch it again because something may have changed
-          dispatch(fetchSystemUser(ownProps.params.auth_users_id))
-            .then(() => dispatch(push(`/users/${ownProps.params.userId}/update`)));
+          dispatch(fetchSystemUser(ownProps.params.id))
+            .then(() => dispatch(push(`/admin/users/${ownProps.params.id}/update`)));
         }
       });
   },

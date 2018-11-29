@@ -66,7 +66,7 @@ const UserPermissionsForm = (props) => {
       <Row>
         <Col md={2}>
           <Field
-            name="admin"
+            name="roles.admin"
             component={renderCheckbox}
             fullWidth
             label={localMessages.adminLabel}
@@ -75,7 +75,7 @@ const UserPermissionsForm = (props) => {
         </Col>
         <Col md={2}>
           <Field
-            name="tm"
+            name="roles.tm"
             component={renderCheckbox}
             fullWidth
             label={localMessages.tmLabel}
@@ -84,7 +84,7 @@ const UserPermissionsForm = (props) => {
         </Col>
         <Col md={2}>
           <Field
-            name="media-edit"
+            name="roles.media-edit"
             component={renderCheckbox}
             fullWidth
             label={localMessages.mediaEditLabel}
@@ -104,7 +104,7 @@ const UserPermissionsForm = (props) => {
       <Row>
         <Col md={2}>
           <Field
-            name="admin-readonly"
+            name="roles.admin-readonly"
             component={renderCheckbox}
             fullWidth
             label={localMessages.adminReadOnlyLabel}
@@ -113,7 +113,7 @@ const UserPermissionsForm = (props) => {
         </Col>
         <Col md={2}>
           <Field
-            name="tm-readonly"
+            name="roles.tm-readonly"
             component={renderCheckbox}
             fullWidth
             label={localMessages.tmReadOnlyLabel}
@@ -122,7 +122,7 @@ const UserPermissionsForm = (props) => {
         </Col>
         <Col md={2}>
           <Field
-            name="stories-edit"
+            name="roles.stories-edit"
             component={renderCheckbox}
             fullWidth
             label={localMessages.storiesEditLabel}

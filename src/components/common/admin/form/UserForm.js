@@ -74,6 +74,7 @@ function validate(values) {
 const reduxFormConfig = {
   form: 'userForm',
   validate,
+  enableReinitialize: true,
 };
 
 export default

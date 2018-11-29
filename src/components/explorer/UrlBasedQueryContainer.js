@@ -10,8 +10,7 @@ import { LEVEL_ERROR } from '../common/Notice';
 import { addNotice } from '../../actions/appActions';
 import { selectBySearchParams, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo,
   fetchQuerySourcesByIds, fetchQueryCollectionsByIds, demoQuerySourcesByIds, demoQueryCollectionsByIds } from '../../actions/explorerActions';
-import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, generateQueryParamString,
-  decodeQueryParamString, serializeQueriesForUrl } from '../../lib/explorerUtil';
+import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, decodeQueryParamString, serializeQueriesForUrl } from '../../lib/explorerUtil';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../lib/dateUtil';
 import { notEmptyString } from '../../lib/formValidators';
 
@@ -81,6 +80,7 @@ function composeUrlBasedQueryContainer() {
           // react-router decided to decode url components, partially because the JSON parser isn't that clever
           this.updateQueriesFromQParam(location.query.q, autoName);
         } else if (location.query.qs) {
+          // it uses the "new" full JSON way of serializing the queries
           this.updateQueriesFromQSParam(location.query.qs, autoName);
         } else {
           addAppNotice({ level: LEVEL_ERROR, message: formatMessage(localMessages.errorInURLParams) });
@@ -92,7 +92,8 @@ function composeUrlBasedQueryContainer() {
         const { formatMessage } = this.props.intl;
         const { addAppNotice } = this.props;
         try {
-          const queriesFromUrl = JSON.parse(queryString);
+          const cleanedQueryString = decodeURIComponent(queryString);
+          const queriesFromUrl = JSON.parse(cleanedQueryString);
           this.updateQueriesFromString(queriesFromUrl, autoName);
         } catch (f) {
           addAppNotice({ level: LEVEL_ERROR, message: formatMessage(localMessages.errorInURLParams) });
@@ -258,15 +259,15 @@ function composeUrlBasedQueryContainer() {
           const queriesToSerialize = nonEmptyQueries.map((q, idx) => ({ index: idx, q: q.q, color: q.color }));
           dispatch(push({ pathname: '/queries/demo/search', search: `?qs=${serializeQueriesForUrl(queriesToSerialize)}` }));
         } else {
-          const queriesToSerialize = generateQueryParamString(queries.map(q => ({
+          const queriesToSerialize = queries.map(q => ({
             label: q.label,
             q: q.q,
             color: q.color,
             startDate: q.startDate,
             endDate: q.endDate,
-            sources: q.sources, // de-aggregate media bucket into sources and collections
-            collections: q.collections,
-          })));
+            sources: q.sources.map(s => s.media_id), // de-aggregate media bucket into sources and collections
+            collections: q.collections.map(c => c.tags_id),
+          }));
           dispatch(push({ pathname: '/queries/search', search: `?qs=${serializeQueriesForUrl(queriesToSerialize)}` }));
         }
       },

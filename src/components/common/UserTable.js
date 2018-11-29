@@ -7,7 +7,7 @@ import messages from '../../resources/messages';
 import AppButton from './AppButton';
 
 function goToUpdate(id) {
-  window.location = `/admin/users/${id}`;
+  window.location = `/admin/users/${id}/update`;
 }
 
 const UserTable = (props) => {
@@ -37,7 +37,7 @@ const UserTable = (props) => {
                 <tr key={user.id} className={(idx % 2 === 0) ? 'even' : 'odd'}>
                   <td className="email">{user.email}</td>
                   <td>
-                    <Link to={`/admin/users/${user.auth_users_id}`}>{user.full_name}</Link>
+                    <Link to={`/admin/users/${user.auth_users_id}/update`}>{user.full_name}</Link>
                   </td>
                   <td className="permissions"><FormattedNumber value={roles} /></td>
                   <td className="edit"><AppButton primary label="edit" onClick={() => goToUpdate(user.auth_users_id)} /></td>

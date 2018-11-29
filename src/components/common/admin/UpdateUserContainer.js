@@ -22,8 +22,11 @@ const UpdateUserContainer = (props) => {
   const { user, handleSave } = props;
   const { formatMessage } = props.intl;
   const content = null;
+  let roles = user.roles.map(r => r.role);
+  roles = roles.reduce((o, key) => ({ ...o, [key]: true }), {});
   const intialValues = {
     ...user,
+    roles, // prep roles for UI checkbox
   };
   if (user === undefined) {
     return (
@@ -34,9 +37,9 @@ const UpdateUserContainer = (props) => {
   }
   return (
     <Grid className="details user-details">
-      <h2>
+      <h1>
         <FormattedMessage {...localMessages.updateTitle} />
-      </h2>
+      </h1>
       <Permissioned onlyRole={PERMISSION_ADMIN}>
         <UserForm
           initialValues={intialValues}

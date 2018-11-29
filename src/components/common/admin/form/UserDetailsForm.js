@@ -4,14 +4,16 @@ import { Field, reduxForm } from 'redux-form';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../hocs/IntlForm';
+import { invalidEmail, notEmptyString, passwordTooShort, stringsDoNotMatch } from '../../../../lib/formValidators';
+import messages from '../../../../resources/messages';
 
 const localMessages = {
   nameLabel: { id: 'user.update.name.label', defaultMessage: 'User Name' },
   emailLabel: { id: 'user.update.email.label', defaultMessage: 'Email' },
   notesLabel: { id: 'user.update.notes.label', defaultMessage: 'Notes' },
   activeLabel: { id: 'user.update.active.label', defaultMessage: 'Active?' },
-  pwdLabel: { id: 'user.update.pwd.hint', defaultMessage: 'Password' },
-  confirmPwdLabel: { id: 'user.update.pwd.confirm', defaultMessage: 'Confirm Password' },
+  pwdLabel: { id: 'user.update.pwd.hint', defaultMessage: 'New Password' },
+  confirmPwdLabel: { id: 'user.update.pwd.confirm', defaultMessage: 'Confirm New Password' },
   nameError: { id: 'user.update.name.error', defaultMessage: 'You must have a name for this user.' },
   emailError: { id: 'user.update.url.error', defaultMessage: 'You must have an email for this user.' },
 };
@@ -87,7 +89,8 @@ const UserDetailsForm = (props) => {
             name="password"
             component={renderTextField}
             fullWidth
-            label={localMessages.pwdLabel}
+            type="password"
+            label={messages.userNewPassword}
             disabled={initialValues.disabled}
           />
         </Col>
@@ -98,7 +101,8 @@ const UserDetailsForm = (props) => {
             name="confirmPassword"
             component={renderTextField}
             fullWidth
-            label={localMessages.confirmPwdLabel}
+            type="password"
+            label={messages.userConfirmPassword}
             disabled={initialValues.disabled}
           />
         </Col>
@@ -115,8 +119,24 @@ UserDetailsForm.propTypes = {
   initialValues: PropTypes.object,
 };
 
+// in-browser validation callback
+function validate(values) {
+  const errors = {};
+  if (invalidEmail(values.email)) {
+    errors.email = localMessages.missingEmail;
+  }
+  if (notEmptyString(values.password) && passwordTooShort(values.password)) {
+    errors.old_password = messages.passwordTooShort;
+  }
+  if (stringsDoNotMatch(values.password, values.confirm_password)) {
+    errors.confirm_password = messages.passwordsMismatch;
+  }
+  return errors;
+}
+
 const reduxFormConfig = {
   form: 'sourceForm',
+  validate,
 };
 
 export default

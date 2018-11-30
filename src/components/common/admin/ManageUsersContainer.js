@@ -8,7 +8,7 @@ import { fetchSystemUsers } from '../../../actions/systemActions';
 import { notEmptyString } from '../../../lib/formValidators';
 import UserTable from '../UserTable';
 
-const ManageUsersContainer = props => <UserTable users={props.users} />;
+const ManageUsersContainer = props => <div><UserTable users={props.users} /></div>;
 
 ManageUsersContainer.propTypes = {
   // from Hoc

@@ -23,7 +23,7 @@ const UpdateUserContainer = (props) => {
   const { formatMessage } = props.intl;
   const content = null;
   let roles = user.roles.map(r => r.role);
-  roles = roles.reduce((o, key) => ({ ...o, [key]: true }), {});
+  roles = roles.reduce((o, key) => ({ ...o, key }), {});
   const intialValues = {
     ...user,
     roles, // prep roles for UI checkbox
@@ -74,13 +74,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     const roles = Object.keys(values.roles);
     const infoToSave = {
       ...values,
-      'roles[]': roles.map(r => r).join(","),
+      'roles[]': roles.map(r => r).join(','),
       // TODO: if password is changed, track that
     };
     return dispatch(updateSystemUser(ownProps.params.id, infoToSave))
       .then((result) => {
         if (result !== undefined) {
-          // let them know it worked  
+          // let them know it worked
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
           // need to fetch it again because something may have changed
           dispatch(fetchSystemUser(ownProps.params.id))

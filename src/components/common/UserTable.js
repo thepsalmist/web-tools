@@ -32,14 +32,15 @@ const UserTable = (props) => {
               <th><FormattedMessage {...messages.edit} /></th>
             </tr>
             {users.map((user, idx) => {
-              const roles = user.roles.map(r => r.role);
+              let roles = user.roles.map(r => r.role);
+              roles = Object.values(roles).toString();
               return (
-                <tr key={user.id} className={(idx % 2 === 0) ? 'even' : 'odd'}>
+                <tr key={user.auth_users_id} className={(idx % 2 === 0) ? 'even' : 'odd'}>
                   <td className="email">{user.email}</td>
                   <td>
                     <Link to={`/admin/users/${user.auth_users_id}/update`}>{user.full_name}</Link>
                   </td>
-                  <td className="permissions"><FormattedNumber value={roles} /></td>
+                  <td className="permissions">{roles}</td>
                   <td className="edit"><AppButton primary label="edit" onClick={() => goToUpdate(user.auth_users_id)} /></td>
                 </tr>
               );

@@ -36,7 +36,7 @@ export function dataAsSeries(data, fieldName = 'count') {
   // turning variable time unit into days
   const intervalMs = (dates[1] - dates[0]);
   const intervalDays = intervalMs / SECS_PER_DAY;
-  const values = data.map(d => Math.round(d[fieldName] / intervalDays));
+  const values = data.map(d => d[fieldName] / intervalDays);
   return { data: values, pointInterval: intervalMs, pointStart: dates[0] };
 }
 

@@ -61,7 +61,7 @@ const NavToolbar = (props) => {
               <li className="admin">
                 <AppButton
                   variant="text"
-                  href="#/admin"
+                  href="#/admin/users/list"
                   target="new"
                   label={formatMessage(localMessages.admin)}
                 />

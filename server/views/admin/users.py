@@ -37,12 +37,13 @@ def api_system_user_by_id(user_id):
 @flask_login.login_required
 def api_system_user_update(user_id):
     mc = user_admin_mediacloud_client()
+
     # needed to put this behind an endpoint so browser doesn't cache it
     valid_params = {
         'email': request.form['email'],
         'full_name': request.form['full_name'],
         'notes': request.form['notes'] if 'notes' in request.form else None,  # this is optional
-        'roles': request.form['roles[]'] if 'roles[]' in request.form else None,
+        'roles': request.form['roles[]'].split(',') if 'roles[]' in request.form else None,
     }
     results = mc.userUpdate(user_id, **valid_params)
     return jsonify(results)

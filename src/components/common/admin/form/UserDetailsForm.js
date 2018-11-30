@@ -58,7 +58,7 @@ const UserDetailsForm = (props) => {
         </Col>
         <Col md={8}>
           <Field
-            name="public_notes"
+            name="notes"
             component={renderTextField}
             label={localMessages.notesLabel}
             fullWidth

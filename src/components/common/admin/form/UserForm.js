@@ -26,7 +26,7 @@ const UserForm = (props) => {
   return (
     <Grid>
       <form className="app-form user-form" name="userForm" onSubmit={handleSubmit(onSave.bind(this))}>
-        <UserDetailsForm initialValues={cleanedInitialValues} />
+        <UserDetailsForm initialValues={cleanedInitialValues} form="userForm" />
         <UserPermissionsForm initialValues={cleanedInitialValues} form="userForm" />
         <Row>
           <Col lg={12}>

@@ -32,6 +32,7 @@ const UserDetailsForm = (props) => {
           <Field
             name="full_name"
             component={renderTextField}
+            label={localMessages.nameLabel}
             fullWidth
           />
         </Col>
@@ -46,6 +47,7 @@ const UserDetailsForm = (props) => {
           <Field
             name="email"
             component={renderTextField}
+            label={localMessages.emailLabel}
             fullWidth
           />
         </Col>
@@ -61,8 +63,6 @@ const UserDetailsForm = (props) => {
             name="notes"
             component={renderTextField}
             label={localMessages.notesLabel}
-            fullWidth
-            disabled={initialValues.disabled}
             rows={2}
           />
         </Col>
@@ -135,7 +135,7 @@ function validate(values) {
 }
 
 const reduxFormConfig = {
-  form: 'sourceForm',
+  form: 'userForm',
   validate,
 };
 

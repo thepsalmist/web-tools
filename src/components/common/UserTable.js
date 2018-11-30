@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Link from 'react-router/lib/Link';
 import { Grid } from 'react-flexbox-grid/lib';
-import { FormattedMessage, injectIntl, FormattedNumber } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import messages from '../../resources/messages';
 import AppButton from './AppButton';
 

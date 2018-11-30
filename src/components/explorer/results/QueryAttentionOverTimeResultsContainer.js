@@ -181,7 +181,6 @@ const mapStateToProps = state => ({
   lastSearchTime: state.explorer.lastSearchTime.time,
   fetchStatus: state.explorer.storySplitCount.fetchStatus || FETCH_INVALID,
   results: state.explorer.storySplitCount.results,
-  selectedTimePeriod: state.explorer.storySplitCount.selectedTimePeriod,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

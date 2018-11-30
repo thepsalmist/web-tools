@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2018-11-30",
+      "version": "v3.6.2",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "You can switch between day/week/month and count/pct on explorer attention chart again"
+        }
+      ]
+    },
+    {
       "date": "2018-11-28",
       "version": "v3.6.1",
       "notes": [

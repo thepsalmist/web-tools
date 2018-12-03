@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import messages from '../../../resources/messages';
 import AppMenu from './AppMenu';
 import { urlToTools } from '../../../lib/urlUtil';
 import { getAppName } from '../../../config';

@@ -19,7 +19,7 @@ const ManageUsersContainer = props => (
     <UserSearchForm onSearch={searchStr => props.fetchData(searchStr)} />
     <Row>
       <UserTable users={props.users} />
-      <Row>{props.prevButton}{props.nextButton}</Row>
+      <Row>{props.previousButton}{props.nextButton}</Row>
     </Row>
   </Grid>
 );
@@ -27,7 +27,7 @@ const ManageUsersContainer = props => (
 ManageUsersContainer.propTypes = {
   // from Hoc
   intl: PropTypes.object.isRequired,
-  prevButton: PropTypes.node,
+  previousButton: PropTypes.node,
   nextButton: PropTypes.node,
   // from state
   fetchStatus: PropTypes.string,

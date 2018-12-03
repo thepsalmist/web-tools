@@ -4,8 +4,7 @@ import { Field, reduxForm } from 'redux-form';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../hocs/IntlForm';
-import { invalidEmail, notEmptyString, passwordTooShort, stringsDoNotMatch } from '../../../../lib/formValidators';
-import messages from '../../../../resources/messages';
+import { invalidEmail } from '../../../../lib/formValidators';
 
 const localMessages = {
   nameLabel: { id: 'user.update.name.label', defaultMessage: 'User Name' },
@@ -19,7 +18,7 @@ const localMessages = {
 };
 
 const UserDetailsForm = (props) => {
-  const { renderTextField, renderCheckbox, initialValues } = props;
+  const { renderTextField, renderCheckbox } = props;
   return (
     <div className="user-details-form">
       <Row>
@@ -79,31 +78,7 @@ const UserDetailsForm = (props) => {
             component={renderCheckbox}
             fullWidth
             label={localMessages.isActiveLabel}
-            disabled={initialValues.disabled}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col md={2}>
-          <Field
-            name="password"
-            component={renderTextField}
-            fullWidth
-            type="password"
-            label={messages.userNewPassword}
-            disabled={initialValues.disabled}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col md={2}>
-          <Field
-            name="confirmPassword"
-            component={renderTextField}
-            fullWidth
-            type="password"
-            label={messages.userConfirmPassword}
-            disabled={initialValues.disabled}
+            disabled
           />
         </Col>
       </Row>
@@ -124,12 +99,6 @@ function validate(values) {
   const errors = {};
   if (invalidEmail(values.email)) {
     errors.email = localMessages.missingEmail;
-  }
-  if (notEmptyString(values.password) && passwordTooShort(values.password)) {
-    errors.old_password = messages.passwordTooShort;
-  }
-  if (stringsDoNotMatch(values.password, values.confirm_password)) {
-    errors.confirm_password = messages.passwordsMismatch;
   }
   return errors;
 }

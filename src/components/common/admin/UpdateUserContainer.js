@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid } from 'react-flexbox-grid/lib';
-import { push } from 'react-router-redux';
+import { replace } from 'react-router-redux';
 import withAsyncFetch from '../hocs/AsyncContainer';
 import { selectSystemUser, updateSystemUser, fetchSystemUser } from '../../../actions/systemActions';
 import { updateFeedback } from '../../../actions/appActions';
@@ -87,7 +87,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
           // need to fetch it again because something may have changed
           dispatch(fetchSystemUser(ownProps.params.id))
-            .then(() => dispatch(push(`/admin/users/${ownProps.params.id}/update`)));
+            .then(() => dispatch(replace(`/admin/users/${ownProps.params.id}/update`)));
         }
       });
   },

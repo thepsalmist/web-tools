@@ -4,7 +4,7 @@ import * as api from '../../lib/serverApi/system';
 
 export const FETCH_SYSTEM_USERS = 'FETCH_SYSTEM_USERS';
 
-export const fetchSystemUsers = createAsyncAction(FETCH_SYSTEM_USERS, api.fetchSystemUsers, searchStr => searchStr);
+export const fetchSystemUsers = createAsyncAction(FETCH_SYSTEM_USERS, api.fetchSystemUsers, params => params);
 
 export const FETCH_SYSTEM_USER = 'FETCH_SYSTEM_USER';
 

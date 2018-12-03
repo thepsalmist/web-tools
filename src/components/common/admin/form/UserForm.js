@@ -18,16 +18,11 @@ const localMessages = {
 
 const UserForm = (props) => {
   const { initialValues, buttonLabel, pristine, submitting, handleSubmit, onSave } = props;
-  // need to init initialValues a bit on the way in to make lower-level logic work right
-  const cleanedInitialValues = initialValues ? { ...initialValues } : {};
-  if (cleanedInitialValues.disabled === undefined) {
-    cleanedInitialValues.disabled = false;
-  }
   return (
     <Grid>
       <form className="app-form user-form" name="userForm" onSubmit={handleSubmit(onSave.bind(this))}>
-        <UserDetailsForm initialValues={cleanedInitialValues} form="userForm" />
-        <UserPermissionsForm initialValues={cleanedInitialValues} form="userForm" />
+        <UserDetailsForm initialValues={initialValues} form="userForm" />
+        <UserPermissionsForm initialValues={initialValues} form="userForm" />
         <Row>
           <Col lg={12}>
             <AppButton

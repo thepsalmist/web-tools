@@ -86,8 +86,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           // let them know it worked
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
           // need to fetch it again because something may have changed
-          dispatch(fetchSystemUser(ownProps.params.id))
-            .then(() => dispatch(replace(`/admin/users/${ownProps.params.id}/update`)));
+          window.location.reload();
         }
       });
   },

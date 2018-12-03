@@ -69,8 +69,9 @@ export function fetchSystemUser(userId) {
   return createApiPromise(`/api/admin/users/${userId}`);
 }
 
-export function fetchSystemUsers(searchStr) {
-  return createApiPromise(`/api/admin/users/list/${searchStr}`);
+export function fetchSystemUsers(params) {
+  const acceptedParams = acceptParams(params, ['searchStr','linkId']);
+  return createApiPromise('/api/admin/users/list', acceptedParams);
 }
 
 export function updateSystemUser(userId, params) {

@@ -11,13 +11,13 @@ from server.util.request import api_error_handler
 logger = logging.getLogger(__name__)
 
 @cache.cache_on_arguments(function_key_generator=key_generator)
-@app.route('/api/admin/users/list/<search_str>', methods=['GET'])
+@app.route('/api/admin/users/list', methods=['GET'])
 @api_error_handler
 @flask_login.login_required
-def api_system_user_search(search_str):
+def api_system_user_search():
     mc = user_admin_mediacloud_client()
-    search = search_str if search_str not in [None, 'undefined'] else None
-    link_id = request.args.get('linkId')
+    search = request.args.get('searchStr') if 'searchStr' in request.args else None,
+    link_id = request.args.get('linkId') if 'linkId' in request.args else None,
     page = mc.userList(search=search, link_id=link_id)
     return jsonify(page)
 

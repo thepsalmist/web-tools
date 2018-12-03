@@ -2,13 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+import { Row } from 'react-flexbox-grid/lib';
 import withAsyncFetch from '../hocs/AsyncContainer';
 import withPaging from '../hocs/PagedContainer';
 import { fetchSystemUsers } from '../../../actions/systemActions';
 import { notEmptyString } from '../../../lib/formValidators';
 import UserTable from '../UserTable';
 
-const ManageUsersContainer = props => <div><UserTable users={props.users} /></div>;
+const ManageUsersContainer = props => <div><UserTable users={props.users} /><Row>{props.prevButton}{props.nextButton}</Row></div>;
 
 ManageUsersContainer.propTypes = {
   // from Hoc
@@ -36,9 +37,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   fetchPagedData: (props, linkId) => {
     if (notEmptyString(ownProps.params.searchStr)) {
-      return dispatch(fetchSystemUsers(ownProps.params.searchStr, linkId));
+      return dispatch(fetchSystemUsers({ searchStr: ownProps.params.searchStr, linkId }));
     }
-    return dispatch(fetchSystemUsers(linkId));
+    return dispatch(fetchSystemUsers({ linkId }));
   },
 });
 

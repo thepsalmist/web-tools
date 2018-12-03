@@ -70,7 +70,7 @@ export function fetchSystemUser(userId) {
 }
 
 export function fetchSystemUsers(params) {
-  const acceptedParams = acceptParams(params, ['searchStr','linkId']);
+  const acceptedParams = acceptParams(params, ['searchStr', 'linkId']);
   return createApiPromise('/api/admin/users/list', acceptedParams);
 }
 

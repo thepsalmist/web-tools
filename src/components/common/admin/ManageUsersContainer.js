@@ -2,14 +2,27 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { Row } from 'react-flexbox-grid/lib';
+import { formValueSelector } from 'redux-form';
+import { Grid, Row } from 'react-flexbox-grid/lib';
 import withAsyncFetch from '../hocs/AsyncContainer';
 import withPaging from '../hocs/PagedContainer';
 import { fetchSystemUsers } from '../../../actions/systemActions';
 import { notEmptyString } from '../../../lib/formValidators';
 import UserTable from '../UserTable';
+import UserSearchForm from './form/UserSearchForm';
 
-const ManageUsersContainer = props => <div><UserTable users={props.users} /><Row>{props.prevButton}{props.nextButton}</Row></div>;
+
+const formSelector = formValueSelector('userSearchForm');
+
+const ManageUsersContainer = props => (
+  <Grid>
+    <UserSearchForm onSearch={searchStr => props.fetchData(searchStr)} />
+    <Row>
+      <UserTable users={props.users} />
+      <Row>{props.prevButton}{props.nextButton}</Row>
+    </Row>
+  </Grid>
+);
 
 ManageUsersContainer.propTypes = {
   // from Hoc
@@ -19,19 +32,26 @@ ManageUsersContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string,
   users: PropTypes.array,
+  fetchData: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   fetchStatus: state.system.users.allUsers.fetchStatus,
   users: state.system.users.allUsers.users,
   links: state.system.users.allUsers.link_ids,
-  searchStr: ownProps.params.searchStr,
+  searchStr: formSelector(state, 'searchStr'),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
+  fetchData: (searchStr) => {
+    if (notEmptyString(Object.values(searchStr)[0])) {
+      return dispatch(fetchSystemUsers(searchStr));
+    }
+    return dispatch(fetchSystemUsers());
+  },
   asyncFetch: () => {
-    if (notEmptyString(ownProps.params.searchStr)) {
-      return dispatch(fetchSystemUsers(ownProps.params.searchStr));
+    if (ownProps.location.query !== undefined) {
+      return dispatch(fetchSystemUsers(ownProps.location.query));
     }
     return dispatch(fetchSystemUsers());
   },

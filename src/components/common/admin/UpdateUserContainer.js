@@ -3,7 +3,6 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid } from 'react-flexbox-grid/lib';
-import { replace } from 'react-router-redux';
 import withAsyncFetch from '../hocs/AsyncContainer';
 import { selectSystemUser, updateSystemUser, fetchSystemUser } from '../../../actions/systemActions';
 import { updateFeedback } from '../../../actions/appActions';

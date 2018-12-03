@@ -7,6 +7,7 @@ import UserMenuContainer from './UserMenuContainer';
 import SourcesAppMenu from './SourcesAppMenu';
 import TopicsAppMenu from './TopicsAppMenu';
 import ExplorerAppMenu from './ExplorerAppMenu';
+import UserAdminAppMenu from './UserAdminAppMenu';
 import { assetUrl } from '../../../lib/assetUtil';
 import RecentNewsMenuContainer from '../news/RecentNewsMenuContainer';
 import AppButton from '../AppButton';
@@ -59,12 +60,7 @@ const NavToolbar = (props) => {
           <Col lg={6}>
             <ul className="right">
               <li className="admin">
-                <AppButton
-                  variant="text"
-                  href="#/admin/users/list"
-                  target="new"
-                  label={formatMessage(localMessages.admin)}
-                />
+                <UserAdminAppMenu />
               </li>
               <li className="support">
                 <AppButton

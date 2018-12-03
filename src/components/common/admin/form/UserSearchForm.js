@@ -19,14 +19,15 @@ const UserSearchForm = (props) => {
   return (
     <form className="app-form search-form" name="userSearchForm" onSubmit={handleSubmit(onSearch.bind(this))}>
       <Row>
-        <Col lg={3} />
-        <Col lg={6}>
+        <Col lg={3}>
           <Field
             name="searchStr"
-            className="explorer-home-search-field"
+            className="tool-user-search"
             component={renderTextField}
-            helpertext={localMessages.searchHint}
+            label={localMessages.searchHint}
           />
+        </Col>
+        <Col lg={1}>
           <AppButton type="submit" label={messages.search} primary />
         </Col>
       </Row>

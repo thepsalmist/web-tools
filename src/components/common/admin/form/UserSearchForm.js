@@ -10,7 +10,7 @@ import messages from '../../../../resources/messages';
 const localMessages = {
   mainTitle: { id: 'explorer.search.title', defaultMessage: 'User name or email' },
   addButton: { id: 'explorer.search', defaultMessage: 'Search' },
-  searchHint: { id: 'explorer.intro.searchHint', defaultMessage: 'Search by user name or email' },
+  searchHint: { id: 'explorer.intro.searchHint', defaultMessage: 'Filter users by name or email' },
 };
 
 const UserSearchForm = (props) => {
@@ -19,7 +19,7 @@ const UserSearchForm = (props) => {
   return (
     <form className="app-form search-form" name="userSearchForm" onSubmit={handleSubmit(onSearch.bind(this))}>
       <Row>
-        <Col lg={3}>
+        <Col lg={9}>
           <Field
             name="searchStr"
             className="tool-user-search"
@@ -28,7 +28,7 @@ const UserSearchForm = (props) => {
           />
         </Col>
         <Col lg={1}>
-          <AppButton type="submit" label={messages.search} primary />
+          <AppButton className="tool-user-search-button" type="submit" label={messages.search} primary />
         </Col>
       </Row>
     </form>

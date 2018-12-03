@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import { Grid, Row } from 'react-flexbox-grid/lib';
@@ -14,9 +14,17 @@ import UserSearchForm from './form/UserSearchForm';
 
 const formSelector = formValueSelector('userSearchForm');
 
+const localMessages = {
+  userTitle: { id: 'user.all.title', defaultMessage: 'Users' },
+};
+
 const ManageUsersContainer = props => (
   <Grid>
-    <UserSearchForm onSearch={searchStr => props.fetchData(searchStr)} />
+    <h1>
+      <FormattedMessage {...localMessages.userTitle} />
+    </h1>
+    <Row><UserSearchForm onSearch={searchStr => props.fetchData(searchStr)} /></Row>
+    <br /><br />
     <Row>
       <UserTable users={props.users} />
       <Row>{props.previousButton}{props.nextButton}</Row>

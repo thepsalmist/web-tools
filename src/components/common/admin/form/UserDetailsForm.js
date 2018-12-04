@@ -78,7 +78,6 @@ const UserDetailsForm = (props) => {
             component={renderCheckbox}
             fullWidth
             label={localMessages.isActiveLabel}
-            disabled
           />
         </Col>
       </Row>
@@ -94,7 +93,6 @@ const UserDetailsForm = (props) => {
             component={renderTextField}
             fullWidth
             label={localMessages.isActiveLabel}
-            disabled
           />
         </Col>
       </Row>
@@ -106,11 +104,10 @@ const UserDetailsForm = (props) => {
         </Col>
         <Col md={2}>
           <Field
-            name="weekly_quota"
+            name="weekly_requests_limit"
             component={renderTextField}
             fullWidth
             label={localMessages.isActiveLabel}
-            disabled
           />
         </Col>
       </Row>

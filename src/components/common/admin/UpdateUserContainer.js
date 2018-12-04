@@ -76,6 +76,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     });
     const infoToSave = {
       ...values,
+      active: values.active || 0,
       'roles[]': Object.keys(updatedRoles).join(','),
       // TODO: if password is changed, track that
     };

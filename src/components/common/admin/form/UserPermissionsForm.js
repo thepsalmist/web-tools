@@ -16,44 +16,6 @@ const localMessages = {
   searchLabel: { id: 'user.update.search.label', defaultMessage: 'Search' },
 };
 
-/*
-admin: Do everything, including editing users
-admin-readonly: Read access to admin interface.
-
-media-edit: Add / edit media; includes feeds.
-stories-edit: Add / edit stories.
-tm: Topic mapper; includes media and story editing
-search: Access to the /search pages
-tm-readonly: Topic mapper; excludes media and story editing
-*/
-/*
-const renderPermissionelector = ({ fields, meta, onDelete }) => (
-  <div>
-    {fields.map((name, index) => (
-      <Col md={2}>
-        <Field
-          key={name}
-          name={name}
-          component={renderCheckbox}
-          fullWidth
-          label={localMessages.tmLabel}
-          disabled={initialValues.disabled}
-        />
-        </Col>
-    ))}
-    { meta.error !== null && meta.error !== undefined ? <div className="error">{meta.error}</div> : '' }
-
-  </div>
-);
-
-renderPermissionselector.propTypes = {
-  fields: PropTypes.object,
-  meta: PropTypes.object,
-  validate: PropTypes.func,
-  onDelete: PropTypes.func,
-};
-*/
-
 const UserPermissionsForm = (props) => {
   const { renderCheckbox, initialValues } = props;
   return (

@@ -6,14 +6,13 @@ import { reduxForm, formValueSelector } from 'redux-form';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { Helmet } from 'react-helmet';
+import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withIntlForm from '../../common/hocs/IntlForm';
 import TopicForm, { TOPIC_FORM_MODE_CREATE } from './TopicForm';
 import { goToCreateTopicStep } from '../../../actions/topicActions';
+import { fetchSystemUser } from '../../../actions/systemActions';
 import messages from '../../../resources/messages';
 import { getCurrentDate, getMomentDateSubtraction } from '../../../lib/dateUtil';
-import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/auth';
-import { MAX_RECOMMENDED_STORIES, ADMIN_MAX_RECOMMENDED_STORIES } from '../../../lib/formValidators';
-
 
 const localMessages = {
   title: { id: 'topic.create.setup.title', defaultMessage: 'Step 1: Create A Topic' },
@@ -28,13 +27,12 @@ const localMessages = {
 const formSelector = formValueSelector('topicForm');
 
 const TopicCreate1ConfigureContainer = (props) => {
-  const { finishStep, handleMediaChange, handleMediaDelete, formData, user } = props;
+  const { finishStep, handleMediaChange, handleMediaDelete, formData, maxStories } = props;
   const { formatMessage } = props.intl;
-  const isAdmin = hasPermissions(getUserRoles(user), PERMISSION_ADMIN);
   const endDate = getCurrentDate();
   const startDate = getMomentDateSubtraction(endDate, 3, 'months');
   const sAndC = (formData && formData.sourcesAndCollections) || [];
-  const initialValues = { start_date: startDate, end_date: endDate, max_iterations: 15, max_stories: isAdmin ? ADMIN_MAX_RECOMMENDED_STORIES : MAX_RECOMMENDED_STORIES, buttonLabel: formatMessage(messages.preview), sourcesAndCollections: sAndC };
+  const initialValues = { start_date: startDate, end_date: endDate, max_iterations: 15, max_topic_stories: maxStories, buttonLabel: formatMessage(messages.preview), sourcesAndCollections: sAndC };
   return (
     <Grid>
       <Helmet><title>{formatMessage(localMessages.title)}</title></Helmet>
@@ -70,6 +68,8 @@ TopicCreate1ConfigureContainer.propTypes = {
   currentStep: PropTypes.number,
   formData: PropTypes.object,
   user: PropTypes.object,
+  maxStories: PropTypes.number,
+  fetchStatus: PropTypes.string.isRequired,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
   handleMediaChange: PropTypes.func.isRequired,
@@ -79,6 +79,8 @@ TopicCreate1ConfigureContainer.propTypes = {
 const mapStateToProps = state => ({
   formData: formSelector(state, 'solr_seed_query', 'start_date', 'end_date', 'sourcesAndCollections'),
   user: state.user,
+  fetchStatus: state.system.users.userDetails.fetchStatus,
+  maxStories: state.system.users.userDetails.user ? state.system.users.userDetails.user.max_topic_stories : 1000,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -95,7 +97,18 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     ownProps.change('sourcesAndCollections', selectedMedia); // redux-form change action
   },
   handleMediaDelete: () => null, // in create mode we don't need to update the values
+  fetchUserInfo: (userid) => {
+    dispatch(fetchSystemUser(userid));
+  },
 });
+
+function mergeProps(stateProps, dispatchProps, ownProps) {
+  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+    asyncFetch: () => {
+      dispatchProps.fetchUserInfo(stateProps.user.profile.auth_users_id);
+    },
+  });
+}
 
 const reduxFormConfig = {
   form: 'topicForm',
@@ -107,8 +120,10 @@ export default
 injectIntl(
   withIntlForm(
     reduxForm(reduxFormConfig)(
-      connect(mapStateToProps, mapDispatchToProps)(
-        TopicCreate1ConfigureContainer
+      connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+        withAsyncFetch(
+          TopicCreate1ConfigureContainer
+        )
       )
     )
   )

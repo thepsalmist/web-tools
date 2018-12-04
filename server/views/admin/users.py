@@ -44,7 +44,7 @@ def api_system_user_update(user_id):
         'full_name': request.form['full_name'],
         'notes': request.form['notes'] if 'notes' in request.form else None,  # this is optional
         'roles': request.form['roles[]'].split(',') if 'roles[]' in request.form else None,
-        'active': bool(request.form['active']) if 'active' in request.form else False,
+        'active': bool(request.form['active'] == 'true') if 'active' in request.form else False,
         'max_topic_stories': request.form['max_topic_stories'] if 'max_topic_stories' in request.form else None,
         'weekly_requests_limit': request.form['weekly_requests_limit'] if 'weekly_requests_limit' in request.form else None,
     }

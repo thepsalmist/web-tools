@@ -17,3 +17,7 @@ export const selectSystemUser = createAction(SELECT_SYSTEM_USER);
 export const UPDATE_SYSTEM_USER = 'UPDATE_SYSTEM_USER';
 
 export const updateSystemUser = createAsyncAction(UPDATE_SYSTEM_USER, api.updateSystemUser);
+
+export const DELETE_SYSTEM_USER = 'DELETE_SYSTEM_USER';
+
+export const deleteSystemUser = createAsyncAction(DELETE_SYSTEM_USER, api.deleteSystemUser);

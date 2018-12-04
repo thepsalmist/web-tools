@@ -75,6 +75,10 @@ export function fetchSystemUsers(params) {
 }
 
 export function updateSystemUser(userId, params) {
-  const acceptedParams = acceptParams(params, ['full_name', 'email', 'active', 'roles[]', 'notes']);
+  const acceptedParams = acceptParams(params, ['full_name', 'email', 'active', 'roles[]', 'notes', 'max_topic_stories', 'weekly_quota']);
   return createPostingApiPromise(`/api/admin/users/${userId}/update`, acceptedParams);
+}
+
+export function deleteSystemUser(userId) {
+  return createApiPromise(`/api/admin/users/${userId}/delete`);
 }

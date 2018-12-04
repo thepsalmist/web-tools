@@ -47,3 +47,12 @@ def api_system_user_update(user_id):
     }
     results = mc.userUpdate(user_id, **valid_params)
     return jsonify(results)
+
+@app.route('/api/admin/users/<user_id>/delete', methods=['GET'])
+@api_error_handler
+@flask_login.login_required
+def api_system_user_delete(user_id):
+    mc = user_admin_mediacloud_client()
+
+    results = mc.userDelete(user_id)
+    return jsonify(results)

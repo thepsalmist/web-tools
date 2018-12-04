@@ -6,7 +6,7 @@ import { formValueSelector } from 'redux-form';
 import { Grid, Row } from 'react-flexbox-grid/lib';
 import withAsyncFetch from '../hocs/AsyncContainer';
 import withPaging from '../hocs/PagedContainer';
-import { fetchSystemUsers } from '../../../actions/systemActions';
+import { fetchSystemUsers, deleteSystemUser } from '../../../actions/systemActions';
 import { notEmptyString } from '../../../lib/formValidators';
 import UserTable from '../UserTable';
 import UserSearchForm from './form/UserSearchForm';
@@ -26,7 +26,7 @@ const ManageUsersContainer = props => (
     <Row><UserSearchForm onSearch={searchStr => props.fetchData(searchStr)} /></Row>
     <br /><br />
     <Row>
-      <UserTable users={props.users} />
+      <UserTable users={props.users} onDeleteUser={userId => props.handleDeleteUser(userId)} />
       <Row>{props.previousButton}{props.nextButton}</Row>
     </Row>
   </Grid>
@@ -41,6 +41,7 @@ ManageUsersContainer.propTypes = {
   fetchStatus: PropTypes.string,
   users: PropTypes.array,
   fetchData: PropTypes.func.isRequired,
+  handleDeleteUser: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -69,6 +70,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
     return dispatch(fetchSystemUsers({ linkId }));
   },
+  handleDeleteUser: userId => dispatch(deleteSystemUser(userId)),
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {

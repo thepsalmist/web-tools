@@ -11,10 +11,10 @@ const localMessages = {
   emailLabel: { id: 'user.update.email.label', defaultMessage: 'Email' },
   notesLabel: { id: 'user.update.notes.label', defaultMessage: 'Notes' },
   activeLabel: { id: 'user.update.active.label', defaultMessage: 'Active?' },
-  pwdLabel: { id: 'user.update.pwd.hint', defaultMessage: 'New Password' },
-  confirmPwdLabel: { id: 'user.update.pwd.confirm', defaultMessage: 'Confirm New Password' },
   nameError: { id: 'user.update.name.error', defaultMessage: 'You must have a name for this user.' },
   emailError: { id: 'user.update.url.error', defaultMessage: 'You must have an email for this user.' },
+  maxStoriesLabel: { id: 'user.update.maxStories', defaultMessage: 'Max Stories' },
+  weeklyQuotaLabel: { id: 'user.update.quota', defaultMessage: 'Weekly Quota' },
 };
 
 const UserDetailsForm = (props) => {
@@ -62,7 +62,7 @@ const UserDetailsForm = (props) => {
             name="notes"
             component={renderTextField}
             label={localMessages.notesLabel}
-            rows={2}
+            rows={5}
           />
         </Col>
       </Row>
@@ -76,6 +76,38 @@ const UserDetailsForm = (props) => {
           <Field
             name="active"
             component={renderCheckbox}
+            fullWidth
+            label={localMessages.isActiveLabel}
+            disabled
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col md={2}>
+          <span className="label unlabeled-field-label">
+            <FormattedMessage {...localMessages.maxStoriesLabel} />
+          </span>
+        </Col>
+        <Col md={2}>
+          <Field
+            name="max_topic_stories"
+            component={renderTextField}
+            fullWidth
+            label={localMessages.isActiveLabel}
+            disabled
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col md={2}>
+          <span className="label unlabeled-field-label">
+            <FormattedMessage {...localMessages.weeklyQuotaLabel} />
+          </span>
+        </Col>
+        <Col md={2}>
+          <Field
+            name="weekly_quota"
+            component={renderTextField}
             fullWidth
             label={localMessages.isActiveLabel}
             disabled

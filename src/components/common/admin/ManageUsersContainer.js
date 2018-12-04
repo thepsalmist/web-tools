@@ -8,6 +8,7 @@ import withAsyncFetch from '../hocs/AsyncContainer';
 import withPaging from '../hocs/PagedContainer';
 import { fetchSystemUsers, deleteSystemUser } from '../../../actions/systemActions';
 import { notEmptyString } from '../../../lib/formValidators';
+import { updateFeedback } from '../../../actions/appActions';
 import UserTable from '../UserTable';
 import UserSearchForm from './form/UserSearchForm';
 
@@ -16,6 +17,7 @@ const formSelector = formValueSelector('userSearchForm');
 
 const localMessages = {
   userTitle: { id: 'user.all.title', defaultMessage: 'Users' },
+  feedback: { id: 'user.all.user.delete.feedback', defaultMessage: 'Successfully deleted user.' },
 };
 
 const ManageUsersContainer = props => (
@@ -70,7 +72,17 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
     return dispatch(fetchSystemUsers({ linkId }));
   },
-  handleDeleteUser: userId => dispatch(deleteSystemUser(userId)),
+  handleDeleteUser: (userId) => {
+    dispatch(deleteSystemUser(userId))
+      .then((result) => {
+        if (result.success) {
+          // let them know it worked
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          // need to fetch it again because something may have changed
+          dispatch(fetchSystemUsers());
+        }
+      });
+  },
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {

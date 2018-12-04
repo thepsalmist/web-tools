@@ -13,6 +13,7 @@ import { goToCreateTopicStep } from '../../../actions/topicActions';
 import { fetchSystemUser } from '../../../actions/systemActions';
 import messages from '../../../resources/messages';
 import { getCurrentDate, getMomentDateSubtraction } from '../../../lib/dateUtil';
+import { MAX_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 
 const localMessages = {
   title: { id: 'topic.create.setup.title', defaultMessage: 'Step 1: Create A Topic' },
@@ -80,7 +81,7 @@ const mapStateToProps = state => ({
   formData: formSelector(state, 'solr_seed_query', 'start_date', 'end_date', 'sourcesAndCollections'),
   user: state.user,
   fetchStatus: state.system.users.userDetails.fetchStatus,
-  maxStories: state.system.users.userDetails.user ? state.system.users.userDetails.user.max_topic_stories : 1000,
+  maxStories: state.system.users.userDetails.user ? state.system.users.userDetails.user.max_topic_stories : MAX_RECOMMENDED_STORIES,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

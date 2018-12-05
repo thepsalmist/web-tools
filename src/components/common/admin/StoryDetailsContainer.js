@@ -49,7 +49,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchData: id => dispatch(fetchStory(Object.values(id))),
-  asyncFetch: () => dispatch(fetchStory(ownProps.params.id)),
+  asyncFetch: () => {
+    dispatch(fetchStory(parseInt(ownProps.params.id, 10)));
+  },
 });
 
 export default

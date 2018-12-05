@@ -26,11 +26,11 @@ const localMessages = {
 
 class SelectedStoryContainer extends React.Component {
   render() {
-    const { selectedStory, handleClose } = this.props;
+    const { selectedStory, selectedStoryId, handleClose } = this.props;
     const { formatDate } = this.props.intl;
 
     let content = null;
-    if (selectedStory) {
+    if (selectedStoryId) {
       content = (
         <div ref={this.rootRef}>
           <DataCard className="admin-story-view">
@@ -79,11 +79,11 @@ class SelectedStoryContainer extends React.Component {
             </Row>
             <Row>
               <Col lg={9}>
-                <StoryEntitiesContainer storyId={selectedStory.stories_id} />
+                <StoryEntitiesContainer storyId={selectedStoryId} />
               </Col>
               <Col lg={3}>
                 <StoryNytThemesContainer
-                  storyId={selectedStory}
+                  storyId={selectedStoryId}
                   tags={selectedStory.story_tags ? selectedStory.story_tags.filter(t => t.tag_sets_id === TAG_SET_NYT_THEMES) : []}
                   hideFullListOption
                 />
@@ -103,6 +103,7 @@ SelectedStoryContainer.propTypes = {
   // from store
   fetchStatus: PropTypes.string.isRequired,
   selectedStory: PropTypes.object.isRequired,
+  selectedStoryId: PropTypes.number,
   // from dispatch
   handleClose: PropTypes.func.isRequired,
   // from context
@@ -113,6 +114,7 @@ SelectedStoryContainer.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: state.story.info.fetchStatus,
   selectedStory: state.story.info,
+  selectedStoryId: parseInt(state.story.info.stories_id, 10),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -121,7 +123,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   asyncFetch: () => {
     if (ownProps.params && ownProps.params.id !== undefined) {
-      dispatch(fetchStory(ownProps.params.id));
+      dispatch(fetchStory(parseInt(ownProps.params.id, 10)));
     }
   },
 });

@@ -15,6 +15,7 @@ const localMessages = {
   menuTitle: { id: 'tools.menu.title', defaultMessage: 'Tools' },
   home: { id: 'tools.menu.items.home', defaultMessage: 'Home' },
   userManagement: { id: 'tools.menu.items.listTopics', defaultMessage: 'Admin: User Management' },
+  storyView: { id: 'tools.menu.items.stories', defaultMessage: 'View Stories' },
 };
 
 
@@ -28,6 +29,9 @@ const UserAdminAppMenu = (props) => {
         </MenuItem>
         <MenuItem onClick={() => { props.handleItemClick('admin/users/list', true); }}>
           <FormattedMessage {...localMessages.userManagement} />
+        </MenuItem>
+        <MenuItem onClick={() => { props.handleItemClick('admin/story/details', true); }}>
+          <FormattedMessage {...localMessages.storyView} />
         </MenuItem>
       </Menu>
     );

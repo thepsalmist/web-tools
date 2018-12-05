@@ -11,7 +11,8 @@ import { notEmptyString } from '../../../lib/formValidators';
 import { updateFeedback } from '../../../actions/appActions';
 import UserTable from '../UserTable';
 import UserSearchForm from './form/UserSearchForm';
-
+import { PERMISSION_ADMIN } from '../../../lib/auth';
+import Permissioned from '../Permissioned';
 
 const formSelector = formValueSelector('userSearchForm');
 
@@ -22,15 +23,17 @@ const localMessages = {
 
 const ManageUsersContainer = props => (
   <Grid>
-    <h1>
-      <FormattedMessage {...localMessages.userTitle} />
-    </h1>
-    <Row><UserSearchForm onSearch={searchStr => props.fetchData(searchStr)} /></Row>
-    <br /><br />
-    <Row>
-      <UserTable users={props.users} onDeleteUser={userId => props.handleDeleteUser(userId)} />
-      <Row>{props.previousButton}{props.nextButton}</Row>
-    </Row>
+    <Permissioned onlyRole={PERMISSION_ADMIN}>
+      <h1>
+        <FormattedMessage {...localMessages.userTitle} />
+      </h1>
+      <Row><UserSearchForm onSearch={searchStr => props.fetchData(searchStr)} /></Row>
+      <br /><br />
+      <Row>
+        <UserTable users={props.users} onDeleteUser={userId => props.handleDeleteUser(userId)} />
+        <Row>{props.previousButton}{props.nextButton}</Row>
+      </Row>
+    </Permissioned>
   </Grid>
 );
 

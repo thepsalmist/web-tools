@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+import { push } from 'react-router-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -9,7 +10,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ActionMenu from '../ActionMenu';
 import { EditButton, ReadItNowButton } from '../IconButton';
 import Permissioned from '../Permissioned';
-import { PERMISSION_STORY_EDIT, PERMISSION_ADMIN } from '../../../lib/auth';
+import { PERMISSION_ADMIN } from '../../../lib/auth';
 import SVGAndCSVMenu from '../SVGAndCSVMenu';
 import { fetchStory } from '../../../actions/storyActions';
 import DataCard from '../DataCard';
@@ -44,8 +45,12 @@ class SelectedStoryContainer extends React.Component {
     window.location = `/admin/story/${storyId}/cached`;
   }
 
+  downloadCsv = (storyId) => {
+    window.location = `/api/admin/story/${storyId}/samples.csv`;
+  }
+
   render() {
-    const { selectedStory, selectedStoryId } = this.props;
+    const { selectedStory, selectedStoryId, handleStoryEditClick, handleStoryCachedTextClick } = this.props;
     const { formatDate, formatMessage } = this.props.intl;
 
     let content = null;
@@ -65,7 +70,7 @@ class SelectedStoryContainer extends React.Component {
                     <ListItemIcon><ReadItNowButton /></ListItemIcon>
                   </MenuItem>
                   <Permissioned onlyRole={PERMISSION_ADMIN}>
-                    <MenuItem onClick={() => this.goToCachedUrl(selectedStoryId)}>
+                    <MenuItem onClick={() => handleStoryCachedTextClick(selectedStoryId)}>
                       <ListItemText><FormattedMessage {...localMessages.readCachedCopy} /></ListItemText>
                     </MenuItem>
                     <MenuItem onClick={() => window.open(`/api/stories/${selectedStoryId}/raw.html`, '_blank')}>
@@ -73,12 +78,12 @@ class SelectedStoryContainer extends React.Component {
                     </MenuItem>
                   </Permissioned>
                   <Permissioned onlyRole={PERMISSION_ADMIN}>
-                    <MenuItem onClick={() => this.goToUpdateUrl(selectedStoryId)}>
+                    <MenuItem onClick={() => handleStoryEditClick(selectedStoryId)}>
                       <ListItemText><FormattedMessage {...localMessages.editThisStory} /></ListItemText>
                       <ListItemIcon><EditButton tooltip={formatMessage(localMessages.editThisStory)} /></ListItemIcon>
                     </MenuItem>
                   </Permissioned>
-                  <SVGAndCSVMenu />
+                  <SVGAndCSVMenu downloadCsv={this.downloadCsv} />
                 </ActionMenu>
               </Col>
             </Row>
@@ -143,6 +148,8 @@ SelectedStoryContainer.propTypes = {
   selectedStoryId: PropTypes.number,
   // from context
   intl: PropTypes.object.isRequired,
+  handleStoryCachedTextClick: PropTypes.func.isRequired,
+  handleStoryEditClick: PropTypes.func.isRequired,
 };
 
 
@@ -157,6 +164,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     if (ownProps.params && ownProps.params.id !== undefined) {
       dispatch(fetchStory(parseInt(ownProps.params.id, 10)));
     }
+  },
+  handleStoryCachedTextClick: (storiesId) => {
+    dispatch(push(`admin/story/${storiesId}/cached`));
+  },
+  handleStoryEditClick: (storiesId) => {
+    dispatch(push(`admin/story/${storiesId}/update`));
   },
 });
 

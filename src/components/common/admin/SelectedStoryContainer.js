@@ -3,7 +3,13 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
-import { CloseButton } from '../IconButton';
+import Link from 'react-router/lib/Link';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ActionMenu from '../ActionMenu';
+import AppButton from '../AppButton';
+import SVGAndCSVMenu from '../SVGAndCSVMenu';
 import { fetchStory } from '../../../actions/storyActions';
 import DataCard from '../DataCard';
 import StoryEntitiesContainer from '../story/StoryEntitiesContainer';
@@ -25,8 +31,12 @@ const localMessages = {
 };
 
 class SelectedStoryContainer extends React.Component {
+
+  goToUpdateUrl = (storyId) => {
+    window.location = `admin/story/details/${storyId}/update`;
+  }
   render() {
-    const { selectedStory, selectedStoryId, handleClose } = this.props;
+    const { selectedStory, selectedStoryId } = this.props;
     const { formatDate } = this.props.intl;
 
     let content = null;
@@ -36,13 +46,19 @@ class SelectedStoryContainer extends React.Component {
           <DataCard className="admin-story-view">
             <Row>
               <Col lg={12}>
-                <div className="actions">
-                  <CloseButton onClick={handleClose} />
-                </div>
                 <h2>
                   <FormattedMessage {...localMessages.title} />
                   <a href={selectedStory.url} target="_blank" rel="noopener noreferrer">{trimToMaxLength(selectedStory.title, 80)}</a>
                 </h2>
+                <ActionMenu actionTextMsg={messages.edit}>
+                  <MenuItem
+                    className="action-icon-menu-item"
+                    onClick={() => goToUpdateUrl(selectedStoryId)}
+                  >
+                    <FormattedMessage {...localMessages.editLabel} />
+                  </MenuItem>
+                  <SVGAndCSVMenu />
+                </ActionMenu>
               </Col>
             </Row>
             <Row>
@@ -52,7 +68,7 @@ class SelectedStoryContainer extends React.Component {
                   stats={[
                     { message: messages.sourceName,
                       data: (
-                        <a href={urlToTools(selectedStory.id)} target="_blank" rel="noopener noreferrer">
+                        <a href={urlToTools(selectedStoryId)} target="_blank" rel="noopener noreferrer">
                           {selectedStory.media_name || selectedStory.media.name}
                         </a>
                       ),
@@ -104,8 +120,6 @@ SelectedStoryContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   selectedStory: PropTypes.object.isRequired,
   selectedStoryId: PropTypes.number,
-  // from dispatch
-  handleClose: PropTypes.func.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
 };
@@ -118,9 +132,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleClose: () => {
-    // dispatch(resetStory());
-  },
   asyncFetch: () => {
     if (ownProps.params && ownProps.params.id !== undefined) {
       dispatch(fetchStory(parseInt(ownProps.params.id, 10)));

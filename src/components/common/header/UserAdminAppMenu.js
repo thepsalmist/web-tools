@@ -8,25 +8,22 @@ import MenuItem from '@material-ui/core/MenuItem';
 import AppMenu from './AppMenu';
 import { urlToTools } from '../../../lib/urlUtil';
 import { getAppName } from '../../../config';
-import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/auth';
-
 
 const localMessages = {
-  menuTitle: { id: 'tools.menu.title', defaultMessage: 'Tools' },
+  menuTitle: { id: 'tools.menu.title', defaultMessage: 'Admin' },
   home: { id: 'tools.menu.items.home', defaultMessage: 'Home' },
   userManagement: { id: 'tools.menu.items.listTopics', defaultMessage: 'Admin: User Management' },
   storyView: { id: 'tools.menu.items.stories', defaultMessage: 'View Stories' },
 };
 
-
-const UserAdminAppMenu = (props) => {
-  let menu;
-  if (props.isLoggedIn && hasPermissions(getUserRoles(props.user), PERMISSION_ADMIN)) {
-    menu = (
+const UserAdminAppMenu = props => (
+  <AppMenu
+    color="primary"
+    titleMsg={localMessages.menuTitle}
+    showMenu={getAppName() === 'tools' && props.isLoggedIn}
+    onTitleClick={() => { props.handleItemClick('', getAppName() === 'tools'); }}
+    menuComponent={(
       <Menu>
-        <MenuItem onClick={() => { props.handleItemClick('home', true); }}>
-          <FormattedMessage {...localMessages.home} />
-        </MenuItem>
         <MenuItem onClick={() => { props.handleItemClick('admin/users/list', true); }}>
           <FormattedMessage {...localMessages.userManagement} />
         </MenuItem>
@@ -34,18 +31,9 @@ const UserAdminAppMenu = (props) => {
           <FormattedMessage {...localMessages.storyView} />
         </MenuItem>
       </Menu>
-    );
-  }
-  return (
-    <AppMenu
-      color="primary"
-      titleMsg={localMessages.menuTitle}
-      showMenu={getAppName() === 'tools' && props.isLoggedIn}
-      onTitleClick={() => { props.handleItemClick('', getAppName() === 'tools'); }}
-      menuComponent={menu}
-    />
-  );
-};
+    )}
+  />
+);
 
 UserAdminAppMenu.propTypes = {
   // state

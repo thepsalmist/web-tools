@@ -11,6 +11,8 @@ import UserAdminAppMenu from './UserAdminAppMenu';
 import { assetUrl } from '../../../lib/assetUtil';
 import RecentNewsMenuContainer from '../news/RecentNewsMenuContainer';
 import AppButton from '../AppButton';
+import Permissioned from '../Permissioned';
+import { PERMISSION_ADMIN } from '../../../lib/auth';
 
 export const TOPICS_URL = 'https://topics.mediacloud.org/';
 export const EXPLORER_URL = 'https://explorer.mediacloud.org/';
@@ -59,9 +61,11 @@ const NavToolbar = (props) => {
           </Col>
           <Col lg={6}>
             <ul className="right">
-              <li className="admin">
-                <UserAdminAppMenu />
-              </li>
+              <Permissioned onlyRole={PERMISSION_ADMIN}>
+                <li className="admin">
+                  <UserAdminAppMenu />
+                </li>
+              </Permissioned>
               <li className="support">
                 <AppButton
                   variant="text"

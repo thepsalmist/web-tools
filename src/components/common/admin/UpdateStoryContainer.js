@@ -5,10 +5,12 @@ import { connect } from 'react-redux';
 import { Grid } from 'react-flexbox-grid/lib';
 import withAsyncFetch from '../hocs/AsyncContainer';
 import { fetchStory, selectStory, updateStory } from '../../../actions/storyActions';
+import { fetchMetadataValuesForPrimaryLanguage } from '../../../actions/systemActions'; // TODO relocate metadata actions into system if we use more often...
 import { updateFeedback } from '../../../actions/appActions';
-import StoryDetailsForm from './form/StoryDetailsForm';
+import StoryDetailForm from './form/StoryDetailForm';
 import { PERMISSION_ADMIN } from '../../../lib/auth';
 import Permissioned from '../Permissioned';
+import { TAG_SET_PRIMARY_LANGUAGE } from '../../../lib/tagUtil';
 
 const localMessages = {
   userTitle: { id: 'user.details.title', defaultMessage: '{name}: ' },
@@ -18,9 +20,16 @@ const localMessages = {
 };
 
 const UpdateStoryContainer = (props) => {
-  const { story, handleSave } = props;
+  const { story, handleSave, tags } = props;
   const { formatMessage } = props.intl;
   const content = null;
+  const lang = tags.map(c => c.tag).sort((f1, f2) => { // alphabetical
+    // const f1Name = f1.toUpperCase();
+    // const f2Name = f2.toUpperCase();
+    if (f1 < f2) return -1;
+    if (f1 > f2) return 1;
+    return 0;
+  });
   if (story === undefined) {
     return (
       <div>
@@ -34,8 +43,9 @@ const UpdateStoryContainer = (props) => {
         <FormattedMessage {...localMessages.updateTitle} />
       </h1>
       <Permissioned onlyRole={PERMISSION_ADMIN}>
-        <StoryDetailsForm
+        <StoryDetailForm
           story={story}
+          language={lang}
           initialValues={story}
           onSave={handleSave}
           buttonLabel={formatMessage(localMessages.updateButton)}
@@ -61,11 +71,13 @@ const mapStateToProps = (state, ownProps) => ({
   fetchStatus: state.story.info.fetchStatus,
   story: state.story.info,
   storyId: ownProps.params.id,
+  tags: state.system.metadata.primaryLanguage.tags,
 });
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleSave: (values) => {
     const infoToSave = {
       ...values,
+      undateable: values.undateable || false,
     };
     return dispatch(updateStory(ownProps.params.id, infoToSave))
       .then((result) => {
@@ -78,6 +90,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       });
   },
   asyncFetch: () => {
+    dispatch(fetchMetadataValuesForPrimaryLanguage(TAG_SET_PRIMARY_LANGUAGE));
     dispatch(selectStory(ownProps.params.id));
     dispatch(fetchStory(ownProps.params.id));
   },

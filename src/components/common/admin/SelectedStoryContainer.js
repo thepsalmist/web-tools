@@ -3,12 +3,8 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
-import Link from 'react-router/lib/Link';
 import MenuItem from '@material-ui/core/MenuItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import ActionMenu from '../ActionMenu';
-import AppButton from '../AppButton';
 import SVGAndCSVMenu from '../SVGAndCSVMenu';
 import { fetchStory } from '../../../actions/storyActions';
 import DataCard from '../DataCard';
@@ -31,10 +27,10 @@ const localMessages = {
 };
 
 class SelectedStoryContainer extends React.Component {
-
   goToUpdateUrl = (storyId) => {
     window.location = `admin/story/details/${storyId}/update`;
   }
+
   render() {
     const { selectedStory, selectedStoryId } = this.props;
     const { formatDate } = this.props.intl;
@@ -53,7 +49,7 @@ class SelectedStoryContainer extends React.Component {
                 <ActionMenu actionTextMsg={messages.edit}>
                   <MenuItem
                     className="action-icon-menu-item"
-                    onClick={() => goToUpdateUrl(selectedStoryId)}
+                    onClick={() => this.goToUpdateUrl(selectedStoryId)}
                   >
                     <FormattedMessage {...localMessages.editLabel} />
                   </MenuItem>

@@ -7,6 +7,7 @@ import ManageUsersContainer from '../components/common/admin/ManageUsersContaine
 import UpdateUserContainer from '../components/common/admin/UpdateUserContainer';
 import StoryDetailsContainer from '../components/common/admin/StoryDetailsContainer';
 import UpdateStoryContainer from '../components/common/admin/UpdateStoryContainer';
+import StoryCachedContainer from '../components/common/admin/StoryCachedContainer';
 import userRoutes from './userRoutes';
 import systemRoutes from './systemRoutes';
 import { requireAuth } from './routes';
@@ -23,6 +24,8 @@ const toolsRoutes = (
       <Route path="/admin/story/details" component={StoryDetailsContainer} onEnter={requireAuth} />
       <Route path="/admin/story/:id/details" component={StoryDetailsContainer} onEnter={requireAuth} />
       <Route path="/admin/story/:id/update" component={UpdateStoryContainer} onEnter={requireAuth} />
+      <Route path="/admin/story/:id/cached" component={StoryCachedContainer} onEnter={requireAuth} />
+
     </Route>
     {userRoutes}
     {systemRoutes}

@@ -17,7 +17,6 @@ const localMessages = {
   guidLabel: { id: 'story.update.guid.label', defaultMessage: 'GUID' },
   dateError: { id: 'stoyr.update.date.error', defaultMessage: 'Please provide a date in YYYY-MM-DD format.' },
   titleError: { id: 'stoyr.update.title.error', defaultMessage: 'Your story needs a title.' },
-  urlError: { id: 'stoyr.update.url.error', defaultMessage: 'Your story needs a url.' },
   guidError: { id: 'stoyr.update.guid.error', defaultMessage: 'Your story needs a guid.' },
 };
 

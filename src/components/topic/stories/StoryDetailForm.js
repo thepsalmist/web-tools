@@ -10,9 +10,9 @@ import { emptyString } from '../../../lib/formValidators';
 import messages from '../../../resources/messages';
 
 const localMessages = {
-  mainTitle: { id: 'story.maintitle', defaultMessage: 'Update Story' },
-  nameError: { id: 'story.nameError', defaultMessage: 'Save New Source' },
-  urlError: { id: 'story.urlError', defaultMessage: 'We saved your new source' },
+  mainTitle: { id: 'story.detail.maintitle', defaultMessage: 'Update Story' },
+  nameError: { id: 'story.detail.nameError', defaultMessage: 'Save Story' },
+  urlError: { id: 'story.detail.urlError', defaultMessage: 'We saved your story' },
 };
 
 const StoryDetailForm = (props) => {

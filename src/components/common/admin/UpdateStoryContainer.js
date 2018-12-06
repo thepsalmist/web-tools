@@ -65,6 +65,7 @@ UpdateStoryContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
   story: PropTypes.object,
+  tags: PropTypes.array,
 };
 
 const mapStateToProps = (state, ownProps) => ({

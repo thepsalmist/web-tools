@@ -4,7 +4,12 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import ActionMenu from '../ActionMenu';
+import { EditButton, ReadItNowButton } from '../IconButton';
+import Permissioned from '../Permissioned';
+import { PERMISSION_STORY_EDIT, PERMISSION_ADMIN } from '../../../lib/auth';
 import SVGAndCSVMenu from '../SVGAndCSVMenu';
 import { fetchStory } from '../../../actions/storyActions';
 import DataCard from '../DataCard';
@@ -22,18 +27,26 @@ const localMessages = {
   title: { id: 'admin.story.title', defaultMessage: 'Story Info: ' },
   close: { id: 'admin.story.inContext.close', defaultMessage: 'Close' },
   readThisStory: { id: 'admin.story.readThisStory', defaultMessage: 'Read This Story' },
+  editThisStory: { id: 'admin.story.editThisStory', defaultMessage: 'Edit This Story' },
   fullDescription: { id: 'admin.story.fullDescription', defaultMessage: 'Published in {media} on {publishDate} in {language}' },
   published: { id: 'admin.story.published', defaultMessage: 'Published in {media}' },
+  readCachedCopy: { id: 'admin.story.details.readCached', defaultMessage: 'Read Cached Text (admin only)' },
+  viewCachedHtml: { id: 'admin.story.details.viewCachedHtml', defaultMessage: 'View Cached HTML (admin only)' },
+  storyOptions: { id: 'admin.story.details.storyOptions', defaultMessage: 'Story Options' },
 };
 
 class SelectedStoryContainer extends React.Component {
   goToUpdateUrl = (storyId) => {
-    window.location = `admin/story/details/${storyId}/update`;
+    window.location = `admin/story/${storyId}/update`;
+  }
+
+  goToCachedUrl = (storyId) => {
+    window.location = `/admin/story/${storyId}/cached`;
   }
 
   render() {
     const { selectedStory, selectedStoryId } = this.props;
-    const { formatDate } = this.props.intl;
+    const { formatDate, formatMessage } = this.props.intl;
 
     let content = null;
     if (selectedStoryId) {
@@ -46,13 +59,25 @@ class SelectedStoryContainer extends React.Component {
                   <FormattedMessage {...localMessages.title} />
                   <a href={selectedStory.url} target="_blank" rel="noopener noreferrer">{trimToMaxLength(selectedStory.title, 80)}</a>
                 </h2>
-                <ActionMenu actionTextMsg={messages.edit}>
-                  <MenuItem
-                    className="action-icon-menu-item"
-                    onClick={() => this.goToUpdateUrl(selectedStoryId)}
-                  >
-                    <FormattedMessage {...localMessages.editLabel} />
+                <ActionMenu actionTextMsg={localMessages.storyOptions}>
+                  <MenuItem onClick={() => window.open(selectedStory.url, '_blank')}>
+                    <ListItemText><FormattedMessage {...localMessages.readThisStory} /></ListItemText>
+                    <ListItemIcon><ReadItNowButton /></ListItemIcon>
                   </MenuItem>
+                  <Permissioned onlyRole={PERMISSION_ADMIN}>
+                    <MenuItem onClick={() => this.goToCachedUrl(selectedStoryId)}>
+                      <ListItemText><FormattedMessage {...localMessages.readCachedCopy} /></ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={() => window.open(`/api/stories/${selectedStoryId}/raw.html`, '_blank')}>
+                      <ListItemText><FormattedMessage {...localMessages.viewCachedHtml} /></ListItemText>
+                    </MenuItem>
+                  </Permissioned>
+                  <Permissioned onlyRole={PERMISSION_ADMIN}>
+                    <MenuItem onClick={() => this.goToUpdateUrl(selectedStoryId)}>
+                      <ListItemText><FormattedMessage {...localMessages.editThisStory} /></ListItemText>
+                      <ListItemIcon><EditButton tooltip={formatMessage(localMessages.editThisStory)} /></ListItemIcon>
+                    </MenuItem>
+                  </Permissioned>
                   <SVGAndCSVMenu />
                 </ActionMenu>
               </Col>

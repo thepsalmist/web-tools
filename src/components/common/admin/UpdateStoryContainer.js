@@ -66,7 +66,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleSave: (values) => {
     const infoToSave = {
       ...values,
-      active: values.active || false,
     };
     return dispatch(updateStory(ownProps.params.id, infoToSave))
       .then((result) => {

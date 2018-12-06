@@ -4,7 +4,8 @@ import { Field, reduxForm } from 'redux-form';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../hocs/IntlForm';
-import { invalidEmail } from '../../../../lib/formValidators';
+import { emptyString } from '../../../../lib/formValidators';
+import AppButton from '../../AppButton';
 
 const localMessages = {
   storyLabel: { id: 'story.update.name.label', defaultMessage: 'Title' },
@@ -16,10 +17,10 @@ const localMessages = {
 };
 
 const StoryDetailsForm = (props) => {
-  const { renderTextField, renderCheckbox } = props;
+  const { renderTextField, renderCheckbox, handleSubmit, onSave, buttonLabel, pristine, submitting } = props;
   return (
     <div className="story-details-form">
-      <form className="app-form user-form" name="userForm" onSubmit={handleSubmit(onSave.bind(this))}>
+      <form className="app-form story-form" name="storyDetailsForm" onSubmit={handleSubmit(onSave.bind(this))}>
         <Row>
           <Col md={2}>
             <span className="label unlabeled-field-label">
@@ -62,6 +63,7 @@ const StoryDetailsForm = (props) => {
               name="guid"
               component={renderTextField}
               label={localMessages.guidLabel}
+              fullWidth
             />
           </Col>
         </Row>
@@ -131,19 +133,33 @@ StoryDetailsForm.propTypes = {
   renderTextField: PropTypes.func.isRequired,
   renderCheckbox: PropTypes.func.isRequired,
   initialValues: PropTypes.object,
+  // from parent
+  onSave: PropTypes.func.isRequired,
+  buttonLabel: PropTypes.string.isRequired,
+  initialValues: PropTypes.object,
+  // from form helper
+  handleSubmit: PropTypes.func,
+  pristine: PropTypes.bool.isRequired,
+  submitting: PropTypes.bool.isRequired,
 };
 
 // in-browser validation callback
 function validate(values) {
   const errors = {};
-  if (invalidEmail(values.url)) {
-    errors.email = localMessages.missingUrl;
+  if (emptyString(values.title)) {
+    errors.title = localMessages.missingTitle;
+  }
+  if (emptyString(values.url)) {
+    errors.url = localMessages.missingUrl;
+  }
+  if (emptyString(values.guid)) {
+    errors.guid = localMessages.missingGuid;
   }
   return errors;
 }
 
 const reduxFormConfig = {
-  form: 'storyForm',
+  form: 'storyDetailsForm',
   validate,
 };
 

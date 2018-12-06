@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
-import { Grid, Row } from 'react-flexbox-grid/lib';
+import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withAsyncFetch from '../hocs/AsyncContainer';
 import withPaging from '../hocs/PagedContainer';
 import { fetchSystemUsers, deleteSystemUser } from '../../../actions/systemActions';
@@ -30,8 +30,14 @@ const ManageUsersContainer = props => (
       <Row><UserSearchForm onSearch={searchStr => props.fetchData(searchStr)} /></Row>
       <br /><br />
       <Row>
-        <UserTable users={props.users} onDeleteUser={userId => props.handleDeleteUser(userId)} />
-        <Row>{props.previousButton}{props.nextButton}</Row>
+        <Col lg={12}>
+          <UserTable users={props.users} onDeleteUser={userId => props.handleDeleteUser(userId)} />
+        </Col>
+      </Row>
+      <Row>
+        <Col lg={12}>
+          {props.previousButton} {props.nextButton}
+        </Col>
       </Row>
     </Permissioned>
   </Grid>

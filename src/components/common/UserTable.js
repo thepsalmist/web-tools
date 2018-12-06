@@ -5,6 +5,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import messages from '../../resources/messages';
 import AppButton from './AppButton';
 import ConfirmationDialog from './ConfirmationDialog';
+import { DeleteButton } from './IconButton';
 
 const localMessages = {
   deleteDialogTitle: { id: 'updateQuery.update.title', defaultMessage: 'Confirm Delete User' },
@@ -76,7 +77,7 @@ class UserTable extends React.Component {
                     </Link>
                   </td>
                   <td className="delete">
-                    <AppButton label="delete" onClick={() => this.confirmDelete(user.auth_users_id)} />
+                    <DeleteButton label="delete" onClick={() => this.confirmDelete(user.auth_users_id)} />
                   </td>
                 </tr>
               );

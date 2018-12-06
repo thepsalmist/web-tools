@@ -9,6 +9,9 @@ import messages from '../../../resources/messages';
  * Your container MUST expose `previousPage` and `nextPage` event handler methods.
  * Most likely those methods will call out to a fetchData property that loads the previous or
  * next page.
+ * Your container receives:
+ * - nextButton (if there is another page)
+ * - prevButton (if there is previous page)
  */
 function withPaging(ComposedContainer) {
   const PagedContainer = (props) => {

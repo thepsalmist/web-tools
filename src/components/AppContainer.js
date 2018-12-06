@@ -56,7 +56,7 @@ class AppContainer extends React.Component {
     }
 
     return (
-      <div className={`app-contiainer app-${name}`}>
+      <div className={`app-container app-${name}`}>
         <AppNoticesContainer />
         <header>
           <NavToolbar />

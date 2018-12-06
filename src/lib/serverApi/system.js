@@ -64,3 +64,21 @@ export function metadataValuesForCountryOfFocus(id) {
 export function sourceSystemSearch(searchStr) {
   return createApiPromise(`/api/sources/search/${searchStr}`);
 }
+
+export function fetchSystemUser(userId) {
+  return createApiPromise(`/api/admin/users/${userId}`);
+}
+
+export function fetchSystemUsers(params) {
+  const acceptedParams = acceptParams(params, ['searchStr', 'linkId']);
+  return createApiPromise('/api/admin/users/list', acceptedParams);
+}
+
+export function updateSystemUser(userId, params) {
+  const acceptedParams = acceptParams(params, ['full_name', 'email', 'active', 'roles[]', 'notes', 'max_topic_stories', 'weekly_requests_limit']);
+  return createPostingApiPromise(`/api/admin/users/${userId}/update`, acceptedParams);
+}
+
+export function deleteSystemUser(userId) {
+  return createApiPromise(`/api/admin/users/${userId}/delete`);
+}

@@ -12,7 +12,6 @@ const toolsRoutes = (
     <IndexRedirect to="/home" />
 
     <Route path="home" component={ToolsHomeContainer} />
-
     {userRoutes}
     {systemRoutes}
 

@@ -4,7 +4,7 @@ import flask_login
 from mediacloud.error import MCException
 
 from server import app, auth, mc
-from server.auth import user_mediacloud_client
+from server.auth import user_mediacloud_client, user_admin_mediacloud_client
 from server.util.request import api_error_handler, form_fields_required, arguments_required, json_error_response
 
 logger = logging.getLogger(__name__)
@@ -23,9 +23,15 @@ def login_with_password():
     password = request.form["password"]
     # try to log them in
     results = mc.authLogin(username, password)
+    userEmail = results['profile']['email']
+    # grab other user info and merge
+    results["user"] = mc.userList(search=userEmail)['users'][0]
+
+    merged_user_info = results['profile'].copy()  # start with x's keys and values
+    merged_user_info.update(results["user"])
     if 'error' in results:
         return json_error_response(results['error'], 401)
-    user = auth.create_and_cache_user(results['profile'])
+    user = auth.create_and_cache_user(merged_user_info)
     logger.debug("  succeeded - got a key (user.is_anonymous=%s)", user.is_anonymous)
     auth.login_user(user)
     return jsonify(user.get_properties())

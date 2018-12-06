@@ -20,7 +20,7 @@ const UserAdminAppMenu = props => (
   <AppMenu
     color="primary"
     titleMsg={localMessages.menuTitle}
-    showMenu={getAppName() === 'tools' && props.isLoggedIn}
+    showMenu
     onTitleClick={() => { props.handleItemClick('', getAppName() === 'tools'); }}
     menuComponent={(
       <Menu>

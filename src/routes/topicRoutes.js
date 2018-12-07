@@ -12,7 +12,7 @@ import InfluentialStoriesContainer from '../components/topic/stories/Influential
 import InfluentialStoryExplorerContainer from '../components/topic/stories/InfluentialStoryExplorerContainer';
 import StoryContainer from '../components/topic/stories/StoryContainer';
 import StoryUpdateContainer from '../components/topic/stories/StoryUpdateContainer';
-import StoryCachedContainer from '../components/common/admin/StoryCachedContainer';
+import StoryCachedContainer from '../components/common/admin/story/StoryCachedContainer';
 import MediaContainer from '../components/topic/media/MediaContainer';
 import LinkMapContainer from '../components/topic/maps/LinkMapContainer';
 import CreateFocusContainer from '../components/topic/snapshots/foci/CreateFocusContainer';

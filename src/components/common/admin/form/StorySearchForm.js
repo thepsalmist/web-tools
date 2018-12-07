@@ -8,9 +8,9 @@ import AppButton from '../../AppButton';
 import messages from '../../../../resources/messages';
 
 const localMessages = {
-  mainTitle: { id: 'explorer.search.title', defaultMessage: 'Story id' },
+  mainTitle: { id: 'explorer.search.title', defaultMessage: 'Story Details' },
   addButton: { id: 'explorer.search', defaultMessage: 'Search' },
-  searchHint: { id: 'explorer.intro.searchHint', defaultMessage: 'Filter story by id' },
+  searchHint: { id: 'explorer.intro.searchHint', defaultMessage: 'Search for story by id' },
 };
 
 const StorySearchForm = (props) => {
@@ -21,8 +21,8 @@ const StorySearchForm = (props) => {
       <Row>
         <Col lg={9}>
           <Field
-            name="id"
-            className="tool-user-search"
+            name="storyId"
+            className="tool-story-search"
             component={renderTextField}
             label={localMessages.searchHint}
           />

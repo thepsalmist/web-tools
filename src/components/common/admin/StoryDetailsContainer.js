@@ -1,16 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
-// import { formValueSelector } from 'redux-form';
+import { formValueSelector } from 'redux-form';
 import { Grid, Row } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../../hocs/AsyncContainer';
-import { fetchStory } from '../../../../actions/storyActions';
+import withAsyncFetch from '../hocs/AsyncContainer';
+import { fetchStory } from '../../../actions/storyActions';
 import SelectedStoryContainer from './SelectedStoryContainer';
-import StorySearchForm from '../form/StorySearchForm';
-import { PERMISSION_ADMIN } from '../../../../lib/auth';
-import Permissioned from '../../Permissioned';
+import StorySearchForm from './form/StorySearchForm';
+import { PERMISSION_ADMIN } from '../../../lib/auth';
+import Permissioned from '../Permissioned';
+
+const formSelector = formValueSelector('storySearchForm');
 
 const localMessages = {
   storyTitle: { id: 'user.all.title', defaultMessage: 'Story' },
@@ -22,7 +23,7 @@ const StoryDetailsContainer = props => (
       <h1>
         <FormattedMessage {...localMessages.storyTitle} />
       </h1>
-      <Row><StorySearchForm initialValues={{ storyId: props.storyId }} onSearch={search => props.fetchData(search)} /></Row>
+      <Row><StorySearchForm onSearch={searchId => props.fetchData(searchId)} /></Row>
       <br /><br />
       <Row>
         <SelectedStoryContainer />
@@ -36,21 +37,18 @@ StoryDetailsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
-  storyId: PropTypes.string,
+  users: PropTypes.array,
   fetchData: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   fetchStatus: state.story.info.fetchStatus,
   story: state.story.info,
-  storyId: ownProps.params.id,
+  searchId: formSelector(state, 'id'),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (story) => {
-    dispatch(fetchStory(story.storyId));
-    dispatch(push(`admin/story/${story.storyId}/details`));
-  },
+  fetchData: id => dispatch(fetchStory(Object.values(id))),
   asyncFetch: () => {
     dispatch(fetchStory(parseInt(ownProps.params.id, 10)));
   },

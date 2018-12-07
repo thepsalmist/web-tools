@@ -5,8 +5,8 @@ import PageNotFound from '../components/PageNotFound';
 import AdminWrapper from '../components/common/admin/AdminWrapper';
 import ManageUsersContainer from '../components/common/admin/users/ManageUsersContainer';
 import UpdateUserContainer from '../components/common/admin/users/UpdateUserContainer';
-import StoryDetailsContainer from '../components/common/admin/StoryDetailsContainer';
-import UpdateStoryContainer from '../components/common/admin/UpdateStoryContainer';
+import StoryDetailsContainer from '../components/common/admin/story/StoryDetailsContainer';
+import UpdateStoryContainer from '../components/common/admin/story/UpdateStoryContainer';
 import { requireAuth } from './routes';
 
 const systemRoutes = (

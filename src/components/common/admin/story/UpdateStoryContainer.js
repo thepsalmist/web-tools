@@ -3,14 +3,14 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../hocs/AsyncContainer';
-import { fetchStory, selectStory, updateStory } from '../../../actions/storyActions';
-import { fetchMetadataValuesForPrimaryLanguage } from '../../../actions/systemActions'; // TODO relocate metadata actions into system if we use more often...
-import { updateFeedback } from '../../../actions/appActions';
-import StoryDetailForm from './form/StoryDetailForm';
-import { PERMISSION_ADMIN } from '../../../lib/auth';
-import Permissioned from '../Permissioned';
-import { TAG_SET_PRIMARY_LANGUAGE } from '../../../lib/tagUtil';
+import withAsyncFetch from '../../hocs/AsyncContainer';
+import { fetchStory, selectStory, updateStory } from '../../../../actions/storyActions';
+import { fetchMetadataValuesForPrimaryLanguage } from '../../../../actions/systemActions'; // TODO relocate metadata actions into system if we use more often...
+import { updateFeedback } from '../../../../actions/appActions';
+import StoryDetailForm from '../form/StoryDetailForm';
+import { PERMISSION_ADMIN } from '../../../../lib/auth';
+import Permissioned from '../../Permissioned';
+import { TAG_SET_PRIMARY_LANGUAGE } from '../../../../lib/tagUtil';
 
 const localMessages = {
   userTitle: { id: 'user.details.title', defaultMessage: '{name}: ' },

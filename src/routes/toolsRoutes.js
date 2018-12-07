@@ -3,13 +3,14 @@ import Route from 'react-router/lib/Route';
 import IndexRedirect from 'react-router/lib/IndexRedirect';
 import ToolsApp from '../components/tools/ToolsApp';
 import ToolsHomeContainer from '../components/tools/ToolsHomeContainer';
-import ManageUsersContainer from '../components/common/admin/ManageUsersContainer';
-import UpdateUserContainer from '../components/common/admin/UpdateUserContainer';
-import StoryDetailsContainer from '../components/common/admin/StoryDetailsContainer';
-import UpdateStoryContainer from '../components/common/admin/UpdateStoryContainer';
-import StoryCachedContainer from '../components/common/admin/StoryCachedContainer';
+import ManageUsersContainer from '../components/common/admin/users/ManageUsersContainer';
+import UpdateUserContainer from '../components/common/admin/users/UpdateUserContainer';
+import StoryDetailsContainer from '../components/common/admin/story/StoryDetailsContainer';
+import UpdateStoryContainer from '../components/common/admin/story/UpdateStoryContainer';
+import StoryCachedContainer from '../components/common/admin/story/StoryCachedContainer';
 import userRoutes from './userRoutes';
 import systemRoutes from './systemRoutes';
+import { requireAuth } from './routes';
 
 const toolsRoutes = (
   <Route path="/" component={ToolsApp}>

@@ -4,12 +4,12 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import { Grid, Row } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../hocs/AsyncContainer';
-import { fetchStory } from '../../../actions/storyActions';
-import SelectedStoryContainer from './SelectedStoryContainer';
-import StorySearchForm from './form/StorySearchForm';
-import { PERMISSION_ADMIN } from '../../../lib/auth';
-import Permissioned from '../Permissioned';
+import withAsyncFetch from '../../hocs/AsyncContainer';
+import { fetchStory } from '../../../../actions/storyActions';
+import SelectedStoryContainer from '../SelectedStoryContainer';
+import StorySearchForm from '../form/StorySearchForm';
+import { PERMISSION_ADMIN } from '../../../../lib/auth';
+import Permissioned from '../../Permissioned';
 
 const formSelector = formValueSelector('storySearchForm');
 

@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import messages from '../../../resources/messages';
-import AppButton from '../AppButton';
-import ConfirmationDialog from '../ConfirmationDialog';
-import { DeleteButton } from '../IconButton';
+import messages from '../../../../resources/messages';
+import AppButton from '../../AppButton';
+import ConfirmationDialog from '../../ConfirmationDialog';
+import { DeleteButton } from '../../IconButton';
 
 const localMessages = {
   deleteDialogTitle: { id: 'updateQuery.update.title', defaultMessage: 'Confirm Delete User' },

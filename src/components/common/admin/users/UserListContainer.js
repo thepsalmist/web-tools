@@ -8,7 +8,7 @@ import withPaging from '../../hocs/PagedContainer';
 import { fetchSystemUsers, deleteSystemUser } from '../../../../actions/systemActions';
 import { notEmptyString } from '../../../../lib/formValidators';
 import { updateFeedback } from '../../../../actions/appActions';
-import UserTable from '../UserTable';
+import UserTable from './UserTable';
 
 const localMessages = {
   userTitle: { id: 'user.all.title', defaultMessage: 'Users' },

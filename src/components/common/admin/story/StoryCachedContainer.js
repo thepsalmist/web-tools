@@ -3,9 +3,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { FormattedHTMLMessage, injectIntl } from 'react-intl';
-import { selectStory, fetchStory } from '../../../actions/storyActions';
-import withAsyncFetch from '../hocs/AsyncContainer';
-import { ReadItNowButton } from '../IconButton';
+import { selectStory, fetchStory } from '../../../../actions/storyActions';
+import withAsyncFetch from '../../hocs/AsyncContainer';
+import { ReadItNowButton } from '../../IconButton';
 
 const localMessages = {
   title: { id: 'story.cached.title', defaultMessage: 'Cached Story' },

@@ -83,7 +83,7 @@ class SelectedStoryContainer extends React.Component {
                       <ListItemIcon><EditButton tooltip={formatMessage(localMessages.editThisStory)} /></ListItemIcon>
                     </MenuItem>
                   </Permissioned>
-                  <SVGAndCSVMenu downloadCsv={this.downloadCsv} />
+                  <SVGAndCSVMenu downloadCsv={() => this.downloadCsv(selectedStoryId)} />
                 </ActionMenu>
               </Col>
             </Row>

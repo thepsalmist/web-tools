@@ -46,7 +46,7 @@ class SelectedStoryContainer extends React.Component {
   }
 
   downloadCsv = (storyId) => {
-    window.location = `/api/admin/story/${storyId}/samples.csv`;
+    window.location = `/api/admin/story/${storyId}/story.csv`;
   }
 
   render() {
@@ -60,11 +60,7 @@ class SelectedStoryContainer extends React.Component {
           <DataCard className="admin-story-view">
             <Row>
               <Col lg={12}>
-                <h2>
-                  <FormattedMessage {...localMessages.title} />
-                  <a href={selectedStory.url} target="_blank" rel="noopener noreferrer">{trimToMaxLength(selectedStory.title, 80)}</a>
-                </h2>
-                <ActionMenu actionTextMsg={localMessages.storyOptions}>
+                <ActionMenu>
                   <MenuItem onClick={() => window.open(selectedStory.url, '_blank')}>
                     <ListItemText><FormattedMessage {...localMessages.readThisStory} /></ListItemText>
                     <ListItemIcon><ReadItNowButton /></ListItemIcon>
@@ -85,6 +81,10 @@ class SelectedStoryContainer extends React.Component {
                   </Permissioned>
                   <SVGAndCSVMenu downloadCsv={() => this.downloadCsv(selectedStoryId)} />
                 </ActionMenu>
+                <h2>
+                  <FormattedMessage {...localMessages.title} />
+                  <a href={selectedStory.url} target="_blank" rel="noopener noreferrer">{trimToMaxLength(selectedStory.title, 80)}</a>
+                </h2>
               </Col>
             </Row>
             <Row>

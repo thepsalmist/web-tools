@@ -8,7 +8,7 @@ import dimensions from 'react-dimensions';
 import { getBrandDarkColor } from '../../../../styles/colors';
 
 function drawViz(wrapperElement, {
-  containerWidth, timespans, selectedTimespan, onTimespanSelected, startDate, endDate, intl,
+  containerWidth, timespans, selectedTimespan, onTimespanSelected, startDate, endDate, intl, period,
 }) {
   const formattedDate = d => intl.formatDate(d, { year: '2-digit', month: 'numeric', day: 'numeric' });
   const horizontalPadding = 30;
@@ -62,7 +62,7 @@ function drawViz(wrapperElement, {
       .append('g')
       .attr('class', 'selected-data')
         .append('rect')
-          .attr('class', 'timespan')
+          .attr('class', `timespan timespan-${period}`)
           .attr('x', xScale(selectedTimespan.startDateMoment.toDate()))
           .attr('y', 0)
           .attr('data-id', selectedTimespan.timespan_id)
@@ -70,7 +70,8 @@ function drawViz(wrapperElement, {
           .attr('data-end', xScale(selectedTimespan.endDateMoment.toDate()))
           .attr('width', xScale(selectedTimespan.endDateMoment.toDate()) - xScale(selectedTimespan.startDateMoment.toDate()))
           .attr('height', 20)
-          .attr('style', `fill:${getBrandDarkColor()};fill-opacity:0.9`)
+          // custom timespans can overlap, so make them more see-through as a hack for now
+          .attr('style', `fill:${getBrandDarkColor()};fill-opacity:${period === 'custom' ? 0.3 : 0.9}`)
           .on('click', onTimespanSelected)
           .append('svg:title')
             .text(`${formattedDate(selectedTimespan.startDateMoment.toDate())}-${formattedDate(selectedTimespan.endDateMoment.toDate())}`);
@@ -105,6 +106,7 @@ VisualTimespanSelector.propTypes = {
   timespans: PropTypes.array.isRequired,
   onTimespanSelected: PropTypes.func,
   selectedTimespan: PropTypes.object,
+  period: PropTypes.string,
   // from context
   intl: PropTypes.object.isRequired,
   // from Dimensions helper

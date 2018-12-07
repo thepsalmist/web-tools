@@ -22,7 +22,7 @@ const StoryTable = (props) => {
             <th><FormattedMessage {...messages.storyTitle} /></th>
             <th colSpan="2"><FormattedMessage {...messages.media} /></th>
             <th><FormattedMessage {...messages.storyDate} /></th>
-            { extraHeaderColumns && extraHeaderColumns()}
+            { extraHeaderColumns}
           </tr>
           {stories.map((story, idx) => {
             const domain = storyDomainName(story);

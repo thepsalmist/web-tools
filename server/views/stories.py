@@ -137,8 +137,8 @@ def nyt_themes_from_mc_or_labeller(stories_id):
 
 @cache.cache_on_arguments(function_key_generator=key_generator)
 def cached_story_raw_theme_results(stories_id):
-    user_mc = user_mediacloud_client()
-    themes = user_mc.storyRawNytThemeResults([stories_id])[0]
+    # have to use internal tool admin client here to fetch these (permissons)
+    themes = mc.storyRawNytThemeResults([stories_id])[0]
     return themes
 
 

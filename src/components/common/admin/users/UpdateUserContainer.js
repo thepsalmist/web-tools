@@ -3,12 +3,12 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../hocs/AsyncContainer';
-import { selectSystemUser, updateSystemUser, fetchSystemUser } from '../../../actions/systemActions';
-import { updateFeedback } from '../../../actions/appActions';
-import UserForm from './form/UserForm';
-import { PERMISSION_ADMIN } from '../../../lib/auth';
-import Permissioned from '../Permissioned';
+import withAsyncFetch from '../../hocs/AsyncContainer';
+import { selectSystemUser, updateSystemUser, fetchSystemUser } from '../../../../actions/systemActions';
+import { updateFeedback } from '../../../../actions/appActions';
+import UserForm from './UserForm';
+import { PERMISSION_ADMIN } from '../../../../lib/auth';
+import Permissioned from '../../Permissioned';
 
 const localMessages = {
   userTitle: { id: 'user.details.title', defaultMessage: '{name}: ' },

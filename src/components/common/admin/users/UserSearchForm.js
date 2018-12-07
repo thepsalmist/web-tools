@@ -17,14 +17,15 @@ const UserSearchForm = (props) => {
   const { handleSubmit, onSearch, renderTextField } = props;
   // need to init initialValues a bit on the way in to make lower-level logic work right
   return (
-    <form className="app-form search-form" name="userSearchForm" onSubmit={handleSubmit(onSearch.bind(this))}>
+    <form className="app-form user-search-form" name="userSearchForm" onSubmit={handleSubmit(onSearch.bind(this))}>
       <Row>
-        <Col lg={9}>
+        <Col lg={5}>
           <Field
             name="searchStr"
             className="tool-user-search"
             component={renderTextField}
             label={localMessages.searchHint}
+            fullWidth
           />
         </Col>
         <Col lg={1}>

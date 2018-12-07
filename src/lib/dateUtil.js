@@ -153,6 +153,7 @@ export function groupDatesByWeek(dates) {
   const extractedSums = Object.values(groups).map(d => d.map(e => e.count).reduce((acc, c) => acc + c));
   Object.keys(groups).forEach((key, index) => {
     groups[key].sum = extractedSums[index];
+    groups[key].avg = groups[key].sum / groups[key].length;
     groups[key].date = groups[key][0].date; // first date in groups - use as date
   });
 
@@ -176,6 +177,7 @@ export function groupDatesByMonth(dates) {
   const extractedSums = Object.values(groups).map(d => d.map(e => e.count).reduce((acc, c) => acc + c));
   Object.keys(groups).forEach((key, index) => {
     groups[key].sum = extractedSums[index];
+    groups[key].avg = groups[key].sum / groups[key].length;
     groups[key].date = groups[key][0].date; // first date in groups - use as date
   });
 

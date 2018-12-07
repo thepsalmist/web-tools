@@ -1,47 +1,53 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { formValueSelector } from 'redux-form';
-import { Grid, Row } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../hocs/AsyncContainer';
-import withPaging from '../hocs/PagedContainer';
-import { fetchSystemUsers, deleteSystemUser } from '../../../actions/systemActions';
-import { notEmptyString } from '../../../lib/formValidators';
-import { updateFeedback } from '../../../actions/appActions';
+import { Row, Col } from 'react-flexbox-grid/lib';
+import withAsyncFetch from '../../hocs/AsyncContainer';
+import withPaging from '../../hocs/PagedContainer';
+import { fetchSystemUsers, deleteSystemUser } from '../../../../actions/systemActions';
+import { notEmptyString } from '../../../../lib/formValidators';
+import { updateFeedback } from '../../../../actions/appActions';
 import UserTable from '../UserTable';
-import UserSearchForm from './form/UserSearchForm';
-import { PERMISSION_ADMIN } from '../../../lib/auth';
-import Permissioned from '../Permissioned';
-
-const formSelector = formValueSelector('userSearchForm');
 
 const localMessages = {
   userTitle: { id: 'user.all.title', defaultMessage: 'Users' },
   feedback: { id: 'user.all.user.delete.feedback', defaultMessage: 'Successfully deleted user.' },
 };
 
-const ManageUsersContainer = props => (
-  <Grid>
-    <Permissioned onlyRole={PERMISSION_ADMIN}>
-      <h1>
-        <FormattedMessage {...localMessages.userTitle} />
-      </h1>
-      <Row><UserSearchForm onSearch={searchStr => props.fetchData(searchStr)} /></Row>
-      <br /><br />
-      <Row>
-        <UserTable users={props.users} onDeleteUser={userId => props.handleDeleteUser(userId)} />
-        <Row>{props.previousButton}{props.nextButton}</Row>
-      </Row>
-    </Permissioned>
-  </Grid>
-);
+class UserListContainer extends React.Component {
+  componentWillReceiveProps(nextProps) {
+    const { searchStr, fetchData } = this.props;
+    if (nextProps.searchStr !== searchStr) {
+      fetchData(nextProps.searchStr);
+    }
+  }
 
-ManageUsersContainer.propTypes = {
-  // from Hoc
-  intl: PropTypes.object.isRequired,
+  render() {
+    const { users, handleDeleteUser, previousButton, nextButton } = this.props;
+    return (
+      <React.Fragment>
+        <Row>
+          <Col lg={12}>
+            <UserTable users={users} onDeleteUser={userId => handleDeleteUser(userId)} />
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={12}>
+            {previousButton} {nextButton}
+          </Col>
+        </Row>
+      </React.Fragment>
+    );
+  }
+}
+
+UserListContainer.propTypes = {
+  // from hoc
   previousButton: PropTypes.node,
   nextButton: PropTypes.node,
+  // from parent
+  searchStr: PropTypes.string,
   // from state
   fetchStatus: PropTypes.string,
   users: PropTypes.array,
@@ -53,22 +59,16 @@ const mapStateToProps = state => ({
   fetchStatus: state.system.users.allUsers.fetchStatus,
   users: state.system.users.allUsers.users,
   links: state.system.users.allUsers.link_ids,
-  searchStr: formSelector(state, 'searchStr'),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchData: (searchStr) => {
-    if (notEmptyString(Object.values(searchStr)[0])) {
-      return dispatch(fetchSystemUsers(searchStr));
+    if (notEmptyString(searchStr)) {
+      return dispatch(fetchSystemUsers({ searchStr }));
     }
     return dispatch(fetchSystemUsers());
   },
-  asyncFetch: () => {
-    if (ownProps.location.query !== undefined) {
-      return dispatch(fetchSystemUsers(ownProps.location.query));
-    }
-    return dispatch(fetchSystemUsers());
-  },
+  asyncFetch: () => dispatch(fetchSystemUsers()),
   fetchPagedData: (props, linkId) => {
     if (notEmptyString(ownProps.params.searchStr)) {
       return dispatch(fetchSystemUsers({ searchStr: ownProps.params.searchStr, linkId }));
@@ -104,7 +104,7 @@ injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withAsyncFetch(
       withPaging(
-        ManageUsersContainer
+        UserListContainer
       )
     )
   )

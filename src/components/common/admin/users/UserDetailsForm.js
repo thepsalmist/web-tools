@@ -22,12 +22,12 @@ const UserDetailsForm = (props) => {
   return (
     <div className="user-details-form">
       <Row>
-        <Col md={2}>
+        <Col lg={2}>
           <span className="label unlabeled-field-label">
             <FormattedMessage {...localMessages.nameLabel} />
           </span>
         </Col>
-        <Col md={4}>
+        <Col lg={4}>
           <Field
             name="full_name"
             component={renderTextField}
@@ -37,12 +37,12 @@ const UserDetailsForm = (props) => {
         </Col>
       </Row>
       <Row>
-        <Col md={2}>
+        <Col lg={2}>
           <span className="label unlabeled-field-label">
             <FormattedMessage {...localMessages.emailLabel} />
           </span>
         </Col>
-        <Col md={4}>
+        <Col lg={4}>
           <Field
             name="email"
             component={renderTextField}
@@ -52,27 +52,29 @@ const UserDetailsForm = (props) => {
         </Col>
       </Row>
       <Row>
-        <Col md={2}>
+        <Col lg={2}>
           <span className="label unlabeled-field-label">
             <FormattedMessage {...localMessages.notesLabel} />
           </span>
         </Col>
-        <Col md={8}>
+        <Col lg={6}>
           <Field
             name="notes"
             component={renderTextField}
             label={localMessages.notesLabel}
-            rows={5}
+            rows={4}
+            multiline
+            fullWidth
           />
         </Col>
       </Row>
       <Row>
-        <Col md={2}>
+        <Col lg={2}>
           <span className="label unlabeled-field-label">
             <FormattedMessage {...localMessages.activeLabel} />
           </span>
         </Col>
-        <Col md={2}>
+        <Col lg={2}>
           <Field
             name="active"
             component={renderCheckbox}
@@ -82,12 +84,12 @@ const UserDetailsForm = (props) => {
         </Col>
       </Row>
       <Row>
-        <Col md={2}>
+        <Col lg={2}>
           <span className="label unlabeled-field-label">
             <FormattedMessage {...localMessages.maxStoriesLabel} />
           </span>
         </Col>
-        <Col md={2}>
+        <Col lg={2}>
           <Field
             name="max_topic_stories"
             component={renderTextField}
@@ -97,12 +99,12 @@ const UserDetailsForm = (props) => {
         </Col>
       </Row>
       <Row>
-        <Col md={2}>
+        <Col lg={2}>
           <span className="label unlabeled-field-label">
             <FormattedMessage {...localMessages.weeklyQuotaLabel} />
           </span>
         </Col>
-        <Col md={2}>
+        <Col lg={2}>
           <Field
             name="weekly_requests_limit"
             component={renderTextField}

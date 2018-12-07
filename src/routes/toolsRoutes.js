@@ -10,7 +10,6 @@ import UpdateStoryContainer from '../components/common/admin/UpdateStoryContaine
 import StoryCachedContainer from '../components/common/admin/StoryCachedContainer';
 import userRoutes from './userRoutes';
 import systemRoutes from './systemRoutes';
-import { requireAuth } from './routes';
 
 const toolsRoutes = (
   <Route path="/" component={ToolsApp}>

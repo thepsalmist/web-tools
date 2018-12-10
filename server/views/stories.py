@@ -70,6 +70,7 @@ def story_details_csv(stories_id):
     props = [
         'stories_id', 'title', 'url','publish_date', 'title', 'guid','url', 'language','is_monitored',
         'media_id', 'story_text']
+    # TODO download all tags too or individually?
     return csv.stream_response([story], props, 'story-' + str(stories_id) + '-details')
 
 

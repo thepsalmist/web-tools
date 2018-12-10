@@ -9,15 +9,16 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import withAsyncFetch from '../../hocs/AsyncContainer';
 import ActionMenu from '../../ActionMenu';
-import { EditButton, ReadItNowButton } from '../../IconButton';
+import { EditButton, ReadItNowButton, DownloadButton } from '../../IconButton';
 import { fetchStory } from '../../../../actions/storyActions';
 import DataCard from '../../DataCard';
 import SVGAndCSVMenu from '../../SVGAndCSVMenu';
+import TagsAndTagSetsTable from '../TagsAndTagSetsTable';
 import StoryEntitiesContainer from '../../story/StoryEntitiesContainer';
 import StoryNytThemesContainer from '../../story/StoryNytThemesContainer';
 import messages from '../../../../resources/messages';
 import { urlToTools } from '../../../../lib/urlUtil';
-import { TAG_SET_NYT_THEMES } from '../../../../lib/tagUtil';
+import { TAG_SET_NYT_THEMES, TAG_SET_CLIFF_ORGS, TAG_SET_CLIFF_PEOPLE } from '../../../../lib/tagUtil';
 import { trimToMaxLength } from '../../../../lib/stringUtil';
 import { storyPubDateToTimestamp } from '../../../../lib/dateUtil';
 import Permissioned from '../../Permissioned';
@@ -34,6 +35,7 @@ const localMessages = {
   readCachedCopy: { id: 'admin.story.details.readCached', defaultMessage: 'Read Cached Text (admin only)' },
   viewCachedHtml: { id: 'admin.story.details.viewCachedHtml', defaultMessage: 'View Cached HTML (admin only)' },
   storyOptions: { id: 'admin.story.details.storyOptions', defaultMessage: 'Story Options' },
+  otherStoryTagTitle: { id: 'admin.story.details.otherTags', defaultMessage: 'Additional Tags ang Tag Sets' },
 };
 
 class SelectedStoryContainer extends React.Component {
@@ -130,6 +132,17 @@ class SelectedStoryContainer extends React.Component {
                   hideFullListOption
                 />
               </Col>
+            </Row>
+            <Row>
+              <DataCard className="other-tags">
+                <div className="actions">
+                  <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(selectedStoryId)} />
+                </div>
+                <h2>
+                  <FormattedMessage {...localMessages.otherStoryTagTitle} />
+                </h2>
+                <TagsAndTagSetsTable storyTags={selectedStory.story_tags ? selectedStory.story_tags.filter(t => t.tag_sets_id !== TAG_SET_NYT_THEMES && t.tag_sets_id !== TAG_SET_CLIFF_ORGS && t.tag_sets_id !== TAG_SET_CLIFF_PEOPLE) : []} />
+              </DataCard>
             </Row>
           </DataCard>
         </div>

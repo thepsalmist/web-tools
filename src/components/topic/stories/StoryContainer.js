@@ -42,6 +42,7 @@ const localMessages = {
   removeTitle: { id: 'story.details.remove', defaultMessage: 'Remove from Next Snapshot' },
   removeAbout: { id: 'story.details.remove.about', defaultMessage: 'If story is clearly not related to the Topic, or is messing up your analysis, you can remove it from the next Snapshot.  Be careful, because this means it won\'t show up anywhere on the new Snapshot you generate.' },
   unknownLanguage: { id: 'story.details.language.unknown', defaultMessage: 'Unknown' },
+  toolStoryManagement: { id: 'story.details.manage', defaultMessage: 'Go To Story Management' },
   editStory: { id: 'story.details.edit', defaultMessage: 'Edit This Story' },
   readStory: { id: 'story.details.read', defaultMessage: 'Read at Original URL' },
   removeStory: { id: 'story.details.remove', defaultMessage: 'Remove From Topic' },
@@ -72,7 +73,7 @@ class StoryContainer extends React.Component {
 
   render() {
     const { storyInfo, topicStoryInfo, topicId, storiesId, topicName,
-      handleStoryCachedTextClick, handleStoryEditClick, filters } = this.props;
+      handleStoryCachedTextClick, handleStoryEditClick, handleStoryManagementClick, filters } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
     let displayTitle = storyInfo.title;
     if (storyInfo.title && storyInfo.title.length > MAX_STORY_TITLE_LENGTH) {
@@ -96,6 +97,9 @@ class StoryContainer extends React.Component {
                     </MenuItem>
                     <MenuItem onClick={() => window.open(`/api/stories/${storyInfo.stories_id}/raw.html`, '_blank')}>
                       <ListItemText><FormattedMessage {...localMessages.viewCachedHtml} /></ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={() => handleStoryManagementClick(storiesId, filters)}>
+                      <ListItemText><FormattedMessage {...localMessages.toolStoryManagement} /></ListItemText>
                     </MenuItem>
                   </Permissioned>
                   <Permissioned onlyRole={PERMISSION_STORY_EDIT}>
@@ -206,6 +210,7 @@ StoryContainer.propTypes = {
   fetchData: PropTypes.func.isRequired,
   handleStoryCachedTextClick: PropTypes.func.isRequired,
   handleStoryEditClick: PropTypes.func.isRequired,
+  handleStoryManagementClick: PropTypes.func.isRequired,
   // from state
   topicStoryInfo: PropTypes.object.isRequired,
   storyInfo: PropTypes.object.isRequired,
@@ -241,6 +246,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   handleStoryEditClick: (topicId, storiesId, filters) => {
     dispatch(push(filteredLinkTo(`topics/${topicId}/stories/${storiesId}/update`, filters)));
+  },
+  handleStoryManagementClick: (storiesId, filters) => {
+    dispatch(push(filteredLinkTo(`admin/story/${storiesId}/details`, filters))); // TODO, do we want filters?
   },
 });
 

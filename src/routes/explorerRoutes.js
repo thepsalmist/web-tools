@@ -9,6 +9,7 @@ import ExplorerApp from '../components/explorer/ExplorerApp';
 import { requireAuth } from './routes';
 import userRoutes from './userRoutes';
 import systemRoutes from './systemRoutes';
+import adminRoutes from './adminRoutes';
 
 const explorerRoutes = (
   <Route path="/" component={ExplorerApp}>
@@ -28,6 +29,7 @@ const explorerRoutes = (
 
     {userRoutes}
     {systemRoutes}
+    {adminRoutes}
 
   </Route>
 );

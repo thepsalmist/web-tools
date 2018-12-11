@@ -21,6 +21,7 @@ import ManageFocalSetsContainer from '../components/topic/snapshots/foci/ManageF
 import { requireAuth } from './routes';
 import userRoutes from './userRoutes';
 import systemRoutes from './systemRoutes';
+import adminRoutes from './adminRoutes';
 import TopicsApp from '../components/topic/TopicsApp';
 import About from '../components/topic/About';
 import CreateTopicContainer from '../components/topic/create/CreateTopicContainer';
@@ -87,7 +88,7 @@ const topicRoutes = (
 
     {userRoutes}
     {systemRoutes}
-
+    {adminRoutes}
   </Route>
 
 );

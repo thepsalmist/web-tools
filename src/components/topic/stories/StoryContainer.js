@@ -240,8 +240,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleStoryCachedTextClick: (topicId, storiesId, filters) => {
     dispatch(push(filteredLinkTo(`topics/${topicId}/stories/${storiesId}/cached`, filters)));
   },
-  handleStoryEditClick: (topicId, storiesId, filters) => {
-    dispatch(push(filteredLinkTo(`admin/story/${storiesId}/details`))); // to admin page
+  handleStoryEditClick: (storiesId) => {
+    dispatch(push(`admin/story/${storiesId}/details`)); // to admin page
   },
 });
 

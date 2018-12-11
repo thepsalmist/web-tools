@@ -12,7 +12,6 @@ import ActionMenu from '../../ActionMenu';
 import { EditButton, ReadItNowButton, DownloadButton } from '../../IconButton';
 import { fetchStory } from '../../../../actions/storyActions';
 import DataCard from '../../DataCard';
-import SVGAndCSVMenu from '../../SVGAndCSVMenu';
 import TagsAndTagSetsTable from '../TagsAndTagSetsTable';
 import StoryEntitiesContainer from '../../story/StoryEntitiesContainer';
 import StoryNytThemesContainer from '../../story/StoryNytThemesContainer';
@@ -34,6 +33,7 @@ const localMessages = {
   published: { id: 'admin.story.published', defaultMessage: 'Published in {media}' },
   readCachedCopy: { id: 'admin.story.details.readCached', defaultMessage: 'Read Cached Text (admin only)' },
   viewCachedHtml: { id: 'admin.story.details.viewCachedHtml', defaultMessage: 'View Cached HTML (admin only)' },
+  downloadAllTagsCsv: { id: 'admin.story.details.downloadTagsCsv', defaultMessage: 'Download all story tags' },
   storyOptions: { id: 'admin.story.details.storyOptions', defaultMessage: 'Story Options' },
   otherStoryTagTitle: { id: 'admin.story.details.otherTags', defaultMessage: 'Additional Tags ang Tag Sets' },
 };
@@ -48,7 +48,7 @@ class SelectedStoryContainer extends React.Component {
   }
 
   downloadCsv = (storyId) => {
-    window.location = `/api/admin/story/${storyId}/story.csv`;
+    window.location = `/api/admin/story/${storyId}/storytags.csv`;
   }
 
   render() {
@@ -74,14 +74,19 @@ class SelectedStoryContainer extends React.Component {
                     <MenuItem onClick={() => window.open(`/api/stories/${selectedStoryId}/raw.html`, '_blank')}>
                       <ListItemText><FormattedMessage {...localMessages.viewCachedHtml} /></ListItemText>
                     </MenuItem>
-                  </Permissioned>
-                  <Permissioned onlyRole={PERMISSION_ADMIN}>
                     <MenuItem onClick={() => handleStoryEditClick(selectedStoryId)}>
                       <ListItemText><FormattedMessage {...localMessages.editThisStory} /></ListItemText>
                       <ListItemIcon><EditButton tooltip={formatMessage(localMessages.editThisStory)} /></ListItemIcon>
                     </MenuItem>
+                    <MenuItem onClick={() => this.downloadCsv(selectedStoryId)}>
+                      <ListItemText>
+                        <FormattedMessage {...localMessages.downloadAllTagsCsv} />
+                      </ListItemText>
+                      <ListItemIcon>
+                        <DownloadButton />
+                      </ListItemIcon>
+                    </MenuItem>
                   </Permissioned>
-                  <SVGAndCSVMenu downloadCsv={() => this.downloadCsv(selectedStoryId)} />
                 </ActionMenu>
                 <h2>
                   <FormattedMessage {...localMessages.title} />

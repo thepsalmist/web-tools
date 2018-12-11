@@ -73,7 +73,7 @@ class StoryContainer extends React.Component {
 
   render() {
     const { storyInfo, topicStoryInfo, topicId, storiesId, topicName,
-      handleStoryCachedTextClick, handleStoryEditClick, handleStoryManagementClick, filters } = this.props;
+      handleStoryCachedTextClick, handleStoryEditClick, filters } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
     let displayTitle = storyInfo.title;
     if (storyInfo.title && storyInfo.title.length > MAX_STORY_TITLE_LENGTH) {
@@ -98,12 +98,9 @@ class StoryContainer extends React.Component {
                     <MenuItem onClick={() => window.open(`/api/stories/${storyInfo.stories_id}/raw.html`, '_blank')}>
                       <ListItemText><FormattedMessage {...localMessages.viewCachedHtml} /></ListItemText>
                     </MenuItem>
-                    <MenuItem onClick={() => handleStoryManagementClick(storiesId, filters)}>
-                      <ListItemText><FormattedMessage {...localMessages.toolStoryManagement} /></ListItemText>
-                    </MenuItem>
                   </Permissioned>
                   <Permissioned onlyRole={PERMISSION_STORY_EDIT}>
-                    <MenuItem onClick={() => handleStoryEditClick(topicId, storiesId, filters)}>
+                    <MenuItem onClick={() => handleStoryEditClick(storiesId)}>
                       <ListItemText><FormattedMessage {...localMessages.editStory} /></ListItemText>
                       <ListItemIcon><EditButton tooltip={formatMessage(localMessages.editStory)} /></ListItemIcon>
                     </MenuItem>
@@ -210,7 +207,6 @@ StoryContainer.propTypes = {
   fetchData: PropTypes.func.isRequired,
   handleStoryCachedTextClick: PropTypes.func.isRequired,
   handleStoryEditClick: PropTypes.func.isRequired,
-  handleStoryManagementClick: PropTypes.func.isRequired,
   // from state
   topicStoryInfo: PropTypes.object.isRequired,
   storyInfo: PropTypes.object.isRequired,
@@ -245,10 +241,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(push(filteredLinkTo(`topics/${topicId}/stories/${storiesId}/cached`, filters)));
   },
   handleStoryEditClick: (topicId, storiesId, filters) => {
-    dispatch(push(filteredLinkTo(`topics/${topicId}/stories/${storiesId}/update`, filters)));
-  },
-  handleStoryManagementClick: (storiesId, filters) => {
-    dispatch(push(filteredLinkTo(`admin/story/${storiesId}/details`, filters))); // TODO, do we want filters?
+    dispatch(push(filteredLinkTo(`admin/story/${storiesId}/details`))); // to admin page
   },
 });
 

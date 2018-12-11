@@ -64,11 +64,9 @@ def story_tags_csv(stories_id):
     if stories_id in [None, 'NaN']:
         return jsonify({'error': 'bad value'})
 
-    story = admin_mc.story(stories_id, text=True)
+    story = admin_mc.story(stories_id, text=True) # Note - this call doesn't pull cliff places
 
-    props = [
-        'tag','tags_id', 'tag_sets_id','tag_set']
-    # TODO download all tags too or individually?
+    props = ['tag','tags_id', 'tag_sets_id','tag_set']
     return csv.stream_response(story['story_tags'], props, 'story-' + str(stories_id) + '-all-tags-and-tag-sets')
 
 

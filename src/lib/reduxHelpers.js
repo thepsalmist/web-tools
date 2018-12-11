@@ -186,14 +186,15 @@ export function errorReportingMiddleware({ dispatch }) {
   return next => (action) => {
     let messageToShow = null;
     if (action.type.endsWith('_RESOLVED') || action.type.endsWith('_REJECTED')) {
-      if ((typeof action.payload === 'object') && ('status' in action.payload)) {
-        if (action.payload.status === 401) {
+      if ((typeof action.payload === 'object') && ('statusCode' in action.payload)) {
+        if (action.payload.statusCode === 401) {
           // unauthorized - ie. needs to login so delete cookies by going to logout
           if ((action.type !== 'LOGIN_WITH_PASSWORD_RESOLVED') && (action.type !== 'LOGIN_WITH_COOKIE_RESOLVED')) { // unless they are trying to login (cause that would be dumb)
             messageToShow = action.payload.message;
             logout();
           }
-        } else if (action.payload.status !== 200) {
+        } else if (action.payload.statusCode !== 200) {
+          // if request failed in some other way, but it isn't login-related, qeueu up a generic error msg
           if ((action.type !== 'LOGIN_WITH_PASSWORD_RESOLVED') && (action.type !== 'LOGIN_WITH_COOKIE_RESOLVED')) { // unless they are trying to login (cause that would be dumb)
             messageToShow = 'Sorry, we had an error';
             if ('message' in action.payload) {

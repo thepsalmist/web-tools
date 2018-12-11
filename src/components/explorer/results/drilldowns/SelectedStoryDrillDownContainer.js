@@ -2,8 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+import { push } from 'react-router-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import { CloseButton } from '../../../common/IconButton';
+import AppButton from '../../../common/AppButton';
 import { resetStory } from '../../../../actions/storyActions';
 import DataCard from '../../../common/DataCard';
 import StoryEntitiesContainer from '../../../common/story/StoryEntitiesContainer';
@@ -21,6 +23,7 @@ const localMessages = {
   readThisStory: { id: 'drilldown.story.readThisStory', defaultMessage: 'Read This Story' },
   fullDescription: { id: 'explorer.story.fullDescription', defaultMessage: 'Published in {media} on {publishDate} in {language}' },
   published: { id: 'explorer.story.published', defaultMessage: 'Published in {media}' },
+  goToManageStory: { id: 'drilldown.inContext.title', defaultMessage: 'Manage Story...' },
 };
 
 class SelectedStoryDrillDownContainer extends React.Component {
@@ -47,7 +50,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
   }
 
   render() {
-    const { selectedStory, storyInfo, handleClose } = this.props;
+    const { selectedStory, storyInfo, handleClose, handleStoryManageClick } = this.props;
     const { formatDate } = this.props.intl;
 
     let content = null;
@@ -58,6 +61,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
             <Row>
               <Col lg={12}>
                 <div className="actions">
+                  <AppButton variant="outlined" onClick={() => handleStoryManageClick(selectedStory)}><FormattedMessage {...localMessages.goToManageStory} /></AppButton>
                   <CloseButton onClick={handleClose} />
                 </div>
                 <h2>
@@ -128,6 +132,7 @@ SelectedStoryDrillDownContainer.propTypes = {
   selectedStory: PropTypes.number,
   // from dispatch
   handleClose: PropTypes.func.isRequired,
+  handleStoryManageClick: PropTypes.func.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
 };
@@ -142,6 +147,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   handleClose: () => {
     dispatch(resetStory());
+  },
+  handleStoryManageClick: (storiesId) => {
+    dispatch(push(`admin/story/${storiesId}/details`)); // to admin page
   },
 });
 

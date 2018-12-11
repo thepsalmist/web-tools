@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { push } from 'react-router-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -27,7 +26,6 @@ const localMessages = {
   },
   downloadCsv: { id: 'explorer.stories.downloadCsv', defaultMessage: 'Download all { name } stories as a CSV' },
   showMetadata: { id: 'explorer.stories.showMetadata', defaultMessage: 'Info' },
-  goToEdit: { id: 'explorer.stories.edit', defaultMessage: 'Edit' },
 };
 
 class QuerySampleStoriesResultsContainer extends React.Component {
@@ -40,27 +38,15 @@ class QuerySampleStoriesResultsContainer extends React.Component {
     }
   }
 
-  onStoryManagementClick = (selectedStory) => {
-    const { handleStorySelection, isLoggedIn, onShowLoginDialog } = this.props;
-    if (isLoggedIn) {
-      handleStorySelection(selectedStory);
-    } else {
-      onShowLoginDialog();
-    }
-  }
-
   downloadCsv = (query) => {
     postToDownloadUrl('/api/explorer/stories/samples.csv', query);
   }
 
   render() {
     const { results, queries, selectedTabIndex, tabSelector, internalItemSelected } = this.props;
-    const showMoreInfoColHdr = <div><th /><th /></div>;
+    const showMoreInfoColHdr = <th />;
     const showMoreInfoCol = story => (
-      <div>
-        <td><AppButton variant="outlined" onClick={() => this.onStorySelection(story)}><FormattedMessage {...localMessages.showMetadata} /></AppButton></td>
-        <td><AppButton variant="outlined" onClick={() => this.onStoryManagementClick(story)}><FormattedMessage {...localMessages.goToEdit} /></AppButton></td>
-      </div>
+      <td><AppButton variant="outlined" onClick={() => this.onStorySelection(story)}><FormattedMessage {...localMessages.showMetadata} /></AppButton></td>
     );
     return (
       <div>
@@ -109,7 +95,6 @@ QuerySampleStoriesResultsContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
   handleStorySelection: PropTypes.func.isRequired,
-  handleStoryManagementClick: PropTypes.func.isRequired,
   selectedTabIndex: PropTypes.number.isRequired,
   selectedQuery: PropTypes.object.isRequired,
   tabSelector: PropTypes.object.isRequired,
@@ -159,9 +144,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     // we should select and fetch since that's the pattern, even if we have the story info
     dispatch(selectStory(story.stories_id));
     dispatch(fetchStory(story.stories_id));
-  },
-  handleStoryManagementClick: (storiesId) => {
-    dispatch(push(`admin/story/${storiesId}/update`));
   },
 });
 

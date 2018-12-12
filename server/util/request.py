@@ -15,7 +15,7 @@ def validate_params_exist(form, params):
 
 def json_error_response(message, status_code=400):
     response = jsonify({
-        'status': status_code,
+        'statusCode': status_code,
         'message': message,
     })
     response.status_code = status_code

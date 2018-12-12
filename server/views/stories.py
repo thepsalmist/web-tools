@@ -54,19 +54,17 @@ def story_entities(stories_id):
     entities = entities_from_mc_or_cliff(stories_id)
     return jsonify({'list': entities})
 
+
 @app.route('/api/admin/story/<stories_id>/storytags.csv', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
 def story_tags_csv(stories_id):
     # in the download include all entity types
-    user_mc = user_mediacloud_client()
     admin_mc = user_admin_mediacloud_client()
     if stories_id in [None, 'NaN']:
         return jsonify({'error': 'bad value'})
-
-    story = admin_mc.story(stories_id, text=True) # Note - this call doesn't pull cliff places
-
-    props = ['tag','tags_id', 'tag_sets_id','tag_set']
+    story = admin_mc.story(stories_id, text=True)  # Note - this call doesn't pull cliff places
+    props = ['tags_id', 'tag', 'tag_sets_id', 'tag_set']
     return csv.stream_response(story['story_tags'], props, 'story-' + str(stories_id) + '-all-tags-and-tag-sets')
 
 

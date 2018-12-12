@@ -15,6 +15,8 @@ import { urlToSource } from '../../../../lib/urlUtil';
 import { TAG_SET_NYT_THEMES } from '../../../../lib/tagUtil';
 import { trimToMaxLength } from '../../../../lib/stringUtil';
 import { storyPubDateToTimestamp } from '../../../../lib/dateUtil';
+import Permissioned from '../../../common/Permissioned';
+import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import StatBar from '../../../common/statbar/StatBar';
 
 const localMessages = {
@@ -61,7 +63,9 @@ class SelectedStoryDrillDownContainer extends React.Component {
             <Row>
               <Col lg={12}>
                 <div className="actions">
-                  <AppButton variant="outlined" onClick={() => handleStoryManageClick(selectedStory)}><FormattedMessage {...localMessages.goToManageStory} /></AppButton>
+                  <Permissioned onlyRole={PERMISSION_ADMIN}>
+                    <AppButton variant="outlined" onClick={() => handleStoryManageClick(selectedStory)}><FormattedMessage {...localMessages.goToManageStory} /></AppButton>
+                  </Permissioned>
                   <CloseButton onClick={handleClose} />
                 </div>
                 <h2>

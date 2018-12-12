@@ -18,7 +18,7 @@ export function story(storiesId, params) {
 }
 
 export function storyUpdate(storiesId, params) {
-  const acceptedParams = acceptParams(params, ['id', 'title', 'url', 'guid', 'language', 'description', 'publish_date', 'confirm_date', 'undateable']);
+  const acceptedParams = acceptParams(params, ['id', 'title', 'url', 'guid', 'language', 'description', 'publish_date', 'custom_date', 'undateable']);
   return createPostingApiPromise(`/api/stories/${storiesId}/storyUpdate`, acceptedParams);
 }
 

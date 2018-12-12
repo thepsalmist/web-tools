@@ -4,6 +4,9 @@
 
   #nav-toolbar {
     background-color: $tools-primary;
+    li.admin {
+      border-bottom: 2px solid white;
+    }
   }
 
   .app-icon-button {

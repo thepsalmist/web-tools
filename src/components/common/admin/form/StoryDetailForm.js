@@ -4,15 +4,20 @@ import { injectIntl } from 'react-intl';
 import { reduxForm, Field } from 'redux-form';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Row, Col } from 'react-flexbox-grid/lib';
-import withIntlForm from '../../common/hocs/IntlForm';
-import AppButton from '../../common/AppButton';
-import { emptyString } from '../../../lib/formValidators';
-import messages from '../../../resources/messages';
+import withIntlForm from '../../hocs/IntlForm';
+import AppButton from '../../AppButton';
+import { emptyString, invalidDate } from '../../../../lib/formValidators';
+import { isValidSolrDate } from '../../../../lib/dateUtil';
+import messages from '../../../../resources/messages';
 
 const localMessages = {
-  mainTitle: { id: 'story.detail.maintitle', defaultMessage: 'Update Story' },
-  nameError: { id: 'story.detail.nameError', defaultMessage: 'Save Story' },
-  urlError: { id: 'story.detail.urlError', defaultMessage: 'We saved your story' },
+  mainTitle: { id: 'story.maintitle', defaultMessage: 'Update Story' },
+  nameError: { id: 'story.nameError', defaultMessage: 'Your story needs a title' },
+  urlError: { id: 'story.urlError', defaultMessage: 'Your story needs a url' },
+  guidLabel: { id: 'story.update.guid.label', defaultMessage: 'GUID' },
+  dateError: { id: 'stoyr.update.date.error', defaultMessage: 'Please provide a date in YYYY-MM-DD format.' },
+  titleError: { id: 'stoyr.update.title.error', defaultMessage: 'Your story needs a title.' },
+  guidError: { id: 'stoyr.update.guid.error', defaultMessage: 'Your story needs a guid.' },
 };
 
 const StoryDetailForm = (props) => {
@@ -39,11 +44,11 @@ const StoryDetailForm = (props) => {
       <Row>
         <Col lg={12}>
           <Field
-            name="description"
+            name="guid"
             component={renderTextField}
             fullWidth
-            label={formatMessage(messages.storyDescription)}
-            placeholder={formatMessage(messages.storyDescription)}
+            label={formatMessage(localMessages.guidLabel)}
+            placeholder={formatMessage(localMessages.guidLabel)}
           />
         </Col>
       </Row>
@@ -69,7 +74,7 @@ const StoryDetailForm = (props) => {
             label={formatMessage(messages.language)}
             placeholder={formatMessage(messages.language)}
           >
-            {language.map(t => <MenuItem key={t} value={t} primaryText={t} />)}
+            {language.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
           </Field>
         </Col>
       </Row>
@@ -82,18 +87,6 @@ const StoryDetailForm = (props) => {
             fullWidth
             label={formatMessage(messages.storyDate)}
             placeholder={formatMessage(messages.storyDate)}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={6}>
-          <Field
-            name="custom_date"
-            component={renderCheckbox}
-            type="inline"
-            fullWidth
-            label={formatMessage(messages.storyCustomDate)}
-            placeholder={formatMessage(messages.storyCustomDate)}
           />
         </Col>
       </Row>
@@ -149,6 +142,12 @@ function validate(values) {
   }
   if (emptyString(values.url)) {
     errors.url = localMessages.urlError;
+  }
+  if (invalidDate(values.custom_date) || !isValidSolrDate(values.custom_date)) {
+    errors.custom_date = localMessages.dateError;
+  }
+  if (invalidDate(values.publish_date) || !isValidSolrDate(values.publish_date)) {
+    errors.publish_date = localMessages.dateError;
   }
   return errors;
 }

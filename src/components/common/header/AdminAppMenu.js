@@ -12,11 +12,11 @@ import { getAppName } from '../../../config';
 const localMessages = {
   menuTitle: { id: 'tools.menu.title', defaultMessage: 'Admin' },
   home: { id: 'tools.menu.items.home', defaultMessage: 'Home' },
-  userManagement: { id: 'tools.menu.items.listTopics', defaultMessage: 'Admin: User Management' },
-  storyView: { id: 'tools.menu.items.stories', defaultMessage: 'View Stories' },
+  userManagement: { id: 'tools.menu.items.listTopics', defaultMessage: 'Manage Users' },
+  storyView: { id: 'tools.menu.items.stories', defaultMessage: 'Manage Stories' },
 };
 
-const UserAdminAppMenu = props => (
+const AdminAppMenu = props => (
   <AppMenu
     color="primary"
     titleMsg={localMessages.menuTitle}
@@ -35,7 +35,7 @@ const UserAdminAppMenu = props => (
   />
 );
 
-UserAdminAppMenu.propTypes = {
+AdminAppMenu.propTypes = {
   // state
   isLoggedIn: PropTypes.bool.isRequired,
   user: PropTypes.object.isRequired,
@@ -63,6 +63,6 @@ const mapDispatchToProps = dispatch => ({
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    UserAdminAppMenu
+    AdminAppMenu
   )
 );

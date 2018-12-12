@@ -12,14 +12,13 @@ import InfluentialStoriesContainer from '../components/topic/stories/Influential
 import InfluentialStoryExplorerContainer from '../components/topic/stories/InfluentialStoryExplorerContainer';
 import StoryContainer from '../components/topic/stories/StoryContainer';
 import StoryUpdateContainer from '../components/topic/stories/StoryUpdateContainer';
-import StoryCachedContainer from '../components/topic/stories/StoryCachedContainer';
+import StoryCachedContainer from '../components/common/admin/story/StoryCachedContainer';
 import MediaContainer from '../components/topic/media/MediaContainer';
 import LinkMapContainer from '../components/topic/maps/LinkMapContainer';
 import CreateFocusContainer from '../components/topic/snapshots/foci/CreateFocusContainer';
 import EditFocusContainer from '../components/topic/snapshots/foci/EditFocusContainer';
 import ManageFocalSetsContainer from '../components/topic/snapshots/foci/ManageFocalSetsContainer';
 import { requireAuth } from './routes';
-import userRoutes from './userRoutes';
 import systemRoutes from './systemRoutes';
 import TopicsApp from '../components/topic/TopicsApp';
 import About from '../components/topic/About';
@@ -85,9 +84,7 @@ const topicRoutes = (
       <Route path="/topics/public/:topicId/summary" component={PublicTopicSummaryContainer} />
     </Route>
 
-    {userRoutes}
     {systemRoutes}
-
   </Route>
 
 );

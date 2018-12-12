@@ -174,6 +174,7 @@ const messages = {
   downloadSVG: { id: 'downloadSVG', defaultMessage: 'Download a SVG' },
   downloadCSV: { id: 'downloadCSV', defaultMessage: 'Download a CSV' },
   downloadOptions: { id: 'downloadOptions', defaultMessage: 'Download Options...' },
+  options: { id: 'options', defaultMessage: 'Options...' },
   viewOptions: { id: 'viewOptions', defaultMessage: 'View Options...' },
   viewSampleOptions: { id: 'viewSampleOptions', defaultMessage: 'Change Sample Sizes...' },
   favorite: { id: 'favorite', defaultMessage: 'Star' },

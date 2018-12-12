@@ -4,7 +4,6 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { fetchStoryInfo } from '../../../../actions/storyActions';
 import withAsyncFetch from '../../hocs/AsyncContainer';
-import withHelp from '../../hocs/HelpfulContainer';
 import messages from '../../../../resources/messages';
 import DataCard from '../../DataCard';
 import { TAG_SET_NYT_THEMES, TAG_SET_CLIFF_ORGS, TAG_SET_CLIFF_PEOPLE } from '../../../../lib/tagUtil';
@@ -13,9 +12,7 @@ import TagsAndTagSetsTable from '../TagsAndTagSetsTable';
 
 const localMessages = {
   title: { id: 'story.entities.title', defaultMessage: 'Tags on Stories' },
-  helpTitle: { id: 'story.entities.help.title', defaultMessage: 'About Tags' },
-  helpIntro: { id: 'story.entities.help.text', defaultMessage: '</p>' },
-  otherStoryTagTitle: { id: 'admin.story.details.otherTags', defaultMessage: 'Additional Tags ang Tag Sets' },
+  otherStoryTagTitle: { id: 'admin.story.details.otherTags', defaultMessage: 'Other Tags' },
 };
 
 class TagListContainer extends React.Component {
@@ -26,7 +23,7 @@ class TagListContainer extends React.Component {
   }
 
   render() {
-    const { selectedStory, helpButton } = this.props;
+    const { selectedStory } = this.props;
     const { formatMessage } = this.props.intl;
     return (
       <DataCard className="other-tags">
@@ -35,7 +32,6 @@ class TagListContainer extends React.Component {
         </div>
         <h2>
           <FormattedMessage {...localMessages.otherStoryTagTitle} />
-          {helpButton}
         </h2>
         <TagsAndTagSetsTable storyTags={selectedStory.story_tags ? selectedStory.story_tags.filter(t => t.tag_sets_id !== TAG_SET_NYT_THEMES && t.tag_sets_id !== TAG_SET_CLIFF_ORGS && t.tag_sets_id !== TAG_SET_CLIFF_PEOPLE) : []} />
       </DataCard>
@@ -46,7 +42,6 @@ class TagListContainer extends React.Component {
 TagListContainer.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
-  helpButton: PropTypes.node.isRequired,
   // from mergeProps
   asyncFetch: PropTypes.func.isRequired,
   // from dispatch
@@ -73,10 +68,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withHelp(localMessages.helpTitle, localMessages.helpIntro)(
-      withAsyncFetch(
-        TagListContainer
-      )
+    withAsyncFetch(
+      TagListContainer
     )
   )
 );

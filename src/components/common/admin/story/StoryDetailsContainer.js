@@ -4,7 +4,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
 // import { formValueSelector } from 'redux-form';
-import { Grid, Row } from 'react-flexbox-grid/lib';
+import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withAsyncFetch from '../../hocs/AsyncContainer';
 import { fetchStory } from '../../../../actions/storyActions';
 import SelectedStoryContainer from './SelectedStoryContainer';
@@ -13,20 +13,21 @@ import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import Permissioned from '../../Permissioned';
 
 const localMessages = {
-  storyTitle: { id: 'user.all.title', defaultMessage: 'Story' },
+  storyTitle: { id: 'user.all.title', defaultMessage: 'Manage Stories' },
 };
 
 const StoryDetailsContainer = props => (
   <Grid>
     <Permissioned onlyRole={PERMISSION_ADMIN}>
-      <h1>
-        <FormattedMessage {...localMessages.storyTitle} />
-      </h1>
-      <Row><StorySearchForm initialValues={{ storyId: props.storyId }} onSearch={search => props.fetchData(search)} /></Row>
-      <br /><br />
       <Row>
-        <SelectedStoryContainer />
+        <Col lg={12}>
+          <h1>
+            <FormattedMessage {...localMessages.storyTitle} />
+          </h1>
+        </Col>
       </Row>
+      <StorySearchForm initialValues={{ storyId: props.storyId }} onSearch={search => props.fetchData(search)} />
+      <SelectedStoryContainer />
     </Permissioned>
   </Grid>
 );

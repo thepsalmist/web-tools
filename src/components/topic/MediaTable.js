@@ -5,6 +5,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import messages from '../../resources/messages';
 import LinkWithFilters from './LinkWithFilters';
 import { googleFavIconUrl } from '../../lib/urlUtil';
+import StorySearchFilterMediaWarning from './StorySearchFilterMediaWarning';
 
 const ICON_STYLE = { margin: 0, padding: 0, width: 12, height: 12 };
 
@@ -45,6 +46,7 @@ class MediaTable extends React.Component {
     const { media, topicId } = this.props;
     return (
       <div className="media-table">
+        <StorySearchFilterMediaWarning />
         <table>
           <tbody>
             <tr>

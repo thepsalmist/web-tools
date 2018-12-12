@@ -12,8 +12,8 @@ import { getAppName } from '../../../config';
 const localMessages = {
   menuTitle: { id: 'tools.menu.title', defaultMessage: 'Admin' },
   home: { id: 'tools.menu.items.home', defaultMessage: 'Home' },
-  userManagement: { id: 'tools.menu.items.listTopics', defaultMessage: 'User Management' },
-  storyView: { id: 'tools.menu.items.stories', defaultMessage: 'Story Management' },
+  userManagement: { id: 'tools.menu.items.listTopics', defaultMessage: 'Manage Users' },
+  storyView: { id: 'tools.menu.items.stories', defaultMessage: 'Manage Stories' },
 };
 
 const AdminAppMenu = props => (

@@ -7,7 +7,7 @@ import Permissioned from '../../Permissioned';
 import UserListcontainer from './UserListContainer';
 
 const localMessages = {
-  userTitle: { id: 'user.all.title', defaultMessage: 'Users' },
+  userTitle: { id: 'user.all.title', defaultMessage: 'Manage Users' },
   feedback: { id: 'user.all.user.delete.feedback', defaultMessage: 'Successfully deleted user.' },
 };
 

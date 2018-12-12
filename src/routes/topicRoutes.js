@@ -19,9 +19,7 @@ import CreateFocusContainer from '../components/topic/snapshots/foci/CreateFocus
 import EditFocusContainer from '../components/topic/snapshots/foci/EditFocusContainer';
 import ManageFocalSetsContainer from '../components/topic/snapshots/foci/ManageFocalSetsContainer';
 import { requireAuth } from './routes';
-import userRoutes from './userRoutes';
 import systemRoutes from './systemRoutes';
-import adminRoutes from './adminRoutes';
 import TopicsApp from '../components/topic/TopicsApp';
 import About from '../components/topic/About';
 import CreateTopicContainer from '../components/topic/create/CreateTopicContainer';
@@ -86,9 +84,7 @@ const topicRoutes = (
       <Route path="/topics/public/:topicId/summary" component={PublicTopicSummaryContainer} />
     </Route>
 
-    {userRoutes}
     {systemRoutes}
-    {adminRoutes}
   </Route>
 
 );

@@ -138,7 +138,7 @@ class SelectedStoryContainer extends React.Component {
               </Col>
             </Row>
             <Row>
-              <Col lg={4}>
+              <Col lg={9}>
                 <TagListContainer story={selectedStory} />
               </Col>
             </Row>

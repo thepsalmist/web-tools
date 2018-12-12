@@ -78,7 +78,6 @@ def explorer_geo_csv():
         solr_q, solr_fq = parse_query_with_keywords(query_object)
         filename = file_name_for_download(query_object['label'], filename)
     data = apicache.top_tags_with_coverage(solr_q, solr_fq, tags.GEO_TAG_SET)
-    data['results'] = _filter_for_countries(data['results'])
     props = ['tags_id', 'label', 'geonamesId', 'count', 'pct', 'alpha3', 'iso-a2']
     return csv.stream_response(data['results'], props, filename)
 

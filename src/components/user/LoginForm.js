@@ -6,19 +6,19 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { push } from 'react-router-redux';
 import { loginWithPassword } from '../../actions/userActions';
-// import { addNotice } from '../../actions/appActions';
 import AppButton from '../common/AppButton';
 import * as fetchConstants from '../../lib/fetchConstants';
 import messages from '../../resources/messages';
 import { emptyString, invalidEmail } from '../../lib/formValidators';
 import withIntlForm from '../common/hocs/IntlForm';
-import { addNotice } from '../../actions/appActions';
-import { LEVEL_ERROR } from '../common/Notice';
+import { addNotice, updateFeedback } from '../../actions/appActions';
+import { LEVEL_ERROR, LEVEL_INFO } from '../common/Notice';
 
 const localMessages = {
   missingEmail: { id: 'user.missingEmail', defaultMessage: 'You need to enter your email address.' },
   missingPassword: { id: 'user.missingPassword', defaultMessage: 'You need to enter your password.' },
   loginFailed: { id: 'user.loginFailed', defaultMessage: 'Your email or password was wrong.' },
+  loginSucceeded: { id: 'user.loginSucceeded', defaultMessage: 'You are now logged in!' },
   signUpNow: { id: 'user.signUpNow', defaultMessage: 'No account? Register now!' },
   forgotPassword: { id: 'user.forgotPassword', defaultMessage: 'Forgot Your Password?' },
   needsToActivate: { id: 'user.needsToActivate', defaultMessage: 'You still need to activate your account. Check out email and click the link we sent you, or <a href="/#/user/resend-activation">send the link again</a> if you didn\'t get it.' },
@@ -118,6 +118,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           if (redirectTo) {
             dispatch(push(redirectTo));
           }
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.loginSucceeded) }));
         } else if ((response.message) && (response.message.includes('is not active'))) {
           // user has signed up, but not activated their account
           dispatch(addNotice({ htmlMessage: ownProps.intl.formatMessage(localMessages.needsToActivate), level: LEVEL_ERROR }));

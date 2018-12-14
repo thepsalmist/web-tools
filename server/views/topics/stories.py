@@ -84,8 +84,8 @@ def topic_story_update(stories_id):
         'url': request.form['url'] if 'url' in request.form else 'url',
         'language': request.form['language'] if 'language' in request.form else 'en',
         'publish_date': request.form['publish_date'] if 'publish_date' in request.form else None,
-        'confirm_date': request.form['confirm_date'] if 'confirm_date' in request.form else False,
-        'undateable': request.form['undateable'] if 'undateable' in request.form else False,
+        #'custom_date': request.form['custom_date'] if 'custom_date' in request.form else False,
+        'undateable': bool(request.form['undateable'] == 'true') if 'active' in request.form else False,
     }
     stories = user_mc.storyUpdate(stories_id, **optional_args)
 

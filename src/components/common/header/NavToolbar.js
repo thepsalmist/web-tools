@@ -7,7 +7,7 @@ import UserMenuContainer from './UserMenuContainer';
 import SourcesAppMenu from './SourcesAppMenu';
 import TopicsAppMenu from './TopicsAppMenu';
 import ExplorerAppMenu from './ExplorerAppMenu';
-import UserAdminAppMenu from './UserAdminAppMenu';
+import AdminAppMenu from './AdminAppMenu';
 import { assetUrl } from '../../../lib/assetUtil';
 import RecentNewsMenuContainer from '../news/RecentNewsMenuContainer';
 import AppButton from '../AppButton';
@@ -63,7 +63,7 @@ const NavToolbar = (props) => {
             <ul className="right">
               <Permissioned onlyRole={PERMISSION_ADMIN}>
                 <li className="admin">
-                  <UserAdminAppMenu />
+                  <AdminAppMenu />
                 </li>
               </Permissioned>
               <li className="support">

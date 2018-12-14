@@ -29,7 +29,7 @@ export default function user(state = INITIAL_STATE, action) {
       });
     case resolve(LOGIN_WITH_PASSWORD):
       setRavenUserContext(action.payload);
-      const passwordLoginWorked = (action.payload.status !== 500);
+      const passwordLoginWorked = (action.payload.statusCode !== 500);
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.FETCH_SUCCEEDED,
         isLoggedIn: passwordLoginWorked,
@@ -50,7 +50,7 @@ export default function user(state = INITIAL_STATE, action) {
       });
     case resolve(LOGIN_WITH_COOKIE):
       setRavenUserContext(action.payload);
-      const keyLoginWorked = (action.payload.status !== 401);
+      const keyLoginWorked = (action.payload.statusCode !== 401);
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.FETCH_SUCCEEDED,
         isLoggedIn: keyLoginWorked,

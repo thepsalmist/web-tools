@@ -10,7 +10,7 @@ import { LEVEL_ERROR } from '../common/Notice';
 import { addNotice } from '../../actions/appActions';
 import { selectBySearchParams, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo,
   fetchQuerySourcesByIds, fetchQueryCollectionsByIds, demoQuerySourcesByIds, demoQueryCollectionsByIds } from '../../actions/explorerActions';
-import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, generateQueryParamString, decodeQueryParamString } from '../../lib/explorerUtil';
+import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, decodeQueryParamString, serializeQueriesForUrl } from '../../lib/explorerUtil';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../lib/dateUtil';
 import { notEmptyString } from '../../lib/formValidators';
 
@@ -66,30 +66,64 @@ function composeUrlBasedQueryContainer() {
       }
 
       updateQueriesFromLocation(location, autoName) {
+        // read the URL and decide how to update the queries in the store
+        const { addAppNotice } = this.props;
+        const { formatMessage } = this.props.intl;
         // regular searches are in a queryParam, but samples by id are part of the path
         const url = location.pathname;
         const lastPathPart = url.slice(url.lastIndexOf('/') + 1, url.length);
         const sampleNumber = parseInt(lastPathPart, 10);
         if (!Number.isNaN(sampleNumber)) {
           this.updateQueriesFromSampleId(sampleNumber);
-        } else {
+        } else if (location.query.q) {
           // this is a crazy fix to make embedded quotes work by forcing us to escape them all... partially because
           // react-router decided to decode url components, partially because the JSON parser isn't that clever
-          const text = location.query.q;
-          const pattern = /:"([^,]*)"[,}]/g; // gotta end with , or } here to support demo case (})
-          let match = pattern.exec(text);
-          let cleanedText = '';
-          let lastSpot = 0;
-          while (match != null) {
-            const matchText = text.substring(match.index + 2, pattern.lastIndex - 2);
-            const cleanedMatch = matchText.replace(/"/g, '\\"');
-            cleanedText += `${text.substring(lastSpot, match.index)}:"${cleanedMatch}`;
-            lastSpot = pattern.lastIndex - 2;
-            match = pattern.exec(text);
-          }
-          cleanedText += text.substring(lastSpot, text.length);
-          // now that we have a relatively clean url, lets use it!
-          this.updateQueriesFromString(cleanedText, autoName);
+          this.updateQueriesFromQParam(location.query.q, autoName);
+        } else if (location.query.qs) {
+          // it uses the "new" full JSON way of serializing the queries
+          this.updateQueriesFromQSParam(location.query.qs, autoName);
+        } else {
+          addAppNotice({ level: LEVEL_ERROR, message: formatMessage(localMessages.errorInURLParams) });
+        }
+      }
+
+      updateQueriesFromQSParam(queryString, autoName) {
+        // the newer, fully serialized way we are supporing going forward
+        const { formatMessage } = this.props.intl;
+        const { addAppNotice } = this.props;
+        try {
+          const cleanedQueryString = decodeURIComponent(queryString);
+          const queriesFromUrl = JSON.parse(cleanedQueryString);
+          this.updateQueriesFromString(queriesFromUrl, autoName);
+        } catch (f) {
+          addAppNotice({ level: LEVEL_ERROR, message: formatMessage(localMessages.errorInURLParams) });
+        }
+      }
+
+      updateQueriesFromQParam(queryString, autoName) {
+        const { addAppNotice } = this.props;
+        const { formatMessage } = this.props.intl;
+        // the older, "ugly" way that we are deprecating
+        const text = queryString;
+        const pattern = /:"([^,]*)"[,}]/g; // gotta end with , or } here to support demo case (})
+        let match = pattern.exec(text);
+        let cleanedText = '';
+        let lastSpot = 0;
+        while (match != null) {
+          const matchText = text.substring(match.index + 2, pattern.lastIndex - 2);
+          const cleanedMatch = matchText.replace(/"/g, '\\"');
+          cleanedText += `${text.substring(lastSpot, match.index)}:"${cleanedMatch}`;
+          lastSpot = pattern.lastIndex - 2;
+          match = pattern.exec(text);
+        }
+        cleanedText += text.substring(lastSpot, text.length);
+        // now that we have a relatively clean url, lets use it!
+        try {
+          const queriesFromUrl = decodeQueryParamString(decodeURIComponent(cleanedText));
+          // and update the queries
+          this.updateQueriesFromString(queriesFromUrl, autoName);
+        } catch (f) {
+          addAppNotice({ level: LEVEL_ERROR, message: formatMessage(localMessages.errorInURLParams) });
         }
       }
 
@@ -100,18 +134,8 @@ function composeUrlBasedQueryContainer() {
         saveQueriesFromParsedUrl(queriesFromUrl, isLoggedIn);
       }
 
-      updateQueriesFromString(queryAsJsonStr, autoNaming) {
-        const { addAppNotice, saveQueriesFromParsedUrl, isLoggedIn } = this.props;
-        const { formatMessage } = this.props.intl;
-        let queriesFromUrl;
-
-        try {
-          queriesFromUrl = decodeQueryParamString(decodeURIComponent(queryAsJsonStr));
-        } catch (f) {
-          addAppNotice({ level: LEVEL_ERROR, message: formatMessage(localMessages.errorInURLParams) });
-          return;
-        }
-
+      updateQueriesFromString(queriesFromUrl, autoNaming) {
+        const { saveQueriesFromParsedUrl, isLoggedIn } = this.props;
         let extraDefaults = {};
         // add in an index, label, and color if they are not there
         if (!isLoggedIn) { // and demo mode needs some extra stuff too
@@ -125,7 +149,7 @@ function composeUrlBasedQueryContainer() {
         } else {
           extraDefaults = { autoNaming };
         }
-        queriesFromUrl = queriesFromUrl.map((query, index) => ({
+        const cleanedQueries = queriesFromUrl.map((query, index) => ({
           ...query, // let anything on URL override label and color
           label: notEmptyString(query.label) ? query.label : autoMagicQueryLabel(query),
           // remember demo queries won't have sources or collections on the URL
@@ -137,7 +161,7 @@ function composeUrlBasedQueryContainer() {
           ...extraDefaults, // for demo mode
         }));
         // push the queries in to the store
-        saveQueriesFromParsedUrl(queriesFromUrl, isLoggedIn);
+        saveQueriesFromParsedUrl(cleanedQueries, isLoggedIn);
       }
 
       isAllMediaDetailsReady() {
@@ -232,19 +256,19 @@ function composeUrlBasedQueryContainer() {
         const unDeletedQueries = queries.filter(q => q.deleted !== true);
         const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
         if (!isLoggedIn) {
-          const urlParamString = nonEmptyQueries.map((q, idx) => `{"index":${idx},"q":"${encodeURIComponent(q.q)}","color":"${encodeURIComponent(q.color)}"}`);
-          dispatch(push({ pathname: '/queries/demo/search', search: `?q=[${urlParamString}]` }));
+          const queriesToSerialize = nonEmptyQueries.map((q, idx) => ({ index: idx, q: q.q, color: q.color }));
+          dispatch(push({ pathname: '/queries/demo/search', search: `?qs=${serializeQueriesForUrl(queriesToSerialize)}` }));
         } else {
-          const search = generateQueryParamString(queries.map(q => ({
+          const queriesToSerialize = queries.map(q => ({
             label: q.label,
             q: q.q,
             color: q.color,
             startDate: q.startDate,
             endDate: q.endDate,
-            sources: q.sources, // de-aggregate media bucket into sources and collections
-            collections: q.collections,
-          })));
-          dispatch(push({ pathname: '/queries/search', search: `?q=${search}` })); // query adds a '?query='
+            sources: q.sources.map(s => s.media_id), // de-aggregate media bucket into sources and collections
+            collections: q.collections.map(c => c.tags_id),
+          }));
+          dispatch(push({ pathname: '/queries/search', search: `?qs=${serializeQueriesForUrl(queriesToSerialize)}` }));
         }
       },
     });

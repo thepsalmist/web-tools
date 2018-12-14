@@ -8,23 +8,24 @@ import AppButton from '../../AppButton';
 import messages from '../../../../resources/messages';
 
 const localMessages = {
-  mainTitle: { id: 'explorer.search.title', defaultMessage: 'Story id' },
+  mainTitle: { id: 'explorer.search.title', defaultMessage: 'Story Details' },
   addButton: { id: 'explorer.search', defaultMessage: 'Search' },
-  searchHint: { id: 'explorer.intro.searchHint', defaultMessage: 'Filter story by id' },
+  searchHint: { id: 'explorer.intro.searchHint', defaultMessage: 'Enter a story id' },
 };
 
 const StorySearchForm = (props) => {
   const { handleSubmit, onSearch, renderTextField } = props;
   // need to init initialValues a bit on the way in to make lower-level logic work right
   return (
-    <form className="app-form search-form" name="storySearchForm" onSubmit={handleSubmit(onSearch.bind(this))}>
+    <form className="app-form story-search-form" name="storySearchForm" onSubmit={handleSubmit(onSearch.bind(this))}>
       <Row>
-        <Col lg={9}>
+        <Col lg={2}>
           <Field
-            name="id"
-            className="tool-user-search"
+            name="storyId"
+            className="tool-story-search"
             component={renderTextField}
             label={localMessages.searchHint}
+            fullWidth
           />
         </Col>
         <Col lg={1}>

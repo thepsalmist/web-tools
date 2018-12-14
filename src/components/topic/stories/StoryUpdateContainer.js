@@ -7,7 +7,7 @@ import { push } from 'react-router-redux';
 import { fetchMetadataValuesForPrimaryLanguage } from '../../../actions/systemActions'; // TODO relocate metadata actions into system if we use more often...
 import { selectStory, fetchStory, updateStory } from '../../../actions/storyActions';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
-import StoryDetailForm from './StoryDetailForm';
+import StoryDetailForm from '../../common/admin/form/StoryDetailForm';
 import { updateFeedback } from '../../../actions/appActions';
 import { TAG_SET_PRIMARY_LANGUAGE } from '../../../lib/tagUtil';
 

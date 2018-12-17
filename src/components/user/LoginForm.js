@@ -12,7 +12,7 @@ import messages from '../../resources/messages';
 import { emptyString, invalidEmail } from '../../lib/formValidators';
 import withIntlForm from '../common/hocs/IntlForm';
 import { addNotice, updateFeedback } from '../../actions/appActions';
-import { LEVEL_ERROR, LEVEL_INFO } from '../common/Notice';
+import { LEVEL_ERROR } from '../common/Notice';
 
 const localMessages = {
   missingEmail: { id: 'user.missingEmail', defaultMessage: 'You need to enter your email address.' },

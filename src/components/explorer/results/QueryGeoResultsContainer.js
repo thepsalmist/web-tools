@@ -25,7 +25,7 @@ const localMessages = {
 };
 
 class QueryGeoResultsContainer extends React.Component {
-  downloadCsv = (query) => {  
+  downloadCsv = (query) => {
     postToDownloadUrl('/api/explorer/geography/geography.csv', query);
   }
 

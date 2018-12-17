@@ -15,7 +15,7 @@ import QueryHelpDialog from '../../common/help/QueryHelpDialog';
 import { selectQuery, updateQuery, addCustomQuery, loadUserSearches, saveUserSearch, deleteUserSearch, markAsDeletedQuery, copyAndReplaceQueryField } from '../../../actions/explorerActions';
 import { AddQueryButton } from '../../common/IconButton';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
-import { autoMagicQueryLabel, generateQueryParamString, KEYWORD, DATES, MEDIA, DEFAULT_COLLECTION_OBJECT_ARRAY } from '../../../lib/explorerUtil';
+import { autoMagicQueryLabel, generateQueryParamString, KEYWORD, DATES, MEDIA, DEFAULT_COLLECTION_OBJECT_ARRAY, replaceCurlyQuotes } from '../../../lib/explorerUtil';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
 
@@ -91,9 +91,10 @@ class QueryPicker extends React.Component {
       const nonDeletedQueries = queries.filter(q => q.deleted !== true);
       nonDeletedQueries.forEach((q) => {
         const queryText = document.getElementById(`query-${q.index}-q`).value; // not super robust,
+        const cleanedQueryText = replaceCurlyQuotes(queryText);
         const updatedQuery = {
           ...q,
-          q: queryText,
+          q: cleanedQueryText,
         };
         updatedQuery.label = updatedQuery.autoNaming ? autoMagicQueryLabel(updatedQuery) : updatedQuery.label; // have to call this alone because input is the whole query
         updateOneQuery(updatedQuery);
@@ -107,7 +108,7 @@ class QueryPicker extends React.Component {
     // filter out removed ids...
     const searchstr = generateQueryParamString(queries.map(q => ({
       label: q.label,
-      q: q.q,
+      q: replaceCurlyQuotes(q.q),
       color: q.color,
       startDate: q.startDate,
       endDate: q.endDate,
@@ -138,6 +139,7 @@ class QueryPicker extends React.Component {
   saveChangesToSelectedQuery = () => {
     const { selected, formQuery, updateCurrentQuery } = this.props;
     const updatedQuery = Object.assign({}, selected, formQuery);
+    updatedQuery.q = replaceCurlyQuotes(updatedQuery.q);
     updateCurrentQuery(updatedQuery, 'label');
   }
 
@@ -168,8 +170,13 @@ class QueryPicker extends React.Component {
     if (propertyName === 'label') { // no longer auto-name query if the user has intentionally changed it
       updatedQuery.autoNaming = false;
     }
-    if (propertyName === 'q' && updatedQuery.autoNaming) { // no longer auto-name query if the user has intentionally changed it
-      updatedQuery.label = newValue;
+
+    if (propertyName === 'q') {
+      const cleanedQ = replaceCurlyQuotes(newValue);
+      updatedQuery.q = cleanedQ;
+      if (updatedQuery.autoNaming) { // no longer auto-name query if the user has intentionally changed it
+        updatedQuery.label = cleanedQ;
+      }
     }
     // now update it in the store
     updateCurrentQuery(updatedQuery, propertyName);

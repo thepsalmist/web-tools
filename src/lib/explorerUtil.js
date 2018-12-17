@@ -35,6 +35,12 @@ export function serializeQueriesForUrl(queries) {
   return encodeURIComponent(JSON.stringify(queries));
 }
 
+export function replaceCurlyQuotes(stringWithQuotes) {
+  let removedQuotes = stringWithQuotes.replace(/[\u2018]/g, "'").replace(/[\u2019]/g, "'"); // replace single curly quotes
+  removedQuotes = removedQuotes.replace(/[\u201C]/g, '"').replace(/[\u201D]/g, '"'); // replace double curly quotes
+  return removedQuotes;
+}
+
 export function generateQueryParamObject(query, skipEncoding) {
   return {
     label: skipEncoding ? query.label : encodeURIComponent(query.label),

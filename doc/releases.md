@@ -32,6 +32,6 @@ Building and Purshing a Release
 see `version-control.md` for more details
 8. Push the tagged release to the appropriate production Dokku server with git (ie. 
 `git push prod-explorer explorer-v3.1.2:master`)
-9. Push the tag(s) "git push --tags"
+9. Push the tag(s) "git push origin --tags"
 <br/><br/>
 10. Create a PR on GitHub from your banch back to master (so the changes get merged in)

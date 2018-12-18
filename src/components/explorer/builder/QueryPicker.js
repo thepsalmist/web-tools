@@ -225,11 +225,12 @@ class QueryPicker extends React.Component {
           dateObj.end = unDeletedQueries[unDeletedQueries.length - 1].endDate;
         }
         const newIndex = queries.length; // all queries, including 'deleted' ones
+        const newUUId = `{${dateObj.start}${Math.floor((Math.random() * 100) + 1)};`
         const genDefColor = colorPallette(newIndex);
         const newQueryLabel = `Query ${String.fromCharCode('A'.charCodeAt(0) + newIndex)}`;
         const defaultQueryField = '';
-        const defaultDemoQuery = { index: newIndex, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
-        const defaultQuery = { index: newIndex, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: [], sources: [], color: genDefColor, autoNaming: true };
+        const defaultDemoQuery = { index: newIndex, uuid: newUUId, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
+        const defaultQuery = { index: newIndex, uuid: newUUId, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: [], sources: [], color: genDefColor, autoNaming: true };
 
         const emptyQuerySlide = (
           <div key={fixedQuerySlides.length}>
@@ -445,7 +446,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
   },
   handleDuplicateQuery: (query, queries) => {
-    const dupeQuery = Object.assign({}, query, { index: queries.length }); // this will be an issue
+    const dupeQuery = Object.assign({}, query, { uuid: queries.length }); // this will be an issue
     if (query) {
       dispatch(addCustomQuery(dupeQuery));
       dispatch(selectQuery(dupeQuery));

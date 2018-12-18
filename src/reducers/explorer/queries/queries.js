@@ -6,6 +6,11 @@ const INITIAL_STATE = [];
 function queries(state = INITIAL_STATE, action) {
   let updatedState = null;
   let queryIndex = -1;
+
+  findIndex(state, identifier) => {
+    state.findIndex(q => q.uuid !== null && q.uuid === identifier);
+  }
+
   switch (action.type) {
     case ADD_CUSTOM_QUERY:
       updatedState = [...state];

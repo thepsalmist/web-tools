@@ -10,7 +10,7 @@ import { LEVEL_ERROR } from '../common/Notice';
 import { addNotice } from '../../actions/appActions';
 import { selectBySearchParams, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo,
   fetchQuerySourcesByIds, fetchQueryCollectionsByIds, demoQuerySourcesByIds, demoQueryCollectionsByIds } from '../../actions/explorerActions';
-import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, decodeQueryParamString, serializeQueriesForUrl } from '../../lib/explorerUtil';
+import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, decodeQueryParamString, serializeQueriesForUrl, replaceCurlyQuotes } from '../../lib/explorerUtil';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../lib/dateUtil';
 import { notEmptyString } from '../../lib/formValidators';
 
@@ -92,7 +92,8 @@ function composeUrlBasedQueryContainer() {
         const { formatMessage } = this.props.intl;
         const { addAppNotice } = this.props;
         try {
-          const cleanedQueryString = decodeURIComponent(queryString);
+          let cleanedQueryString = decodeURIComponent(queryString);
+          cleanedQueryString = replaceCurlyQuotes(cleanedQueryString);
           const queriesFromUrl = JSON.parse(cleanedQueryString);
           this.updateQueriesFromString(queriesFromUrl, autoName);
         } catch (f) {
@@ -111,7 +112,9 @@ function composeUrlBasedQueryContainer() {
         let lastSpot = 0;
         while (match != null) {
           const matchText = text.substring(match.index + 2, pattern.lastIndex - 2);
-          const cleanedMatch = matchText.replace(/"/g, '\\"');
+          let cleanedMatch = matchText.replace(/"/g, '\\"');
+          // also handle curly quotes
+          cleanedMatch = replaceCurlyQuotes(cleanedMatch);
           cleanedText += `${text.substring(lastSpot, match.index)}:"${cleanedMatch}`;
           lastSpot = pattern.lastIndex - 2;
           match = pattern.exec(text);
@@ -155,7 +158,7 @@ function composeUrlBasedQueryContainer() {
           // remember demo queries won't have sources or collections on the URL
           sources: query.sources ? query.sources.map(s => ({ id: s, media_id: s })) : undefined,
           collections: query.collections ? query.collections.map(s => ({ id: s, tags_id: s })) : undefined,
-          q: query.q,
+          q: replaceCurlyQuotes(query.q),
           color: query.color ? query.color : schemeCategory10[index % 10],
           index, // redo index to be zero-based on reload of query
           ...extraDefaults, // for demo mode

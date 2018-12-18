@@ -7,8 +7,9 @@ from server import app
 from server.auth import user_admin_mediacloud_client, user_mediacloud_client
 from server.util.request import form_fields_required, api_error_handler, json_error_response
 from server.util.stringutil import ids_from_comma_separated_str
+from server.util.tags import US_COLLECTIONS
 from server.views.topics import concatenate_query_for_solr, concatenate_solr_dates
-
+from server.views.topics.foci.retweetpartisanship import create_retweet_partisanship_focal_set
 # load the shared settings file
 
 logger = logging.getLogger(__name__)
@@ -117,6 +118,10 @@ def topic_create():
 
         topic_id = topic_result['topics_id']
         logger.info("Created new topic \"{}\" as {}".format(name, topic_id))
+
+        if set(tag_ids_to_add).intersection(US_COLLECTIONS):
+            create_retweet_partisanship_focal_set(topic_result['topics_id'])
+
         spider_job = user_mc.topicSpider(topic_id)  # kick off a spider, which will also generate a snapshot
         logger.info("  spider result = {}".format(json.dumps(spider_job)))
         results = user_mc.topic(topic_id)

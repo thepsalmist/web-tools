@@ -19,19 +19,21 @@ const AttentionContainer = (props) => {
   let content = null;
   const defaultFocalSet = focalSets.length > 0 ? focalSets[0].focal_sets_id : NO_FOCAL_SET_SELECTED;
   if (selectedFocalSetId !== NO_FOCAL_SET_SELECTED) {
+    const selectedFocalSet = focalSets.filter(fs => fs.focal_sets_id === selectedFocalSetId)[0];
     content = (
       <FociAttentionComparisonContainer
         topicId={topicId}
         filters={filters}
-        selectedFocalSetId={selectedFocalSetId}
+        selectedFocalSet={selectedFocalSet}
       />
     );
   } else if (focalSets.length > 0) { // handle case for default if we do have any focal sets
+    const selectedFocalSet = focalSets.filter(fs => fs.focal_sets_id === defaultFocalSet)[0];
     content = (
       <FociAttentionComparisonContainer
         topicId={topicId}
         filters={filters}
-        selectedFocalSetId={defaultFocalSet}
+        selectedFocalSet={selectedFocalSet}
       />
     );
   }

@@ -75,8 +75,13 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
     // because these results are indexed, we can merge these two arrays
     // we may have more results than queries b/c queries can be deleted but not executed
     // so we have to do the following
-    const safeResults = results.map((r, idx) => Object.assign({}, r, queries[idx]));
+
+    const unDeletedQueries = queries.filter(q => q.deleted !== true);
+    const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '').sort((a, b) => a.index - b.index);
+    let safeResults = nonEmptyQueries.map((q, idx) => Object.assign({}, q, results[idx]));
+    safeResults = safeResults.filter(q => q.counts && q.counts.length > 0); // must have results
     // stich together line chart data
+
     let series = [];
     if (safeResults && safeResults.length > 0) {
       series = [
@@ -196,6 +201,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           end_date: q.endDate,
           q: q.q,
           index: q.index,
+          sortPosition: q.sortPosition,
           sources: q.sources.map(s => s.id),
           collections: q.collections.map(c => c.id),
         };

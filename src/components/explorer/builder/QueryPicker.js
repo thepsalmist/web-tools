@@ -184,7 +184,7 @@ class QueryPicker extends React.Component {
 
   render() {
     const { isLoggedIn, selected, queries, isEditable, addAQuery, handleLoadUserSearches, formQuery,
-      handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll } = this.props;
+      handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll, handleDuplicateQuery } = this.props;
     const { formatMessage } = this.props.intl;
     let queryPickerContent; // editable if demo mode
     let queryFormContent; // hidden if demo mode
@@ -193,7 +193,8 @@ class QueryPicker extends React.Component {
 
     const unDeletedQueries = this.getAllActiveQueries(queries);
     if (unDeletedQueries && unDeletedQueries.length > 0 && selected) {
-      fixedQuerySlides = unDeletedQueries.map((query, index) => (
+      fixedQuerySlides = unDeletedQueries.sort((a, b) => a.sortPosition - b.sortPosition);
+      fixedQuerySlides = fixedQuerySlides.map((query, index) => (
         <div key={index}>
           <QueryPickerItem
             isLoggedIn={isLoggedIn}
@@ -208,7 +209,7 @@ class QueryPicker extends React.Component {
             updateDemoQueryLabel={newValue => this.updateDemoQueryLabel(query, newValue)}
             onSearch={this.saveAndSearch}
             onDelete={() => this.handleDeleteAndSelectQuery(query)}
-            /* onDuplicate={() => handleDuplicateQuery(query, queries)} */
+            onDuplicate={() => handleDuplicateQuery(query, queries)}
             // loadDialog={loadQueryEditDialog}
           />
         </div>
@@ -225,12 +226,12 @@ class QueryPicker extends React.Component {
           dateObj.end = unDeletedQueries[unDeletedQueries.length - 1].endDate;
         }
         const newIndex = queries.length; // all queries, including 'deleted' ones
-        const newUUId = `{${dateObj.start}${Math.floor((Math.random() * 100) + 1)};`
+        const newPosition = queries.length;
         const genDefColor = colorPallette(newIndex);
         const newQueryLabel = `Query ${String.fromCharCode('A'.charCodeAt(0) + newIndex)}`;
         const defaultQueryField = '';
-        const defaultDemoQuery = { index: newIndex, uuid: newUUId, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
-        const defaultQuery = { index: newIndex, uuid: newUUId, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: [], sources: [], color: genDefColor, autoNaming: true };
+        const defaultDemoQuery = { index: newIndex, sortPosition: newPosition, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
+        const defaultQuery = { index: newIndex, sortPosition: newPosition, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: [], sources: [], color: genDefColor, autoNaming: true };
 
         const emptyQuerySlide = (
           <div key={fixedQuerySlides.length}>
@@ -446,7 +447,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
   },
   handleDuplicateQuery: (query, queries) => {
-    const dupeQuery = Object.assign({}, query, { uuid: queries.length }); // this will be an issue
+    const dupeQuery = Object.assign({}, query, { index: queries.length, sortPosition: query.sortPosition + 1 }); // what is the index?
     if (query) {
       dispatch(addCustomQuery(dupeQuery));
       dispatch(selectQuery(dupeQuery));

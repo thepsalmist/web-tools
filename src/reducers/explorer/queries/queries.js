@@ -3,17 +3,25 @@ import { autoMagicQueryLabel } from '../../../lib/explorerUtil';
 
 const INITIAL_STATE = [];
 
+function shiftSortPositions(state, position) {
+  const updatedState = [...state];
+  updatedState.map((q, index) => {
+    if (index >= position) {
+      updatedState[index].sortPosition += 1;
+    }
+    return updatedState[index];
+  });
+  return updatedState;
+}
+
+
 function queries(state = INITIAL_STATE, action) {
   let updatedState = null;
   let queryIndex = -1;
-
-  findIndex(state, identifier) => {
-    state.findIndex(q => q.uuid !== null && q.uuid === identifier);
-  }
-
   switch (action.type) {
     case ADD_CUSTOM_QUERY:
       updatedState = [...state];
+      updatedState = shiftSortPositions(state, action.payload.sortPosition); // increment sortPosition for all queries 'behind' new query
       updatedState.push(action.payload);
       return updatedState;
     case UPDATE_QUERY:

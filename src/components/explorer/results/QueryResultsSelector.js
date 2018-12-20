@@ -32,14 +32,15 @@ function withQueryResults(ChildComponent) {
 
     render() {
       const { queries } = this.props;
-      const tabSelector = <TabSelector onViewSelected={idx => this.setView(idx)} tabLabels={queries} />;
+      const sortedQueries = queries.sort((a, b) => a.sortPosition - b.sortPosition);
+      const tabSelector = <TabSelector onViewSelected={idx => this.setView(idx)} tabLabels={sortedQueries} />;
       return (
         <div className="query-results-selector">
           <ChildComponent
             {...this.props}
             selectedTabIndex={this.state.selectedQueryIndex} // for backwards compatability
             selectedQueryIndex={this.state.selectedQueryIndex}
-            selectedQuery={queries[this.state.selectedQueryIndex]}
+            selectedQuery={sortedQueries[this.state.selectedQueryIndex]}
             tabSelector={tabSelector}
           />
         </div>

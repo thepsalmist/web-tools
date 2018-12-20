@@ -29,7 +29,7 @@ class QueryPickerLoggedInHeader extends React.Component {
   };
 
   render() {
-    const { query, isDeletable, onColorChange, /* onDuplicate */ onDelete, onLabelEditRequest } = this.props;
+    const { query, isDeletable, onColorChange, onDuplicate, onDelete, onLabelEditRequest } = this.props;
     let nameInfo = <div />;
     let menuChildren = null;
     let iconOptions = null;
@@ -37,7 +37,7 @@ class QueryPickerLoggedInHeader extends React.Component {
       menuChildren = (
         <div>
           <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onLabelEditRequest(); this.handleClose(); }}><FormattedMessage {...localMessages.rename} /></MenuItem>
-          { /* <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onDuplicate(); this.handleClose(); }}><FormattedMessage {...localMessages.duplicate} /></MenuItem> */ }
+          <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onDuplicate(); this.handleClose(); }}><FormattedMessage {...localMessages.duplicate} /></MenuItem>
           <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onDelete(query); this.handleClose(); }}><FormattedMessage {...localMessages.delete} /></MenuItem>
         </div>
       );
@@ -45,7 +45,7 @@ class QueryPickerLoggedInHeader extends React.Component {
       menuChildren = (
         <div>
           <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onLabelEditRequest(); this.handleClose(); }}><FormattedMessage {...localMessages.rename} /></MenuItem>
-          { /* <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onDuplicate(); this.handleClose(); }}><FormattedMessage {...localMessages.duplicate} /></MenuItem> */ }
+          <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onDuplicate(); this.handleClose(); }}><FormattedMessage {...localMessages.duplicate} /></MenuItem>
         </div>
       );
     }
@@ -104,7 +104,7 @@ QueryPickerLoggedInHeader.propTypes = {
   query: PropTypes.object,
   isDeletable: PropTypes.func.isRequired,
   onColorChange: PropTypes.func.isRequired,
-  /* onDuplicate: PropTypes.func.isRequired, */
+  onDuplicate: PropTypes.func.isRequired,
   onDelete: PropTypes.func,
   onLabelEditRequest: PropTypes.func,
   // from composition

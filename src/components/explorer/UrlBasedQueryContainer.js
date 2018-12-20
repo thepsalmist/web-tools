@@ -161,6 +161,7 @@ function composeUrlBasedQueryContainer() {
           q: replaceCurlyQuotes(query.q),
           color: query.color ? query.color : schemeCategory10[index % 10],
           index, // redo index to be zero-based on reload of query
+          sortPosition: index,
           ...extraDefaults, // for demo mode
         }));
         // push the queries in to the store
@@ -182,9 +183,11 @@ function composeUrlBasedQueryContainer() {
       }
 
       render() {
+        const { queries } = this.props;
         let content;
+        const sortedQueries = queries.sort((a, b) => a.sortPosition - b.sortPosition);
         if (this.state.queryInStore) {
-          content = <ChildComponent {...this.props} />;
+          content = <ChildComponent {...this.props} queries={sortedQueries} />;
         } else {
           content = <LoadingSpinner />;
         }
@@ -215,7 +218,7 @@ function composeUrlBasedQueryContainer() {
       isLoggedIn: state.user.isLoggedIn,
       fetchStatus: state.explorer.samples.fetchStatus,
       samples: state.explorer.samples.list,
-      queries: state.explorer.queries.queries,
+      queries: state.explorer.queries.queries.sort((a, b) => a.sortPosition - b.sortPosition),
       lastSearchTime: state.explorer.lastSearchTime.time,
     });
 
@@ -258,11 +261,12 @@ function composeUrlBasedQueryContainer() {
       updateUrl: (queries, isLoggedIn) => {
         const unDeletedQueries = queries.filter(q => q.deleted !== true);
         const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
+        const sortedQueries = nonEmptyQueries.sort((a, b) => a.sortPosition - b.sortPosition);
         if (!isLoggedIn) {
           const queriesToSerialize = nonEmptyQueries.map((q, idx) => ({ index: idx, q: q.q, color: q.color }));
           dispatch(push({ pathname: '/queries/demo/search', search: `?qs=${serializeQueriesForUrl(queriesToSerialize)}` }));
         } else {
-          const queriesToSerialize = queries.map(q => ({
+          const queriesToSerialize = sortedQueries.map(q => ({
             label: q.label,
             q: q.q,
             color: q.color,

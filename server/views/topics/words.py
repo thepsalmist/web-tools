@@ -7,7 +7,7 @@ from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_SAMPLE_SIZE
 import server.util.csv as csv
 from server.util.request import api_error_handler, arguments_required, filters_from_args
 from server.auth import user_mediacloud_key, is_user_logged_in
-from server.views.topics.splitstories import stream_topic_split_story_counts_csv
+from server.views.topics.attention import stream_topic_split_story_counts_csv
 from server.views.topics.stories import stream_story_list_csv
 import server.views.topics.apicache as apicache
 from server.views.topics import access_public_topic

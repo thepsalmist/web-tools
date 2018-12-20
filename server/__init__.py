@@ -195,10 +195,12 @@ if (server_app == SERVER_APP_SOURCES) or is_dev_mode():
     import server.views.sources.geocount
 if (server_app == SERVER_APP_TOPICS) or is_dev_mode():
     import server.views.topics.media
-    import server.views.topics.splitstories
+    import server.views.topics.attention
+    import server.views.topics.story
     import server.views.topics.stories
     import server.views.topics.topic
     import server.views.topics.words
+    import server.views.topics.foci.attention
     import server.views.topics.foci.focalsets
     import server.views.topics.foci.focaldefs
     import server.views.topics.foci.retweetpartisanship

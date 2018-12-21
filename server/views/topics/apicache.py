@@ -315,7 +315,7 @@ def topic_focal_set(user_mc_key, topics_id, snapshots_id, focal_sets_id):
     for fs in all_focal_sets:
         if int(fs['focal_sets_id']) == int(focal_sets_id):
             return fs
-    return None
+    raise ValueError("Unknown subtopic set id of {}".format(focal_sets_id))
 
 
 @cache.cache_on_arguments(function_key_generator=key_generator)

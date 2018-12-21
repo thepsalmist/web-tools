@@ -200,7 +200,6 @@ if (server_app == SERVER_APP_TOPICS) or is_dev_mode():
     import server.views.topics.stories
     import server.views.topics.topic
     import server.views.topics.words
-    import server.views.topics.foci.attention
     import server.views.topics.foci.focalsets
     import server.views.topics.foci.focaldefs
     import server.views.topics.foci.retweetpartisanship

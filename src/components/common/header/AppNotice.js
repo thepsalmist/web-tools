@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import { LEVEL_INFO, LEVEL_WARNING, LEVEL_ERROR, ErrorNotice, InfoNotice, WarningNotice } from '../Notice';
 
 const localMessages = {
@@ -9,6 +9,7 @@ const localMessages = {
   badLoginAttempt: { id: 'errors.badLoginAttempt', defaultMessage: 'Your email or password was wrong' },
   details: { id: 'errors.internal.details', defaultMessage: 'details' },
   quotaExceeded: { id: 'errors.quotaExceeded', defaultMessage: 'You have exceeded your weekly search or story quota. This means you won\'t be able to use any Media Cloud tools until next week. Please email us at support@mediacloud.org if you want a higher quota.' },
+  querySyntaxError: { id: 'errors.internal.syntax', defaultMessage: 'Your boolean query has a problem - <a target=_new href="https://mediacloud.org/support/query-guide">see our query guide</a> for tips.' },
 };
 
 const AppNotice = (props) => {
@@ -38,6 +39,8 @@ const AppNotice = (props) => {
           detailsContent = null; // don't show them the gnarly details if they just got their password wrong
         } else if (stringMessage.includes('You have exceeded your quota of requests or stories')) {
           messageContent = <FormattedMessage {...localMessages.quotaExceeded} />;
+        } else if (stringMessage.includes('org.apache.solr.search.SyntaxError')) {
+          messageContent = <FormattedHTMLMessage {...localMessages.querySyntaxError} />;
         } else {
           messageContent = <FormattedMessage {...localMessages.internalError} />;
         }

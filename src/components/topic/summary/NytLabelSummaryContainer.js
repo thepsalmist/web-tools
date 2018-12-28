@@ -6,7 +6,7 @@ import { schemeCategory10 } from 'd3';
 import { push } from 'react-router-redux';
 import { fetchTopicNytLabelCounts, filterByQuery } from '../../../actions/topicActions';
 import ActionMenu from '../../common/ActionMenu';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import BubbleRowChart from '../../vis/BubbleRowChart';
 import { downloadSvg } from '../../util/svg';
@@ -35,13 +35,6 @@ const localMessages = {
 };
 
 class NytLabelSummaryContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, filters } = this.props;
-    if (nextProps.filters !== filters) {
-      fetchData(nextProps);
-    }
-  }
-
   downloadCsv = (evt) => {
     const { topicId, filters } = this.props;
     if (evt) {
@@ -146,7 +139,6 @@ NytLabelSummaryContainer.propTypes = {
   coverage: PropTypes.object.isRequired,
   data: PropTypes.array,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   updateQueryFilter: PropTypes.func.isRequired,
 };
 
@@ -157,9 +149,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (props) => {
-    dispatch(fetchTopicNytLabelCounts(props.topicId, props.filters));
-  },
   asyncFetch: () => {
     dispatch(fetchTopicNytLabelCounts(ownProps.topicId, ownProps.filters));
   },
@@ -174,12 +163,15 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
+const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicNytLabelCounts(props.topicId, props.filters));
+
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, messages.nytThemeHelpDetails)(
-      withAsyncFetch(
-        NytLabelSummaryContainer
+      withFilteredAsyncData(
+        NytLabelSummaryContainer,
+        fetchAsyncData
       )
     )
   )

@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import WordSpace from '../../vis/WordSpace';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
@@ -27,44 +27,35 @@ const localMessages = {
 };
 const WORD_SPACE_DOM_ID = 'topic-summary-word-space';
 
-class TopicWordSpaceContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { filters, fetchData } = this.props;
-    if (nextProps.filters !== filters) {
-      fetchData(nextProps);
-    }
-  }
-
-  render() {
-    const { words, topicName, filters } = this.props;
-    return (
-      <React.Fragment>
-        <WordSpace
-          words={words.slice(0, 50)}
-          domId={WORD_SPACE_DOM_ID}
-          xProperty="w2v_x"
-          yProperty="w2v_y"
-          noDataMsg={localMessages.noTopicW2VData}
-        />
-        <div className="actions">
-          <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-            <div className="actions">
-              <ActionMenu actionTextMsg={messages.downloadOptions}>
-                <MenuItem
-                  className="action-icon-menu-item"
-                  onClick={() => downloadSvg(`${topicDownloadFilename(topicName, filters)}-sampled-word-space`, WORD_SPACE_DOM_ID)}
-                >
-                  <ListItemText><FormattedMessage {...localMessages.downloadSVG} /></ListItemText>
-                  <ListItemIcon><DownloadButton /></ListItemIcon>
-                </MenuItem>
-              </ActionMenu>
-            </div>
-          </Permissioned>
-        </div>
-      </React.Fragment>
-    );
-  }
-}
+const TopicWordSpaceContainer = (props) => {
+  const { words, topicName, filters } = props;
+  return (
+    <React.Fragment>
+      <WordSpace
+        words={words.slice(0, 50)}
+        domId={WORD_SPACE_DOM_ID}
+        xProperty="w2v_x"
+        yProperty="w2v_y"
+        noDataMsg={localMessages.noTopicW2VData}
+      />
+      <div className="actions">
+        <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
+          <div className="actions">
+            <ActionMenu actionTextMsg={messages.downloadOptions}>
+              <MenuItem
+                className="action-icon-menu-item"
+                onClick={() => downloadSvg(`${topicDownloadFilename(topicName, filters)}-sampled-word-space`, WORD_SPACE_DOM_ID)}
+              >
+                <ListItemText><FormattedMessage {...localMessages.downloadSVG} /></ListItemText>
+                <ListItemIcon><DownloadButton /></ListItemIcon>
+              </MenuItem>
+            </ActionMenu>
+          </div>
+        </Permissioned>
+      </div>
+    </React.Fragment>
+  );
+};
 
 TopicWordSpaceContainer.propTypes = {
   // from compositional chain
@@ -73,9 +64,6 @@ TopicWordSpaceContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
   topicName: PropTypes.string.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
   // from state
   words: PropTypes.array,
   fetchStatus: PropTypes.string.isRequired,
@@ -87,11 +75,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  // don't need to do anything, because the WordsSummaryContainer is making the request for the same data already
-  fetchData: () => {
-  },
-  asyncFetch: () => {
-  },
   pushToUrl: url => dispatch(push(url)),
 });
 
@@ -99,8 +82,9 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, [messages.wordCloudTopicWord2VecLayoutHelp])(
-      withAsyncFetch(
-        TopicWordSpaceContainer
+      withFilteredAsyncData(
+        TopicWordSpaceContainer,
+        () => {} // don't need to do asyncFetchData, because the WordsSummaryContainer is making the request for the same data already
       )
     )
   )

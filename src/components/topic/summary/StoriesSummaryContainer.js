@@ -6,7 +6,7 @@ import { push } from 'react-router-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData, { shouldFetchOnSortChange } from '../FilteredAsyncDataContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import { fetchTopicTopStories, sortTopicTopStories, filterByFocus } from '../../../actions/topicActions';
@@ -30,13 +30,6 @@ const localMessages = {
 const NUM_TO_SHOW = 10;
 
 class StoriesSummaryContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { filters, sort, fetchData } = this.props;
-    if ((nextProps.filters !== filters) || (nextProps.sort !== sort)) {
-      fetchData(nextProps);
-    }
-  }
-
   onChangeSort = (newSort) => {
     const { sortData } = this.props;
     sortData(newSort);
@@ -126,7 +119,6 @@ StoriesSummaryContainer.propTypes = {
   filters: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   handleFocusSelected: PropTypes.func.isRequired,
   sortData: PropTypes.func.isRequired,
   handleExplore: PropTypes.func.isRequired,
@@ -147,14 +139,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (props) => {
-    const params = {
-      ...props.filters,
-      sort: props.sort,
-      limit: NUM_TO_SHOW,
-    };
-    dispatch(fetchTopicTopStories(props.topicId, params));
-  },
   handleFocusSelected: (focusId) => {
     const params = {
       ...ownProps.filters,
@@ -174,26 +158,25 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData({
-        topicId: ownProps.topicId,
-        filters: ownProps.filters,
-        sort: stateProps.sort,
-      });
-    },
-  });
-}
+const fetchAsyncData = (dispatch, props) => {
+  const params = {
+    ...props.filters,
+    sort: props.sort,
+    limit: NUM_TO_SHOW,
+  };
+  dispatch(fetchTopicTopStories(props.topicId, params));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, messages.storiesTableHelpText, true)(
-      withAsyncFetch(
-        withCsvDownloadNotifyContainer(
-          StoriesSummaryContainer
-        )
+      withCsvDownloadNotifyContainer(
+        withFilteredAsyncData(
+          StoriesSummaryContainer,
+          fetchAsyncData,
+          shouldFetchOnSortChange,
+        ),
       )
     )
   )

@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
@@ -27,13 +27,6 @@ const localMessages = {
 };
 
 class SplitStoryCountSummaryContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { filters, fetchData } = this.props;
-    if (nextProps.filters !== filters) {
-      fetchData(nextProps);
-    }
-  }
-
   downloadCsv = () => {
     const { topicId, filters } = this.props;
     const url = `/api/topics/${topicId}/split-story/count.csv?${filtersAsUrlParams(filters)}`;
@@ -77,7 +70,7 @@ SplitStoryCountSummaryContainer.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
   selectedTimePeriod: PropTypes.string.isRequired,
-  attentionAggregationMenuItems: PropTypes.object.isRequired, // from hoc
+  attentionAggregationMenuItems: PropTypes.array.isRequired, // from hoc
   // passed in
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
@@ -86,8 +79,6 @@ SplitStoryCountSummaryContainer.propTypes = {
   total: PropTypes.number,
   counts: PropTypes.array, // array of {date: epochMS, count: int]
   // from dispath
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
   handleExplore: PropTypes.func.isRequired,
   handleTimePeriodClick: PropTypes.func,
 };
@@ -99,30 +90,24 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (props) => {
-    dispatch(fetchTopicSplitStoryCounts(props.topicId, props.filters));
-  },
   handleExplore: () => {
     const exploreUrl = filteredLinkTo(`/topics/${ownProps.topicId}/attention`, ownProps.filters);
     dispatch(push(exploreUrl));
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, props) => {
+  dispatch(fetchTopicSplitStoryCounts(props.topicId, props.filters));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, [messages.attentionChartHelpText])(
       withAttentionAggregation(
-        withAsyncFetch(
-          SplitStoryCountSummaryContainer
+        withFilteredAsyncData(
+          SplitStoryCountSummaryContainer,
+          fetchAsyncData,
         )
       )
     )

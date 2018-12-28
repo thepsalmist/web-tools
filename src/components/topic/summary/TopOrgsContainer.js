@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import { fetchTopicEntitiesOrgs, filterByQuery } from '../../../actions/topicActions';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
@@ -29,13 +29,6 @@ const localMessages = {
 };
 
 class TopOrgsContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { filters, fetchData } = this.props;
-    if (nextProps.filters !== filters) {
-      fetchData(nextProps.topicId, nextProps.filters);
-    }
-  }
-
   downloadCsv = () => {
     const { topicId, filters } = this.props;
     const url = `/api/topics/${topicId}/entities/organizations/entities.csv?${filtersAsUrlParams(filters)}`;
@@ -99,9 +92,6 @@ TopOrgsContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
   // from state
   coverage: PropTypes.object.isRequired,
   entities: PropTypes.array.isRequired,
@@ -116,9 +106,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (topicId, filters) => {
-    dispatch(fetchTopicEntitiesOrgs(topicId, filters));
-  },
   updateQueryFilter: (newQueryFilter) => {
     const newFilters = {
       ...ownProps.filters,
@@ -130,20 +117,15 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.topicId, ownProps.filters);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicEntitiesOrgs(props.topicId, props.filters));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, messages.entityHelpContent)(
-      withAsyncFetch(
-        TopOrgsContainer
+      withFilteredAsyncData(
+        TopOrgsContainer,
+        fetchAsyncData
       )
     )
   )

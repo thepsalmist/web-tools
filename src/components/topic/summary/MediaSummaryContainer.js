@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData, { shouldFetchOnSortChange } from '../FilteredAsyncDataContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import MediaTable from '../MediaTable';
 import messages from '../../../resources/messages';
@@ -30,21 +30,9 @@ const localMessages = {
 const NUM_TO_SHOW = 10;
 
 class MediaSummaryContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { filters, fetchData } = this.props;
-    if ((nextProps.filters !== filters) || (nextProps.sort !== this.props.sort)) {
-      fetchData(nextProps);
-    }
-  }
-
   onChangeSort = (newSort) => {
     const { sortData } = this.props;
     sortData(newSort);
-  }
-
-  refetchData = () => {
-    const { topicId, filters, fetchData, sort } = this.props;
-    fetchData(topicId, filters.snapshotId, filters.timespanId, sort);
   }
 
   downloadCsv = () => {
@@ -101,7 +89,6 @@ MediaSummaryContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   sortData: PropTypes.func.isRequired,
   handleExplore: PropTypes.func.isRequired,
   // from state
@@ -119,14 +106,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (props) => {
-    const params = {
-      ...props.filters,
-      sort: props.sort,
-      limit: NUM_TO_SHOW,
-    };
-    dispatch(fetchTopicTopMedia(props.topicId, params));
-  },
   sortData: (sort) => {
     dispatch(sortTopicTopMedia(sort));
   },
@@ -136,25 +115,24 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData({
-        topicId: ownProps.topicId,
-        filters: ownProps.filters,
-        sort: stateProps.sort,
-      });
-    },
-  });
-}
+const fetchAsyncData = (dispatch, props) => {
+  const params = {
+    ...props.filters,
+    sort: props.sort,
+    limit: NUM_TO_SHOW,
+  };
+  dispatch(fetchTopicTopMedia(props.topicId, params));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, localMessages.description)(
-      withAsyncFetch(
-        MediaSummaryContainer
-      )
+      withFilteredAsyncData(
+        MediaSummaryContainer,
+        fetchAsyncData,
+        shouldFetchOnSortChange,
+      ),
     )
   )
 );

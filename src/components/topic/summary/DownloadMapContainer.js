@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import LinkWithFilters from '../LinkWithFilters';
 import { fetchTopicMapFiles } from '../../../actions/topicActions';
@@ -22,65 +22,56 @@ const localMessages = {
   unsupported: { id: 'topic.summary.mapDownload.unsupported', defaultMessage: 'Sorry, but we can\'t generate link maps or word maps when you are using a query filter.  Remove your "{q}" query filter if you want to generate these maps.' },
 };
 
-class DownloadMapContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { filters, fetchData } = this.props;
-    if (nextProps.filters !== filters) {
-      fetchData(nextProps);
+const DownloadMapContainer = (props) => {
+  const { topicId, filters, wordMapStatus } = props;
+  let content;
+  if (filters.q) {
+    // maps generated with a q filter are not what people expect them to be, so don't support it
+    content = (<FormattedMessage {...localMessages.unsupported} values={{ q: filters.q }} />);
+  } else {
+    let wordMapContent;
+    switch (wordMapStatus) {
+      case 'generating':
+        wordMapContent = <FormattedMessage {...localMessages.generating} />;
+        break;
+      case 'rendered':
+        wordMapContent = (
+          <ul>
+            <li>
+              <a href={`/api/topics/${topicId}/map-files/wordMap.gexf?timespanId=${filters.timespanId}`}>
+                <FormattedMessage {...localMessages.downloadGexf} />
+              </a>
+            </li>
+            <li>
+              <a href={`/api/topics/${topicId}/map-files/wordMap.json?timespanId=${filters.timespanId}`}>
+                <FormattedMessage {...localMessages.downloadJson} />
+              </a>
+            </li>
+            <li>
+              <a href={`/api/topics/${topicId}/map-files/wordMap.txt?timespanId=${filters.timespanId}`}>
+                <FormattedMessage {...localMessages.downloadText} />
+              </a>
+            </li>
+          </ul>
+        );
+        break;
+      default:
     }
-  }
-
-  render() {
-    const { topicId, filters, wordMapStatus } = this.props;
-    let content;
-    if (filters.q) {
-      // maps generated with a q filter are not what people expect them to be, so don't support it
-      content = (<FormattedMessage {...localMessages.unsupported} values={{ q: filters.q }} />);
-    } else {
-      let wordMapContent;
-      switch (wordMapStatus) {
-        case 'generating':
-          wordMapContent = <FormattedMessage {...localMessages.generating} />;
-          break;
-        case 'rendered':
-          wordMapContent = (
-            <ul>
-              <li>
-                <a href={`/api/topics/${topicId}/map-files/wordMap.gexf?timespanId=${filters.timespanId}`}>
-                  <FormattedMessage {...localMessages.downloadGexf} />
-                </a>
-              </li>
-              <li>
-                <a href={`/api/topics/${topicId}/map-files/wordMap.json?timespanId=${filters.timespanId}`}>
-                  <FormattedMessage {...localMessages.downloadJson} />
-                </a>
-              </li>
-              <li>
-                <a href={`/api/topics/${topicId}/map-files/wordMap.txt?timespanId=${filters.timespanId}`}>
-                  <FormattedMessage {...localMessages.downloadText} />
-                </a>
-              </li>
-            </ul>
-          );
-          break;
-        default:
-      }
-      content = (
-        <React.Fragment>
-          <h3><FormattedMessage {...localMessages.linkMap} />:</h3>
-          <p><LinkWithFilters to={`/topics/${topicId}/link-map`}><FormattedMessage {...localMessages.linkMapDownload} /></LinkWithFilters></p>
-          <h3><FormattedMessage {...localMessages.wordMap} />:</h3>
-          {wordMapContent}
-        </React.Fragment>
-      );
-    }
-    return (
+    content = (
       <React.Fragment>
-        {content}
+        <h3><FormattedMessage {...localMessages.linkMap} />:</h3>
+        <p><LinkWithFilters to={`/topics/${topicId}/link-map`}><FormattedMessage {...localMessages.linkMapDownload} /></LinkWithFilters></p>
+        <h3><FormattedMessage {...localMessages.wordMap} />:</h3>
+        {wordMapContent}
       </React.Fragment>
     );
   }
-}
+  return (
+    <React.Fragment>
+      {content}
+    </React.Fragment>
+  );
+};
 
 DownloadMapContainer.propTypes = {
   // from compositional chain
@@ -88,9 +79,6 @@ DownloadMapContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   linkMapStatus: PropTypes.string,
@@ -103,21 +91,17 @@ const mapStateToProps = state => ({
   wordMapStatus: state.topics.selected.summary.mapFiles.wordMap,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (props) => {
-    dispatch(fetchTopicMapFiles(props.topicId, props.filters));
-  },
-  asyncFetch: () => {
-    dispatch(fetchTopicMapFiles(ownProps.topicId, ownProps.filters));
-  },
-});
+const fetchAsyncData = (dispatch, props) => {
+  dispatch(fetchTopicMapFiles(props.topicId, props.filters));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps)(
     withSummary(localMessages.title, localMessages.helpIntro, localMessages.helpText)(
-      withAsyncFetch(
-        DownloadMapContainer
+      withFilteredAsyncData(
+        DownloadMapContainer,
+        fetchAsyncData
       )
     )
   )

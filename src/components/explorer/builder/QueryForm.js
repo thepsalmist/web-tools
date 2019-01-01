@@ -4,6 +4,9 @@ import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import { reduxForm, Field, propTypes, formValueSelector } from 'redux-form';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/material.css';
+import 'codemirror/mode/solr/solr';
 import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
 import withHelp from '../../common/hocs/HelpfulContainer';
@@ -79,20 +82,11 @@ class QueryForm extends React.Component {
     return anyQueriesNoMedia || thisCurrentQueryFormNoMedia;
   }
 
-  focusQueryInputField = () => {
-    // commented out because this is throwing a JS error on the console
-    /*
-    if (input) {
-      setTimeout(() => {
-        // input.focus();
-      }, 100);
-    }
-    */
-  };
-
   render() {
-    const { initialValues, onWillSearch, renderTextFieldWithFocus, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, onLoadSearches, onDeleteSearch, savedSearches, searchNickname, onSaveSearch,
-      submitting, handleSubmit, onSave, onMediaChange, renderTextField, onCopyAll } = this.props;
+    const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, onKeywordsChange,
+      onDeleteSearch, onLoadSearches, savedSearches, searchNickname, onSaveSearch,
+      submitting, handleSubmit, onSave, onMediaChange, renderSolrTextField, renderTextField, /* renderTextFieldWithFocus, */
+      onCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
     const cleanedInitialValues = JSON.parse(JSON.stringify(initialValues));
     if (cleanedInitialValues.disabled === undefined) {
@@ -166,10 +160,11 @@ class QueryForm extends React.Component {
                     rows={3}
                     rowsMax={4}
                     fullWidth
+                    onChange={onKeywordsChange}
+                    // onChange={this.focusSelect}
+                    // component={renderTextFieldWithFocus}
+                    component={renderSolrTextField}
                     ref={(input) => { this.textInputRef = input; }}
-                    inputRef={this.focusQueryInputField}
-                    saveRef={this.focusQueryInputField}
-                    component={renderTextFieldWithFocus}
                   />
                 </div>
                 <div className="query-field-desc">
@@ -294,8 +289,9 @@ QueryForm.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
   renderTextField: PropTypes.func.isRequired,
+  renderSolrTextField: PropTypes.func.isRequired,
+  // renderTextFieldWithFocus: PropTypes.func.isRequired,
   renderSelect: PropTypes.func.isRequired,
-  renderTextFieldWithFocus: PropTypes.func.isRequired,
   searchNickname: PropTypes.string.isRequired,
   savedSearches: PropTypes.array,
 
@@ -313,7 +309,8 @@ QueryForm.propTypes = {
   onCopyAll: PropTypes.func.isRequired,
   onMediaDelete: PropTypes.func.isRequired,
   onDateChange: PropTypes.func.isRequired,
-  // from setState
+  onKeywordsChange: PropTypes.func.isRequired,
+  // from state
   queries: PropTypes.array,
   // from form helper
   updateQuery: PropTypes.func,
@@ -359,7 +356,9 @@ function warn(values, props) {
     && (!values.media || !values.media.length)) {
     warnings.media = { _warning: formatMessage(localMessages.noMediaSpecified) };
   }
-  if (emptyString(values.q)) {
+  // first time through text is a form field, then a codemirror object
+  const queryText = (typeof values.q === 'string') ? values.q : values.q.getValue();
+  if (emptyString(queryText)) {
     const errString = formatMessage(localMessages.queryStringError, { name: values.label });
     warnings.q = { _warning: errString };
   }

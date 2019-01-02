@@ -25,6 +25,10 @@
         {
             "name": "System",
             "description": "Read-only commands to learn about the state of the Media Cloud system."
+        },
+        {
+            "name": "Stories",
+            "description": "Query story-level information."
         }
     ],
     "paths": {
@@ -46,6 +50,69 @@
                 },
                 "tags": [
                     "System"
+                ]
+            }
+        },
+        "/stories_public/count": {
+            "get": {
+                "summary": "",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "q (\"query\") parameter which is passed directly to Solr",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "name": "fq",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "fq (\"filter query\") parameter which is passed directly to Solr",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "name": "split",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "if set to 1 or true, split the counts into date ranges",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "name": "split_period",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "day",
+                                "week",
+                                "month",
+                                "year"
+                            ]
+                        },
+                        "description": "return counts for these date periods: day, week, month, year",
+                        "allowEmptyValue": true
+                    }
+                ],
+                "operationId": "",
+                "responses": {
+                    "default": {
+                        "description": "Default response"
+                    }
+                },
+                "tags": [
+                    "Stories"
                 ]
             }
         }

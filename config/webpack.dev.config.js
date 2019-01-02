@@ -1,6 +1,7 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 const path = require('path');
 const merge = require('webpack-merge');
+const ManifestRevisionPlugin = require('manifest-revision-webpack-plugin');
 // const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const baseConfig = require('./webpack.base.config');
 
@@ -21,6 +22,13 @@ const devConfig = {
     publicPath: 'http://localhost:2992/', // needed to get correct path in dev manifest file
   },
   plugins: [
+    // this writes JS files for our Flask server to read
+    new ManifestRevisionPlugin(
+      path.resolve(basedir, 'build', 'manifest.json'), // keep this path in sync with FlaskWebpack config
+      { rootAssetPath: './src', // important that this be relative, not absolute
+        ignorePaths: [/.*\.DS_Store/], // need to manually ignore the .DS_Store files generated on OSX
+      },
+    ),
     // add an intermediate caching step to speed up builds (expect the first one)
     // new HardSourceWebpackPlugin(),
   ],

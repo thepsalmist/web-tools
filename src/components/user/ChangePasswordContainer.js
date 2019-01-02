@@ -6,11 +6,13 @@ import { push } from 'react-router-redux';
 import { changePassword } from '../../actions/userActions';
 import ChangePasswordForm from './ChangePasswordForm';
 import messages from '../../resources/messages';
+import PageTitle from '../common/PageTitle';
 
 const ChangePasswordContainer = (props) => {
   const { handlePasswordChange } = props;
   return (
     <Grid>
+      <PageTitle value={messages.userChangePassword} />
       <ChangePasswordForm
         titleMsg={messages.userChangePassword}
         buttonMsg={messages.userChangePassword}

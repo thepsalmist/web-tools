@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { push } from 'react-router-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
@@ -12,6 +11,7 @@ import SourceForm from './form/SourceForm';
 import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import Permissioned from '../../common/Permissioned';
 import { nullOrUndefined } from '../../../lib/formValidators';
+import PageTitle from '../../common/PageTitle';
 
 const localMessages = {
   mainTitle: { id: 'source.maintitle', defaultMessage: 'Create New Source' },
@@ -24,11 +24,10 @@ const localMessages = {
 const CreateSourceContainer = (props) => {
   const { handleSave } = props;
   const { formatMessage } = props.intl;
-  const titleHandler = parentTitle => `${formatMessage(localMessages.mainTitle)} | ${parentTitle}`;
   return (
     <div className="create-source">
       <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
-        <Helmet><title>{titleHandler()}</title></Helmet>
+        <PageTitle value={localMessages.mainTitle} />
         <Grid>
           <Row>
             <Col lg={12}>

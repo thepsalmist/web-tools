@@ -218,7 +218,8 @@ function composeUrlBasedQueryContainer() {
       isLoggedIn: state.user.isLoggedIn,
       fetchStatus: state.explorer.samples.fetchStatus,
       samples: state.explorer.samples.list,
-      queries: state.explorer.queries.queries.sort((a, b) => a.sortPosition - b.sortPosition),
+      queries: state.explorer.queries.queries,
+      queryCount: state.explorer.queries.queries.length,
       lastSearchTime: state.explorer.lastSearchTime.time,
     });
 

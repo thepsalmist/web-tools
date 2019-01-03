@@ -18,7 +18,7 @@ const topWordsComparison = createAsyncReducer({
   [SELECT_COMPARATIVE_WORD_FIELD]: (payload) => {
     // store query selection
     let value = payload.query;
-    if (payload.query.length) {
+    if (payload.query && payload.query.length) {
       value = payload.query[payload.target];
     }
     if (payload.target === LEFT) return { left: value };

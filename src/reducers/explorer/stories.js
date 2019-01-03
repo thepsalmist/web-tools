@@ -9,7 +9,7 @@ const stories = createIndexedAsyncReducer({
   }),
   action: FETCH_QUERY_SAMPLE_STORIES,
   [RESET_SAMPLE_STORIES]: () => ({
-    fetchStatus: '', fetchStatuses: [], results: [],
+    fetchStatus: '', fetchStatuses: [], fetchUids: [], results: [],
   }),
 });
 

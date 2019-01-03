@@ -185,7 +185,7 @@ QueryAttentionOverTimeResultsContainer.propTypes = {
 const mapStateToProps = state => ({
   lastSearchTime: state.explorer.lastSearchTime.time,
   fetchStatus: state.explorer.storySplitCount.fetchStatus || FETCH_INVALID,
-  results: state.explorer.storySplitCount.results,
+  results: state.explorer.storySplitCount.results.sort((a, b) => a.sortPosition - b.sortPosition),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -200,7 +200,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           start_date: q.startDate,
           end_date: q.endDate,
           q: q.q,
-          index: q.index,
+          index: q.sortPosition,
           sortPosition: q.sortPosition,
           sources: q.sources.map(s => s.id),
           collections: q.collections.map(c => c.id),

@@ -135,7 +135,7 @@ QueryTotalAttentionResultsContainer.propTypes = {
 const mapStateToProps = state => ({
   lastSearchTime: state.explorer.lastSearchTime.time,
   fetchStatus: state.explorer.storySplitCount.fetchStatus || FETCH_INVALID,
-  results: state.explorer.storySplitCount.results,
+  results: state.explorer.storySplitCount.results.sort((a, b) => a.sortPosition - b.sortPosition),
 });
 
 const mapDispatchToProps = () => ({

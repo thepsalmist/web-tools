@@ -240,7 +240,6 @@ export function createIndexedAsyncReducer(handlers) {
       const updatedFetchStatuses = [...state.fetchStatuses];
       updatedFetchStatuses[index] = fetchConstants.FETCH_ONGOING;
       const updatedFetchUids = [...state.fetchUids];
-      updatedFetchUids[index] = payload.uid;
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
         fetchStatuses: updatedFetchStatuses,
@@ -249,6 +248,7 @@ export function createIndexedAsyncReducer(handlers) {
     },
     handleSuccess: (payload, state, args) => {
       const { index } = args[0];
+      // const { uid } = meta;
       const updatedResults = [...state.results];
       const updatedFetchStatuses = [...state.fetchStatuses];
       updatedFetchStatuses[index] = fetchConstants.FETCH_SUCCEEDED;
@@ -257,6 +257,7 @@ export function createIndexedAsyncReducer(handlers) {
       } else {
         updatedResults[index] = payload;
       }
+      updatedResults[index].uid = index; // sortPosition fyi
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
         fetchStatuses: updatedFetchStatuses,
@@ -291,7 +292,7 @@ export function createIndexedAsyncReducer(handlers) {
         if (!isValid) { // don't honor resolves that are for indexes we aren't tracking anymore
           return state;
         }
-        return reducers.handleSuccess(action.payload, state, action.meta.args);
+        return reducers.handleSuccess(action.payload, state, action.meta.args, action.meta);
       case reject(handlers.action):
         return reducers.handleFailure(action.payload, state, action.meta.args);
       default:

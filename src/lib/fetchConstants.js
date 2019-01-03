@@ -12,10 +12,11 @@ export const combineFetchStatuses = (fetchStatuses) => {
   if (fetchStatuses === undefined) {
     throw missingFetchStatusError;
   }
-  const allInvalid = fetchStatuses.reduce((total, status) => total && (status === FETCH_INVALID), true);
-  const anyOngoing = fetchStatuses.reduce((total, status) => total || (status === FETCH_ONGOING), false);
-  const anyFailed = fetchStatuses.reduce((total, status) => total || (status === FETCH_FAILED), false);
-  const allSucceeded = fetchStatuses.reduce((total, status) => total && (status === FETCH_SUCCEEDED), true);
+  const removeEmpties = fetchStatuses.filter(f => f !== undefined, true);
+  const allInvalid = removeEmpties.reduce((total, status) => total && (status === FETCH_INVALID), true);
+  const anyOngoing = removeEmpties.reduce((total, status) => total || (status === FETCH_ONGOING), false);
+  const anyFailed = removeEmpties.reduce((total, status) => total || (status === FETCH_FAILED), false);
+  const allSucceeded = removeEmpties.reduce((total, status) => total && (status === FETCH_SUCCEEDED), true);
   if (allInvalid) {
     return FETCH_INVALID;
   }

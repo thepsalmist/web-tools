@@ -104,7 +104,7 @@ QuerySampleStoriesResultsContainer.propTypes = {
 const mapStateToProps = state => ({
   lastSearchTime: state.explorer.lastSearchTime.time,
   fetchStatus: state.explorer.stories.fetchStatus,
-  results: state.explorer.stories.results,
+  results: state.explorer.stories.results.sort((a, b) => a.sortPosition - b.sortPosition),
   internalItemSelected: state.story.info.stories_id,
 });
 
@@ -121,7 +121,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           start_date: q.startDate,
           end_date: q.endDate,
           q: q.q,
-          index: q.index,
+          index: q.sortPosition,
           sources: q.sources.map(s => s.id),
           collections: q.collections.map(c => c.id),
         };

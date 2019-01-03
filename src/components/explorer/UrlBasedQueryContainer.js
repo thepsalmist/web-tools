@@ -219,7 +219,6 @@ function composeUrlBasedQueryContainer() {
       fetchStatus: state.explorer.samples.fetchStatus,
       samples: state.explorer.samples.list,
       queries: state.explorer.queries.queries,
-      queryCount: state.explorer.queries.queries.length,
       lastSearchTime: state.explorer.lastSearchTime.time,
     });
 

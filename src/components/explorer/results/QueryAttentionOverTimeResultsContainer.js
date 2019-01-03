@@ -77,7 +77,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
     // so we have to do the following
 
     const unDeletedQueries = queries.filter(q => q.deleted !== true);
-    const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '').sort((a, b) => a.index - b.index);
+    const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
     let safeResults = nonEmptyQueries.map((q, idx) => Object.assign({}, q, results[idx]));
     safeResults = safeResults.filter(q => q.counts && q.counts.length > 0); // must have results
     // stich together line chart data

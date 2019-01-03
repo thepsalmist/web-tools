@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import LinkMapForm from './LinkMapForm';
 import { selectTopic, filterBySnapshot, filterByFocus, filterByTimespan } from '../../../actions/topicActions';
 import { generateParamStr } from '../../../lib/apiUtil';
+import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
   title: { id: 'topic.maps.link.title', defaultMessage: 'Link Map' },
@@ -38,12 +38,10 @@ class LinkMapContainer extends React.Component {
   render() {
     const { handleFetchMapData, filters, topicId } = this.props;
     const { formatMessage } = this.props.intl;
-    const titleHandler = parentTitle => `${formatMessage(localMessages.title)} | ${parentTitle}`;
     const initialValues = { color_field: 'media_type', num_media: 500, include_weights: false };
-
     return (
       <Grid>
-        <Helmet><title>{titleHandler()}</title></Helmet>
+        <TopicPageTitle value={localMessages.title} />
         <Row>
           <Col lg={12} md={12} sm={12}>
             <h1><FormattedMessage {...localMessages.title} /></h1>

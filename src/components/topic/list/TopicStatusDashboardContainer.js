@@ -9,6 +9,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import { fetchAdminTopicList } from '../../../actions/topicActions';
 import TopicStatusTable from './TopicStatusTable';
+import PageTitle from '../../common/PageTitle';
 
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Admin: Topic Status Dashboard' },
@@ -29,6 +30,7 @@ class TopicStatusDashboardContainer extends React.Component {
     const topicsToShow = topics.filter(t => t.state === this.state.selectedTopicState);
     return (
       <Grid>
+        <PageTitle value={localMessages.title} />
         <Row>
           <Col lg={12}>
             <h1><FormattedMessage {...localMessages.title} /></h1>

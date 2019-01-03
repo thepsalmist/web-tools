@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -25,6 +24,7 @@ import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
 import StatBar from '../../common/statbar/StatBar';
 import CollectionList from '../../common/CollectionList';
 import SourceMetadataStatBar from '../../common/SourceMetadataStatBar';
+import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
   removeTitle: { id: 'story.details.remove', defaultMessage: 'Remove from Next Snapshot' },
@@ -87,7 +87,7 @@ class MediaContainer extends React.Component {
     }
     return (
       <div>
-        <Helmet><title>{`${media.name} | ${topicName} | ${formatMessage(messages.topicsToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
+        <TopicPageTitle value={media.name} />
         <Grid>
           <Row>
             <Col lg={12} md={12} sm={12}>

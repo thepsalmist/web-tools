@@ -78,12 +78,14 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
 
     const unDeletedQueries = queries.filter(q => q.deleted !== true);
     const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
-    let safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid).results));
-    safeResults = safeResults.filter(q => q.counts && q.counts.length > 0); // must have results
-    // stich together line chart data
 
     let series = [];
-    if (safeResults && safeResults.length > 0) {
+    let safeResults = [];
+    if (results !== null && results !== undefined && results.length > 0) {
+      safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid).results));
+      safeResults = safeResults.filter(q => q.counts && q.counts.length > 0); // must have results
+      // stich together line chart data
+
       series = [
         ...safeResults.map((query, idx) => { // add series for all the results
           if (query.counts || query.normalizedCounts) {

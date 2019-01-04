@@ -26,7 +26,7 @@ def api_explorer_story_sample():
 
     for story in story_sample_result:
         story["media"] = apicache.media(story["media_id"])
-    return jsonify(story_sample_result)
+    return jsonify({"results": story_sample_result})
 
 
 @app.route('/api/explorer/demo/stories/sample', methods=['GET'])
@@ -51,7 +51,7 @@ def explorer_stories_csv():
     filename = u'sampled-stories'
     data = request.form
     if 'searchId' in data:
-        solr_q, solr_fq = parse_as_sample(data['searchId'], data['index'])
+        solr_q, solr_fq = parse_as_sample(data['searchId'], data['uid'])
         filename = filename  # don't have this info + current_query['q']
         # for demo users we only download 100 random stories (ie. not all matching stories)
         return _stream_story_list_csv(filename, solr_q, solr_fq, 100, MediaCloud.SORT_RANDOM, 1)

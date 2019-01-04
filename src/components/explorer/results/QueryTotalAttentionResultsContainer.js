@@ -53,12 +53,13 @@ class QueryTotalAttentionResultsContainer extends React.Component {
 
     const unDeletedQueries = queries.filter(q => q.deleted !== true);
     const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
-    let safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid).results));
-    safeResults = safeResults.filter(q => q.counts && q.counts.length > 0); // must have results
-    // stich together line chart data
 
-    let bubbleData = [];
-    if (safeResults !== undefined && safeResults !== null && safeResults.length > 0) {
+    if (results !== undefined && results !== null && results.length > 0) {
+      let safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid).results));
+      safeResults = safeResults.filter(q => q.counts && q.counts.length > 0); // must have results
+      // stich together line chart data
+
+      let bubbleData = [];
       bubbleData = safeResults.map((query, idx) => {
         const value = (this.state.view === VIEW_REGULAR) ? query.total : query.ratio;
         let centerText;

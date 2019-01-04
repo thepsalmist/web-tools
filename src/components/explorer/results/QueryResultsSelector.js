@@ -7,7 +7,7 @@ import { queryChangedEnoughToUpdate } from '../../../lib/explorerUtil';
 function withQueryResults(ChildComponent) {
   class QueryResultsSelector extends React.Component {
     state = {
-      selectedQueryIndex: 0,
+      selectedQueryUid: 0,
     };
 
     componentWillReceiveProps(nextProps) {
@@ -25,22 +25,24 @@ function withQueryResults(ChildComponent) {
       return childShouldUpdate || defaultShouldUpdate;
     }
 
-    setView(nextView) {
-      this.setState({ selectedQueryIndex: nextView });
+    getUidFromTabSelection(idx) {
+      const { queries } = this.props;
+      const selectedQuery = queries.find(q => q.sortPosition === idx);
+      this.setState({ selectedQueryUid: selectedQuery.uid });
       this.forceUpdate();
     }
 
     render() {
       const { queries } = this.props;
       const sortedQueries = queries.sort((a, b) => a.sortPosition - b.sortPosition);
-      const tabSelector = <TabSelector onViewSelected={idx => this.setView(idx)} tabLabels={sortedQueries} />;
+      const tabSelector = <TabSelector onViewSelected={idx => this.getUidFromTabSelection(idx)} tabLabels={sortedQueries} />;
       return (
         <div className="query-results-selector">
           <ChildComponent
             {...this.props}
-            selectedTabIndex={this.state.selectedQueryIndex} // for backwards compatability
-            selectedQueryIndex={this.state.selectedQueryIndex}
-            selectedQuery={sortedQueries[this.state.selectedQueryIndex]}
+            selectedTabIndex={this.state.selectedQueryUid} // for backwards compatability
+            selectedQueryIndex={this.state.selectedQueryUid}
+            selectedQuery={sortedQueries[this.state.selectedQueryUid]}
             tabSelector={tabSelector}
           />
         </div>

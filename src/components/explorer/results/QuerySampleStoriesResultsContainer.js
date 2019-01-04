@@ -48,19 +48,18 @@ class QuerySampleStoriesResultsContainer extends React.Component {
     const showMoreInfoCol = story => (
       <td><AppButton variant="outlined" onClick={() => this.onStorySelection(story)}><FormattedMessage {...localMessages.showMetadata} /></AppButton></td>
     );
-    
+
     const unDeletedQueries = queries.filter(q => q.deleted !== true);
     const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
-    let safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid).results));
-    safeResults = safeResults.filter(q => q.counts && q.counts.length > 0); // must have results
-    
-
+    let safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid)));
+    safeResults = Object.values(safeResults);
+    safeResults = safeResults[selectedTabIndex].results ? safeResults[selectedTabIndex].results.slice(0, 10) : [];
     return (
       <div>
         {tabSelector}
         <StoryTable
           className="story-table" // TODO: selectedTabIndex will now fail if uid/sortPosition isn't present
-          stories={safeResults[selectedTabIndex] ? safeResults[selectedTabIndex].slice(0, 10) : []}
+          stories={safeResults}
           onMoreInfo={story => this.onStorySelection(story)}
           maxTitleLength={90}
           selectedStory={internalItemSelected}

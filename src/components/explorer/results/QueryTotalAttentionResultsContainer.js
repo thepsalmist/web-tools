@@ -51,7 +51,11 @@ class QueryTotalAttentionResultsContainer extends React.Component {
     const { formatNumber, formatMessage } = this.props.intl;
     let content = null;
 
-    const safeResults = results.map((r, idx) => Object.assign({}, r, queries[idx]));
+    const unDeletedQueries = queries.filter(q => q.deleted !== true);
+    const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
+    let safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid).results));
+    safeResults = safeResults.filter(q => q.counts && q.counts.length > 0); // must have results
+    // stich together line chart data
 
     let bubbleData = [];
     if (safeResults !== undefined && safeResults !== null && safeResults.length > 0) {
@@ -135,7 +139,7 @@ QueryTotalAttentionResultsContainer.propTypes = {
 const mapStateToProps = state => ({
   lastSearchTime: state.explorer.lastSearchTime.time,
   fetchStatus: state.explorer.storySplitCount.fetchStatus || FETCH_INVALID,
-  results: state.explorer.storySplitCount.results.sort((a, b) => a.sortPosition - b.sortPosition),
+  results: state.explorer.storySplitCount.results,
 });
 
 const mapDispatchToProps = () => ({

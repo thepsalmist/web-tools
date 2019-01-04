@@ -48,12 +48,19 @@ class QuerySampleStoriesResultsContainer extends React.Component {
     const showMoreInfoCol = story => (
       <td><AppButton variant="outlined" onClick={() => this.onStorySelection(story)}><FormattedMessage {...localMessages.showMetadata} /></AppButton></td>
     );
+    
+    const unDeletedQueries = queries.filter(q => q.deleted !== true);
+    const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
+    let safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid).results));
+    safeResults = safeResults.filter(q => q.counts && q.counts.length > 0); // must have results
+    
+
     return (
       <div>
         {tabSelector}
         <StoryTable
-          className="story-table"
-          stories={results[selectedTabIndex] ? results[selectedTabIndex].slice(0, 10) : []}
+          className="story-table" // TODO: selectedTabIndex will now fail if uid/sortPosition isn't present
+          stories={safeResults[selectedTabIndex] ? safeResults[selectedTabIndex].slice(0, 10) : []}
           onMoreInfo={story => this.onStorySelection(story)}
           maxTitleLength={90}
           selectedStory={internalItemSelected}
@@ -104,7 +111,7 @@ QuerySampleStoriesResultsContainer.propTypes = {
 const mapStateToProps = state => ({
   lastSearchTime: state.explorer.lastSearchTime.time,
   fetchStatus: state.explorer.stories.fetchStatus,
-  results: state.explorer.stories.results.sort((a, b) => a.sortPosition - b.sortPosition),
+  results: state.explorer.stories.results,
   internalItemSelected: state.story.info.stories_id,
 });
 
@@ -121,7 +128,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           start_date: q.startDate,
           end_date: q.endDate,
           q: q.q,
-          index: q.sortPosition,
+          uid: q.uid,
           sources: q.sources.map(s => s.id),
           collections: q.collections.map(c => c.id),
         };

@@ -78,7 +78,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
 
     const unDeletedQueries = queries.filter(q => q.deleted !== true);
     const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
-    let safeResults = nonEmptyQueries.map((q, idx) => Object.assign({}, q, results[idx]));
+    let safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid).results));
     safeResults = safeResults.filter(q => q.counts && q.counts.length > 0); // must have results
     // stich together line chart data
 
@@ -185,7 +185,7 @@ QueryAttentionOverTimeResultsContainer.propTypes = {
 const mapStateToProps = state => ({
   lastSearchTime: state.explorer.lastSearchTime.time,
   fetchStatus: state.explorer.storySplitCount.fetchStatus || FETCH_INVALID,
-  results: state.explorer.storySplitCount.results.sort((a, b) => a.sortPosition - b.sortPosition),
+  results: state.explorer.storySplitCount.results,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -200,7 +200,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           start_date: q.startDate,
           end_date: q.endDate,
           q: q.q,
-          index: q.sortPosition,
+          uid: q.sortPosition,
           sortPosition: q.sortPosition,
           sources: q.sources.map(s => s.id),
           collections: q.collections.map(c => c.id),

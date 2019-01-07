@@ -14,7 +14,7 @@ import ActionMenu from '../../common/ActionMenu';
 import StoryTable from '../../common/StoryTable';
 import { fetchQuerySampleStories, fetchDemoQuerySampleStories, resetSampleStories } from '../../../actions/explorerActions';
 import { selectStory, resetStory, fetchStory } from '../../../actions/storyActions';
-import { postToDownloadUrl } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, ensureSafeTabIndex, ensureSafeResults } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
 
@@ -49,14 +49,10 @@ class QuerySampleStoriesResultsContainer extends React.Component {
       <td><AppButton variant="outlined" onClick={() => this.onStorySelection(story)}><FormattedMessage {...localMessages.showMetadata} /></AppButton></td>
     );
 
-    const unDeletedQueries = queries.filter(q => q.deleted !== true);
-    const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
-    let safeResults = null;
-    if (results !== undefined && results !== null && results.length > 0) {
-      safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid)));
-      safeResults = Object.values(safeResults);
-      const testTabIndex = selectedTabIndex > (queries.length - 1) ? queries.length - 1 : selectedTabIndex;
-      safeResults = safeResults[testTabIndex].results ? safeResults[testTabIndex].results.slice(0, 10) : [];
+    let safeResults = ensureSafeResults(queries, results, selectedTabIndex);
+    const safeIndex = ensureSafeTabIndex(queries, selectedTabIndex);
+    if (safeResults) {
+      safeResults = safeResults[safeIndex].results ? safeResults[safeIndex].results.slice(0, 10) : [];
       return (
         <div>
           {tabSelector}
@@ -73,10 +69,10 @@ class QuerySampleStoriesResultsContainer extends React.Component {
             <ActionMenu actionTextMsg={messages.downloadOptions}>
               <MenuItem
                 className="action-icon-menu-item"
-                onClick={() => this.downloadCsv(queries[selectedTabIndex])}
+                onClick={() => this.downloadCsv(queries[safeIndex])}
               >
                 <ListItemText>
-                  <FormattedMessage {...localMessages.downloadCsv} values={{ name: queries[testTabIndex].label }} />
+                  <FormattedMessage {...localMessages.downloadCsv} values={{ name: queries[safeIndex].label }} />
                 </ListItemText>
                 <ListItemIcon>
                   <DownloadButton />

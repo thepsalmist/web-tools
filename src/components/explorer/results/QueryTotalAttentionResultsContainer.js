@@ -9,7 +9,7 @@ import withSummary from '../../common/hocs/SummarizedVizualization';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 import ActionMenu from '../../common/ActionMenu';
 import BubbleRowChart from '../../vis/BubbleRowChart';
-import { queryChangedEnoughToUpdate, postToCombinedDownloadUrl, downloadExplorerSvg } from '../../../lib/explorerUtil';
+import { queryChangedEnoughToUpdate, postToCombinedDownloadUrl, downloadExplorerSvg, ensureSafeResults } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
@@ -51,17 +51,11 @@ class QueryTotalAttentionResultsContainer extends React.Component {
     const { formatNumber, formatMessage } = this.props.intl;
     let content = null;
 
-    const unDeletedQueries = queries.filter(q => q.deleted !== true);
-    const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
-
-    if (results !== undefined && results !== null && results.length > 0) {
-      let safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.filter(r => r.uid === q.uid).length > 0 ? results.filter(r => r.uid === q.uid)[0].results : []));
-      safeResults = safeResults.filter(q => q.counts && q.counts.length > 0); // must have results
-      // stich together line chart data
-
+    const safeResults = ensureSafeResults(queries, results);
+    if (safeResults) {
       let bubbleData = [];
       bubbleData = safeResults.map((query, idx) => {
-        const value = (this.state.view === VIEW_REGULAR) ? query.total : query.ratio;
+        const value = (this.state.view === VIEW_REGULAR) ? query.results.total : query.results.ratio;
         let centerText;
         if (this.state.view === VIEW_REGULAR) {
           centerText = formatNumber(value);

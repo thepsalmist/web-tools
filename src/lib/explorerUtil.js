@@ -41,6 +41,21 @@ export function replaceCurlyQuotes(stringWithQuotes) {
   return removedQuotes;
 }
 
+export function ensureSafeResults(queries, results) {
+  const unDeletedQueries = queries.filter(q => q.deleted !== true);
+  const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
+  let safeResults = null;
+  if (results !== undefined && results !== null && results.length > 0) {
+    safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid)));
+    safeResults = Object.values(safeResults);
+  }
+  return (safeResults && (safeResults.length === queries.length) && (results.length === queries.length)) ? safeResults : false;
+}
+
+export function ensureSafeTabIndex(array, index) {
+  return index > (array.length - 1) ? array.length - 1 : index;
+}
+
 export function generateQueryParamObject(query, skipEncoding) {
   return {
     label: skipEncoding ? query.label : encodeURIComponent(query.label),

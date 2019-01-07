@@ -41,7 +41,6 @@ class QueryPicker extends React.Component {
       ...formQuery,
       color: newColorInfo.value,
     };
-    // this.handleSelectedQueryChange(selected, selected.index);
     updateCurrentQuery(updatedQuery, 'color');
   }
 
@@ -90,7 +89,7 @@ class QueryPicker extends React.Component {
       // for demo mode we have to save all the queries they entered first, and then search
       const nonDeletedQueries = queries.filter(q => q.deleted !== true);
       nonDeletedQueries.forEach((q) => {
-        const queryText = document.getElementById(`query-${q.index}-q`).value; // not super robust,
+        const queryText = document.getElementById(`query-${q.uid}-q`).value; // not super robust,
         const cleanedQueryText = replaceCurlyQuotes(queryText);
         const updatedQuery = {
           ...q,
@@ -119,17 +118,17 @@ class QueryPicker extends React.Component {
     sendAndSaveUserSearch(userSearch);
   }
 
-  handleSelectedQueryChange = (nextSelectedQuery, nextSelectedIndex) => {
+  handleSelectedQueryChange = (nextSelectedQuery) => {
     const { handleQuerySelected } = this.props;
     // first update the one we are unmounting
     this.saveChangesToSelectedQuery();
 
-    handleQuerySelected(nextSelectedQuery, nextSelectedQuery.index ? nextSelectedQuery.index : nextSelectedIndex);
+    handleQuerySelected(nextSelectedQuery);
   }
 
   handleDeleteAndSelectQuery = (query) => {
     const { queries, handleDeleteQuery } = this.props;
-    const queryIndex = queries.findIndex(q => q.index !== null && q.index === query.index);
+    const queryIndex = queries.findIndex(q => q.uid !== null && q.uid === query.uid);
     const replaceSelectionWithWhichQuery = queryIndex === 0 ? 1 : 0; // replace with the query, not the position
     if (this.isDeletable()) {
       handleDeleteQuery(query, queries[replaceSelectionWithWhichQuery]);
@@ -200,11 +199,11 @@ class QueryPicker extends React.Component {
             isLoggedIn={isLoggedIn}
             key={index}
             query={query}
-            isSelected={selected.index === query.index}
+            isSelected={selected.uid === query.uid}
             isLabelEditable={isEditable} // if custom, true for either mode, else if logged in no
             isDeletable={() => this.isDeletable()}
             displayLabel={false}
-            onQuerySelected={() => this.handleSelectedQueryChange(query, index)}
+            onQuerySelected={() => this.handleSelectedQueryChange(query)}
             updateQueryProperty={(propertyName, newValue) => this.updateQueryProperty(query, propertyName, newValue)}
             updateDemoQueryLabel={newValue => this.updateDemoQueryLabel(query, newValue)}
             onSearch={this.saveAndSearch}
@@ -226,12 +225,13 @@ class QueryPicker extends React.Component {
           dateObj.end = unDeletedQueries[unDeletedQueries.length - 1].endDate;
         }
         const newIndex = queries.length; // all queries, including 'deleted' ones
+        const newUid = Math.floor((Math.random() * 100) + 1); // all queries, including 'deleted' ones
         const newPosition = queries.length;
         const genDefColor = colorPallette(newIndex);
         const newQueryLabel = `Query ${String.fromCharCode('A'.charCodeAt(0) + newIndex)}`;
         const defaultQueryField = '';
-        const defaultDemoQuery = { index: newIndex, sortPosition: newPosition, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
-        const defaultQuery = { index: newIndex, sortPosition: newPosition, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: [], sources: [], color: genDefColor, autoNaming: true };
+        const defaultDemoQuery = { uid: newUid, sortPosition: newPosition, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
+        const defaultQuery = { uid: newUid, sortPosition: newPosition, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: [], sources: [], color: genDefColor, autoNaming: true };
 
         const emptyQuerySlide = (
           <div key={fixedQuerySlides.length}>
@@ -307,7 +307,7 @@ class QueryPicker extends React.Component {
             handleLoadSelectedSearch={handleLoadSelectedSearch}
             handleSaveSearch={l => this.saveThisSearch(l)}
             handleDeleteSearch={l => handleDeleteUserSearch(l)}
-            handleCopyAll={property => handleCopyAll(property, selected.index, queries, formQuery)}
+            handleCopyAll={property => handleCopyAll(property, selected.uid, queries, formQuery)}
             isEditable={canSelectMedia}
             focusRequested={field => field.focus()}
             // TODO change to on
@@ -367,9 +367,8 @@ const mapStateToProps = state => ({
 
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleQuerySelected: (query, index) => {
-    const queryWithIndex = Object.assign({}, query, { index }); // if this doesn't exist...
-    dispatch(selectQuery(queryWithIndex));
+  handleQuerySelected: (query) => {
+    dispatch(selectQuery(query));
   },
   updateCurrentQueryThenReselect: (query, fieldName) => {
     if (query) {
@@ -391,7 +390,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       dispatch(selectQuery(query));
     }
   },
-  handleCopyAll: (whichFilter, selectedIndex, queries, currentFormValues) => {
+  handleCopyAll: (whichFilter, selectedUid, queries, currentFormValues) => {
     // formQuery
     let newValues = null;
     if (whichFilter === KEYWORD) {
@@ -405,8 +404,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       };
     }
     queries.map((query) => {
-      if (selectedIndex !== query.index) {
-        return dispatch(copyAndReplaceQueryField({ field: whichFilter, index: query.index, newValues }));
+      if (selectedUid !== query.uid) {
+        return dispatch(copyAndReplaceQueryField({ field: whichFilter, uid: query.uid, newValues }));
       }
       return null;
     });
@@ -446,8 +445,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       dispatch(selectQuery(replacementSelectionQuery));
     }
   },
-  handleDuplicateQuery: (query, queries) => {
-    const dupeQuery = Object.assign({}, query, { index: queries.length, sortPosition: query.sortPosition + 1 }); // what is the index?
+  handleDuplicateQuery: (query) => {
+    const dupeQuery = Object.assign({}, query, { uid: Math.floor((Math.random() * 100) + 1), sortPosition: query.sortPosition + 1 }); // what is the index?
     if (query) {
       dispatch(addCustomQuery(dupeQuery));
       dispatch(selectQuery(dupeQuery));

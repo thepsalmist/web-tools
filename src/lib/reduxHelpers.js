@@ -288,7 +288,7 @@ export function createIndexedAsyncReducer(handlers) {
         return reducers.handleFetch(action.payload, state, action.payload.args);
       case resolve(handlers.action):
         const uid = action.meta.args ? action.meta.args[0].uid : 0;
-        const isValid = Object.keys(state.fetchStatuses).length > uid;
+        const isValid = Object.keys(state.fetchStatuses).length > 0 && state.fetchStatuses[uid] !== null;
         if (!isValid) { // don't honor resolves that are for indexes we aren't tracking anymore
           return state;
         }

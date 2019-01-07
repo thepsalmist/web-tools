@@ -55,7 +55,7 @@ class QueryTotalAttentionResultsContainer extends React.Component {
     const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
 
     if (results !== undefined && results !== null && results.length > 0) {
-      let safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid).results));
+      let safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.filter(r => r.uid === q.uid).length > 0 ? results.filter(r => r.uid === q.uid)[0].results : []));
       safeResults = safeResults.filter(q => q.counts && q.counts.length > 0); // must have results
       // stich together line chart data
 

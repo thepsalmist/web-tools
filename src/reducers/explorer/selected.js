@@ -11,7 +11,7 @@ function selected(state = INITIAL_STATE, action) {
       if (updatedState == null) {
         return { ...action.payload };
       }
-      if (action.payload.index !== updatedState.index) {
+      if (action.payload.uid !== updatedState.uid) {
         updatedState = { ...action.payload }; // leave alone if the same - this isnt an update
       }
       return updatedState;

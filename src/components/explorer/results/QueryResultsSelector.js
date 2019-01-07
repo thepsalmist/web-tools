@@ -8,6 +8,7 @@ function withQueryResults(ChildComponent) {
   class QueryResultsSelector extends React.Component {
     state = {
       selectedQueryUid: 0,
+      selectedQueryTabIndex: 0,
     };
 
     componentWillReceiveProps(nextProps) {
@@ -21,14 +22,18 @@ function withQueryResults(ChildComponent) {
       const { results, queries, shouldUpdate } = this.props;
       // ask the child if internal repainting is needed
       const defaultShouldUpdate = queryChangedEnoughToUpdate(queries, nextProps.queries, results, nextProps.results);
+      const tabIndexNotValid = nextProps.queries.length - 1 < this.state.selectedQueryTabIndex;
+      if (tabIndexNotValid) {
+        this.setState({ selectedQueryTabIndex: nextProps.queries.length - 1 });
+      }
       const childShouldUpdate = (shouldUpdate && shouldUpdate(nextProps));
-      return childShouldUpdate || defaultShouldUpdate;
+      return childShouldUpdate || defaultShouldUpdate || tabIndexNotValid;
     }
 
     getUidFromTabSelection(idx) {
       const { queries } = this.props;
-      const selectedQuery = queries.find(q => q.sortPosition === idx);
-      this.setState({ selectedQueryUid: selectedQuery.uid });
+      const selectedQuery = queries.sort((a, b) => a.sortPosition - b.sortPosition)[idx];
+      this.setState({ selectedQueryTabIndex: idx, selectedQueryUid: selectedQuery.uid });
       this.forceUpdate();
     }
 
@@ -40,9 +45,9 @@ function withQueryResults(ChildComponent) {
         <div className="query-results-selector">
           <ChildComponent
             {...this.props}
-            selectedTabIndex={this.state.selectedQueryUid} // for backwards compatability
-            selectedQueryIndex={this.state.selectedQueryUid}
-            selectedQuery={sortedQueries[this.state.selectedQueryUid]}
+            selectedTabIndex={this.state.selectedQueryTabIndex} // for backwards compatability
+            selectedQueryUid={this.state.selectedQueryUid}
+            selectedQuery={sortedQueries[this.state.selectedQueryTabIndex]}
             tabSelector={tabSelector}
           />
         </div>

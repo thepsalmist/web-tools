@@ -82,7 +82,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
     let series = [];
     let safeResults = [];
     if (results !== null && results !== undefined && results.length > 0) {
-      safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid).results));
+      safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.filter(r => r.uid === q.uid).length > 0 ? results.filter(r => r.uid === q.uid)[0].results : []));
       safeResults = safeResults.filter(q => q.counts && q.counts.length > 0); // must have results
       // stich together line chart data
 
@@ -202,7 +202,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           start_date: q.startDate,
           end_date: q.endDate,
           q: q.q,
-          uid: q.sortPosition,
+          uid: q.uid,
           sortPosition: q.sortPosition,
           sources: q.sources.map(s => s.id),
           collections: q.collections.map(c => c.id),

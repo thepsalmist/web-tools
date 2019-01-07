@@ -160,7 +160,7 @@ function composeUrlBasedQueryContainer() {
           collections: query.collections ? query.collections.map(s => ({ id: s, tags_id: s })) : undefined,
           q: replaceCurlyQuotes(query.q),
           color: query.color ? query.color : schemeCategory10[index % 10],
-          uid: index,
+          uid: Math.floor((Math.random() * 100) + 1),
           sortPosition: index, // for now
           ...extraDefaults, // for demo mode
         }));
@@ -263,7 +263,7 @@ function composeUrlBasedQueryContainer() {
         const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
         const sortedQueries = nonEmptyQueries.sort((a, b) => a.uid - b.uid);
         if (!isLoggedIn) {
-          const queriesToSerialize = nonEmptyQueries.map((q, idx) => ({ index: idx, q: q.q, color: q.color }));
+          const queriesToSerialize = nonEmptyQueries.map(q => ({ q: q.q, color: q.color }));
           dispatch(push({ pathname: '/queries/demo/search', search: `?qs=${serializeQueriesForUrl(queriesToSerialize)}` }));
         } else {
           const queriesToSerialize = sortedQueries.map(q => ({

@@ -51,38 +51,43 @@ class QuerySampleStoriesResultsContainer extends React.Component {
 
     const unDeletedQueries = queries.filter(q => q.deleted !== true);
     const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
-    let safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid)));
-    safeResults = Object.values(safeResults);
-    safeResults = safeResults[selectedTabIndex].results ? safeResults[selectedTabIndex].results.slice(0, 10) : [];
-    return (
-      <div>
-        {tabSelector}
-        <StoryTable
-          className="story-table" // TODO: selectedTabIndex will now fail if uid/sortPosition isn't present
-          stories={safeResults}
-          onMoreInfo={story => this.onStorySelection(story)}
-          maxTitleLength={90}
-          selectedStory={internalItemSelected}
-          extraheaderColumns={showMoreInfoColHdr}
-          extraColumns={story => showMoreInfoCol(story)}
-        />
-        <div className="actions">
-          <ActionMenu actionTextMsg={messages.downloadOptions}>
-            <MenuItem
-              className="action-icon-menu-item"
-              onClick={() => this.downloadCsv(queries[selectedTabIndex])}
-            >
-              <ListItemText>
-                <FormattedMessage {...localMessages.downloadCsv} values={{ name: queries[selectedTabIndex].label }} />
-              </ListItemText>
-              <ListItemIcon>
-                <DownloadButton />
-              </ListItemIcon>
-            </MenuItem>
-          </ActionMenu>
+    let safeResults = null;
+    if (results !== undefined && results !== null && results.length > 0) {
+      safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid)));
+      safeResults = Object.values(safeResults);
+      const testTabIndex = selectedTabIndex > (queries.length - 1) ? queries.length - 1 : selectedTabIndex;
+      safeResults = safeResults[testTabIndex].results ? safeResults[testTabIndex].results.slice(0, 10) : [];
+      return (
+        <div>
+          {tabSelector}
+          <StoryTable
+            className="story-table"
+            stories={safeResults}
+            onMoreInfo={story => this.onStorySelection(story)}
+            maxTitleLength={90}
+            selectedStory={internalItemSelected}
+            extraheaderColumns={showMoreInfoColHdr}
+            extraColumns={story => showMoreInfoCol(story)}
+          />
+          <div className="actions">
+            <ActionMenu actionTextMsg={messages.downloadOptions}>
+              <MenuItem
+                className="action-icon-menu-item"
+                onClick={() => this.downloadCsv(queries[selectedTabIndex])}
+              >
+                <ListItemText>
+                  <FormattedMessage {...localMessages.downloadCsv} values={{ name: queries[testTabIndex].label }} />
+                </ListItemText>
+                <ListItemIcon>
+                  <DownloadButton />
+                </ListItemIcon>
+              </MenuItem>
+            </ActionMenu>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+    return <div>Error</div>;
   }
 }
 
@@ -170,8 +175,8 @@ injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withSummary(localMessages.title, localMessages.helpIntro, localMessages.helpDetails)(
       withAsyncFetch(
-        withQueryResults(
-          withLoginRequired(
+        withLoginRequired(
+          withQueryResults(
             QuerySampleStoriesResultsContainer
           )
         )

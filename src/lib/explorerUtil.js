@@ -46,12 +46,14 @@ this function to handle these cases */
 export function ensureSafeResults(queries, results) {
   const unDeletedQueries = queries.filter(q => q.deleted !== true);
   const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
-  let safeResults = null;
+  let safeQueryWithResults = null;
   if (results !== undefined && results !== null && results.length > 0) {
-    safeResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid)));
-    safeResults = Object.values(safeResults);
+    safeQueryWithResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid)));
+    safeQueryWithResults = Object.values(safeQueryWithResults);
+    const allQueriesHaveResults = safeQueryWithResults.filter(q => q.results);
+    return allQueriesHaveResults.length === safeQueryWithResults.length ? safeQueryWithResults : [];
   }
-  return (safeResults && (safeResults.length === queries.length) && (results.length === queries.length)) ? safeResults : false;
+  return [];
 }
 
 /* deletions may result in an intermediate state in which the selectedTabIndex hasn't been updated yet. Use

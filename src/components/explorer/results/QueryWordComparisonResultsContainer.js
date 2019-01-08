@@ -74,7 +74,7 @@ class QueryWordComparisonResultsContainer extends React.Component {
 
   render() {
     const { queries, results, handleWordCloudClick, leftQuery, rightQuery } = this.props;
-    if (results && !rightQuery) {
+    if (results && results.length > 0 && !rightQuery) {
       return (
         <Grid>
           <Row>

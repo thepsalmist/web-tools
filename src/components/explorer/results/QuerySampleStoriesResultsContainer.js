@@ -14,7 +14,7 @@ import ActionMenu from '../../common/ActionMenu';
 import StoryTable from '../../common/StoryTable';
 import { fetchQuerySampleStories, fetchDemoQuerySampleStories, resetSampleStories } from '../../../actions/explorerActions';
 import { selectStory, resetStory, fetchStory } from '../../../actions/storyActions';
-import { postToDownloadUrl, ensureSafeTabIndex, ensureSafeResults } from '../../../lib/explorerUtil';
+import { postToDownloadUrl } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
 
@@ -49,10 +49,8 @@ class QuerySampleStoriesResultsContainer extends React.Component {
       <td><AppButton variant="outlined" onClick={() => this.onStorySelection(story)}><FormattedMessage {...localMessages.showMetadata} /></AppButton></td>
     );
 
-    let safeResults = ensureSafeResults(queries, results);
-    const safeIndex = ensureSafeTabIndex(queries, selectedTabIndex);
-    if (safeResults) {
-      safeResults = safeResults[safeIndex].results ? safeResults[safeIndex].results.slice(0, 10) : [];
+    if (results && results.length > 0) {
+      const safeResults = results[selectedTabIndex].results ? results[selectedTabIndex].results.slice(0, 10) : [];
       return (
         <div>
           {tabSelector}
@@ -69,10 +67,10 @@ class QuerySampleStoriesResultsContainer extends React.Component {
             <ActionMenu actionTextMsg={messages.downloadOptions}>
               <MenuItem
                 className="action-icon-menu-item"
-                onClick={() => this.downloadCsv(queries[safeIndex])}
+                onClick={() => this.downloadCsv(queries[selectedTabIndex])}
               >
                 <ListItemText>
-                  <FormattedMessage {...localMessages.downloadCsv} values={{ name: queries[safeIndex].label }} />
+                  <FormattedMessage {...localMessages.downloadCsv} values={{ name: queries[selectedTabIndex].label }} />
                 </ListItemText>
                 <ListItemIcon>
                   <DownloadButton />

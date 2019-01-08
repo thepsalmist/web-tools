@@ -48,7 +48,7 @@ function withQueryResults(ChildComponent) {
           <ChildComponent
             {...this.props}
             results={safeResults}
-            selectedTabIndex={this.state.selectedQueryTabIndex} // for backwards compatability
+            selectedTabIndex={this.state.selectedQueryTabIndex}
             selectedQueryUid={this.state.selectedQueryUid}
             selectedQuery={sortedQueries[safeIndex]}
             tabSelector={tabSelector}

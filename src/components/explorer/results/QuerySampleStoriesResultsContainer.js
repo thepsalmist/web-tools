@@ -49,7 +49,7 @@ class QuerySampleStoriesResultsContainer extends React.Component {
       <td><AppButton variant="outlined" onClick={() => this.onStorySelection(story)}><FormattedMessage {...localMessages.showMetadata} /></AppButton></td>
     );
 
-    let safeResults = ensureSafeResults(queries, results, selectedTabIndex);
+    let safeResults = ensureSafeResults(queries, results);
     const safeIndex = ensureSafeTabIndex(queries, selectedTabIndex);
     if (safeResults) {
       safeResults = safeResults[safeIndex].results ? safeResults[safeIndex].results.slice(0, 10) : [];

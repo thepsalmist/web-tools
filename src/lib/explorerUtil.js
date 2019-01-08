@@ -41,6 +41,8 @@ export function replaceCurlyQuotes(stringWithQuotes) {
   return removedQuotes;
 }
 
+/* deletions, duplications and new queries may result in an intermediate state in which the results and queries are not yet in alignment. Use
+this function to handle these cases */
 export function ensureSafeResults(queries, results) {
   const unDeletedQueries = queries.filter(q => q.deleted !== true);
   const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
@@ -52,8 +54,15 @@ export function ensureSafeResults(queries, results) {
   return (safeResults && (safeResults.length === queries.length) && (results.length === queries.length)) ? safeResults : false;
 }
 
+/* deletions may result in an intermediate state in which the selectedTabIndex hasn't been updated yet. Use
+this function to handle these cases */
+
 export function ensureSafeTabIndex(array, index) {
   return index > (array.length - 1) ? array.length - 1 : index;
+}
+
+export function getUidIndex(uid, array) {
+  return array.findIndex(a => a.uid !== null && a.uid === uid);
 }
 
 export function generateQueryParamObject(query, skipEncoding) {

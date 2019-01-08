@@ -33,7 +33,7 @@ class QueryWordSpaceResultsContainer extends React.Component {
       <div>
         {tabSelector}
         <WordSpace
-          words={results[selectedTabIndex].list.slice(0, 50)}
+          words={results[selectedTabIndex].results.slice(0, 50)}
           domId={domId}
           xProperty="google_w2v_x"
           yProperty="google_w2v_y"

@@ -256,7 +256,7 @@ export function createIndexedAsyncReducer(handlers) {
         const results = handlers.handleSuccess(payload, state, args, uid);
         updatedResults.push({ uid, results });
       } else {
-        updatedResults.push({ uid, results: payload.results });
+        updatedResults.push({ uid, ...payload });
       }
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),

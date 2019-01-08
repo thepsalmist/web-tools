@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import TabSelector from '../../common/TabSelector';
-import { queryChangedEnoughToUpdate } from '../../../lib/explorerUtil';
+import { queryChangedEnoughToUpdate, ensureSafeResults, ensureSafeTabIndex } from '../../../lib/explorerUtil';
 
 function withQueryResults(ChildComponent) {
   class QueryResultsSelector extends React.Component {
@@ -22,7 +22,7 @@ function withQueryResults(ChildComponent) {
       const { results, queries, shouldUpdate } = this.props;
       // ask the child if internal repainting is needed
       const defaultShouldUpdate = queryChangedEnoughToUpdate(queries, nextProps.queries, results, nextProps.results);
-      const tabIndexNotValid = nextProps.queries.length - 1 < this.state.selectedQueryTabIndex;
+      const tabIndexNotValid = (nextProps.queries.length - 1) < this.state.selectedQueryTabIndex;
       if (tabIndexNotValid) {
         this.setState({ selectedQueryTabIndex: nextProps.queries.length - 1 });
       }
@@ -38,16 +38,19 @@ function withQueryResults(ChildComponent) {
     }
 
     render() {
-      const { queries } = this.props;
+      const { queries, results } = this.props;
       const sortedQueries = queries.sort((a, b) => a.sortPosition - b.sortPosition);
+      const safeResults = ensureSafeResults(queries, results);
+      const safeIndex = ensureSafeTabIndex(queries, this.state.selectedQueryTabIndex);
       const tabSelector = <TabSelector onViewSelected={idx => this.getUidFromTabSelection(idx)} tabLabels={sortedQueries} />;
       return (
         <div className="query-results-selector">
           <ChildComponent
             {...this.props}
+            results={safeResults}
             selectedTabIndex={this.state.selectedQueryTabIndex} // for backwards compatability
             selectedQueryUid={this.state.selectedQueryUid}
-            selectedQuery={sortedQueries[this.state.selectedQueryTabIndex]}
+            selectedQuery={sortedQueries[safeIndex]}
             tabSelector={tabSelector}
           />
         </div>

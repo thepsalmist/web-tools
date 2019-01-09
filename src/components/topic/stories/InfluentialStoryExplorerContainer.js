@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { fetchTopicStoryCounts } from '../../../actions/topicActions';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import InfluentialStoryExplorer from './InfluentialStoryExplorer';
+import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
   title: { id: 'topic.influentialStoryExplorer.title', defaultMessage: 'Story Explorer' },
@@ -26,8 +26,6 @@ class InfluentialStoryExplorerContainer extends React.Component {
 
   render() {
     const { counts, topicId, filters, selectedTimespan } = this.props;
-    const { formatMessage } = this.props.intl;
-    const titleHandler = parentTitle => `${formatMessage(localMessages.title)} | ${parentTitle}`;
     let content = null;
     if (counts.count > MAX_STORIES) {
       content = (
@@ -46,10 +44,10 @@ class InfluentialStoryExplorerContainer extends React.Component {
     }
     return (
       <div className="story-explorer">
+        <TopicPageTitle value={localMessages.title} />
         <Grid>
           <Row>
             <Col lg={12} md={12} sm={12}>
-              <Helmet><title>{titleHandler()}</title></Helmet>
               <h1><FormattedMessage {...localMessages.title} /></h1>
               <p><FormattedHTMLMessage {...localMessages.intro} /></p>
               {content}

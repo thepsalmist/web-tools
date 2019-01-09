@@ -7,6 +7,7 @@ import withAsyncFetch from '../../../common/hocs/AsyncContainer';
 import CollectionIcon from '../../../common/icons/CollectionIcon';
 import { fetchGeoCollectionsByCountry } from '../../../../actions/sourceActions';
 import CollectionList from '../../../common/CollectionList';
+import PageTitle from '../../../common/PageTitle';
 
 const localMessages = {
   title: { id: 'sources.collections.geo.title', defaultMessage: 'Collections by Country' },
@@ -17,6 +18,7 @@ const CountryCollectionListContainer = (props) => {
   const { collectionsByCountry, user } = props;
   return (
     <div className="country-collections-table">
+      <PageTitle value={localMessages.title} />
       <Grid>
         <Row>
           <Col lg={10}>

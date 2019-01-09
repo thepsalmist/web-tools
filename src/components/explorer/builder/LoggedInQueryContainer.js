@@ -7,6 +7,11 @@ import { resetStory } from '../../../actions/storyActions';
 import QueryBuilderContainer from './QueryBuilderContainer';
 import QueryResultsContainer from '../results/QueryResultsContainer';
 import composeUrlBasedQueryContainer from '../UrlBasedQueryContainer';
+import PageTitle from '../../common/PageTitle';
+
+const localMessages = {
+  title: { id: 'explorer.queryBuilder.title', defaultMessage: 'Search' },
+};
 
 class LoggedInQueryContainer extends React.Component {
   componentWillMount() {
@@ -25,6 +30,7 @@ class LoggedInQueryContainer extends React.Component {
     const isEditable = false;
     return (
       <div className="query-container query-container-logged-in">
+        <PageTitle value={localMessages.title} />
         <QueryBuilderContainer isEditable={isEditable} onSearch={() => handleSearch()} />
         <QueryResultsContainer
           lastSearchTime={lastSearchTime}

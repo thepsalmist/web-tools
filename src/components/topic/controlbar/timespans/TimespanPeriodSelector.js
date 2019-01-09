@@ -31,10 +31,9 @@ class TimespanPeriodSelector extends React.Component {
         { this.linkToPeriod('overall', localMessages.timespansOverall) }
         { this.linkToPeriod('monthly', localMessages.timespansMonthly) }
         { this.linkToPeriod('weekly', localMessages.timespansWeekly) }
+        { this.linkToPeriod('custom', localMessages.timespansCustom) }
       </div>
     );
-    // removed custom for now:
-    //         { this.linkToPeriod('custom', localMessages.timespansCustom) }
   }
 }
 

@@ -1,6 +1,89 @@
 {
   "releases": [
     {
+      "date": "2018-12-17",
+      "version": "v3.7.0",
+      "notes": [
+        {
+          "apps": [ "sources", "explorer", "topics", "tools" ],
+          "type": "Enhancement",
+          "note": "User and Story Management implmented for Admins under new Admin menu option"
+        },
+        {
+          "apps": [ "sources", "explorer", "topics" ],
+          "type": "Enhancement",
+          "note": "Confirmation notice when logged in"
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Show more info on sources feed"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Default to user's max stories when creating a topic."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Media List download now respects story search filter."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Enhancement",
+          "note": "Can view custom timespan."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Curly quotes in query string will no longer cause query fail."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Standard url encoding now implemented."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Handling of carriage return (enter) in query."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Enhancement",
+          "note": "You can now download top places from the Geographic view."
+        }
+      ]
+    },
+    {
+      "date": "2018-11-30",
+      "version": "v3.6.2",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "You can switch between day/week/month and count/pct on explorer attention chart again"
+        }
+      ]
+    },
+    {
+      "date": "2018-11-28",
+      "version": "v3.6.1",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Show more info on sources feed"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Regular users couldn't view story info drill-down"
+        }
+      ]
+    },
+    {
       "date": "2018-11-20",
       "version": "v3.6.0",
       "notes": [

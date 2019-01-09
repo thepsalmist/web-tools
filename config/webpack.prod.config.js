@@ -21,7 +21,9 @@ function prodConfigGenerator(basedir, toolName) {
       // Create the manifest file that Flask and other frameworks use.
       new ManifestRevisionPlugin(
         path.resolve(basedir, 'server', 'static', 'gen', toolName, 'manifest.json'),
-        { rootAssetPath: './src' },
+        { rootAssetPath: './src', // important that this be relative, not absolute
+          ignorePaths: [/.*\.DS_Store/], // need to manually ignore the .DS_Store files generated on OSX
+        },
       ),
     ],
   };

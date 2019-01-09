@@ -19,10 +19,12 @@ const middlewares = [
 ];
 
 function configDevelopmentStore(appName) {
+  /* eslint-disable no-underscore-dangle */
   return createStore(getRootReducer(appName), {}, compose(
     applyMiddleware(...middlewares),
-    window.devToolsExtension ? window.devToolsExtension() : f => f
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   ));
+  /* eslint-enable */
 }
 
 function configProductionStore(appName) {

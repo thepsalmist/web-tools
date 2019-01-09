@@ -16,7 +16,7 @@
     "tools-release": "NODE_ENV=production MC_APP_NAME=tools webpack --config config/webpack.config.js",
     "test-acceptance": "react-scripts test --env=jsdom test/acceptance",
     "requirements-check": "node check-version.js",
-    "preinstall": "npm run requirements-check"
+    "postinstall": "npm run requirements-check"
   },
   "jest": {
     "testPathDirs": [

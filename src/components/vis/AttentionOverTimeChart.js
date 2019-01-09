@@ -6,6 +6,7 @@ import initHighcharts from './initHighcharts';
 import { getBrandDarkColor } from '../../styles/colors';
 import { getVisDate, PAST_DAY, PAST_WEEK, PAST_MONTH, groupDatesByWeek, groupDatesByMonth } from '../../lib/dateUtil';
 import { STACKED_VIEW } from '../../lib/visUtil';
+import messages from '../../resources/messages';
 
 initHighcharts();
 
@@ -21,12 +22,27 @@ const localMessages = {
   tooltipSeriesName: { id: 'chart.storiesOverTime.tooltipSeriesName', defaultMessage: 'Query: {name}' },
   tooltipText: { id: 'chart.storiesOverTime.tooltipText', defaultMessage: '{count} {count, plural, =1 {story} other {stories} }' },
   normalizedTooltipText: { id: 'chart.storiesOverTime.normalizedTooltipText', defaultMessage: '{count}% of stories' },
-  seriesTitle: { id: 'chart.storiesOverTime.seriesTitle', defaultMessage: 'stories/day' },
+  storiesPerDay: { id: 'chart.storiesOverTime.seriesTitle.day', defaultMessage: 'stories/day' },
+  storiesPerWeek: { id: 'chart.storiesOverTime.seriesTitle.week', defaultMessage: 'stories/week' },
+  storiesPerMonth: { id: 'chart.storiesOverTime.seriesTitle.month', defaultMessage: 'stories/month' },
   totalCount: { id: 'chart.storiesOverTime.totalCount',
     defaultMessage: 'We have collected {total, plural, =0 {No stories} one {One story} other {{formattedTotal} stories}}.',
   },
   yAxisNormalizedTitle: { id: 'chart.storiesOverTime.series.yaxis', defaultMessage: 'percentage of stories' },
 };
+
+function yAxisTitleByInterval(interval) {
+  if (interval === PAST_MONTH) {
+    return localMessages.storiesPerMonth;
+  }
+  if (interval === PAST_WEEK) {
+    return localMessages.storiesPerWeek;
+  }
+  if (interval === PAST_DAY) {
+    return localMessages.storiesPerDay;
+  }
+  return messages.unknown;
+}
 
 function makePercentage(value) { return value * 100; }
 
@@ -36,7 +52,7 @@ export function dataAsSeries(data, fieldName = 'count') {
   // turning variable time unit into days
   const intervalMs = (dates[1] - dates[0]);
   const intervalDays = intervalMs / SECS_PER_DAY;
-  const values = data.map(d => Math.round(d[fieldName] / intervalDays));
+  const values = data.map(d => d[fieldName] / intervalDays);
   return { data: values, pointInterval: intervalMs, pointStart: dates[0] };
 }
 
@@ -45,7 +61,7 @@ export function dataAsSeries(data, fieldName = 'count') {
  */
 class AttentionOverTimeChart extends React.Component {
   getConfig() {
-    const { backgroundColor, normalizeYAxis } = this.props;
+    const { backgroundColor, normalizeYAxis, interval } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
 
     const config = {
@@ -97,7 +113,7 @@ class AttentionOverTimeChart extends React.Component {
       yAxis: {
         labels: { formatter: function afxn() { return normalizeYAxis === true ? `${makePercentage(this.value)}%` : this.value; } },
         min: 0,
-        title: { text: normalizeYAxis === true ? formatMessage(localMessages.yAxisNormalizedTitle) : formatMessage(localMessages.seriesTitle) },
+        title: { text: normalizeYAxis === true ? formatMessage(localMessages.yAxisNormalizedTitle) : formatMessage(yAxisTitleByInterval(interval)) },
       },
       exporting: {
       },
@@ -106,7 +122,8 @@ class AttentionOverTimeChart extends React.Component {
   }
 
   render() {
-    const { total, data, series, height, interval, display, onDataPointClick, lineColor, health, filename, showLegend, introText } = this.props;
+    const { total, data, series, height, interval, display, onDataPointClick, lineColor,
+      health, filename, showLegend, introText, normalizeYAxis } = this.props;
     const { formatMessage } = this.props.intl;
     // setup up custom chart configuration
     const config = this.getConfig();
@@ -115,7 +132,7 @@ class AttentionOverTimeChart extends React.Component {
     if (filename !== undefined) {
       config.exporting.filename = filename;
     } else {
-      config.exporting.filename = formatMessage(localMessages.seriesTitle);
+      config.exporting.filename = formatMessage(yAxisTitleByInterval(interval));
     }
     if ((health !== null) && (health !== undefined)) {
       config.xAxis.plotLines = health.map(h => ({ className: 'health-plot-line', ...h }));
@@ -198,7 +215,13 @@ class AttentionOverTimeChart extends React.Component {
         }
         const dates = Object.values(groupedData).map(d => d.date);
         const intervalMs = SECS_PER_DAY * config.intervalVal;
-        const values = Object.values(groupedData).map(d => (d.sum !== undefined ? d.sum : d.count));
+        // grab the grouped sum if showing counts, or avg if doing ratios (not ideal, but easier to implement)
+        let values;
+        if (normalizeYAxis) {
+          values = Object.values(groupedData).map(d => (d.avg !== undefined ? d.avg : d.count));
+        } else {
+          values = Object.values(groupedData).map(d => (d.sum !== undefined ? d.sum : d.count));
+        }
         return {
           ...thisSeries,
           data: values,
@@ -240,7 +263,7 @@ AttentionOverTimeChart.propTypes = {
   backgroundColor: PropTypes.string,
   health: PropTypes.array,
   interval: PropTypes.string,
-  display: PropTypes.number,
+  display: PropTypes.string,
   onDataPointClick: PropTypes.func, // (date0, date1, evt, chartObj)
   total: PropTypes.number,
   introText: PropTypes.string, // overrides automatic total string generation

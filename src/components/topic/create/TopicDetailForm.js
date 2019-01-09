@@ -153,7 +153,7 @@ const TopicDetailForm = (props) => {
             <Permissioned onlyRole={PERMISSION_ADMIN}>
               <ExpansionPanelDetails>
                 <Field
-                  name="max_stories"
+                  name="max_topic_stories"
                   component={renderTextField}
                   type="inline"
                   fullWidth

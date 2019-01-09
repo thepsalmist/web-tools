@@ -39,6 +39,7 @@ TAG_SET_ABYZ_GEO_COLLECTIONS = 15765102  # for geographic collections we are imp
 VALID_COLLECTION_TAG_SETS_IDS = [TAG_SETS_ID_COLLECTIONS, TAG_SET_ID_PARTISAN_RETWEETS,
                                  TAG_SET_ABYZ_GEO_COLLECTIONS]
 
+US_COLLECTIONS = [58722749, 57078150, 9360520, 9360521, 9360522, 9360523, 9360524]
 # Source metadata tag sets
 TAG_SETS_ID_PUBLICATION_COUNTRY = 1935  # holds the country of publication of a source
 TAG_SETS_ID_PUBLICATION_STATE = 1962  # holds the state of publication of a source (only US and India right now)

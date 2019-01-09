@@ -26,7 +26,6 @@ import CountryCollectionListContainer from '../components/source/collection/list
 import PageWrapper from '../components/source/PageWrapper';
 import FavoritedContainer from '../components/source/FavoritedContainer';
 import { requireAuth } from './routes';
-import userRoutes from './userRoutes';
 import systemRoutes from './systemRoutes';
 import SourcesApp from '../components/source/SourcesApp';
 import About from '../components/source/About';
@@ -76,7 +75,6 @@ const sourceRoutes = (
       </Route>
     </Route>
 
-    {userRoutes}
     {systemRoutes}
 
   </Route>

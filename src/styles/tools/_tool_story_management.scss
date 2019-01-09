@@ -1,0 +1,24 @@
+@import '../_constants';
+
+.tool-story-search {
+  width: 250px;
+}
+
+.tool-story-search-button {
+  top: 10px;
+}
+
+span.label {
+    font-size: 16px;
+    font-weight: bold;
+    &.chip-label {
+      line-height: 30px;
+    }
+    &.field-label {
+      line-height: 50px;
+    }
+    &.unlabeled-field-label {
+      display: block;
+      padding-top: 40px !important;
+    }
+  }

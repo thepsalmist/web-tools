@@ -18,7 +18,7 @@ import ModifyTopicDialog from './controlbar/ModifyTopicDialog';
 import TopicUnderConstruction from './TopicUnderConstruction';
 import TopicHeaderContainer from './TopicHeaderContainer';
 import Permissioned from '../common/Permissioned';
-import { PERMISSION_TOPIC_WRITE } from '../../lib/auth';
+import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../lib/auth';
 import { ADMIN_MAX_RECOMMENDED_STORIES, MAX_RECOMMENDED_STORIES } from '../../lib/formValidators';
 import messages from '../../resources/messages';
 
@@ -34,10 +34,14 @@ const localMessages = {
   snapshotFailed: { id: 'snapshotFailed.warning', defaultMessage: 'We tried to generate a new snapshot, but it failed.' },
   topicRunning: { id: 'topic.topicRunning', defaultMessage: 'We are scraping the web for all the stories in include in your topic.' },
   notUsingLatestSnapshot: { id: 'topic.notUsingLatestSnapshot', defaultMessage: 'You are not using the latest snapshot!  If you are not doing this on purpose, <a href="{url}">switch to the latest snapshot</a> to get the best data.' },
-  otherError: { id: 'topic.state.otherError', defaultMessage: 'Sorry, this topic has an error.  It says it is "{state}".' },
+  otherError: { id: 'topic.state.error.otherError', defaultMessage: 'Sorry, this topic has an error.  It says it is "{state}".' },
+  topicTooBig: { id: 'topic.state.error.topicTooBig', defaultMessage: 'Error, your topic is too big' },
+  topicTooBigDesc: { id: 'topic.state.error.topicTooBigDesc', defaultMessage: 'We limit the size of topics to make sure that our system doesn\'t get overrun with gathering content from the entire web.' },
+  topicTooBigInstructions: { id: 'topic.state.error.topicTooBigInstructions', defaultMessage: 'Try making a new topic with a more specific query or a smaller date range. Email us at support@mediacloud.org if you have questions' },
   trySpidering: { id: 'topic.state.trySpidering', defaultMessage: 'Manually run this topic' },
   updateMaxStories: { id: 'topic.state.updateMaxStories', defaultMessage: 'Increase Max Stories and Respider' },
   maxStories: { id: 'topic.state.maxStories', defaultMessage: 'Max Stories' },
+  otherErrorInstructions: { id: 'topic.state.error.otherErrorInstructions', defaultMessage: 'Email us at support@mediacloud.org if you have questions' },
 };
 
 class TopicContainer extends React.Component {
@@ -94,47 +98,70 @@ class TopicContainer extends React.Component {
             <Row>
               <Col lg={12}>
                 <div className="topic-stuck-created-or-error">
-                  <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
+                  <h1><FormattedMessage {...localMessages.topicTooBig} /></h1>
+                  <p><FormattedMessage {...localMessages.topicTooBigDesc} /></p>
                 </div>
               </Col>
             </Row>
-            <Row>
-              <Col lg={2}>
-                <input
-                  id="maxStories"
-                  ref={(input) => { this.textInputRef = input; }}
-                  label={formatMessage(localMessages.maxStories)}
-                  rows={1}
-                  placeholder={ADMIN_MAX_RECOMMENDED_STORIES}
-                />
-              </Col>
-              <Col lg={6}>
-                <AppButton
-                  label={formatMessage(localMessages.updateMaxStories)}
-                  onTouchTap={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo, this.textInputRef)}
-                  type="submit"
-                  primary
-                />
-              </Col>
-            </Row>
+            <Permissioned onlyTopic={PERMISSION_ADMIN}>
+              <Row>
+                <Col lg={2}>
+                  <input
+                    id="maxStories"
+                    ref={(input) => { this.textInputRef = input; }}
+                    label={formatMessage(localMessages.maxStories)}
+                    rows={1}
+                    placeholder={ADMIN_MAX_RECOMMENDED_STORIES}
+                  />
+                </Col>
+                <Col lg={6}>
+                  <AppButton
+                    label={formatMessage(localMessages.updateMaxStories)}
+                    onTouchTap={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo, this.textInputRef)}
+                    type="submit"
+                    primary
+                  />
+                </Col>
+              </Row>
+            </Permissioned>
+            <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
+              <Row>
+                <Col lg={12}>
+                  <div className="topic-stuck-created-or-error">
+                    <p><FormattedMessage {...localMessages.topicTooBigInstructions} /></p>
+                  </div>
+                </Col>
+              </Row>
+            </Permissioned>
           </Grid>
         );
       } else {
         contentToShow = (
           <Grid>
-            <Row>
-              <Col lg={12}>
-                <div className="topic-stuck-created-or-error">
-                  <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
-                  <AppButton
-                    label={formatMessage(localMessages.trySpidering)}
-                    onTouchTap={() => handleSpiderRequest(topicInfo.topics_id)}
-                    type="submit"
-                    color="primary"
-                  />
-                </div>
-              </Col>
-            </Row>
+            <Permissioned onlyTopic={PERMISSION_ADMIN}>
+              <Row>
+                <Col lg={12}>
+                  <div className="topic-stuck-created-or-error">
+                    <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
+                    <AppButton
+                      label={formatMessage(localMessages.trySpidering)}
+                      onTouchTap={() => handleSpiderRequest(topicInfo.topics_id)}
+                      type="submit"
+                      color="primary"
+                    />
+                  </div>
+                </Col>
+              </Row>
+            </Permissioned>
+            <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
+              <Row>
+                <Col lg={12}>
+                  <div className="topic-stuck-created-or-error">
+                    <p><FormattedMessage {...localMessages.otherErrorInstructions} /></p>
+                  </div>
+                </Col>
+              </Row>
+            </Permissioned>
           </Grid>
         );
       }

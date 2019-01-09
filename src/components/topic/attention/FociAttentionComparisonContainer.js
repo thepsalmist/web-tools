@@ -18,6 +18,7 @@ import { DownloadButton } from '../../common/IconButton';
 import messages from '../../../resources/messages';
 import { downloadSvg } from '../../util/svg';
 import { LINE_VIEW, STACKED_VIEW } from '../../../lib/visUtil';
+import { usPartisanshipColorFor } from '../snapshots/foci/builder/retweetPartisanship/RetweetStoryCountsPreviewContainer';
 
 const localMessages = {
   overallSeries: { id: 'topic.attention.series.overall', defaultMessage: 'Whole Topic' },
@@ -32,15 +33,27 @@ const COLORS = d3.schemeCategory10;
 const BUBBLE_CHART_DOM_ID = 'total-attention-bubble-chart';
 const TOP_N_LABELS_TO_SHOW = 3; // only the top N bubbles will get a label visible on them (so the text is readable)
 
+const setColorsByUsPartisanship = (series, nameProperty, colorProperty) => {
+  const newSeries = [...series];
+  for (let idx = 0; idx < series.length; idx += 1) {
+    try {
+      newSeries[idx][colorProperty] = usPartisanshipColorFor(series[idx][nameProperty]);
+    } catch (err) {
+      // don't do anything because it is probably the "all stories" item being an "unrecognized name" error
+    }
+  }
+  return newSeries;
+};
+
 class FociAttentionComparisonContainer extends React.Component {
   state = {
     view: LINE_VIEW,
   }
 
   componentWillReceiveProps(nextProps) {
-    const { selectedFocalSetId, filters, fetchData } = this.props;
-    if ((nextProps.selectedFocalSetId !== selectedFocalSetId) || (nextProps.filters.timespanId !== filters.timespanId)) {
-      fetchData(nextProps.topicId, nextProps.selectedFocalSetId, nextProps.filters);
+    const { selectedFocalSet, filters, fetchData } = this.props;
+    if ((nextProps.selectedFocalSet !== selectedFocalSet) || (nextProps.filters.timespanId !== filters.timespanId)) {
+      fetchData(nextProps.topicId, nextProps.selectedFocalSet.focal_sets_id, nextProps.filters);
     }
   }
 
@@ -49,7 +62,7 @@ class FociAttentionComparisonContainer extends React.Component {
   }
 
   render() {
-    const { foci, overallTotal, overallCounts, attentionAggregationMenuItems, selectedTimePeriod } = this.props;
+    const { foci, overallTotal, overallCounts, attentionAggregationMenuItems, selectedTimePeriod, selectedFocalSet } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
     // stich together bubble chart data
     const stackedAreaView = (
@@ -109,6 +122,11 @@ class FociAttentionComparisonContainer extends React.Component {
         });
       }
     }
+    // add custom colors if it is a retweetPartisanship set
+    if (selectedFocalSet.name === 'Retweet Partisanship') { // not very robust, but since it is just a boolean query set I don't think we have a better way to do this
+      bubbleData = setColorsByUsPartisanship(bubbleData, 'centerText', 'fill');
+      series = setColorsByUsPartisanship(series, 'name', 'color');
+    }
     return (
       <React.Fragment>
         <Row>
@@ -157,12 +175,13 @@ class FociAttentionComparisonContainer extends React.Component {
 FociAttentionComparisonContainer.propTypes = {
   // from parent
   filters: PropTypes.object.isRequired,
-  selectedFocalSetId: PropTypes.number.isRequired,
+  selectedFocalSet: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
+  useRetweetPartisanshipColors: PropTypes.bool,
   // from composition
   intl: PropTypes.object.isRequired,
   selectedTimePeriod: PropTypes.string.isRequired,
-  attentionAggregationMenuItems: PropTypes.object.isRequired, // from hoc
+  attentionAggregationMenuItems: PropTypes.array.isRequired, // from hoc
   // from dispatch
   fetchData: PropTypes.func.isRequired,
   // from mergeProps
@@ -196,7 +215,7 @@ const mapDispatchToProps = dispatch => ({
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
     asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.topicId, ownProps.selectedFocalSetId, ownProps.filters);
+      dispatchProps.fetchData(ownProps.topicId, ownProps.selectedFocalSet.focal_sets_id, ownProps.filters);
     },
   });
 }

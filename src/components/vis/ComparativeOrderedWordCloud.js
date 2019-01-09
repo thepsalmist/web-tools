@@ -39,7 +39,7 @@ const ComparativeOrderedWordCloud = (props) => {
     <div className="comparative-ordered-word-cloud">
       <Row>
         <Col lg={4}>
-          <h3>{leftTitleMsg}</h3>
+          <h4>{leftTitleMsg}</h4>
           <OrderedWordCloud
             words={left}
             alreadyNormalized
@@ -50,7 +50,7 @@ const ComparativeOrderedWordCloud = (props) => {
           />
         </Col>
         <Col lg={4}>
-          <h3>{centerTitleMsg}</h3>
+          <h4>{centerTitleMsg}</h4>
           <OrderedWordCloud
             words={center}
             alreadyNormalized
@@ -60,7 +60,7 @@ const ComparativeOrderedWordCloud = (props) => {
           />
         </Col>
         <Col lg={4}>
-          <h3>{rightTitleMsg}</h3>
+          <h4>{rightTitleMsg}</h4>
           <OrderedWordCloud
             words={right}
             alreadyNormalized

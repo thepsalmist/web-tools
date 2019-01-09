@@ -20,12 +20,17 @@ const localMessages = {
   help: { id: 'explorer.geo.help',
     defaultMessage: '<p>Sometimes media coverage can differ based on the place being talked about. Digging into the <i>geography</i> of the coverage can provide clues to help you understand the narratives. This heatmap shows you the countries that were most often the focus of stories. Click a country to load an Explorer search showing you how the sources in this collection cover it.</p>' },
   descriptionIntro: { id: 'explorer.geo.help.title', defaultMessage: 'About Geographic Attention' },
-  downloadCsv: { id: 'explorer.geo.downloadCsv', defaultMessage: 'Download { name } geographic attention CSV' },
+  downloadCsv: { id: 'explorer.geo.downloadCsv', defaultMessage: 'Download { name } Top Countries CSV' },
+  downloadTopPlacesCsv: { id: 'explorer.geo.downloadTopCsv', defaultMessage: 'Download { name } Top Places (city, state, or country) CSV' },
 };
 
 class QueryGeoResultsContainer extends React.Component {
   downloadCsv = (query) => {
     postToDownloadUrl('/api/explorer/geography/geography.csv', query);
+  }
+
+  downloadTopPlacesCsv = (query) => {
+    postToDownloadUrl('/api/explorer/geography/topplaces.csv', query);
   }
 
   render() {
@@ -70,6 +75,17 @@ class QueryGeoResultsContainer extends React.Component {
             >
               <ListItemText>
                 <FormattedMessage {...localMessages.downloadCsv} values={{ name: queries[selectedTabIndex].label }} />
+              </ListItemText>
+              <ListItemIcon>
+                <DownloadButton />
+              </ListItemIcon>
+            </MenuItem>
+            <MenuItem
+              className="action-icon-menu-item"
+              onClick={() => this.downloadTopPlacesCsv(queries[selectedTabIndex])}
+            >
+              <ListItemText>
+                <FormattedMessage {...localMessages.downloadTopPlacesCsv} values={{ name: queries[selectedTabIndex].label }} />
               </ListItemText>
               <ListItemIcon>
                 <DownloadButton />

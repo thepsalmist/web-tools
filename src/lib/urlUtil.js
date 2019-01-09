@@ -41,6 +41,10 @@ export function urlToExplorer(param) {
   return `https://explorer.mediacloud.org/#/${param}`;
 }
 
+export function urlToTools(param) {
+  return `https://tools.mediacloud.org/#/${param}`;
+}
+
 export function urlToExplorerQuery(name, keywords, sourceIds, collectionIds, startDate, endDate) {
   const color = encodeURIComponent(`#${getBrandDarkerColor().substr(1)}`);
   let sources = sourceIds || [];

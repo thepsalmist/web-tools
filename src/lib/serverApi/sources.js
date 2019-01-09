@@ -203,3 +203,7 @@ export function fetchSourceReviewInfo(mediaId) {
 export function fetchGeoCollectionsByCountry() {
   return createApiPromise('/api/collection/set/geo-by-country');
 }
+
+export function sourceFeedRecentStories(feedId) {
+  return createApiPromise(`/api/sources/feeds/${feedId}/recent-stories`);
+}

@@ -79,5 +79,21 @@ def explorer_geo_csv():
         filename = file_name_for_download(query_object['label'], filename)
     data = apicache.top_tags_with_coverage(solr_q, solr_fq, tags.GEO_TAG_SET)
     data['results'] = _filter_for_countries(data['results'])
+    props = ['tags_id', 'label', 'geonamesId', 'count', 'pct', 'alpha3', 'iso-a2']
+    return csv.stream_response(data['results'], props, filename)
+
+
+@app.route('/api/explorer/geography/topplaces.csv', methods=['POST'])
+@api_error_handler
+def explorer_top_places_csv():
+    filename = u'-top-places'
+    data = request.form
+    if 'searchId' in data:
+        solr_q, solr_fq = parse_as_sample(data['searchId'], data['index'])
+    else:
+        query_object = json.loads(data['q'])
+        solr_q, solr_fq = parse_query_with_keywords(query_object)
+        filename = file_name_for_download(query_object['label'], filename)
+    data = apicache.top_tags_with_coverage(solr_q, solr_fq, tags.GEO_TAG_SET)
     props = ['label', 'count', 'pct', 'alpha3', 'iso-a2', 'geonamesId', 'tags_id', 'tag']
     return csv.stream_response(data['results'], props, filename)

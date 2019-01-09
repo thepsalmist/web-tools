@@ -174,6 +174,7 @@ const messages = {
   downloadSVG: { id: 'downloadSVG', defaultMessage: 'Download a SVG' },
   downloadCSV: { id: 'downloadCSV', defaultMessage: 'Download a CSV' },
   downloadOptions: { id: 'downloadOptions', defaultMessage: 'Download Options...' },
+  options: { id: 'options', defaultMessage: 'Options...' },
   viewOptions: { id: 'viewOptions', defaultMessage: 'View Options...' },
   viewSampleOptions: { id: 'viewSampleOptions', defaultMessage: 'Change Sample Sizes...' },
   favorite: { id: 'favorite', defaultMessage: 'Star' },
@@ -215,6 +216,7 @@ const messages = {
   userSignup: { id: 'user.signup', defaultMessage: 'Sign Up' },
   userFullName: { id: 'user.fullName', defaultMessage: 'Full Name' },
   userNotes: { id: 'user.notes', defaultMessage: 'Notes' },
+  userPermissions: { id: 'user.permissions', defaultMessage: 'Permissions' },
   passwordsMismatch: { id: 'user.mismatchPassword', defaultMessage: 'Passwords do not match.' },
   passwordTooShort: { id: 'user.passwordTooShort', defaultMessage: 'Passwords must be at least 8 characters long.' },
 

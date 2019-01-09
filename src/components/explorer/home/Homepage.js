@@ -11,7 +11,7 @@ import SearchForm from './SearchForm';
 import SampleSearchContainer from './SampleSearchContainer';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
 import { getUserRoles, hasPermissions, PERMISSION_LOGGED_IN } from '../../../lib/auth';
-import { DEFAULT_COLLECTION_OBJECT_ARRAY, generateQueryParamString, autoMagicQueryLabel } from '../../../lib/explorerUtil';
+import { DEFAULT_COLLECTION, autoMagicQueryLabel, serializeQueriesForUrl } from '../../../lib/explorerUtil';
 import { emptyString } from '../../../lib/formValidators';
 import ExplorerMarketingFeatureList from './ExplorerMarketingFeatureList';
 import SystemStatsContainer from '../../common/statbar/SystemStatsContainer';
@@ -99,15 +99,14 @@ const mapDispatchToProps = dispatch => ({
         startDate: solrFormat(defaultDates.start),
         endDate: solrFormat(defaultDates.end),
         color: schemeCategory10[0],
-        collections: DEFAULT_COLLECTION_OBJECT_ARRAY,
+        collections: [DEFAULT_COLLECTION],
         sources: [],
       }];
       queries[0].label = autoMagicQueryLabel(queries[0]);
-      const queryStr = generateQueryParamString(queries);
-      urlParamString = `search?q=${queryStr}`;
+      urlParamString = `search?qs=${serializeQueriesForUrl(queries)}`;
     } else {
-      const queryStr = `[{"q":"${encodeURIComponent(keyword)}"}]`;
-      urlParamString = `demo/search?q=${queryStr}`;
+      const queries = [{ q: keyword }];
+      urlParamString = `demo/search?qs=${serializeQueriesForUrl(queries)}`;
     }
     dispatch(push(`/queries/${urlParamString}&auto=true`));
   },

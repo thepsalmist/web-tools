@@ -42,6 +42,7 @@ const localMessages = {
   removeTitle: { id: 'story.details.remove', defaultMessage: 'Remove from Next Snapshot' },
   removeAbout: { id: 'story.details.remove.about', defaultMessage: 'If story is clearly not related to the Topic, or is messing up your analysis, you can remove it from the next Snapshot.  Be careful, because this means it won\'t show up anywhere on the new Snapshot you generate.' },
   unknownLanguage: { id: 'story.details.language.unknown', defaultMessage: 'Unknown' },
+  toolStoryManagement: { id: 'story.details.manage', defaultMessage: 'Go To Story Management' },
   editStory: { id: 'story.details.edit', defaultMessage: 'Edit This Story' },
   readStory: { id: 'story.details.read', defaultMessage: 'Read at Original URL' },
   removeStory: { id: 'story.details.remove', defaultMessage: 'Remove From Topic' },
@@ -99,7 +100,7 @@ class StoryContainer extends React.Component {
                     </MenuItem>
                   </Permissioned>
                   <Permissioned onlyRole={PERMISSION_STORY_EDIT}>
-                    <MenuItem onClick={() => handleStoryEditClick(topicId, storiesId, filters)}>
+                    <MenuItem onClick={() => handleStoryEditClick(storiesId)}>
                       <ListItemText><FormattedMessage {...localMessages.editStory} /></ListItemText>
                       <ListItemIcon><EditButton tooltip={formatMessage(localMessages.editStory)} /></ListItemIcon>
                     </MenuItem>
@@ -239,8 +240,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleStoryCachedTextClick: (topicId, storiesId, filters) => {
     dispatch(push(filteredLinkTo(`topics/${topicId}/stories/${storiesId}/cached`, filters)));
   },
-  handleStoryEditClick: (topicId, storiesId, filters) => {
-    dispatch(push(filteredLinkTo(`topics/${topicId}/stories/${storiesId}/update`, filters)));
+  handleStoryEditClick: (storiesId) => {
+    dispatch(push(`admin/story/${storiesId}/update`)); // to admin page
   },
 });
 

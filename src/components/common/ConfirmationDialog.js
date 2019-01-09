@@ -22,10 +22,12 @@ class ConfirmationDialog extends React.Component {
     const { open, title, children, okText } = this.props;
     const actions = [
       <AppButton
+        key={1}
         label="Cancel"
         onTouchTap={this.handleCancel}
       />,
       <AppButton
+        key={2}
         label={okText}
         primary
         onTouchTap={this.handleOk}

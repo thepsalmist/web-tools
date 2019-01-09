@@ -7,9 +7,12 @@ import UserMenuContainer from './UserMenuContainer';
 import SourcesAppMenu from './SourcesAppMenu';
 import TopicsAppMenu from './TopicsAppMenu';
 import ExplorerAppMenu from './ExplorerAppMenu';
+import AdminAppMenu from './AdminAppMenu';
 import { assetUrl } from '../../../lib/assetUtil';
 import RecentNewsMenuContainer from '../news/RecentNewsMenuContainer';
 import AppButton from '../AppButton';
+import Permissioned from '../Permissioned';
+import { PERMISSION_ADMIN } from '../../../lib/auth';
 
 export const TOPICS_URL = 'https://topics.mediacloud.org/';
 export const EXPLORER_URL = 'https://explorer.mediacloud.org/';
@@ -19,6 +22,7 @@ const SUPPORT_URL = 'https://mediacloud.org/tools/';
 
 const localMessages = {
   goHome: { id: 'nav.home', defaultMessage: 'Home' },
+  admin: { id: 'nav.admin', defaultMessage: 'Admin' },
   support: { id: 'nav.support', defaultMessage: 'Support' },
   about: { id: 'nav.about', defaultMessage: 'About' },
 };
@@ -57,6 +61,11 @@ const NavToolbar = (props) => {
           </Col>
           <Col lg={6}>
             <ul className="right">
+              <Permissioned onlyRole={PERMISSION_ADMIN}>
+                <li className="admin">
+                  <AdminAppMenu />
+                </li>
+              </Permissioned>
               <li className="support">
                 <AppButton
                   variant="text"

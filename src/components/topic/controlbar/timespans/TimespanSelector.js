@@ -52,6 +52,7 @@ const TimespanSelector = (props) => {
             endDate={latestTimespanEnd}
             onTimespanSelected={onTimespanSelected}
             selectedTimespan={selectedTimespan}
+            period={selectedPeriod}
           />
         </Col>
       </Row>

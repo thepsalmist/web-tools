@@ -10,6 +10,16 @@ import BubbleRowChart from '../../../../../vis/BubbleRowChart';
 // @see http://colorbrewer2.org/#type=diverging&scheme=RdBu&n=5
 const PARTISANSHIP_COLORS = ['#0571b0', '#92c5de', '#666666', '#f4a582', '#ca0020'];
 
+export function usPartisanshipColorFor(name) {
+  if (name.toLowerCase() === 'left') return PARTISANSHIP_COLORS[0];
+  if (name.toLowerCase() === 'center left') return PARTISANSHIP_COLORS[1];
+  if (name.toLowerCase() === 'center') return PARTISANSHIP_COLORS[2];
+  if (name.toLowerCase() === 'center right') return PARTISANSHIP_COLORS[3];
+  if (name.toLowerCase() === 'right') return PARTISANSHIP_COLORS[4];
+  const error = { message: 'Unknown US partisanship name' };
+  throw error;
+}
+
 const BUBBLE_CHART_DOM_ID = 'focalSetCreatePreviewRetweetPartisanshipCounts';
 
 const localMessages = {

@@ -177,6 +177,7 @@ def index():
 # now load in the appropriate view endpoints, after the app has been initialized
 import server.views.user
 import server.views.app
+import server.views.admin.users
 import server.views.download
 import server.views.stories
 import server.views.media_search

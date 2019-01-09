@@ -69,7 +69,7 @@ def demo_top_tags_with_coverage(tag_sets_id,):
 @api_error_handler
 def explorer_entities_csv(tag_sets_id):
     tag_set = apicache.tag_set(tag_sets_id)
-    filename = u'sampled-{}'.format(tag_set['label'])
+    filename = 'sampled-{}'.format(tag_set['label'])
     data = request.form
     if 'searchId' in data:
         solr_q, solr_fq = parse_as_sample(data['searchId'], data['index'])

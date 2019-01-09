@@ -29,7 +29,7 @@ def get_top_countries_by_story_tag_counts(topics_id, num_countries):
     
     # make sure the geo tag is in the geo_tags whitelist (is a country)
     country_tag_counts = [r for r in top_geo_tags if
-                          int(r['tag'].split('_')[1]) in COUNTRY_GEONAMES_ID_TO_APLHA3.keys()]
+                          int(r['tag'].split('_')[1]) in list(COUNTRY_GEONAMES_ID_TO_APLHA3.keys())]
     country_tag_counts = country_tag_counts[:num_countries]
 
     # for each country, set up the requisite info for UI
@@ -90,7 +90,7 @@ def create_top_countries_focal_set(topics_id):
     for tag in country_data:
         params = {
             'name': tag['label'],
-            'description': u"Stories about {}".format(tag['label']),
+            'description': "Stories about {}".format(tag['label']),
             'query': "tags_id_stories:{}".format(tag['tags_id']),
             'focal_set_definitions_id': new_focal_set['focal_set_definitions_id'],
         }

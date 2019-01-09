@@ -238,7 +238,7 @@ def topic_search():
     search_str = request.args['searchStr']
     user_mc = user_admin_mediacloud_client()
     matching_topics = user_mc.topicList(name=search_str, limit=15)
-    results = map(lambda x: {'name': x['name'], 'id': x['topics_id']}, matching_topics['topics'])
+    results = [{'name': x['name'], 'id': x['topics_id']} for x in matching_topics['topics']]
     return jsonify({'topics': results})
 
 
@@ -247,7 +247,7 @@ def grab_timespan_embeddings(api_key, topics_id, args, overall_words, overall_em
     ts_word_counts = _cached_topic_word_counts(api_key, topics_id, num_words=250, timespans_id=int(ts['timespans_id']), **args)
 
     # Remove any words not in top words overall
-    ts_word_counts = filter(lambda x: x['term'] in overall_words, ts_word_counts)
+    ts_word_counts = [x for x in ts_word_counts if x['term'] in overall_words]
 
     # Replace specific timespan embeddings with overall so coordinates are consistent
     for word in ts_word_counts:

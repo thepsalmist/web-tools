@@ -39,7 +39,7 @@ def access_public_topic(topics_id):
 # helper for preview queries
 #tags_id is either a string or a list, which is handled in either case by the len() test. ALL_MEDIA is the exception
 def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
-    query = u'({})'.format(solr_seed_query)
+    query = '({})'.format(solr_seed_query)
 
     #if isinstance(tags_ids, basestring) or isinstance(tags_ids, list):
     if len(media_ids) > 0 or len(tags_ids) > 0:
@@ -48,9 +48,9 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
         query += " AND ("
         # add in the media sources they specified
         if len(media_ids) > 0:
-            media_ids = media_ids.split(',') if isinstance(media_ids, basestring) else media_ids
-            query_media_ids = u" ".join([str(m) for m in media_ids])
-            query_media_ids = u" media_id:({})".format(query_media_ids)
+            media_ids = media_ids.split(',') if isinstance(media_ids, str) else media_ids
+            query_media_ids = " ".join([str(m) for m in media_ids])
+            query_media_ids = " media_id:({})".format(query_media_ids)
             query += '('+query_media_ids+')'
 
         # conjunction
@@ -61,20 +61,20 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
         if len(tags_ids) == 0:
             tags_ids = []
         else:
-            tags_ids = tags_ids.split(',') if isinstance(tags_ids, basestring) else tags_ids
-            query_tags_ids = u" ".join([str(t) for t in tags_ids])
-            query_tags_ids = u" tags_id_media:({})".format(query_tags_ids)
-            query += u'('+query_tags_ids+')'
+            tags_ids = tags_ids.split(',') if isinstance(tags_ids, str) else tags_ids
+            query_tags_ids = " ".join([str(t) for t in tags_ids])
+            query_tags_ids = " tags_id_media:({})".format(query_tags_ids)
+            query += '('+query_tags_ids+')'
         query += ')'
 
     return query
 
 
 def concatenate_query_and_dates(start_date, end_date):
-    date_query = u""
+    date_query = ""
     if start_date:
-        testa = datetime.datetime.strptime(start_date, u'%Y-%m-%d').date()
-        testb = datetime.datetime.strptime(end_date, u'%Y-%m-%d').date()
+        testa = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+        testb = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
         date_query = mc.publish_date_query(testa, testb, True, True)
     return date_query
 
@@ -107,13 +107,13 @@ def parse_query_with_keywords(args):
         media_ids = []
 
         if 'sources' in args:
-            if isinstance(args['sources'], basestring):
+            if isinstance(args['sources'], str):
                 media_ids = args['sources'].split(',') if 'sources' in args and len(args['sources']) > 0 else []
             else:
                 media_ids = args['sources']
 
         if 'collections' in args:
-            if isinstance(args['collections'], basestring):
+            if isinstance(args['collections'], str):
                 if len(args['collections']) == 0:
                     tags_ids = []
                 else:
@@ -182,4 +182,4 @@ def file_name_for_download(label, type_of_download):
     length_limited_label = label
     if len(label) > 30:
         length_limited_label = label[:30]
-    return u'{}-{}'.format(slugify(length_limited_label), type_of_download)
+    return '{}-{}'.format(slugify(length_limited_label), type_of_download)

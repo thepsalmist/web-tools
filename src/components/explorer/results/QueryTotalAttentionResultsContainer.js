@@ -55,7 +55,7 @@ class QueryTotalAttentionResultsContainer extends React.Component {
     if (safeResults) {
       let bubbleData = [];
       bubbleData = safeResults.map((query, idx) => {
-        const value = (this.state.view === VIEW_REGULAR) ? query.total : query.ratio;
+        const value = (this.state.view === VIEW_REGULAR) ? query.results.total : query.results.ratio;
         let centerText;
         if (this.state.view === VIEW_REGULAR) {
           centerText = formatNumber(value);

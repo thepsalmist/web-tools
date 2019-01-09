@@ -40,17 +40,23 @@ export function replaceCurlyQuotes(stringWithQuotes) {
   removedQuotes = removedQuotes.replace(/[\u201C]/g, '"').replace(/[\u201D]/g, '"'); // replace double curly quotes
   return removedQuotes;
 }
+/* deletions, duplications and new queries shouldn't be shown in results until they have fetched results */
+export function ensureSafeSortedQueries(queries) {
+  const unDeletedQueries = queries.filter(q => q.deleted !== true);
+  return unDeletedQueries.filter(q => q.new !== true).sort((a, b) => a.sortPosition - b.sortPosition);
+}
 
 /* deletions, duplications and new queries may result in an intermediate state in which the results and queries are not yet in alignment. Use
-this function to handle these cases */
+this function to handle these cases. sort resutls according to query sortPositions */
 export function ensureSafeResults(queries, results) {
   const unDeletedQueries = queries.filter(q => q.deleted !== true);
-  const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
   let safeQueryWithResults = null;
+
   if (results !== undefined && results !== null && results.length > 0) {
-    safeQueryWithResults = nonEmptyQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid)));
-    safeQueryWithResults = Object.values(safeQueryWithResults);
-    const allQueriesHaveResults = safeQueryWithResults.filter(q => q.results);
+    safeQueryWithResults = unDeletedQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid)));
+    const nonEmptyQueries = safeQueryWithResults.filter(q => q.q !== undefined && q.results && q.results !== undefined);
+    safeQueryWithResults = Object.values(nonEmptyQueries).sort((a, b) => a.sortPosition - b.sortPosition);
+    const allQueriesHaveResults = safeQueryWithResults.filter(q => q.results); // trying to handle not-yet fetched queries (dupes/new)
     return allQueriesHaveResults.length === safeQueryWithResults.length ? safeQueryWithResults : [];
   }
   return [];

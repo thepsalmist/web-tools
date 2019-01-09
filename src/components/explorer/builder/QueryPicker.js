@@ -224,14 +224,13 @@ class QueryPicker extends React.Component {
           dateObj.start = unDeletedQueries[unDeletedQueries.length - 1].startDate;
           dateObj.end = unDeletedQueries[unDeletedQueries.length - 1].endDate;
         }
-        const newIndex = queries.length; // all queries, including 'deleted' ones
         const newUid = Math.floor((Math.random() * 100) + 1); // all queries, including 'deleted' ones
         const newPosition = queries.length;
-        const genDefColor = colorPallette(newIndex);
-        const newQueryLabel = `Query ${String.fromCharCode('A'.charCodeAt(0) + newIndex)}`;
+        const genDefColor = colorPallette(newPosition);
+        const newQueryLabel = `Query ${String.fromCharCode('A'.charCodeAt(0) + newPosition)}`;
         const defaultQueryField = '';
-        const defaultDemoQuery = { uid: newUid, sortPosition: newPosition, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
-        const defaultQuery = { uid: newUid, sortPosition: newPosition, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: [], sources: [], color: genDefColor, autoNaming: true };
+        const defaultDemoQuery = { uid: newUid, sortPosition: newPosition, new: true, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
+        const defaultQuery = { uid: newUid, sortPosition: newPosition, new: true, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: [], sources: [], color: genDefColor, autoNaming: true };
 
         const emptyQuerySlide = (
           <div key={fixedQuerySlides.length}>
@@ -446,7 +445,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
   },
   handleDuplicateQuery: (query) => {
-    const dupeQuery = Object.assign({}, query, { uid: Math.floor((Math.random() * 100) + 1), sortPosition: query.sortPosition + 1 }); // what is the index?
+    const dupeQuery = Object.assign({}, query, { uid: Math.floor((Math.random() * 10000) + 1), sortPosition: query.sortPosition + 1, results: undefined, new: true }); // what is the index?
     if (query) {
       dispatch(addCustomQuery(dupeQuery));
       dispatch(selectQuery(dupeQuery));

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import TabSelector from '../../common/TabSelector';
-import { queryChangedEnoughToUpdate, ensureSafeResults, ensureSafeTabIndex } from '../../../lib/explorerUtil';
+import { queryChangedEnoughToUpdate, ensureSafeResults, ensureSafeTabIndex, ensureSafeSortedQueries } from '../../../lib/explorerUtil';
 
 function withQueryResults(ChildComponent) {
   class QueryResultsSelector extends React.Component {
@@ -27,7 +27,7 @@ function withQueryResults(ChildComponent) {
         this.setState({ selectedQueryTabIndex: nextProps.queries.length - 1 });
       }
       const childShouldUpdate = (shouldUpdate && shouldUpdate(nextProps));
-      return childShouldUpdate || defaultShouldUpdate || tabIndexNotValid;
+      return childShouldUpdate || defaultShouldUpdate;
     }
 
     getUidFromTabSelection(idx) {
@@ -39,18 +39,19 @@ function withQueryResults(ChildComponent) {
 
     render() {
       const { queries, results } = this.props;
-      const sortedQueries = queries.sort((a, b) => a.sortPosition - b.sortPosition);
-      const safeResults = ensureSafeResults(queries, results);
-      const safeIndex = ensureSafeTabIndex(queries, this.state.selectedQueryTabIndex);
-      const tabSelector = <TabSelector onViewSelected={idx => this.getUidFromTabSelection(idx)} tabLabels={sortedQueries} />;
+      const sortedSafeQueries = ensureSafeSortedQueries(queries);
+      const safeResults = ensureSafeResults(sortedSafeQueries, results);
+      const safeIndex = ensureSafeTabIndex(sortedSafeQueries, this.state.selectedQueryTabIndex);
+      const tabSelector = <TabSelector onViewSelected={idx => this.getUidFromTabSelection(idx)} tabLabels={sortedSafeQueries} />;
       return (
         <div className="query-results-selector">
           <ChildComponent
             {...this.props}
+            safeSortedQueries={sortedSafeQueries}
             results={safeResults}
-            selectedTabIndex={this.state.selectedQueryTabIndex}
+            selectedTabIndex={safeIndex}
             selectedQueryUid={this.state.selectedQueryUid}
-            selectedQuery={sortedQueries[safeIndex]}
+            selectedQuery={sortedSafeQueries[safeIndex]}
             tabSelector={tabSelector}
           />
         </div>

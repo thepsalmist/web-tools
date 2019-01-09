@@ -126,6 +126,9 @@ export const deleteUserSearch = createAsyncAction(DELETE_USER_SEARCH, api.delete
 export const MARK_AS_DELETED_QUERY = 'MARK_AS_DELETED_QUERY';
 export const markAsDeletedQuery = createAction(MARK_AS_DELETED_QUERY);
 
+export const REMOVE_NEW_STATUS = 'REMOVE_NEW_STATUS';
+export const removeNewStatusFromQueries = createAction(REMOVE_NEW_STATUS, params => params);
+
 export const REMOVE_DELETED_QUERIES = 'REMOVE_DELETED_QUERIES';
 export const removeDeletedQueries = createAction(REMOVE_DELETED_QUERIES);
 

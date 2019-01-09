@@ -81,7 +81,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
     if (safeResults) {
       series = [
         ...safeResults.map((query, idx) => { // add series for all the results
-          if (query.results.counts || query.results.normalizedCounts) {
+          if (query.results && (query.results.counts || query.results.normalizedCounts)) {
             let data;
             if (this.state.view === VIEW_NORMALIZED) {
               data = dataAsSeries(query.results.counts, 'ratio');

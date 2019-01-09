@@ -1,4 +1,4 @@
-import { UPDATE_QUERY, UPDATE_QUERY_COLLECTION_LOOKUP_INFO, UPDATE_QUERY_SOURCE_LOOKUP_INFO, ADD_CUSTOM_QUERY, SELECT_SEARCH_BY_ID, SELECT_SEARCH_BY_PARAMS, MARK_AS_DELETED_QUERY, RESET_QUERIES, REMOVE_DELETED_QUERIES, COPY_AND_REPLACE_QUERY_FIELD } from '../../../actions/explorerActions';
+import { UPDATE_QUERY, UPDATE_QUERY_COLLECTION_LOOKUP_INFO, UPDATE_QUERY_SOURCE_LOOKUP_INFO, ADD_CUSTOM_QUERY, SELECT_SEARCH_BY_ID, SELECT_SEARCH_BY_PARAMS, MARK_AS_DELETED_QUERY, RESET_QUERIES, REMOVE_DELETED_QUERIES, COPY_AND_REPLACE_QUERY_FIELD, REMOVE_NEW_STATUS } from '../../../actions/explorerActions';
 import { autoMagicQueryLabel } from '../../../lib/explorerUtil';
 
 const INITIAL_STATE = [];
@@ -88,6 +88,10 @@ function queries(state = INITIAL_STATE, action) {
         return updatedState;
       }
       return state;
+    case REMOVE_NEW_STATUS:
+      const queryData = [...state.map(q => Object.assign({}, q, { new: false }))];
+      updatedState = queryData;
+      return updatedState;
     case REMOVE_DELETED_QUERIES:
       return state.filter(q => !q.deleted);
     case RESET_QUERIES:

@@ -185,7 +185,7 @@ function composeUrlBasedQueryContainer() {
       render() {
         const { queries } = this.props;
         let content;
-        const sortedQueries = queries.sort((a, b) => a.uid - b.uid);
+        const sortedQueries = queries.sort((a, b) => a.sortPosition - b.sortPosition);
         if (this.state.queryInStore) {
           content = <ChildComponent {...this.props} queries={sortedQueries} />;
         } else {

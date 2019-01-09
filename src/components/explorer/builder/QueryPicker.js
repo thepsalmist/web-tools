@@ -224,8 +224,8 @@ class QueryPicker extends React.Component {
           dateObj.start = unDeletedQueries[unDeletedQueries.length - 1].startDate;
           dateObj.end = unDeletedQueries[unDeletedQueries.length - 1].endDate;
         }
-        const newUid = Math.floor((Math.random() * 100) + 1); // all queries, including 'deleted' ones
-        const newPosition = queries.length;
+        const newUid = Math.floor((Math.random() * 10000) + 1);
+        const newPosition = queries.reduce((a, b) => (a.sortPosition > b.sortPosition ? a : b)).sortPosition + 1;
         const genDefColor = colorPallette(newPosition);
         const newQueryLabel = `Query ${String.fromCharCode('A'.charCodeAt(0) + newPosition)}`;
         const defaultQueryField = '';

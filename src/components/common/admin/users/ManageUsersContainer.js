@@ -5,6 +5,7 @@ import UserSearchForm from './UserSearchForm';
 import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import Permissioned from '../../Permissioned';
 import UserListcontainer from './UserListContainer';
+import PageTitle from '../../PageTitle';
 
 const localMessages = {
   userTitle: { id: 'user.all.title', defaultMessage: 'Manage Users' },
@@ -19,6 +20,7 @@ class ManageUsersContainer extends React.Component {
   render() {
     return (
       <Grid>
+        <PageTitle value={localMessages.userTitle} />
         <Permissioned onlyRole={PERMISSION_ADMIN}>
           <Row>
             <h1>

@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { push } from 'react-router-redux';
 import Dialog from '@material-ui/core/Dialog';
@@ -34,11 +33,11 @@ import StatBar from '../../common/statbar/StatBar';
 import AppButton from '../../common/AppButton';
 import { urlToTopicMapper } from '../../../lib/urlUtil';
 import { filteredLinkTo } from '../../util/location';
+import TopicPageTitle from '../TopicPageTitle';
 
 const MAX_STORY_TITLE_LENGTH = 70; // story titles longer than this will be trimmed and ellipses added
 
 const localMessages = {
-  mainTitle: { id: 'story.details.mainTitle', defaultMessage: 'Story: {title} | {topicName} | Topic Manager | Media Cloud' },
   removeTitle: { id: 'story.details.remove', defaultMessage: 'Remove from Next Snapshot' },
   removeAbout: { id: 'story.details.remove.about', defaultMessage: 'If story is clearly not related to the Topic, or is messing up your analysis, you can remove it from the next Snapshot.  Be careful, because this means it won\'t show up anywhere on the new Snapshot you generate.' },
   unknownLanguage: { id: 'story.details.language.unknown', defaultMessage: 'Unknown' },
@@ -81,7 +80,7 @@ class StoryContainer extends React.Component {
     }
     return (
       <div>
-        <Helmet><title>{formatMessage(localMessages.mainTitle, { title: displayTitle, topicName })}</title></Helmet>
+        <TopicPageTitle value={storyInfo.title} />
         <Grid>
           <Row>
             <Col lg={12}>

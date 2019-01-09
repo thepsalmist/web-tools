@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { push, replace } from 'react-router-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { injectIntl, FormattedMessage } from 'react-intl';
@@ -20,7 +19,7 @@ import TopicHeaderContainer from './TopicHeaderContainer';
 import Permissioned from '../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../lib/auth';
 import { ADMIN_MAX_RECOMMENDED_STORIES, MAX_RECOMMENDED_STORIES } from '../../lib/formValidators';
-import messages from '../../resources/messages';
+import PageTitle from '../common/PageTitle';
 
 const localMessages = {
   needsSnapshotWarning: { id: 'needSnapshot.warning', defaultMessage: 'You\'ve made changes to your Topic that require a new snapshot to be generated!' },
@@ -186,11 +185,9 @@ class TopicContainer extends React.Component {
     }
     return (
       <div className="topic-container">
-        <div>
-          <Helmet><title>{`${topicInfo.name} | ${formatMessage(messages.topicsToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
-          <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} filters={filters} />
-          {contentToShow}
-        </div>
+        <PageTitle value={topicInfo.name} />
+        <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} filters={filters} />
+        {contentToShow}
       </div>
     );
   }

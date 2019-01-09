@@ -12,6 +12,8 @@ import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import Permissioned from '../../common/Permissioned';
 import { nullOrUndefined } from '../../../lib/formValidators';
 import FETCH_SUCCEEDED from '../../../lib/fetchConstants';
+import PageTitle from '../../common/PageTitle';
+import messages from '../../../resources/messages';
 
 const localMessages = {
   mainTitle: { id: 'collection.mainTitle', defaultMessage: 'Modify this Collection' },
@@ -33,6 +35,7 @@ const EditCollectionContainer = (props) => {
   };
   return (
     <div className="edit-collection">
+      <PageTitle value={[messages.edit, collection.label]} />
       <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
         <Grid>
           <Row>

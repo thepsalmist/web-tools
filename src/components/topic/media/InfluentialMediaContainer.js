@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
@@ -15,6 +14,7 @@ import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import { pagedAndSortedLocation } from '../../util/location';
 import withPaging from '../../common/hocs/PagedContainer';
 import MediaSourceIcon from '../../common/icons/MediaSourceIcon';
+import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
   title: { id: 'topic.influentialMedia.title', defaultMessage: 'Influential Media' },
@@ -44,12 +44,11 @@ class InfluentialMediaContainer extends React.Component {
   render() {
     const { media, sort, topicId, previousButton, nextButton } = this.props;
     const { formatMessage } = this.props.intl;
-    const titleHandler = parentTitle => `${formatMessage(localMessages.title)} | ${parentTitle}`;
     return (
       <Grid>
         <Row>
           <Col lg={12} md={12} sm={12}>
-            <Helmet><title>{titleHandler()}</title></Helmet>
+            <TopicPageTitle value={localMessages.title} />
             <TopicSourceSearchContainer topicId={topicId} showSearch />
             <DataCard border={false}>
               <div className="actions">

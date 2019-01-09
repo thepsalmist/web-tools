@@ -9,6 +9,7 @@ import { updateFeedback } from '../../../../actions/appActions';
 import UserForm from './UserForm';
 import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import Permissioned from '../../Permissioned';
+import PageTitle from '../../PageTitle';
 
 const localMessages = {
   userTitle: { id: 'user.details.title', defaultMessage: '{name}: ' },
@@ -36,6 +37,7 @@ const UpdateUserContainer = (props) => {
   }
   return (
     <Grid className="details user-details">
+      <PageTitle value={localMessages.updateTitle} />
       <h1>
         <FormattedMessage {...localMessages.updateTitle} />
       </h1>

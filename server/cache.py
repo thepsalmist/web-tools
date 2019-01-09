@@ -18,17 +18,17 @@ cache = make_region().configure(
 def key_generator(namespace, fn, to_str=compat.string_type):
     # can't use the default dogpile.cache one because it doesn't respect keyworded args
     if namespace is None:
-        namespace = u'%s:%s' % (fn.__module__, fn.__name__)
+        namespace = '%s:%s' % (fn.__module__, fn.__name__)
     else:
-        namespace = u'%s:%s|%s' % (fn.__module__, fn.__name__, namespace)
+        namespace = '%s:%s|%s' % (fn.__module__, fn.__name__, namespace)
 
     args = inspect.getargspec(fn)
     has_self = args[0] and args[0][0] in ('self', 'cls')
 
     def generate_key(*fn_args, **kw):
-        kw_keys = [u"{}_{}".format(k, v) for k, v in kw.iteritems()]
+        kw_keys = ["{}_{}".format(k, v) for k, v in kw.items()]
         if has_self:
             fn_args = fn_args[1:]
-        fn_args_as_strings = [u"{}".format(arg) for arg in fn_args]
-        return namespace + u"|" + u" ".join(fn_args_as_strings + kw_keys)
+        fn_args_as_strings = ["{}".format(arg) for arg in fn_args]
+        return namespace + "|" + " ".join(fn_args_as_strings + kw_keys)
     return generate_key

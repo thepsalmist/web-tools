@@ -61,7 +61,7 @@ def retweet_partisanship_coverage(topics_id):
 def _cached_media_tags(tag_sets_id):
     partisanship_tags = tags_in_tag_set(TOOL_API_KEY, tag_sets_id)
     for tag in partisanship_tags:
-        tag['query'] = u"tags_id_media:{}".format(tag['tags_id'])
+        tag['query'] = "tags_id_media:{}".format(tag['tags_id'])
     return partisanship_tags
 
 

@@ -40,24 +40,24 @@ def access_public_topic(topics_id):
 
 # helper for topic preview queries
 def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
-    query = u'({})'.format(solr_seed_query)
+    query = '({})'.format(solr_seed_query)
 
     if len(media_ids) > 0 or len(tags_ids) > 0:
-        query += u" AND ("
+        query += " AND ("
         # add in the media sources they specified
         if len(media_ids) > 0:
-            query_media_ids = u" ".join(map(str, media_ids))
-            query_media_ids = u" media_id:({})".format(query_media_ids)
-            query += u'(' + query_media_ids + u')'
+            query_media_ids = " ".join(map(str, media_ids))
+            query_media_ids = " media_id:({})".format(query_media_ids)
+            query += '(' + query_media_ids + ')'
 
         if len(media_ids) > 0 and len(tags_ids) > 0:
-            query += u" OR "
+            query += " OR "
         # add in the collections they specified
         if len(tags_ids) > 0:
-            query_tags_ids = u" ".join(map(str, tags_ids))
-            query_tags_ids = u" tags_id_media:({})".format(query_tags_ids)
-            query += u'(' + query_tags_ids + u')'
-        query += u')'
+            query_tags_ids = " ".join(map(str, tags_ids))
+            query_tags_ids = " tags_id_media:({})".format(query_tags_ids)
+            query += '(' + query_tags_ids + ')'
+        query += ')'
 
 
     return query

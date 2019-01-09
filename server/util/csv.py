@@ -10,11 +10,11 @@ logger = logging.getLogger(__name__)
 
 
 def filename_timestamp():
-    return datetime.datetime.now().strftime(u'%Y%m%d%H%M%S')
+    return datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 
 
 def safe_filename(name):
-    return u"{}-{}.csv".format(name, filename_timestamp())
+    return "{}-{}.csv".format(name, filename_timestamp())
 
 
 def dict2row(keys_to_include, dict_row):
@@ -22,20 +22,20 @@ def dict2row(keys_to_include, dict_row):
     for k in keys_to_include:
         try:
             value = dict_row[k] if k in dict_row else ''  # allow download even if col missing for this row
-            if isinstance(value, (int, long, float)):
+            if isinstance(value, (int, float)):
                 cleaned_value = str(dict_row[k])
             elif isinstance(value, list):
-                cleaned_value = u", ".join(value)
+                cleaned_value = ", ".join(value)
             elif value in ['', None]:
-                cleaned_value = u''
+                cleaned_value = ''
             else:
                 cleaned_value = value
             if '"' in cleaned_value:  # escape quotes for CSV file
-                cleaned_value = cleaned_value.replace(u'"', u'""')
-            cleaned_value = u'"{}"'.format(cleaned_value)
+                cleaned_value = cleaned_value.replace('"', '""')
+            cleaned_value = '"{}"'.format(cleaned_value)
             attributes.append(cleaned_value)
         except Exception as e:
-            logger.error(u"Couldn't process a value in a CSV row, skipping it: " + str(e))
+            logger.error("Couldn't process a value in a CSV row, skipping it: " + str(e))
             logger.exception(e)
             logger.debug(dict_row)
             attributes.append('ERROR')  # let the user know something didn't work out
@@ -51,13 +51,13 @@ def stream_response(data, dict_keys, filename, column_names=None, as_attachment=
     column_names -- (optional) column names to use, defaults to dict_keys if not specified
     """
     if len(data) == 0:
-        logger.debug(u"data is empty, must be asking for template")
+        logger.debug("data is empty, must be asking for template")
     else:
-        logger.debug(u"csv.stream_response with "+str(len(data))+" rows of data")
+        logger.debug("csv.stream_response with "+str(len(data))+" rows of data")
     if column_names is None:
         column_names = dict_keys
-    logger.debug(u"  cols: "+' '.join(column_names))
-    logger.debug(u"  props: "+' '.join(dict_keys))
+    logger.debug("  cols: "+' '.join(column_names))
+    logger.debug("  props: "+' '.join(dict_keys))
 
     # stream back a csv
     def stream_as_csv(dataset, props, names):
@@ -99,7 +99,7 @@ def download_media_csv(all_media, file_prefix, column_names):
         if 'metadata' not in src:
             src['metadata'] = ''
         else:
-            for name, tag in src['metadata'].iteritems():
+            for name, tag in src['metadata'].items():
                 src[name] = label_for_metadata_tag(tag) if tag is not None else None
 
     return stream_response(all_media, column_names, file_prefix, column_names)

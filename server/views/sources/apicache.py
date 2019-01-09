@@ -54,7 +54,7 @@ def _cached_collection_source_representation(mc_api_key, collection_id):
     for media_id in media_representation:
         media_representation[media_id]['story_pct'] = float(media_representation[media_id]['stories']) / float(
             sample_size)
-    return sorted(media_representation.values(), key=operator.itemgetter('stories'))
+    return sorted(list(media_representation.values()), key=operator.itemgetter('stories'))
 
 
 def random_story_list(mc_api_key, q, fq=None, rows=1000):

@@ -54,7 +54,7 @@ def story(topics_id, stories_id):
 
     try:
         story_info = local_mc.story(stories_id)  # add in other fields from regular call
-        for k in story_info.keys():
+        for k in list(story_info.keys()):
             story_topic_info[k] = story_info[k]
         for tag in story_info['story_tags']:
             if tag['tag_sets_id'] == tag_util.GEO_TAG_SET:
@@ -320,7 +320,7 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
         'ref_title', 'ref_url', 'ref_language', 'ref_ap_syndicated', 'ref_inlink_count', 'ref_outlink_count'
         # 'media_pub_country', 'media_pub_state', 'media_language', 'media_about_country', 'media_media_type'
     ]
-    yield u','.join(spec_props) + u'\n'  # first send the column names
+    yield ','.join(spec_props) + '\n'  # first send the column names
     link_id = 0
     more_pages = True
     while more_pages:
@@ -346,13 +346,13 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
             for s in story_link_page['links']:
                 cleaned_source_info = csv.dict2row(props, s['source_info'])
                 cleaned_ref_info = csv.dict2row(props, s['ref_info'])
-                row_string = u','.join(cleaned_source_info) + ',' + u','.join(cleaned_ref_info) + u'\n'
+                row_string = ','.join(cleaned_source_info) + ',' + ','.join(cleaned_ref_info) + '\n'
                 yield row_string
 
 
 # generator you can use to handle a long list of stories row by row (one row per story)
 def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
-    yield u','.join(props) + u'\n'  # first send the column names
+    yield ','.join(props) + '\n'  # first send the column names
     link_id = 0
     more_pages = True
     while more_pages:
@@ -363,9 +363,9 @@ def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
             more_pages = False
         for s in page['stories']:
             # first foci down to just the readable names
-            s['subtopics'] = [u"{}: {}".format(f['focal_set_name'], f['name']) for f in s['foci']]
+            s['subtopics'] = ["{}: {}".format(f['focal_set_name'], f['name']) for f in s['foci']]
             cleaned_row = csv.dict2row(props, s)
-            row_string = u','.join(cleaned_row) + u'\n'
+            row_string = ','.join(cleaned_row) + '\n'
             yield row_string
 
 
@@ -402,8 +402,8 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
                 media = media_lookup[s['media_id']]
 
                 # add in foci/subtopic names
-                for k, v in media['metadata'].iteritems():
-                    s[u'media_{}'.format(k)] = v['label'] if v is not None else None
+                for k, v in media['metadata'].items():
+                    s['media_{}'.format(k)] = v['label'] if v is not None else None
 
             # build lookup for id => story for all stories in stories with tags (non topic results)
             for st in stories_with_tags:

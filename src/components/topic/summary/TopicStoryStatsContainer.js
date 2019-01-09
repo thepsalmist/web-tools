@@ -39,10 +39,12 @@ const TopicStoryStatsContainer = (props) => {
     ];
   }
   return (
-    <StatBar
-      columnWidth={3}
-      stats={stats}
-    />
+    <React.Fragment>
+      <StatBar
+        columnWidth={3}
+        stats={stats}
+      />
+    </React.Fragment>
   );
 };
 

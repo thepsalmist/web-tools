@@ -28,10 +28,11 @@ export const asyncContainerize = (ChildComponent, loadingSpinnerSize) => {
       this.state = { asyncFetchResult };
     }
 
-    componentWillReceiveProps(nextProps) {
+    static getDerivedStateFromProps(nextProps) {
       if (nextProps.fetchStatus === fetchConstants.FETCH_SUCCEEDED) {
-        this.setState({ hasShowResults: true });
+        return { hasShowResults: true };
       }
+      return null;
     }
 
     render() {

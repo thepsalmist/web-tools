@@ -18,6 +18,7 @@ import GeoTagSummaryContainer from './GeoTagSummaryContainer';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import TopicStoryMetadataStatsContainer from './TopicStoryMetadataStatsContainer';
+import FociStoryCountComparisonContainer from './FociStoryCountComparisonContainer';
 import TopicWordSpaceContainer from './TopicWordSpaceContainer';
 import TabSelector from '../../common/TabSelector';
 import messages from '../../../resources/messages';
@@ -152,6 +153,11 @@ class TopicSummaryContainer extends React.Component {
                 <Row>
                   <Col lg={12}>
                     <TopicStoryMetadataStatsContainer topicId={topicId} filters={filters} timespan={selectedTimespan} />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col lg={12}>
+                    <FociStoryCountComparisonContainer topicId={topicId} filters={filters} />
                   </Col>
                 </Row>
               </Permissioned>

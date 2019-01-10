@@ -4,14 +4,7 @@ export const FETCH_ONGOING = 'FETCH_ONGOING';
 export const FETCH_SUCCEEDED = 'FETCH_SUCCEEDED';
 export const FETCH_FAILED = 'FETCH_FAILED';
 
-const missingFetchStatusError = {
-  msg: 'fetchStatuses is undefined!',
-};
-
 function combineArrayOfFetchStatuses(fetchStatusesArray) {
-  if (fetchStatusesArray === undefined) {
-    throw missingFetchStatusError;
-  }
   const allInvalid = fetchStatusesArray.reduce((total, status) => total && (status === FETCH_INVALID), true);
   const anyOngoing = fetchStatusesArray.reduce((total, status) => total || (status === FETCH_ONGOING), false);
   const anyFailed = fetchStatusesArray.reduce((total, status) => total || (status === FETCH_FAILED), false);
@@ -32,9 +25,6 @@ function combineArrayOfFetchStatuses(fetchStatusesArray) {
 }
 
 function combineIndexedFetchStatuses(indexedFetchStatuses) {
-  if (indexedFetchStatuses === undefined) {
-    throw missingFetchStatusError;
-  }
   const fetchStatusesArray = Object.keys(indexedFetchStatuses).map(k => indexedFetchStatuses[k]);
   return combineArrayOfFetchStatuses(fetchStatusesArray);
 }
@@ -43,6 +33,9 @@ function combineIndexedFetchStatuses(indexedFetchStatuses) {
 export function combineFetchStatuses(input) {
   let fetchStatusToUse;
   if (input === undefined) {
+    const missingFetchStatusError = {
+      msg: 'fetchStatuses is undefined!',
+    };
     throw missingFetchStatusError;
   // support a basic string
   } else if (typeof input === 'string') {
@@ -54,10 +47,10 @@ export function combineFetchStatuses(input) {
   } else if (typeof input === 'object' && input !== null) {
     fetchStatusToUse = combineIndexedFetchStatuses(input);
   } else {
-    const badFetchStatusType = {
+    const badFetchStatusTypeError = {
       msg: `fetchStatus received is not a valid type - it is ${typeof input}`,
     };
-    throw badFetchStatusType;
+    throw badFetchStatusTypeError;
   }
   return fetchStatusToUse;
 }

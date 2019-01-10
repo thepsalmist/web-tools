@@ -10,6 +10,7 @@ import QueryForm from './QueryForm';
 import AppButton from '../../common/AppButton';
 import ItemSlider from '../../common/ItemSlider';
 import QueryPickerItem from './QueryPickerItem';
+import { QUERY_COLORS } from '../../common/ColorPicker';
 import { updateFeedback } from '../../../actions/appActions';
 import QueryHelpDialog from '../../common/help/QueryHelpDialog';
 import { selectQuery, updateQuery, addCustomQuery, loadUserSearches, saveUserSearch, deleteUserSearch, markAsDeletedQuery, copyAndReplaceQueryField } from '../../../actions/explorerActions';
@@ -444,8 +445,20 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       dispatch(selectQuery(replacementSelectionQuery));
     }
   },
-  handleDuplicateQuery: (query) => {
-    const dupeQuery = Object.assign({}, query, { uid: Math.floor((Math.random() * 10000) + 1), sortPosition: query.sortPosition + 1, results: undefined, new: true }); // what is the index?
+  handleDuplicateQuery: (query, queries) => {
+    // smartly pick a new color for this query
+    const colorsInUse = queries.map(q => q.color);
+    const availableColors = QUERY_COLORS.filter(c => colorsInUse.indexOf(c) === -1);
+    const nextColor = (availableColors.length > 0) ? availableColors[0] : QUERY_COLORS[0]
+    // and dupliate the sucker
+    const dupeQuery = {
+      ...query,
+      uid: Math.floor((Math.random() * 10000) + 1),
+      sortPosition: query.sortPosition + 1,
+      results: undefined,
+      color: nextColor,
+      new: true,
+    }; // what is the index?
     if (query) {
       dispatch(addCustomQuery(dupeQuery));
       dispatch(selectQuery(dupeQuery));

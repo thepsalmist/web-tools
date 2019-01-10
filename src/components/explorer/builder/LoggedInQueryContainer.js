@@ -4,7 +4,7 @@ import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { updateTimestampForQueries, resetSelected, resetSentenceCounts, resetSampleStories, resetStoryCounts, resetGeo, selectQuery, removeDeletedQueries, removeNewStatusFromQueries } from '../../../actions/explorerActions';
 import { resetStory } from '../../../actions/storyActions';
-import QueryBuilderContainer from './QueryBuilderContainer';
+import QueryPicker from './QueryPicker';
 import QueryResultsContainer from '../results/QueryResultsContainer';
 import composeUrlBasedQueryContainer from '../UrlBasedQueryContainer';
 import PageTitle from '../../common/PageTitle';
@@ -31,7 +31,7 @@ class LoggedInQueryContainer extends React.Component {
     return (
       <div className="query-container query-container-logged-in">
         <PageTitle value={localMessages.title} />
-        <QueryBuilderContainer isEditable={isEditable} onSearch={() => handleSearch()} />
+        <QueryPicker isEditable={isEditable} onSearch={() => handleSearch()} />
         <QueryResultsContainer
           lastSearchTime={lastSearchTime}
           queries={queries}

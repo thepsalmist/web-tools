@@ -39,6 +39,7 @@ function withQueryResults(ChildComponent) {
 
     render() {
       const { queries, results } = this.props;
+      // remove deleted stuff and sort queries and results correctly before sending down to child
       const sortedSafeQueries = ensureSafeSortedQueries(queries);
       const safeResults = ensureSafeResults(sortedSafeQueries, results);
       const safeIndex = ensureSafeTabIndex(sortedSafeQueries, this.state.selectedQueryTabIndex);

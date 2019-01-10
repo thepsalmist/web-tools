@@ -101,11 +101,11 @@ def _most_used_tags(q, fq, tag_sets_id):
 
 
 def _entity_coverage(q, fq):
-    return tag_set_coverage(q, u'({}) AND {}'.format(q, processed_for_entities_query_clause()), fq)
+    return tag_set_coverage(q, '({}) AND {}'.format(q, processed_for_entities_query_clause()), fq)
 
 
 def _theme_coverage(q, fq):
-    return tag_set_coverage(q, u'({}) AND {}'.format(q, processed_for_themes_query_clause()), fq)
+    return tag_set_coverage(q, '({}) AND {}'.format(q, processed_for_themes_query_clause()), fq)
 
 
 def tag_set_coverage(total_q, subset_q, fq):

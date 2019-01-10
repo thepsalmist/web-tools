@@ -200,7 +200,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchData: (topicId, snapshotId, snapshots) => {
     if (topicId !== null) {
       // here we want to determine if the topic needs a new snapshot and let everything know
-      dispatch(fetchTopicFocalSetsList(topicId, snapshotId))
+      dispatch(fetchTopicFocalSetsList(topicId, { snapshotId }))
         .then((focalSets) => {
           dispatch(fetchFocalSetDefinitions(topicId))
             .then((focalSetDefinitions) => {

@@ -91,7 +91,7 @@ def create_nyt_theme_focal_set(topics_id):
     for tag in theme_data:
         params = {
             'name': tag['label'],
-            'description': u"Stories about {}".format(tag['label']),
+            'description': "Stories about {}".format(tag['label']),
             'query': "tags_id_stories:{}".format(tag['tags_id']) ,
             'focal_set_definitions_id' : new_focal_set['focal_set_definitions_id'],
         }

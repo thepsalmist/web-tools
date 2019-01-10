@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def download_svg():
     svg_text = request.form['svgText']
     filename_prefix = request.form['filename']
-    filename = u'{}-{}.svg'.format(filename_prefix, filename_timestamp())
+    filename = '{}-{}.svg'.format(filename_prefix, filename_timestamp())
     headers = {
         "Content-Disposition": "attachment;filename=" + filename,
     }

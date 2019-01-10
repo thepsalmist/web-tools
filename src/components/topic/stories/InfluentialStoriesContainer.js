@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
@@ -17,6 +16,7 @@ import withHelp from '../../common/hocs/HelpfulContainer';
 import { pagedAndSortedLocation } from '../../util/location';
 import withPaging from '../../common/hocs/PagedContainer';
 import { HELP_STORIES_CSV_COLUMNS } from '../../../lib/helpConstants';
+import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
   title: { id: 'topic.influentialStories.title', defaultMessage: 'Influential Stories' },
@@ -46,12 +46,11 @@ class InfluentialStoriesContainer extends React.Component {
   render() {
     const { stories, showTweetCounts, sort, topicId, previousButton, nextButton, helpButton } = this.props;
     const { formatMessage } = this.props.intl;
-    const titleHandler = parentTitle => `${formatMessage(localMessages.title)} | ${parentTitle}`;
     return (
       <Grid>
         <Row>
           <Col lg={12} md={12} sm={12}>
-            <Helmet><title>{titleHandler()}</title></Helmet>
+            <TopicPageTitle value={localMessages.title} />
             <DataCard border={false}>
               <div className="actions">
                 <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.downloadCsv} />

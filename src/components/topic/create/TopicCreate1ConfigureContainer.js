@@ -5,7 +5,6 @@ import { push } from 'react-router-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import { Helmet } from 'react-helmet';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withIntlForm from '../../common/hocs/IntlForm';
 import TopicForm, { TOPIC_FORM_MODE_CREATE } from './TopicForm';
@@ -36,7 +35,6 @@ const TopicCreate1ConfigureContainer = (props) => {
   const initialValues = { start_date: startDate, end_date: endDate, max_iterations: 15, max_topic_stories: maxStories, buttonLabel: formatMessage(messages.preview), sourcesAndCollections: sAndC };
   return (
     <Grid>
-      <Helmet><title>{formatMessage(localMessages.title)}</title></Helmet>
       <Row>
         <Col lg={10}>
           <h1><FormattedMessage {...localMessages.title} /></h1>

@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import Word2VecTimespanPlayerContainer from './Word2VecTimespanPlayerContainer';
 import WordCloudComparisonContainer from './WordCloudComparisonContainer';
 import FociWordComparison from './FociWordComparison';
+import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
   title: { id: 'topic.influentialWords.title', defaultMessage: 'Influential Words' },
@@ -15,7 +15,7 @@ const localMessages = {
 
 const InfluentialWordsContainer = props => (
   <Grid>
-    <Helmet><title>{props.intl.formatMessage(localMessages.title)}</title></Helmet>
+    <TopicPageTitle value={localMessages.title} />
     <Row>
       <Col lg={12} md={12} sm={12}>
         <h1><FormattedMessage {...localMessages.title} /></h1>

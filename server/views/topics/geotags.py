@@ -48,10 +48,10 @@ def _geo_tag_counts(user_mc_key, topics_id):
                                   tag_util.GEO_SAMPLE_SIZE)
     # filter for countries, add in highcharts metadata
     country_tag_counts = [r for r in tag_counts if
-                          int(r['tag'].split('_')[1]) in COUNTRY_GEONAMES_ID_TO_APLHA3.keys()]
+                          int(r['tag'].split('_')[1]) in list(COUNTRY_GEONAMES_ID_TO_APLHA3.keys())]
     for r in country_tag_counts:
         geonamesId = int(r['tag'].split('_')[1])
-        if geonamesId not in COUNTRY_GEONAMES_ID_TO_APLHA3.keys():  # only include countries
+        if geonamesId not in list(COUNTRY_GEONAMES_ID_TO_APLHA3.keys()):  # only include countries
             continue
         r['geonamesId'] = geonamesId  # TODO: move this to JS?
         r['alpha3'] = COUNTRY_GEONAMES_ID_TO_APLHA3[geonamesId]

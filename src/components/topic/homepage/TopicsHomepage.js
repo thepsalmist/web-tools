@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage, injectIntl, FormattedHTMLMessage } from 'react-intl';
@@ -26,23 +25,10 @@ const localMessages = {
 
 const TopicsHomepage = (props) => {
   const { user } = props;
-  const { formatMessage } = props.intl;
-  const title = formatMessage(localMessages.homeTitle);
-  const titleHandler = parentTitle => `${title} | ${parentTitle}`;
   let content = null;
-  const mastHead = (
-    <Masthead
-      nameMsg={messages.topicsToolName}
-      descriptionMsg={messages.topicsToolDescription}
-      link="https://mediacloud.org/tools/"
-    />
-  );
   if (user.isLoggedIn) {
     content = (
       <div>
-
-        <Helmet><title>{`${formatMessage(localMessages.homeTitle)} | ${formatMessage(messages.topicsToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
-
         <div className="controlbar">
           <div className="main">
             <Grid>
@@ -72,9 +58,6 @@ const TopicsHomepage = (props) => {
   } else {
     content = (
       <div>
-
-        <Helmet><title>{titleHandler()}</title></Helmet>
-
         <Grid>
           <Row>
             <Col lg={1} xs={0} />
@@ -108,7 +91,11 @@ const TopicsHomepage = (props) => {
   }
   return (
     <div className="homepage">
-      {mastHead}
+      <Masthead
+        nameMsg={messages.topicsToolName}
+        descriptionMsg={messages.topicsToolDescription}
+        link="https://mediacloud.org/tools/"
+      />
       {content}
     </div>
   );

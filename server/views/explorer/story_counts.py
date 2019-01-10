@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 @app.route('/api/explorer/stories/count.csv', methods=['POST'])
 def explorer_story_count_csv():
-    filename = u'total-story-count'
+    filename = 'total-story-count'
     data = request.form
     if 'searchId' in data:
         # TODO: don't load this query twice because that is kind of dumb
@@ -92,7 +92,7 @@ def api_explorer_demo_story_split_count():
 @app.route('/api/explorer/stories/split-count.csv', methods=['POST'])
 @api_error_handler
 def api_explorer_story_split_count_csv():
-    filename = u'stories-over-time'
+    filename = 'stories-over-time'
     data = request.form
     if 'searchId' in data:
         solr_q, solr_fq = parse_as_sample(data['searchId'], data['index'])

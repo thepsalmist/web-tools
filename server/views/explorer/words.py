@@ -49,7 +49,7 @@ def explorer_wordcount_csv():
     data = request.form
     ngram_size = data['ngramSize'] if 'ngramSize' in data else 1    # defaul to words if ngram not specified
     sample_size = data['sample_size'] if 'sample_size' in data else WORD_COUNT_SAMPLE_SIZE
-    filename = u'sampled-{}-ngrams-{}'.format(sample_size, ngram_size)
+    filename = 'sampled-{}-ngrams-{}'.format(sample_size, ngram_size)
     if 'searchId' in data:
         solr_q, solr_fq = parse_as_sample(data['searchId'], data['index'])
     else:

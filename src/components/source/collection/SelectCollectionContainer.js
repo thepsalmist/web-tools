@@ -4,7 +4,6 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { Grid } from 'react-flexbox-grid/lib';
-import { Helmet } from 'react-helmet';
 import { selectCollection, fetchCollectionDetails } from '../../../actions/sourceActions';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import SourceControlBar from '../controlbar/SourceControlBar';
@@ -14,7 +13,7 @@ import { EditButton, ExploreButton } from '../../common/IconButton';
 import SourceMgrHeaderContainer from '../SourceMgrHeaderContainer';
 import { getCurrentDate, oneMonthBefore } from '../../../lib/dateUtil';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
-import messages from '../../../resources/messages';
+import PageTitle from '../../common/PageTitle';
 
 const localMessages = {
   searchNow: { id: 'collection.details.searchNow', defaultMessage: 'Search in Explorer' },
@@ -47,10 +46,9 @@ class SelectCollectionContainer extends React.Component {
 
   render() {
     const { children, collection } = this.props;
-    const { formatMessage } = this.props.intl;
     return (
       <div className="collection-container">
-        <Helmet><title>{`${collection.label} | ${formatMessage(messages.sourcesToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
+        <PageTitle value={collection.label} />
         <SourceMgrHeaderContainer />
         <SourceControlBar>
           <a href="search-in-explorer" onClick={this.searchInExplorer}>

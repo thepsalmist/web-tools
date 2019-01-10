@@ -114,8 +114,9 @@ export function allMediaOutlinks(topicId, mediaId, params) {
   return createApiPromise(`/api/topics/${topicId}/media/${mediaId}/outlinks/all`, acceptedParams);
 }
 
-export function topicFocalSetsList(topicId, snapshotId) {
-  return createApiPromise(`/api/topics/${topicId}/focal-sets/list`, { snapshotId });
+export function topicFocalSetsList(topicId, params) {
+  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'includeStoryCounts']);
+  return createApiPromise(`/api/topics/${topicId}/focal-sets/list`, acceptedParams);
 }
 
 export function listFocalSetDefinitions(topicId) {
@@ -172,7 +173,7 @@ export function topicUndateableStoryCounts(topicId, params) {
 
 export function topicFocalSetSplitStoryCounts(topicId, focalSetId, params) {
   const acceptedParams = acceptParams(params, ['snapshotId', 'focusId', 'timespanId', 'q']);
-  return createApiPromise(`/api/topics/${topicId}/split-story/focal-set/${focalSetId}/count`, acceptedParams);
+  return createApiPromise(`/api/topics/${topicId}/focal-set/${focalSetId}/split-story-count`, acceptedParams);
 }
 
 export function word(topicId, wordstem) {

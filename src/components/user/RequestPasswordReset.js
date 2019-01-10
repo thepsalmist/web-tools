@@ -12,6 +12,7 @@ import AppButton from '../common/AppButton';
 import messages from '../../resources/messages';
 import { invalidEmail } from '../../lib/formValidators';
 import withIntlForm from '../common/hocs/IntlForm';
+import PageTitle from '../common/PageTitle';
 
 const localMessages = {
   title: { id: 'user.forgotPassword.title', defaultMessage: 'Forgot Your Password?' },
@@ -26,6 +27,7 @@ const RequestPasswordReset = (props) => {
   const { formatMessage } = props.intl;
   return (
     <Grid>
+      <PageTitle value={localMessages.title} />
       <form onSubmit={handleSubmit(onSubmitRecovery.bind(this))} className="app-form request-password-reset-form">
         <Row>
           <Col lg={12}>

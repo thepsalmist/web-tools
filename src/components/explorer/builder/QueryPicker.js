@@ -449,7 +449,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     // smartly pick a new color for this query
     const colorsInUse = queries.map(q => q.color);
     const availableColors = QUERY_COLORS.filter(c => colorsInUse.indexOf(c) === -1);
-    const nextColor = (availableColors.length > 0) ? availableColors[0] : QUERY_COLORS[0]
+    const nextColor = (availableColors.length > 0) ? availableColors[0] : QUERY_COLORS[0];
     // and dupliate the sucker
     const dupeQuery = {
       ...query,

@@ -237,20 +237,19 @@ export function createIndexedAsyncReducer(handlers) {
         const error = { error: 'You need to pass the indexedAsyncReducer an uid to use!' };
         throw error;
       }
-      const updatedFetchStatuses = state.fetchStatuses;
+      const updatedFetchStatuses = { ...state.fetchStatuses };
       updatedFetchStatuses[uid] = fetchConstants.FETCH_ONGOING;
-      const updatedFetchUids = state.fetchUids;
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
         fetchStatuses: updatedFetchStatuses,
-        fetchUids: updatedFetchUids,
+        fetchUids: state.fetchUids,
       });
     },
     handleSuccess: (payload, state, args) => {
       const { uid } = args[0];
       // const { uid } = meta;
       const updatedResults = [...state.results];
-      const updatedFetchStatuses = state.fetchStatuses;
+      const updatedFetchStatuses = { ...state.fetchStatuses };
       updatedFetchStatuses[uid] = fetchConstants.FETCH_SUCCEEDED;
       if ('handleSuccess' in handlers) {
         const results = handlers.handleSuccess(payload, state, args, uid);
@@ -266,7 +265,7 @@ export function createIndexedAsyncReducer(handlers) {
     },
     handleFailure: (payload, state, args) => {
       const { uid } = args[0];
-      const updatedFetchStatuses = state.fetchStatuses;
+      const updatedFetchStatuses = { ...state.fetchStatuses };
       updatedFetchStatuses[uid] = fetchConstants.FETCH_FAILED;
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),

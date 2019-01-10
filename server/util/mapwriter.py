@@ -53,7 +53,7 @@ def build_network(top_words, sources, media_attribs=None):
     for m in source_ids:
         # pairwise_sources[m] = nx.DiGraph()
         
-        if(m in top_words.keys()):
+        if(m in list(top_words.keys())):
             for w in top_words[m]:
                 msw_network.add_node(w['term'], type='word',
                     viz = {'color':{'r':77,'g':7,'b':0}, 

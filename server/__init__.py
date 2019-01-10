@@ -46,10 +46,10 @@ config = get_default_config()
 
 server_mode = config.get('SERVER_MODE').lower()
 if server_mode not in [SERVER_MODE_DEV, SERVER_MODE_PROD]:
-    logger.error(u"Unknown server mode '{}', set a mode in the `config/app.config` file".format(server_mode))
+    logger.error("Unknown server mode '{}', set a mode in the `config/app.config` file".format(server_mode))
     sys.exit(1)
 else:
-    logger.info(u"Started server in %s mode", server_mode)
+    logger.info("Started server in %s mode", server_mode)
 
 # setup optional sentry logging service
 try:
@@ -64,14 +64,14 @@ except ConfigException as e:
 TOOL_API_KEY = config.get('MEDIA_CLOUD_API_KEY')
 
 mc = mediacloud.api.AdminMediaCloud(TOOL_API_KEY)
-logger.info(u"Connected to mediacloud")
+logger.info("Connected to mediacloud")
 
 # Connect to CLIFF if the settings are there
 cliff = None
 try:
     cliff = Cliff(config.get('CLIFF_URL'))
 except KeyError as e:
-    logger.warn(u"no CLIFF connection")
+    logger.warn("no CLIFF connection")
 
 NYT_THEME_LABELLER_URL = config.get('NYT_THEME_LABELLER_URL')
 
@@ -80,11 +80,11 @@ db = AppDatabase(config.get('MONGO_URL'))
 try:
     db.check_connection()
 except Exception as err:
-    logger.error(u"DB error: {0}".format(err))
+    logger.error("DB error: {0}".format(err))
     logger.exception(err)
     sys.exit()
 
-logger.info(u"Connected to DB: {}".format(config.get('MONGO_URL')))
+logger.info("Connected to DB: {}".format(config.get('MONGO_URL')))
 
 
 def is_dev_mode():
@@ -133,7 +133,7 @@ def create_app():
     webpack.init_app(my_app)
     # set up mail sending
     try:
-        if config.get('SMTP_ENABLED') == u'1':
+        if config.get('SMTP_ENABLED') == '1':
             mail_config = {     # @see https://pythonhosted.org/Flask-Mail/
                 'MAIL_SERVER': config.get('SMTP_SERVER'),
                 'MAIL_PORT': int(config.get('SMTP_PORT')),
@@ -143,7 +143,7 @@ def create_app():
             }
             my_app.config.update(mail_config)
             mail.init_app(my_app)
-            logger.info(u'Mailing from {} via {}'.format(config.get('SMTP_USER'), config.get('SMTP_SERVER')))
+            logger.info('Mailing from {} via {}'.format(config.get('SMTP_USER'), config.get('SMTP_SERVER')))
             # need to tell jinja to look in "emails" directory directly for the shared email templates
             # because the `imports` in them don't include relative paths
             my_loader = jinja2.ChoiceLoader([
@@ -205,7 +205,8 @@ if (server_app == SERVER_APP_SOURCES) or is_dev_mode():
     import server.views.sources.geocount
 if (server_app == SERVER_APP_TOPICS) or is_dev_mode():
     import server.views.topics.media
-    import server.views.topics.splitstories
+    import server.views.topics.attention
+    import server.views.topics.story
     import server.views.topics.stories
     import server.views.topics.topic
     import server.views.topics.words

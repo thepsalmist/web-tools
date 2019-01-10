@@ -52,7 +52,7 @@ def api_explorer_demo_geotag_count():
 def _filter_for_countries(top_geo_tags):
     # this tag set has country and state tags, so we have to filter out to get just the country ones to draw a heatmap
     # 1: parse out the geonames id from the tag (ie. "geonames_6252001" and verify it on the whitelist
-    country_tags = [t for t in top_geo_tags if int(t['tag'].split('_')[1]) in COUNTRY_GEONAMES_ID_TO_APLHA3.keys()]
+    country_tags = [t for t in top_geo_tags if int(t['tag'].split('_')[1]) in list(COUNTRY_GEONAMES_ID_TO_APLHA3.keys())]
     # 2: now add in helpful data for mapping it
     for t in country_tags:
         geonames_id = int(t['tag'].split('_')[1])
@@ -69,7 +69,7 @@ def _filter_for_countries(top_geo_tags):
 @app.route('/api/explorer/geography/geography.csv', methods=['POST'])
 @api_error_handler
 def explorer_geo_csv():
-    filename = u'-top-countries'
+    filename = 'sampled-geographic-coverage'
     data = request.form
     if 'searchId' in data:
         solr_q, solr_fq = parse_as_sample(data['searchId'], data['index'])

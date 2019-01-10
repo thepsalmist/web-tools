@@ -4,15 +4,15 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { Link } from 'react-router';
-import { Helmet } from 'react-helmet';
 import { fetchCollectionSourceSplitStoryHistoricalCounts } from '../../../actions/sourceActions';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import { getBrandDarkColor } from '../../../styles/colors';
 import { DownloadButton } from '../../common/IconButton';
 import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
+import PageTitle from '../../common/PageTitle';
 
 const localMessages = {
-  title: { id: 'collection.contentHistory.title', defaultMessage: 'Total Stories over Time' },
+  title: { id: 'collection.contentHistory.title', defaultMessage: 'Content History' },
   counts: { id: 'collection.contentHistory.counts', defaultMessage: '{total} Stories' },
 };
 
@@ -28,11 +28,10 @@ class CollectionContentHistory extends React.Component {
 
   render() {
     const { collection, historicalCounts } = this.props;
-    const { formatMessage, formatNumber } = this.props.intl;
-    const titleHandler = parentTitle => `${formatMessage(localMessages.title)} | ${parentTitle}`;
+    const { formatNumber } = this.props.intl;
     return (
       <div>
-        <Helmet><title>{titleHandler()}</title></Helmet>
+        <PageTitle value={[localMessages.title, collection.label]} />
         <Grid>
           <Row>
             <Col lg={10}>

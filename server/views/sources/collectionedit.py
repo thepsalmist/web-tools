@@ -151,22 +151,22 @@ def _parse_sources_from_csv_upload(filepath):
         reader.fieldnames = acceptable_column_names
         sources_to_create = []
         sources_to_update = []
-        reader.next()   # skip column headers
+        next(reader)   # skip column headers
         for line in reader:
             try:
                 # python 2.7 csv module doesn't support unicode so have to do the decode/encode here for cleaned up val
                 updatedSrc = line['media_id'] not in ['', None]
                 # decode all keys as long as there is a key  re Unicode vs ascii
                 newline = {k.decode('utf-8', errors='replace').encode('ascii', errors='ignore').lower(): v for
-                           k, v in line.items() if k not in ['', None]}
+                           k, v in list(line.items()) if k not in ['', None]}
                 newline_decoded = {k: v.decode('utf-8', errors='replace').encode('ascii', errors='ignore') for
-                                   k, v in newline.items() if v not in ['', None]}
-                empties = {k: v for k, v in newline.items() if v in ['', None]}
+                                   k, v in list(newline.items()) if v not in ['', None]}
+                empties = {k: v for k, v in list(newline.items()) if v in ['', None]}
 
                 # source urls have to start with the http, so add it if the user didn't
-                if newline_decoded['url'][:7] not in [u'http://', 'http://'] and \
-                                newline_decoded['url'][:8] not in [u'https://', 'https://']:
-                    newline_decoded['url'] = u'http://{}'.format(newline_decoded['url'])
+                if newline_decoded['url'][:7] not in ['http://', 'http://'] and \
+                                newline_decoded['url'][:8] not in ['https://', 'https://']:
+                    newline_decoded['url'] = 'http://{}'.format(newline_decoded['url'])
 
                 # sources must have a name for updates
                 if updatedSrc:
@@ -188,7 +188,7 @@ def _update_source_worker(source_info):
     user_mc = user_admin_mediacloud_client()
     media_id = source_info['media_id']
     # logger.debug("Updating media {}".format(media_id))
-    source_no_metadata_no_id = {k: v for k, v in source_info.items() if k != 'media_id'
+    source_no_metadata_no_id = {k: v for k, v in list(source_info.items()) if k != 'media_id'
                                 and k not in SOURCE_LIST_CSV_METADATA_PROPS}
     response = user_mc.mediaUpdate(media_id, source_no_metadata_no_id)
     return response
@@ -223,11 +223,11 @@ def _create_or_update_sources(source_list_from_csv, create_new):
         sources_to_create_no_metadata = []
         for src in sources_to_create:
             sources_to_create_no_metadata.append(
-                {k: v for k, v in src.items() if k not in SOURCE_LIST_CSV_METADATA_PROPS})
+                {k: v for k, v in list(src.items()) if k not in SOURCE_LIST_CSV_METADATA_PROPS})
         # parallelize media creation to make it faster
         chunk_size = 5  # @ 10, each call takes over a minute; @ 5 each takes around ~40 secs
         media_to_create_batches = [sources_to_create_no_metadata[x:x + chunk_size]
-                                   for x in xrange(0, len(sources_to_create_no_metadata), chunk_size)]
+                                   for x in range(0, len(sources_to_create_no_metadata), chunk_size)]
 
         if use_pool:
             pool = Pool(processes=MEDIA_UPDATE_POOL_SIZE)  # process updates in parallel with worker function
@@ -288,7 +288,7 @@ def _create_or_update_sources(source_list_from_csv, create_new):
             if source['url'] in info_by_url:
                 info_by_url[source['url']].update(source)
         update_metadata_for_sources(info_by_url)
-        return results, info_by_url.values(), errors
+        return results, list(info_by_url.values()), errors
 
     # if a successful update, just return what we have, success
     update_metadata_for_sources(successful)
@@ -331,8 +331,8 @@ def _tag_media_worker(tags):
 def update_metadata_for_sources(source_list):
     tags = []
     for m in VALID_METADATA_IDS:
-        mid = m.values()[0]
-        mkey = m.keys()[0]
+        mid = list(m.values())[0]
+        mkey = list(m.keys())[0]
         tag_codes = tags_in_tag_set(TOOL_API_KEY, mid)
         for source in source_list:
             if mkey in source:
@@ -351,7 +351,7 @@ def update_metadata_for_sources(source_list):
                         tags.append(MediaTag(source['media_id'], tags_id=metadata_tag_id, action=TAG_ACTION_ADD))
     # now do all the tags in parallel batches so it happens quickly
     if len(tags) > 0:
-        chunks = [tags[x:x + 50] for x in xrange(0, len(tags), 50)]  # do 50 tags in each request
+        chunks = [tags[x:x + 50] for x in range(0, len(tags), 50)]  # do 50 tags in each request
         use_pool = False
         if use_pool:
             pool = Pool(processes=MEDIA_METADATA_UPDATE_POOL_SIZE )  # process updates in parallel with worker function

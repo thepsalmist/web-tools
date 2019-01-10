@@ -15,6 +15,7 @@ import SourceFeedForm from './form/SourceFeedForm';
 import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import Permissioned from '../../common/Permissioned';
 import FeedRecentStoriesContainer from './FeedRecentStoriesContainer';
+import PageTitle from '../../common/PageTitle';
 
 const localMessages = {
   sourceFeedsTitle: { id: 'source.details.feeds.title', defaultMessage: '{name}: ' },
@@ -56,6 +57,7 @@ class EditSourceFeedContainer extends React.Component {
     }
     return (
       <Grid className="details source-feed-details">
+        <PageTitle value={[localMessages.updateFeedsTitle, sourceName]} />
         <h2>
           <MediaSourceIcon height={32} />
           <Link to={`/sources/${sourceId}/feeds`}>

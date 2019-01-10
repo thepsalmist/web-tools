@@ -36,7 +36,7 @@ def topic_update_permission(topics_id):
             user_mc.topicPermissionsUpdate(topics_id, email, 'none')
     # now update the remaining permissions
     for permission in new_permissions:
-        if permission['permission'] not in [u'read', u'write', u'admin', u'none']:
+        if permission['permission'] not in ['read', 'write', 'admin', 'none']:
             return json_error_response('Invalid permission value')
         try:
             user_mc.topicPermissionsUpdate(topics_id, permission['email'], permission['permission'])

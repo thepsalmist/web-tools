@@ -5,9 +5,9 @@ import flask_login
 from server import app, TOOL_API_KEY
 from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_SAMPLE_SIZE
 import server.util.csv as csv
-from server.util.request import api_error_handler, arguments_required, filters_from_args
+from server.util.request import api_error_handler, arguments_required, filters_from_args, json_error_response
 from server.auth import user_mediacloud_key, is_user_logged_in
-from server.views.topics.splitstories import stream_topic_split_story_counts_csv
+from server.views.topics.attention import stream_topic_split_story_counts_csv
 from server.views.topics.stories import stream_story_list_csv
 import server.views.topics.apicache as apicache
 from server.views.topics import access_public_topic
@@ -31,7 +31,10 @@ def topic_compare_subtopic_top_words(topics_id):
     for t in selected_snapshot_timespans:
         if t['timespans_id'] == int(timespans_id):
             selected_timespan = t
-    focal_set = apicache.topic_focal_set(user_mediacloud_key(), topics_id, snapshots_id, selected_focal_sets_id)
+    try:
+        focal_set = apicache.topic_focal_set(user_mediacloud_key(), topics_id, snapshots_id, selected_focal_sets_id)
+    except ValueError:
+        return json_error_response('Invalid Focal Set Id')
     timespans = apicache.matching_timespans_in_foci(topics_id, selected_timespan, focal_set['foci'])
     for idx in range(0, len(timespans)):
         data = apicache.topic_word_counts(user_mediacloud_key(), topics_id,
@@ -41,7 +44,7 @@ def topic_compare_subtopic_top_words(topics_id):
     data = []
     headers = [f['name'] for f in focal_set['foci']]
     for idx in range(0, word_count):
-        row = {f['name']: u"{} ({})".format(f['top_words'][idx]['term'], f['top_words'][idx]['count'])
+        row = {f['name']: "{} ({})".format(f['top_words'][idx]['term'], f['top_words'][idx]['count'])
                for f in focal_set['foci']}
         data.append(row)
     return csv.stream_response(data, headers,

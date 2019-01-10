@@ -1,4 +1,5 @@
 
+// Trim a string to a max length, adding '...' if it is too long
 export function trimToMaxLength(string, maxLength) {
   if ((string === undefined) || (string === null)) {
     return string; // is this right, or should we return empty string?
@@ -9,6 +10,7 @@ export function trimToMaxLength(string, maxLength) {
   return `${string.substring(0, maxLength)}...`;
 }
 
+// Use this to handle really big numbers that you need to show at low accuracy
 export function humanReadableNumber(number, numSigFigs, formatNumber) {
   const pow = Math.round(number).toString().length;
 
@@ -29,4 +31,12 @@ export function humanReadableNumber(number, numSigFigs, formatNumber) {
   }
 
   return formatNumber(number);
+}
+
+// Use this to intl a variable when you don't know if it is a string or a message object
+export function intlIfObject(formatter, value) {
+  if (typeof value === 'string') {
+    return value;
+  }
+  return formatter(value);
 }

@@ -8,11 +8,10 @@ const missingFetchStatusError = {
   msg: 'fetchStatuses is undefined!',
 };
 
-export const combineFetchStatuses = (fetchStatuses) => {
-  if (fetchStatuses === undefined) {
+export const combineFetchStatuses = (fetchStatusesArray) => {
+  if (fetchStatusesArray === undefined) {
     throw missingFetchStatusError;
   }
-  const fetchStatusesArray = Object.keys(fetchStatuses).map(k => fetchStatuses[k]);
   const allInvalid = fetchStatusesArray.reduce((total, status) => total && (status === FETCH_INVALID), true);
   const anyOngoing = fetchStatusesArray.reduce((total, status) => total || (status === FETCH_ONGOING), false);
   const anyFailed = fetchStatusesArray.reduce((total, status) => total || (status === FETCH_FAILED), false);
@@ -31,3 +30,11 @@ export const combineFetchStatuses = (fetchStatuses) => {
   }
   return FETCH_ONGOING;
 };
+
+export const combineIndexedFetchStatuses = (indexedFetchStatuses) => {
+  if (indexedFetchStatuses === undefined) {
+    throw missingFetchStatusError;
+  }
+  const fetchStatusesArray = Object.keys(indexedFetchStatuses).map(k => indexedFetchStatuses[k]);
+  return combineFetchStatuses(fetchStatusesArray);
+}

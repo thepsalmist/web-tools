@@ -240,7 +240,7 @@ export function createIndexedAsyncReducer(handlers) {
       const updatedFetchStatuses = { ...state.fetchStatuses };
       updatedFetchStatuses[uid] = fetchConstants.FETCH_ONGOING;
       return Object.assign({}, state, {
-        fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
+        fetchStatus: fetchConstants.combineIndexedFetchStatuses(updatedFetchStatuses),
         fetchStatuses: updatedFetchStatuses,
         fetchUids: state.fetchUids,
       });
@@ -258,7 +258,7 @@ export function createIndexedAsyncReducer(handlers) {
         updatedResults.push({ uid, ...payload });
       }
       return Object.assign({}, state, {
-        fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
+        fetchStatus: fetchConstants.combineIndexedFetchStatuses(updatedFetchStatuses),
         fetchStatuses: updatedFetchStatuses,
         results: updatedResults,
       });
@@ -268,7 +268,7 @@ export function createIndexedAsyncReducer(handlers) {
       const updatedFetchStatuses = { ...state.fetchStatuses };
       updatedFetchStatuses[uid] = fetchConstants.FETCH_FAILED;
       return Object.assign({}, state, {
-        fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
+        fetchStatus: fetchConstants.combineIndexedFetchStatuses(updatedFetchStatuses),
         fetchStatuses: updatedFetchStatuses,
       });
     },

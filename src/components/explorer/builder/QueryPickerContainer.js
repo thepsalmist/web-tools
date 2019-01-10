@@ -31,7 +31,7 @@ const localMessages = {
 
 const formSelector = formValueSelector('queryForm');
 
-class QueryPicker extends React.Component {
+class QueryPickerContainer extends React.Component {
   getAllActiveQueries = queries => (queries.filter(q => q.deleted !== true));
 
   handleColorChange = (newColorInfo) => {
@@ -329,7 +329,7 @@ class QueryPicker extends React.Component {
   }
 }
 
-QueryPicker.propTypes = {
+QueryPickerContainer.propTypes = {
   // from state
   selected: PropTypes.object,
   queries: PropTypes.array,
@@ -469,6 +469,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    QueryPicker
+    QueryPickerContainer
   )
 );

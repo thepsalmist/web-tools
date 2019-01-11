@@ -82,7 +82,7 @@ class QueryPickerItem extends React.Component {
   }
 
   render() {
-    const { isLoggedIn, query, isSelected, isDeletable, displayLabel, isLabelEditable, updateDemoQueryLabel, onDuplicate, onDelete } = this.props;
+    const { isLoggedIn, query, isSelected, isDeletable, displayLabel, isLabelEditable, updateDemoQueryLabel, onDuplicate, onDelete, onMove } = this.props;
     const { formatMessage } = this.props.intl;
     let subT = null;
     let headerInfo = null;
@@ -99,6 +99,7 @@ class QueryPickerItem extends React.Component {
             isDeletable={isDeletable}
             displayLabel={displayLabel}
             onDelete={onDelete}
+            onMove={onMove}
             onColorChange={this.handleColorChange}
             handleMenuItemKeyDown={this.handleMenuItemKeyDown}
           />
@@ -229,6 +230,7 @@ QueryPickerItem.propTypes = {
   onSearch: PropTypes.func.isRequired,
   onDuplicate: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  onMove: PropTypes.func.isRequired,
   loadEditLabelDialog: PropTypes.func,
   isLoggedIn: PropTypes.bool.isRequired,
   // from composition

@@ -13,11 +13,11 @@ import QueryPickerItem from './QueryPickerItem';
 import { QUERY_COLORS } from '../../common/ColorPicker';
 import { updateFeedback } from '../../../actions/appActions';
 import QueryHelpDialog from '../../common/help/QueryHelpDialog';
-import { selectQuery, updateQuery, addCustomQuery, loadUserSearches, saveUserSearch, deleteUserSearch, markAsDeletedQuery, copyAndReplaceQueryField } from '../../../actions/explorerActions';
+import { selectQuery, updateQuery, addCustomQuery, loadUserSearches, saveUserSearch, deleteUserSearch, markAsDeletedQuery, copyAndReplaceQueryField, swapSortQueries } from '../../../actions/explorerActions';
 import { AddQueryButton } from '../../common/IconButton';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
 import { autoMagicQueryLabel, generateQueryParamString, KEYWORD, DATES, MEDIA,
-  DEFAULT_COLLECTION_OBJECT_ARRAY, replaceCurlyQuotes, uniqueQueryId } from '../../../lib/explorerUtil';
+  DEFAULT_COLLECTION_OBJECT_ARRAY, replaceCurlyQuotes, uniqueQueryId, LEFT } from '../../../lib/explorerUtil';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
 const localMessages = {
@@ -184,7 +184,7 @@ class QueryPickerContainer extends React.Component {
 
   render() {
     const { isLoggedIn, selected, queries, isEditable, addAQuery, handleLoadUserSearches, formQuery,
-      handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll, handleDuplicateQuery } = this.props;
+      handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll, handleDuplicateQuery, handleMoveAndSwap } = this.props;
     const { formatMessage } = this.props.intl;
     let queryPickerContent; // editable if demo mode
     let queryFormContent; // hidden if demo mode
@@ -209,6 +209,7 @@ class QueryPickerContainer extends React.Component {
             updateDemoQueryLabel={newValue => this.updateDemoQueryLabel(query, newValue)}
             onSearch={this.saveAndSearch}
             onDelete={() => this.handleDeleteAndSelectQuery(query)}
+            onMove={direction => handleMoveAndSwap(query, direction, queries)}
             onDuplicate={() => handleDuplicateQuery(query, queries)}
             // loadDialog={loadQueryEditDialog}
           />
@@ -351,6 +352,7 @@ QueryPickerContainer.propTypes = {
   handleDeleteQuery: PropTypes.func.isRequired,
   handleCopyAll: PropTypes.func.isRequired,
   updateOneQuery: PropTypes.func.isRequired,
+  handleMoveAndSwap: PropTypes.func.isRequired,
   // from parent
   isEditable: PropTypes.bool.isRequired,
   isDeletable: PropTypes.func,
@@ -444,6 +446,11 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       dispatch(markAsDeletedQuery(query));
       dispatch(selectQuery(replacementSelectionQuery));
     }
+  },
+  handleMoveAndSwap: (query, direction, queries) => {
+    const movedQuery = { ...query };
+    const newSortPosition = direction === LEFT ? movedQuery.sortPosition - 1 : movedQuery.sortPosition + 1;
+    dispatch(swapSortQueries({ from: query, to: newSortPosition}));
   },
   handleDuplicateQuery: (query, queries) => {
     // smartly pick a new color for this query

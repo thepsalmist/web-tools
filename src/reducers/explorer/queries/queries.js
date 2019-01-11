@@ -1,4 +1,4 @@
-import { UPDATE_QUERY, UPDATE_QUERY_COLLECTION_LOOKUP_INFO, UPDATE_QUERY_SOURCE_LOOKUP_INFO, ADD_CUSTOM_QUERY, SELECT_SEARCH_BY_ID, SAVE_PARSED_QUERIES, MARK_AS_DELETED_QUERY, RESET_QUERIES, REMOVE_DELETED_QUERIES, COPY_AND_REPLACE_QUERY_FIELD, REMOVE_NEW_STATUS } from '../../../actions/explorerActions';
+import { UPDATE_QUERY, UPDATE_QUERY_COLLECTION_LOOKUP_INFO, UPDATE_QUERY_SOURCE_LOOKUP_INFO, ADD_CUSTOM_QUERY, SELECT_SEARCH_BY_ID, SAVE_PARSED_QUERIES, MARK_AS_DELETED_QUERY, RESET_QUERIES, REMOVE_DELETED_QUERIES, COPY_AND_REPLACE_QUERY_FIELD, REMOVE_NEW_STATUS, SWAP_SORT_QUERIES } from '../../../actions/explorerActions';
 import { autoMagicQueryLabel } from '../../../lib/explorerUtil';
 
 const INITIAL_STATE = [];
@@ -11,6 +11,17 @@ function shiftSortPositions(state, position) {
     }
     return updatedState[index];
   });
+  return updatedState;
+}
+function swapSortPositions(state, fromQuery, toPosition) {
+  const updatedState = [...state];
+  const fromQueryIndex = state.findIndex(q => q.uid !== null && q.uid === fromQuery.uid);
+  updatedState.map((q, index) => {
+    if (q.sortPosition === toPosition){
+      updatedState[index].sortPosition = fromQuery.sortPosition;
+    }
+  });
+  updatedState[fromQueryIndex].sortPosition = toPosition;
   return updatedState;
 }
 
@@ -101,6 +112,9 @@ function queries(state = INITIAL_STATE, action) {
       return updatedState;
     case REMOVE_DELETED_QUERIES:
       return state.filter(q => !q.deleted);
+    case SWAP_SORT_QUERIES:
+      updatedState = [...state];
+      return swapSortPositions(state, action.payload.from, action.payload.to);
     case RESET_QUERIES:
       return INITIAL_STATE;
     default:

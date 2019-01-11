@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ColorPicker from '../../common/ColorPicker';
-import { QUERY_LABEL_CHARACTER_LIMIT, ACTION_MENU_ITEM_CLASS } from '../../../lib/explorerUtil';
+import { QUERY_LABEL_CHARACTER_LIMIT, ACTION_MENU_ITEM_CLASS, LEFT } from '../../../lib/explorerUtil';
 import { defaultMenuOriginProps } from '../../util/uiUtil';
 import { trimToMaxLength } from '../../../lib/stringUtil';
 
@@ -15,6 +15,8 @@ const localMessages = {
   rename: { id: 'explorer.querypicker.title', defaultMessage: 'Rename Query' },
   duplicate: { id: 'explorer.querypicker.title', defaultMessage: 'Duplicate Query' },
   delete: { id: 'explorer.querypicker.delete', defaultMessage: 'Delete Query' },
+  moveLeft: { id: 'explorer.querypicker.move.left', defaultMessage: 'Move Left' },
+  moveRight: { id: 'explorer.querypicker.move.right', defaultMessage: 'Move Right' },
 };
 
 class QueryPickerItemMenu extends React.Component {
@@ -26,12 +28,16 @@ class QueryPickerItemMenu extends React.Component {
     this.setState({ anchorEl: event.currentTarget });
   };
 
+  handleClick = (event) => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
   handleClose = () => {
     this.setState({ anchorEl: null });
   };
 
   render() {
-    const { query, isDeletable, onColorChange, onDuplicate, onDelete, onLabelEditRequest } = this.props;
+    const { query, isDeletable, onColorChange, onDuplicate, onDelete, onMove, onLabelEditRequest } = this.props;
     let nameInfo = <div />;
     // construct the menu to use for each
     const menuChildren = [
@@ -53,6 +59,14 @@ class QueryPickerItemMenu extends React.Component {
     if (isDeletable()) { // if this is not the only QueryPickerItem
       menuChildren.push(<Divider />);
       menuChildren.push(<MenuItem key="delete" className={ACTION_MENU_ITEM_CLASS} onClick={() => { onDelete(query); this.handleClose(); }}><FormattedMessage {...localMessages.delete} /></MenuItem>);
+      menuChildren.push(<Divider />);
+      if (query.sortPosition > 0) {
+        menuChildren.push(<MenuItem key="moveLeft" className={ACTION_MENU_ITEM_CLASS} onClick={() => { onMove(LEFT); this.handleClose(); }}><FormattedMessage {...localMessages.moveLeft} /></MenuItem>);
+      }
+      /* const highestSortPosition = queries.reduce((a, b) => (a.sortPosition > b.sortPosition ? a : b)).sortPosition ;
+      if (query.sortPosition < highestSortPosition){
+        menuChildren.push(<MenuItem key="moveRight" className={ACTION_MENU_ITEM_CLASS} onClick={() => { onMove(RIGHT); this.handleClose(); }}><FormattedMessage {...localMessages.moveRight} /></MenuItem>);
+      } */
     }
     // build the menu
     if (query) {
@@ -95,6 +109,7 @@ QueryPickerItemMenu.propTypes = {
   onColorChange: PropTypes.func.isRequired,
   onDuplicate: PropTypes.func.isRequired,
   onDelete: PropTypes.func,
+  onMove: PropTypes.func.isRequired,
   onLabelEditRequest: PropTypes.func,
   // from composition
   intl: PropTypes.object.isRequired,

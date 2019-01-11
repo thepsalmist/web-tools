@@ -144,6 +144,8 @@ export const resetSentenceCounts = createAction(RESET_STORY_SPLIT_COUNTS);
 export const RESET_QUERY_TOP_WORDS = 'RESET_QUERY_TOP_WORDS';
 export const resetTopWords = createAction(RESET_QUERY_TOP_WORDS);
 
+export const SWAP_SORT_QUERIES = 'SWAP_SORT_QUERIES';
+export const swapSortQueries = createAction(SWAP_SORT_QUERIES, props => props);
 
 export const RESET_QUERY_TOP_WORDS_COMPARISON = 'RESET_QUERY_TOP_WORDS_COMPARISON';
 export const resetTopWordsComparison = createAction(RESET_QUERY_TOP_WORDS_COMPARISON);

@@ -2,12 +2,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
 import { fetchMediaSplitStoryCounts } from '../../../actions/topicActions';
 import messages from '../../../resources/messages';
 import { DownloadButton } from '../../common/IconButton';
+import ActionMenu from '../../common/ActionMenu';
 import DataCard from '../../common/DataCard';
 import { getBrandDarkColor } from '../../../styles/colors';
 
@@ -17,6 +22,7 @@ const localMessages = {
   helpText: { id: 'media.splitStoryCount.help.text',
     defaultMessage: '<p>This chart shows you the coverage of this Topic over time by this Media Source. This is the total number of stories from this Media Source within this topic.</p>',
   },
+  downloadCsv: { id: 'media.splitStoryCount.downloadCsv', defaultMessage: 'Download CSV of Stories per Day' },
 };
 
 class MediaSplitStoryCountContainer extends React.Component {
@@ -34,18 +40,35 @@ class MediaSplitStoryCountContainer extends React.Component {
   }
 
   render() {
-    const { total, counts, helpButton } = this.props;
-    const { formatMessage } = this.props.intl;
+    const { total, counts, helpButton, selectedTimePeriod } = this.props;
     return (
       <DataCard>
         <div className="actions">
-          <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.downloadCsv} />
+          <ActionMenu actionTextMsg={messages.downloadOptions}>
+            <MenuItem onClick={this.downloadCsv}>
+              <ListItemText>
+                <FormattedMessage {...localMessages.downloadCsv} />
+              </ListItemText>
+              <ListItemIcon>
+                <DownloadButton />
+              </ListItemIcon>
+            </MenuItem>
+          </ActionMenu>
+          <ActionMenu actionTextMsg={messages.viewOptions}>
+            {this.props.attentionAggregationMenuItems}
+          </ActionMenu>
         </div>
         <h2>
           <FormattedMessage {...localMessages.title} />
           {helpButton}
         </h2>
-        <AttentionOverTimeChart total={total} data={counts} height={200} lineColor={getBrandDarkColor()} />
+        <AttentionOverTimeChart
+          total={total}
+          data={counts}
+          height={200}
+          lineColor={getBrandDarkColor()}
+          interval={selectedTimePeriod}
+        />
       </DataCard>
     );
   }
@@ -55,6 +78,8 @@ MediaSplitStoryCountContainer.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
+  attentionAggregationMenuItems: PropTypes.array.isRequired,
+  selectedTimePeriod: PropTypes.string.isRequired,
   // passed in
   topicId: PropTypes.number.isRequired,
   mediaId: PropTypes.number.isRequired,
@@ -93,8 +118,10 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpText, messages.attentionChartHelpText])(
-      withAsyncFetch(
-        MediaSplitStoryCountContainer
+      withAttentionAggregation(
+        withAsyncFetch(
+          MediaSplitStoryCountContainer
+        )
       )
     )
   )

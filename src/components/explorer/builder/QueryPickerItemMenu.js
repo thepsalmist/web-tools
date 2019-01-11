@@ -63,9 +63,6 @@ class QueryPickerItemMenu extends React.Component {
       if (query.sortPosition > 0) {
         menuChildren.push(<MenuItem key="moveLeft" className={ACTION_MENU_ITEM_CLASS} onClick={() => { onMove(LEFT); this.handleClose(); }}><FormattedMessage {...localMessages.moveLeft} /></MenuItem>);
       }
-      /* const highestSortPosition = queries.reduce((a, b) => (a.sortPosition > b.sortPosition ? a : b)).sortPosition ;
-      if (query.sortPosition < highestSortPosition){
-         } */
       menuChildren.push(<MenuItem key="moveRight" className={ACTION_MENU_ITEM_CLASS} onClick={() => { onMove(RIGHT); this.handleClose(); }}><FormattedMessage {...localMessages.moveRight} /></MenuItem>);
     }
     // build the menu

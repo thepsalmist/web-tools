@@ -4,7 +4,6 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid } from 'react-flexbox-grid/lib';
 import Link from 'react-router/lib/Link';
-import { Helmet } from 'react-helmet';
 import { getCurrentDate, oneMonthBefore } from '../../../lib/dateUtil';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 import { selectSource, fetchSourceDetails } from '../../../actions/sourceActions';
@@ -14,7 +13,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import { EditButton, ExploreButton } from '../../common/IconButton';
 import SourceMgrHeaderContainer from '../SourceMgrHeaderContainer';
-import messages from '../../../resources/messages';
+import PageTitle from '../../common/PageTitle';
 
 const localMessages = {
   title: { id: 'source.title', defaultMessage: '{name} | Source Summary | Media Cloud' },
@@ -48,10 +47,9 @@ class SelectSourceContainer extends React.Component {
 
   render() {
     const { children, source } = this.props;
-    const { formatMessage } = this.props.intl;
     return (
       <div className="source-container">
-        <Helmet><title>{`${source.name} | ${formatMessage(messages.sourcesToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
+        <PageTitle value={source.name} />
         <SourceMgrHeaderContainer />
         <SourceControlBar>
           <a href="search-in-explorer" onClick={this.searchInExplorer}>

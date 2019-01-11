@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 // import { formValueSelector } from 'redux-form';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
@@ -8,6 +7,8 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import Divider from '@material-ui/core/Divider';
 import AdvancedSearchForm from './AdvancedSearchForm';
 import AdvancedSearchResultsContainer from './AdvancedSearchResultsContainer';
+import PageTitle from '../../common/PageTitle';
+import messages from '../../../resources/messages';
 
 // const formSelector = formValueSelector('advancedQueryForm');
 
@@ -32,14 +33,13 @@ class AdvancedSearchContainer extends React.Component {
 
   render() {
     const { formatMessage } = this.props.intl;
-    const titleHandler = parentTitle => `${formatMessage(localMessages.mainTitle)} | ${parentTitle}`;
     let resultsContent = null;
     if ((this.state.queryStr) || (this.state.tags.length > 0)) {
       resultsContent = <AdvancedSearchResultsContainer searchString={this.state.queryStr} tags={this.state.tags} />;
     }
     return (
       <div>
-        <Helmet><title>{titleHandler()}</title></Helmet>
+        <PageTitle value={messages.search} />
         <Grid>
           <Row>
             <Col lg={12}>

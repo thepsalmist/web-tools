@@ -18,8 +18,8 @@ export const resetWordSampleSentences = createAction(RESET_WORD_SAMPLE_SENTENCES
 export const SELECT_SEARCH_BY_ID = 'SELECT_SEARCH_BY_ID';
 export const selectBySearchId = createAction(SELECT_SEARCH_BY_ID, searchId => searchId);
 
-export const SELECT_SEARCH_BY_PARAMS = 'SELECT_SEARCH_BY_PARAMS';
-export const selectBySearchParams = createAction(SELECT_SEARCH_BY_PARAMS, searchParams => searchParams);
+export const SAVE_PARSED_QUERIES = 'SAVE_PARSED_QUERIES';
+export const saveParsedQueries = createAction(SAVE_PARSED_QUERIES, searchParams => searchParams);
 
 
 export const FETCH_SAVED_SEARCHES = 'FETCH_SAVED_SEARCHES';
@@ -126,6 +126,9 @@ export const deleteUserSearch = createAsyncAction(DELETE_USER_SEARCH, api.delete
 export const MARK_AS_DELETED_QUERY = 'MARK_AS_DELETED_QUERY';
 export const markAsDeletedQuery = createAction(MARK_AS_DELETED_QUERY);
 
+export const REMOVE_NEW_STATUS = 'REMOVE_NEW_STATUS';
+export const removeNewStatusFromQueries = createAction(REMOVE_NEW_STATUS, params => params);
+
 export const REMOVE_DELETED_QUERIES = 'REMOVE_DELETED_QUERIES';
 export const removeDeletedQueries = createAction(REMOVE_DELETED_QUERIES);
 
@@ -141,6 +144,8 @@ export const resetSentenceCounts = createAction(RESET_STORY_SPLIT_COUNTS);
 export const RESET_QUERY_TOP_WORDS = 'RESET_QUERY_TOP_WORDS';
 export const resetTopWords = createAction(RESET_QUERY_TOP_WORDS);
 
+export const SWAP_SORT_QUERIES = 'SWAP_SORT_QUERIES';
+export const swapSortQueries = createAction(SWAP_SORT_QUERIES, props => props);
 
 export const RESET_QUERY_TOP_WORDS_COMPARISON = 'RESET_QUERY_TOP_WORDS_COMPARISON';
 export const resetTopWordsComparison = createAction(RESET_QUERY_TOP_WORDS_COMPARISON);

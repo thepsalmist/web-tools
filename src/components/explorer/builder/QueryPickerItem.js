@@ -8,8 +8,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import AppButton from '../../common/AppButton';
-import QueryPickerLoggedInHeader from './QueryPickerLoggedInHeader';
-import QueryPickerDemoHeader from './QueryPickerDemoHeader';
+import QueryPickerItemMenu from './QueryPickerItemMenu';
+import QueryPickerItemDemoMenu from './QueryPickerItemDemoMenu';
 import { getShortDate } from '../../../lib/dateUtil';
 import { QUERY_LABEL_CHARACTER_LIMIT } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
@@ -82,7 +82,7 @@ class QueryPickerItem extends React.Component {
   }
 
   render() {
-    const { isLoggedIn, query, isSelected, isDeletable, displayLabel, isLabelEditable, updateDemoQueryLabel, /* onDuplicate, */ onDelete } = this.props;
+    const { isLoggedIn, query, isSelected, isDeletable, displayLabel, isLabelEditable, updateDemoQueryLabel, onDuplicate, onDelete, onMove } = this.props;
     const { formatMessage } = this.props.intl;
     let subT = null;
     let headerInfo = null;
@@ -92,20 +92,21 @@ class QueryPickerItem extends React.Component {
     if (query) {
       if (isLoggedIn) {
         headerInfo = (
-          <QueryPickerLoggedInHeader
+          <QueryPickerItemMenu
             query={query}
             onLabelEditRequest={this.handleLabelEditRequest}
-            /* onDuplicate={onDuplicate} */
+            onDuplicate={onDuplicate}
             isDeletable={isDeletable}
             displayLabel={displayLabel}
             onDelete={onDelete}
+            onMove={onMove}
             onColorChange={this.handleColorChange}
             handleMenuItemKeyDown={this.handleMenuItemKeyDown}
           />
         );
       } else { // can delete only if this is a custom query (vs sample query) for demo users and this is not the only QueryPickerItem
         headerInfo = (
-          <QueryPickerDemoHeader
+          <QueryPickerItemDemoMenu
             query={query}
             isDeletable={isDeletable}
             onDelete={onDelete}
@@ -227,8 +228,9 @@ QueryPickerItem.propTypes = {
   updateQueryProperty: PropTypes.func.isRequired,
   updateDemoQueryLabel: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
-  /* onDuplicate: PropTypes.func.isRequired, */
+  onDuplicate: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  onMove: PropTypes.func.isRequired,
   loadEditLabelDialog: PropTypes.func,
   isLoggedIn: PropTypes.bool.isRequired,
   // from composition

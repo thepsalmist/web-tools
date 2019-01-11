@@ -38,7 +38,7 @@ def _get_word_count():
         solr_q, solr_fq = parse_query_with_keywords(request.args)
     word_data = query_wordcount(solr_q, solr_fq, sample_size=sample_size)
     # return combined data
-    return jsonify({"list": word_data, "sample_size": str(sample_size)})
+    return jsonify({"results": word_data, "sample_size": str(sample_size)})
 
 
 # if this is a sample search, we will have a search id and a query index
@@ -49,7 +49,7 @@ def explorer_wordcount_csv():
     data = request.form
     ngram_size = data['ngramSize'] if 'ngramSize' in data else 1    # defaul to words if ngram not specified
     sample_size = data['sample_size'] if 'sample_size' in data else WORD_COUNT_SAMPLE_SIZE
-    filename = u'sampled-{}-ngrams-{}'.format(sample_size, ngram_size)
+    filename = 'sampled-{}-ngrams-{}'.format(sample_size, ngram_size)
     if 'searchId' in data:
         solr_q, solr_fq = parse_as_sample(data['searchId'], data['index'])
     else:
@@ -95,7 +95,7 @@ def api_explorer_demo_compare_words():
             word_count_result = query_wordcount(solr_q, solr_fq)
             results.append(word_count_result)
 
-    return jsonify({"list": results})
+    return jsonify({"results": results})
 
 
 def query_wordcount(q, fq, ngram_size=1, num_words=WORD_COUNT_UI_NUM_WORDS, sample_size=WORD_COUNT_SAMPLE_SIZE):

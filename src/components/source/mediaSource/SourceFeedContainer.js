@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import Link from 'react-router/lib/Link';
 import { push } from 'react-router-redux';
-import { Helmet } from 'react-helmet';
 import { fetchSourceFeeds, scrapeSourceFeeds, fetchSourceDetails } from '../../../actions/sourceActions';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import MediaSourceIcon from '../../common/icons/MediaSourceIcon';
@@ -17,8 +16,10 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import { updateFeedback } from '../../../actions/appActions';
 import { SOURCE_SCRAPE_STATE_QUEUED, SOURCE_SCRAPE_STATE_RUNNING } from '../../../reducers/sources/sources/selected/sourceDetails';
+import PageTitle from '../../common/PageTitle';
 
 const localMessages = {
+  pageTitle: { id: 'source.feeds.pageTitle', defaultMessage: 'Feeds' },
   title: { id: 'source.feeds.title', defaultMessage: '{name} | Source Feeds | Media Cloud' },
   sourceFeedsTitle: { id: 'source.details.feeds.title', defaultMessage: '{name}: Feeds' },
   add: { id: 'source.deatils.feeds.add', defaultMessage: 'Add A Feed' },
@@ -51,7 +52,7 @@ class SourceFeedContainer extends React.Component {
     }
     return (
       <Grid className="details source-details">
-        <Helmet><title>{formatMessage(localMessages.title, { name: sourceName })}</title></Helmet>
+        <PageTitle value={[localMessages.pageTitle, sourceName]} />
         <Row>
           <Col lg={11} xs={11}>
             <h1>

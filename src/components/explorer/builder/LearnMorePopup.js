@@ -14,7 +14,7 @@ const localMessages = {
   instructions: { id: 'explorer.querymediapicker.instructions', defaultMessage: 'When you find a source or collection you want to add, click the + button to the right of the description. You can edit your selections (by clicking the X button to remove unwanted selections) in the lower left corner of the dialog window. Click the OK button to add your source selections to your query.' },
 };
 
-class QueryPickerLoggedInHeader extends React.Component {
+class LearnMorePopup extends React.Component {
   state = {
     open: false,
   };
@@ -44,7 +44,7 @@ class QueryPickerLoggedInHeader extends React.Component {
   }
 }
 
-QueryPickerLoggedInHeader.propTypes = {
+LearnMorePopup.propTypes = {
   // from parent
   query: PropTypes.object,
   isDeletable: PropTypes.func.isRequired,
@@ -55,4 +55,4 @@ QueryPickerLoggedInHeader.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default injectIntl(QueryPickerLoggedInHeader);
+export default injectIntl(LearnMorePopup);

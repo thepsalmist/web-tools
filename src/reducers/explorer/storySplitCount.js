@@ -22,7 +22,7 @@ const storySplitCount = createIndexedAsyncReducer({
     dataPoint: null,
   }),
   [RESET_STORY_SPLIT_COUNTS]: () => ({
-    fetchStatus: '', fetchStatuses: [], results: [], dateRangeSpread: 0, dataPoint: null,
+    fetchStatus: '', fetchStatuses: [], fetchUids: [], results: [], dateRangeSpread: 0, dataPoint: null,
   }),
   [SELECT_EXPLORER_TIME_AGGREGATE]: payload => ({
     selectedTimePeriod: payload,

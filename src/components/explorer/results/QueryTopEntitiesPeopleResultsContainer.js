@@ -120,7 +120,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           start_date: q.startDate,
           end_date: q.endDate,
           q: q.q,
-          index: q.index,
+          uid: q.uid,
           sources: q.sources.map(s => s.id),
           collections: q.collections.map(c => c.id),
         };

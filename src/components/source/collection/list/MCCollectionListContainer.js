@@ -10,6 +10,7 @@ import TabSelector from '../../../common/TabSelector';
 import { TAG_SET_MC_ID, isCollectionTagSet } from '../../../../lib/tagUtil';
 import { PERMISSION_MEDIA_EDIT, getUserRoles, hasPermissions } from '../../../../lib/auth';
 import Permissioned from '../../../common/Permissioned';
+import PageTitle from '../../../common/PageTitle';
 
 const localMessages = {
   private: { id: 'sources.collections.mc.private', defaultMessage: 'Private' },
@@ -36,6 +37,7 @@ class MCCollectionListContainer extends React.Component {
     }
     return (
       <div className="mc-collections-table">
+        <PageTitle value={name} />
         <Grid>
           <h1>{name}</h1>
           <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>

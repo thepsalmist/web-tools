@@ -6,11 +6,11 @@ from operator import itemgetter
 import time
 
 from server.cache import cache, key_generator
-from media_search import collection_search, media_search
 from server import app, mc
 from server.auth import user_has_auth_role, ROLE_MEDIA_EDIT
 from server.util.tags import VALID_COLLECTION_TAG_SETS_IDS
 from server.views.sources import FEATURED_COLLECTION_LIST
+from server.views.media_search import collection_search, media_search
 from server.util.request import api_error_handler, arguments_required
 from server.util.tags import cached_media_with_tag_page
 

@@ -8,9 +8,10 @@ import withAsyncFetch from '../common/hocs/AsyncContainer';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { LEVEL_ERROR } from '../common/Notice';
 import { addNotice } from '../../actions/appActions';
-import { selectBySearchParams, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo,
+import { saveParsedQueries, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo,
   fetchQuerySourcesByIds, fetchQueryCollectionsByIds, demoQuerySourcesByIds, demoQueryCollectionsByIds } from '../../actions/explorerActions';
-import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, decodeQueryParamString, serializeQueriesForUrl, replaceCurlyQuotes } from '../../lib/explorerUtil';
+import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, decodeQueryParamString, serializeQueriesForUrl,
+  replaceCurlyQuotes, uniqueQueryId } from '../../lib/explorerUtil';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../lib/dateUtil';
 import { notEmptyString } from '../../lib/formValidators';
 
@@ -35,6 +36,8 @@ function composeUrlBasedQueryContainer() {
         // if from homepage, allow automagic, if from URL, do not...
         const autoMagic = location.query.auto === 'true';
         this.setState({ queryInStore: false }); // if/def automagic here
+        // console.log('saving queries from will mount');
+        // console.log('saving queries from will mount');
         this.updateQueriesFromLocation(location, autoMagic);
       }
 
@@ -55,10 +58,12 @@ function composeUrlBasedQueryContainer() {
             this.setState({ queryInStore: true }); // mark that the parsing process has finished
           }
           if (nextProps.queries.filter(q => q.sources.length > 0).length === 0 && nextProps.queries.filter(q => q.collections.length > 0).length === 0) {
+            // console.log('no sources or collections');
             this.setState({ queryInStore: true });
             updateUrl(nextProps.queries, isLoggedIn);
           }
         } else if (lastSearchTime !== nextProps.lastSearchTime) {
+          // console.log('got a new search time');
           updateUrl(nextProps.queries, isLoggedIn);
         } else {
           // console.log('  other change');
@@ -160,7 +165,8 @@ function composeUrlBasedQueryContainer() {
           collections: query.collections ? query.collections.map(s => ({ id: s, tags_id: s })) : undefined,
           q: replaceCurlyQuotes(query.q),
           color: query.color ? query.color : schemeCategory10[index % 10],
-          index, // redo index to be zero-based on reload of query
+          uid: uniqueQueryId(),
+          sortPosition: index, // for now
           ...extraDefaults, // for demo mode
         }));
         // push the queries in to the store
@@ -182,9 +188,11 @@ function composeUrlBasedQueryContainer() {
       }
 
       render() {
+        const { queries } = this.props;
         let content;
+        const sortedQueries = queries.sort((a, b) => a.sortPosition - b.sortPosition);
         if (this.state.queryInStore) {
-          content = <ChildComponent {...this.props} />;
+          content = <ChildComponent {...this.props} queries={sortedQueries} />;
         } else {
           content = <LoadingSpinner />;
         }
@@ -226,7 +234,7 @@ function composeUrlBasedQueryContainer() {
       },
       // handles demo mode by allowing you to pass in extraDefaults
       saveQueriesFromParsedUrl: (queriesToUse, isLoggedIn) => {
-        dispatch(selectBySearchParams(queriesToUse)); // load query data into the store
+        dispatch(saveParsedQueries(queriesToUse)); // load query data into the store
         // lookup ancillary data eg collection and source info for display purposes in QueryForm
         queriesToUse.forEach((q) => {
           const queryInfo = {
@@ -258,11 +266,12 @@ function composeUrlBasedQueryContainer() {
       updateUrl: (queries, isLoggedIn) => {
         const unDeletedQueries = queries.filter(q => q.deleted !== true);
         const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
+        const sortedQueries = nonEmptyQueries.sort((a, b) => a.uid - b.uid);
         if (!isLoggedIn) {
-          const queriesToSerialize = nonEmptyQueries.map((q, idx) => ({ index: idx, q: q.q, color: q.color }));
+          const queriesToSerialize = nonEmptyQueries.map(q => ({ q: q.q, color: q.color }));
           dispatch(push({ pathname: '/queries/demo/search', search: `?qs=${serializeQueriesForUrl(queriesToSerialize)}` }));
         } else {
-          const queriesToSerialize = queries.map(q => ({
+          const queriesToSerialize = sortedQueries.map(q => ({
             label: q.label,
             q: q.q,
             color: q.color,

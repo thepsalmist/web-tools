@@ -5,6 +5,7 @@ const topWords = createIndexedAsyncReducer({
   initialState: ({
     fetchStatus: '',
     fetchStatuses: [],
+    fetchUids: [],
     results: [],
     selectedWord: null,
   }),

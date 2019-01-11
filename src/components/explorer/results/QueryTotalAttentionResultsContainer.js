@@ -9,7 +9,7 @@ import withSummary from '../../common/hocs/SummarizedVizualization';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 import ActionMenu from '../../common/ActionMenu';
 import BubbleRowChart from '../../vis/BubbleRowChart';
-import { queryChangedEnoughToUpdate, postToCombinedDownloadUrl, downloadExplorerSvg } from '../../../lib/explorerUtil';
+import { queryChangedEnoughToUpdate, postToCombinedDownloadUrl, downloadExplorerSvg, ensureSafeResults } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
@@ -51,12 +51,11 @@ class QueryTotalAttentionResultsContainer extends React.Component {
     const { formatNumber, formatMessage } = this.props.intl;
     let content = null;
 
-    const safeResults = results.map((r, idx) => Object.assign({}, r, queries[idx]));
-
-    let bubbleData = [];
-    if (safeResults !== undefined && safeResults !== null && safeResults.length > 0) {
+    const safeResults = ensureSafeResults(queries, results);
+    if (safeResults) {
+      let bubbleData = [];
       bubbleData = safeResults.map((query, idx) => {
-        const value = (this.state.view === VIEW_REGULAR) ? query.total : query.ratio;
+        const value = (this.state.view === VIEW_REGULAR) ? query.results.total : query.results.ratio;
         let centerText;
         if (this.state.view === VIEW_REGULAR) {
           centerText = formatNumber(value);

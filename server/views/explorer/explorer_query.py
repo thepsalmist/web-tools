@@ -28,7 +28,7 @@ def api_explorer_sources_by_ids():
         info = user_mc.media(media_id)
         info['id'] = int(media_id)
         source_list.append(info)
-    return jsonify(source_list)
+    return jsonify({"results": source_list})
 
 
 @app.route('/api/explorer/collections/list', methods=['GET'])
@@ -50,7 +50,7 @@ def api_explorer_collections_by_ids():
         info = client_mc.tag(tags_id)
         info['id'] = int(tags_id)
         collection_list.append(info)
-    return jsonify(collection_list)
+    return jsonify({"results": collection_list})
 
 
 @app.route('/api/explorer/demo/sources/list', methods=['GET'])

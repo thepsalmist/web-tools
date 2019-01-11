@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import { selectComparativeWordField, updateQuery } from '../../../actions/explorerActions';
-import { queryChangedEnoughToUpdate } from '../../../lib/explorerUtil';
+import { queryChangedEnoughToUpdate, getUidIndex } from '../../../lib/explorerUtil';
 import { getBrandDarkColor } from '../../../styles/colors';
 import ComparativeOrderedWordCloud from '../../vis/ComparativeOrderedWordCloud';
 import OrderedWordCloud from '../../vis/OrderedWordCloud';
@@ -74,14 +74,14 @@ class QueryWordComparisonResultsContainer extends React.Component {
 
   render() {
     const { queries, results, handleWordCloudClick, leftQuery, rightQuery } = this.props;
-    if (results && !rightQuery) {
+    if (results && results.length > 0 && !rightQuery) {
       return (
         <Grid>
           <Row>
             <Col lg={8}>
               <h2><FormattedMessage {...localMessages.title} /></h2>
               <OrderedWordCloud
-                words={results[0].list}
+                words={results[0].results}
                 // alreadyNormalized
                 width={700}
               />
@@ -111,8 +111,8 @@ class QueryWordComparisonResultsContainer extends React.Component {
                 <h2><FormattedMessage {...localMessages.title} /></h2>
                 {wordSelectorContent}
                 <ComparativeOrderedWordCloud
-                  leftWords={results[leftQuery.index].list}
-                  rightWords={results[rightQuery.index].list}
+                  leftWords={results[getUidIndex(leftQuery.uid, results)].results}
+                  rightWords={results[getUidIndex(rightQuery.uid, results)].results}
                   leftTextColor={leftQuery.color}
                   rightTextColor={rightQuery.color}
                   textColor={getBrandDarkColor()}

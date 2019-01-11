@@ -3,6 +3,7 @@ import React from 'react';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import { getUidIndex } from '../../../lib/explorerUtil';
 
 const LEFT = 0;
 const RIGHT = 1;
@@ -17,13 +18,13 @@ class WordSelectWrapper extends React.Component {
     }
   }
 
-  selectThisQuery = (targetIndex, value) => {
+  selectThisQuery = (targetIndex, uid) => {
     // get value and which menu (left or right) and then run comparison
     // get query out of queries at queries[targetIndex] and pass "q" to fetch
     // store choice of Select
     const { selectComparativeWords, queries } = this.props;
     let queryObj = {};
-    queryObj = queries[value];
+    queryObj = queries[getUidIndex(uid, queries)];
     if (targetIndex === LEFT) {
       selectComparativeWords(queryObj, LEFT);
     } else {
@@ -33,7 +34,7 @@ class WordSelectWrapper extends React.Component {
 
   render() {
     const { queries, leftQuery, rightQuery } = this.props;
-    const menuItems = queries.map((q, idx) => <MenuItem key={idx} value={idx}>{q.label}</MenuItem>);
+    const menuItems = queries.map((q, idx) => <MenuItem key={idx} value={q.uid}>{q.label}</MenuItem>);
     let content = null;
     if (leftQuery !== null) {
       content = (
@@ -41,8 +42,8 @@ class WordSelectWrapper extends React.Component {
           <Col lg={3}>
             <Select
               label="Left Column"
-              value={leftQuery.index || queries[0].index}
-              onChange={(...args) => this.selectThisQuery(LEFT, args[2])}
+              value={leftQuery.uid || queries[0].uid}
+              onChange={event => this.selectThisQuery(LEFT, event.target.value)}
               fullWidth
             >
               {menuItems}
@@ -51,8 +52,8 @@ class WordSelectWrapper extends React.Component {
           <Col>
             <Select
               label="Right Column"
-              value={rightQuery ? rightQuery.index : queries[1].index}
-              onChange={(...args) => this.selectThisQuery(RIGHT, args[2])}
+              value={rightQuery ? rightQuery.uid : queries[1].uid}
+              onChange={event => this.selectThisQuery(RIGHT, event.target.value)}
             >
               {menuItems}
             </Select>

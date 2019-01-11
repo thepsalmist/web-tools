@@ -6,26 +6,26 @@ const LEFT = 0;
 
 const topWordsComparison = createAsyncReducer({
   initialState: ({
-    list: [], // list of words
+    results: [], // list of words
     left: null, // ui component selection
     right: null,
   }),
   action: FETCH_QUERY_TOP_WORDS_COMPARISON,
   handleSuccess: payload => ({
     // result of left and right queries
-    list: payload.list,
+    results: payload.list,
   }),
   [SELECT_COMPARATIVE_WORD_FIELD]: (payload) => {
     // store query selection
     let value = payload.query;
-    if (payload.query.length) {
+    if (payload.query && payload.query.length) {
       value = payload.query[payload.target];
     }
     if (payload.target === LEFT) return { left: value };
     return { right: value };
   },
   [RESET_QUERY_TOP_WORDS_COMPARISON]: () => ({
-    list: [],
+    results: [],
   }),
 });
 export default topWordsComparison;

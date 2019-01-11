@@ -4,6 +4,8 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { GithubPicker } from 'react-color';
 import ListItemText from '@material-ui/core/ListItemText';
 
+export const QUERY_COLORS = ['#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE', '#004DCF', '#5300EB'];
+
 const localMessages = {
   choose: { id: 'explorer.colorpicker', defaultMessage: 'Choose A Color' },
 };
@@ -53,7 +55,7 @@ class ColorPicker extends React.Component {
       colorPicker = (
         <div>
           <ListItemText><FormattedMessage {...localMessages.choose} /></ListItemText>
-          <GithubPicker triangle="hide" color={color} onChange={this.handleClose} colors={['#B80000', '#DB3E00', '#FCCB00', '#008B02', '#006B76', '#1273DE', '#004DCF', '#5300EB']} />
+          <GithubPicker triangle="hide" color={color} onChange={this.handleClose} colors={QUERY_COLORS} />
         </div>
       );
     }

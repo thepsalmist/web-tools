@@ -15,7 +15,7 @@ const localMessages = {
   delete: { id: 'explorer.querypicker.delete', defaultMessage: 'Delete' },
 };
 
-class QueryPickerDemoHeader extends React.Component {
+class QueryPickerItemDemoMenu extends React.Component {
   state = {
     anchorEl: null,
   };
@@ -112,7 +112,7 @@ class QueryPickerDemoHeader extends React.Component {
     return nameInfo;
   }
 }
-QueryPickerDemoHeader.propTypes = {
+QueryPickerItemDemoMenu.propTypes = {
   // from parent
   query: PropTypes.object.isRequired,
   isLabelEditable: PropTypes.bool.isRequired,
@@ -128,5 +128,5 @@ QueryPickerDemoHeader.propTypes = {
 
 export default
 injectIntl(
-  QueryPickerDemoHeader
+  QueryPickerItemDemoMenu
 );

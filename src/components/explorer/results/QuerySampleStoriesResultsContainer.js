@@ -48,35 +48,40 @@ class QuerySampleStoriesResultsContainer extends React.Component {
     const showMoreInfoCol = story => (
       <td><AppButton variant="outlined" onClick={() => this.onStorySelection(story)}><FormattedMessage {...localMessages.showMetadata} /></AppButton></td>
     );
-    return (
-      <div>
-        {tabSelector}
-        <StoryTable
-          className="story-table"
-          stories={results[selectedTabIndex] ? results[selectedTabIndex].slice(0, 10) : []}
-          onMoreInfo={story => this.onStorySelection(story)}
-          maxTitleLength={90}
-          selectedStory={internalItemSelected}
-          extraheaderColumns={showMoreInfoColHdr}
-          extraColumns={story => showMoreInfoCol(story)}
-        />
-        <div className="actions">
-          <ActionMenu actionTextMsg={messages.downloadOptions}>
-            <MenuItem
-              className="action-icon-menu-item"
-              onClick={() => this.downloadCsv(queries[selectedTabIndex])}
-            >
-              <ListItemText>
-                <FormattedMessage {...localMessages.downloadCsv} values={{ name: queries[selectedTabIndex].label }} />
-              </ListItemText>
-              <ListItemIcon>
-                <DownloadButton />
-              </ListItemIcon>
-            </MenuItem>
-          </ActionMenu>
+
+    if (results && results.length > 0) {
+      const safeResults = results[selectedTabIndex].results ? results[selectedTabIndex].results.slice(0, 10) : [];
+      return (
+        <div>
+          {tabSelector}
+          <StoryTable
+            className="story-table"
+            stories={safeResults}
+            onMoreInfo={story => this.onStorySelection(story)}
+            maxTitleLength={90}
+            selectedStory={internalItemSelected}
+            extraheaderColumns={showMoreInfoColHdr}
+            extraColumns={story => showMoreInfoCol(story)}
+          />
+          <div className="actions">
+            <ActionMenu actionTextMsg={messages.downloadOptions}>
+              <MenuItem
+                className="action-icon-menu-item"
+                onClick={() => this.downloadCsv(queries[selectedTabIndex])}
+              >
+                <ListItemText>
+                  <FormattedMessage {...localMessages.downloadCsv} values={{ name: queries[selectedTabIndex].label }} />
+                </ListItemText>
+                <ListItemIcon>
+                  <DownloadButton />
+                </ListItemIcon>
+              </MenuItem>
+            </ActionMenu>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+    return <div>Error</div>;
   }
 }
 
@@ -121,7 +126,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           start_date: q.startDate,
           end_date: q.endDate,
           q: q.q,
-          index: q.index,
+          uid: q.uid,
           sources: q.sources.map(s => s.id),
           collections: q.collections.map(c => c.id),
         };
@@ -164,8 +169,8 @@ injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withSummary(localMessages.title, localMessages.helpIntro, localMessages.helpDetails)(
       withAsyncFetch(
-        withQueryResults(
-          withLoginRequired(
+        withLoginRequired(
+          withQueryResults(
             QuerySampleStoriesResultsContainer
           )
         )

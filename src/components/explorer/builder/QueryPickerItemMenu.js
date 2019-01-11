@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ColorPicker from '../../common/ColorPicker';
-import { QUERY_LABEL_CHARACTER_LIMIT, ACTION_MENU_ITEM_CLASS, LEFT } from '../../../lib/explorerUtil';
+import { QUERY_LABEL_CHARACTER_LIMIT, ACTION_MENU_ITEM_CLASS, LEFT, RIGHT } from '../../../lib/explorerUtil';
 import { defaultMenuOriginProps } from '../../util/uiUtil';
 import { trimToMaxLength } from '../../../lib/stringUtil';
 
@@ -65,8 +65,8 @@ class QueryPickerItemMenu extends React.Component {
       }
       /* const highestSortPosition = queries.reduce((a, b) => (a.sortPosition > b.sortPosition ? a : b)).sortPosition ;
       if (query.sortPosition < highestSortPosition){
-        menuChildren.push(<MenuItem key="moveRight" className={ACTION_MENU_ITEM_CLASS} onClick={() => { onMove(RIGHT); this.handleClose(); }}><FormattedMessage {...localMessages.moveRight} /></MenuItem>);
-      } */
+         } */
+      menuChildren.push(<MenuItem key="moveRight" className={ACTION_MENU_ITEM_CLASS} onClick={() => { onMove(RIGHT); this.handleClose(); }}><FormattedMessage {...localMessages.moveRight} /></MenuItem>);
     }
     // build the menu
     if (query) {

@@ -15,13 +15,14 @@ function shiftSortPositions(state, position) {
 }
 function swapSortPositions(state, fromQuery, toPosition) {
   const updatedState = [...state];
+  const highestPosition = updatedState.reduce((a, b) => (a.sortPosition > b.sortPosition ? a : b)).sortPosition;
   const fromQueryIndex = state.findIndex(q => q.uid !== null && q.uid === fromQuery.uid);
   updatedState.map((q, index) => {
     if (q.sortPosition === toPosition){
       updatedState[index].sortPosition = fromQuery.sortPosition;
     }
   });
-  updatedState[fromQueryIndex].sortPosition = toPosition;
+  updatedState[fromQueryIndex].sortPosition = toPosition > highestPosition ? highestPosition : toPosition; // prevent inflation at end of list
   return updatedState;
 }
 

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { selectQuery, resetSelected, resetQueries, resetSentenceCounts, resetSampleStories, resetStoryCounts,
   resetGeo, updateTimestampForQueries, removeDeletedQueries } from '../../../actions/explorerActions';
-import QueryBuilderContainer from './QueryBuilderContainer';
+import QueryPickerContainer from './QueryPickerContainer';
 import QueryResultsContainer from '../results/QueryResultsContainer';
 import { WarningNotice } from '../../common/Notice';
 import composeUrlBasedQueryContainer from '../UrlBasedQueryContainer';
@@ -47,7 +47,7 @@ class DemoQueryBuilderContainer extends React.Component {
             </Row>
           </Grid>
         </div>
-        <QueryBuilderContainer isEditable={isEditable} onSearch={() => handleSearch()} />
+        <QueryPickerContainer isEditable={isEditable} onSearch={() => handleSearch()} />
         <QueryResultsContainer
           lastSearchTime={lastSearchTime}
           queries={queries}

@@ -16,7 +16,7 @@ import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTim
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import { oneDayLater, solrFormat } from '../../../lib/dateUtil';
-import { postToDownloadUrl, ACTION_MENU_ITEM_CLASS } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, ACTION_MENU_ITEM_CLASS, ensureSafeResults } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
@@ -75,18 +75,18 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
     // because these results are indexed, we can merge these two arrays
     // we may have more results than queries b/c queries can be deleted but not executed
     // so we have to do the following
-    const safeResults = results.map((r, idx) => Object.assign({}, r, queries[idx]));
-    // stich together line chart data
+
     let series = [];
-    if (safeResults && safeResults.length > 0) {
+    const safeResults = ensureSafeResults(queries, results);
+    if (safeResults) {
       series = [
         ...safeResults.map((query, idx) => { // add series for all the results
-          if (query.counts || query.normalizedCounts) {
+          if (query.results && (query.results.counts || query.results.normalizedCounts)) {
             let data;
             if (this.state.view === VIEW_NORMALIZED) {
-              data = dataAsSeries(query.counts, 'ratio');
+              data = dataAsSeries(query.results.counts, 'ratio');
             } else {
-              data = dataAsSeries(query.counts);
+              data = dataAsSeries(query.results.counts);
             }
             return {
               id: idx,
@@ -97,59 +97,60 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
           } return {};
         }),
       ];
-    }
-    return (
-      <React.Fragment>
-        <AttentionOverTimeChart
-          series={series}
-          height={300}
-          backgroundColor="#f5f5f5"
-          onDataPointClick={this.handleDataPointClick}
-          normalizeYAxis={this.state.view === VIEW_NORMALIZED}
-          interval={selectedTimePeriod}
-        />
-        <div className="actions">
-          <ActionMenu actionTextMsg={messages.downloadOptions}>
-            {safeResults.map((q, idx) => (
+      return (
+        <React.Fragment>
+          <AttentionOverTimeChart
+            series={series}
+            height={300}
+            backgroundColor="#f5f5f5"
+            onDataPointClick={this.handleDataPointClick}
+            normalizeYAxis={this.state.view === VIEW_NORMALIZED}
+            interval={selectedTimePeriod}
+          />
+          <div className="actions">
+            <ActionMenu actionTextMsg={messages.downloadOptions}>
+              {safeResults.map((q, idx) => (
+                <MenuItem
+                  key={idx}
+                  className={ACTION_MENU_ITEM_CLASS}
+                  onClick={() => this.downloadCsv(q)}
+                >
+                  <ListItemText>
+                    <FormattedMessage {...localMessages.downloadCsv} values={{ name: q.label }} />
+                  </ListItemText>
+                  <ListItemIcon>
+                    <DownloadButton />
+                  </ListItemIcon>
+                </MenuItem>
+              ))}
+            </ActionMenu>
+            <ActionMenu actionTextMsg={messages.viewOptions}>
               <MenuItem
-                key={idx}
                 className={ACTION_MENU_ITEM_CLASS}
-                onClick={() => this.downloadCsv(q)}
+                disabled={this.state.view === VIEW_REGULAR}
+                onClick={() => this.setView(VIEW_REGULAR)}
               >
                 <ListItemText>
-                  <FormattedMessage {...localMessages.downloadCsv} values={{ name: q.label }} />
+                  <FormattedMessage {...localMessages.withKeywords} />
                 </ListItemText>
-                <ListItemIcon>
-                  <DownloadButton />
-                </ListItemIcon>
               </MenuItem>
-            ))}
-          </ActionMenu>
-          <ActionMenu actionTextMsg={messages.viewOptions}>
-            <MenuItem
-              className={ACTION_MENU_ITEM_CLASS}
-              disabled={this.state.view === VIEW_REGULAR}
-              onClick={() => this.setView(VIEW_REGULAR)}
-            >
-              <ListItemText>
-                <FormattedMessage {...localMessages.withKeywords} />
-              </ListItemText>
-            </MenuItem>
-            <MenuItem
-              className={ACTION_MENU_ITEM_CLASS}
-              disabled={this.state.view === VIEW_NORMALIZED}
-              onClick={() => this.setView(VIEW_NORMALIZED)}
-            >
-              <ListItemText>
-                <FormattedMessage {...localMessages.withoutKeywords} />
-              </ListItemText>
-            </MenuItem>
-            <Divider />
-            {this.props.attentionAggregationMenuItems}
-          </ActionMenu>
-        </div>
-      </React.Fragment>
-    );
+              <MenuItem
+                className={ACTION_MENU_ITEM_CLASS}
+                disabled={this.state.view === VIEW_NORMALIZED}
+                onClick={() => this.setView(VIEW_NORMALIZED)}
+              >
+                <ListItemText>
+                  <FormattedMessage {...localMessages.withoutKeywords} />
+                </ListItemText>
+              </MenuItem>
+              <Divider />
+              {this.props.attentionAggregationMenuItems}
+            </ActionMenu>
+          </div>
+        </React.Fragment>
+      );
+    }
+    return <div>Error</div>;
   }
 }
 
@@ -195,7 +196,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           start_date: q.startDate,
           end_date: q.endDate,
           q: q.q,
-          index: q.index,
+          uid: q.uid,
+          sortPosition: q.sortPosition,
           sources: q.sources.map(s => s.id),
           collections: q.collections.map(c => c.id),
         };

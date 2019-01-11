@@ -45,7 +45,7 @@ export const asyncContainerize = (ChildComponent, loadingSpinnerSize) => {
         const error = { message: `asyncContainerize: No asyncFetch defined for your ${ChildComponent.displayName || ChildComponent.name} container!`, child: ChildComponent };
         throw error;
       }
-      const fetchStatusToUse = (typeof fetchStatus === 'string') ? fetchStatus : fetchConstants.combineFetchStatuses(fetchStatus);
+      const fetchStatusToUse = fetchConstants.combineFetchStatuses(fetchStatus);
       let content = null;
       if (this.state.asyncFetchResult === 'hide') {
         content = null;

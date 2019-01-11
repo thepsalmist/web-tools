@@ -229,39 +229,39 @@ export function createIndexedAsyncReducer(handlers) {
     desiredInitialState = handlers.initialState;
   }
   const initialState = {
-    results: [],
+    results: {},
     fetchStatus: fetchConstants.FETCH_INVALID,
-    fetchStatuses: [], // array of fetchStatus
-    fetchUids: [], // array of unique ids for each fetch in the list
+    fetchStatuses: {}, // array of fetchStatus
+    fetchUids: {}, // array of unique ids for each fetch in the list
     ...desiredInitialState,
   };
   // set up any async reducer handlers the user passed in
   const reducers = { // set up some smart defaults for normal behaviour
     handleFetch: (payload, state, args) => {
-      const { index } = args[0];
-      if (index === undefined) {
-        const error = { error: 'You need to pass the indexedAsyncReducer an index to use!' };
+      const { uid } = args[0];
+      if (uid === undefined) {
+        const error = { error: 'You need to pass the indexedAsyncReducer an uid to use!' };
         throw error;
       }
-      const updatedFetchStatuses = [...state.fetchStatuses];
-      updatedFetchStatuses[index] = fetchConstants.FETCH_ONGOING;
-      const updatedFetchUids = [...state.fetchUids];
-      updatedFetchUids[index] = payload.uid;
+      const updatedFetchStatuses = { ...state.fetchStatuses };
+      updatedFetchStatuses[uid] = fetchConstants.FETCH_ONGOING;
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
         fetchStatuses: updatedFetchStatuses,
-        fetchUids: updatedFetchUids,
+        fetchUids: state.fetchUids,
       });
     },
     handleSuccess: (payload, state, args) => {
-      const { index } = args[0];
+      const { uid } = args[0];
+      // const { uid } = meta;
       const updatedResults = [...state.results];
-      const updatedFetchStatuses = [...state.fetchStatuses];
-      updatedFetchStatuses[index] = fetchConstants.FETCH_SUCCEEDED;
+      const updatedFetchStatuses = { ...state.fetchStatuses };
+      updatedFetchStatuses[uid] = fetchConstants.FETCH_SUCCEEDED;
       if ('handleSuccess' in handlers) {
-        updatedResults[index] = handlers.handleSuccess(payload, state, args, index);
+        const results = handlers.handleSuccess(payload, state, args, uid);
+        updatedResults.push({ uid, results });
       } else {
-        updatedResults[index] = payload;
+        updatedResults.push({ uid, ...payload });
       }
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
@@ -270,9 +270,9 @@ export function createIndexedAsyncReducer(handlers) {
       });
     },
     handleFailure: (payload, state, args) => {
-      const { index } = args[0];
-      const updatedFetchStatuses = [...state.fetchStatuses];
-      updatedFetchStatuses[index] = fetchConstants.FETCH_FAILED;
+      const { uid } = args[0];
+      const updatedFetchStatuses = { ...state.fetchStatuses };
+      updatedFetchStatuses[uid] = fetchConstants.FETCH_FAILED;
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
         fetchStatuses: updatedFetchStatuses,
@@ -292,12 +292,12 @@ export function createIndexedAsyncReducer(handlers) {
       case handlers.action:
         return reducers.handleFetch(action.payload, state, action.payload.args);
       case resolve(handlers.action):
-        const index = action.meta.args ? action.meta.args[0].index : 0;
-        const isValid = state.fetchStatuses.length > index;
+        const uid = action.meta.args ? action.meta.args[0].uid : 0;
+        const isValid = Object.keys(state.fetchStatuses).length > 0 && state.fetchStatuses[uid] !== null;
         if (!isValid) { // don't honor resolves that are for indexes we aren't tracking anymore
           return state;
         }
-        return reducers.handleSuccess(action.payload, state, action.meta.args);
+        return reducers.handleSuccess(action.payload, state, action.meta.args, action.meta);
       case reject(handlers.action):
         return reducers.handleFailure(action.payload, state, action.meta.args);
       default:

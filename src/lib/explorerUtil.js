@@ -1,4 +1,5 @@
 import slugify from 'slugify';
+import uuidv4 from 'uuid/v4';
 import { trimToMaxLength } from './stringUtil';
 import { notEmptyString } from './formValidators';
 import { downloadViaFormPost } from './apiUtil';
@@ -39,6 +40,38 @@ export function replaceCurlyQuotes(stringWithQuotes) {
   let removedQuotes = stringWithQuotes.replace(/[\u2018]/g, "'").replace(/[\u2019]/g, "'"); // replace single curly quotes
   removedQuotes = removedQuotes.replace(/[\u201C]/g, '"').replace(/[\u201D]/g, '"'); // replace double curly quotes
   return removedQuotes;
+}
+/* deletions, duplications and new queries shouldn't be shown in results until they have fetched results */
+export function ensureSafeSortedQueries(queries) {
+  const unDeletedQueries = queries.filter(q => q.deleted !== true);
+  return unDeletedQueries.filter(q => q.new !== true).sort((a, b) => a.sortPosition - b.sortPosition);
+}
+
+/* deletions, duplications and new queries may result in an intermediate state in which the results and queries are not yet in alignment. Use
+this function to handle these cases. sort resutls according to query sortPositions */
+export function ensureSafeResults(queries, results) {
+  const unDeletedQueries = queries.filter(q => q.deleted !== true);
+  let safeQueryWithResults = null;
+
+  if (results !== undefined && results !== null && results.length > 0) {
+    safeQueryWithResults = unDeletedQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid)));
+    const nonEmptyQueries = safeQueryWithResults.filter(q => q.q !== undefined && q.results && q.results !== undefined);
+    safeQueryWithResults = Object.values(nonEmptyQueries).sort((a, b) => a.sortPosition - b.sortPosition);
+    const allQueriesHaveResults = safeQueryWithResults.filter(q => q.results); // trying to handle not-yet fetched queries (dupes/new)
+    return allQueriesHaveResults.length === safeQueryWithResults.length ? safeQueryWithResults : [];
+  }
+  return [];
+}
+
+/* deletions may result in an intermediate state in which the selectedTabIndex hasn't been updated yet. Use
+this function to handle these cases */
+
+export function ensureSafeTabIndex(array, index) {
+  return index > (array.length - 1) ? array.length - 1 : index;
+}
+
+export function getUidIndex(uid, array) {
+  return array.findIndex(a => a.uid !== null && a.uid === uid);
 }
 
 export function generateQueryParamObject(query, skipEncoding) {
@@ -135,4 +168,8 @@ export const slugifiedQueryLabel = queryLabel => slugify(trimToMaxLength(queryLa
 export function downloadExplorerSvg(queryLabel, type, domIdOrElement) {
   const filename = `${slugifiedQueryLabel(queryLabel)}-${type}`;
   downloadSvg(filename, domIdOrElement);
+}
+
+export function uniqueQueryId() {
+  return uuidv4();
 }

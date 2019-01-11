@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { updateTimestampForQueries, resetSelected, resetSentenceCounts, resetSampleStories, resetStoryCounts, resetGeo, selectQuery, removeDeletedQueries } from '../../../actions/explorerActions';
+import { updateTimestampForQueries, resetSelected, resetSentenceCounts, resetSampleStories, resetStoryCounts, resetGeo, selectQuery, removeDeletedQueries, removeNewStatusFromQueries } from '../../../actions/explorerActions';
 import { resetStory } from '../../../actions/storyActions';
-import QueryBuilderContainer from './QueryBuilderContainer';
+import QueryPickerContainer from './QueryPickerContainer';
 import QueryResultsContainer from '../results/QueryResultsContainer';
 import composeUrlBasedQueryContainer from '../UrlBasedQueryContainer';
 import PageTitle from '../../common/PageTitle';
@@ -31,7 +31,7 @@ class LoggedInQueryContainer extends React.Component {
     return (
       <div className="query-container query-container-logged-in">
         <PageTitle value={localMessages.title} />
-        <QueryBuilderContainer isEditable={isEditable} onSearch={() => handleSearch()} />
+        <QueryPickerContainer isEditable={isEditable} onSearch={() => handleSearch()} />
         <QueryResultsContainer
           lastSearchTime={lastSearchTime}
           queries={queries}
@@ -83,6 +83,7 @@ const mapDispatchToProps = dispatch => ({
   },
   reallyHandleSearch: () => {
     dispatch(removeDeletedQueries());
+    dispatch(removeNewStatusFromQueries());
     dispatch(updateTimestampForQueries()); // but this doesn't update the query... only the timestamp.. nextprops.queries should be new?
     // update URL location according to updated queries
   },

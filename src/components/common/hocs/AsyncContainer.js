@@ -73,7 +73,6 @@ export const asyncContainerize = (ChildComponent, loadingSpinnerSize) => {
           case fetchConstants.FETCH_FAILED:
             content = (
               <div className="async-loading">
-                <ChildComponent {...this.props} />
                 <div className="loading-overlay">
                   <div className="overlay-content">
                     <ErrorTryAgain onTryAgain={asyncFetch} />

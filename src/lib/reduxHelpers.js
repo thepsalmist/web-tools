@@ -185,6 +185,7 @@ export function createAsyncReducer(handlers) {
 export function errorReportingMiddleware({ dispatch }) {
   return next => (action) => {
     let messageToShow = null;
+    let die = false;
     if (action.type.endsWith('_RESOLVED') || action.type.endsWith('_REJECTED')) {
       if ((typeof action.payload === 'object') && ('statusCode' in action.payload)) {
         if (action.payload.statusCode === 401) {
@@ -200,12 +201,17 @@ export function errorReportingMiddleware({ dispatch }) {
             if ('message' in action.payload) {
               messageToShow = action.payload.message;
             }
+            die = true; // don't continue executing the action chain, because something bad happened
           }
         }
       }
     }
     if (messageToShow) {
       dispatch(addNotice({ level: LEVEL_ERROR, message: messageToShow }));
+    }
+    if (die) {
+      dispatch({ type: action.type.replace('RESOLVED', 'REJECTED') }); // mark the action as failed (because it wasn't a 200!)
+      return -1;
     }
     return next(action); // Call the next dispatch method in the middleware chain.
   };

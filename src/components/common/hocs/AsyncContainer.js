@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ErrorTryAgain from '../ErrorTryAgain';
 import LoadingSpinner from '../LoadingSpinner';
-import ErrorBoundary from '../ErrorBoundary';
 import * as fetchConstants from '../../../lib/fetchConstants';
 
 // pass this in as the second arg to not show a spinner
@@ -73,9 +72,6 @@ export const asyncContainerize = (ChildComponent, loadingSpinnerSize) => {
           case fetchConstants.FETCH_FAILED:
             content = (
               <div className="async-loading">
-                <ErrorBoundary>
-                  <ChildComponent {...this.props} />
-                </ErrorBoundary>
                 <div className="loading-overlay">
                   <div className="overlay-content">
                     <ErrorTryAgain onTryAgain={asyncFetch} />

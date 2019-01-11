@@ -19,6 +19,7 @@ import { SOURCE_SCRAPE_STATE_QUEUED, SOURCE_SCRAPE_STATE_RUNNING, SOURCE_SCRAPE_
 import FilledStarIcon from '../../common/icons/FilledStarIcon';
 import { googleFavIconUrl } from '../../../lib/urlUtil';
 import { parseSolrShortDate, jobStatusDateToMoment } from '../../../lib/dateUtil';
+import PageTitle from '../../common/PageTitle';
 
 const REVIEW = 0;
 const REMOVE = 1;
@@ -95,7 +96,7 @@ class ManageSourcesContainer extends React.Component {
   }
 
   render() {
-    const { collectionId, scrapeFeeds, sources, removeSource } = this.props;
+    const { collectionId, collection, scrapeFeeds, sources, removeSource } = this.props;
     const { formatMessage, formatDate } = this.props.intl;
     let viewSources = '';
     let viewDesc = '';
@@ -189,6 +190,7 @@ class ManageSourcesContainer extends React.Component {
     );
     return (
       <Grid>
+        <PageTitle value={[localMessages.title, collection.label]} />
         <Row>
           <Col lg={8}>
             <h1><FormattedMessage {...localMessages.title} /></h1>

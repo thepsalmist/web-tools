@@ -11,18 +11,20 @@ import SelectedStoryContainer from './SelectedStoryContainer';
 import StorySearchForm from '../form/StorySearchForm';
 import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import Permissioned from '../../Permissioned';
+import PageTitle from '../../PageTitle';
 
 const localMessages = {
-  storyTitle: { id: 'user.all.title', defaultMessage: 'Manage Stories' },
+  title: { id: 'user.all.title', defaultMessage: 'Manage Stories' },
 };
 
 const StoryDetailsContainer = props => (
   <Grid>
+    <PageTitle value={localMessages.title} />
     <Permissioned onlyRole={PERMISSION_ADMIN}>
       <Row>
         <Col lg={12}>
           <h1>
-            <FormattedMessage {...localMessages.storyTitle} />
+            <FormattedMessage {...localMessages.title} />
           </h1>
         </Col>
       </Row>

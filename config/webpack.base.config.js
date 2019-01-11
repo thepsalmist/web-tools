@@ -1,7 +1,6 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 const path = require('path');
 const webpack = require('webpack');
-const ManifestRevisionPlugin = require('manifest-revision-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 // many of the webpack directives need an absolute path
@@ -15,15 +14,8 @@ const baseConfig = {
   plugins: [
     // needed this to get eslint working for some reason
     new webpack.LoaderOptionsPlugin({ options: {} }),
-    // this writes JS files for our Flask server to read
-    new ManifestRevisionPlugin(
-      path.resolve(basedir, 'build', 'manifest.json'), // keep this path in sync with FlaskWebpack config
-      { rootAssetPath: './src' } // important that this be relative, not absolute
-    ),
     // this writes CSS files for our Flask server to read
-    new MiniCssExtractPlugin({
-      filename: '[name].[hash].css',
-    }),
+    new MiniCssExtractPlugin({ filename: '[name].[hash].css' }),
   ],
   module: {
     rules: [

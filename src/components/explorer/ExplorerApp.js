@@ -1,19 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
 import AppContainer from '../AppContainer';
 import messages from '../../resources/messages';
+import PageTitle from '../common/PageTitle';
 
 const ExplorerApp = (props) => {
   const { formatMessage } = props.intl;
   return (
     <div>
-      <Helmet>
-        <title>
-          {`${formatMessage(messages.explorerToolName)} | ${formatMessage(messages.suiteName)}`}
-        </title>
-      </Helmet>
+      <PageTitle />
       <AppContainer
         name="explorer"
         title={formatMessage(messages.explorerToolName)}

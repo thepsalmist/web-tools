@@ -40,7 +40,7 @@ def api_metadata_download(collection_id):
 
     metadata_counts = {}  # from tag_sets_id to info
     for media_source in all_media:
-        for metadata_label, info in media_source['metadata'].iteritems():
+        for metadata_label, info in media_source['metadata'].items():
             if metadata_label not in metadata_counts:  # lazily populate counts
                 metadata_counts[metadata_label] = {
                     'metadataCoverage': metadata_label,
@@ -49,13 +49,13 @@ def api_metadata_download(collection_id):
             if info is not None:
                 metadata_counts[metadata_label]['tagged'] += 1
 
-    for item_info in metadata_counts.values():
+    for item_info in list(metadata_counts.values()):
         temp = len(all_media) - item_info['tagged']
         item_info.update({'notTagged': temp})
 
     props = ['metadataCoverage', 'tagged', 'notTagged']
     filename = "metadataCoverageForCollection" + collection_id + ".csv"
-    return csv.stream_response(metadata_counts.values(), props, filename,
+    return csv.stream_response(list(metadata_counts.values()), props, filename,
                                ['metadata category', 'sources with info', 'sources missing info'])
 
 

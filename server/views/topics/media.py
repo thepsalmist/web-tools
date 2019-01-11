@@ -9,7 +9,7 @@ from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS
 from server.auth import user_mediacloud_key, user_mediacloud_client, user_admin_mediacloud_client, is_user_logged_in
 from server.util import csv
 from server.views.topics import validated_sort, TOPIC_MEDIA_CSV_PROPS
-from server.views.topics.splitstories import stream_topic_split_story_counts_csv
+from server.views.topics.attention import stream_topic_split_story_counts_csv
 from server.views.topics.stories import stream_story_list_csv
 import server.views.topics.apicache as apicache
 from server.util.request import filters_from_args, api_error_handler
@@ -40,8 +40,8 @@ def media(topics_id, media_id):
     user_mc = user_admin_mediacloud_client()
     combined_media_info = apicache.topic_media_list(user_mediacloud_key(), topics_id, media_id=media_id)['media'][0]
     media_info = user_mc.media(media_id)
-    for key in media_info.keys():
-        if key not in combined_media_info.keys():
+    for key in list(media_info.keys()):
+        if key not in list(combined_media_info.keys()):
             combined_media_info[key] = media_info[key]
     return jsonify(combined_media_info)
 
@@ -212,7 +212,7 @@ def _media_info_worker(info):
 
 # generator you can use to handle a long list of stories row by row (one row per story)
 def _topic_media_link_list_by_page_as_csv_row(user_mc_key, topics_id, props, **kwargs):
-    yield u','.join(props) + u'\n'  # first send the column names
+    yield ','.join(props) + '\n'  # first send the column names
     more_media = True
     use_pool = True
     link_id = 0
@@ -241,7 +241,7 @@ def _topic_media_link_list_by_page_as_csv_row(user_mc_key, topics_id, props, **k
         for s in media_link_page['links']:
             cleaned_source_info = csv.dict2row(basic_media_props, s['source_info'])
             cleaned_ref_info = csv.dict2row(basic_media_props, s['ref_info'])
-            row_string = u','.join(cleaned_source_info) + ',' + u','.join(cleaned_ref_info) + u'\n'
+            row_string = ','.join(cleaned_source_info) + ',' + ','.join(cleaned_ref_info) + '\n'
             yield row_string
         # set up to grab the next page
         if 'next' in media_link_page['link_ids']:

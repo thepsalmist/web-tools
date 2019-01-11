@@ -14,6 +14,7 @@ import { emptyString, invalidEmail, passwordTooShort, stringsDoNotMatch } from '
 import withIntlForm from '../common/hocs/IntlForm';
 import { addNotice } from '../../actions/appActions';
 import { LEVEL_ERROR } from '../common/Notice';
+import PageTitle from '../common/PageTitle';
 
 const localMessages = {
   intro: { id: 'user.signup.intro', defaultMessage: 'Create an account to use all our tools for free.' },
@@ -45,6 +46,7 @@ class SignupContainer extends React.Component {
     const { formatMessage } = this.props.intl;
     return (
       <Grid>
+        <PageTitle value={messages.userSignup} />
         <form onSubmit={handleSubmit(handleSignupSubmission.bind(this))} className="app-form signup-form">
           <Row>
             <Col lg={12}>

@@ -2,13 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import { Helmet } from 'react-helmet';
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import messages from '../../resources/messages';
 import AppButton from '../common/AppButton';
 import { resetApiKey } from '../../actions/userActions';
 import { addNotice, updateFeedback } from '../../actions/appActions';
 import { LEVEL_ERROR } from '../common/Notice';
+import PageTitle from '../common/PageTitle';
 
 const API_REQUESTS_UNLIMITED = 0;
 
@@ -26,11 +26,10 @@ const localMessages = {
 const UserProfileContainer = (props) => {
   const { profile, handleResetApiKey } = props;
   const { formatMessage } = props.intl;
-  const titleHandler = parentTitle => `${formatMessage(messages.userProfile)} | ${parentTitle}`;
   const adminContent = (profile.auth_roles.includes('admin')) ? <FormattedHTMLMessage {...localMessages.admin} /> : null;
   return (
     <Grid>
-      <Helmet><title>{titleHandler()}</title></Helmet>
+      <PageTitle value={messages.userProfile} />
       <Row>
         <Col lg={12}>
           <h1><FormattedMessage {...messages.userProfile} /></h1>

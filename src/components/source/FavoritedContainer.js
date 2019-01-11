@@ -7,8 +7,10 @@ import withAsyncFetch from '../common/hocs/AsyncContainer';
 import { fetchFavoriteSources, fetchFavoriteCollections } from '../../actions/systemActions';
 import SourceList from '../common/SourceList';
 import CollectionList from '../common/CollectionList';
+import PageTitle from '../common/PageTitle';
 
 const localMessages = {
+  starred: { id: 'sources.starred', defaultMessage: 'Starred' },
   title: { id: 'sources.menu.items.favoritedItems', defaultMessage: 'My Starred Sources And Collections' },
   favoritedCollectionsTitle: { id: 'favorited.collections.title', defaultMessage: 'My Starred Collections' },
   favoritedCollectionsIntro: { id: 'favorited.collections.intro', defaultMessage: 'These are collections you have starred by clicking the star next to their name.  This is useful to bookmark collections you use frequently.' },
@@ -21,6 +23,7 @@ const FavoritedContainer = (props) => {
   const { formatMessage } = props.intl;
   return (
     <Grid>
+      <PageTitle value={localMessages.starred} />
       <Row>
         <Col lg={12}>
           <h1><FormattedMessage {...localMessages.title} /></h1>

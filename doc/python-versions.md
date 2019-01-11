@@ -1,7 +1,7 @@
 Python Version Management (OSX)
 ==============================
 
-Our dev codebase currently runs with Python v2.7.x on OSX.  However, that is sure to change. Managing Python 
+Our dev codebase currently runs with Python v3.6.x on OSX.  However, that is sure to change. Managing Python 
 versions can be hard, so this document introduce our approach.
  
 PyEnv
@@ -15,7 +15,7 @@ brew install pyenv
 
 Then install the versions of Python we need:
 ```
-pyenv install 2.7.15
+pyenv install 3.6.5
 ```
 
 PyEnv-VirtualEnv
@@ -36,5 +36,5 @@ And then create a virtualenv for this project.  The name is important, because t
 refers to it so it loads autoamtically when you enter the directory (if `eval "$(pyenv virtualenv-init -)"` 
 is in your `.profile`):
 ```
-pyenv virtualenv 2.7.15 mediacloud-web-tools
+pyenv virtualenv 3.6.5 mc-web-tools
 ```

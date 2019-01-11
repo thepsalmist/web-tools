@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { push } from 'react-router-redux';
-import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import { reduxForm } from 'redux-form';
@@ -22,9 +21,10 @@ import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
 import TopicForm from './TopicForm';
 import { TOPIC_FORM_MODE_EDIT } from './TopicDetailForm';
 import UpdateForStorySearchWarning from '../UpdateForStorySearchWarning';
+import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
-  editTopicTitle: { id: 'topic.edit.title', defaultMessage: 'Edit Topic Settings' },
+  editTopicTitle: { id: 'topic.edit.title', defaultMessage: 'Topic Settings' },
   editTopicText: { id: 'topic.edit.text', defaultMessage: 'You can update this Topic. If you make changes to the query, media sourcs, or dates, those will be reflected in the next snapshot you run.' },
   editTopic: { id: 'topic.edit', defaultMessage: 'Edit Topic' },
   editTopicCollectionsTitle: { id: 'topic.edit.editTopicCollectionsTitle', defaultMessage: 'Edit Sources and Collections' },
@@ -143,7 +143,7 @@ class EditTopicContainer extends React.Component {
       <div className="topic-edit-form">
         <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
         <Grid>
-          <Helmet><title>{formatMessage(localMessages.editTopicTitle)}</title></Helmet>
+          <TopicPageTitle value={localMessages.editTopicTitle} />
           <Row>
             <Col lg={12}>
               <h1><FormattedMessage {...localMessages.editTopicTitle} /></h1>

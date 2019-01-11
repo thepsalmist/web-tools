@@ -449,12 +449,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   handleMoveAndSwap: (query, direction, queries) => {
     const movedQuery = { ...query };
-    const highestSortPosition = queries.reduce((a, b) => (a.sortPosition > b.sortPosition ? a : b)).sortPosition ;
-    let newSortPosition = direction === LEFT ? movedQuery.sortPosition - 1 : movedQuery.sortPosition + 1;
+    const highestSortPosition = queries.reduce((a, b) => (a.sortPosition > b.sortPosition ? a : b)).sortPosition;
+    const newSortPosition = direction === LEFT ? movedQuery.sortPosition - 1 : movedQuery.sortPosition + 1;
     if (newSortPosition > highestSortPosition) { // don't inflate sortPosition needlessly
       return;
     }
-    dispatch(swapSortQueries({ from: query, to: newSortPosition}));
+    dispatch(swapSortQueries({ from: query, to: newSortPosition }));
     dispatch(updateQuery({ query }));
   },
   handleDuplicateQuery: (query, queries) => {

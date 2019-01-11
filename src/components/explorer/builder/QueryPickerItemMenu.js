@@ -57,9 +57,9 @@ class QueryPickerItemMenu extends React.Component {
       </MenuItem>,
     ];
     if (isDeletable()) { // if this is not the only QueryPickerItem
-      menuChildren.push(<Divider />);
+      menuChildren.push(<Divider key="divider" />);
       menuChildren.push(<MenuItem key="delete" className={ACTION_MENU_ITEM_CLASS} onClick={() => { onDelete(query); this.handleClose(); }}><FormattedMessage {...localMessages.delete} /></MenuItem>);
-      menuChildren.push(<Divider />);
+      menuChildren.push(<Divider key="divider" />);
       if (query.sortPosition > 0) {
         menuChildren.push(<MenuItem key="moveLeft" className={ACTION_MENU_ITEM_CLASS} onClick={() => { onMove(LEFT); this.handleClose(); }}><FormattedMessage {...localMessages.moveLeft} /></MenuItem>);
       }

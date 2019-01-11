@@ -18,9 +18,10 @@ function swapSortPositions(state, fromQuery, toPosition) {
   const highestPosition = updatedState.reduce((a, b) => (a.sortPosition > b.sortPosition ? a : b)).sortPosition;
   const fromQueryIndex = state.findIndex(q => q.uid !== null && q.uid === fromQuery.uid);
   updatedState.map((q, index) => {
-    if (q.sortPosition === toPosition){
+    if (q.sortPosition === toPosition) {
       updatedState[index].sortPosition = fromQuery.sortPosition;
     }
+    return q;
   });
   updatedState[fromQueryIndex].sortPosition = toPosition > highestPosition ? highestPosition : toPosition; // prevent inflation at end of list
   return updatedState;

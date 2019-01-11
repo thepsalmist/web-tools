@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
-import withFilteredAsyncData, { shouldFetchOnSortChange } from '../FilteredAsyncDataContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import MediaTable from '../MediaTable';
 import messages from '../../../resources/messages';
@@ -131,7 +131,7 @@ injectIntl(
       withFilteredAsyncData(
         MediaSummaryContainer,
         fetchAsyncData,
-        shouldFetchOnSortChange,
+        ['sort'], // refetch data if sort property has changed
       ),
     )
   )

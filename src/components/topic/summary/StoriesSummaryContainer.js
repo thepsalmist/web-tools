@@ -6,7 +6,7 @@ import { push } from 'react-router-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import withFilteredAsyncData, { shouldFetchOnSortChange } from '../FilteredAsyncDataContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import { fetchTopicTopStories, sortTopicTopStories, filterByFocus } from '../../../actions/topicActions';
@@ -175,7 +175,7 @@ injectIntl(
         withFilteredAsyncData(
           StoriesSummaryContainer,
           fetchAsyncData,
-          shouldFetchOnSortChange,
+          ['sort'], // refetch data if sort property has changed
         ),
       )
     )

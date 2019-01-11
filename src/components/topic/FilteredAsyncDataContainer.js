@@ -4,14 +4,19 @@ import { connect } from 'react-redux';
 import withAsyncDataFetch from '../common/hocs/AsyncDataContainer';
 
 /**
- * shouldasyncFetch: optional extra function to run to check if data should be re-fecthed; passed (props, nextProps)
+ * propsToRefetchOn: optional array of property names that should be watched; if any of them change then
+ * a refetch will happen
  */
-const withFilteredAsyncData = (ChildComponent, fetchAsyncData, shouldFetchData) => {
+const withFilteredAsyncData = (ChildComponent, fetchAsyncData, propsToRefetchOn) => {
   class FilteredAsyncDataContainer extends React.Component {
     componentWillReceiveProps(nextProps) {
       const { filters, dispatch } = this.props;
       const filtersChanged = (nextProps.filters !== filters);
-      const childSaysSomethingChanged = shouldFetchData && shouldFetchData(this.props, nextProps);
+      let childSaysSomethingChanged = false;
+      if (propsToRefetchOn) {
+        const haveChanged = propsToRefetchOn.map(propName => nextProps[propName] !== this.props[propName]);
+        childSaysSomethingChanged = haveChanged.reduce((combined, current) => combined || current);
+      }
       if (filtersChanged || childSaysSomethingChanged) {
         fetchAsyncData(dispatch, nextProps);
       }
@@ -46,8 +51,5 @@ const withFilteredAsyncData = (ChildComponent, fetchAsyncData, shouldFetchData) 
     )
   );
 };
-
-// some helpful shouldFetchData handlers
-export const shouldFetchOnSortChange = (props, nextProps) => (props.sort !== nextProps.sort);
 
 export default withFilteredAsyncData;

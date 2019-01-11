@@ -1,4 +1,5 @@
 import slugify from 'slugify';
+import uuidv4 from 'uuid/v4';
 import { trimToMaxLength } from './stringUtil';
 import { notEmptyString } from './formValidators';
 import { downloadViaFormPost } from './apiUtil';
@@ -167,4 +168,8 @@ export const slugifiedQueryLabel = queryLabel => slugify(trimToMaxLength(queryLa
 export function downloadExplorerSvg(queryLabel, type, domIdOrElement) {
   const filename = `${slugifiedQueryLabel(queryLabel)}-${type}`;
   downloadSvg(filename, domIdOrElement);
+}
+
+export function uniqueQueryId() {
+  return uuidv4();
 }

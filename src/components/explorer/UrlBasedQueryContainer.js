@@ -10,7 +10,8 @@ import { LEVEL_ERROR } from '../common/Notice';
 import { addNotice } from '../../actions/appActions';
 import { saveParsedQueries, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo,
   fetchQuerySourcesByIds, fetchQueryCollectionsByIds, demoQuerySourcesByIds, demoQueryCollectionsByIds } from '../../actions/explorerActions';
-import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, decodeQueryParamString, serializeQueriesForUrl, replaceCurlyQuotes } from '../../lib/explorerUtil';
+import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, decodeQueryParamString, serializeQueriesForUrl,
+  replaceCurlyQuotes, uniqueQueryId } from '../../lib/explorerUtil';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../lib/dateUtil';
 import { notEmptyString } from '../../lib/formValidators';
 
@@ -164,7 +165,7 @@ function composeUrlBasedQueryContainer() {
           collections: query.collections ? query.collections.map(s => ({ id: s, tags_id: s })) : undefined,
           q: replaceCurlyQuotes(query.q),
           color: query.color ? query.color : schemeCategory10[index % 10],
-          uid: Math.floor((Math.random() * 10000) + 1),
+          uid: uniqueQueryId(),
           sortPosition: index, // for now
           ...extraDefaults, // for demo mode
         }));

@@ -18,8 +18,8 @@ export const resetWordSampleSentences = createAction(RESET_WORD_SAMPLE_SENTENCES
 export const SELECT_SEARCH_BY_ID = 'SELECT_SEARCH_BY_ID';
 export const selectBySearchId = createAction(SELECT_SEARCH_BY_ID, searchId => searchId);
 
-export const SELECT_SEARCH_BY_PARAMS = 'SELECT_SEARCH_BY_PARAMS';
-export const selectBySearchParams = createAction(SELECT_SEARCH_BY_PARAMS, searchParams => searchParams);
+export const SAVE_PARSED_QUERIES = 'SAVE_PARSED_QUERIES';
+export const saveParsedQueries = createAction(SAVE_PARSED_QUERIES, searchParams => searchParams);
 
 
 export const FETCH_SAVED_SEARCHES = 'FETCH_SAVED_SEARCHES';

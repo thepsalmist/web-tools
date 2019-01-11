@@ -8,7 +8,7 @@ import withAsyncFetch from '../common/hocs/AsyncContainer';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { LEVEL_ERROR } from '../common/Notice';
 import { addNotice } from '../../actions/appActions';
-import { selectBySearchParams, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo,
+import { saveParsedQueries, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo,
   fetchQuerySourcesByIds, fetchQueryCollectionsByIds, demoQuerySourcesByIds, demoQueryCollectionsByIds } from '../../actions/explorerActions';
 import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, decodeQueryParamString, serializeQueriesForUrl, replaceCurlyQuotes } from '../../lib/explorerUtil';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../lib/dateUtil';
@@ -35,6 +35,8 @@ function composeUrlBasedQueryContainer() {
         // if from homepage, allow automagic, if from URL, do not...
         const autoMagic = location.query.auto === 'true';
         this.setState({ queryInStore: false }); // if/def automagic here
+        // console.log('saving queries from will mount');
+        // console.log('saving queries from will mount');
         this.updateQueriesFromLocation(location, autoMagic);
       }
 
@@ -55,10 +57,12 @@ function composeUrlBasedQueryContainer() {
             this.setState({ queryInStore: true }); // mark that the parsing process has finished
           }
           if (nextProps.queries.filter(q => q.sources.length > 0).length === 0 && nextProps.queries.filter(q => q.collections.length > 0).length === 0) {
+            // console.log('no sources or collections');
             this.setState({ queryInStore: true });
             updateUrl(nextProps.queries, isLoggedIn);
           }
         } else if (lastSearchTime !== nextProps.lastSearchTime) {
+          // console.log('got a new search time');
           updateUrl(nextProps.queries, isLoggedIn);
         } else {
           // console.log('  other change');
@@ -160,7 +164,7 @@ function composeUrlBasedQueryContainer() {
           collections: query.collections ? query.collections.map(s => ({ id: s, tags_id: s })) : undefined,
           q: replaceCurlyQuotes(query.q),
           color: query.color ? query.color : schemeCategory10[index % 10],
-          uid: Math.floor((Math.random() * 100) + 1),
+          uid: Math.floor((Math.random() * 10000) + 1),
           sortPosition: index, // for now
           ...extraDefaults, // for demo mode
         }));
@@ -229,7 +233,7 @@ function composeUrlBasedQueryContainer() {
       },
       // handles demo mode by allowing you to pass in extraDefaults
       saveQueriesFromParsedUrl: (queriesToUse, isLoggedIn) => {
-        dispatch(selectBySearchParams(queriesToUse)); // load query data into the store
+        dispatch(saveParsedQueries(queriesToUse)); // load query data into the store
         // lookup ancillary data eg collection and source info for display purposes in QueryForm
         queriesToUse.forEach((q) => {
           const queryInfo = {

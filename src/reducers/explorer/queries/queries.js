@@ -1,4 +1,4 @@
-import { UPDATE_QUERY, UPDATE_QUERY_COLLECTION_LOOKUP_INFO, UPDATE_QUERY_SOURCE_LOOKUP_INFO, ADD_CUSTOM_QUERY, SELECT_SEARCH_BY_ID, SELECT_SEARCH_BY_PARAMS, MARK_AS_DELETED_QUERY, RESET_QUERIES, REMOVE_DELETED_QUERIES, COPY_AND_REPLACE_QUERY_FIELD, REMOVE_NEW_STATUS } from '../../../actions/explorerActions';
+import { UPDATE_QUERY, UPDATE_QUERY_COLLECTION_LOOKUP_INFO, UPDATE_QUERY_SOURCE_LOOKUP_INFO, ADD_CUSTOM_QUERY, SELECT_SEARCH_BY_ID, SAVE_PARSED_QUERIES, MARK_AS_DELETED_QUERY, RESET_QUERIES, REMOVE_DELETED_QUERIES, COPY_AND_REPLACE_QUERY_FIELD, REMOVE_NEW_STATUS } from '../../../actions/explorerActions';
 import { autoMagicQueryLabel } from '../../../lib/explorerUtil';
 
 const INITIAL_STATE = [];
@@ -52,7 +52,11 @@ function queries(state = INITIAL_STATE, action) {
       if (action.payload && state && state.length > 0) { // just for safety
         updatedState = [...state];
         queryIndex = state.findIndex(q => q.uid !== null && q.uid === action.payload.uid);
-        // we may not have an id if this is a custom query, use index. -- update we may not even use ID... TBD
+        if (queryIndex === -1) {
+          // we didn't fine the query uid we are looking for, so this is an error
+          // so swallow the error for now with no updates
+          return state;
+        }
         queryIndex = queryIndex > -1 ? queryIndex : action.payload.uid;
         updatedState[queryIndex].sources = action.payload.sources.results;
         return updatedState;
@@ -62,8 +66,11 @@ function queries(state = INITIAL_STATE, action) {
       if (action.payload && state && state.length > 0) { // just for safety
         updatedState = [...state];
         queryIndex = state.findIndex(q => q.uid !== null && q.uid === action.payload.uid);
-        // we may not have an id if this is a custom query, use index. -- update we may not even use ID... TBD
-        queryIndex = queryIndex > -1 ? queryIndex : action.payload.uid;
+        if (queryIndex === -1) {
+          // we didn't fine the query uid we are looking for, so this is an error
+          // so swallow the error for now with no updates
+          return state;
+        }
         updatedState[queryIndex].collections = action.payload.collections.results;
         return updatedState;
       }
@@ -75,7 +82,7 @@ function queries(state = INITIAL_STATE, action) {
         return updatedState;
       }
       return state;
-    case SELECT_SEARCH_BY_PARAMS: // select this set of queries as passed in by URL
+    case SAVE_PARSED_QUERIES: // select this set of queries as passed in by URL
       updatedState = action.payload.map(q => Object.assign({}, q, { autoNaming: q.q === '*' || q.q === '' ? true : q.autoNaming }));
       return updatedState;
     case MARK_AS_DELETED_QUERY:

@@ -82,9 +82,8 @@ const fetchAsyncData = (dispatch, props) => {
 export default
 injectIntl(
   connect(mapStateToProps)(
-    withFilteredAsyncData(
-      TopicStoryMetadataStatsContainer,
-      fetchAsyncData,
+    withFilteredAsyncData(fetchAsyncData)(
+      TopicStoryMetadataStatsContainer
     )
   )
 );

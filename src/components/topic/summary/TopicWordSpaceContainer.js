@@ -82,9 +82,8 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, [messages.wordCloudTopicWord2VecLayoutHelp])(
-      withFilteredAsyncData(
-        TopicWordSpaceContainer,
-        () => {} // don't need to do asyncFetchData, because the WordsSummaryContainer is making the request for the same data already
+      withFilteredAsyncData(() => {})( // don't need to do asyncFetchData, because the WordsSummaryContainer is making the request for the same data already
+        TopicWordSpaceContainer
       )
     )
   )

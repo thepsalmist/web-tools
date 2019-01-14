@@ -70,12 +70,12 @@ MediaSplitStoryCountContainer.propTypes = {
   helpButton: PropTypes.node.isRequired,
   attentionAggregationMenuItems: PropTypes.array.isRequired,
   selectedTimePeriod: PropTypes.string.isRequired,
+  filters: PropTypes.object.isRequired,
   // passed in
   topicId: PropTypes.number.isRequired,
   mediaId: PropTypes.number.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
-  filters: PropTypes.object.isRequired,
   total: PropTypes.number,
   counts: PropTypes.array,
 };
@@ -84,7 +84,6 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.mediaSource.splitStoryCount.fetchStatus,
   total: state.topics.selected.mediaSource.splitStoryCount.total,
   counts: state.topics.selected.mediaSource.splitStoryCount.counts,
-  filters: state.topics.selected.filters,
 });
 
 const fetchAsyncData = (dispatch, props) => dispatch(fetchMediaSplitStoryCounts(props.topicId, props.mediaId, props.filters));
@@ -94,9 +93,8 @@ injectIntl(
   connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpText, messages.attentionChartHelpText])(
       withAttentionAggregation(
-        withFilteredAsyncData(
+        withFilteredAsyncData(fetchAsyncData)(
           MediaSplitStoryCountContainer,
-          fetchAsyncData,
         )
       )
     )

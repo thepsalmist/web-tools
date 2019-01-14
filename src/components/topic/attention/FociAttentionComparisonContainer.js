@@ -205,10 +205,8 @@ export default
 connect(mapStateToProps)(
   withAttentionAggregation(
     injectIntl(
-      withFilteredAsyncData(
-        FociAttentionComparisonContainer,
-        fetchAsyncData,
-        ['selectedFocalSet'], // refetch data if sort property has changed
+      withFilteredAsyncData(fetchAsyncData, ['selectedFocalSet'])( // refetch data if sort property has changed
+        FociAttentionComparisonContainer
       )
     )
   )

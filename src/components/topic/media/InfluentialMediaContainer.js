@@ -117,13 +117,10 @@ const handlePageChange = (dispatch, props, linkId) => {
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withPaging(
-      withFilteredAsyncData(
-        InfluentialMediaContainer,
-        fetchAsyncData,
-        ['sort', 'linkId'],
-      ),
-      handlePageChange,
+    withPaging(handlePageChange)(
+      withFilteredAsyncData(fetchAsyncData, ['sort', 'linkId'])(
+        InfluentialMediaContainer
+      )
     )
   )
 );

@@ -75,7 +75,7 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withAsyncFetch(
-      withPaging(
+      withPaging()(
         PersonalTopicsContainer
       )
     )

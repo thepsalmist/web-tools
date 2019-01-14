@@ -172,10 +172,8 @@ injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, messages.storiesTableHelpText, true)(
       withCsvDownloadNotifyContainer(
-        withFilteredAsyncData(
-          StoriesSummaryContainer,
-          fetchAsyncData,
-          ['sort'], // refetch data if sort property has changed
+        withFilteredAsyncData(fetchAsyncData, ['sort'])( // refetch data if sort property has changed
+          StoriesSummaryContainer
         ),
       )
     )

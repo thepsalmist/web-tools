@@ -103,9 +103,8 @@ injectIntl(
     withSampleSize(
       withSummary(messages.topWords, localMessages.descriptionIntro, [messages.wordcloudHelpText, messages.wordCloudTopicWord2VecLayoutHelp])(
         withCsvDownloadNotifyContainer(
-          withFilteredAsyncData(
+          withFilteredAsyncData(fetchAysncData)(
             WordsSummaryContainer,
-            fetchAysncData,
           )
         )
       )

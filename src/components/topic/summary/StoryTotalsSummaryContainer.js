@@ -102,9 +102,8 @@ export default
 injectIntl(
   connect(mapStateToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, localMessages.description)(
-      withFilteredAsyncData(
-        StoryTotalsSummaryContainer,
-        fetchAsyncData
+      withFilteredAsyncData(fetchAsyncData)(
+        StoryTotalsSummaryContainer
       )
     )
   )

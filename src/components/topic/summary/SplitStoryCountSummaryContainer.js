@@ -105,9 +105,8 @@ injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, [messages.attentionChartHelpText])(
       withAttentionAggregation(
-        withFilteredAsyncData(
-          SplitStoryCountSummaryContainer,
-          fetchAsyncData,
+        withFilteredAsyncData(fetchAsyncData)(
+          SplitStoryCountSummaryContainer
         )
       )
     )

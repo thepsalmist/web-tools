@@ -99,9 +99,8 @@ export default
 injectIntl(
   connect(mapStateToProps)(
     withSummary(localMessages.title, localMessages.helpIntro, localMessages.helpText)(
-      withFilteredAsyncData(
-        DownloadMapContainer,
-        fetchAsyncData
+      withFilteredAsyncData(fetchAsyncData)(
+        DownloadMapContainer
       )
     )
   )

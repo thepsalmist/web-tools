@@ -128,10 +128,8 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, localMessages.description)(
-      withFilteredAsyncData(
-        MediaSummaryContainer,
-        fetchAsyncData,
-        ['sort'], // refetch data if sort property has changed
+      withFilteredAsyncData(fetchAsyncData, ['sort'])( // refetch data if sort property has changed
+        MediaSummaryContainer
       ),
     )
   )

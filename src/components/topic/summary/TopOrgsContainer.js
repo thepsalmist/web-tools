@@ -123,9 +123,8 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, messages.entityHelpContent)(
-      withFilteredAsyncData(
-        TopOrgsContainer,
-        fetchAsyncData
+      withFilteredAsyncData(fetchAsyncData)(
+        TopOrgsContainer
       )
     )
   )

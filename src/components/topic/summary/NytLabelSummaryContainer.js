@@ -169,9 +169,8 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, messages.nytThemeHelpDetails)(
-      withFilteredAsyncData(
-        NytLabelSummaryContainer,
-        fetchAsyncData
+      withFilteredAsyncData(fetchAsyncData)(
+        NytLabelSummaryContainer
       )
     )
   )

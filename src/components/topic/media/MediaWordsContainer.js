@@ -52,6 +52,7 @@ MediaWordsContainer.propTypes = {
   helpButton: PropTypes.node.isRequired,
   onViewSampleSizeClick: PropTypes.func.isRequired,
   initSampleSize: PropTypes.string.isRequired,
+  filters: PropTypes.object.isRequired,
   // from parent
   mediaId: PropTypes.number.isRequired,
   topicId: PropTypes.number.isRequired,
@@ -59,7 +60,6 @@ MediaWordsContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   topicInfo: PropTypes.object,
   words: PropTypes.array,
-  filters: PropTypes.object.isRequired,
   // from dispatch
   handleWordCloudClick: PropTypes.func,
 };
@@ -68,7 +68,6 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.mediaSource.words.fetchStatus,
   topicInfo: state.topics.selected.info,
   words: state.topics.selected.mediaSource.words.list,
-  filters: state.topics.selected.filters,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -94,9 +93,8 @@ injectIntl(
     withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordCloudTopicWord2VecLayoutHelp])(
       withSampleSize(
         withCsvDownloadNotifyContainer(
-          withFilteredAsyncData(
-            MediaWordsContainer,
-            fetchAsyncData,
+          withFilteredAsyncData(fetchAsyncData)(
+            MediaWordsContainer
           )
         ),
         handleSampleSizeChange, // tell it to run the fetch when the sample size changes too

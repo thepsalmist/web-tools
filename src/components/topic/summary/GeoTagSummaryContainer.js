@@ -97,9 +97,8 @@ export default
 injectIntl(
   connect(mapStateToProps)(
     withSummary(localMessages.title, localMessages.helpIntro, messages.heatMapHelpText)(
-      withFilteredAsyncData(
-        GeoTagSummaryContainer,
-        fetchAsyncData
+      withFilteredAsyncData(fetchAsyncData)(
+        GeoTagSummaryContainer
       )
     )
   )

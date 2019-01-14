@@ -158,7 +158,7 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withHelp(messages.storiesTableHelpTitle, messages.storiesTableHelpText)(
-      withPaging(
+      withPaging()(
         withAsyncFetch(
           withCsvDownloadNotifyContainer(
             InfluentialStoriesContainer

@@ -25,6 +25,7 @@ const MediaInlinkTableContainer = (props) => {
 MediaInlinkTableContainer.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
+  filters: PropTypes.object.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
   mediaId: PropTypes.number.isRequired,
@@ -34,7 +35,6 @@ MediaInlinkTableContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   inlinkedStories: PropTypes.array,
   sort: PropTypes.string.isRequired,
-  filters: PropTypes.object.isRequired,
   showTweetCounts: PropTypes.bool.isRequired,
 };
 
@@ -42,7 +42,6 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.mediaSource.inlinks.fetchStatus,
   inlinkedStories: state.topics.selected.mediaSource.inlinks.stories,
   sort: state.topics.selected.mediaSource.inlinks.sort,
-  filters: state.topics.selected.filters,
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
 });
 
@@ -62,10 +61,8 @@ const fetchAsyncData = (dispatch, props) => {
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withFilteredAsyncData(
-      MediaInlinkTableContainer,
-      fetchAsyncData,
-      ['sort'],
+    withFilteredAsyncData(fetchAsyncData, ['sort'])(
+      MediaInlinkTableContainer
     )
   )
 );

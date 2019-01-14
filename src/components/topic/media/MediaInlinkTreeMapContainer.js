@@ -41,6 +41,7 @@ MediaInlinkTreeMapContainer.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
+  filters: PropTypes.object.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
   topicName: PropTypes.string.isRequired,
@@ -48,13 +49,11 @@ MediaInlinkTreeMapContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
   allInlinks: PropTypes.array,
-  filters: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.mediaSource.allInlinks.fetchStatus,
   allInlinks: state.topics.selected.mediaSource.allInlinks.stories,
-  filters: state.topics.selected.filters,
 });
 
 const fetchAsyncData = (dispatch, props) => {
@@ -65,9 +64,8 @@ export default
 injectIntl(
   connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpIntro, messages.storiesTableHelpText])(
-      withFilteredAsyncData(
-        MediaInlinkTreeMapContainer,
-        fetchAsyncData,
+      withFilteredAsyncData(fetchAsyncData)(
+        MediaInlinkTreeMapContainer
       )
     )
   )

@@ -262,7 +262,7 @@ AttentionOverTimeChart.propTypes = {
   lineColor: PropTypes.string,
   backgroundColor: PropTypes.string,
   health: PropTypes.array,
-  interval: PropTypes.string,
+  interval: PropTypes.string.isRequired,
   display: PropTypes.string,
   onDataPointClick: PropTypes.func, // (date0, date1, evt, chartObj)
   total: PropTypes.number,

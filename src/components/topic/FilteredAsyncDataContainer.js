@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import withAsyncDataFetch from '../common/hocs/AsyncDataContainer';
+import withAsyncData from '../common/hocs/AsyncDataContainer';
 
 /**
  * propsToRefetchOn: optional array of property names that should be watched; if any of them change then
@@ -46,9 +46,8 @@ const withFilteredAsyncData = (fetchAsyncData, propsToRefetchOn) => {
     });
 
     return connect(mapStateToProps)(
-      withAsyncDataFetch(
-        FilteredAsyncDataContainer,
-        fetchAsyncData
+      withAsyncData(fetchAsyncData)(
+        FilteredAsyncDataContainer
       )
     );
   };

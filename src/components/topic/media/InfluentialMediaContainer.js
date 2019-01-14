@@ -21,12 +21,12 @@ const localMessages = {
 };
 
 const InfluentialMediaContainer = (props) => {
-  const { media, sort, sortData, topicId, previousButton, nextButton, filters } = props;
+  const { media, sort, handleChangeSort, topicId, previousButton, nextButton, filters } = props;
   const { formatMessage } = props.intl;
   return (
     <Grid>
       <Row>
-        <Col lg={12} md={12} sm={12}>
+        <Col lg={12}>
           <TopicPageTitle value={localMessages.title} />
           <TopicSourceSearchContainer topicId={topicId} showSearch />
           <DataCard border={false}>
@@ -46,7 +46,7 @@ const InfluentialMediaContainer = (props) => {
             <MediaTable
               media={media}
               topicId={topicId}
-              onChangeSort={newSort => sortData(newSort)}
+              onChangeSort={newSort => handleChangeSort(newSort)}
               sortedBy={sort}
             />
             { previousButton }
@@ -66,15 +66,15 @@ InfluentialMediaContainer.propTypes = {
   sort: PropTypes.string.isRequired,
   media: PropTypes.array.isRequired,
   links: PropTypes.object,
-  filters: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
   // from dispatch
-  sortData: PropTypes.func.isRequired,
+  handleChangeSort: PropTypes.func.isRequired,
   // from compositional chain
   intl: PropTypes.object.isRequired,
   nextButton: PropTypes.node,
   previousButton: PropTypes.node,
+  filters: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -82,13 +82,12 @@ const mapStateToProps = state => ({
   sort: state.topics.selected.media.sort,
   media: state.topics.selected.media.media,
   links: state.topics.selected.media.link_ids,
-  filters: state.topics.selected.filters,
   topicId: state.topics.selected.id,
   topicInfo: state.topics.selected.info,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  sortData: (sort) => {
+  handleChangeSort: (sort) => {
     dispatch(push(pagedAndSortedLocation(ownProps.location, null, sort)));
     dispatch(sortTopicInfluentialMedia(sort));
   },

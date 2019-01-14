@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
@@ -25,54 +25,44 @@ const localMessages = {
   downloadCsv: { id: 'media.splitStoryCount.downloadCsv', defaultMessage: 'Download CSV of Stories per Day' },
 };
 
-class MediaSplitStoryCountContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, filters } = this.props;
-    if (nextProps.filters !== filters) {
-      fetchData(nextProps);
-    }
-  }
-
-  downloadCsv = () => {
-    const { topicId, mediaId, filters } = this.props;
-    const url = `/api/topics/${topicId}/media/${mediaId}/split-story/count.csv?snapshotId=${filters.snapshotId}&timespanId=${filters.timespanId}`;
-    window.location = url;
-  }
-
-  render() {
-    const { total, counts, helpButton, selectedTimePeriod } = this.props;
-    return (
-      <DataCard>
-        <div className="actions">
-          <ActionMenu actionTextMsg={messages.downloadOptions}>
-            <MenuItem onClick={this.downloadCsv}>
-              <ListItemText>
-                <FormattedMessage {...localMessages.downloadCsv} />
-              </ListItemText>
-              <ListItemIcon>
-                <DownloadButton />
-              </ListItemIcon>
-            </MenuItem>
-          </ActionMenu>
-          <ActionMenu actionTextMsg={messages.viewOptions}>
-            {this.props.attentionAggregationMenuItems}
-          </ActionMenu>
-        </div>
-        <h2>
-          <FormattedMessage {...localMessages.title} />
-          {helpButton}
-        </h2>
-        <AttentionOverTimeChart
-          total={total}
-          data={counts}
-          height={200}
-          lineColor={getBrandDarkColor()}
-          interval={selectedTimePeriod}
-        />
-      </DataCard>
-    );
-  }
-}
+const MediaSplitStoryCountContainer = (props) => {
+  const { total, counts, helpButton, selectedTimePeriod, filters, topicId, mediaId } = props;
+  return (
+    <DataCard>
+      <div className="actions">
+        <ActionMenu actionTextMsg={messages.downloadOptions}>
+          <MenuItem
+            onClick={() => {
+              const url = `/api/topics/${topicId}/media/${mediaId}/split-story/count.csv?snapshotId=${filters.snapshotId}&timespanId=${filters.timespanId}`;
+              window.location = url;
+            }}
+          >
+            <ListItemText>
+              <FormattedMessage {...localMessages.downloadCsv} />
+            </ListItemText>
+            <ListItemIcon>
+              <DownloadButton />
+            </ListItemIcon>
+          </MenuItem>
+        </ActionMenu>
+        <ActionMenu actionTextMsg={messages.viewOptions}>
+          {props.attentionAggregationMenuItems}
+        </ActionMenu>
+      </div>
+      <h2>
+        <FormattedMessage {...localMessages.title} />
+        {helpButton}
+      </h2>
+      <AttentionOverTimeChart
+        total={total}
+        data={counts}
+        height={200}
+        lineColor={getBrandDarkColor()}
+        interval={selectedTimePeriod}
+      />
+    </DataCard>
+  );
+};
 
 MediaSplitStoryCountContainer.propTypes = {
   // from composition chain
@@ -88,9 +78,6 @@ MediaSplitStoryCountContainer.propTypes = {
   filters: PropTypes.object.isRequired,
   total: PropTypes.number,
   counts: PropTypes.array,
-  // from dispath
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -100,27 +87,16 @@ const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (stateProps) => {
-    dispatch(fetchMediaSplitStoryCounts(ownProps.topicId, ownProps.mediaId, stateProps.filters));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(stateProps);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, props) => dispatch(fetchMediaSplitStoryCounts(props.topicId, props.mediaId, props.filters));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpText, messages.attentionChartHelpText])(
       withAttentionAggregation(
-        withAsyncFetch(
-          MediaSplitStoryCountContainer
+        withFilteredAsyncData(
+          MediaSplitStoryCountContainer,
+          fetchAsyncData,
         )
       )
     )

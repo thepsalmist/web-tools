@@ -7,12 +7,12 @@ import withSampleSize from '../../common/composers/SampleSize';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import { filteredLinkTo, filtersAsUrlParams, combineQueryParams } from '../../util/location';
 import { fetchTopicTopWords } from '../../../actions/topicActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import EditableWordCloudDataCard from '../../common/EditableWordCloudDataCard';
 import messages from '../../../resources/messages';
 import { generateParamStr } from '../../../lib/apiUtil';
-import { VIEW_1K, mergeFilters } from '../../../lib/topicFilterUtil';
+import { mergeFilters } from '../../../lib/topicFilterUtil';
 import { topicDownloadFilename } from '../../util/topicUtil';
 
 const localMessages = {
@@ -24,35 +24,27 @@ const localMessages = {
 
 const WORD_CLOUD_DOM_ID = 'topic-summary-media-word-cloud';
 
-
-class MediaWordsContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, filters } = this.props;
-    if (nextProps.filters !== filters) {
-      fetchData(nextProps);
-    }
-  }
-
-  render() {
-    const { topicInfo, topicId, mediaId, initSampleSize, onViewSampleSizeClick, filters, handleWordCloudClick } = this.props;
-    const urlDownload = `/api/topics/${topicId}/words.csv?${filtersAsUrlParams({ ...filters, q: combineQueryParams(filters.q, `media_id:${mediaId}`) })}`;
-    const { formatMessage } = this.props.intl;
-    return (
-      <EditableWordCloudDataCard
-        words={this.props.words}
-        explore={filteredLinkTo(`/topics/${topicId}/words`, filters)}
-        initSampleSize={initSampleSize}
-        downloadUrl={urlDownload}
-        onViewModeClick={handleWordCloudClick}
-        onViewSampleSizeClick={onViewSampleSizeClick}
-        title={formatMessage(messages.topWords)}
-        domId={WORD_CLOUD_DOM_ID}
-        svgDownloadPrefix={`${topicDownloadFilename(topicInfo.name, filters)}-media-${mediaId}-words`}
-        includeTopicWord2Vec
-      />
-    );
-  }
-}
+const MediaWordsContainer = (props) => {
+  const { topicInfo, words, topicId, mediaId, initSampleSize, onViewSampleSizeClick,
+    filters, handleWordCloudClick } = props;
+  const { formatMessage } = props.intl;
+  const urlDownload = `/api/topics/${topicId}/words.csv?${filtersAsUrlParams({ ...filters, q: combineQueryParams(filters.q, `media_id:${mediaId}`) })}`;
+  return (
+    <EditableWordCloudDataCard
+      width={700}
+      words={words}
+      explore={filteredLinkTo(`/topics/${topicId}/words`, filters)}
+      initSampleSize={initSampleSize}
+      downloadUrl={urlDownload}
+      onViewModeClick={word => handleWordCloudClick(word, topicId, filters)}
+      onViewSampleSizeClick={onViewSampleSizeClick}
+      title={formatMessage(messages.topWords)}
+      domId={WORD_CLOUD_DOM_ID}
+      svgDownloadPrefix={`${topicDownloadFilename(topicInfo.name, filters)}-media-${mediaId}-words`}
+      includeTopicWord2Vec
+    />
+  );
+};
 
 MediaWordsContainer.propTypes = {
   // from compositional chain
@@ -63,16 +55,13 @@ MediaWordsContainer.propTypes = {
   // from parent
   mediaId: PropTypes.number.isRequired,
   topicId: PropTypes.number.isRequired,
+  // from state
+  fetchStatus: PropTypes.string.isRequired,
+  topicInfo: PropTypes.object,
+  words: PropTypes.array,
   filters: PropTypes.object.isRequired,
   // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
-  // from state
-  words: PropTypes.array,
-  fetchStatus: PropTypes.string.isRequired,
   handleWordCloudClick: PropTypes.func,
-  topicInfo: PropTypes.object,
-
 };
 
 const mapStateToProps = state => ({
@@ -82,38 +71,35 @@ const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (props) => {
-    const currentProps = props || ownProps;
-    const filterObj = mergeFilters(currentProps, `media_id:${ownProps.mediaId}`);
-    dispatch(fetchTopicTopWords(ownProps.topicId, filterObj));
+const mapDispatchToProps = dispatch => ({
+  handleWordCloudClick: (word, topicId, filters) => {
+    const params = generateParamStr({ ...filters, stem: word.stem, term: word.term });
+    const url = `/topics/${topicId}/words/${word.stem}*?${params}`;
+    dispatch(push(url));
   },
-  pushToUrl: url => dispatch(push(url)),
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData({ ...stateProps, sample_size: VIEW_1K });
-    },
-    handleWordCloudClick: (word) => {
-      const params = generateParamStr({ ...stateProps.filters, stem: word.stem, term: word.term });
-      const url = `/topics/${ownProps.topicId}/words/${word.stem}*?${params}`;
-      dispatchProps.pushToUrl(url);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, props) => {
+  const filterObj = mergeFilters(props, `media_id:${props.mediaId}`);
+  dispatch(fetchTopicTopWords(props.topicId, filterObj));
+};
+
+const handleSampleSizeChange = (dispatch, props, sampleSize) => {
+  fetchAsyncData(dispatch, { ...props, sample_size: sampleSize });
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordCloudTopicWord2VecLayoutHelp])(
       withSampleSize(
-        withAsyncFetch(
-          withCsvDownloadNotifyContainer(
-            MediaWordsContainer
+        withCsvDownloadNotifyContainer(
+          withFilteredAsyncData(
+            MediaWordsContainer,
+            fetchAsyncData,
           )
-        )
+        ),
+        handleSampleSizeChange, // tell it to run the fetch when the sample size changes too
       )
     )
   )

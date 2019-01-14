@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import ErrorTryAgain from '../ErrorTryAgain';
 import LoadingSpinner from '../LoadingSpinner';
 import * as fetchConstants from '../../../lib/fetchConstants';
@@ -90,16 +91,16 @@ const withAsyncData = (fetchAsyncData, loadingSpinnerSize) => {
     }
 
     AsyncDataContainer.propTypes = {
-      // from store
+      // from child container
       fetchStatus: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.arrayOf(PropTypes.string),
       ]),
-      // from component chain
+      // from compositional chain
       dispatch: PropTypes.func.isRequired,
     };
 
-    return AsyncDataContainer;
+    return connect()(AsyncDataContainer);
   };
 
   return withAsyncDataInner;

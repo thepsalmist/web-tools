@@ -11,24 +11,31 @@ export const NO_SPINNER = 0;
 /**
  * Use this with the JS Composition pattern to make a Container do an async fetch for you.
  * The container MUST pass in a `fetchAsyncData` method that takes two args - `dispatch` and `props`.
- * Pass in a loadingSpinnerSize of 0 to not display it at all.
+ * You can optionally pass in an array of `propsToRefetchOn` - if properties in this array change then a refetch will be called for you.
+ * Also pass in a loadingSpinnerSize of 0 to not display a spinner while it loads.
  */
-const withAsyncData = (fetchAsyncData, loadingSpinnerSize) => {
+const withAsyncData = (fetchAsyncData, propsToRefetchOn, loadingSpinnerSize) => {
   const withAsyncDataInner = (ChildComponent) => {
     const spinnerSize = (loadingSpinnerSize !== undefined) ? loadingSpinnerSize : null;
     class AsyncDataContainer extends React.Component {
       state = {
-        asyncFetchResult: undefined,
         hasShowResults: false,
       };
 
       componentDidMount() {
         const { dispatch } = this.props;
-        const asyncFetchResult = fetchAsyncData(dispatch, this.props);
-        this.state = { asyncFetchResult };
+        fetchAsyncData(dispatch, this.props);
       }
 
       componentWillReceiveProps(nextProps) {
+        if (propsToRefetchOn) {
+          const oneOfPropsChanged = propsToRefetchOn
+            .map(propName => this.props[propName] !== nextProps[propName])
+            .reduce((combined, item) => combined || item);
+          if (oneOfPropsChanged) {
+            fetchAsyncData(this.props.dispatch, nextProps);
+          }
+        }
         if (nextProps.fetchStatus === fetchConstants.FETCH_SUCCEEDED) {
           this.setState({ hasShowResults: true });
         }
@@ -47,44 +54,40 @@ const withAsyncData = (fetchAsyncData, loadingSpinnerSize) => {
         // support single fetchStatus or an array of them
         const fetchStatusToUse = (typeof fetchStatus === 'string') ? fetchStatus : fetchConstants.combineFetchStatuses(fetchStatus);
         let content = null;
-        if (this.state.asyncFetchResult === 'hide') {
-          content = null;
-        } else {
-          switch (fetchStatusToUse) {
-            case fetchConstants.FETCH_ONGOING:
-              if (this.state.hasShowResults) {
-                content = (
-                  <div className="async-loading">
-                    <ChildComponent {...this.props} />
-                    <div className="loading-overlay">
-                      <div className="overlay-content">
-                        <LoadingSpinner size={spinnerSize} />
-                      </div>
-                    </div>
-                  </div>
-                );
-              } else if (loadingSpinnerSize !== 0) {
-                content = <LoadingSpinner size={spinnerSize} />;
-              }
-              break;
-            case fetchConstants.FETCH_SUCCEEDED:
-              content = <ChildComponent {...this.props} />;
-              break;
-            case fetchConstants.FETCH_FAILED:
+        switch (fetchStatusToUse) {
+          case fetchConstants.FETCH_ONGOING:
+            if (this.state.hasShowResults) {
               content = (
                 <div className="async-loading">
                   <ChildComponent {...this.props} />
                   <div className="loading-overlay">
                     <div className="overlay-content">
-                      <ErrorTryAgain onTryAgain={() => fetchAsyncData(dispatch, this.props)} />
+                      <LoadingSpinner size={spinnerSize} />
                     </div>
                   </div>
                 </div>
               );
-              break;
-            default:
-              break;
-          }
+            } else if (loadingSpinnerSize !== 0) {
+              content = <LoadingSpinner size={spinnerSize} />;
+            }
+            break;
+          case fetchConstants.FETCH_SUCCEEDED:
+            content = <ChildComponent {...this.props} />;
+            break;
+          case fetchConstants.FETCH_FAILED:
+            content = (
+              <div className="async-loading">
+                <ChildComponent {...this.props} />
+                <div className="loading-overlay">
+                  <div className="overlay-content">
+                    <ErrorTryAgain onTryAgain={() => fetchAsyncData(dispatch, this.props)} />
+                  </div>
+                </div>
+              </div>
+            );
+            break;
+          default:
+            break;
         }
         return content;
       }

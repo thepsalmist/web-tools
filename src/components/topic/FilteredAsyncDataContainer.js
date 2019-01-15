@@ -9,25 +9,7 @@ import withAsyncData from '../common/hocs/AsyncDataContainer';
  */
 const withFilteredAsyncData = (fetchAsyncData, propsToRefetchOn) => {
   const withFilteredAsyncDataInner = (ChildComponent) => {
-    class FilteredAsyncDataContainer extends React.Component {
-      componentWillReceiveProps(nextProps) {
-        const { filters, dispatch } = this.props;
-        const filtersChanged = (nextProps.filters !== filters);
-        let childSaysSomethingChanged = false;
-        if (propsToRefetchOn) {
-          const haveChanged = propsToRefetchOn.map(propName => nextProps[propName] !== this.props[propName]);
-          childSaysSomethingChanged = haveChanged.reduce((combined, current) => combined || current);
-        }
-        if (filtersChanged || childSaysSomethingChanged) {
-          fetchAsyncData(dispatch, nextProps);
-        }
-      }
-
-      render() {
-        const { filters } = this.props;
-        return <ChildComponent {...this.props} filters={filters} />;
-      }
-    }
+    const FilteredAsyncDataContainer = props => <ChildComponent {...props} />;
 
     FilteredAsyncDataContainer.propTypes = {
       // from store
@@ -45,8 +27,13 @@ const withFilteredAsyncData = (fetchAsyncData, propsToRefetchOn) => {
       filters: state.topics.selected.filters,
     });
 
+    let propsToListenTo = ['filters'];
+    if (propsToRefetchOn) {
+      propsToListenTo = ['filters', ...propsToListenTo];
+    }
+
     return connect(mapStateToProps)(
-      withAsyncData(fetchAsyncData)(
+      withAsyncData(fetchAsyncData, ['filters', ...propsToListenTo])(
         FilteredAsyncDataContainer
       )
     );

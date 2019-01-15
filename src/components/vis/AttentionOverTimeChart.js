@@ -262,7 +262,7 @@ AttentionOverTimeChart.propTypes = {
   lineColor: PropTypes.string,
   backgroundColor: PropTypes.string,
   health: PropTypes.array,
-  interval: PropTypes.string.isRequired,
+  interval: PropTypes.oneOf([PAST_DAY, PAST_WEEK, PAST_MONTH]),
   display: PropTypes.string,
   onDataPointClick: PropTypes.func, // (date0, date1, evt, chartObj)
   total: PropTypes.number,
@@ -272,6 +272,11 @@ AttentionOverTimeChart.propTypes = {
   normalizeYAxis: PropTypes.bool,
   // from composition chain
   intl: PropTypes.object.isRequired,
+};
+
+// Specifies the default values for props:
+AttentionOverTimeChart.defaultProps = {
+  interval: PAST_DAY,
 };
 
 export default injectIntl(AttentionOverTimeChart);

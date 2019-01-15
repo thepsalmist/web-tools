@@ -16,16 +16,6 @@
         },
         {
           "apps": [ "sources", "explorer", "topics" ],
-          "type": "New",
-          "note": "Upgrade to Python 3"
-        },
-        {
-          "apps": [ "sources", "explorer", "topics" ],
-          "type": "New",
-          "note": "Email templates updated"
-        },
-        {
-          "apps": [ "sources", "explorer", "topics" ],
           "type": "Fixed",
           "note": "Better error messages when back-end goes down"
         },
@@ -38,7 +28,7 @@
           "apps": [ "explorer" ],
           "type": "Fixed",
           "note": "Curly quotes additional fix"
-        },
+        }
       ]
     },
     {
@@ -47,12 +37,12 @@
       "notes": [
         {
           "apps": [ "sources", "explorer", "topics", "tools" ],
-          "type": "Enhancement",
+          "type": "New",
           "note": "User and Story Management implmented for Admins under new Admin menu option"
         },
         {
           "apps": [ "sources", "explorer", "topics" ],
-          "type": "Enhancement",
+          "type": "New",
           "note": "Confirmation notice when logged in"
         },
         {
@@ -72,7 +62,7 @@
         },
         {
           "apps": [ "topics" ],
-          "type": "Enhancement",
+          "type": "New",
           "note": "Can view custom timespan."
         },
         {
@@ -92,7 +82,7 @@
         },
         {
           "apps": [ "explorer" ],
-          "type": "Enhancement",
+          "type": "New",
           "note": "You can now download top places from the Geographic view."
         }
       ]

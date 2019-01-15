@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
 import { fetchCreateFocusTopCountriesCoverage } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
 import PieChart from '../../../../../vis/PieChart';
@@ -15,42 +15,33 @@ const localMessages = {
   notIncluded: { id: 'topic.snapshot.keywords.coverage.total', defaultMessage: 'All Stories about this topic' },
 };
 
-class TopCountriesCoveragePreviewContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { topicId, numCountries, fetchData } = this.props;
-    if (nextProps.numCountries !== numCountries) {
-      fetchData(topicId, nextProps.numCountries);
-    }
-  }
-
-  render() {
-    const { count, total } = this.props;
-    const { formatMessage } = this.props.intl;
-    let content = null;
-    if (count !== null) {
-      content = (
-        <PieChart
-          title={formatMessage(localMessages.title)}
-          data={[
-            { name: formatMessage(localMessages.included), y: count, color: getBrandDarkColor() },
-            { name: formatMessage(localMessages.notIncluded), y: total, color: '#cccccc' },
-          ]}
-          height={250}
-          showDataLabels={false}
-        />
-      );
-    }
-    return (
-      <DataCard>
-        <h2>
-          <FormattedMessage {...localMessages.title} />
-        </h2>
-        <p><FormattedMessage {...localMessages.intro} /></p>
-        {content}
-      </DataCard>
+const TopCountriesCoveragePreviewContainer = (props) => {
+  const { count, total } = props;
+  const { formatMessage } = props.intl;
+  let content = null;
+  if (count !== null) {
+    content = (
+      <PieChart
+        title={formatMessage(localMessages.title)}
+        data={[
+          { name: formatMessage(localMessages.included), y: count, color: getBrandDarkColor() },
+          { name: formatMessage(localMessages.notIncluded), y: total, color: '#cccccc' },
+        ]}
+        height={250}
+        showDataLabels={false}
+      />
     );
   }
-}
+  return (
+    <DataCard>
+      <h2>
+        <FormattedMessage {...localMessages.title} />
+      </h2>
+      <p><FormattedMessage {...localMessages.intro} /></p>
+      {content}
+    </DataCard>
+  );
+};
 
 TopCountriesCoveragePreviewContainer.propTypes = {
   // from compositional chain
@@ -58,9 +49,6 @@ TopCountriesCoveragePreviewContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   numCountries: PropTypes.number.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
   // from state
   count: PropTypes.number,
   total: PropTypes.number,
@@ -73,25 +61,12 @@ const mapStateToProps = state => ({
   total: state.topics.selected.focalSets.create.topCountriesCoverage.counts.total,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchData: (topicId, numCountries) => {
-    dispatch(fetchCreateFocusTopCountriesCoverage(topicId, { numCountries }));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.topicId, ownProps.numCountries);
-    },
-
-  });
-}
+const fetchAsyncData = (dispatch, { topicId, numCountries }) => dispatch(fetchCreateFocusTopCountriesCoverage(topicId, { numCountries }));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData, ['numCountries'])(
       TopCountriesCoveragePreviewContainer
     )
   )

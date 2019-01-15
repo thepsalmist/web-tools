@@ -1,8 +1,8 @@
 {
   "releases": [
     {
-      "date": "2018-12-17",
-      "version": "v3.7.0",
+      "date": "2019-1-15",
+      "version": "v3.8.0",
       "notes": [
         {
           "apps": [ "explorer"],
@@ -28,6 +28,11 @@
           "apps": [ "explorer" ],
           "type": "Fixed",
           "note": "Curly quotes additional fix"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Story count now on topic status page"
         }
       ]
     },

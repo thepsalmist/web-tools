@@ -5,6 +5,47 @@
       "version": "v3.7.0",
       "notes": [
         {
+          "apps": [ "explorer"],
+          "type": "New",
+          "note": "Duplication and re-ordering for explorer queries"
+        },
+        {
+          "apps": [ "sources", "explorer", "topics" ],
+          "type": "New",
+          "note": "Update Page Titles"
+        },
+        {
+          "apps": [ "sources", "explorer", "topics" ],
+          "type": "New",
+          "note": "Upgrade to Python 3"
+        },
+        {
+          "apps": [ "sources", "explorer", "topics" ],
+          "type": "New",
+          "note": "Email templates updated"
+        },
+        {
+          "apps": [ "sources", "explorer", "topics" ],
+          "type": "Fixed",
+          "note": "Better error messages when back-end goes down"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Comparative Word Cloud working again"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Curly quotes additional fix"
+        },
+      ]
+    },
+    {
+      "date": "2018-12-17",
+      "version": "v3.7.0",
+      "notes": [
+        {
           "apps": [ "sources", "explorer", "topics", "tools" ],
           "type": "Enhancement",
           "note": "User and Story Management implmented for Admins under new Admin menu option"

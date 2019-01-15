@@ -21,10 +21,10 @@ const localMessages = {
 };
 
 class AdvancedMediaPickerSearchForm extends React.Component {
-  handleSearchButtonClick = (evt) => {
+  handleSearchButtonClick = (evt, inputRef) => {
     const { onAdvancedSelection } = this.props;
     evt.preventDefault();
-    const searchStr = document.getElementsByTagName('input')[0].value; // note: this is a brittle hack
+    const searchStr = inputRef.value;
     onAdvancedSelection({ mediaKeyword: searchStr });
   }
 
@@ -44,6 +44,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
             <Field
               name="advancedSearchQueryString"
               value={initValues}
+              ref={(input) => { this.textInputRef = input; }}
               component={renderTextField}
               label={formatMessage(localMessages.searchSuggestion)}
               fullWidth
@@ -108,7 +109,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
             <AppButton
               style={{ marginTop: 30 }}
               label={formatMessage(localMessages.search)}
-              onClick={this.handleSearchButtonClick}
+              onClick={evt => this.handleSearchButtonClick(evt, this.textInputRef)}
               color="primary"
             />
           </Col>

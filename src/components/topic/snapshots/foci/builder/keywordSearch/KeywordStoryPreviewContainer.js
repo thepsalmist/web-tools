@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
 import withHelp from '../../../../../common/hocs/HelpfulContainer';
 import { fetchCreateFocusKeywordStories } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
@@ -16,27 +16,18 @@ const localMessages = {
   helpTitle: { id: 'topic.summary.stories.help.title', defaultMessage: 'About Matching Top Stories' },
 };
 
-class KeywordStoryPreviewContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { keywords, fetchData } = this.props;
-    if ((nextProps.keywords !== keywords)) {
-      fetchData(nextProps.keywords);
-    }
-  }
-
-  render() {
-    const { stories, topicId, helpButton, showTweetCounts } = this.props;
-    return (
-      <DataCard>
-        <h2>
-          <FormattedMessage {...localMessages.title} />
-          {helpButton}
-        </h2>
-        <TopicStoryTable stories={stories.slice(0, NUM_TO_SHOW)} showTweetCounts={showTweetCounts} topicId={topicId} />
-      </DataCard>
-    );
-  }
-}
+const KeywordStoryPreviewContainer = (props) => {
+  const { stories, topicId, helpButton, showTweetCounts } = props;
+  return (
+    <DataCard>
+      <h2>
+        <FormattedMessage {...localMessages.title} />
+        {helpButton}
+      </h2>
+      <TopicStoryTable stories={stories.slice(0, NUM_TO_SHOW)} showTweetCounts={showTweetCounts} topicId={topicId} />
+    </DataCard>
+  );
+};
 
 KeywordStoryPreviewContainer.propTypes = {
   // from the composition chain
@@ -59,29 +50,13 @@ const mapStateToProps = state => ({
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (keywords) => {
-    const params = {
-      q: keywords,
-      limit: NUM_TO_SHOW,
-    };
-    dispatch(fetchCreateFocusKeywordStories(ownProps.topicId, params));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.keywords);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, { topicId, keywords }) => dispatch(fetchCreateFocusKeywordStories(topicId, { q: keywords, limit: NUM_TO_SHOW }));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, messages.storiesTableHelpText)(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData, ['keywords'])(
         KeywordStoryPreviewContainer
       )
     )

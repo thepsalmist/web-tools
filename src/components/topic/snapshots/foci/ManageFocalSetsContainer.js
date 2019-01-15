@@ -43,7 +43,7 @@ class ManageFocalSetsContainer extends React.Component {
     this.setState({ removeDialogOpen: false, idToRemove: null });
   }
 
-  onFocalSetDefinitionDelete = () => {
+  onDeleteFocalSetDefinition = () => {
     const { topicId, handleDeleteFocalSetDefinition } = this.props;
     handleDeleteFocalSetDefinition(topicId, this.state.idToRemove);
     this.setState({ removeDialogOpen: false, idToRemove: null });

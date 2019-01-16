@@ -23,8 +23,7 @@ const withAsyncData = (fetchAsyncData, propsToRefetchOn, loadingSpinnerSize) => 
       };
 
       componentDidMount() {
-        const { dispatch } = this.props;
-        fetchAsyncData(dispatch, this.props);
+        this.handleRefetch();
       }
 
       componentWillReceiveProps(nextProps) {
@@ -41,8 +40,13 @@ const withAsyncData = (fetchAsyncData, propsToRefetchOn, loadingSpinnerSize) => 
         }
       }
 
+      handleRefetch() {
+        const { dispatch } = this.props;
+        fetchAsyncData(dispatch, this.props);
+      }
+
       render() {
-        const { fetchStatus, dispatch } = this.props;
+        const { fetchStatus } = this.props;
         if (fetchStatus === undefined) {
           const error = { message: `AsyncDataContainer: No fetchStatus defined for your ${ChildComponent.displayName || ChildComponent.name} container`, child: ChildComponent };
           throw error;
@@ -72,7 +76,7 @@ const withAsyncData = (fetchAsyncData, propsToRefetchOn, loadingSpinnerSize) => 
             }
             break;
           case fetchConstants.FETCH_SUCCEEDED:
-            content = <ChildComponent {...this.props} />;
+            content = <ChildComponent {...this.props} onFetchAyncData={this.handleRefetch} />;
             break;
           case fetchConstants.FETCH_FAILED:
             content = (
@@ -80,7 +84,7 @@ const withAsyncData = (fetchAsyncData, propsToRefetchOn, loadingSpinnerSize) => 
                 <ChildComponent {...this.props} />
                 <div className="loading-overlay">
                   <div className="overlay-content">
-                    <ErrorTryAgain onTryAgain={() => fetchAsyncData(dispatch, this.props)} />
+                    <ErrorTryAgain onTryAgain={this.handleRefetch} />
                   </div>
                 </div>
               </div>

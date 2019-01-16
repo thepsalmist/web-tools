@@ -1,17 +1,53 @@
 {
   "releases": [
     {
+      "date": "2019-1-15",
+      "version": "v3.8.0",
+      "notes": [
+        {
+          "apps": [ "explorer"],
+          "type": "New",
+          "note": "Duplication and re-ordering for explorer queries"
+        },
+        {
+          "apps": [ "sources", "explorer", "topics" ],
+          "type": "New",
+          "note": "Update Page Titles"
+        },
+        {
+          "apps": [ "sources", "explorer", "topics" ],
+          "type": "Fixed",
+          "note": "Better error messages when back-end goes down"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Comparative Word Cloud working again"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Curly quotes additional fix"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Story count now on topic status page"
+        }
+      ]
+    },
+    {
       "date": "2018-12-17",
       "version": "v3.7.0",
       "notes": [
         {
           "apps": [ "sources", "explorer", "topics", "tools" ],
-          "type": "Enhancement",
+          "type": "New",
           "note": "User and Story Management implmented for Admins under new Admin menu option"
         },
         {
           "apps": [ "sources", "explorer", "topics" ],
-          "type": "Enhancement",
+          "type": "New",
           "note": "Confirmation notice when logged in"
         },
         {
@@ -31,7 +67,7 @@
         },
         {
           "apps": [ "topics" ],
-          "type": "Enhancement",
+          "type": "New",
           "note": "Can view custom timespan."
         },
         {
@@ -51,7 +87,7 @@
         },
         {
           "apps": [ "explorer" ],
-          "type": "Enhancement",
+          "type": "New",
           "note": "You can now download top places from the Geographic view."
         }
       ]

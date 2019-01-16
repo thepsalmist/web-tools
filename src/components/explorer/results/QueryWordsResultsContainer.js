@@ -33,26 +33,29 @@ class QueryWordsResultsContainer extends React.Component {
   }
 
   render() {
-    const { results, queries, tabSelector, selectedQueryIndex, fetchData, internalItemSelected } = this.props;
-    const selectedQuery = queries[selectedQueryIndex];
-    return (
-      <EditableWordCloudDataCard
-        onViewSampleSizeClick={sampleSize => fetchData(queries, sampleSize)}
-        initSampleSize={results[selectedQueryIndex].sample_size}
-        subHeaderContent={tabSelector}
-        words={results[selectedQueryIndex].list}
-        onViewModeClick={this.handleWordClick}
-        border={false}
-        domId={WORD_CLOUD_DOM_ID}
-        width={585}
-        onDownload={ngramSize => this.handleDownload(selectedQuery, ngramSize, results[selectedQueryIndex].sample_size)}
-        svgDownloadPrefix={`${slugifiedQueryLabel(selectedQuery.label)}-ngram-1`}
-        textColor={selectedQuery.color}
-        actionsAsLinksUnderneath
-        hideGoogleWord2Vec
-        selectedTerm={internalItemSelected ? internalItemSelected.word : ''}
-      />
-    );
+    const { results, queries, tabSelector, selectedTabIndex, fetchData, internalItemSelected } = this.props;
+    const selectedQuery = queries[selectedTabIndex];
+    if (results && results.length > 0) {
+      return (
+        <EditableWordCloudDataCard
+          onViewSampleSizeClick={sampleSize => fetchData(queries, sampleSize)}
+          initSampleSize={results[selectedTabIndex].sample_size}
+          subHeaderContent={tabSelector}
+          words={results[selectedTabIndex].results}
+          onViewModeClick={this.handleWordClick}
+          border={false}
+          domId={WORD_CLOUD_DOM_ID}
+          width={585}
+          onDownload={ngramSize => this.handleDownload(selectedQuery, ngramSize, results[selectedTabIndex].sample_size)}
+          svgDownloadPrefix={`${slugifiedQueryLabel(selectedQuery.label)}-ngram-1`}
+          textColor={selectedQuery.color}
+          actionsAsLinksUnderneath
+          hideGoogleWord2Vec
+          selectedTerm={internalItemSelected ? internalItemSelected.word : ''}
+        />
+      );
+    }
+    return <div>Error</div>;
   }
 }
 
@@ -63,7 +66,7 @@ QueryWordsResultsContainer.propTypes = {
   isLoggedIn: PropTypes.bool.isRequired,
   // from hocs
   intl: PropTypes.object.isRequired,
-  selectedQueryIndex: PropTypes.number.isRequired,
+  selectedTabIndex: PropTypes.number.isRequired,
   selectedQuery: PropTypes.object.isRequired,
   tabSelector: PropTypes.object.isRequired,
   onShowLoginDialog: PropTypes.func.isRequired,
@@ -96,7 +99,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           start_date: q.startDate,
           end_date: q.endDate,
           q: q.q,
-          index: q.index,
+          uid: q.uid,
           sources: q.sources.map(s => s.id),
           collections: q.collections.map(c => c.id),
           sample_size: sampleSize,

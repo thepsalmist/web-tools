@@ -4,18 +4,11 @@ export const FETCH_ONGOING = 'FETCH_ONGOING';
 export const FETCH_SUCCEEDED = 'FETCH_SUCCEEDED';
 export const FETCH_FAILED = 'FETCH_FAILED';
 
-const missingFetchStatusError = {
-  msg: 'fetchStatuses is undefined!',
-};
-
-export const combineFetchStatuses = (fetchStatuses) => {
-  if (fetchStatuses === undefined) {
-    throw missingFetchStatusError;
-  }
-  const allInvalid = fetchStatuses.reduce((total, status) => total && (status === FETCH_INVALID), true);
-  const anyOngoing = fetchStatuses.reduce((total, status) => total || (status === FETCH_ONGOING), false);
-  const anyFailed = fetchStatuses.reduce((total, status) => total || (status === FETCH_FAILED), false);
-  const allSucceeded = fetchStatuses.reduce((total, status) => total && (status === FETCH_SUCCEEDED), true);
+function combineArrayOfFetchStatuses(fetchStatusesArray) {
+  const allInvalid = fetchStatusesArray.reduce((total, status) => total && (status === FETCH_INVALID), true);
+  const anyOngoing = fetchStatusesArray.reduce((total, status) => total || (status === FETCH_ONGOING), false);
+  const anyFailed = fetchStatusesArray.reduce((total, status) => total || (status === FETCH_FAILED), false);
+  const allSucceeded = fetchStatusesArray.reduce((total, status) => total && (status === FETCH_SUCCEEDED), true);
   if (allInvalid) {
     return FETCH_INVALID;
   }
@@ -29,4 +22,35 @@ export const combineFetchStatuses = (fetchStatuses) => {
     return FETCH_SUCCEEDED;
   }
   return FETCH_ONGOING;
-};
+}
+
+function combineIndexedFetchStatuses(indexedFetchStatuses) {
+  const fetchStatusesArray = Object.keys(indexedFetchStatuses).map(k => indexedFetchStatuses[k]);
+  return combineArrayOfFetchStatuses(fetchStatusesArray);
+}
+
+// accept a string, an array, or an object
+export function combineFetchStatuses(input) {
+  let fetchStatusToUse;
+  if (input === undefined) {
+    const missingFetchStatusError = {
+      msg: 'fetchStatuses is undefined!',
+    };
+    throw missingFetchStatusError;
+  // support a basic string
+  } else if (typeof input === 'string') {
+    fetchStatusToUse = input;
+  // or an array of strings
+  } else if (Array.isArray(input)) {
+    fetchStatusToUse = combineArrayOfFetchStatuses(input);
+  // or an object keyed to strings
+  } else if (typeof input === 'object' && input !== null) {
+    fetchStatusToUse = combineIndexedFetchStatuses(input);
+  } else {
+    const badFetchStatusTypeError = {
+      msg: `fetchStatus received is not a valid type - it is ${typeof input}`,
+    };
+    throw badFetchStatusTypeError;
+  }
+  return fetchStatusToUse;
+}

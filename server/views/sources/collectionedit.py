@@ -127,7 +127,7 @@ def upload_file():
             all_errors += errors
         try:
             mail_enabled = config.get('SMTP_ENABLED')
-            if mail_enabled is '1':
+            if mail_enabled == u'1':
                 _email_batch_source_update_results(audit)
         except ConfigException:
             logger.debug("Skipping collection file upload confirmation email")

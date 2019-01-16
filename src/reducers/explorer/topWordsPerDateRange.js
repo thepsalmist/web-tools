@@ -6,7 +6,7 @@ import { FETCH_QUERY_PER_DATE_TOP_WORDS, RESET_QUERY_PER_DATE_TOP_WORDS } from '
 const topWordsPerDateRange = createAsyncReducer({
   action: FETCH_QUERY_PER_DATE_TOP_WORDS,
   [RESET_QUERY_PER_DATE_TOP_WORDS]: () => ({
-    list: [],
+    results: [],
   }),
 });
 

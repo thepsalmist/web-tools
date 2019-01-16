@@ -13,6 +13,7 @@ from raven.handlers.logging import SentryHandler
 import mediacloud
 from cliff.api import Cliff
 import redis
+import jinja2
 
 from server.sessions import RedisSessionInterface
 from server.util.config import get_default_config, ConfigException
@@ -32,7 +33,8 @@ data_dir = os.path.join(base_dir, 'server', 'static', 'data')
 # setup logging
 with open(os.path.join(base_dir, 'config', 'server-logging.json'), 'r') as f:
     logging_config = json.load(f)
-    logging_config['handlers']['file']['filename'] = os.path.join(base_dir, logging_config['handlers']['file']['filename'])
+    logging_config['handlers']['file']['filename'] = os.path.join(base_dir,
+                                                                  logging_config['handlers']['file']['filename'])
 logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
 logger.info("---------------------------------------------------------------------------")
@@ -108,8 +110,8 @@ def create_app():
     try:
         sentry_dsn = config.get('SENTRY_DSN')
         Sentry(my_app, dsn=sentry_dsn)
-    except ConfigException as e:
-        logger.warn(e)
+    except ConfigException as ce:
+        logger.warn(ce)
     # set up webpack
     if is_dev_mode():
         manifest_path = '../build/manifest.json'
@@ -142,6 +144,14 @@ def create_app():
             my_app.config.update(mail_config)
             mail.init_app(my_app)
             logger.info('Mailing from {} via {}'.format(config.get('SMTP_USER'), config.get('SMTP_SERVER')))
+            # need to tell jinja to look in "emails" directory directly for the shared email templates
+            # because the `imports` in them don't include relative paths
+            my_loader = jinja2.ChoiceLoader([
+                my_app.jinja_loader,
+                jinja2.FileSystemLoader([os.path.join(base_dir, 'server', 'templates'),
+                                         os.path.join(base_dir, 'server', 'templates', 'emails')])
+            ])
+            my_app.jinja_loader = my_loader
         else:
             logger.warn("Mail configured, but not enabled")
     except ConfigException as ce:

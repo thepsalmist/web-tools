@@ -1,7 +1,7 @@
 import re
 import logging
 import os
-from mediacloud import MediaCloud
+from mediacloud.api import MediaCloud
 from operator import itemgetter
 import json
 import codecs

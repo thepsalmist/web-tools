@@ -189,9 +189,8 @@ const mapStateToProps = (state, ownProps) => ({
 const fetchAsyncData = (dispatch, props) => {
   dispatch(selectMedia(props.mediaId)); // save it to the state
   dispatch(fetchMedia(props.topicId, props.mediaId, props.filters))
-    .catch((error) => { // a 500
+    .catch(() => { // a 500
       // this means the media source has no stories in the timespan
-      console.log(error);
       dispatch(updateFeedback({ open: true, message: props.intl.formatMessage(localMessages.noStories) }));
     });
 };

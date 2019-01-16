@@ -89,7 +89,7 @@ def api_explorer_demo_story_split_count():
     return jsonify({'results': results})
 
 
-@app.route('/api/explorer/stories/split-count.csv', methods=['POST'])
+@app.route('/api/explorer/stories/split-count-all.csv', methods=['POST'])
 @api_error_handler
 def api_explorer_story_split_count_csv():
     filename = 'stories-over-time'
@@ -97,14 +97,25 @@ def api_explorer_story_split_count_csv():
     if 'searchId' in data:
         solr_q, solr_fq = parse_as_sample(data['searchId'], data['index'])
         filename = filename  # don't have this info + current_query['q']
-        # TODO solr_open_query
+        SAMPLE_SEARCHES = load_sample_searches()
+        queries = SAMPLE_SEARCHES[data['searchId']]['queries']
     else:
-        query_object = json.loads(data['q'])
-        solr_q, solr_fq = parse_query_with_keywords(query_object)
-        filename = file_name_for_download(query_object['label'], filename)
-    solr_open_query = concatenate_query_for_solr(solr_seed_query='*',
-                                                 media_ids=query_object['sources'],
-                                                 tags_ids=query_object['collections'])
-    results = apicache.normalized_and_story_split_count(solr_q, solr_fq, solr_open_query)
-    props = ['date', 'count', 'total_count', 'ratio']
-    return csv.stream_response(results['counts'], props, filename)
+        queries = json.loads(data['queries'])
+    label = " ".join([q['label'] for q in queries])
+    filename = file_name_for_download(label, filename)
+    # now compute total attention for all results
+    story_count_results = []
+    for q in queries:
+        solr_q, solr_fq = parse_query_with_keywords(q)
+        solr_open_query = concatenate_query_for_solr(solr_seed_query='*', media_ids=q['sources'],
+                                                     tags_ids=q['collections'])
+        story_counts = apicache.normalized_and_story_count(solr_q, solr_fq, solr_open_query)
+        story_count_results.append({
+            'date': q['startDate'],
+            'query': q['label'],
+            'matching_stories': story_counts['total'],
+            'total_stories': story_counts['normalized_total'],
+            'ratio': float(story_counts['total']) / float(story_counts['normalized_total'])
+        })
+    props = ['date','query', 'matching_stories', 'total_stories', 'ratio']
+    return csv.stream_response(story_count_results, props, filename)

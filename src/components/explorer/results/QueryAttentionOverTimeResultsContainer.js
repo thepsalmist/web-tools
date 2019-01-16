@@ -16,7 +16,7 @@ import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTim
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import { oneDayLater, solrFormat } from '../../../lib/dateUtil';
-import { postToDownloadUrl, ACTION_MENU_ITEM_CLASS, ensureSafeResults } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, ACTION_MENU_ITEM_CLASS, ensureSafeResults, postToCombinedDownloadUrl } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
@@ -28,6 +28,7 @@ const localMessages = {
   withKeywords: { id: 'explorer.attention.mode.withkeywords', defaultMessage: 'View Story Count (default)' },
   withoutKeywords: { id: 'explorer.attention.mode.withoutkeywords', defaultMessage: 'View Story Percentage' },
   downloadCsv: { id: 'explorer.attention.downloadCsv', defaultMessage: 'Download { name } stories over time CSV' },
+  downloadAllCsv: { id: 'explorer.attention.downloadAllCsv', defaultMessage: 'Download all stories over time CSV' },
 };
 
 const VIEW_NORMALIZED = 'VIEW_NORMALIZED';
@@ -66,6 +67,10 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
 
   downloadCsv = (query) => {
     postToDownloadUrl('/api/explorer/stories/split-count.csv', query);
+  }
+
+  downloadAllQueriesCsv = (queries) => {
+    postToCombinedDownloadUrl('/api/explorer/stories/split-count-all.csv', queries);
   }
 
   render() {
@@ -123,6 +128,18 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
                   </ListItemIcon>
                 </MenuItem>
               ))}
+              <MenuItem
+                key="all"
+                className={ACTION_MENU_ITEM_CLASS}
+                onClick={() => this.downloadAllQueriesCsv(queries)}
+              >
+                <ListItemText>
+                  <FormattedMessage {...localMessages.downloadAllCsv} />
+                </ListItemText>
+                <ListItemIcon>
+                  <DownloadButton />
+                </ListItemIcon>
+              </MenuItem>
             </ActionMenu>
             <ActionMenu actionTextMsg={messages.viewOptions}>
               <MenuItem

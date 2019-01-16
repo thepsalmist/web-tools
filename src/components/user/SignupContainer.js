@@ -24,7 +24,6 @@ const localMessages = {
   missingNotes: { id: 'user.missingNotes', defaultMessage: 'You have to tell us a little about why you want to use Media Cloud.' },
   feedback: { id: 'user.signUp.feedback', defaultMessage: 'Successfully signed up.' },
   notesHint: { id: 'user.notes.hint', defaultMessage: 'Tell us a little about what you want to use Media Cloud for' },
-  subscribeToNewsletter: { id: 'user.signUp.subscribeToNewsletter', defaultMessage: 'Subscribe to Newsletter?' },
   userAlreadyExists: { id: 'user.signUp.error.alreadyExists', defaultMessage: 'Sorry, but a user with that email already exists! Did you <a href="/#/request-password-reset">need to reset your password</a>?' },
   signupSuccess: { id: 'user.signUp.success',
     defaultMessage: '<h1>Clink the link we just emailed you</h1>'
@@ -108,15 +107,6 @@ class SignupContainer extends React.Component {
                 component={renderTextField}
                 hintText={formatMessage(localMessages.notesHint)}
                 label={messages.userNotes}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={6}>
-              <Field
-                name="subscribeToNewsletter"
-                component={renderCheckbox}
-                label={localMessages.subscribeToNewsletter}
               />
             </Col>
           </Row>

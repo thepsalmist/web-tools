@@ -10,7 +10,7 @@ import flask_login
 from raven.conf import setup_logging
 from raven.contrib.flask import Sentry
 from raven.handlers.logging import SentryHandler
-import mediacloud
+import mediacloud.api
 from cliff.api import Cliff
 import redis
 import jinja2

@@ -28,7 +28,8 @@ class SourceSearchResultsContainer extends React.Component {
     showAdvancedOptions: false,
   }
 
-  toggleAdvancedOptions = () => {
+  toggleAdvancedOptions = (evt) => {
+    evt.preventDefault();
     this.setState(prevState => ({ showAdvancedOptions: !prevState.showAdvancedOptions }));
   }
 
@@ -68,7 +69,7 @@ class SourceSearchResultsContainer extends React.Component {
             onAdvancedSelection={val => this.updateMediaQuery(val)}
             hintText={formatMessage(localMessages.hintText)}
           />
-          <a onTouchTap={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.hideAdvancedOptions} /></a>
+          <a href="#toggle" onClick={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.hideAdvancedOptions} /></a>
         </div>
       );
     } else {
@@ -79,7 +80,7 @@ class SourceSearchResultsContainer extends React.Component {
             onSearch={val => this.updateMediaQuery(val)}
             hintText={formatMessage(localMessages.hintText)}
           />
-          <a onTouchTap={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.showAdvancedOptions} /></a>
+          <a href="#toggle" onClick={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.showAdvancedOptions} /></a>
         </div>
       );
     }

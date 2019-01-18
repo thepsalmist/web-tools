@@ -131,7 +131,7 @@ class StoryContainer extends React.Component {
                   <AppButton
                     label={formatMessage(messages.ok)}
                     primary
-                    onTouchTap={this.handleRemoveDialogClose}
+                    onClick={this.handleRemoveDialogClose}
                   />
                 </DialogActions>
               </Dialog>

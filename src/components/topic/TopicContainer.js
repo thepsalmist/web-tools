@@ -116,7 +116,7 @@ class TopicContainer extends React.Component {
                 <Col lg={6}>
                   <AppButton
                     label={formatMessage(localMessages.updateMaxStories)}
-                    onTouchTap={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo, this.textInputRef)}
+                    onClick={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo, this.textInputRef)}
                     type="submit"
                     primary
                   />
@@ -144,7 +144,7 @@ class TopicContainer extends React.Component {
                     <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
                     <AppButton
                       label={formatMessage(localMessages.trySpidering)}
-                      onTouchTap={() => handleSpiderRequest(topicInfo.topics_id)}
+                      onClick={() => handleSpiderRequest(topicInfo.topics_id)}
                       type="submit"
                       color="primary"
                     />

@@ -42,12 +42,12 @@ class FocusDefinition extends React.Component {
     const dialogActions = [
       <AppButton
         label={formatMessage(messages.cancel)}
-        onTouchTap={this.handleDeleteCancel}
+        onClick={this.handleDeleteCancel}
       />,
       <AppButton
         label={formatMessage(messages.delete)}
         primary
-        onTouchTap={this.handleDelete}
+        onClick={this.handleDelete}
       />,
     ];
     return (

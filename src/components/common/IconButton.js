@@ -91,7 +91,7 @@ function composeIconButton(Icon, defaultTooltipMessage, useBackgroundColor = tru
         content = (
           <Link
             to={linkTarget}
-            onTouchTap={clickHandler}
+            onClick={clickHandler}
             className="icon-button-link"
             name={displayTooltip}
             onMouseEnter={this.handleMouseEnter}

@@ -29,7 +29,7 @@ export function resetPassword(params) {
 }
 
 export function signupUser(params) {
-  const acceptedParams = acceptParams(params, ['email', 'password', 'fullName', 'notes', 'subscribeToNewsletter']);
+  const acceptedParams = acceptParams(params, ['email', 'password', 'fullName', 'notes']);
   return createPostingApiPromise('/api/user/signup', acceptedParams);
 }
 

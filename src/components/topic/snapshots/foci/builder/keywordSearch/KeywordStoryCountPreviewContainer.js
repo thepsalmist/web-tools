@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
 import withHelp from '../../../../../common/hocs/HelpfulContainer';
 import { fetchCreateFocusKeywordStoryCounts } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
@@ -21,53 +21,44 @@ const localMessages = {
   totalLabel: { id: 'topic.snapshot.keywords.storyCount.total', defaultMessage: 'All Stories' },
 };
 
-class KeywordStoryCountPreviewContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { keywords, fetchData } = this.props;
-    if (nextProps.keywords !== keywords) {
-      fetchData(nextProps.keywords);
-    }
-  }
-
-  render() {
-    const { counts, helpButton } = this.props;
-    const { formatMessage, formatNumber } = this.props.intl;
-    let content = null;
-    if (counts !== null) {
-      const data = [ // format the data for the bubble chart help
-        {
-          value: counts.count,
-          fill: getBrandDarkColor(),
-          aboveText: formatMessage(localMessages.filteredLabel),
-          aboveTextColor: 'rgb(255,255,255)',
-          rolloverText: `${formatMessage(localMessages.filteredLabel)}: ${formatNumber(counts.count)} stories`,
-        },
-        {
-          value: counts.total,
-          aboveText: formatMessage(localMessages.totalLabel),
-          rolloverText: `${formatMessage(localMessages.totalLabel)}: ${formatNumber(counts.total)} stories`,
-        },
-      ];
-      content = (
-        <BubbleRowChart
-          data={data}
-          domId={BUBBLE_CHART_DOM_ID}
-          width={400}
-          padding={30}
-        />
-      );
-    }
-    return (
-      <DataCard>
-        <h2>
-          <FormattedMessage {...localMessages.title} />
-          {helpButton}
-        </h2>
-        {content}
-      </DataCard>
+const KeywordStoryCountPreviewContainer = (props) => {
+  const { counts, helpButton } = props;
+  const { formatMessage, formatNumber } = props.intl;
+  let content = null;
+  if (counts !== null) {
+    const data = [ // format the data for the bubble chart help
+      {
+        value: counts.count,
+        fill: getBrandDarkColor(),
+        aboveText: formatMessage(localMessages.filteredLabel),
+        aboveTextColor: 'rgb(255,255,255)',
+        rolloverText: `${formatMessage(localMessages.filteredLabel)}: ${formatNumber(counts.count)} stories`,
+      },
+      {
+        value: counts.total,
+        aboveText: formatMessage(localMessages.totalLabel),
+        rolloverText: `${formatMessage(localMessages.totalLabel)}: ${formatNumber(counts.total)} stories`,
+      },
+    ];
+    content = (
+      <BubbleRowChart
+        data={data}
+        domId={BUBBLE_CHART_DOM_ID}
+        width={400}
+        padding={30}
+      />
     );
   }
-}
+  return (
+    <DataCard>
+      <h2>
+        <FormattedMessage {...localMessages.title} />
+        {helpButton}
+      </h2>
+      {content}
+    </DataCard>
+  );
+};
 
 KeywordStoryCountPreviewContainer.propTypes = {
   // from compositional chain
@@ -89,25 +80,13 @@ const mapStateToProps = state => ({
   counts: state.topics.selected.focalSets.create.matchingStoryCounts.counts,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (keywords) => {
-    dispatch(fetchCreateFocusKeywordStoryCounts(ownProps.topicId, { q: keywords }));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.keywords);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, { topicId, keywords }) => dispatch(fetchCreateFocusKeywordStoryCounts(topicId, { q: keywords }));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, localMessages.helpText)(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData, ['keywords'])(
         KeywordStoryCountPreviewContainer
       )
     )

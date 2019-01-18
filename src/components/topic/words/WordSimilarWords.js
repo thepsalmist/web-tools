@@ -40,7 +40,6 @@ WordSimilarWords.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
   // from parent
-  term: PropTypes.string.isRequired,
   similarWords: PropTypes.array.isRequired,
 };
 

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { FormattedHTMLMessage, injectIntl } from 'react-intl';
 import { selectStory, fetchStory } from '../../../actions/storyActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { ReadItNowButton } from '../../common/IconButton';
 
 const localMessages = {
@@ -34,29 +34,30 @@ const StoryCachedContainer = (props) => {
 };
 
 StoryCachedContainer.propTypes = {
-  // from parent
+  // from state
+  fetchStatus: PropTypes.string.isRequired,
   story: PropTypes.object.isRequired,
+  storyId: PropTypes.number.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   fetchStatus: state.story.info.fetchStatus,
   story: state.story.info,
+  storyId: parseInt(ownProps.params.storiesId, 10),
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  asyncFetch: () => {
-    dispatch(selectStory(ownProps.params.storiesId));
-    dispatch(fetchStory(ownProps.params.storiesId, { text: true }));
-  },
-});
+const fetchAsyncData = (dispatch, props) => {
+  dispatch(selectStory(props.storyId));
+  dispatch(fetchStory(props.storyId, { text: true }));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       StoryCachedContainer
     )
   )

@@ -191,7 +191,7 @@ def topic_word_counts(user_mc_key, topics_id, **kwargs):
         'num_words': WORD_COUNT_UI_NUM_WORDS
     }
     merged_args.update(kwargs)    # passed in args override anything pulled form the request.args
-    word_data = _cached_topic_word_counts(user_mc_key, topics_id, **merged_args)
+    word_data = cached_topic_word_counts(user_mc_key, topics_id, **merged_args)
     words = [w['term'] for w in word_data]
     # and now add in word2vec model position data
     google_word2vec_data = _cached_word2vec_google_2d_results(words)
@@ -232,7 +232,7 @@ def _cached_word2vec_google_2d_results(words):
 
 
 @cache.cache_on_arguments(function_key_generator=key_generator)
-def _cached_topic_word_counts(user_mc_key, topics_id, **kwargs):
+def cached_topic_word_counts(user_mc_key, topics_id, **kwargs):
     '''
     Internal helper - don't call this; call topic_word_counts instead. This needs user_mc_key in the
     function signature to make sure the caching is keyed correctly.

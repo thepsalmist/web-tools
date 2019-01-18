@@ -4,7 +4,7 @@ import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { fetchTopicStoryCounts } from '../../../actions/topicActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import InfluentialStoryExplorer from './InfluentialStoryExplorer';
 import TopicPageTitle from '../TopicPageTitle';
 
@@ -16,94 +16,67 @@ const localMessages = {
 
 const MAX_STORIES = 100000;
 
-class InfluentialStoryExplorerContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { filters, fetchData } = this.props;
-    if (nextProps.filters !== filters) {
-      fetchData(nextProps);
-    }
-  }
-
-  render() {
-    const { counts, topicId, filters, selectedTimespan } = this.props;
-    let content = null;
-    if (counts.count > MAX_STORIES) {
-      content = (
-        <p>
-          <FormattedMessage {...localMessages.error} />
-        </p>
-      );
-    } else {
-      content = (
-        <InfluentialStoryExplorer
-          topicId={topicId}
-          filters={filters}
-          selectedTimespan={selectedTimespan}
-        />
-      );
-    }
-    return (
-      <div className="story-explorer">
-        <TopicPageTitle value={localMessages.title} />
-        <Grid>
-          <Row>
-            <Col lg={12} md={12} sm={12}>
-              <h1><FormattedMessage {...localMessages.title} /></h1>
-              <p><FormattedHTMLMessage {...localMessages.intro} /></p>
-              {content}
-            </Col>
-          </Row>
-        </Grid>
-      </div>
+const InfluentialStoryExplorerContainer = (props) => {
+  const { counts, topicId, filters, selectedTimespan } = props;
+  let content = null;
+  if (counts.count > MAX_STORIES) {
+    content = (
+      <p>
+        <FormattedMessage {...localMessages.error} />
+      </p>
+    );
+  } else {
+    content = (
+      <InfluentialStoryExplorer
+        topicId={topicId}
+        filters={filters}
+        selectedTimespan={selectedTimespan}
+      />
     );
   }
-}
+  return (
+    <div className="story-explorer">
+      <TopicPageTitle value={localMessages.title} />
+      <Grid>
+        <Row>
+          <Col lg={12} md={12} sm={12}>
+            <h1><FormattedMessage {...localMessages.title} /></h1>
+            <p><FormattedHTMLMessage {...localMessages.intro} /></p>
+            {content}
+          </Col>
+        </Row>
+      </Grid>
+    </div>
+  );
+};
 
 InfluentialStoryExplorerContainer.propTypes = {
   // from the composition chain
   intl: PropTypes.object.isRequired,
+  filters: PropTypes.object.isRequired,
   // from parent
   // from state
-  filters: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   selectedTimespan: PropTypes.object,
-  counts: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
-  // from PagedContainer wrapper
-  nextButton: PropTypes.node,
-  previousButton: PropTypes.node,
+  counts: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
-  filters: state.topics.selected.filters,
   topicId: state.topics.selected.id,
   selectedTimespan: state.topics.selected.timespans.selected,
   fetchStatus: state.topics.selected.summary.storyTotals.fetchStatus,
   counts: state.topics.selected.summary.storyTotals.counts.total, // total
 });
 
-
-const mapDispatchToProps = dispatch => ({
-  fetchData: (props) => {
-    dispatch(fetchTopicStoryCounts(props.topicId, props.filters));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(stateProps);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, props) => {
+  dispatch(fetchTopicStoryCounts(props.topicId, props.filters));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withFilteredAsyncData(fetchAsyncData)(
       InfluentialStoryExplorerContainer
     )
   )

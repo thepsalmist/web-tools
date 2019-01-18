@@ -60,14 +60,15 @@ def topic_media_csv(topics_id):
 @flask_login.login_required
 @api_error_handler
 def topic_media_split_story_count(topics_id, media_id):
-    return jsonify(apicache.topic_split_story_counts(user_mediacloud_key(), topics_id))
+    return jsonify(apicache.topic_split_story_counts(user_mediacloud_key(), topics_id,
+                                                     q="media_id:{}".format(media_id)))
 
 
 @app.route('/api/topics/<topics_id>/media/<media_id>/split-story/count.csv', methods=['GET'])
 @flask_login.login_required
 def topic_media_story_split_count_csv(topics_id, media_id):
     return stream_topic_split_story_counts_csv(user_mediacloud_key(), 'media-'+str(media_id)+'-split-story-counts',
-                                     topics_id, fq="media_id:"+media_id)
+                                               topics_id, q="media_id:{}".format(media_id))
 
 
 @app.route('/api/topics/<topics_id>/media/<media_id>/stories', methods=['GET'])
@@ -77,7 +78,7 @@ def media_stories(topics_id, media_id):
     sort = validated_sort(request.args.get('sort'))
     limit = request.args.get('limit')
     stories = apicache.topic_story_list(user_mediacloud_key(), topics_id,
-                               media_id=media_id, sort=sort, limit=limit)
+                                        media_id=media_id, sort=sort, limit=limit)
     return jsonify(stories)
 
 
@@ -96,7 +97,7 @@ def media_inlinks(topics_id, media_id):
     sort = validated_sort(request.args.get('sort'))
     limit = request.args.get('limit')
     inlinks = apicache.topic_story_list(user_mediacloud_key(), topics_id,
-                               link_to_media_id=media_id, sort=sort, limit=limit)
+                                        link_to_media_id=media_id, sort=sort, limit=limit)
     return jsonify(inlinks)
 
 
@@ -138,7 +139,7 @@ def media_outlinks(topics_id, media_id):
     sort = validated_sort(request.args.get('sort'))
     limit = request.args.get('limit')
     outlinks = apicache.topic_story_list(user_mediacloud_key(), topics_id,
-                                link_from_media_id=media_id, sort=sort, limit=limit)
+                                         link_from_media_id=media_id, sort=sort, limit=limit)
     return jsonify(outlinks)
 
 
@@ -178,15 +179,12 @@ def media_outlinks_csv(topics_id, media_id):
 def get_topic_media_links_csv(topics_id):
     user_mc = user_mediacloud_client()
     topic = user_mc.topic(topics_id)
-
-    #page through results for timespand
+    # page through results for timespand
     return stream_media_link_list_csv(user_mediacloud_key(), topic['name'] + '-stories', topics_id)
 
+
 def stream_media_link_list_csv(user_mc_key, filename, topics_id, **kwargs):
-
-    all_stories = []
-    params=kwargs.copy()
-
+    params = kwargs.copy()
     merged_args = {
         'snapshots_id': request.args['snapshotId'],
         'timespans_id': request.args['timespanId'],

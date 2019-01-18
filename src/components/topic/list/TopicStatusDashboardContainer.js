@@ -6,7 +6,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchAdminTopicList } from '../../../actions/topicActions';
 import TopicStatusTable from './TopicStatusTable';
 import PageTitle from '../../common/PageTitle';
@@ -59,8 +59,6 @@ TopicStatusDashboardContainer.propTypes = {
   topics: PropTypes.array,
   // from context
   intl: PropTypes.object.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -68,16 +66,12 @@ const mapStateToProps = state => ({
   topics: state.topics.adminList.topics,
 });
 
-const mapDispatchToProps = dispatch => ({
-  asyncFetch: () => {
-    dispatch(fetchAdminTopicList());
-  },
-});
+const fetchAsyncData = dispatch => dispatch(fetchAdminTopicList());
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       TopicStatusDashboardContainer
     )
   )

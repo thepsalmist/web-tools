@@ -41,7 +41,7 @@ class SignupContainer extends React.Component {
   }
 
   render() {
-    const { handleSubmit, handleSignupSubmission, pristine, submitting, renderTextField, renderCheckbox } = this.props;
+    const { handleSubmit, handleSignupSubmission, pristine, submitting, renderTextField } = this.props;
     const { formatMessage } = this.props.intl;
     return (
       <Grid>
@@ -136,7 +136,6 @@ SignupContainer.propTypes = {
   redirect: PropTypes.string,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,
-  renderCheckbox: PropTypes.func.isRequired,
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   // from state

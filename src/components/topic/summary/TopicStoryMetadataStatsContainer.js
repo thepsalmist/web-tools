@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import { fetchTopicGeocodedStoryCoverage, fetchTopicEnglishStoryCounts, fetchTopicUndateableStoryCounts, fetchTopicNytLabelCoverage } from '../../../actions/topicActions';
 import StatBar from '../../common/statbar/StatBar';
 import messages from '../../../resources/messages';
@@ -14,43 +14,34 @@ const localMessages = {
   undateableCount: { id: 'topic.summary.storystats.undateableCount', defaultMessage: 'Undateable Stories' },
 };
 
-class TopicStoryMetadataStatsContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { filters, fetchData } = this.props;
-    if ((nextProps.filters !== filters)) {
-      fetchData(nextProps.filters);
-    }
+const TopicStoryMetadataStatsContainer = (props) => {
+  const { timespan, themeCounts, undateableCount, geocodedCounts, englishCounts } = props;
+  const { formatNumber } = props.intl;
+  if ((timespan === null) || (timespan === undefined)) {
+    return null;
   }
-
-  render() {
-    const { timespan, themeCounts, undateableCount, geocodedCounts, englishCounts } = this.props;
-    const { formatNumber } = this.props.intl;
-    if ((timespan === null) || (timespan === undefined)) {
-      return null;
-    }
-    return (
-      <StatBar
-        columnWidth={3}
-        stats={[
-          { message: localMessages.englishCount,
-            data: formatNumber(englishCounts.count / geocodedCounts.total, { style: 'percent', maximumFractionDigits: 0 }) },
-          { message: localMessages.undateableCount,
-            data: formatNumber(undateableCount.count / undateableCount.total, { style: 'percent', maximumFractionDigits: 0 }) },
-          { message: localMessages.geocodedCount,
-            data: formatNumber(geocodedCounts.count / geocodedCounts.total, { style: 'percent', maximumFractionDigits: 0 }),
-            helpTitleMsg: messages.entityHelpTitle,
-            helpContentMsg: messages.entityHelpContent,
-          },
-          { message: localMessages.themedCount,
-            data: formatNumber(themeCounts.count / themeCounts.total, { style: 'percent', maximumFractionDigits: 0 }),
-            helpTitleMsg: messages.themeHelpTitle,
-            helpContentMsg: messages.themeHelpContent,
-          },
-        ]}
-      />
-    );
-  }
-}
+  return (
+    <StatBar
+      columnWidth={3}
+      stats={[
+        { message: localMessages.englishCount,
+          data: formatNumber(englishCounts.count / geocodedCounts.total, { style: 'percent', maximumFractionDigits: 0 }) },
+        { message: localMessages.undateableCount,
+          data: formatNumber(undateableCount.count / undateableCount.total, { style: 'percent', maximumFractionDigits: 0 }) },
+        { message: localMessages.geocodedCount,
+          data: formatNumber(geocodedCounts.count / geocodedCounts.total, { style: 'percent', maximumFractionDigits: 0 }),
+          helpTitleMsg: messages.entityHelpTitle,
+          helpContentMsg: messages.entityHelpContent,
+        },
+        { message: localMessages.themedCount,
+          data: formatNumber(themeCounts.count / themeCounts.total, { style: 'percent', maximumFractionDigits: 0 }),
+          helpTitleMsg: messages.themeHelpTitle,
+          helpContentMsg: messages.themeHelpContent,
+        },
+      ]}
+    />
+  );
+};
 
 TopicStoryMetadataStatsContainer.propTypes = {
   // from parent
@@ -60,7 +51,6 @@ TopicStoryMetadataStatsContainer.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
   // from state
-  fetchData: PropTypes.func.isRequired,
   fetchStatus: PropTypes.arrayOf(PropTypes.string).isRequired,
   geocodedCounts: PropTypes.object,
   englishCounts: PropTypes.object,
@@ -82,25 +72,17 @@ const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (filters) => {
-    dispatch(fetchTopicGeocodedStoryCoverage(ownProps.topicId, filters));
-    dispatch(fetchTopicEnglishStoryCounts(ownProps.topicId, filters));
-    dispatch(fetchTopicUndateableStoryCounts(ownProps.topicId, filters));
-    dispatch(fetchTopicNytLabelCoverage(ownProps.topicId, filters));
-  },
-  asyncFetch: () => {
-    dispatch(fetchTopicGeocodedStoryCoverage(ownProps.topicId, ownProps.filters));
-    dispatch(fetchTopicEnglishStoryCounts(ownProps.topicId, ownProps.filters));
-    dispatch(fetchTopicUndateableStoryCounts(ownProps.topicId, ownProps.filters));
-    dispatch(fetchTopicNytLabelCoverage(ownProps.topicId, ownProps.filters));
-  },
-});
+const fetchAsyncData = (dispatch, props) => {
+  dispatch(fetchTopicGeocodedStoryCoverage(props.topicId, props.filters));
+  dispatch(fetchTopicEnglishStoryCounts(props.topicId, props.filters));
+  dispatch(fetchTopicUndateableStoryCounts(props.topicId, props.filters));
+  dispatch(fetchTopicNytLabelCoverage(props.topicId, props.filters));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withFilteredAsyncData(fetchAsyncData)(
       TopicStoryMetadataStatsContainer
     )
   )

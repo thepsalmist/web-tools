@@ -5,7 +5,7 @@ import { injectIntl } from 'react-intl';
 import { push } from 'react-router-redux';
 import { reset } from 'redux-form';
 import FocusBuilderWizard from './builder/FocusBuilderWizard';
-import withAsyncFetch from '../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import { fetchFocalSetDefinitions, submitFocusUpdateOrCreate, setTopicNeedsNewSnapshot } from '../../../../actions/topicActions';
 import { updateFeedback } from '../../../../actions/appActions';
 
@@ -82,7 +82,6 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: topicId => dispatch(fetchFocalSetDefinitions(topicId)),
   handleDone: (topicId, formValues) => {
     const propsToSubmit = {
       foci_id: parseInt(ownProps.params.focusDefId, 10),
@@ -104,18 +103,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(stateProps.topicId);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, { topicId }) => dispatch(fetchFocalSetDefinitions(topicId));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncData(fetchAsyncData)(
       EditFocusContainer
     )
   )

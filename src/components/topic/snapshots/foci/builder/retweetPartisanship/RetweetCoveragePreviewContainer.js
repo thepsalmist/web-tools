@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
 import { fetchCreateFocusRetweetCoverage } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
 import PieChart from '../../../../../vis/PieChart';
@@ -48,10 +48,8 @@ RetweetCoveragePreviewContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
   // from state
-  counts: PropTypes.array,
+  counts: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
 };
 
@@ -60,16 +58,12 @@ const mapStateToProps = state => ({
   counts: state.topics.selected.focalSets.create.retweetCoverage.counts,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  asyncFetch: () => {
-    dispatch(fetchCreateFocusRetweetCoverage(ownProps.topicId));
-  },
-});
+const fetchAsycData = (dispatch, { topicId }) => dispatch(fetchCreateFocusRetweetCoverage(topicId));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsycData)(
       RetweetCoveragePreviewContainer
     )
   )

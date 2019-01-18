@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchUserQueuedAndRunningTopics } from '../../../actions/topicActions';
 import { WarningNotice } from '../../common/Notice';
 import TopicBuilderWizard from './TopicBuilderWizard';
@@ -34,8 +34,10 @@ const CreateTopicContainer = (props) => {
 };
 
 CreateTopicContainer.propTypes = {
+  // from compositional chain
   location: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
+  // from store
   canCreateTopic: PropTypes.bool,
   runningTopics: PropTypes.array,
   user: PropTypes.object,
@@ -48,16 +50,12 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-const mapDispatchToProps = dispatch => ({
-  asyncFetch: () => {
-    dispatch(fetchUserQueuedAndRunningTopics());
-  },
-});
+const fetchAsyncData = dispatch => dispatch(fetchUserQueuedAndRunningTopics());
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       CreateTopicContainer
     )
   )

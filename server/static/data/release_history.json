@@ -8,6 +8,11 @@
           "apps": [ "topics"],
           "type": "Fixed",
           "note": "You can create topics again"
+        },
+        {
+          "apps": [ "topics"],
+          "type": "Fixed",
+          "note": "Topic story CSV download includes tweet counts (if we have them)"
         }
       ]
     },

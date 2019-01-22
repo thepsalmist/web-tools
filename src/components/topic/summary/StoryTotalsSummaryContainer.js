@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import { fetchTopicStoryCounts } from '../../../actions/topicActions';
 import Permissioned from '../../common/Permissioned';
@@ -32,60 +32,51 @@ const localMessages = {
   totalLabel: { id: 'topic.summary.storyTotals.total', defaultMessage: 'Total' },
 };
 
-class StoryTotalsSummaryContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { filters, fetchData } = this.props;
-    if (nextProps.filters !== filters) {
-      fetchData(nextProps);
-    }
-  }
-
-  render() {
-    const { counts, topicName, filters } = this.props;
-    const { formatMessage, formatNumber } = this.props.intl;
-    let content = null;
-    if (counts !== null) {
-      const data = [ // format the data for the bubble chart help
-        {
-          value: counts.count,
-          fill: getBrandDarkColor(),
-          aboveText: formatMessage(localMessages.filteredLabel),
-          aboveTextColor: 'rgb(255,255,255)',
-          rolloverText: `${formatMessage(localMessages.filteredLabel)}: ${formatNumber(counts.count)} stories`,
-        },
-        {
-          value: counts.total,
-          aboveText: formatMessage(localMessages.totalLabel),
-          rolloverText: `${formatMessage(localMessages.totalLabel)}: ${formatNumber(counts.total)} stories`,
-        },
-      ];
-      content = (
-        <BubbleRowChart
-          data={data}
-          domId={BUBBLE_CHART_DOM_ID}
-        />
-      );
-    }
-    return (
-      <React.Fragment>
-        {content}
-        <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-          <div className="actions">
-            <ActionMenu actionTextMsg={messages.downloadOptions}>
-              <MenuItem
-                className="action-icon-menu-item"
-                onClick={() => downloadSvg(`${topicDownloadFilename(topicName, filters)}-filtered-story-count`, BUBBLE_CHART_DOM_ID)}
-              >
-                <ListItemText><FormattedMessage {...messages.downloadSVG} /></ListItemText>
-                <ListItemIcon><DownloadButton /></ListItemIcon>
-              </MenuItem>
-            </ActionMenu>
-          </div>
-        </Permissioned>
-      </React.Fragment>
+const StoryTotalsSummaryContainer = (props) => {
+  const { counts, topicName, filters } = props;
+  const { formatMessage, formatNumber } = props.intl;
+  let content = null;
+  if (counts !== null) {
+    const data = [ // format the data for the bubble chart help
+      {
+        value: counts.count,
+        fill: getBrandDarkColor(),
+        aboveText: formatMessage(localMessages.filteredLabel),
+        aboveTextColor: 'rgb(255,255,255)',
+        rolloverText: `${formatMessage(localMessages.filteredLabel)}: ${formatNumber(counts.count)} stories`,
+      },
+      {
+        value: counts.total,
+        aboveText: formatMessage(localMessages.totalLabel),
+        rolloverText: `${formatMessage(localMessages.totalLabel)}: ${formatNumber(counts.total)} stories`,
+      },
+    ];
+    content = (
+      <BubbleRowChart
+        data={data}
+        domId={BUBBLE_CHART_DOM_ID}
+      />
     );
   }
-}
+  return (
+    <React.Fragment>
+      {content}
+      <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
+        <div className="actions">
+          <ActionMenu actionTextMsg={messages.downloadOptions}>
+            <MenuItem
+              className="action-icon-menu-item"
+              onClick={() => downloadSvg(`${topicDownloadFilename(topicName, filters)}-filtered-story-count`, BUBBLE_CHART_DOM_ID)}
+            >
+              <ListItemText><FormattedMessage {...messages.downloadSVG} /></ListItemText>
+              <ListItemIcon><DownloadButton /></ListItemIcon>
+            </MenuItem>
+          </ActionMenu>
+        </div>
+      </Permissioned>
+    </React.Fragment>
+  );
+};
 
 StoryTotalsSummaryContainer.propTypes = {
   // from compositional chain
@@ -94,9 +85,6 @@ StoryTotalsSummaryContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   topicName: PropTypes.string.isRequired,
   filters: PropTypes.object.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
   // from state
   counts: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
@@ -108,25 +96,13 @@ const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchData: (props) => {
-    dispatch(fetchTopicStoryCounts(props.topicId, props.filters));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicStoryCounts(props.topicId, props.filters));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, localMessages.description)(
-      withAsyncFetch(
+      withFilteredAsyncData(fetchAsyncData)(
         StoryTotalsSummaryContainer
       )
     )

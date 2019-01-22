@@ -18,7 +18,8 @@ function withDescription(introMessage, descriptionMessage) {
         showDescription: false,
       };
 
-      toggleVisible = () => {
+      toggleVisible = (evt) => {
+        evt.preventDefault();
         this.setState(prevState => ({ showDescription: !prevState.showDescription }));
       }
 
@@ -28,7 +29,7 @@ function withDescription(introMessage, descriptionMessage) {
         if (descriptionMessage) { // only toggle extra text if there is any
           if (this.state.showDescription) {
             toggleButton = (
-              <a onTouchTap={this.toggleVisible}>
+              <a href="#hide" onClick={this.toggleVisible}>
                 <FormattedHTMLMessage {...localMessage.hideDescription} />
               </a>
             );
@@ -39,7 +40,7 @@ function withDescription(introMessage, descriptionMessage) {
             }
           } else {
             toggleButton = (
-              <a onTouchTap={this.toggleVisible}>
+              <a href="#show" onClick={this.toggleVisible}>
                 <FormattedHTMLMessage {...localMessage.showDescription} />
               </a>
             );

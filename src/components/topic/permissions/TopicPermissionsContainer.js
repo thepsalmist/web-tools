@@ -6,7 +6,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { fetchPermissionsList, updatePermissions } from '../../../actions/topicActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import BackLinkingControlBar from '../BackLinkingControlBar';
 import { updateFeedback } from '../../../actions/appActions';
 import { PERMISSION_TOPIC_READ, PERMISSION_TOPIC_WRITE, PERMISSION_TOPIC_ADMIN } from '../../../lib/auth';
@@ -74,59 +74,50 @@ PermissionsList.propTypes = {
 const HocPermissionsList = injectIntl(withIntlForm(PermissionsList));
 
 
-class TopicPermissionsContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { topicId, fetchData } = this.props;
-    if ((nextProps.topicId !== topicId)) {
-      fetchData(nextProps.topicId);
-    }
-  }
-
-  render() {
-    const { handleUpdate, topicId, handleSubmit, pristine, submitting } = this.props;
-    return (
-      <React.Fragment>
-        <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
-        <Grid>
+const TopicPermissionsContainer = (props) => {
+  const { handleUpdate, topicId, handleSubmit, pristine, submitting } = props;
+  return (
+    <React.Fragment>
+      <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
+      <Grid>
+        <Row>
+          <Col lg={10}>
+            <h1><FormattedMessage {...localMessages.title} /></h1>
+            <p><FormattedMessage {...localMessages.intro} /></p>
+          </Col>
+        </Row>
+        <form
+          name="updateTopicPermissions"
+          onSubmit={handleSubmit(values => handleUpdate(topicId, values.permissions))}
+        >
           <Row>
-            <Col lg={10}>
-              <h1><FormattedMessage {...localMessages.title} /></h1>
-              <p><FormattedMessage {...localMessages.intro} /></p>
+            <Col lg={12} md={12} sm={12}>
+              <FieldArray name="permissions" component={HocPermissionsList} />
             </Col>
           </Row>
-          <form name="updateTopicPermissions" onSubmit={handleSubmit(handleUpdate)}>
-            <Row>
-              <Col lg={12} md={12} sm={12}>
-                <FieldArray name="permissions" component={HocPermissionsList} />
-              </Col>
-            </Row>
-            <Row>
-              <Col lg={2}>
-                <AppButton
-                  type="submit"
-                  disabled={pristine || submitting}
-                  label={messages.save}
-                  primary
-                />
-              </Col>
-            </Row>
-          </form>
-        </Grid>
-      </React.Fragment>
-    );
-  }
-}
+          <Row>
+            <Col lg={2}>
+              <AppButton
+                type="submit"
+                disabled={pristine || submitting}
+                label={messages.save}
+                primary
+              />
+            </Col>
+          </Row>
+        </form>
+      </Grid>
+    </React.Fragment>
+  );
+};
 
 TopicPermissionsContainer.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
   // from dispatch
   handleUpdate: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   // from state
   topicId: PropTypes.number,
-  fetchStatus: PropTypes.string.isRequired,
   // from form helper
   initialValues: PropTypes.object,
   handleSubmit: PropTypes.func,
@@ -144,7 +135,7 @@ const UKNOWN_EMAIL_ERROR_REGEX = /Unknown email '(.*)'/;
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   // save and then update the list of existing permissions
-  updatePermissions: (topicId, permissions) => dispatch(updatePermissions(topicId, permissions))
+  handleUpdate: (topicId, permissions) => dispatch(updatePermissions(topicId, permissions))
     .then((response) => {
       if (response.success === 0) {
         let extraDetail;
@@ -157,15 +148,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         dispatch(fetchPermissionsList(topicId));
       }
     }),
-  fetchData: topicId => dispatch(fetchPermissionsList(topicId)),
 });
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    handleUpdate: values => dispatchProps.updatePermissions(stateProps.topicId, values.permissions),
-    asyncFetch: () => dispatchProps.fetchData(stateProps.topicId),
-  });
-}
 
 function validate(values) {
   const errors = {};
@@ -188,10 +171,12 @@ const reduxFormConfig = {
   enableReinitialize: true,
 };
 
+const fetchAsyncData = (dispatch, { topicId }) => dispatch(fetchPermissionsList(topicId));
+
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncData(fetchAsyncData, ['topicId'])(
       reduxForm(reduxFormConfig)(
         TopicPermissionsContainer
       )

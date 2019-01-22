@@ -109,7 +109,7 @@ class ModifyTopicDialog extends React.Component {
             <DialogActions>
               <AppButton
                 label={formatMessage(messages.cancel)}
-                onTouchTap={this.handleRemoveDialogClose}
+                onClick={this.handleRemoveDialogClose}
                 key="close"
               />
             </DialogActions>

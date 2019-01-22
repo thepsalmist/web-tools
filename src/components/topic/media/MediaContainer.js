@@ -9,9 +9,10 @@ import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { selectMedia, fetchMedia } from '../../../actions/topicActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import MediaInlinkContainer from './MediaInlinkContainer';
 import MediaOutlinkContainer from './MediaOutlinkContainer';
+import { updateFeedback } from '../../../actions/appActions';
 import MediaStoriesContainer from './MediaStoriesContainer';
 import MediaSplitStoryCountContainer from './MediaSplitStoryCountContainer';
 import MediaWordsContainer from './MediaWordsContainer';
@@ -27,24 +28,18 @@ import SourceMetadataStatBar from '../../common/SourceMetadataStatBar';
 import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
-  removeTitle: { id: 'story.details.remove', defaultMessage: 'Remove from Next Snapshot' },
-  removeAbout: { id: 'story.details.remove.about', defaultMessage: 'If media source is clearly not related to the Topic, or is messing up your analysis, you can remove it from the next Snapshot.  Be careful, because this means it won\'t show up anywhere on the new Snapshot you generate.' },
+  removeTitle: { id: 'media.details.remove', defaultMessage: 'Remove from Next Snapshot' },
+  removeAbout: { id: 'media.details.remove.about', defaultMessage: 'If media source is clearly not related to the Topic, or is messing up your analysis, you can remove it from the next Snapshot.  Be careful, because this means it won\'t show up anywhere on the new Snapshot you generate.' },
   storyCount: { id: 'media.details.storyCount', defaultMessage: 'Stories in timespan' },
   collectionTitle: { id: 'media.details.collections.title', defaultMessage: 'Collections' },
   collectionIntro: { id: 'media.details.collections.info', defaultMessage: 'This source is in the following collections.' },
+  noStories: { id: 'media.details.noStories', defaultMessage: 'This source has no stories in this timespan.' },
 };
 
 class MediaContainer extends React.Component {
   state = {
     open: false,
   };
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.mediaId !== this.props.mediaId) {
-      const { fetchData } = this.props;
-      fetchData(nextProps.topicId, nextProps.mediaId, nextProps.filters);
-    }
-  }
 
   handleRemoveClick = () => {
     this.setState({ open: true });
@@ -86,7 +81,7 @@ class MediaContainer extends React.Component {
       ];
     }
     return (
-      <div>
+      <React.Fragment>
         <TopicPageTitle value={media.name} />
         <Grid>
           <Row>
@@ -166,57 +161,44 @@ class MediaContainer extends React.Component {
             </Col>
           </Row>
         </Grid>
-      </div>
+      </React.Fragment>
     );
   }
 }
 
 MediaContainer.propTypes = {
-  // from context
-  params: PropTypes.object.isRequired, // params from router
+  // from compositional chain
   intl: PropTypes.object.isRequired,
-  // from parent
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
   // from state
   filters: PropTypes.object.isRequired,
-  media: PropTypes.object.isRequired,
-  mediaId: PropTypes.number.isRequired,
+  fetchStatus: PropTypes.string.isRequired,
   topicId: PropTypes.number.isRequired,
   topicName: PropTypes.string.isRequired,
-  fetchStatus: PropTypes.string.isRequired,
+  media: PropTypes.object.isRequired,
+  mediaId: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  filters: state.topics.selected.filters,
   fetchStatus: state.topics.selected.mediaSource.info.fetchStatus,
-  mediaId: parseInt(ownProps.params.mediaId, 10),
   topicId: state.topics.selected.id,
   topicName: state.topics.selected.info.name,
   media: state.topics.selected.mediaSource.info,
+  mediaId: parseInt(ownProps.params.mediaId, 10),
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchData: (topicId, mediaId, filters) => {
-    dispatch(selectMedia(mediaId)); // save it to the state
-    dispatch(fetchMedia(topicId, mediaId, filters)); // fetch the info we need
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(stateProps.topicId, ownProps.params.mediaId, stateProps.filters);
-    },
-
-  });
-}
+const fetchAsyncData = (dispatch, props) => {
+  dispatch(selectMedia(props.mediaId)); // save it to the state
+  dispatch(fetchMedia(props.topicId, props.mediaId, props.filters))
+    .catch(() => { // a 500
+      // this means the media source has no stories in the timespan
+      dispatch(updateFeedback({ open: true, message: props.intl.formatMessage(localMessages.noStories) }));
+    });
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withFilteredAsyncData(fetchAsyncData, ['mediaId'])(
       MediaContainer
     )
   )

@@ -70,7 +70,7 @@ class CollectionSplitStoryCountContainer extends React.Component {
           <ActionMenu>
             <MenuItem
               className="action-icon-menu-item"
-              onTouchTap={this.downloadCsv}
+              onClick={this.downloadCsv}
             >
               <ListItemText><FormattedMessage {...messages.downloadCSV} /></ListItemText>
               <ListItemIcon><DownloadButton /></ListItemIcon>

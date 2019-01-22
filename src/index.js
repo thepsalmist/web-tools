@@ -16,7 +16,6 @@ import { Provider } from 'react-redux';
 import Router from 'react-router/lib/Router';
 import hashHistory from 'react-router/lib/hashHistory';
 import { syncHistoryWithStore } from 'react-router-redux';
-import injectTapEventPlugin from 'react-tap-event-plugin';
 import Raven from 'raven-js';
 import { loginWithCookie } from './actions/userActions';
 import getStore from './store';
@@ -27,9 +26,6 @@ const APP_DOM_ELEMENT_ID = 'app';
 const DEFAULT_LOCALE = 'en';
 
 function reallyInitializeApp(routes) {
-  // necessary lines for Material-UI library to work
-  injectTapEventPlugin();
-
   const store = getStore(getAppName());
 
   // Create an enhanced history that syncs navigation events with the store

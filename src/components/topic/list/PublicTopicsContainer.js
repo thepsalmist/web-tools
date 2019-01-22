@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchPublicTopicsList } from '../../../actions/topicActions';
 import TopicPreviewList from './TopicPreviewList';
 import { TOPIC_SNAPSHOT_STATE_COMPLETED } from '../../../reducers/topics/selected/snapshots';
@@ -12,7 +12,7 @@ const localMessages = {
 };
 
 const PublicTopicsContainer = (props) => {
-  const { topics, onSetFavorited, asyncFetch, isLoggedIn } = props;
+  const { topics, onSetFavorited, isLoggedIn, onFetchAyncData } = props;
   return (
     <div className="public-topics-list">
       <TopicPreviewList
@@ -23,7 +23,7 @@ const PublicTopicsContainer = (props) => {
           }
           return `/topics/public/${t.topics_id}/summary`;
         }}
-        onSetFavorited={(id, isFav) => { onSetFavorited(id, isFav); asyncFetch(); }}
+        onSetFavorited={(id, isFav) => { onSetFavorited(id, isFav); onFetchAyncData(); }}
         emptyMsg={localMessages.empty}
         hideState
       />
@@ -37,10 +37,9 @@ PublicTopicsContainer.propTypes = {
   // from state
   topics: PropTypes.array,
   isLoggedIn: PropTypes.bool.isRequired,
-  // from context
+  // from compositional chain
   intl: PropTypes.object.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
+  onFetchAyncData: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -55,10 +54,12 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
+const fetchAsyncData = dispatch => dispatch(fetchPublicTopicsList());
+
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+    withAsyncData(fetchAsyncData)(
       PublicTopicsContainer
     )
   )

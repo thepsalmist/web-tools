@@ -17,7 +17,8 @@ class CopyAllComponent extends React.Component {
     open: false,
   };
 
-  handleOpen = () => {
+  handleOpen = (evt) => {
+    evt.preventDefault();
     this.setState({ open: true });
   };
 
@@ -60,7 +61,15 @@ class CopyAllComponent extends React.Component {
     return (
       <div className="copy-all">
         <label htmlFor="q">{label}</label>
-        <a role="button" title={formatMessage(localMessages.title)} tabIndex="0" onTouchTap={this.handleOpen}>&nbsp;&#x00BB;</a>
+        <a
+          href="#"
+          role="button"
+          title={formatMessage(localMessages.title)}
+          tabIndex="0"
+          onClick={this.handleOpen}
+        >
+            &nbsp;&#x00BB;
+        </a>
         <Dialog
           className="app-dialog"
           open={this.state.open}

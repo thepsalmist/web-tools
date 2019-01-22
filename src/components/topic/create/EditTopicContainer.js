@@ -112,12 +112,12 @@ class EditTopicContainer extends React.Component {
         <AppButton
           label={formatMessage(messages.cancel)}
           primary
-          onTouchTap={this.handleCancelSave}
+          onClick={this.handleCancelSave}
         />,
         <AppButton
           label={formatMessage(messages.confirm)}
           primary
-          onTouchTap={this.handleConfirmSave}
+          onClick={this.handleConfirmSave}
         />,
       ];
       dialogContent = (

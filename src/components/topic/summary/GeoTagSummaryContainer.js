@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import GeoChart from '../../vis/GeoChart';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
@@ -29,13 +29,6 @@ const localMessages = {
 const COVERAGE_REQUIRED = 0.7; // need > this many of the stories tagged to show the results
 
 class GeoTagSummaryContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { filters, fetchData } = this.props;
-    if (nextProps.filters !== filters) {
-      fetchData(nextProps.filters);
-    }
-  }
-
   downloadCsv = () => {
     const { topicId, filters } = this.props;
     const url = `/api/topics/${topicId}/geo-tags/counts.csv?${filtersAsUrlParams(filters)}`;
@@ -85,9 +78,6 @@ GeoTagSummaryContainer.propTypes = {
   data: PropTypes.array.isRequired,
   coverage: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
@@ -101,20 +91,13 @@ const mapStateToProps = state => ({
   coverage: state.topics.selected.geotags.coverage,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (filters) => {
-    dispatch(fetchTopicGeocodedStoryCounts(ownProps.topicId, filters));
-  },
-  asyncFetch: () => {
-    dispatch(fetchTopicGeocodedStoryCounts(ownProps.topicId, ownProps.filters));
-  },
-});
+const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicGeocodedStoryCounts(props.topicId, props.filters));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps)(
     withSummary(localMessages.title, localMessages.helpIntro, messages.heatMapHelpText)(
-      withAsyncFetch(
+      withFilteredAsyncData(fetchAsyncData)(
         GeoTagSummaryContainer
       )
     )

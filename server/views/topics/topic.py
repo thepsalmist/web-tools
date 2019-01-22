@@ -1,15 +1,15 @@
-# -*- coding: utf-8 -*-
 import logging
 from flask import jsonify, request
 import flask_login
 from multiprocessing import Pool
 from functools import partial
+from deco import concurrent, synchronized
 
 from server import app, db, mc
 from server.util.stringutil import ids_from_comma_separated_str
 from server.util.request import form_fields_required, arguments_required, api_error_handler
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client, user_name, is_user_logged_in
-from server.views.topics.apicache import cached_topic_timespan_list, topic_word_counts, _cached_topic_word_counts, topic_story_count
+from server.views.topics.apicache import cached_topic_timespan_list, topic_word_counts, cached_topic_word_counts
 from server.views.topics import access_public_topic
 
 logger = logging.getLogger(__name__)
@@ -51,7 +51,6 @@ def topic_favorites():
 
 @app.route('/api/topics/public', methods=['GET'])
 @api_error_handler
-#@cache.cache_on_arguments(function_key_generator=key_generator)
 def public_topics_list():
     public_topics = sorted_public_topic_list()
     if is_user_logged_in():
@@ -78,8 +77,8 @@ def sorted_public_topic_list():
         local_mc = user_mediacloud_client()
     else:
         local_mc = mc
-    public_topics_list = local_mc.topicList(public=True, limit=51)['topics']
-    return sorted(public_topics_list, key=lambda t: t['name'].lower())
+    public_topics = local_mc.topicList(public=True, limit=51)['topics']
+    return sorted(public_topics, key=lambda t: t['name'].lower())
 
 
 @app.route('/api/topics/<topics_id>/summary', methods=['GET'])
@@ -107,13 +106,15 @@ def _topic_summary(topics_id):
     if is_user_logged_in():
         _add_user_favorite_flag_to_topics([topic])
 
-    #add in story counts, overall seed and spidered
-    #seedTotal = topic_story_count(local_mc, topics_id) # with q - but not passed in for summary
-    #total = topic_story_count(local_mc, topics_id, timespans_id=None, q=None)  # spidered count.. how?
-    #spidered = total - seedTotal
-    #topic['seedStories'] = seedTotal
-    #topic['spideredStories'] = spidered
-    #topic['totaltories'] = total
+    '''
+    # add in story counts, overall seed and spidered
+    feedTotal = topic_story_count(local_mc, topics_id) # with q - but not passed in for summary
+    total = topic_story_count(local_mc, topics_id, timespans_id=None, q=None)  # spidered count.. how?
+    spidered = total - seedTotal
+    topic['seedStories'] = seedTotal
+    topic['spideredStories'] = spidered
+    topic['totaltories'] = total
+    '''
     return topic
 
 
@@ -137,10 +138,11 @@ def get_topic_info_per_snapshot_timespan(topic_id):
     for snp in snapshots['list']:
         if snp['searchable'] == 1 and snp['state'] == "completed":
             most_recent_running_snapshot = snp
-            timespans = cached_topic_timespan_list(user_mediacloud_key(), topic_id, most_recent_running_snapshot['snapshots_id'])
+            timespans = cached_topic_timespan_list(user_mediacloud_key(), topic_id,
+                                                   most_recent_running_snapshot['snapshots_id'])
             for ts in timespans:
                 if ts['period'] == "overall":
-                   overall_timespan = ts
+                    overall_timespan = ts
 
     return {'snapshot': most_recent_running_snapshot, 'timespan': overall_timespan}
 
@@ -202,7 +204,9 @@ def topic_update(topics_id):
         'end_date': request.form['end_date'] if 'end_date' in request.form else None,
         'is_public': request.form['is_public'] if 'is_public' in request.form else None,
         'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
-        'ch_monitor_id': request.form['ch_monitor_id'] if 'ch_monitor_id' in request.form and request.form['ch_monitor_id']!= 'null' and len(request.form['ch_monitor_id']) > 0 else None,
+        'ch_monitor_id': request.form['ch_monitor_id'] if 'ch_monitor_id' in request.form
+                                                          and request.form['ch_monitor_id'] != 'null'
+                                                          and len(request.form['ch_monitor_id']) > 0 else None,
         'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
         'max_stories': request.form['max_stories'] if 'max_stories' in request.form else None,
         'twitter_topics_id': request.form['twitter_topics_id'] if 'twitter_topics_id' in request.form else None
@@ -210,7 +214,8 @@ def topic_update(topics_id):
 
     # parse out any sources and collections to add
     media_ids_to_add = ids_from_comma_separated_str(request.form['sources[]'] if 'sources[]' in request.form else '')
-    tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]'] if 'collections[]' in request.form else '')
+    tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]']
+                                                  if 'collections[]' in request.form else '')
     # hack to support twitter-only topics
     if (len(media_ids_to_add) is 0) and (len(tag_ids_to_add) is 0):
         media_ids_to_add = None
@@ -226,7 +231,7 @@ def topic_update(topics_id):
 @api_error_handler
 def topic_spider(topics_id):
     user_mc = user_admin_mediacloud_client()
-    spider_job = user_mc.topicSpider(topics_id) # kick off a spider, which will also generate a snapshot
+    spider_job = user_mc.topicSpider(topics_id)  # kick off a spider, which will also generate a snapshot
     return jsonify(spider_job)
 
 
@@ -244,7 +249,8 @@ def topic_search():
 
 # Helper function for pooling word2vec timespans process
 def grab_timespan_embeddings(api_key, topics_id, args, overall_words, overall_embeddings, ts):
-    ts_word_counts = _cached_topic_word_counts(api_key, topics_id, num_words=250, timespans_id=int(ts['timespans_id']), **args)
+    ts_word_counts = cached_topic_word_counts(api_key, topics_id, num_words=250,
+                                              timespans_id=int(ts['timespans_id']), **args)
 
     # Remove any words not in top words overall
     ts_word_counts = [x for x in ts_word_counts if x['term'] in overall_words]
@@ -288,20 +294,38 @@ def topic_w2v_timespan_embeddings(topics_id):
 @arguments_required('searchStr')
 @api_error_handler
 def topic_name_exists():
-    '''Check if topic with name exists already
-    Have to do this in a unique method, instead of in topic_search because we need to use an admin connection
-    to media cloud to list all topics, but we don't want to return topics a user can't see to them.
-    :return: boolean indicating if topic with this name exists for not (case insensive check)
-    '''
+    # Check if topic with name exists already
+    # Have to do this in a unique method, instead of in topic_search because we need to use an admin connection
+    # to media cloud to list all topics, but we don't want to return topics a user can't see to them.
+    # :return: boolean indicating if topic with this name exists for not (case insensive check)
     search_str = request.args['searchStr']
     topics_id = int(request.args['topicId']) if 'topicId' in request.args else None
     matching_topics = mc.topicList(name=search_str, limit=15)
     if topics_id:
-        matching_topic_names = [t['name'].lower().strip() for t in matching_topics['topics'] if t['topics_id'] != topics_id]
+        matching_topic_names = [t['name'].lower().strip() for t in matching_topics['topics']
+                                if t['topics_id'] != topics_id]
     else:
         matching_topic_names = [t['name'].lower().strip() for t in matching_topics['topics']]
     name_in_use = search_str.lower() in matching_topic_names
     return jsonify({'nameInUse': name_in_use})
+
+
+@concurrent
+def _topic_snapshot_worker(topics_id):
+    user_mc = user_admin_mediacloud_client()
+    return {
+        'list': user_mc.topicSnapshotList(topics_id),
+        'jobStatus': mc.topicSnapshotGenerateStatus(topics_id)['job_states']  # need to know if one is running
+    }
+
+
+@synchronized
+def _add_snapshots_info_to_topics(topics):
+    for t in topics:
+        topics_id = t['topics_id']
+        if t['state'] == 'error':
+            t['snapshots'] = _topic_snapshot_worker(topics_id)
+    return topics
 
 
 @app.route('/api/topics/admin/list', methods=['GET'])
@@ -313,12 +337,5 @@ def topic_admin_list():
     # but for admins this will return ALL topics
     topics = user_mc.topicList(limit=500)['topics']
     # we also want snapshot info
-    for t in topics:
-        topics_id = t['topics_id']
-        if t['state'] == 'error':
-            t['snapshots'] = {
-                'list': user_mc.topicSnapshotList(topics_id),
-                'jobStatus': mc.topicSnapshotGenerateStatus(topics_id)['job_states']    # need to know if one is running
-            }
-
+    topics = _add_snapshots_info_to_topics(topics)
     return jsonify(topics)

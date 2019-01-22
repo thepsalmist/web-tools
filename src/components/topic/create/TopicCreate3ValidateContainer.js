@@ -8,7 +8,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import withIntlForm from '../../common/hocs/IntlForm';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import AppButton from '../../common/AppButton';
 import StoryFeedbackRow from './StoryFeedbackRow';
 import { goToCreateTopicStep, fetchStorySampleByQuery } from '../../../actions/topicActions';
@@ -167,8 +167,6 @@ TopicCreate3ValidateContainer.propTypes = {
   handlePreviousStep: PropTypes.func.isRequired,
   handleNextStep: PropTypes.func.isRequired,
   handleEditSeedQueryRequest: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
   // from form
   formData: PropTypes.object,
 };
@@ -191,37 +189,30 @@ const mapDispatchToProps = dispatch => ({
   handleNextStep: () => {
     dispatch(goToCreateTopicStep(3));
   },
-  fetchData: (query) => {
-    const infoForQuery = {
-      q: query.solr_seed_query,
-      start_date: query.start_date,
-      end_date: query.end_date,
-      rows: NUM_TO_SHOW,
-    };
-    infoForQuery['collections[]'] = [];
-    infoForQuery['sources[]'] = [];
-
-    if ('sourcesAndCollections' in query) { // in FieldArrays on the form
-      infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
-      infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
-    }
-    dispatch(fetchStorySampleByQuery(infoForQuery));
-  },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(stateProps.formData);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, { formData }) => {
+  const infoForQuery = {
+    q: formData.solr_seed_query,
+    start_date: formData.start_date,
+    end_date: formData.end_date,
+    rows: NUM_TO_SHOW,
+  };
+  infoForQuery['collections[]'] = [];
+  infoForQuery['sources[]'] = [];
+
+  if ('sourcesAndCollections' in formData) { // in FieldArrays on the form
+    infoForQuery['collections[]'] = formData.sourcesAndCollections.map(s => s.tags_id);
+    infoForQuery['sources[]'] = formData.sourcesAndCollections.map(s => s.media_id);
+  }
+  dispatch(fetchStorySampleByQuery(infoForQuery));
+};
 
 export default
 injectIntl(
   withIntlForm(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      withAsyncFetch(
+    connect(mapStateToProps, mapDispatchToProps)(
+      withAsyncData(fetchAsyncData)(
         TopicCreate3ValidateContainer
       )
     )

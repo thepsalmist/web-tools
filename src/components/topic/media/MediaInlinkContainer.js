@@ -19,7 +19,6 @@ const VIEW_TABLE = 'VIEW_TABLE';
 const VIEW_TREE = 'VIEW_TREE';
 const TREE_MAP_DOM_ID = 'tree-map';
 
-
 const localMessages = {
   title: { id: 'media.inlinks.title', defaultMessage: 'Inlinks' },
   helpTitle: { id: 'media.inlinks.help.title', defaultMessage: 'About Media Inlinks' },
@@ -27,7 +26,6 @@ const localMessages = {
   downloadLinkCSV: { id: 'media.inlinks.download.csv', defaultMessage: 'Download CSV with All Inlinks' },
   modeTree: { id: 'media.inlinks.tree', defaultMessage: 'View Tree Map' },
   modeTable: { id: 'media.inlinks.table', defaultMessage: 'View Table' },
-  treeMap: { id: 'media.inlinks.treemap', defaultMessage: 'Inlink Tree Map for {name}' },
 };
 
 class MediaInlinksContainer extends React.Component {
@@ -44,9 +42,9 @@ class MediaInlinksContainer extends React.Component {
   }
 
   downloadCsv = () => {
-    const { mediaId, topicId, filters } = this.props;
+    const { media, topicId, filters } = this.props;
     const filtersAsParams = filtersAsUrlParams(filters);
-    const url = `/api/topics/${topicId}/media/${mediaId}/inlinks.csv?${filtersAsParams}`;
+    const url = `/api/topics/${topicId}/media/${media.media_id}/inlinks.csv?${filtersAsParams}`;
     window.location = url;
   }
 
@@ -58,14 +56,13 @@ class MediaInlinksContainer extends React.Component {
   }
 
   render() {
-    const { topicId, mediaId, showTweetCounts, media, helpButton, topicName, filters } = this.props;
+    const { topicId, topicName, filters, media, helpButton, showTweetCounts } = this.props;
     const { formatMessage } = this.props.intl;
     let content = <MediaInlinkTableContainer topicId={topicId} mediaId={media.media_id} showTweetCounts={showTweetCounts} />;
     if (this.state.view === VIEW_TREE) {
-      // setup data so the TreeMap can consume it
       content = <MediaInlinkTreeMapContainer topicId={topicId} topicName={topicName} media={media} />;
     }
-    const svgFilename = `${topicDownloadFilename(topicName, filters)}-inlinks-to-${mediaId})`;
+    const svgFilename = `${topicDownloadFilename(topicName, filters)}-inlinks-to-${media.media_id})`;
     return (
       <DataCard>
         <div className="actions">
@@ -79,17 +76,17 @@ class MediaInlinksContainer extends React.Component {
           <ActionMenu actionTextMsg={messages.viewOptions}>
             <MenuItem
               className="action-icon-menu-item"
-              disabled={this.state.view === VIEW_TREE}
-              onClick={() => this.setView(VIEW_TREE)}
-            >
-              <ListItemText><FormattedMessage {...localMessages.modeTree} /></ListItemText>
-            </MenuItem>
-            <MenuItem
-              className="action-icon-menu-item"
               disabled={this.state.view === VIEW_TABLE}
               onClick={() => this.setView(VIEW_TABLE)}
             >
               <ListItemText><FormattedMessage {...localMessages.modeTable} /> </ListItemText>
+            </MenuItem>
+            <MenuItem
+              className="action-icon-menu-item"
+              disabled={this.state.view === VIEW_TREE}
+              onClick={() => this.setView(VIEW_TREE)}
+            >
+              <ListItemText><FormattedMessage {...localMessages.modeTree} /></ListItemText>
             </MenuItem>
           </ActionMenu>
         </div>
@@ -108,18 +105,15 @@ MediaInlinksContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
   // from parent
-  mediaId: PropTypes.number.isRequired,
   topicId: PropTypes.number.isRequired,
   topicName: PropTypes.string.isRequired,
   media: PropTypes.object.isRequired,
   // from state
-  sort: PropTypes.string.isRequired,
   filters: PropTypes.object.isRequired,
   showTweetCounts: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
-  sort: state.topics.selected.mediaSource.inlinks.sort,
   filters: state.topics.selected.filters,
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
   media: state.topics.selected.mediaSource.info,

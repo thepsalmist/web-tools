@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchPersonalTopicsList } from '../../../actions/topicActions';
 import TopicPreviewList from './TopicPreviewList';
 import withPaging from '../../common/hocs/PagedContainer';
@@ -16,13 +16,13 @@ const userIsOwner = (owners, user) => owners.filter(topicUser => topicUser.email
 const topicsUserOwns = (topics, user) => topics.filter(topic => userIsOwner(topic.owners, user));
 
 const PersonalTopicsContainer = (props) => {
-  const { topics, onSetFavorited, asyncFetch, user, showAll } = props;
+  const { topics, onSetFavorited, onFetchAyncData, user, showAll } = props;
   return (
     <div className="personal-topics-list">
       <TopicPreviewList
         topics={(showAll === true) ? topics : topicsUserOwns(topics, user)}
         linkGenerator={t => `/topics/${t.topics_id}/summary`}
-        onSetFavorited={(id, isFav) => { onSetFavorited(id, isFav); asyncFetch(); }}
+        onSetFavorited={(id, isFav) => { onSetFavorited(id, isFav); onFetchAyncData(); }}
         emptyMsg={localMessages.empty}
       />
     </div>
@@ -38,10 +38,9 @@ PersonalTopicsContainer.propTypes = {
   user: PropTypes.object.isRequired,
   // from compositional chain
   intl: PropTypes.object.isRequired,
+  onFetchAyncData: PropTypes.func.isRequired,
   prevButton: PropTypes.node,
   nextButton: PropTypes.node,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -51,31 +50,15 @@ const mapStateToProps = state => ({
   links: state.topics.personalList.link_ids,
 });
 
-const mapDispatchToProps = dispatch => ({
-  asyncFetch: () => {
-    dispatch(fetchPersonalTopicsList());
-  },
-  fetchPagedData: (props, linkId) => {
-    dispatch(fetchPersonalTopicsList(linkId));
-  },
-});
+const fetchAsyncData = dispatch => dispatch(fetchPersonalTopicsList());
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    nextPage: () => {
-      dispatchProps.fetchPagedData(stateProps, stateProps.links.next);
-    },
-    previousPage: () => {
-      dispatchProps.fetchPagedData(stateProps, stateProps.links.previous);
-    },
-  });
-}
+const handlePageChange = (dispatch, props, linkId) => dispatch(fetchPersonalTopicsList(linkId));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
-      withPaging(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
+      withPaging(handlePageChange)(
         PersonalTopicsContainer
       )
     )

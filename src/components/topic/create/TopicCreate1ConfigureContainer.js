@@ -97,6 +97,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   handleMediaDelete: () => null, // in create mode we don't need to update the values
   fetchUserInfo: (userid) => {
+    // gotta fetch the user info here to make sure we have the `maxStories` configured on them
     dispatch(fetchSystemUser(userid));
   },
 });

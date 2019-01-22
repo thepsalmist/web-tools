@@ -28,7 +28,8 @@ class SourceSearchResultsContainer extends React.Component {
     showAdvancedOptions: false,
   }
 
-  toggleAdvancedOptions = () => {
+  toggleAdvancedOptions = (evt) => {
+    evt.preventDefault();
     this.setState(prevState => ({ showAdvancedOptions: !prevState.showAdvancedOptions }));
   }
 
@@ -41,7 +42,7 @@ class SourceSearchResultsContainer extends React.Component {
       updatedQueryObj.tags = [];
       const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType'];
       metadataQueryFields.forEach((key) => {
-        if (key in formValues) {
+        if (formValues && key in formValues) {
           updatedQueryObj.tags.push(formValues[key]);
         }
       });
@@ -68,7 +69,7 @@ class SourceSearchResultsContainer extends React.Component {
             onAdvancedSelection={val => this.updateMediaQuery(val)}
             hintText={formatMessage(localMessages.hintText)}
           />
-          <a onTouchTap={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.hideAdvancedOptions} /></a>
+          <a href="#toggle" onClick={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.hideAdvancedOptions} /></a>
         </div>
       );
     } else {
@@ -79,7 +80,7 @@ class SourceSearchResultsContainer extends React.Component {
             onSearch={val => this.updateMediaQuery(val)}
             hintText={formatMessage(localMessages.hintText)}
           />
-          <a onTouchTap={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.showAdvancedOptions} /></a>
+          <a href="#toggle" onClick={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.showAdvancedOptions} /></a>
         </div>
       );
     }
@@ -141,7 +142,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
   },
   updateAdvancedMediaQuerySelection: (values) => {
-    if (values.tags && values.tags.length > 0) {
+    if (values.mediaKeyword || (values.tags && values.tags.length > 0)) {
       if (values.allMedia) { // handle the "all media" placeholder selection
         ownProps.handleToggleAndSelectMedia({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
       } else {

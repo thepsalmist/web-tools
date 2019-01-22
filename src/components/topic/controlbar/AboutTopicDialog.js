@@ -57,7 +57,7 @@ class AboutTopicDialog extends React.Component {
           <DialogActions>
             <AppButton
               label={formatMessage(messages.ok)}
-              onTouchTap={this.handleRemoveDialogClose}
+              onClick={this.handleRemoveDialogClose}
               key={0}
             />
           </DialogActions>

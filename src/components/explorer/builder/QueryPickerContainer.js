@@ -204,7 +204,11 @@ class QueryPickerContainer extends React.Component {
             isLabelEditable={isEditable} // if custom, true for either mode, else if logged in no
             isDeletable={() => this.isDeletable()}
             displayLabel={false}
-            onQuerySelected={() => this.handleSelectedQueryChange(query)}
+            onQuerySelected={(newlySelectedQuery) => {
+              if (selected.uid !== newlySelectedQuery.uid) {
+                this.handleSelectedQueryChange(newlySelectedQuery);
+              }
+            }}
             updateQueryProperty={(propertyName, newValue) => this.updateQueryProperty(query, propertyName, newValue)}
             updateDemoQueryLabel={newValue => this.updateDemoQueryLabel(query, newValue)}
             onSearch={this.saveAndSearch}
@@ -243,7 +247,7 @@ class QueryPickerContainer extends React.Component {
                   tooltip={formatMessage(localMessages.addQuery)}
                   onClick={() => addAQuery(isLoggedIn ? defaultQuery : defaultDemoQuery)}
                 />
-                <a href="" onTouchTap={() => addAQuery(isLoggedIn ? defaultQuery : defaultDemoQuery)}><FormattedMessage {...localMessages.addQuery} /></a>
+                <a href="" onClick={() => addAQuery(isLoggedIn ? defaultQuery : defaultDemoQuery)}><FormattedMessage {...localMessages.addQuery} /></a>
               </div>
             </div>
           </div>
@@ -267,7 +271,7 @@ class QueryPickerContainer extends React.Component {
                   type="submit"
                   label={formatMessage(messages.search)}
                   color="primary"
-                  onTouchTap={this.saveAndSearch}
+                  onClick={this.saveAndSearch}
                 />
               </Col>
             </Row>

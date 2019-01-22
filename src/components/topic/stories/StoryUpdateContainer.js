@@ -6,7 +6,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
 import { fetchMetadataValuesForPrimaryLanguage } from '../../../actions/systemActions'; // TODO relocate metadata actions into system if we use more often...
 import { selectStory, fetchStory, updateStory } from '../../../actions/storyActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import StoryDetailForm from '../../common/admin/form/StoryDetailForm';
 import { updateFeedback } from '../../../actions/appActions';
 import { TAG_SET_PRIMARY_LANGUAGE } from '../../../lib/tagUtil';
@@ -18,9 +18,9 @@ const localMessages = {
 
 class StoryUpdateContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
+    const { refetchAsyncData } = this.props;
     if (nextProps.storiesId !== this.props.storiesId) {
-      const { fetchData } = this.props;
-      fetchData(nextProps.storiesId);
+      refetchAsyncData(nextProps);
     }
   }
 
@@ -69,8 +69,7 @@ StoryUpdateContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
+  refetchAsyncData: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
   // from state
   story: PropTypes.object.isRequired,
@@ -88,15 +87,16 @@ const mapStateToProps = (state, ownProps) => ({
   tags: state.system.metadata.primaryLanguage.tags,
 });
 
+
+const fetchAsyncData = (dispatch, props) => {
+  dispatch(selectStory(props.storiesId));
+  dispatch(fetchStory(props.topicId, props.storiesId));
+  dispatch(fetchMetadataValuesForPrimaryLanguage(TAG_SET_PRIMARY_LANGUAGE));
+};
+
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  asyncFetch: () => {
-    dispatch(selectStory(ownProps.params.storiesId));
-    dispatch(fetchStory(ownProps.params.topicId, ownProps.params.storiesId));
-    dispatch(fetchMetadataValuesForPrimaryLanguage(TAG_SET_PRIMARY_LANGUAGE));
-  },
-  fetchData: (storiesId) => {
-    dispatch(selectStory(storiesId));
-    dispatch(fetchStory(ownProps.params.topicId, ownProps.params.storiesId));
+  refetchAsyncData: (props) => {
+    fetchAsyncData(dispatch, props);
   },
   onSave: (storyInfo) => {
     dispatch(updateStory(storyInfo.stories_id, storyInfo))
@@ -112,10 +112,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
-      injectIntl(
-        StoryUpdateContainer
-      )
+    withAsyncData(fetchAsyncData)(
+      StoryUpdateContainer
     )
   )
 );

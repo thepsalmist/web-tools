@@ -76,13 +76,13 @@ class WordInContextDrillDownContainer extends React.Component {
             <ActionMenu>
               <MenuItem
                 className="action-icon-menu-item"
-                onTouchTap={handleClose}
+                onClick={handleClose}
               >
                 <FormattedMessage {...localMessages.close} />
               </MenuItem>
               <MenuItem
                 className="action-icon-menu-item"
-                onTouchTap={() => {
+                onClick={() => {
                   const wordToAdd = selectedWord.word;
                   handleClose();
                   handleAddToAllQueries(wordToAdd);
@@ -92,7 +92,7 @@ class WordInContextDrillDownContainer extends React.Component {
               </MenuItem>
               <MenuItem
                 className="action-icon-menu-item"
-                onTouchTap={this.handleDownloadSvg}
+                onClick={this.handleDownloadSvg}
               >
                 <FormattedMessage {...messages.downloadSVG} />
               </MenuItem>

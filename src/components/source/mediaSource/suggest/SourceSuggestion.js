@@ -89,12 +89,12 @@ class SourceSuggestion extends React.Component {
             <DialogActions>
               <AppButton
                 label={formatMessage(messages.cancel)}
-                onTouchTap={() => this.setState({ showApproveDialog: false })}
+                onClick={() => this.setState({ showApproveDialog: false })}
               />
               <AppButton
                 label={formatMessage(localMessages.approve)}
                 primary
-                onTouchTap={() => {
+                onClick={() => {
                   this.setState({ showApproveDialog: false });
                   onApprove(suggestion, document.getElementById(approveReasonInputId).value);
                 }}
@@ -120,12 +120,12 @@ class SourceSuggestion extends React.Component {
             <DialogActions>
               <AppButton
                 label={formatMessage(messages.cancel)}
-                onTouchTap={() => this.setState({ showRejectDialog: false })}
+                onClick={() => this.setState({ showRejectDialog: false })}
               />
               <AppButton
                 label={formatMessage(localMessages.reject)}
                 primary
-                onTouchTap={() => {
+                onClick={() => {
                   this.setState({ showRejectDialog: false });
                   onReject(suggestion, document.getElementById(rejectReasonInputId).value);
                 }}

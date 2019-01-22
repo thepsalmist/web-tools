@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { selectStory, fetchStory } from '../../../actions/storyActions';
 import { fetchTopicStoryInfo } from '../../../actions/topicActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import StoryWordsContainer from './StoryWordsContainer';
 import StoryInlinksContainer from './StoryInlinksContainer';
 import StoryOutlinksContainer from './StoryOutlinksContainer';
@@ -56,9 +56,9 @@ class StoryContainer extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
+    const { refetchAsyncData } = this.props;
     if (nextProps.storiesId !== this.props.storiesId) {
-      const { fetchData } = this.props;
-      fetchData(nextProps.storiesId, nextProps.filters);
+      refetchAsyncData(nextProps);
     }
   }
 
@@ -131,7 +131,7 @@ class StoryContainer extends React.Component {
                   <AppButton
                     label={formatMessage(messages.ok)}
                     primary
-                    onTouchTap={this.handleRemoveDialogClose}
+                    onClick={this.handleRemoveDialogClose}
                   />
                 </DialogActions>
               </Dialog>
@@ -200,10 +200,10 @@ StoryContainer.propTypes = {
   // from context
   params: PropTypes.object.isRequired, // params from router
   intl: PropTypes.object.isRequired,
-  // from parent
+  // from compositional chain
+  dispatch: PropTypes.func.isRequired,
   // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
+  refetchAsyncData: PropTypes.func.isRequired,
   handleStoryCachedTextClick: PropTypes.func.isRequired,
   handleStoryEditClick: PropTypes.func.isRequired,
   // from state
@@ -212,12 +212,13 @@ StoryContainer.propTypes = {
   storiesId: PropTypes.number.isRequired,
   topicName: PropTypes.string.isRequired,
   topicId: PropTypes.number.isRequired,
-  fetchStatus: PropTypes.string.isRequired,
+  fetchStatus: PropTypes.array.isRequired,
   filters: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  fetchStatus: state.story.info.fetchStatus,
+  // check both of these to the spinner doesn't stop until the topic-specific stats are ready
+  fetchStatus: [state.story.info.fetchStatus, state.topics.selected.story.info.fetchStatus],
   filters: state.topics.selected.filters,
   storiesId: parseInt(ownProps.params.storiesId, 10),
   topicId: state.topics.selected.id,
@@ -226,15 +227,19 @@ const mapStateToProps = (state, ownProps) => ({
   storyInfo: state.story.info,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (storiesId, filters) => {
-    dispatch(selectStory(storiesId));
-    const q = {
-      ...filters,
-      id: ownProps.params.topicId,
-    };
-    dispatch(fetchStory(storiesId, q));
-    dispatch(fetchTopicStoryInfo(ownProps.params.topicId, storiesId, filters));
+const fetchAsyncData = (dispatch, props) => {
+  dispatch(selectStory(props.storiesId));
+  const q = {
+    ...props.filters,
+    id: props.topicId,
+  };
+  dispatch(fetchStory(props.storiesId, q));
+  dispatch(fetchTopicStoryInfo(props.topicId, props.storiesId, props.filters));
+};
+
+const mapDispatchToProps = dispatch => ({
+  refetchAsyncData: (props) => {
+    fetchAsyncData(dispatch, props);
   },
   handleStoryCachedTextClick: (topicId, storiesId, filters) => {
     dispatch(push(filteredLinkTo(`topics/${topicId}/stories/${storiesId}/cached`, filters)));
@@ -244,16 +249,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => dispatchProps.fetchData(stateProps.storiesId, stateProps.filters),
-  });
-}
-
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncData(fetchAsyncData)(
       StoryContainer
     )
   )

@@ -82,9 +82,9 @@ def entities_from_mc_or_cliff(stories_id):
     entities = []
     # get entities from MediaCloud, or from CLIFF if not in MC
     cliff_results = cached_story_raw_cliff_results(stories_id)[0]['cliff']
-    if (cliff_results == '"story is not annotated"') or (cliff_results == "story does not exist"):
+    if (cliff_results == 'story is not annotated') or (cliff_results == "story does not exist"):
         story = mc.story(stories_id, text=True)
-        cliff_results = cliff.parseText(story['story_text'])
+        cliff_results = cliff.parse_text(story['story_text'])
     # clean up for reporting
     for org in cliff_results['results']['organizations']:
         entities.append({
@@ -92,7 +92,7 @@ def entities_from_mc_or_cliff(stories_id):
             'name': org['name'],
             'frequency': org['count']
         })
-    for person in cliff_results ['results']['people']:
+    for person in cliff_results['results']['people']:
         entities.append({
             'type': 'PERSON',
             'name': person['name'],
@@ -125,7 +125,8 @@ def cached_story_raw_cliff_results(stories_id):
 @flask_login.login_required
 @api_error_handler
 def story_nyt_themes(stories_id):
-    themes = nyt_themes_from_mc_or_labeller(stories_id)['descriptors600']
+    results = nyt_themes_from_mc_or_labeller(stories_id)
+    themes = results['descriptors600']
     return jsonify({'list': themes})
 
 
@@ -133,14 +134,15 @@ def story_nyt_themes(stories_id):
 @flask_login.login_required
 @api_error_handler
 def story_nyt_themes_csv(stories_id):
-    themes = nyt_themes_from_mc_or_labeller(stories_id)['descriptors600']
+    results = nyt_themes_from_mc_or_labeller(stories_id)
+    themes = results['descriptors600']
     props = ['label', 'score']
     return csv.stream_response(themes, props, 'story-'+str(stories_id)+'-nyt-themes')
 
 
 def nyt_themes_from_mc_or_labeller(stories_id):
     results = cached_story_raw_theme_results(stories_id)
-    if results['nytlabels'] == '"story is not annotated"':
+    if results['nytlabels'] == 'story is not annotated':
         story = mc.story(stories_id, text=True)
         results = predict_news_labels(story['story_text'])
     else:

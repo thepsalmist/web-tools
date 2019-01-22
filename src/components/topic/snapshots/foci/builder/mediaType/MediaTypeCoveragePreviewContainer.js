@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
 import { fetchCreateFocusMediaTypeCoverage } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
 import PieChart from '../../../../../vis/PieChart';
@@ -48,9 +48,6 @@ MediaTypeCoveragePreviewContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
   // from state
   count: PropTypes.number,
   total: PropTypes.number,
@@ -63,25 +60,12 @@ const mapStateToProps = state => ({
   total: state.topics.selected.focalSets.create.mediaTypeCoverage.counts.total,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchData: (topicId) => {
-    dispatch(fetchCreateFocusMediaTypeCoverage(topicId));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.topicId);
-    },
-
-  });
-}
+const fetchAsyncData = (dispatch, { topicId }) => dispatch(fetchCreateFocusMediaTypeCoverage(topicId));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       MediaTypeCoveragePreviewContainer
     )
   )

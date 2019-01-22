@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import withDescription from '../../../common/hocs/DescribedDataCard';
-import withAsyncFetch from '../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import StoryTable from '../../../common/StoryTable'; // use this istead of TopicStoryTable because here we don't have extra metadata
 import { fetchStorySampleByQuery } from '../../../../actions/topicActions';
 import DataCard from '../../../common/DataCard';
@@ -22,29 +22,20 @@ const localMessages = {
 
 };
 
-class TopicStorySamplePreview extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, query } = this.props;
-    if (nextProps.query !== query) {
-      fetchData(nextProps.query);
-    }
-  }
-
-  render() {
-    const { stories } = this.props;
-    return (
-      <DataCard>
-        <h2>
-          <FormattedMessage {...localMessages.title} />
-        </h2>
-        <StoryTable
-          stories={stories}
-          maxTitleLength={50}
-        />
-      </DataCard>
-    );
-  }
-}
+const TopicStorySamplePreview = (props) => {
+  const { stories } = props;
+  return (
+    <DataCard>
+      <h2>
+        <FormattedMessage {...localMessages.title} />
+      </h2>
+      <StoryTable
+        stories={stories}
+        maxTitleLength={50}
+      />
+    </DataCard>
+  );
+};
 
 TopicStorySamplePreview.propTypes = {
   // from composition chain
@@ -66,38 +57,28 @@ const mapStateToProps = state => ({
   stories: state.topics.create.preview.matchingStories.list,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchData: (query) => {
-    const infoForQuery = {
-      q: query.solr_seed_query,
-      start_date: query.start_date,
-      end_date: query.end_date,
-      limit: NUM_TO_SHOW,
-    };
-    infoForQuery['collections[]'] = [];
-    infoForQuery['sources[]'] = [];
+const fetchAsyncData = (dispatch, { query }) => {
+  const infoForQuery = {
+    q: query.solr_seed_query,
+    start_date: query.start_date,
+    end_date: query.end_date,
+    limit: NUM_TO_SHOW,
+  };
+  infoForQuery['collections[]'] = [];
+  infoForQuery['sources[]'] = [];
 
-    if ('sourcesAndCollections' in query) { // in FieldArrays on the form
-      infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
-      infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
-    }
-    dispatch(fetchStorySampleByQuery(infoForQuery));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.query);
-    },
-  });
-}
+  if ('sourcesAndCollections' in query) { // in FieldArrays on the form
+    infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
+    infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
+  }
+  dispatch(fetchStorySampleByQuery(infoForQuery));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps)(
     withDescription(localMessages.descriptionIntro)(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData, ['query'])(
         TopicStorySamplePreview
       )
     )

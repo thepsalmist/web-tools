@@ -55,7 +55,7 @@ function queries(state = INITIAL_STATE, action) {
     case COPY_AND_REPLACE_QUERY_FIELD: // replace property
 
       if (action.payload.uid !== undefined && action.payload.field) {
-        queryIndex = state.findIndex(q => q.uid !== null && q.uid === action.payload.query.uid);
+        queryIndex = state.findIndex(q => q.uid !== null && q.uid === action.payload.uid);
         updatedState = [...state];
         updatedState[queryIndex] = Object.assign({}, updatedState[queryIndex], action.payload.newValues);
         return updatedState;

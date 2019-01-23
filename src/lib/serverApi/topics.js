@@ -249,8 +249,9 @@ export function fetchCustomMap(topicId, params) {
   return createApiPromise(`/api/topics/${topicId}/map-files/fetchCustomMap`, acceptedParams);
 }
 
-export function fetchTopicSearchResults(searchStr) {
-  return createApiPromise('/api/topics/search', { searchStr });
+export function fetchTopicSearchResults(searchStr, params) {
+  const acceptedParams = acceptParams(params, ['mode']);
+  return createApiPromise('/api/topics/search', { searchStr, ...acceptedParams });
 }
 
 export function fetchTopicWithNameExists(searchStr, topicId) {

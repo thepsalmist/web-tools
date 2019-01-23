@@ -18,7 +18,7 @@ const localMessages = {
 
 const MetadataPickerContainer = (props) => {
   const { initialValues, label, name, tags, isClearable, renderSelect, autocompleteHideOptions,
-    renderSimpleAutoComplete, autocomplete, disabled, showDescription } = props;
+    renderAutocomplete, autocomplete, disabled, showDescription } = props;
   const { formatMessage } = props.intl;
   const mode = autocomplete ? MODE_AUTOCOMPLETE : MODE_SELECT;
   let content = null;
@@ -75,15 +75,13 @@ const MetadataPickerContainer = (props) => {
           <Field
             styles={styles}
             name={name}
-            component={renderSimpleAutoComplete}
-            placeholder={formatMessage(localMessages.hintText, { label })}
+            component={renderAutocomplete}
             fullWidth
             isDisabled={disabled}
-            options={tags}
             defaultValue={initialValues}
-            getOptionLabel={tag => tag.label}
-            getOptionValue={tag => tag.tags_id}
             isClearable={isClearable}
+            placeholder={formatMessage(localMessages.hintText, { label })}
+            options={tags.map(t => ({ ...t, value: t.tags_id, label: t.label }))}
           />
         </React.Fragment>
       );
@@ -108,7 +106,7 @@ MetadataPickerContainer.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
   renderSelect: PropTypes.func.isRequired,
-  renderSimpleAutoComplete: PropTypes.func.isRequired,
+  renderAutocomplete: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string,
   tags: PropTypes.array,

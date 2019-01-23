@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import Select from '@material-ui/core/Select';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import ReactSelect from 'react-select';
+import Autocomplete from '../form/Autocomplete';
 
 /**
  * Helpful compositional wrapper for forms that want to use Material-UI, react-intl and redux-form.
@@ -102,13 +102,13 @@ function withIntlForm(Component) {
       );
     }
 
-    renderSimpleAutoComplete = ({ input, ...custom }) => {
+    renderAutocomplete = ({ input, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
       return (
-        <ReactSelect
+        <Autocomplete
           className="form-field-autocomplete"
           {...custom}
-          onChange={value => input.onChange(value)}
+          onSelected={value => input.onChange(value)}
           {...intlCustom}
         />
       );
@@ -121,7 +121,7 @@ function withIntlForm(Component) {
         renderSelect: this.renderSelect,
         renderTextFieldWithFocus: this.renderTextFieldWithFocus,
         renderNewAutoComplete: this.renderNewAutoComplete,
-        renderSimpleAutoComplete: this.renderSimpleAutoComplete,
+        renderAutocomplete: this.renderAutocomplete,
       };
       return (
         <Component {...this.props} {...helpers} />

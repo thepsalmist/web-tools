@@ -183,43 +183,35 @@ const components = {
   ValueContainer,
 };
 
-class Autocomplete extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      single: '',
-    };
-  }
-
-  render() {
-    const { placeholder, options } = this.props;
-    const selectStyles = {
-      input: base => ({
-        ...base,
-        // color: theme.palette.text.primary,
-        '& input': {
-          font: 'inherit',
-        },
-      }),
-    };
-    return (
-      <div className="autocomplete" style={customStyles.root}>
-        <Select
-          classes={customStyles}
-          style={selectStyles}
-          options={options}
-          components={components}
-          value={this.state.single}
-          onChange={(value) => { this.setState({ single: value }); }}
-          placeholder={placeholder}
-        />
-      </div>
-    );
-  }
-}
+const Autocomplete = (props) => {
+  const { placeholder, options, onSelected } = props;
+  const selectStyles = {
+    input: base => ({
+      ...base,
+      // color: theme.palette.text.primary,
+      '& input': {
+        font: 'inherit',
+      },
+    }),
+  };
+  return (
+    <div className="autocomplete" style={customStyles.root}>
+      <Select
+        classes={customStyles}
+        style={selectStyles}
+        options={options}
+        components={components}
+        onChange={onSelected}
+        placeholder={placeholder}
+        {...props}
+      />
+    </div>
+  );
+};
 Autocomplete.propTypes = {
   placeholder: PropTypes.string,
   options: PropTypes.array, // an array of objects with value and label properties
+  onSelected: PropTypes.func.isRequired,
 };
 
 export const AsyncAutocomplete = (props) => {

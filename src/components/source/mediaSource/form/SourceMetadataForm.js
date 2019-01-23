@@ -18,7 +18,7 @@ const SourceMetadataForm = props => (
       </Col>
     </Row>
     <Row>
-      <Col lg={3} xs={12}>
+      <Col lg={4} xs={12}>
         <MetadataPickerContainer
           autocomplete
           isClearable
@@ -29,7 +29,7 @@ const SourceMetadataForm = props => (
           label={props.intl.formatMessage(messages.pubCountry)}
         />
       </Col>
-      <Col lg={3} xs={12}>
+      <Col lg={4} xs={12}>
         <MetadataPickerContainer
           autocomplete
           isClearable
@@ -41,19 +41,21 @@ const SourceMetadataForm = props => (
           label={props.intl.formatMessage(messages.pubState)}
         />
       </Col>
-      <Col lg={3} xs={12}>
+      <Col lg={4} xs={12}>
         <MetadataPickerContainer
           autocomplete
           isClearable
-          id={TAG_SET_PRIMARY_LANGUAGE}
-          name="primaryLanguage"
+          id={TAG_SET_MEDIA_TYPE}
+          name="mediaType"
           form="sourceForm"
-          disabled
-          initialValues={props.initialValues.metadata ? props.initialValues.metadata.language : null}
-          label={props.intl.formatMessage(messages.language)}
+          showDescription
+          initialValues={props.initialValues.metadata ? props.initialValues.metadata.media_type : null}
+          label={props.intl.formatMessage(messages.mediaType)}
         />
       </Col>
-      <Col lg={3} xs={12}>
+    </Row>
+    <Row>
+      <Col lg={4} xs={12}>
         <MetadataPickerContainer
           autocomplete
           isClearable
@@ -65,18 +67,16 @@ const SourceMetadataForm = props => (
           label={props.intl.formatMessage(messages.countryOfFocus)}
         />
       </Col>
-    </Row>
-    <Row>
-      <Col lg={3} xs={12}>
+      <Col lg={4} xs={12}>
         <MetadataPickerContainer
           autocomplete
           isClearable
-          id={TAG_SET_MEDIA_TYPE}
-          name="mediaType"
+          id={TAG_SET_PRIMARY_LANGUAGE}
+          name="primaryLanguage"
           form="sourceForm"
-          showDescription
-          initialValues={props.initialValues.metadata ? props.initialValues.metadata.media_type : null}
-          label={props.intl.formatMessage(messages.mediaType)}
+          disabled
+          initialValues={props.initialValues.metadata ? props.initialValues.metadata.language : null}
+          label={props.intl.formatMessage(messages.language)}
         />
       </Col>
     </Row>

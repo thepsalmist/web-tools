@@ -7,7 +7,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import MediaTable from '../MediaTable';
 import { fetchTopicInfluentialMedia, sortTopicInfluentialMedia } from '../../../actions/topicActions';
 import { DownloadButton } from '../../common/IconButton';
-import TopicSourceSearchContainer from '../search/TopicSourceSearchContainer';
+import MediaSearchContainer from './MediaSearchContainer';
 import messages from '../../../resources/messages';
 import DataCard from '../../common/DataCard';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
@@ -28,7 +28,7 @@ const InfluentialMediaContainer = (props) => {
       <Row>
         <Col lg={12}>
           <TopicPageTitle value={localMessages.title} />
-          <TopicSourceSearchContainer topicId={topicId} showSearch />
+          <MediaSearchContainer topicId={topicId} showSearch />
           <DataCard border={false}>
             <div className="actions">
               <DownloadButton

@@ -19,7 +19,7 @@ const localMessages = {
   searchHint: { id: 'topics.search.hint', defaultMessage: 'Search by topic name' },
 };
 
-class TopicSearchContainer extends React.Component {
+class TopicQuickSearchContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -120,7 +120,7 @@ class TopicSearchContainer extends React.Component {
   }
 }
 
-TopicSearchContainer.propTypes = {
+TopicQuickSearchContainer.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
   // from state
@@ -149,6 +149,6 @@ const mapDispatchToProps = dispatch => ({
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    TopicSearchContainer
+    TopicQuickSearchContainer
   )
 );

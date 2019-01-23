@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage, injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import TopicSearchContainer from '../search/TopicSearchContainer';
+import TopicQuickSearchContainer from '../search/TopicQuickSearchContainer';
 import TopicListContainer from '../list/TopicListContainer';
 import LoginForm from '../../user/LoginForm';
 import TopicIcon from '../../common/icons/TopicIcon';
@@ -40,7 +40,7 @@ const TopicsHomepage = (props) => {
                   </Link>
                 </Col>
                 <Col lg={4}>
-                  <TopicSearchContainer />
+                  <TopicQuickSearchContainer />
                 </Col>
               </Row>
             </Grid>

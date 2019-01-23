@@ -247,7 +247,8 @@ def topic_search():
     if mode == 'full':
         matching_topics = results['topics']
     else:
-        matching_topics = [{'name': x['name'], 'id': x['topics_id']} for x in results['topics']]
+        # matching_topics = [{'name': x['name'], 'id': x['topics_id']} for x in results['topics']]
+        matching_topics = results['topics']
     return jsonify({'topics': matching_topics})
 
 

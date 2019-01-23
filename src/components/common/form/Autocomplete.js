@@ -239,10 +239,6 @@ export const AsyncAutocomplete = (props) => {
         cacheOptions
         loadOptions={onLoadOptions}
         defaultOptions
-        onInputChange={(newValue) => {
-          const inputValue = newValue.replace(/\W/g, '');
-          return inputValue;
-        }}
         classes={customStyles}
         style={selectStyles}
         components={components}

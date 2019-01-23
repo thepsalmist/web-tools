@@ -6,9 +6,9 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
 import SimpleSourceSearchContainer from '../../common/SimpleSourceSearchContainer';
 
-const TopicSourceSearchContainer = props => (
+const MediaSearchContainer = props => (
   <div className="controlbar controlbar-sources">
-    <div className="topic-search">
+    <div className="topic-media-search">
       <Grid>
         <Row>
           {props.children}
@@ -25,7 +25,7 @@ const TopicSourceSearchContainer = props => (
   </div>
 );
 
-TopicSourceSearchContainer.propTypes = {
+MediaSearchContainer.propTypes = {
   // from parent
   children: PropTypes.node,
   showSearch: PropTypes.bool,
@@ -46,6 +46,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    TopicSourceSearchContainer
+    MediaSearchContainer
   )
 );

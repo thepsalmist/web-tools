@@ -39,6 +39,9 @@ function reallyInitializeApp(routes) {
     }
   };
   const muiTheme = createMuiTheme({
+    typography: {
+      useNextVariants: true,
+    },
     palette: {
       primary: getBrandColors(),
       secondary: getBrandColors(),
@@ -54,7 +57,7 @@ function reallyInitializeApp(routes) {
     overrides: { // Name of the component ⚛️ / style sheet
       MuiButton: {
         root: {
-          padding: '0px 16px',
+          padding: '5px 16px',
         },
         containedPrimary: {
           color: 'white',
@@ -77,7 +80,7 @@ function reallyInitializeApp(routes) {
         // paperWidth: '80%',
       },
       MuiTypography: {
-        title: {
+        h6: {
           fontFamily: 'Lato, Helvetica, sans',
         },
       },

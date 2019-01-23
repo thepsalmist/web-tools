@@ -236,6 +236,7 @@ export const AsyncAutocomplete = (props) => {
   return (
     <div className="autocomplete async-autocomplete" style={customStyles.root}>
       <AsyncSelect
+        cacheOptions
         loadOptions={onLoadOptions}
         defaultOptions
         onInputChange={(newValue) => {

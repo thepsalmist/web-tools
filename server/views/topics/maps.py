@@ -38,7 +38,7 @@ def map_files(topics_id):
         if is_rendered:
             status = 'rendered'
         else:
-            is_generating = os.path.isfile(os.path.join(DATA_DIR,lock_filename))
+            is_generating = os.path.isfile(os.path.join(DATA_DIR, lock_filename))
             if not is_generating:
                 _start_generating_map_file(map_type, topics_id, timespans_id)
             status = 'generating'

@@ -241,10 +241,15 @@ def topic_spider(topics_id):
 @api_error_handler
 def topic_search():
     search_str = request.args['searchStr']
+    mode = request.args['mode'] if 'mode' in request.args else 'list'
     user_mc = user_admin_mediacloud_client()
-    matching_topics = user_mc.topicList(name=search_str, limit=15)
-    results = [{'name': x['name'], 'id': x['topics_id']} for x in matching_topics['topics']]
-    return jsonify({'topics': results})
+    results = user_mc.topicList(name=search_str, limit=50)
+    if mode == 'full':
+        matching_topics = results['topics']
+    else:
+        # matching_topics = [{'name': x['name'], 'id': x['topics_id']} for x in results['topics']]
+        matching_topics = results['topics']
+    return jsonify({'topics': matching_topics})
 
 
 # Helper function for pooling word2vec timespans process

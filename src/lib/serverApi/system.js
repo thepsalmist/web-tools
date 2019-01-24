@@ -21,10 +21,6 @@ export function fetchMediaPickerSources(params) {
   return createApiPromise('/api/mediapicker/sources/search', acceptedParams);
 }
 
-export function metadataValuesForMediaType(id) {
-  return createApiPromise(`/api/metadata/${id}/values`);
-}
-
 export function fetchRecentNews() {
   return createApiPromise('/api/release-notes');
 }
@@ -45,20 +41,13 @@ export function favoriteCollection(collectionId, favorite) {
   return createPostingApiPromise(`/api/collections/${collectionId}/favorite`, { favorite: (favorite) ? 1 : 0 }, 'put');
 }
 
-export function metadataValuesForCountry(id) {
+export function mediaMetadataValues(id) {
   return createApiPromise(`api/metadata/${id}/values`);
 }
 
-export function metadataValuesForState(id) {
-  return createApiPromise(`api/metadata/${id}/values`);
-}
-
-export function metadataValuesForPrimaryLanguage(id) {
-  return createApiPromise(`api/metadata/${id}/values`);
-}
-
-export function metadataValuesForCountryOfFocus(id) {
-  return createApiPromise(`api/metadata/${id}/values`);
+export function mediaMetadataSearch(id, params) {
+  const acceptedParams = acceptParams(params, ['name']);
+  return createApiPromise(`api/metadata/${id}/search`, acceptedParams);
 }
 
 export function sourceSystemSearch(searchStr) {

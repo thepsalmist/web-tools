@@ -2,97 +2,61 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Field } from 'redux-form';
-import MenuItem from '@material-ui/core/MenuItem';
 import { FETCH_SUCCEEDED } from '../../lib/fetchConstants';
 import withAsyncFetch from './hocs/AsyncContainer';
-import { fetchMetadataValuesForCountry, fetchMetadataValuesForState, fetchMetadataValuesForPrimaryLanguage, fetchMetadataValuesForCountryOfFocus, fetchMetadataValuesForMediaType } from '../../actions/systemActions';
+import { fetchMetadataValuesForCountry, fetchMetadataValuesForState, fetchMetadataValuesForPrimaryLanguage,
+  fetchMetadataValuesForCountryOfFocus, fetchMetadataValuesForMediaType, searchMetadataValues }
+  from '../../actions/systemActions';
 import withIntlForm from './hocs/IntlForm';
 import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE } from '../../lib/tagUtil';
 
-const MODE_SELECT = 'MODE_SELECT';
-const MODE_AUTOCOMPLETE = 'MODE_AUTOCOMPLETE';
+const MAX_SUGGESTIONS = 15;
 
 const localMessages = {
   hintText: { id: 'metadata.pick.hint', defaultMessage: 'Pick a {label}' },
 };
 
 const MetadataPickerContainer = (props) => {
-  const { initialValues, label, name, tags, isClearable, renderSelect, autocompleteHideOptions,
-    renderSimpleAutoComplete, autocomplete, disabled, showDescription } = props;
+  const { initialValues, label, name, tags, handleLoadOptions, renderAsyncAutocomplete, renderAutocomplete,
+    async, disabled } = props;
   const { formatMessage } = props.intl;
-  const mode = autocomplete ? MODE_AUTOCOMPLETE : MODE_SELECT;
-  let content = null;
-  switch (mode) {
-    case MODE_SELECT:
-      if (showDescription) {
-        content = (
-          <Field
-            fullWidth
-            name={name}
-            component={renderSelect}
-            disabled={disabled}
-            label={label}
-          >
-            <MenuItem className="header-primary-menu" value={null} />
-            {tags.map(t => (
-              <MenuItem
-                className="header-primary-menu"
-                key={t.tags_id}
-                value={t.tags_id}
-              >
-                <div className="header-primary-label">{t.label}
-                  <br /><span className="header-primary-description">{t.description}</span>
-                </div>
-              </MenuItem>
-            ))}
-          </Field>
-        );
-      } else {
-        content = (
-          <Field
-            fullWidth
-            name={name}
-            component={renderSelect}
-            disabled={disabled}
-            label={label}
-          >
-            <MenuItem value={null} />
-            {tags.map(t => <MenuItem key={t.tags_id} value={t.tags_id}>{t.label}</MenuItem>)}
-          </Field>
-        );
-      }
-      break;
-    case MODE_AUTOCOMPLETE:
-      let styles = {};
-      if (autocompleteHideOptions) {
-        styles = {
-          dropdownIndicator: () => ({ display: 'none' }),
-        };
-      }
-      content = (
-        <React.Fragment>
-          <label>{label}</label>
-          <Field
-            styles={styles}
-            name={name}
-            component={renderSimpleAutoComplete}
-            placeholder={formatMessage(localMessages.hintText, { label })}
-            fullWidth
-            isDisabled={disabled}
-            options={tags}
-            defaultValue={initialValues}
-            getOptionLabel={tag => tag.label}
-            getOptionValue={tag => tag.tags_id}
-            isClearable={isClearable}
-          />
-        </React.Fragment>
-      );
-      break;
-    default:
-      content = '';
-      break;
+  let properties;
+  // set up default
+  let defaultValue;
+  if (initialValues && initialValues.tags_id) {
+    defaultValue = {
+      ...initialValues,
+      value: initialValues.tags_id,
+    };
   }
-  return (<div className={`metadata-picker metadata-picker-${name}`}>{content}</div>);
+  // manage async or not
+  if (async) {
+    properties = {
+      component: renderAsyncAutocomplete,
+      onLoadOptions: handleLoadOptions,
+    };
+  } else {
+    properties = {
+      component: renderAutocomplete,
+      options: tags.map(t => ({ ...t, value: t.tags_id, label: t.label })),
+    };
+  }
+  return (
+    <div className={`metadata-picker metadata-picker-${name}`}>
+      <React.Fragment>
+        <label>{label}</label>
+        <Field
+          name={name}
+          fullWidth
+          isDisabled={disabled}
+          defaultValue={defaultValue}
+          isClearable
+          placeholder={formatMessage(localMessages.hintText, { label })}
+          {...properties}
+        />
+      </React.Fragment>
+    </div>
+  );
 };
 
 MetadataPickerContainer.propTypes = {
@@ -101,18 +65,17 @@ MetadataPickerContainer.propTypes = {
   name: PropTypes.string.isRequired,
   initialValues: PropTypes.object,
   disabled: PropTypes.bool,
-  autocomplete: PropTypes.bool,
-  autocompleteHideOptions: PropTypes.bool,
-  isClearable: PropTypes.bool,
-  showDescription: PropTypes.bool,
+  async: PropTypes.bool,
   // from compositional chain
   intl: PropTypes.object.isRequired,
-  renderSelect: PropTypes.func.isRequired,
-  renderSimpleAutoComplete: PropTypes.func.isRequired,
+  renderAutocomplete: PropTypes.func.isRequired,
+  renderAsyncAutocomplete: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string,
   tags: PropTypes.array,
   label: PropTypes.string,
+  // from dispatch
+  handleLoadOptions: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -141,6 +104,15 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         break;
       default:
         break;
+    }
+  },
+  handleLoadOptions: (searchString, callback) => {
+    if (searchString && (searchString.length > 0)) {
+      dispatch(searchMetadataValues(ownProps.id, { name: searchString }))
+        .then((results) => {
+          const options = results.map(t => ({ ...t, value: t.tags_id, label: t.label })).slice(0, MAX_SUGGESTIONS);
+          callback(options);
+        });
     }
   },
 });

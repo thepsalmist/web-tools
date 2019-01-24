@@ -3,7 +3,7 @@ import logging
 import server.util.csv as csv
 import server.util.tags as tag_utl
 from server.util.geo import COUNTRY_GEONAMES_ID_TO_APLHA3, HIGHCHARTS_KEYS
-from server.cache import cache, key_generator
+from server.cache import cache
 from server.auth import user_admin_mediacloud_client
 import server.views.sources.apicache as apicache
 from server.views.stories import QUERY_LAST_MONTH, QUERY_ENGLISH_LANGUAGE
@@ -11,7 +11,7 @@ from server.views.stories import QUERY_LAST_MONTH, QUERY_ENGLISH_LANGUAGE
 logger = logging.getLogger(__name__)
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def cached_geotag_count(user_mc_key, query):
     user_mc = user_admin_mediacloud_client()
     res = user_mc.storyTagCount(query, [QUERY_LAST_MONTH, QUERY_ENGLISH_LANGUAGE], tag_sets_id=tag_utl.GEO_TAG_SET)

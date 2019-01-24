@@ -10,7 +10,7 @@ import server.views.topics.apicache as apicache
 from server import app, cliff, TOOL_API_KEY
 from server.auth import is_user_logged_in
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
-from server.cache import cache, key_generator
+from server.cache import cache
 from server.util.request import api_error_handler
 from server.views.topics import access_public_topic
 
@@ -21,7 +21,7 @@ PRIMARY_ENTITY_TYPES = ['PERSON', 'LOCATION', 'ORGANIZATION']
 MEDIA_INFO_POOL_SIZE = 15
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def _cached_geoname(geonames_id):
     return cliff.geonames_lookup(geonames_id)
 

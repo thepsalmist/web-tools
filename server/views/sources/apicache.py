@@ -4,7 +4,7 @@ import operator
 import server.util.tags as tags
 from server import mc
 from server.auth import user_mediacloud_client, user_mediacloud_key
-from server.cache import cache, key_generator
+from server.cache import cache
 from server.util.api_helper import add_missing_dates_to_split_story_counts
 from server.views.sources import FEATURED_COLLECTION_LIST
 from server.views.stories import QUERY_LAST_MONTH
@@ -26,7 +26,7 @@ def featured_collections():
     return _cached_featured_collection_list()
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def _cached_featured_collection_list():
     return [mc.tag(tags_id) for tags_id in FEATURED_COLLECTION_LIST]
 
@@ -35,7 +35,7 @@ def collection_source_representation(mc_api_key, collection_id):
     return _cached_collection_source_representation(mc_api_key, collection_id)
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def _cached_collection_source_representation(mc_api_key, collection_id):
     # have to respect the api here here because only some folks can see private collections
     sample_size = 1000
@@ -61,7 +61,7 @@ def random_story_list(mc_api_key, q, fq=None, rows=1000):
     return _cached_random_story_list(q, fq, rows)
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def _cached_random_story_list(q, fq, rows):
     # sources are open to everyone, so no need for user-specific cache
     return mc.storyList(q, fq, rows=rows, sort=mc.SORT_RANDOM)
@@ -75,7 +75,7 @@ def timeperiod_story_count(user_mc, query, time_period):
     return _cached_timeperiod_story_count(query, time_period)
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def _cached_timeperiod_story_count(q='*', time_period=QUERY_LAST_MONTH):
     # sources are open to everyone, so no need for user-specific cache
     # Helper to fetch split story counts over a timeframe for an arbitrary query
@@ -84,7 +84,7 @@ def _cached_timeperiod_story_count(q='*', time_period=QUERY_LAST_MONTH):
     return results
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def _cached_last_year_split_story_count(q='*'):
     # sources are open to everyone, so no need for user-specific cache
     # Helper to fetch split story counts over a timeframe for an arbitrary query
@@ -103,7 +103,7 @@ def source_story_count(user_mc_key, query):
     return cached_source_story_count(query)
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def cached_source_story_count(query):
     # sources are open to everyone, so no need for user-specific cache
     user_mc = user_mediacloud_client()
@@ -116,7 +116,7 @@ def tag_coverage_pct(user_mc_key, query, tag_sets_id):
     return _cached_tag_coverage_pct(query, tag_sets_id)
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def _cached_tag_coverage_pct(query, tag_sets_id):
     user_mc = user_mediacloud_client()
     story_count = source_story_count(user_mediacloud_key(), query)

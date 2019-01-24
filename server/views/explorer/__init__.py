@@ -1,5 +1,5 @@
 import logging
-from server.cache import cache, key_generator
+from server.cache import cache
 import os
 import json
 from server import mc

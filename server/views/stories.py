@@ -9,7 +9,7 @@ from server import app, cliff, NYT_THEME_LABELLER_URL, mc
 from server.auth import user_mediacloud_client, user_admin_mediacloud_client
 from server.util.request import api_error_handler
 import server.util.csv as csv
-from server.cache import cache, key_generator
+from server.cache import cache
 
 QUERY_LAST_FEW_DAYS = "publish_date:[NOW-3DAY TO NOW]"
 QUERY_LAST_WEEK = "publish_date:[NOW-7DAY TO NOW]"
@@ -114,7 +114,7 @@ def entities_from_mc_or_cliff(stories_id):
     return unique_entities
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def cached_story_raw_cliff_results(stories_id):
     # need to pull story results with the tool key, so we don't need to cache on user key here
     themes = mc.storyRawCliffResults([stories_id])
@@ -150,7 +150,7 @@ def nyt_themes_from_mc_or_labeller(stories_id):
     return results
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def cached_story_raw_theme_results(stories_id):
     # have to use internal tool admin client here to fetch these (permissons)
     themes = mc.storyRawNytThemeResults([stories_id])[0]

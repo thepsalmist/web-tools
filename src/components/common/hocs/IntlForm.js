@@ -4,9 +4,8 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import Select from '@material-ui/core/Select';
-import AutoComplete from 'material-ui/AutoComplete';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import ReactSelect from 'react-select';
+import Autocomplete, { AsyncAutocomplete } from '../form/Autocomplete';
 
 /**
  * Helpful compositional wrapper for forms that want to use Material-UI, react-intl and redux-form.
@@ -103,34 +102,24 @@ function withIntlForm(Component) {
       );
     }
 
-    renderSimpleAutoComplete = ({ input, ...custom }) => {
+    renderAutocomplete = ({ input, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
       return (
-        <ReactSelect
+        <Autocomplete
           className="form-field-autocomplete"
-          {...custom}
-          onChange={value => input.onChange(value)}
+          onSelected={value => input.onChange(value)}
           {...intlCustom}
         />
       );
     }
 
-    renderAutoComplete = ({ input, meta: { touched, error }, onNewRequest: onNewRequestFunc, ...custom }) => {
+    renderAsyncAutocomplete = ({ input, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
       return (
-        <AutoComplete
+        <AsyncAutocomplete
           className="form-field-autocomplete"
-          {...input}
-          errorText={touched && (error ? this.intlIfObject(error) : null)}
-          onNewRequest={(currentValue, index) => {
-            if (onNewRequestFunc && typeof onNewRequestFunc === 'function') {
-              onNewRequestFunc(currentValue, index);
-            }
-            return input.onChange(intlCustom.dataSourceConfig ? currentValue[intlCustom.dataSourceConfig.value] : currentValue);
-          }}
+          onSelected={value => input.onChange(value)}
           {...intlCustom}
-          filter={AutoComplete.fuzzyFilter}
-          value={input.value}
         />
       );
     }
@@ -140,10 +129,10 @@ function withIntlForm(Component) {
         renderTextField: this.renderTextField,
         renderCheckbox: this.renderCheckbox,
         renderSelect: this.renderSelect,
-        renderAutoComplete: this.renderAutoComplete,
         renderTextFieldWithFocus: this.renderTextFieldWithFocus,
         renderNewAutoComplete: this.renderNewAutoComplete,
-        renderSimpleAutoComplete: this.renderSimpleAutoComplete,
+        renderAutocomplete: this.renderAutocomplete,
+        renderAsyncAutocomplete: this.renderAsyncAutocomplete,
       };
       return (
         <Component {...this.props} {...helpers} />

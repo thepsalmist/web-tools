@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { injectIntl } from 'react-intl';
 import messages from '../../resources/messages';
 import { intlIfObject } from '../../lib/stringUtil';
+import { intlMessageShape } from '../../lib/reactUtil';
 import { getAppName } from '../../config';
 
 const nameForApp = () => {
@@ -45,11 +46,6 @@ const PageTitle = (props) => {
       </title>
     </Helmet>
   );
-};
-
-const intlMessageShape = {
-  id: PropTypes.string.isRequired,
-  defaultMessage: PropTypes.string.isRequired,
 };
 
 PageTitle.propTypes = {

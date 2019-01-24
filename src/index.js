@@ -7,10 +7,6 @@ import ReactDOM from 'react-dom';
 import ReactGA from 'react-ga';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import { createMuiTheme } from '@material-ui/core/styles';
-// currently using old AutoComplete, keeping old theme in context
-import { MuiThemeProvider as V0MuiThemeProvider } from 'material-ui';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-//
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import Router from 'react-router/lib/Router';
@@ -95,26 +91,16 @@ function reallyInitializeApp(routes) {
     },
   });
 
-  const themeV0 = getMuiTheme({
-    fontFamily: 'Lato, sans',
-    palette: {
-      primary1Color: getBrandColors().dark,
-      accent1Color: getBrandColors().light,
-    },
-  });
-
   const renderApp = () => {
     ReactDOM.render(
       <MuiThemeProvider theme={muiTheme}>
-        <V0MuiThemeProvider muiTheme={themeV0}>
-          <Provider store={store}>
-            <IntlProvider locale={DEFAULT_LOCALE}>
-              <Router history={history} onUpdate={logPageView}>
-                {routes}
-              </Router>
-            </IntlProvider>
-          </Provider>
-        </V0MuiThemeProvider>
+        <Provider store={store}>
+          <IntlProvider locale={DEFAULT_LOCALE}>
+            <Router history={history} onUpdate={logPageView}>
+              {routes}
+            </Router>
+          </IntlProvider>
+        </Provider>
       </MuiThemeProvider>,
       document.getElementById(APP_DOM_ELEMENT_ID)
     );

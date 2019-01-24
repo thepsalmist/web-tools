@@ -32,6 +32,7 @@ import SnapshotGenerate from '../components/topic/snapshots/SnapshotGenerate';
 import ManageTimespansContainer from '../components/topic/snapshots/timespans/ManageTimespansContainer';
 import InfluentialWordsContainer from '../components/topic/words/InfluentialWordsContainer';
 import TopicStatusDashboardContainer from '../components/topic/list/TopicStatusDashboardContainer';
+import TopicSearchContainer from '../components/topic/search/TopicSearchContainer';
 
 const topicRoutes = (
   <Route path="/" component={TopicsApp}>
@@ -46,6 +47,8 @@ const topicRoutes = (
     <Route path="/topics/create" component={CreateTopicContainer} onEnter={requireAuth}>
       <Route path="/topics/create/:step" component={CreateTopicContainer} onEnter={requireAuth} />
     </Route>
+
+    <Route path="/topics/search" component={TopicSearchContainer} onEnter={requireAuth} />
 
     <Route path="/topics/status" component={TopicStatusDashboardContainer} onEnter={requireAuth} />
 

@@ -3,12 +3,6 @@
 .topic-list-container {
   margin-top: 20px;
 
-  .topic-preview-list-item {
-    .datacard {
-      margin-right: 0px;
-    }
-  }
-
   .label {
     margin-top: 15px;
     float: right;
@@ -44,4 +38,11 @@
 		}
   }
 
+}
+
+.topic-preview-list-item {
+  .datacard {
+    margin-right: 0px;
+  }
+  padding-bottom: 30px;
 }

@@ -15,6 +15,7 @@ from server.auth import user_admin_mediacloud_client, user_mediacloud_key, user_
 from server.util.request import json_error_response, form_fields_required, api_error_handler
 from server.views.sources.collection import allowed_file
 from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS
+import server.views.sources.apicache as apicache
 from server.util.csv import SOURCE_LIST_CSV_METADATA_PROPS
 from server.util.tags import VALID_METADATA_IDS, METADATA_PUB_COUNTRY_NAME, \
     format_name_from_label, tags_in_tag_set, media_with_tag
@@ -60,6 +61,7 @@ def collection_update(collection_id):
     tags = tags_to_add + tags_to_remove
     if len(tags) > 0:
         user_mc.tagMedia(tags)
+    apicache.invalidate_collection_source_representation_cache(user_mediacloud_key(), collection_id)
     return jsonify(updated_collection['tag'])
 
 
@@ -82,6 +84,8 @@ def remove_sources_from_collection(collection_id):
 
     if len(current_media) > 0:
         results = user_mc.tagMedia(current_media)
+
+    apicache.invalidate_collection_source_representation_cache(user_mediacloud_key(), collection_id)
     return jsonify(results)
 
 
@@ -155,7 +159,7 @@ def _parse_sources_from_csv_upload(filepath):
         for line in reader:
             try:
                 # python 2.7 csv module doesn't support unicode so have to do the decode/encode here for cleaned up val
-                updatedSrc = line['media_id'] not in ['', None]
+                updated_src = line['media_id'] not in ['', None]
                 # decode all keys as long as there is a key  re Unicode vs ascii
                 newline = {k.decode('utf-8', errors='replace').encode('ascii', errors='ignore').lower(): v for
                            k, v in list(line.items()) if k not in ['', None]}
@@ -165,13 +169,14 @@ def _parse_sources_from_csv_upload(filepath):
 
                 # source urls have to start with the http, so add it if the user didn't
                 if newline_decoded['url'][:7] not in ['http://', 'http://'] and \
-                                newline_decoded['url'][:8] not in ['https://', 'https://']:
+                        newline_decoded['url'][:8] not in ['https://', 'https://']:
                     newline_decoded['url'] = 'http://{}'.format(newline_decoded['url'])
 
                 # sources must have a name for updates
-                if updatedSrc:
+                if updated_src:
                     if 'name' not in newline_decoded:
-                        raise Exception("Missing name for source " + str(newline_decoded['media_id'] + " " + str(newline_decoded['url'])))
+                        raise Exception("Missing name for source " + str(newline_decoded['media_id'] + " " +
+                                                                         str(newline_decoded['url'])))
                     newline_decoded.update(empties)
                     sources_to_update.append(newline_decoded)
                 else:
@@ -201,7 +206,6 @@ def _create_media_worker(media_list):
 
 def _create_or_update_sources(source_list_from_csv, create_new):
     time_start = time.time()
-    user_mc = user_admin_mediacloud_client()
     successful = []
     errors = []
     # logger.debug("@@@@@@@@@@@@@@@@@@@@@@")
@@ -231,7 +235,7 @@ def _create_or_update_sources(source_list_from_csv, create_new):
 
         if use_pool:
             pool = Pool(processes=MEDIA_UPDATE_POOL_SIZE)  # process updates in parallel with worker function
-            creation_batched_responses = pool.map(_create_media_worker, media_to_create_batches)  # blocks until they are all done
+            creation_batched_responses = pool.map(_create_media_worker, media_to_create_batches)
         else:
             creation_batched_responses = [_create_media_worker(job) for job in
                                           media_to_create_batches]  # blocks until they are all done
@@ -262,7 +266,7 @@ def _create_or_update_sources(source_list_from_csv, create_new):
             pool = Pool(processes=MEDIA_UPDATE_POOL_SIZE)    # process updates in parallel with worker function
             update_responses = pool.map(_update_source_worker, sources_to_update)  # blocks until they are all done
         else:
-            update_responses = [_update_source_worker(job) for job in sources_to_update]  # blocks until they are all done
+            update_responses = [_update_source_worker(job) for job in sources_to_update]
 
         for idx, response in enumerate(update_responses):
             src = sources_to_update[idx]
@@ -339,7 +343,6 @@ def update_metadata_for_sources(source_list):
                 metadata_tag_name = source[mkey]
                 if metadata_tag_name not in ['', None]:
                     # hack until we have a better match check
-                    matching = []
                     if mkey == METADATA_PUB_COUNTRY_NAME:  # template pub_###
                         matching = [t for t in tag_codes if t['tag'] == 'pub_' + metadata_tag_name]
                     else:
@@ -354,9 +357,8 @@ def update_metadata_for_sources(source_list):
         chunks = [tags[x:x + 50] for x in range(0, len(tags), 50)]  # do 50 tags in each request
         use_pool = False
         if use_pool:
-            pool = Pool(processes=MEDIA_METADATA_UPDATE_POOL_SIZE )  # process updates in parallel with worker function
+            pool = Pool(processes=MEDIA_METADATA_UPDATE_POOL_SIZE)  # process updates in parallel with worker function
             pool.map(_tag_media_worker, chunks)  # blocks until they are all done
             pool.terminate()  # extra safe garbage collection
         else:
             [_tag_media_worker(job) for job in chunks]
-

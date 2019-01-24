@@ -29,11 +29,11 @@ const withFilteredAsyncData = (fetchAsyncData, propsToRefetchOn) => {
 
     let propsToListenTo = ['filters'];
     if (propsToRefetchOn) {
-      propsToListenTo = ['filters', ...propsToListenTo];
+      propsToListenTo = ['filters', ...propsToRefetchOn];
     }
 
     return connect(mapStateToProps)(
-      withAsyncData(fetchAsyncData, ['filters', ...propsToListenTo])(
+      withAsyncData(fetchAsyncData, propsToListenTo)(
         FilteredAsyncDataContainer
       )
     );

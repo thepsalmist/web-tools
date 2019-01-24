@@ -17,6 +17,7 @@ const localMessages = {
   downloadGexf: { id: 'topic.summary.mapDownload.download.gexf', defaultMessage: 'Download a .gexf file to use in Gephi' },
   downloadJson: { id: 'topic.summary.mapDownload.download.json', defaultMessage: 'Download a .json file to analyze with Python' },
   wordMap: { id: 'topic.summary.mapDownload.wordMap.header', defaultMessage: 'Word Map' },
+  wordMapDescription: { id: 'topic.summary.mapDownload.wordMap.wordMapDescription', defaultMessage: 'This is a network graph with two types of nodes - words and media sources.  The top media sources by inlink are included. Sources are linked to each other through words, clustering sources together based on the language they use.' },
   linkMap: { id: 'topic.summary.mapDownload.linkMap.header', defaultMessage: 'Link Map' },
   linkMapDownload: { id: 'topic.summary.mapDownload.linkMap.download', defaultMessage: 'Generate a .gexf link map.' },
   unsupported: { id: 'topic.summary.mapDownload.unsupported', defaultMessage: 'Sorry, but we can\'t generate link maps or word maps when you are using a query filter.  Remove your "{q}" query filter if you want to generate these maps.' },
@@ -62,6 +63,7 @@ const DownloadMapContainer = (props) => {
         <h3><FormattedMessage {...localMessages.linkMap} />:</h3>
         <p><LinkWithFilters to={`/topics/${topicId}/link-map`}><FormattedMessage {...localMessages.linkMapDownload} /></LinkWithFilters></p>
         <h3><FormattedMessage {...localMessages.wordMap} />:</h3>
+        <p><FormattedMessage {...localMessages.wordMapDescription} /></p>
         {wordMapContent}
       </React.Fragment>
     );

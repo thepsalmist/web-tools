@@ -225,17 +225,23 @@ export const AsyncAutocomplete = (props) => {
       },
     }),
   };
+  const otherProperties = { // let the caller override things as they desire
+    defaultValue: props.defaultValue || true,
+    cacheOptions: props.cacheOptions || true,
+    isDisabled: props.isDisabled || false,
+    isClearable: props.isClearable || false,
+  };
   return (
     <div className="autocomplete async-autocomplete" style={customStyles.root}>
       <AsyncSelect
         cacheOptions
         loadOptions={onLoadOptions}
-        defaultOptions
         classes={customStyles}
         style={selectStyles}
         components={components}
         placeholder={placeholder}
         onChange={onSelected}
+        {...otherProperties}
       />
     </div>
   );
@@ -244,6 +250,10 @@ AsyncAutocomplete.propTypes = {
   placeholder: PropTypes.string,
   onLoadOptions: PropTypes.func.isRequired,
   onSelected: PropTypes.func.isRequired,
+  defaultValue: PropTypes.object,
+  cacheOptions: PropTypes.array,
+  isDisabled: PropTypes.bool,
+  isClearable: PropTypes.bool,
 };
 
 export default Autocomplete;

@@ -20,31 +20,26 @@ const SourceMetadataForm = props => (
     <Row>
       <Col lg={4} xs={12}>
         <MetadataPickerContainer
-          autocomplete
-          isClearable
           id={TAG_SET_PUBLICATION_COUNTRY}
           name="publicationCountry"
           form="sourceForm"
           initialValues={props.initialValues.metadata ? props.initialValues.metadata.pub_country : null}
           label={props.intl.formatMessage(messages.pubCountry)}
+          async
         />
       </Col>
       <Col lg={4} xs={12}>
         <MetadataPickerContainer
-          autocomplete
-          isClearable
-          autocompleteHideOptions
           id={TAG_SET_PUBLICATION_STATE}
           name="publicationState"
           form="sourceForm"
           initialValues={props.initialValues.metadata ? props.initialValues.metadata.pub_state : null}
           label={props.intl.formatMessage(messages.pubState)}
+          async
         />
       </Col>
       <Col lg={4} xs={12}>
         <MetadataPickerContainer
-          autocomplete
-          isClearable
           id={TAG_SET_MEDIA_TYPE}
           name="mediaType"
           form="sourceForm"
@@ -57,20 +52,17 @@ const SourceMetadataForm = props => (
     <Row>
       <Col lg={4} xs={12}>
         <MetadataPickerContainer
-          autocomplete
-          isClearable
           id={TAG_SET_COUNTRY_OF_FOCUS}
           name="countryOfFocus"
           form="sourceForm"
           disabled
           initialValues={props.initialValues.metadata ? props.initialValues.metadata.about_country : null}
           label={props.intl.formatMessage(messages.countryOfFocus)}
+          async
         />
       </Col>
       <Col lg={4} xs={12}>
         <MetadataPickerContainer
-          autocomplete
-          isClearable
           id={TAG_SET_PRIMARY_LANGUAGE}
           name="primaryLanguage"
           form="sourceForm"

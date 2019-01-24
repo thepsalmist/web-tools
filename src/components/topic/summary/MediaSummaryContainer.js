@@ -7,6 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
+import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import MediaTable from '../MediaTable';
@@ -16,6 +17,7 @@ import Permissioned from '../../common/Permissioned';
 import { getUserRoles, hasPermissions, PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { DownloadButton } from '../../common/IconButton';
 import { filteredLinkTo, filtersAsUrlParams } from '../../util/location';
+import { HELP_SOURCES_CSV_COLUMNS } from '../../../lib/helpConstants';
 
 const localMessages = {
   title: { id: 'topic.summary.topMedia.title', defaultMessage: 'Top Media' },
@@ -36,9 +38,10 @@ class MediaSummaryContainer extends React.Component {
   }
 
   downloadCsv = () => {
-    const { topicId, filters, sort } = this.props;
+    const { topicId, filters, sort, notifyOfCsvDownload } = this.props;
     const url = `/api/topics/${topicId}/media.csv?${filtersAsUrlParams(filters)}&sort=${sort}`;
     window.location = url;
+    notifyOfCsvDownload(HELP_SOURCES_CSV_COLUMNS);
   }
 
   downloadLinkCsv = () => {
@@ -85,6 +88,7 @@ class MediaSummaryContainer extends React.Component {
 MediaSummaryContainer.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
+  notifyOfCsvDownload: PropTypes.func.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
@@ -127,10 +131,12 @@ const fetchAsyncData = (dispatch, props) => {
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withSummary(localMessages.title, localMessages.descriptionIntro, localMessages.description)(
-      withFilteredAsyncData(fetchAsyncData, ['sort'])( // refetch data if sort property has changed
-        MediaSummaryContainer
-      ),
+    withSummary(localMessages.title, localMessages.descriptionIntro, localMessages.description, true)(
+      withCsvDownloadNotifyContainer(
+        withFilteredAsyncData(fetchAsyncData, ['sort'])( // refetch data if sort property has changed
+          MediaSummaryContainer
+        ),
+      )
     )
   )
 );

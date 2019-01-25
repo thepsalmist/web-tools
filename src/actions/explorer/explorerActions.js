@@ -176,3 +176,6 @@ export const copyAndReplaceQueryField = createAction(COPY_AND_REPLACE_QUERY_FIEL
 
 export const SELECT_EXPLORER_TIME_AGGREGATE = 'SELECT_EXPLORER_TIME_AGGREGATE';
 export const selectExplorerTimeAggregate = createAction(SELECT_EXPLORER_TIME_AGGREGATE, timeperiod => timeperiod);
+
+export const COUNT_SOURCE_COLLECITON_USAGE = 'COUNT_SOURCE_COLLECITON_USAGE';
+export const countSourceCollectionUsage = createAction(COUNT_SOURCE_COLLECITON_USAGE, api.countSourceCollectionUsage, params => params);

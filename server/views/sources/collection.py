@@ -7,7 +7,7 @@ from flask import jsonify, request
 from mediacloud.tags import MediaTag, TAG_ACTION_ADD
 
 import server.util.csv as csv
-from server import app, mc, db
+from server import app, mc, user_db, analytics_db
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client, user_name,\
     user_has_auth_role, ROLE_MEDIA_EDIT
 from server.util.request import arguments_required, form_fields_required, api_error_handler
@@ -117,9 +117,9 @@ def collection_set_favorited(collection_id):
     favorite = request.form["favorite"]
     username = user_name()
     if int(favorite) == 1:
-        db.add_item_to_users_list(username, 'favoriteCollections', int(collection_id))
+        user_db.add_item_to_users_list(username, 'favoriteCollections', int(collection_id))
     else:
-        db.remove_item_from_users_list(username, 'favoriteCollections', int(collection_id))
+        user_db.remove_item_from_users_list(username, 'favoriteCollections', int(collection_id))
     return jsonify({'isFavorite': favorite})
 
 
@@ -139,6 +139,7 @@ def api_collection_details(collection_id):
     if add_in_sources:
         media_in_collection = media_with_tag(user_mediacloud_key(), collection_id)
         info['sources'] = media_in_collection
+    analytics_db.increment_count(analytics_db.TYPE_COLLECTION, collection_id, analytics_db.ACTION_SOURCE_MGR_VIEW)
     return jsonify({'results': info})
 
 

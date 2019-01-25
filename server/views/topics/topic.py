@@ -5,7 +5,7 @@ from multiprocessing import Pool
 from functools import partial
 from deco import concurrent, synchronized
 
-from server import app, db, mc
+from server import app, user_db, mc
 from server.util.stringutil import ids_from_comma_separated_str
 from server.util.request import form_fields_required, arguments_required, api_error_handler
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client, user_name, is_user_logged_in
@@ -41,7 +41,7 @@ def does_user_have_a_running_topic():
 @api_error_handler
 def topic_favorites():
     user_mc = user_mediacloud_client()
-    favorite_topic_ids = db.get_users_lists(user_name(), 'favoriteTopics')
+    favorite_topic_ids = user_db.get_users_lists(user_name(), 'favoriteTopics')
     favorited_topics = [user_mc.topic(tid) for tid in favorite_topic_ids]
     for t in favorited_topics:
         t['isFavorite'] = True
@@ -119,7 +119,7 @@ def _topic_summary(topics_id):
 
 
 def _add_user_favorite_flag_to_topics(topics):
-    user_favorited = db.get_users_lists(user_name(), 'favoriteTopics')
+    user_favorited = user_db.get_users_lists(user_name(), 'favoriteTopics')
     for t in topics:
         t['isFavorite'] = t['topics_id'] in user_favorited
     return topics
@@ -183,9 +183,9 @@ def topic_set_favorited(topics_id):
     favorite = int(request.form["favorite"])
     username = user_name()
     if favorite == 1:
-        db.add_item_to_users_list(username, 'favoriteTopics', int(topics_id))
+        user_db.add_item_to_users_list(username, 'favoriteTopics', int(topics_id))
     else:
-        db.remove_item_from_users_list(username, 'favoriteTopics', int(topics_id))
+        user_db.remove_item_from_users_list(username, 'favoriteTopics', int(topics_id))
     return jsonify({'isFavorite': favorite == 1})
 
 

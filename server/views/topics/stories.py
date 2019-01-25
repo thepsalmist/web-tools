@@ -7,6 +7,7 @@ from flask import jsonify, request, Response
 import server.util.csv as csv
 import server.util.tags as tag_util
 import server.views.topics.apicache as apicache
+import server.views.apicache as base_apicache
 from server import app, cliff, TOOL_API_KEY
 from server.auth import is_user_logged_in
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
@@ -256,7 +257,7 @@ def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
 
 
 def _media_info_worker(info):
-    return apicache.get_media(info['user_key'], info['media_id'])
+    return base_apicache.get_media(info['user_key'], info['media_id'])
 
 
 # generator you can use to do something for each page of story results

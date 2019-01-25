@@ -1,16 +1,13 @@
 import datetime
 import logging
-from pymongo import MongoClient
-from bson.objectid import ObjectId
+from pymongo import MongoClient, DESCENDING
 
 logger = logging.getLogger(__name__)
 
 
 class AppDatabase:
-    '''
-    DB wrapper for accessing local storge that supports the app.
-    In theory this makes switching out storage backends easier, by gauranteeing _conn is private.
-    '''
+    # DB wrapper for accessing local storge that supports the app.
+    # In theory this makes switching out storage backends easier, by gauranteeing _conn is private.
 
     def __init__(self, db_uri):
         self.uri = db_uri
@@ -21,6 +18,10 @@ class AppDatabase:
 
     def check_connection(self):
         return self._conn.test.insert({'dummy': 'test'})
+
+
+class UserDatabase(AppDatabase):
+    # DB access for maintaining user-related data; one document per user
 
     def includes_user_named(self, username):
         return self.find_by_username(username) is not None
@@ -61,3 +62,26 @@ class AppDatabase:
 
     def update_user(self, username, values_to_update):
         return self._conn.users.update_one({'username': username}, {'$set': values_to_update})
+
+
+class AnalyticsDatabase(AppDatabase):
+    # DB access for maintaining user-related data; one document per user
+
+    TYPE_MEDIA = 'media'
+    TYPE_COLLECTION = 'collection'
+
+    ACTION_SOURCE_MGR_VIEW = 'sources-view'
+    ACTION_EXPLORER_QUERY = 'explorer-query'
+
+    def increment_count(self, the_type, the_id, the_action, amount=1):
+        # type - media | collection
+        # id - media_id | tags_id
+        # action - explorer-query | sources-view | topics-usage
+        return self._conn.analytics.update_one(
+            {'type': the_type, 'id': int(the_id)},
+            {'$inc': {the_action: amount}},
+            upsert=True
+        )
+
+    def top(self, the_type, the_action, limit=50):
+        return self._conn.analytics.find({'type': the_type}).sort(the_action, DESCENDING).limit(limit)

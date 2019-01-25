@@ -1,7 +1,7 @@
 import logging
 from flask import jsonify, request
 import flask_login
-from server import app, TOOL_API_KEY
+from server import app
 from server.util.request import api_error_handler
 import server.views.explorer.apicache as apicache
 from server.views.explorer import parse_query_with_keywords
@@ -26,13 +26,13 @@ def api_explorer_sentences_list():
     return jsonify({'results': results})
 
 
-'''
-Turn a sentence into a sentence fragment, including just the 5 words before and after the keyword we are looking at.
-We do this to enforce our rule that full sentences (even without metadata) never leave our servers).
-Warning: this makes simplistic assumptions about word tokenization
-::return:: a sentence fragment around keyword, or None if keyword can't be found
-'''
 def _sentence_fragment_around(keyword, sentence):
+    """
+    Turn a sentence into a sentence fragment, including just the 5 words before and after the keyword we are looking at.
+    We do this to enforce our rule that full sentences (even without metadata) never leave our servers).
+    Warning: this makes simplistic assumptions about word tokenization
+    :return: a sentence fragment around keyword, or None if keyword can't be found
+    """
     try:
         words = sentence.split()  # super naive, but works ok
         keyword_index = None
@@ -49,5 +49,3 @@ def _sentence_fragment_around(keyword, sentence):
         return " ".join(fragment_words)
     except ValueError:
         return None
-
-

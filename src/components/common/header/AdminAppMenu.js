@@ -14,6 +14,7 @@ const localMessages = {
   home: { id: 'tools.menu.items.home', defaultMessage: 'Home' },
   userManagement: { id: 'tools.menu.items.listTopics', defaultMessage: 'Manage Users' },
   storyView: { id: 'tools.menu.items.stories', defaultMessage: 'Manage Stories' },
+  analytics: { id: 'tools.menu.items.analytics', defaultMessage: 'Analytics' },
 };
 
 const AdminAppMenu = props => (
@@ -29,6 +30,9 @@ const AdminAppMenu = props => (
         </MenuItem>
         <MenuItem onClick={() => { props.handleItemClick('admin/story/details', true); }}>
           <FormattedMessage {...localMessages.storyView} />
+        </MenuItem>
+        <MenuItem onClick={() => { props.handleItemClick('admin/analytics?type=collection&action=explorer-query', true); }}>
+          <FormattedMessage {...localMessages.analytics} />
         </MenuItem>
       </Menu>
     )}

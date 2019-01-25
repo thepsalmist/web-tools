@@ -7,16 +7,11 @@ import ReactDOM from 'react-dom';
 import ReactGA from 'react-ga';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import { createMuiTheme } from '@material-ui/core/styles';
-// currently using old AutoComplete, keeping old theme in context
-import { MuiThemeProvider as V0MuiThemeProvider } from 'material-ui';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-//
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import Router from 'react-router/lib/Router';
 import hashHistory from 'react-router/lib/hashHistory';
 import { syncHistoryWithStore } from 'react-router-redux';
-import injectTapEventPlugin from 'react-tap-event-plugin';
 import Raven from 'raven-js';
 import { loginWithCookie } from './actions/userActions';
 import getStore from './store';
@@ -27,9 +22,6 @@ const APP_DOM_ELEMENT_ID = 'app';
 const DEFAULT_LOCALE = 'en';
 
 function reallyInitializeApp(routes) {
-  // necessary lines for Material-UI library to work
-  injectTapEventPlugin();
-
   const store = getStore(getAppName());
 
   // Create an enhanced history that syncs navigation events with the store
@@ -43,6 +35,9 @@ function reallyInitializeApp(routes) {
     }
   };
   const muiTheme = createMuiTheme({
+    typography: {
+      useNextVariants: true,
+    },
     palette: {
       primary: getBrandColors(),
       secondary: getBrandColors(),
@@ -58,7 +53,7 @@ function reallyInitializeApp(routes) {
     overrides: { // Name of the component ⚛️ / style sheet
       MuiButton: {
         root: {
-          padding: '0px 16px',
+          padding: '5px 16px',
         },
         containedPrimary: {
           color: 'white',
@@ -81,7 +76,7 @@ function reallyInitializeApp(routes) {
         // paperWidth: '80%',
       },
       MuiTypography: {
-        title: {
+        h6: {
           fontFamily: 'Lato, Helvetica, sans',
         },
       },
@@ -96,26 +91,16 @@ function reallyInitializeApp(routes) {
     },
   });
 
-  const themeV0 = getMuiTheme({
-    fontFamily: 'Lato, sans',
-    palette: {
-      primary1Color: getBrandColors().dark,
-      accent1Color: getBrandColors().light,
-    },
-  });
-
   const renderApp = () => {
     ReactDOM.render(
       <MuiThemeProvider theme={muiTheme}>
-        <V0MuiThemeProvider muiTheme={themeV0}>
-          <Provider store={store}>
-            <IntlProvider locale={DEFAULT_LOCALE}>
-              <Router history={history} onUpdate={logPageView}>
-                {routes}
-              </Router>
-            </IntlProvider>
-          </Provider>
-        </V0MuiThemeProvider>
+        <Provider store={store}>
+          <IntlProvider locale={DEFAULT_LOCALE}>
+            <Router history={history} onUpdate={logPageView}>
+              {routes}
+            </Router>
+          </IntlProvider>
+        </Provider>
       </MuiThemeProvider>,
       document.getElementById(APP_DOM_ELEMENT_ID)
     );

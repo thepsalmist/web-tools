@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { injectIntl } from 'react-intl';
 import messages from '../../resources/messages';
 import { intlIfObject } from '../../lib/stringUtil';
+import { intlMessageShape } from '../../lib/reactUtil';
 import { getAppName } from '../../config';
 
 const nameForApp = () => {
@@ -47,18 +48,15 @@ const PageTitle = (props) => {
   );
 };
 
-const intlMessageShape = {
-  id: PropTypes.string.isRequired,
-  defaultMessage: PropTypes.string.isRequired,
-};
-
 PageTitle.propTypes = {
   // from parent
   value: PropTypes.oneOfType([
-    PropTypes.string, // pass in a formatted string to use as the page title
-    PropTypes.arrayOf(PropTypes.string), // or an array of strings
-    PropTypes.shape(intlMessageShape), // or pass in a message to be formatted
-    PropTypes.arrayOf(PropTypes.shape(intlMessageShape)), // or an array of messages to be formatted
+    // pass in a formatted string to use as the page title
+    PropTypes.string,
+    // or a mix of strings and intl msg objects
+    PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.shape(intlMessageShape)])),
+    // or pass in a message to be formatted
+    PropTypes.shape(intlMessageShape),
   ]),
   // from compositional chain
   intl: PropTypes.object,

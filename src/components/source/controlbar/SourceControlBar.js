@@ -11,10 +11,10 @@ const SourceControlBar = props => (
     <div className="main">
       <Grid>
         <Row>
-          <Col lg={(props.showSearch === true) ? 6 : 12} xs={12} className="left">
+          <Col lg={(props.showSearch === true) ? 7 : 12} xs={12} className="left">
             {props.children}
           </Col>
-          <Col lg={6} xs={12} className="right">
+          <Col lg={5} xs={12} className="right">
             {(props.showSearch === true) && (
               <SourceSearchContainer
                 onAdvancedSearchSelected={props.handleAdvancedSearchSelected}
@@ -46,10 +46,10 @@ const mapStateToProps = () => ({
 
 const mapDispatchToProps = dispatch => ({
   handleMediaSourceSelected: (item) => {
-    dispatch(push(`/sources/${item.id}`));
+    dispatch(push(`/sources/${item.value}`));
   },
   handleCollectionSelected: (item) => {
-    dispatch(push(`/collections/${item.id}`));
+    dispatch(push(`/collections/${item.value}`));
   },
   handleAdvancedSearchSelected: (searchStr) => {
     dispatch(push(`/search?search=${searchStr}`));

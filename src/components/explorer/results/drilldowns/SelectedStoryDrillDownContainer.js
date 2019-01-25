@@ -64,7 +64,10 @@ class SelectedStoryDrillDownContainer extends React.Component {
               <Col lg={12}>
                 <div className="actions">
                   <Permissioned onlyRole={PERMISSION_ADMIN}>
-                    <AppButton variant="outlined" onClick={() => handleStoryManageClick(selectedStory)}><FormattedMessage {...localMessages.goToManageStory} /></AppButton>
+                    <AppButton
+                      onClick={() => handleStoryManageClick(selectedStory)}
+                      label={localMessages.goToManageStory}
+                    />
                   </Permissioned>
                   <CloseButton onClick={handleClose} />
                 </div>

@@ -6,8 +6,8 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from mediacloud.tags import MediaTag, TAG_ACTION_ADD, TAG_ACTION_REMOVE
 
-from server import app, db
-from server.cache import cache, key_generator
+from server import app, user_db, analytics_db
+from server.cache import cache
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_name, user_has_auth_role, ROLE_MEDIA_EDIT
 from server.util.request import arguments_required, form_fields_required, api_error_handler
 from server.util.tags import TAG_SETS_ID_PUBLICATION_COUNTRY, TAG_SETS_ID_PUBLICATION_STATE, VALID_COLLECTION_TAG_SETS_IDS, \
@@ -46,9 +46,9 @@ def source_set_favorited(media_id):
     favorite = request.form["favorite"]
     username = user_name()
     if int(favorite) == 1:
-        db.add_item_to_users_list(username, 'favoriteSources', int(media_id))
+        user_db.add_item_to_users_list(username, 'favoriteSources', int(media_id))
     else:
-        db.remove_item_from_users_list(username, 'favoriteSources', int(media_id))
+        user_db.remove_item_from_users_list(username, 'favoriteSources', int(media_id))
     return jsonify({'isFavorite': favorite})
 
 
@@ -80,7 +80,7 @@ def source_stats(media_id):
     return jsonify(results)
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def _cached_media_source_health(user_mc_key, media_id):
     user_mc = user_admin_mediacloud_client()
     results = None
@@ -136,6 +136,7 @@ def api_media_source_details(media_id):
         info['scrape_status'] = None
     add_user_favorite_flag_to_sources([info])
     add_user_favorite_flag_to_collections(info['media_source_tags'])
+    analytics_db.increment_count(analytics_db.TYPE_MEDIA, media_id, analytics_db.ACTION_SOURCE_MGR_VIEW)
     return jsonify(info)
 
 

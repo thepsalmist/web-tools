@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
-import FlatButton from 'material-ui/FlatButton';
+import AppButton from '../../common/AppButton';
 import { googleFavIconUrl, storyDomainName } from '../../../lib/urlUtil';
 import { trimToMaxLength } from '../../../lib/stringUtil';
 
@@ -82,14 +82,14 @@ class StoryFeedbackRow extends React.Component {
         <Col lg={4}>
           <Row>
             <Col lg={6}>
-              <FlatButton
+              <AppButton
                 className={`match-btn${this.state.selection === selectionOptions.match ? '-selected' : ''}`}
                 label={formatMessage(localMessages.yesLabel)}
                 onClick={this.handleMatch}
               />
             </Col>
             <Col lg={6}>
-              <FlatButton
+              <AppButton
                 className={`not-match-btn${this.state.selection === selectionOptions.notMatch ? '-selected' : ''}`}
                 label={formatMessage(localMessages.noLabel)}
                 onClick={this.handleNotAMatch}

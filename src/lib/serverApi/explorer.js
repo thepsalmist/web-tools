@@ -176,3 +176,8 @@ export function fetchDemoQueryTopThemes(params) {
   const acceptedParams = acceptParams(params, ['index', 'search_id', 'query_id', 'q']);
   return createApiPromise('/api/explorer/demo/themes', acceptedParams);
 }
+
+export function countSourceCollectionUsage(params) {
+  const acceptedParams = acceptParams(params, ['sources', 'collections']);
+  return createApiPromise('/api/explorer/count-stats', acceptedParams);
+}

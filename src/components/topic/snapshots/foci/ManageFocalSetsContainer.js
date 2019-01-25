@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import Link from 'react-router/lib/Link';
-import withAsyncFetch from '../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AppButton from '../../../common/AppButton';
 import ConfirmationDialog from '../../../common/ConfirmationDialog';
 import { fetchFocalSetDefinitions, deleteFocalSetDefinition, deleteFocusDefinition, setTopicNeedsNewSnapshot }
@@ -34,23 +34,23 @@ class ManageFocalSetsContainer extends React.Component {
     idToRemove: null,
   };
 
+  onFocusDefinitionDelete = (focusDef) => {
+    const { topicId, handleDeleteFocusDefinition } = this.props;
+    handleDeleteFocusDefinition(topicId, focusDef.focus_definitions_id);
+  }
+
+  onCancelDeleteFocalSetDefinition = () => {
+    this.setState({ removeDialogOpen: false, idToRemove: null });
+  }
+
+  onDeleteFocalSetDefinition = () => {
+    const { topicId, handleDeleteFocalSetDefinition } = this.props;
+    handleDeleteFocalSetDefinition(topicId, this.state.idToRemove);
+    this.setState({ removeDialogOpen: false, idToRemove: null });
+  }
+
   handleDelete = (focalSetDef) => {
     this.setState({ removeDialogOpen: true, idToRemove: focalSetDef.focal_set_definitions_id });
-  }
-
-  actuallyDelete = () => {
-    const { handleFocalSetDefinitionDelete } = this.props;
-    handleFocalSetDefinitionDelete(this.state.idToRemove);
-    this.setState({ removeDialogOpen: false, idToRemove: null });
-  }
-
-  doNotActuallyDelete = () => {
-    this.setState({ removeDialogOpen: false, idToRemove: null });
-  }
-
-  handleFocusDefinitionDelete = (focusDef) => {
-    const { handleFocusDefinitionDelete } = this.props;
-    handleFocusDefinitionDelete(focusDef.focus_definitions_id);
   }
 
   render() {
@@ -61,8 +61,8 @@ class ManageFocalSetsContainer extends React.Component {
         open={this.state.removeDialogOpen}
         title={formatMessage(localMessages.removeFocalSetTitle)}
         okText={formatMessage(localMessages.removeOk)}
-        onCancel={this.doNotActuallyDelete}
-        onOk={this.actuallyDelete}
+        onCancel={this.onCancelDeleteFocalSetDefinition}
+        onOk={this.onDeleteFocalSetDefinition}
       >
         <FormattedHTMLMessage {...localMessages.removeFocalSetAbout} />
       </ConfirmationDialog>
@@ -91,7 +91,7 @@ class ManageFocalSetsContainer extends React.Component {
                     key={focalSetDef.focal_set_definitions_id}
                     focalSetDefinition={focalSetDef}
                     onDelete={this.handleDelete}
-                    onFocusDefinitionDelete={this.handleFocusDefinitionDelete}
+                    onFocusDefinitionDelete={this.onFocusDefinitionDelete}
                     topicId={topicId}
                   />
                 ))}
@@ -122,9 +122,8 @@ ManageFocalSetsContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   focalSetDefinitions: PropTypes.array.isRequired,
   // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  handleFocalSetDefinitionDelete: PropTypes.func.isRequired,
-  handleFocusDefinitionDelete: PropTypes.func.isRequired,
+  handleDeleteFocalSetDefinition: PropTypes.func.isRequired,
+  handleDeleteFocusDefinition: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -133,29 +132,26 @@ const mapStateToProps = (state, ownProps) => ({
   fetchStatus: state.topics.selected.focalSets.definitions.fetchStatus,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchData: (topicId) => {
-    dispatch(fetchFocalSetDefinitions(topicId));
-  },
-  removeFocalSetDefinition: (topicId, focalSetDefinitionId, succeededMessage, failedMessage) => {
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  handleDeleteFocalSetDefinition: (topicId, focalSetDefinitionId) => {
     dispatch(deleteFocalSetDefinition(topicId, focalSetDefinitionId))
       .then((results) => {
         if (results.success === 0) {
-          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: failedMessage }));
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.removeFocalSetFailed) }));
         } else {
-          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: succeededMessage }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.removeFocalSetSucceeded) }));
           dispatch(setTopicNeedsNewSnapshot(true));
           dispatch(fetchFocalSetDefinitions(topicId));
         }
       });
   },
-  removeFocusDefinition: (topicId, focusDefinitionId, succeededMessage, failedMessage) => {
+  handleDeleteFocusDefinition: (topicId, focusDefinitionId) => {
     dispatch(deleteFocusDefinition(topicId, focusDefinitionId))
       .then((results) => {
         if (results.success === 0) {
-          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: failedMessage }));
+          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.removeFocusFailed) }));
         } else {
-          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: succeededMessage }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.removeFocusSucceeded) }));
           dispatch(setTopicNeedsNewSnapshot(true));
           dispatch(fetchFocalSetDefinitions(topicId));
         }
@@ -163,28 +159,14 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(stateProps.topicId);
-    },
-    handleFocalSetDefinitionDelete: (focalSetDefinitionId) => {
-      dispatchProps.removeFocalSetDefinition(stateProps.topicId, focalSetDefinitionId,
-        ownProps.intl.formatMessage(localMessages.removeFocalSetSucceeded),
-        ownProps.intl.formatMessage(localMessages.removeFocalSetFailed));
-    },
-    handleFocusDefinitionDelete: (focusDefinitionId) => {
-      dispatchProps.removeFocusDefinition(stateProps.topicId, focusDefinitionId,
-        ownProps.intl.formatMessage(localMessages.removeFocusSucceeded),
-        ownProps.intl.formatMessage(localMessages.removeFocusFailed));
-    },
-  });
-}
+const fetchAsyncData = (dispatch, { topicId }) => {
+  dispatch(fetchFocalSetDefinitions(topicId));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncData(fetchAsyncData)(
       ManageFocalSetsContainer
     )
   )

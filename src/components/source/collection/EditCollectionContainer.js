@@ -5,13 +5,12 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { updateCollection, fetchCollectionDetails, fetchCollectionSourceList } from '../../../actions/sourceActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { updateFeedback } from '../../../actions/appActions';
 import CollectionForm from './form/CollectionForm';
 import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import Permissioned from '../../common/Permissioned';
 import { nullOrUndefined } from '../../../lib/formValidators';
-import FETCH_SUCCEEDED from '../../../lib/fetchConstants';
 import PageTitle from '../../common/PageTitle';
 import messages from '../../../resources/messages';
 
@@ -66,8 +65,8 @@ EditCollectionContainer.propTypes = {
   sources: PropTypes.array,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  collectionId: parseInt(ownProps.params.collectionId, 10),
+const mapStateToProps = state => ({
+  collectionId: state.sources.collections.selected.id,
   collection: state.sources.collections.selected.collectionDetails.object,
   sources: state.sources.collections.selected.collectionSourceList.sources,
   fetchStatus: state.sources.collections.selected.collectionSourceList.fetchStatus,
@@ -98,25 +97,18 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           });
       });
   },
-  fetchData: (collectionId) => {
-    dispatch(fetchCollectionSourceList(collectionId));
-  },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      if (stateProps.fetchStatus !== FETCH_SUCCEEDED) {
-        dispatchProps.fetchData(stateProps.collectionId);
-      }
-    },
-  });
-}
+const fetchAsyncData = (dispatch, { collectionId }) => {
+  if (collectionId) {
+    dispatch(fetchCollectionSourceList(collectionId));
+  }
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncData(fetchAsyncData)(
       EditCollectionContainer
     )
   ),

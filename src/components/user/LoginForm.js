@@ -63,20 +63,14 @@ const LoginForm = (props) => {
       <Row>
         <Col lg={12}>
           <Link to="/user/signup">
-            <AppButton
-              variant="outlined"
-              label={formatMessage(localMessages.signUpNow)}
-            />
+            <AppButton label={formatMessage(localMessages.signUpNow)} />
           </Link>
         </Col>
       </Row>
       <Row>
         <Col lg={12}>
           <Link to="/user/request-password-reset">
-            <AppButton
-              variant="outlined"
-              label={formatMessage(localMessages.forgotPassword)}
-            />
+            <AppButton label={formatMessage(localMessages.forgotPassword)} />
           </Link>
         </Col>
       </Row>

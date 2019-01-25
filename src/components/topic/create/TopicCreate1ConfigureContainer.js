@@ -5,7 +5,7 @@ import { push } from 'react-router-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import withIntlForm from '../../common/hocs/IntlForm';
 import TopicForm, { TOPIC_FORM_MODE_CREATE } from './TopicForm';
 import { goToCreateTopicStep } from '../../../actions/topicActions';
@@ -58,17 +58,17 @@ TopicCreate1ConfigureContainer.propTypes = {
   // from parent
   location: PropTypes.object.isRequired,
   initialValues: PropTypes.object,
+  currentStep: PropTypes.number,
   // form composition
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   pristine: PropTypes.bool,
   submitting: PropTypes.bool,
   // from state
-  currentStep: PropTypes.number,
   formData: PropTypes.object,
   user: PropTypes.object,
-  maxStories: PropTypes.number,
   fetchStatus: PropTypes.string.isRequired,
+  maxStories: PropTypes.number,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
   handleMediaChange: PropTypes.func.isRequired,
@@ -96,18 +96,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     ownProps.change('sourcesAndCollections', selectedMedia); // redux-form change action
   },
   handleMediaDelete: () => null, // in create mode we don't need to update the values
-  fetchUserInfo: (userid) => {
-    dispatch(fetchSystemUser(userid));
-  },
 });
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchUserInfo(stateProps.user.profile.auth_users_id);
-    },
-  });
-}
 
 const reduxFormConfig = {
   form: 'topicForm',
@@ -115,12 +104,15 @@ const reduxFormConfig = {
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
 };
 
+// gotta fetch the user info here to make sure we have the `maxStories` configured on them
+const fetchAsyncData = (dispatch, { user }) => dispatch(fetchSystemUser(user.profile.auth_users_id));
+
 export default
 injectIntl(
   withIntlForm(
     reduxForm(reduxFormConfig)(
-      connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-        withAsyncFetch(
+      connect(mapStateToProps, mapDispatchToProps)(
+        withAsyncData(fetchAsyncData)(
           TopicCreate1ConfigureContainer
         )
       )

@@ -7,7 +7,7 @@ import json
 from server import app, mc
 import server.util.csv as csv
 from server.auth import is_user_logged_in, user_mediacloud_key, user_mediacloud_client
-from server.cache import cache, key_generator
+from server.cache import cache
 from server.util.request import api_error_handler
 from server.util.geo import COUNTRY_GEONAMES_ID_TO_APLHA3, HIGHCHARTS_KEYS
 import server.util.tags as tags

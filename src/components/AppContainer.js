@@ -91,7 +91,6 @@ class AppContainer extends React.Component {
           message={feedback.message}
           action={feedback.action}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          // onClick={feedback.onActionClick}
           autoHideDuration={5000}
         />
       </div>

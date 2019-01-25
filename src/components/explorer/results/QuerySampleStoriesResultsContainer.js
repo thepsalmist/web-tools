@@ -46,9 +46,13 @@ class QuerySampleStoriesResultsContainer extends React.Component {
     const { results, queries, selectedTabIndex, tabSelector, internalItemSelected } = this.props;
     const showMoreInfoColHdr = <th />;
     const showMoreInfoCol = story => (
-      <td><AppButton variant="outlined" onClick={() => this.onStorySelection(story)}><FormattedMessage {...localMessages.showMetadata} /></AppButton></td>
+      <td>
+        <AppButton
+          onClick={() => this.onStorySelection(story)}
+          label={localMessages.showMetadata}
+        />
+      </td>
     );
-
     if (results && results.length > 0) {
       const safeResults = results[selectedTabIndex].results ? results[selectedTabIndex].results.slice(0, 10) : [];
       return (

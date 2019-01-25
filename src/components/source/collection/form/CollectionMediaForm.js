@@ -141,20 +141,29 @@ class SourceSelectionRendererRaw extends React.Component {
     }
     const firstTab = (
       <TabContainer text={localMessages.tabSource} intro={localMessages.tabSourceIntro}>
-        <SourceSearchContainer
-          searchCollections={false}
-          onMediaSourceSelected={item => this.addSources([item])}
-          maxSources={12}
-        />
+        <Row>
+          <Col lg={6}>
+            <SourceSearchContainer
+              searchCollections={false}
+              onMediaSourceSelected={item => this.addSources([item])}
+              maxSources={30}
+            />
+          </Col>
+        </Row>
       </TabContainer>
     );
     const secondTab = (
       <TabContainer text={localMessages.tabCollection} intro={localMessages.tabCollectionIntro}>
-        <SourceSearchContainer
-          searchSources={false}
-          onCollectionSelected={c => this.pickCollectionToCopy(c.tags_id)}
-        />
-        {copyConfirmation}
+        <Row>
+          <Col lg={6}>
+            <SourceSearchContainer
+              searchSources={false}
+              onCollectionSelected={c => this.pickCollectionToCopy(c.tags_id)}
+              maxSources={30}
+            />
+            {copyConfirmation}
+          </Col>
+        </Row>
       </TabContainer>
     );
     const thirdTab = (

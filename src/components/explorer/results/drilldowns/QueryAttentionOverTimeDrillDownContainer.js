@@ -5,29 +5,13 @@ import { connect } from 'react-redux';
 import { fetchQueryPerDateTopWords, fetchDemoQueryPerDateTopWords, fetchQueryPerDateSampleStories,
   fetchDemoQueryPerDateSampleStories, resetQueriesPerDateTopWords, resetQueriesPerDateSampleStories,
   resetSentenceDataPoint } from '../../../../actions/explorerActions';
-import withAsyncFetch from '../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import QueryAttentionOverTimeDrillDownDataCard from './QueryAttentionOverTimeDrillDownDataCard';
-import LoadingSpinner from '../../../common/LoadingSpinner';
 
 class QueryAttentionOverTimeDrillDownContainer extends React.Component {
   constructor(props) {
     super(props);
     this.rootRef = React.createRef();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { lastSearchTime, fetchData, dataPoint } = this.props;
-    if ((nextProps.lastSearchTime !== lastSearchTime
-      || nextProps.dataPoint !== dataPoint) && nextProps.dataPoint !== null) {
-      fetchData(nextProps.dataPoint);
-    }
-  }
-
-  shouldComponentUpdate(nextProps) {
-    const { dataPoint, words, stories } = this.props;
-    return (nextProps.dataPoint !== dataPoint
-      || nextProps.words !== words
-      || nextProps.stories !== stories);
   }
 
   componentDidUpdate() {
@@ -40,29 +24,18 @@ class QueryAttentionOverTimeDrillDownContainer extends React.Component {
 
   render() {
     const { words, handleClose, stories, dataPoint } = this.props;
-
-    let dateSelected = true;
     let content = <span />;
     // don't bother if datapoint is empty
-    if (dataPoint && words && words.length > 0 && stories !== undefined) {
+    // if (dataPoint && words && words.length > 0 && stories !== undefined) {
+    if (dataPoint) {
       content = (
-        <QueryAttentionOverTimeDrillDownDataCard
-          info={dataPoint}
-          words={words}
-          stories={stories}
-          onClose={handleClose}
-        />
-      );
-    } else if (dataPoint) {
-      content = <LoadingSpinner />;
-    } else {
-      dateSelected = false;
-    }
-
-    if (dateSelected) {
-      return (
         <div className="drill-down" ref={this.rootRef}>
-          {content}
+          <QueryAttentionOverTimeDrillDownDataCard
+            info={dataPoint}
+            words={words}
+            stories={stories}
+            onClose={handleClose}
+          />
         </div>
       );
     }
@@ -78,41 +51,22 @@ QueryAttentionOverTimeDrillDownContainer.propTypes = {
   // from composition
   intl: PropTypes.object.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
   // from state
-  fetchStatus: PropTypes.string.isRequired,
+  fetchStatus: PropTypes.array.isRequired,
   dataPoint: PropTypes.object,
   words: PropTypes.array,
   stories: PropTypes.array,
-  results: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.explorer.storySplitCount.fetchStatus,
+  fetchStatus: [state.explorer.storiesPerDateRange.fetchStatus, state.explorer.topWordsPerDateRange.fetchStatus],
   dataPoint: state.explorer.storySplitCount.dataPoint,
-  words: state.explorer.topWordsPerDateRange.list,
+  words: state.explorer.topWordsPerDateRange.results,
   stories: state.explorer.storiesPerDateRange.results,
-  results: state.explorer.storySplitCount.results,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (clickedQuery) => {
-    // this should trigger when the user clicks a data point on the attention over time chart
-    dispatch(resetQueriesPerDateSampleStories());
-    dispatch(resetQueriesPerDateTopWords());
-    if (clickedQuery && clickedQuery !== undefined) {
-      if (ownProps.isLoggedIn) {
-        dispatch(fetchQueryPerDateSampleStories({ ...clickedQuery }));
-        dispatch(fetchQueryPerDateTopWords({ ...clickedQuery }));
-      } else {
-        dispatch(fetchDemoQueryPerDateTopWords(clickedQuery));
-        dispatch(fetchDemoQueryPerDateSampleStories(clickedQuery));
-      }
-    }
-  },
+const mapDispatchToProps = dispatch => ({
   handleClose: () => {
     dispatch(resetSentenceDataPoint());
     dispatch(resetQueriesPerDateSampleStories());
@@ -120,18 +74,25 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.dataPoint);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, { isLoggedIn, dataPoint }) => {
+  // this should trigger when the user clicks a data point on the attention over time chart
+  dispatch(resetQueriesPerDateSampleStories());
+  dispatch(resetQueriesPerDateTopWords());
+  if (dataPoint) {
+    if (isLoggedIn) {
+      dispatch(fetchQueryPerDateSampleStories({ ...dataPoint }));
+      dispatch(fetchQueryPerDateTopWords({ ...dataPoint }));
+    } else {
+      dispatch(fetchDemoQueryPerDateTopWords(dataPoint));
+      dispatch(fetchDemoQueryPerDateSampleStories(dataPoint));
+    }
+  }
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncData(fetchAsyncData, ['dataPoint'])(
       QueryAttentionOverTimeDrillDownContainer
     )
   )

@@ -41,7 +41,7 @@ def map_files(topics_id):
             lockfile_path = os.path.join(DATA_DIR, lock_filename)
             is_generating = os.path.isfile(lockfile_path)
             if not is_generating:
-                status = 'started generating'
+                status = 'starting'
                 _start_generating_map_file(map_type, topics_id, timespans_id)
             else:
                 status = 'generating'

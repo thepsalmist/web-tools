@@ -27,21 +27,24 @@ def map_files(topics_id):
 
     if access_public_topic(topics_id) or is_user_logged_in():
         snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
-        map_type = MAP_TYPES[0] # no linkMaps yet
+        map_type = MAP_TYPES[0]  # no linkMaps yet
         prefix = _get_file_prefix(map_type, topics_id, timespans_id)
         lock_filename = prefix+".lock"
         rendered_filename = prefix+".gexf"
         # check if rendered file is there
-        is_rendered = os.path.isfile(os.path.join(DATA_DIR,rendered_filename))
-        #logger.warn(os.path.join(DATA_DIR,rendered_filename))
-        #logger.warn(is_rendered)
+        is_rendered = os.path.isfile(os.path.join(DATA_DIR, rendered_filename))
+        # logger.warn(os.path.join(DATA_DIR,rendered_filename))
+        # logger.warn(is_rendered)
         if is_rendered:
             status = 'rendered'
         else:
-            is_generating = os.path.isfile(os.path.join(DATA_DIR, lock_filename))
+            lockfile_path = os.path.join(DATA_DIR, lock_filename)
+            is_generating = os.path.isfile(lockfile_path)
             if not is_generating:
+                status = 'started generating'
                 _start_generating_map_file(map_type, topics_id, timespans_id)
-            status = 'generating'
+            else:
+                status = 'generating'
         files[map_type] = status
         return jsonify(files)
     else:
@@ -64,10 +67,10 @@ def map_files_download(topics_id, map_type, map_format):
 
 
 @app.route('/api/topics/<topics_id>/map-files/fetchCustomMap', methods=['GET'])
-@arguments_required( 'timespanId', 'color_field', 'num_media', 'include_weights')
+@arguments_required('timespanId', 'color_field', 'num_media', 'include_weights')
 # @flask_login.login_required
 def map_files_download_custom(topics_id):
-    user_mc= user_admin_mediacloud_client()
+    user_mc = user_admin_mediacloud_client()
     # how to treat these as req or default?
     optional_args = {
         'timespans_id': request.args['timespanId'] if 'timespanId' in request.args else None,
@@ -76,9 +79,10 @@ def map_files_download_custom(topics_id):
         'color_field': request.args['color_field'] if 'color_field' in request.args else 'media_type',
         'num_media': request.args['num_media'] if 'num_media' in request.args else 500,    # this is optional
         'include_weights': request.args['include_weights'] if 'include_weights' in request.args else 1,
-        'num_links_per_medium': request.args['num_links_per_medium'] if 'num_links_per_medium' in request.args else None, 
+        'num_links_per_medium': request.args['num_links_per_medium'] if 'num_links_per_medium' in request.args
+                                                                        else None,
     }
-    filename = "link-map-"+topics_id+"-"+request.args['timespanId']+"."+ "gexf"
+    filename = "link-map-"+topics_id+"-"+request.args['timespanId']+"."+"gexf"
     result_stream = user_mc.topicMediaMap(topics_id, **optional_args)
     return flask.Response(result_stream, mimetype="attachment/octet-stream",
                           headers={"Content-Disposition": "attachment;filename="+filename})
@@ -86,17 +90,9 @@ def map_files_download_custom(topics_id):
 
 def _start_generating_map_file(map_type, topics_id, timespans_id):
     file_prefix = _get_file_prefix(map_type, topics_id, timespans_id)
-    # create map file
-    lock_filename = file_prefix+'.lock'
-    lock_filepath = os.path.join(DATA_DIR,lock_filename)
-    open(lock_filepath, 'a').close()
-    # generate maps
     file_path = os.path.join(DATA_DIR, file_prefix)
     p = Process(target=mapwriter.create_word_map_files, args=(topics_id, timespans_id, file_path))
     p.start()
-    # mapwriter.create_word_map_files(topics_id, timespans_id, file_path)
-    # remove lock file
-    os.remove(lock_filepath)
 
 
 def _get_file_prefix(map_type, topics_id, timespans_id):

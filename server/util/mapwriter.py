@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+import os
 from networkx.readwrite import json_graph
 import networkx as nx
 from collections import defaultdict
@@ -214,6 +215,10 @@ def _generate_network_of_frames(topics_id, timespans_id, num_of_sources, out_nam
 
 def create_word_map_files(topics_id, timespans_id, filepath, top_media_sort='inlink'):
     start = time.time()
+    # create a lock file for inter-process comms
+    lock_filename = filepath+'.lock'
+    with open(lock_filename, 'a'):
+        os.utime(lock_filename, None)
     # Defaults
     num_of_sources = 50
     # remove_media_sources = ['digg.com', 'delicious.com', 'en-gb.facebook', 'newsvine.com', 'nationalservice.gov',
@@ -225,3 +230,6 @@ def create_word_map_files(topics_id, timespans_id, filepath, top_media_sort='inl
     end = time.time()
     duration_secs = end - start
     logger.info("Generated word map for {}/{} in {:.2f}s".format(topics_id, timespans_id, duration_secs))
+    # kill the lock file to indicate we are done
+    os.remove(lock_filename)
+

@@ -11,7 +11,7 @@ const localMessages = {
   title: { id: 'topic.summary.mapDownload.title', defaultMessage: 'Download Link and Word Maps' },
   helpIntro: { id: 'topic.summary.mapDownload.help.intro', defaultMessage: '<p>Anayzing the content in this topic as a network can help reveal clusters of content all using the same narrative.  Links Maps show which media sources are linking to each other.  Word Maps show which sources use the same words when talking about this topic.' },
   helpText: { id: 'topic.summary.mapDownload.help.details', defaultMessage: '<p>When you visit this page for the first time, we start a background process to generate the word map.  This word map is based on the top 100 words from the top 50 sources.  We will be making this system more versatile in the future, but for now this was the quickest way to integrate support.  The map is unique for each snapshot/focus/timespan trio; so if you change to a different timespan a new map will be generated.  These maps are saved, so you won\'t have to generate them more than once.</p>' },
-  generating: { id: 'topic.summary.mapDownload.generating', defaultMessage: 'Your map is being generated. This can take a while. Please reload this page in a few minutes to see if it is ready.' },
+  generating: { id: 'topic.summary.mapDownload.generating', defaultMessage: 'Your map is {status}. This can take a while. Please reload this page in a few minutes to see if it is ready.' },
   unknownStatus: { id: 'topic.summary.mapDownload.unknownStatus', defaultMessage: 'We\'re not sure what is up with this file. Sorry!' },
   downloadText: { id: 'topic.summary.mapDownload.download.text', defaultMessage: 'Download a text file of the words used by each source' },
   downloadGexf: { id: 'topic.summary.mapDownload.download.gexf', defaultMessage: 'Download a .gexf file to use in Gephi' },
@@ -32,9 +32,6 @@ const DownloadMapContainer = (props) => {
   } else {
     let wordMapContent;
     switch (wordMapStatus) {
-      case 'generating':
-        wordMapContent = <FormattedMessage {...localMessages.generating} />;
-        break;
       case 'rendered':
         wordMapContent = (
           <ul>
@@ -57,6 +54,8 @@ const DownloadMapContainer = (props) => {
         );
         break;
       default:
+        wordMapContent = <FormattedMessage {...localMessages.generating} values={{ status: wordMapStatus }} />;
+        break;
     }
     content = (
       <React.Fragment>

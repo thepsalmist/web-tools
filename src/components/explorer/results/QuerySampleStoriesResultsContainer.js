@@ -47,7 +47,7 @@ class QuerySampleStoriesResultsContainer extends React.Component {
     const showMoreInfoColHdr = <th />;
     const showMoreInfoCol = story => (
       <td>
-        <AppButton 
+        <AppButton
           onClick={() => this.onStorySelection(story)}
           label={localMessages.showMetadata}
         />

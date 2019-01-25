@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import { fetchCollectionSourceList } from '../../../actions/sourceActions';
 import SourceList from '../../common/SourceList';
@@ -34,24 +34,12 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchData: (collectionId) => {
-    dispatch(fetchCollectionSourceList(collectionId));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.collectionId);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, { collectionId }) => dispatch(fetchCollectionSourceList(collectionId));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData, ['collectionId'])(
       withCsvDownloadNotifyContainer(
         CollectionSourceListContainer
       )

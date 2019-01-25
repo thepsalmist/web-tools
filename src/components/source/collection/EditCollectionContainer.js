@@ -99,7 +99,11 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-const fetchAsyncData = (dispatch, { collectionId }) => dispatch(fetchCollectionSourceList(collectionId));
+const fetchAsyncData = (dispatch, { collectionId }) => {
+  if (collectionId) {
+    dispatch(fetchCollectionSourceList(collectionId));
+  }
+};
 
 export default
 injectIntl(

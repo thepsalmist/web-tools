@@ -61,7 +61,7 @@ def collection_update(collection_id):
     tags = tags_to_add + tags_to_remove
     if len(tags) > 0:
         user_mc.tagMedia(tags)
-    apicache.invalidate_collection_source_representation_cache(user_mediacloud_key(), collection_id)
+        apicache.invalidate_collection_source_representation_cache(user_mediacloud_key(), collection_id)
     return jsonify(updated_collection['tag'])
 
 

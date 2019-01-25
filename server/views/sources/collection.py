@@ -147,6 +147,7 @@ def api_collection_details(collection_id):
 @flask_login.login_required
 @api_error_handler
 def api_collection_sources(collection_id):
+    int(collection_id)
     results = {
         'tags_id': collection_id
     }

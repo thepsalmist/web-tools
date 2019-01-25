@@ -2,15 +2,66 @@
   "releases": [
     {
       "date": "2019-1-22",
+      "version": "v3.8.2",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "The copy-to-all-queries feature works again"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Advanced source search works again"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Searching for topics works better",
+          "details": "The autocomplete works better, and there is a separate search page linked to from the menu too."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Tweaked approach to try to get topic word-map files generating again",
+          "details": "Now faster & sorted by media-inlink counts)"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic top media tree-map shows correct data",
+          "details": "We had been aggregating incorrectly previously."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Collection editing is faster",
+          "details": "Now we keep track of the source list and caches the source representation graph."
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Searching for sources in Source Manager is a bit better",
+          "details": "The autocomplete works a bit better, and advanced search works again."
+        },
+        {
+          "apps": [ "tools" ],
+          "type": "New",
+          "note": "Admins can see some analytics about media source and collection usage"
+        }
+      ]
+    },
+    {
+      "date": "2019-1-22",
       "version": "v3.8.1",
       "notes": [
         {
-          "apps": [ "topics"],
+          "apps": [ "topics" ],
           "type": "Fixed",
           "note": "You can create topics again"
         },
         {
-          "apps": [ "topics"],
+          "apps": [ "topics" ],
           "type": "Fixed",
           "note": "Topic story CSV download includes tweet counts (if we have them)"
         }
@@ -21,7 +72,7 @@
       "version": "v3.8.0",
       "notes": [
         {
-          "apps": [ "explorer"],
+          "apps": [ "explorer" ],
           "type": "New",
           "note": "Duplication and re-ordering for explorer queries"
         },

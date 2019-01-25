@@ -6,7 +6,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from mediacloud.tags import MediaTag, TAG_ACTION_ADD, TAG_ACTION_REMOVE
 
-from server import app, db
+from server import app, db, stats_db
 from server.cache import cache
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_name, user_has_auth_role, ROLE_MEDIA_EDIT
 from server.util.request import arguments_required, form_fields_required, api_error_handler
@@ -136,6 +136,7 @@ def api_media_source_details(media_id):
         info['scrape_status'] = None
     add_user_favorite_flag_to_sources([info])
     add_user_favorite_flag_to_collections(info['media_source_tags'])
+    stats_db.increment_count(stats_db.TYPE_MEDIA, media_id, stats_db.ACTION_SOURCE_MGR_VIEW)
     return jsonify(info)
 
 

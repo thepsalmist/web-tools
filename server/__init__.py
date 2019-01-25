@@ -17,7 +17,7 @@ import jinja2
 
 from server.sessions import RedisSessionInterface
 from server.util.config import get_default_config, ConfigException
-from server.database import AppDatabase
+from server.database import UserDatabase, StatsDatabase
 
 SERVER_MODE_DEV = "dev"
 SERVER_MODE_PROD = "prod"
@@ -76,15 +76,15 @@ except KeyError as e:
 NYT_THEME_LABELLER_URL = config.get('NYT_THEME_LABELLER_URL')
 
 # Connect to the app's mongo DB
-db = AppDatabase(config.get('MONGO_URL'))
 try:
+    db = UserDatabase(config.get('MONGO_URL'))
+    stats_db = StatsDatabase(config.get('MONGO_URL'))
     db.check_connection()
+    logger.info("Connected to DB: {}".format(config.get('MONGO_URL')))
 except Exception as err:
     logger.error("DB error: {0}".format(err))
     logger.exception(err)
     sys.exit()
-
-logger.info("Connected to DB: {}".format(config.get('MONGO_URL')))
 
 
 def is_dev_mode():

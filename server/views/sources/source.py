@@ -6,7 +6,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from mediacloud.tags import MediaTag, TAG_ACTION_ADD, TAG_ACTION_REMOVE
 
-from server import app, db, stats_db
+from server import app, user_db, stats_db
 from server.cache import cache
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_name, user_has_auth_role, ROLE_MEDIA_EDIT
 from server.util.request import arguments_required, form_fields_required, api_error_handler
@@ -46,9 +46,9 @@ def source_set_favorited(media_id):
     favorite = request.form["favorite"]
     username = user_name()
     if int(favorite) == 1:
-        db.add_item_to_users_list(username, 'favoriteSources', int(media_id))
+        user_db.add_item_to_users_list(username, 'favoriteSources', int(media_id))
     else:
-        db.remove_item_from_users_list(username, 'favoriteSources', int(media_id))
+        user_db.remove_item_from_users_list(username, 'favoriteSources', int(media_id))
     return jsonify({'isFavorite': favorite})
 
 

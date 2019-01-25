@@ -77,9 +77,9 @@ NYT_THEME_LABELLER_URL = config.get('NYT_THEME_LABELLER_URL')
 
 # Connect to the app's mongo DB
 try:
-    db = UserDatabase(config.get('MONGO_URL'))
+    user_db = UserDatabase(config.get('MONGO_URL'))
     stats_db = StatsDatabase(config.get('MONGO_URL'))
-    db.check_connection()
+    user_db.check_connection()
     logger.info("Connected to DB: {}".format(config.get('MONGO_URL')))
 except Exception as err:
     logger.error("DB error: {0}".format(err))

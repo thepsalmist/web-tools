@@ -71,3 +71,8 @@ export function updateSystemUser(userId, params) {
 export function deleteSystemUser(userId) {
   return createApiPromise(`/api/admin/users/${userId}/delete`);
 }
+
+export function fetchTopAnalyticsResults(params) {
+  const acceptedParams = acceptParams(params, ['type', 'action']);
+  return createApiPromise(`api/admin/analytics/top-${acceptedParams.type}/${acceptedParams.action}`);
+}

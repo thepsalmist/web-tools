@@ -17,7 +17,7 @@ import jinja2
 
 from server.sessions import RedisSessionInterface
 from server.util.config import get_default_config, ConfigException
-from server.database import UserDatabase, StatsDatabase
+from server.database import UserDatabase, AnalyticsDatabase
 
 SERVER_MODE_DEV = "dev"
 SERVER_MODE_PROD = "prod"
@@ -78,7 +78,7 @@ NYT_THEME_LABELLER_URL = config.get('NYT_THEME_LABELLER_URL')
 # Connect to the app's mongo DB
 try:
     user_db = UserDatabase(config.get('MONGO_URL'))
-    stats_db = StatsDatabase(config.get('MONGO_URL'))
+    analytics_db = AnalyticsDatabase(config.get('MONGO_URL'))
     user_db.check_connection()
     logger.info("Connected to DB: {}".format(config.get('MONGO_URL')))
 except Exception as err:
@@ -188,6 +188,7 @@ def index():
 import server.views.user
 import server.views.app
 import server.views.admin.users
+import server.views.admin.analytics
 import server.views.download
 import server.views.stories
 import server.views.media_search

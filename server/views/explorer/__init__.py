@@ -6,7 +6,7 @@ import json
 import datetime
 from slugify import slugify
 
-from server import mc, app, stats_db
+from server import mc, app, analytics_db
 from server.auth import is_user_logged_in
 from server.util.request import api_error_handler
 
@@ -191,9 +191,9 @@ def count_stats():
     sources = request.args['sources'].split(",") if 'sources' in request.args else None
     collections = request.args['collections'].split(",") if 'collections' in request.args else None
     for media_id in sources:
-        stats_db.increment_count(stats_db.TYPE_MEDIA, media_id,
-                                 stats_db.ACTION_EXPLORER_QUERY, sources.count(media_id))
+        analytics_db.increment_count(analytics_db.TYPE_MEDIA, media_id,
+                                     analytics_db.ACTION_EXPLORER_QUERY, sources.count(media_id))
     for collection_id in collections:
-        stats_db.increment_count(stats_db.TYPE_COLLECTION, collection_id,
-                                 stats_db.ACTION_EXPLORER_QUERY, collections.count(collection_id))
+        analytics_db.increment_count(analytics_db.TYPE_COLLECTION, collection_id,
+                                     analytics_db.ACTION_EXPLORER_QUERY, collections.count(collection_id))
     return jsonify({'status': 'ok'})

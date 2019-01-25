@@ -4,6 +4,7 @@ import flask_login
 import json
 from mediacloud.api import MediaCloud
 
+import server.views.apicache
 from server import app
 import server.util.csv as csv
 import server.util.tags as tag_util
@@ -25,7 +26,7 @@ def api_explorer_story_sample():
     story_sample_result = apicache.random_story_list(solr_q, solr_fq, SAMPLE_STORY_COUNT)
 
     for story in story_sample_result:
-        story["media"] = apicache.media(story["media_id"])
+        story["media"] = server.views.apicache.media(story["media_id"])
     return jsonify({"results": story_sample_result})
 
 
@@ -42,7 +43,7 @@ def api_explorer_demo_story_sample():
 
     story_sample_result = apicache.random_story_list(solr_q, solr_fq, SAMPLE_STORY_COUNT)
     for story in story_sample_result:
-        story["media"] = apicache.media(story["media_id"])
+        story["media"] = server.views.apicache.media(story["media_id"])
     return jsonify(story_sample_result)
 
 
@@ -100,7 +101,7 @@ def _story_list_by_page(q, fq, stories_per_page, sort, page_limit=None):
         for s in story_page:
             # add in media metadata to the story (from lazy cache)
             media_id = s['media_id']
-            media = apicache.media(media_id)
+            media = server.views.apicache.media(media_id)
             for k, v in media['metadata'].items():
                 s['media_{}'.format(k)] = v['label'] if v is not None else None
             # and add in the story metadata too

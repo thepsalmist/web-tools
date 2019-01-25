@@ -12,6 +12,7 @@ from server.views.topics import validated_sort, TOPIC_MEDIA_CSV_PROPS
 from server.views.topics.attention import stream_topic_split_story_counts_csv
 from server.views.topics.stories import stream_story_list_csv
 import server.views.topics.apicache as apicache
+import server.views.apicache as base_apicache
 from server.util.request import filters_from_args, api_error_handler
 from server.views.topics import access_public_topic
 
@@ -205,7 +206,7 @@ def stream_media_link_list_csv(user_mc_key, filename, topics_id, **kwargs):
 
 
 def _media_info_worker(info):
-    return apicache.get_media(info['key'], info['media_id'])
+    return base_apicache.media(info['key'], info['media_id'])
 
 
 # generator you can use to handle a long list of stories row by row (one row per story)

@@ -5,6 +5,7 @@ from datetime import datetime
 from server import mc, TOOL_API_KEY
 from server.views import WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_UI_NUM_WORDS
 from server.cache import cache
+import server.views.apicache as base_cache
 from server.util.tags import STORY_UNDATEABLE_TAG, is_bad_theme
 import server.util.wordembeddings as wordembeddings
 from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_mediacloud_key, is_user_logged_in
@@ -118,7 +119,7 @@ def _cached_topic_story_list(user_mc_key, topics_id, **kwargs):
     Internal helper - don't call this; call topic_story_list instead. This needs user_mc_key in the
     function signature to make sure the caching is keyed correctly.
     '''
-    local_mc = _mc_client(user_mc_key)
+    local_mc = base_cache.mc_client(user_mc_key)
     return local_mc.topicStoryList(topics_id, **kwargs)
 
 
@@ -130,7 +131,7 @@ def topic_story_list_by_page(user_mc_key, topics_id, link_id, **kwargs):
 def _cached_topic_story_list_page(user_mc_key, topics_id, link_id, **kwargs):
     # be user-specific in this cache to be careful about permissions on stories
     # api_key passed in just to make this a user-level cache
-    local_mc = _mc_client(user_mc_key)
+    local_mc = base_cache.mc_client(user_mc_key)
     return local_mc.topicStoryList(topics_id, link_id=link_id, **kwargs)
 
 
@@ -141,7 +142,7 @@ def topic_story_link_list_by_page(user_mc_key, topics_id, link_id, **kwargs):
 @cache.cache_on_arguments()
 def _cached_topic_story_link_list_page(user_mc_key, topics_id, link_id, **kwargs):
     # api_key passed in just to make this a user-level cache
-    local_mc = _mc_client(user_mc_key)
+    local_mc = base_cache.mc_client(user_mc_key)
     return local_mc.topicStoryLinks(topics_id, link_id=link_id, **kwargs)
 
 
@@ -152,19 +153,8 @@ def topic_media_link_list_by_page(user_mc_key, topics_id, link_id, **kwargs):
 @cache.cache_on_arguments()
 def _cached_topic_media_link_list_page(user_mc_key, topics_id, link_id, **kwargs):
     # api_key passed in just to make this a user-level cache
-    local_mc = _mc_client(user_mc_key)
+    local_mc = base_cache.mc_client(user_mc_key)
     return local_mc.topicMediaLinks(topics_id, link_id=link_id, **kwargs)
-
-
-def get_media(user_mc_key, media_id):
-    return _cached_media(user_mc_key, media_id)
-
-
-@cache.cache_on_arguments()
-def _cached_media(user_mc_key, media_id):
-    # api_key passed in just to make this a user-level cache
-    mc_client = _mc_client(user_mc_key)
-    return mc_client.media(media_id)
 
 
 def topic_ngram_counts(user_mc_key, topics_id, ngram_size, q, num_words=WORD_COUNT_UI_NUM_WORDS, sample_size=WORD_COUNT_SAMPLE_SIZE):
@@ -439,19 +429,6 @@ def add_to_user_query(query_to_add):
         return query_to_add
     return "({}) AND ({})".format(q_from_request, query_to_add)
 
-
-def _api_key():
-    api_key = user_mediacloud_key() \
-        if is_user_logged_in() else TOOL_API_KEY
-    return api_key
-
-
-def _mc_client(user_mc_key):
-    if user_mc_key == TOOL_API_KEY:
-        local_mc = mc
-    else:
-        local_mc = user_mediacloud_client(user_mc_key)
-    return local_mc
 
 
 '''

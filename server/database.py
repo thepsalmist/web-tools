@@ -1,6 +1,6 @@
 import datetime
 import logging
-from pymongo import MongoClient
+from pymongo import MongoClient, DESCENDING
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ class UserDatabase(AppDatabase):
         return self._conn.users.update_one({'username': username}, {'$set': values_to_update})
 
 
-class StatsDatabase(AppDatabase):
+class AnalyticsDatabase(AppDatabase):
     # DB access for maintaining user-related data; one document per user
 
     TYPE_MEDIA = 'media'
@@ -77,8 +77,11 @@ class StatsDatabase(AppDatabase):
         # type - media | collection
         # id - media_id | tags_id
         # action - explorer-query | sources-view | topics-usage
-        return self._conn.stats.update_one(
+        return self._conn.analytics.update_one(
             {'type': the_type, 'id': int(the_id)},
             {'$inc': {the_action: amount}},
             upsert=True
         )
+
+    def top(self, the_type, the_action, limit=50):
+        return self._conn.analytics.find({'type': the_type}).sort(the_action, DESCENDING).limit(limit)

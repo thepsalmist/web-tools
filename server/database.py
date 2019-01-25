@@ -61,13 +61,3 @@ class AppDatabase:
 
     def update_user(self, username, values_to_update):
         return self._conn.users.update_one({'username': username}, {'$set': values_to_update})
-
-    def save_notebook_entry(self, username, entry):
-        return self._conn.notebook.insert({
-            'username': username,
-            'createdDate': datetime.datetime.now(),
-            'entry': entry
-        })
-
-    def load_notebook_entry(self, entry_id):
-        return self._conn.users.find_one({'_id': ObjectId(entry_id)})

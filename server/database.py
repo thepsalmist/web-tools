@@ -77,11 +77,13 @@ class AnalyticsDatabase(AppDatabase):
         # type - media | collection
         # id - media_id | tags_id
         # action - explorer-query | sources-view | topics-usage
-        return self._conn.analytics.update_one(
-            {'type': the_type, 'id': int(the_id)},
-            {'$inc': {the_action: amount}},
-            upsert=True
-        )
+        if (the_id is not None) and (len(the_id) > 0):  # some extra validation
+            return self._conn.analytics.update_one(
+                {'type': the_type, 'id': int(the_id)},
+                {'$inc': {the_action: amount}},
+                upsert=True
+            )
+        return None
 
     def top(self, the_type, the_action, limit=50):
         return self._conn.analytics.find({'type': the_type}).sort(the_action, DESCENDING).limit(limit)

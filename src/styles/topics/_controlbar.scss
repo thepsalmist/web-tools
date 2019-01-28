@@ -2,6 +2,10 @@
 
 .controlbar {
 
+  .autocomplete {
+    margin-top: 6px;
+  }
+
   &.controlbar-topic {
     background-color: $white !important;
 

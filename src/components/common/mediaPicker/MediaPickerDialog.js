@@ -97,14 +97,14 @@ class MediaPickerDialog extends React.Component {
                   <AppButton
                     className="select-media-ok-button"
                     label={formatMessage(messages.ok)}
-                    onTouchTap={() => this.handleRemoveDialogClose(true)}
+                    onClick={() => this.handleRemoveDialogClose(true)}
                     type="submit"
                     primary
                   />
                   <AppButton
                     className="select-media-cancel-button"
                     label={formatMessage(messages.cancel)}
-                    onTouchTap={() => this.handleRemoveDialogClose(false)}
+                    onClick={() => this.handleRemoveDialogClose(false)}
                     type="submit"
                   />
                 </div>

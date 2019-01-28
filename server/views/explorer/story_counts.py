@@ -3,8 +3,7 @@ from flask import jsonify, request
 import flask_login
 import json
 
-from server import app, TOOL_API_KEY
-from server.auth import user_mediacloud_key, is_user_logged_in
+from server import app
 import server.util.csv as csv
 from server.util.request import api_error_handler
 from server.views.explorer import parse_as_sample,\

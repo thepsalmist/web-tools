@@ -7,10 +7,11 @@ from flask import jsonify, request, Response
 import server.util.csv as csv
 import server.util.tags as tag_util
 import server.views.topics.apicache as apicache
+import server.views.apicache as base_apicache
 from server import app, cliff, TOOL_API_KEY
 from server.auth import is_user_logged_in
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
-from server.cache import cache, key_generator
+from server.cache import cache
 from server.util.request import api_error_handler
 from server.views.topics import access_public_topic
 
@@ -20,7 +21,8 @@ PRIMARY_ENTITY_TYPES = ['PERSON', 'LOCATION', 'ORGANIZATION']
 
 MEDIA_INFO_POOL_SIZE = 15
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+
+@cache.cache_on_arguments()
 def _cached_geoname(geonames_id):
     return cliff.geonames_lookup(geonames_id)
 
@@ -93,9 +95,12 @@ def topic_stories_csv(topics_id):
 
 
 def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
+    user_mc = user_mediacloud_client(user_key)
+    topic = user_mc.topic(topics_id)
+    has_twitter_data = topic['ch_monitor_id'] is not None
 
     # as_attachment = kwargs['as_attachment'] if 'as_attachment' in kwargs else True
-    fb_data = kwargs['fb_data'] if 'fb_data' in kwargs else False
+    include_fb_date = kwargs['fb_data'] if 'fb_data' in kwargs else False
     all_stories = []
     params = kwargs.copy()
 
@@ -116,15 +121,21 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
         params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
     params['limit'] = 1000  # an arbitrary value to let us page through with big topics
 
+    # determine which props the user actaully wants to download
     props = [
         'stories_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',
         'themes', 'subtopics',
-        'inlink_count', 'facebook_share_count', 'outlink_count', 'media_inlink_count',
-        'media_id', 'media_name', 'media_url',
+        'inlink_count', 'facebook_share_count',
+        # removed media metadata here because it takes too long to query for it
         # 'media_pub_country', 'media_pub_state', 'media_language', 'media_about_country', 'media_media_type'
     ]
+    if has_twitter_data:
+        props.append('simple_tweet_count')
+    if include_fb_date:
+        props.append('facebook_collection_date')
+    props += ['outlink_count', 'media_inlink_count', 'media_id', 'media_name', 'media_url']
 
-    if fb_data:
+    if include_fb_date:
         all_fb_count = []
         more_fb_count = True
         link_id = 0
@@ -144,7 +155,6 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
             for fb_item in all_fb_count:
                 if int(fb_item['stories_id']) == int(s['stories_id']):
                     s['facebook_collection_date'] = fb_item['facebook_api_collect_date']
-        props.append('facebook_collection_date')
 
     timestamped_filename = csv.safe_filename(filename)
     headers = {
@@ -247,7 +257,7 @@ def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
 
 
 def _media_info_worker(info):
-    return apicache.get_media(info['user_key'], info['media_id'])
+    return base_apicache.get_media(info['user_key'], info['media_id'])
 
 
 # generator you can use to do something for each page of story results

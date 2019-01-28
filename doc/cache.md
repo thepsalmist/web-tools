@@ -3,14 +3,14 @@ Caching
 
 *"There are two hard problems in computer science - caching and naming things"*
 
-We use [`dogpile.cache`](https://dogpilecache.readthedocs.io/en/latest/) for front-end caching ofresults returned from 
+We use [`dogpile.cache`](https://dogpilecache.readthedocs.io/en/latest/) for front-end caching of results returned from 
 the back-end server.  Most function that we want to cache are are decorated like this:
 
 ```python
-from server.cache import cache, key_generator
+from server.cache import cache
 from server.auth import user_mediacloud_client
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def _cached_list_of_important_things(user_mc_key, arg1, arg2):
     mc = user_mediacloud_client()
     return mc.someEndpoint(arg1, arg2)
@@ -45,10 +45,10 @@ in that module follow a pattern like this:
 def list_of_important_things(user_mc_key, arg1, arg2):
     return _cached_list_of_important_things(user_mc_key, arg1, arg2)
     
-from server.cache import cache, key_generator
+from server.cache import cache
 from server.auth import user_mediacloud_client
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def _cached_list_of_important_things(user_mc_key, arg1, arg2):
     mc = user_mediacloud_client()
     return mc.someEndpoint(arg1, arg2)

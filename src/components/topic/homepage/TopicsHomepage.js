@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage, injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import TopicSearchContainer from '../search/TopicSearchContainer';
+// import TopicQuickSearchContainer from '../search/TopicQuickSearchContainer';
 import TopicListContainer from '../list/TopicListContainer';
 import LoginForm from '../../user/LoginForm';
 import TopicIcon from '../../common/icons/TopicIcon';
@@ -14,6 +14,7 @@ import { AddButton } from '../../common/IconButton';
 import messages from '../../../resources/messages';
 import Masthead from '../../common/header/Masthead';
 import TopicsMarketingFeatureList from './TopicsMarketingFeatureList';
+import TopicQuickSearchContainer from '../search/TopicQuickSearchContainer';
 
 const localMessages = {
   homeTitle: { id: 'home.title', defaultMessage: 'Home' },
@@ -40,7 +41,7 @@ const TopicsHomepage = (props) => {
                   </Link>
                 </Col>
                 <Col lg={4}>
-                  <TopicSearchContainer />
+                  <TopicQuickSearchContainer />
                 </Col>
               </Row>
             </Grid>

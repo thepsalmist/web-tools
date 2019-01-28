@@ -46,7 +46,7 @@ class QueryPickerItemDemoMenu extends React.Component {
     let menuDelete = null;
     if (query) {
       if (!isThisAProtectedQuery) {
-        menuRegister = <MenuItem className={ACTION_MENU_ITEM_CLASS} onTouchTap={this.sendToLink}><FormattedMessage {...localMessages.register} /></MenuItem>;
+        menuRegister = <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={this.sendToLink}><FormattedMessage {...localMessages.register} /></MenuItem>;
       }
       if (!isThisAProtectedQuery && isDeletable()) { // can delete only if this is a custom query (vs sample query) for demo users and this is not the only QueryPickerItem
         menuDelete = <MenuItem className={ACTION_MENU_ITEM_CLASS} onClick={() => { onDelete(query); this.handleClose(); }}><FormattedMessage {...localMessages.delete} /></MenuItem>;

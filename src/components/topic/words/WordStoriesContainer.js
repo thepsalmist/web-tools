@@ -3,7 +3,7 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { fetchWordStories, sortWordStories } from '../../../actions/topicActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
@@ -16,66 +16,53 @@ import { HELP_STORIES_CSV_COLUMNS } from '../../../lib/helpConstants';
 const STORIES_TO_SHOW = 10;
 
 const localMessages = {
-  title: { id: 'word.stories.title', defaultMessage: 'Stories that Use this Word' },
+  title: { id: 'word.stories.title', defaultMessage: 'Top Stories (using this word)' },
   helpTitle: { id: 'word.stories.help.title', defaultMessage: 'About Word Stories' },
   helpIntro: { id: 'word.stories.help.intro', defaultMessage: '<p>This is a table of stories pertaining this word within the Topic.</p>' },
 };
 
-class WordStoriesContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, filters, sort, stem } = this.props;
-    if ((nextProps.filters !== filters)
-      || (nextProps.sort !== sort)
-      || (nextProps.stem !== stem)) {
-      fetchData(nextProps.filters, nextProps.sort, nextProps.stem);
-    }
-  }
-
-  handleSortData = (newSort) => {
-    const { sortData } = this.props;
-    sortData(newSort);
-  }
-
-  downloadCsv = () => {
-    const { term, topicId, filters, notifyOfCsvDownload } = this.props;
-    const url = `/api/topics/${topicId}/words/${term}*/stories.csv?${filtersAsUrlParams(filters)}`;
-    window.location = url;
-    notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
-  }
-
-  render() {
-    const { inlinkedStories, topicId, helpButton, showTweetCounts } = this.props;
-    const { formatMessage } = this.props.intl;
-    return (
-      <DataCard>
-        <div className="actions">
-          <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.downloadCsv} />
-        </div>
-        <h2>
-          <FormattedMessage {...localMessages.title} />
-          {helpButton}
-        </h2>
-        <TopicStoryTable stories={inlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={this.handleSortData} />
-      </DataCard>
-    );
-  }
-}
+const WordStoriesContainer = (props) => {
+  const { term, topicId, filters, notifyOfCsvDownload, inlinkedStories, handleChangeSort, helpButton,
+    showTweetCounts } = props;
+  const { formatMessage } = props.intl;
+  return (
+    <DataCard>
+      <div className="actions">
+        <DownloadButton
+          tooltip={formatMessage(messages.download)}
+          onClick={() => {
+            const url = `/api/topics/${topicId}/words/${term}*/stories.csv?${filtersAsUrlParams(filters)}`;
+            window.location = url;
+            notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
+          }}
+        />
+      </div>
+      <h2>
+        <FormattedMessage {...localMessages.title} />
+        {helpButton}
+      </h2>
+      <TopicStoryTable
+        stories={inlinkedStories}
+        showTweetCounts={showTweetCounts}
+        topicId={topicId}
+        onChangeSort={handleChangeSort}
+      />
+    </DataCard>
+  );
+};
 
 WordStoriesContainer.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
   notifyOfCsvDownload: PropTypes.func.isRequired,
+  filters: PropTypes.object.isRequired,
   // from parent
   stem: PropTypes.string.isRequired,
   term: PropTypes.string.isRequired,
   topicId: PropTypes.number.isRequired,
-  filters: PropTypes.object.isRequired,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
   // from fetchData
-  fetchData: PropTypes.func.isRequired,
-  sortData: PropTypes.func.isRequired,
+  handleChangeSort: PropTypes.func.isRequired,
   // from state
   sort: PropTypes.string.isRequired,
   fetchStatus: PropTypes.string.isRequired,
@@ -91,33 +78,26 @@ const mapStateToProps = state => ({
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (filters, sort, stem) => {
-    const params = {
-      ...filters,
-      sort,
-      limit: STORIES_TO_SHOW,
-    };
-    dispatch(fetchWordStories(ownProps.topicId, stem, params));
-  },
-  sortData: (sort) => {
+const mapDispatchToProps = dispatch => ({
+  handleChangeSort: (sort) => {
     dispatch(sortWordStories(sort));
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.filters, stateProps.sort, ownProps.stem);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, props) => {
+  const params = {
+    ...props.filters,
+    sort: props.sort,
+    limit: STORIES_TO_SHOW,
+  };
+  dispatch(fetchWordStories(props.topicId, props.stem, params));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpIntro, messages.storiesTableHelpText])(
-      withAsyncFetch(
+      withFilteredAsyncData(fetchAsyncData, ['stem', 'sort'])(
         withCsvDownloadNotifyContainer(
           WordStoriesContainer
         )

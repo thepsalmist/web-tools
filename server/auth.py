@@ -4,7 +4,7 @@ import flask_login
 from flask_login import current_user
 import mediacloud
 
-from server import db, login_manager
+from server import user_db, login_manager
 
 logger = logging.getLogger(__name__)
 
@@ -45,13 +45,13 @@ class User(flask_login.UserMixin):
     def create_in_db_if_needed(self):
         if self.exists_in_db():
             logger.debug("user %s already in db", self.name)
-            db.update_user(self.name, {'api_key': self.id, 'profile': self.profile})
+            user_db.update_user(self.name, {'api_key': self.id, 'profile': self.profile})
             return
         logger.debug("user %s created in db", self.name)
-        db.add_user(self.name, self.id, self.profile)
+        user_db.add_user(self.name, self.id, self.profile)
 
     def exists_in_db(self):
-        return db.includes_user_named(self.name)
+        return user_db.includes_user_named(self.name)
 
     def get_properties(self):
         return {
@@ -63,7 +63,7 @@ class User(flask_login.UserMixin):
     @classmethod
     def get(cls, userid):
         try:
-            return User(db.find_by_api_key(userid)['profile'])
+            return User(user_db.find_by_api_key(userid)['profile'])
             # return User.cached[userid]
         except Exception:
             # be safer here... if anything goes wrong make them login again
@@ -102,7 +102,7 @@ def create_and_cache_user(profile):
 
 
 def load_from_db_by_username(username):
-    return db.find_by_username(username)
+    return user_db.find_by_username(username)
 
 
 def user_name():

@@ -24,13 +24,13 @@ class ConfirmationDialog extends React.Component {
       <AppButton
         key={1}
         label="Cancel"
-        onTouchTap={this.handleCancel}
+        onClick={this.handleCancel}
       />,
       <AppButton
         key={2}
         label={okText}
         primary
-        onTouchTap={this.handleOk}
+        onClick={this.handleOk}
       />,
     ];
     return (

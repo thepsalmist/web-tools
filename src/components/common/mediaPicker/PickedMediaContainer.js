@@ -40,13 +40,20 @@ class PickedMediaContainer extends React.Component {
       <div>
         <div className="select-media-menu">
           {options.map((option, idx) => (
-            <div
-              key={idx}
-              className={`select-media-option ${(selectedMediaQueryType === option.value) ? 'selected' : ''}`}
-              onTouchTap={() => this.updateMediaType(option.value)}
+            <a
+              href="#select"
+              onClick={(evt) => {
+                evt.preventDefault();
+                this.updateMediaType(option.value);
+              }}
             >
-              <h3><FormattedMessage {...option.label} /></h3>
-            </div>
+              <div
+                key={idx}
+                className={`select-media-option ${(selectedMediaQueryType === option.value) ? 'selected' : ''}`}
+              >
+                <h3><FormattedMessage {...option.label} /></h3>
+              </div>
+            </a>
           ))}
         </div>
         <div className="select-media-selected-list">

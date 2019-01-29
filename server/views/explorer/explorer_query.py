@@ -42,7 +42,7 @@ def api_explorer_collections_by_ids():
             return jsonify([{'id': ALL_MEDIA, 'label': "All Media", 'tag_sets_id': ALL_MEDIA}])
         else:
             collection_ids = request.args['collections[]'].split(',')
-    except ValueError as ve:
+    except ValueError:
         # ie. request.args['collections[]'] is not an int
         collection_ids = request.args['collections[]'].split(',')
     collection_list = []
@@ -73,11 +73,9 @@ def api_explorer_demo_collections_by_ids():
     collection_ids = request.args['collections[]'].split(',')
     coll_list = []
     for tags_id in collection_ids:
-        tags_id = tags_id.encode('ascii', 'ignore') # if empty, the unicode char will cause an error
-        if len (tags_id) > 0:
+        if len(tags_id) > 0:
             info = mc.tag(tags_id)
             info['id'] = tags_id
-        # info['tag_set'] = _tag_set_info(mc, info['tag_sets_id'])
             coll_list.append(info)
     return jsonify(coll_list)
 
@@ -86,18 +84,18 @@ def api_explorer_demo_collections_by_ids():
 @app.route('/api/explorer/set/<tag_sets_id>', methods=['GET'])
 @api_error_handler
 def api_explorer_collection_set(tag_sets_id):
-    '''
-    Return a list of all the (public only or public and private, depending on user role) collections in a tag set.  Not cached because this can change, and load time isn't terrible.
+    """
+    Return a list of all the (public only or public and private, depending on user role) collections in a tag set.
+    Not cached because this can change, and load time isn't terrible.
     :param tag_sets_id: the tag set to query for public collections
     :return: dict of info and list of collections in
-    '''
-    info = []
-    if is_user_logged_in() and user_has_auth_role(ROLE_MEDIA_EDIT) == True:
+    """
+    if is_user_logged_in() and user_has_auth_role(ROLE_MEDIA_EDIT) is True:
         info = _tag_set_with_private_collections(tag_sets_id)
     else:
         info = _tag_set_with_public_collections(tag_sets_id)
 
-    #_add_user_favorite_flag_to_collections(info['collections'])
+    # add_user_favorite_flag_to_collections(info['collections'])
     return jsonify(info)
 
 
@@ -110,12 +108,14 @@ def _tag_set_with_collections(tag_sets_id, show_only_public_collections):
     all_tags = []
     last_tags_id = 0
     while more_tags:
-        tags = mc.tagList(tag_sets_id=tag_set['tag_sets_id'], last_tags_id=last_tags_id, rows=100, public_only=show_only_public_collections)
+        tags = mc.tagList(tag_sets_id=tag_set['tag_sets_id'], last_tags_id=last_tags_id, rows=100,
+                          public_only=show_only_public_collections)
         all_tags = all_tags + tags
         if len(tags) > 0:
             last_tags_id = tags[-1]['tags_id']
         more_tags = len(tags) != 0
-    collection_list = [t for t in all_tags if t['show_on_media'] is 1]  # double check the show_on_media because that controls public or not
+    # double check the show_on_media because that controls public or not
+    collection_list = [t for t in all_tags if t['show_on_media'] is 1]
     collection_list = sorted(collection_list, key=itemgetter('label'))
     return {
         'name': tag_set['label'],
@@ -138,4 +138,3 @@ def _tag_set_with_public_collections(tag_sets_id):
 @api_error_handler
 def api_explorer_themes():
     return jsonify()
-

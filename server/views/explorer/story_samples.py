@@ -44,7 +44,7 @@ def api_explorer_demo_story_sample():
     story_sample_result = apicache.random_story_list(solr_q, solr_fq, SAMPLE_STORY_COUNT)
     for story in story_sample_result:
         story["media"] = server.views.apicache.media(story["media_id"])
-    return jsonify(story_sample_result)
+    return jsonify({"results": story_sample_result})
 
 
 @app.route('/api/explorer/stories/samples.csv', methods=['POST'])

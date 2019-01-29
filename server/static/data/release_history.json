@@ -7,6 +7,11 @@
         {
           "apps": [ "explorer" ],
           "type": "Fixed",
+          "note": "Working on problems preventing you from adding queries to Explorer"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
           "note": "Better tracking of source and collection usage"
         }
       ]

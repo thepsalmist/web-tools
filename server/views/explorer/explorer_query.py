@@ -77,7 +77,7 @@ def api_explorer_demo_collections_by_ids():
             info = mc.tag(tags_id)
             info['id'] = tags_id
             coll_list.append(info)
-    return jsonify(coll_list)
+    return jsonify({"results": coll_list})
 
 
 # TODO use this or the other collection list retrieval?

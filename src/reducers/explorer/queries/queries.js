@@ -84,7 +84,7 @@ function queries(state = INITIAL_STATE, action) {
           // so swallow the error for now with no updates
           return state;
         }
-        updatedState[queryIndex].collections = action.payload.collections;
+        updatedState[queryIndex].collections = action.payload.collections.results;
         return updatedState;
       }
       return null;

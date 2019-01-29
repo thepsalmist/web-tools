@@ -9,6 +9,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Link from 'react-router/lib/Link';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { selectStory, fetchStory } from '../../../actions/storyActions';
@@ -31,8 +32,9 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE, PERMISSION_STORY_EDIT, PERMISSION_ADMIN } from '../../../lib/auth';
 import StatBar from '../../common/statbar/StatBar';
 import AppButton from '../../common/AppButton';
-import { urlToTopicMapper } from '../../../lib/urlUtil';
-import { filteredLinkTo } from '../../util/location';
+import { trimToMaxLength } from '../../../lib/stringUtil';
+import { filteredLinkTo, urlWithFilters } from '../../util/location';
+import { storyPubDateToTimestamp } from '../../../lib/dateUtil';
 import TopicPageTitle from '../TopicPageTitle';
 
 const MAX_STORY_TITLE_LENGTH = 70; // story titles longer than this will be trimmed and ellipses added
@@ -48,6 +50,8 @@ const localMessages = {
   readCachedCopy: { id: 'story.details.readCached', defaultMessage: 'Read Cached Text (admin only)' },
   viewCachedHtml: { id: 'story.details.viewCachedHtml', defaultMessage: 'View Cached HTML (admin only)' },
   storyOptions: { id: 'story.details.storyOptions', defaultMessage: 'Story Options' },
+  mediaSourceInfo: { id: 'admin.story.fullDescription', defaultMessage: 'Published in {media} on {publishDate}' },
+  publishedIn: { id: 'story.details.publishedIn', defaultMessage: 'Published In ' },
 };
 
 class StoryContainer extends React.Component {
@@ -73,14 +77,11 @@ class StoryContainer extends React.Component {
   render() {
     const { storyInfo, topicStoryInfo, topicId, storiesId, topicName,
       handleStoryCachedTextClick, handleStoryEditClick, filters } = this.props;
-    const { formatMessage, formatNumber } = this.props.intl;
-    let displayTitle = storyInfo.title;
-    if (storyInfo.title && storyInfo.title.length > MAX_STORY_TITLE_LENGTH) {
-      displayTitle = `${storyInfo.title.substr(0, MAX_STORY_TITLE_LENGTH)}...`;
-    }
+    const { formatMessage, formatNumber, formatDate } = this.props.intl;
+    const mediaUrl = `/topics/${topicId}/media/${storyInfo.media.media_id}`;
     return (
       <div>
-        <TopicPageTitle value={storyInfo.title} />
+        <TopicPageTitle value={trimToMaxLength(storyInfo.title, 20)} />
         <Grid>
           <Row>
             <Col lg={12}>
@@ -112,8 +113,12 @@ class StoryContainer extends React.Component {
                   </Permissioned>
                 </ActionMenu>
                 <StoryIcon height={32} />
-                {displayTitle}
+                {trimToMaxLength(storyInfo.title, MAX_STORY_TITLE_LENGTH)}
               </h1>
+              <h2>
+                <FormattedMessage {...localMessages.publishedIn} />
+                <Link to={filteredLinkTo(mediaUrl, filters)}>{storyInfo.media.name}</Link>
+              </h2>
               <Dialog
                 modal={false}
                 open={this.state.open}
@@ -146,6 +151,7 @@ class StoryContainer extends React.Component {
                   { message: messages.outlinks, data: formatNumber(topicStoryInfo.outlink_count) },
                   { message: messages.facebookShares, data: formatNumber(topicStoryInfo.facebook_share_count) },
                   { message: messages.language, data: storyInfo.language || formatMessage(localMessages.unknownLanguage) },
+                  { message: messages.storyDate, data: formatDate(storyPubDateToTimestamp(storyInfo.publish_date)) },
                 ]}
                 columnWidth={2}
               />
@@ -182,7 +188,7 @@ class StoryContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={6}>
-              <StoryDetails mediaLink={urlToTopicMapper(topicId)} story={storyInfo} />
+              <StoryDetails mediaLink={urlWithFilters(mediaUrl, filters).substring(2)} story={storyInfo} />
             </Col>
           </Row>
           <Row>

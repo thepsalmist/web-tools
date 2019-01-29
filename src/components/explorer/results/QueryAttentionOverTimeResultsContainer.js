@@ -16,7 +16,7 @@ import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTim
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import { oneDayLater, solrFormat } from '../../../lib/dateUtil';
-import { postToDownloadUrl, ACTION_MENU_ITEM_CLASS, ensureSafeResults } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, ACTION_MENU_ITEM_CLASS, ensureSafeResults, formatQueryForServer, formatDemoQueryForServer } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
@@ -192,26 +192,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     if (ownProps.isLoggedIn) {
       const runTheseQueries = queries || ownProps.queries;
       runTheseQueries.map((q) => {
-        const infoToQuery = {
-          start_date: q.startDate,
-          end_date: q.endDate,
-          q: q.q,
-          uid: q.uid,
-          sortPosition: q.sortPosition,
-          sources: q.sources.map(s => s.id),
-          collections: q.collections.map(c => c.id),
-        };
+        const infoToQuery = formatQueryForServer(q);
         return dispatch(fetchQuerySplitStoryCount(infoToQuery));
       });
     } else if (queries || ownProps.queries) { // else assume DEMO mode, but assume the queries have been loaded
       const runTheseQueries = queries || ownProps.queries;
       runTheseQueries.map((q, index) => {
-        const demoInfo = {
-          index, // should be same as q.index btw
-          search_id: q.searchId, // may or may not have these
-          query_id: q.id, // could be undefined
-          q: q.q, // only if no query id, means demo user added a keyword
-        };
+        const demoInfo = formatDemoQueryForServer(q, index);
         return dispatch(fetchDemoQuerySplitStoryCount(demoInfo));
       });
     }

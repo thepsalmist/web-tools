@@ -247,7 +247,12 @@ class QueryPickerContainer extends React.Component {
                   tooltip={formatMessage(localMessages.addQuery)}
                   onClick={() => addAQuery(isLoggedIn ? defaultQuery : defaultDemoQuery)}
                 />
-                <a href="" onClick={() => addAQuery(isLoggedIn ? defaultQuery : defaultDemoQuery)}><FormattedMessage {...localMessages.addQuery} /></a>
+                <a
+                  href="#add-query"
+                  onClick={(evt) => { evt.preventDefault(); addAQuery(isLoggedIn ? defaultQuery : defaultDemoQuery); }}
+                >
+                  <FormattedMessage {...localMessages.addQuery} />
+                </a>
               </div>
             </div>
           </div>

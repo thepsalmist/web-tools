@@ -28,7 +28,6 @@ const localMessages = {
   close: { id: 'admin.story.inContext.close', defaultMessage: 'Close' },
   readThisStory: { id: 'admin.story.readThisStory', defaultMessage: 'Read This Story' },
   editThisStory: { id: 'admin.story.editThisStory', defaultMessage: 'Edit This Story' },
-  fullDescription: { id: 'admin.story.fullDescription', defaultMessage: 'Published in {media} on {publishDate} in {language}' },
   published: { id: 'admin.story.published', defaultMessage: 'Published in {media}' },
   readCachedCopy: { id: 'admin.story.details.readCached', defaultMessage: 'Read Cached Text (admin only)' },
   viewCachedHtml: { id: 'admin.story.details.viewCachedHtml', defaultMessage: 'View Cached HTML (admin only)' },

@@ -173,3 +173,22 @@ export function downloadExplorerSvg(queryLabel, type, domIdOrElement) {
 export function uniqueQueryId() {
   return uuidv4();
 }
+
+export const formatQueryForServer = q => ({
+  start_date: q.startDate,
+  end_date: q.endDate,
+  q: q.q,
+  uid: q.uid,
+  sortPosition: q.sortPosition,
+  sources: q.sources.map(s => s.id),
+  collections: q.collections.map(c => c.id),
+});
+
+export const formatDemoQueryForServer = (q, index) => ({
+  index, // should be same as q.index btw
+  search_id: q.searchId, // may or may not have these
+  query_id: q.id,
+  q: q.q, // only if no query id, means demo user added a keyword
+  uid: q.uid,
+  sortPosition: q.sortPosition,
+});

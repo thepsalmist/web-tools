@@ -11,7 +11,7 @@ import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import EntitiesTable from '../../common/EntitiesTable';
 import { resetEntitiesOrgs, fetchTopEntitiesOrgs, fetchDemoTopEntitiesOrgs } from '../../../actions/explorerActions';
-import { postToDownloadUrl, COVERAGE_REQUIRED, ENTITY_DISPLAY_TOP_TEN } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, COVERAGE_REQUIRED, ENTITY_DISPLAY_TOP_TEN, formatQueryForServer, formatDemoQueryForServer } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
 import { TAG_SET_CLIFF_ORGS } from '../../../lib/tagUtil';
@@ -118,25 +118,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     if (ownProps.isLoggedIn) {
       const runTheseQueries = queries || ownProps.queries;
       runTheseQueries.map((q) => {
-        const infoToQuery = {
-          start_date: q.startDate,
-          end_date: q.endDate,
-          q: q.q,
-          uid: q.uid,
-          sources: q.sources.map(s => s.id),
-          collections: q.collections.map(c => c.id),
-        };
+        const infoToQuery = formatQueryForServer(q);
         return dispatch(fetchTopEntitiesOrgs(infoToQuery));
       });
     } else if (queries || ownProps.queries) { // else assume DEMO mode, but assume the queries have been loaded
       const runTheseQueries = queries || ownProps.queries;
       runTheseQueries.map((q, index) => {
-        const demoInfo = {
-          index, // should be same as q.index btw
-          search_id: q.searchId, // may or may not have these
-          query_id: q.id,
-          q: q.q, // only if no query id, means demo user added a keyword
-        };
+        const demoInfo = formatDemoQueryForServer(q, index);
         return dispatch(fetchDemoTopEntitiesOrgs(demoInfo)); // id
       });
     }

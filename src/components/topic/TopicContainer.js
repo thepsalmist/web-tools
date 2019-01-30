@@ -21,6 +21,11 @@ import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../lib/auth';
 import { ADMIN_MAX_RECOMMENDED_STORIES, MAX_RECOMMENDED_STORIES } from '../../lib/formValidators';
 import PageTitle from '../common/PageTitle';
 
+const VERSION_ERROR = 'error';
+const VERSION_ERROR_EXCEEDED = 'errorExceededMaxStories';
+const VERSION_UNDER_CONSTRUCTION = 'constructing';
+const VERSION_QUEUED = 'queuedToRun';
+
 const localMessages = {
   needsSnapshotWarning: { id: 'needSnapshot.warning', defaultMessage: 'You\'ve made changes to your Topic that require a new snapshot to be generated!' },
   snapshotBuilderLink: { id: 'needSnapshot.snapshotBuilderLink', defaultMessage: 'Visit the Snapshot Builder for details.' },
@@ -77,12 +82,41 @@ class TopicContainer extends React.Component {
     return ((topicId !== null) && (filters.snapshotId !== null) && (filters.timespanId !== null));
   }
 
+  determineVersionStatus(topicInfo) {
+    const { snapshotCount } = this.props;
+    /*
+      TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED
+      TOPIC_SNAPSHOT_STATE_QUEUED
+       --> TOPIC_SNAPSHOT_STATE_ERROR
+      TOPIC_SNAPSHOT_STATE_RUNNING
+       -->TOPIC_SNAPSHOT_STATE_ERROR
+      TOPIC_SNAPSHOT_STATE_COMPLETED
+    */
+    switch (topicInfo.state) {
+      case TOPIC_SNAPSHOT_STATE_ERROR:
+      case TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED:
+        if (topicInfo.message.indexOf('exceeds topic max')) {
+          return VERSION_ERROR_EXCEEDED;
+        }
+        return VERSION_ERROR;
+      case TOPIC_SNAPSHOT_STATE_RUNNING:
+        if (snapshotCount === 0) {
+          return VERSION_UNDER_CONSTRUCTION;
+        }
+        return 0; // what?
+      case TOPIC_SNAPSHOT_STATE_QUEUED:
+        return VERSION_QUEUED;
+      default:
+        return 0;
+    }
+  }
+
   render() {
-    const { children, goToUrl, topicInfo, topicId, snapshotCount, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, filters, needsNewSnapshot } = this.props;
+    const { children, goToUrl, topicInfo, topicId, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, filters, needsNewSnapshot } = this.props;
     const { formatMessage } = this.props.intl;
     // show a big error if there is one to show
     let contentToShow = children;
-    if ((topicInfo.state === TOPIC_SNAPSHOT_STATE_RUNNING) && (snapshotCount === 0)) {
+    if (this.determineVersionStatus(topicInfo) === VERSION_UNDER_CONSTRUCTION) {
       // if the topic is running the initial spider and then show under construction message
       contentToShow = (
         <div>
@@ -90,81 +124,79 @@ class TopicContainer extends React.Component {
           <TopicUnderConstruction />
         </div>
       );
-    } else if ((topicInfo.state === TOPIC_SNAPSHOT_STATE_ERROR) || (topicInfo.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED)) {
-      if (topicInfo.message.indexOf('exceeds topic max') > -1) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
-        contentToShow = (
-          <Grid>
+    } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
+      contentToShow = (
+        <Grid>
+          <Row>
+            <Col lg={12}>
+              <div className="topic-stuck-created-or-error">
+                <h1><FormattedMessage {...localMessages.topicTooBig} /></h1>
+                <p><FormattedMessage {...localMessages.topicTooBigDesc} /></p>
+              </div>
+            </Col>
+          </Row>
+          <Permissioned onlyTopic={PERMISSION_ADMIN}>
+            <Row>
+              <Col lg={2}>
+                <input
+                  id="maxStories"
+                  ref={(input) => { this.textInputRef = input; }}
+                  label={formatMessage(localMessages.maxStories)}
+                  rows={1}
+                  placeholder={ADMIN_MAX_RECOMMENDED_STORIES}
+                />
+              </Col>
+              <Col lg={6}>
+                <AppButton
+                  label={formatMessage(localMessages.updateMaxStories)}
+                  onClick={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo, this.textInputRef)}
+                  type="submit"
+                  primary
+                />
+              </Col>
+            </Row>
+          </Permissioned>
+          <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
             <Row>
               <Col lg={12}>
                 <div className="topic-stuck-created-or-error">
-                  <h1><FormattedMessage {...localMessages.topicTooBig} /></h1>
-                  <p><FormattedMessage {...localMessages.topicTooBigDesc} /></p>
+                  <p><FormattedMessage {...localMessages.topicTooBigInstructions} /></p>
                 </div>
               </Col>
             </Row>
-            <Permissioned onlyTopic={PERMISSION_ADMIN}>
-              <Row>
-                <Col lg={2}>
-                  <input
-                    id="maxStories"
-                    ref={(input) => { this.textInputRef = input; }}
-                    label={formatMessage(localMessages.maxStories)}
-                    rows={1}
-                    placeholder={ADMIN_MAX_RECOMMENDED_STORIES}
-                  />
-                </Col>
-                <Col lg={6}>
+          </Permissioned>
+        </Grid>
+      );
+    } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR) {
+      contentToShow = (
+        <Grid>
+          <Permissioned onlyTopic={PERMISSION_ADMIN}>
+            <Row>
+              <Col lg={12}>
+                <div className="topic-stuck-created-or-error">
+                  <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
                   <AppButton
-                    label={formatMessage(localMessages.updateMaxStories)}
-                    onClick={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo, this.textInputRef)}
+                    label={formatMessage(localMessages.trySpidering)}
+                    onClick={() => handleSpiderRequest(topicInfo.topics_id)}
                     type="submit"
-                    primary
+                    color="primary"
                   />
-                </Col>
-              </Row>
-            </Permissioned>
-            <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-              <Row>
-                <Col lg={12}>
-                  <div className="topic-stuck-created-or-error">
-                    <p><FormattedMessage {...localMessages.topicTooBigInstructions} /></p>
-                  </div>
-                </Col>
-              </Row>
-            </Permissioned>
-          </Grid>
-        );
-      } else {
-        contentToShow = (
-          <Grid>
-            <Permissioned onlyTopic={PERMISSION_ADMIN}>
-              <Row>
-                <Col lg={12}>
-                  <div className="topic-stuck-created-or-error">
-                    <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
-                    <AppButton
-                      label={formatMessage(localMessages.trySpidering)}
-                      onClick={() => handleSpiderRequest(topicInfo.topics_id)}
-                      type="submit"
-                      color="primary"
-                    />
-                  </div>
-                </Col>
-              </Row>
-            </Permissioned>
-            <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-              <Row>
-                <Col lg={12}>
-                  <div className="topic-stuck-created-or-error">
-                    <p><FormattedMessage {...localMessages.otherErrorInstructions} /></p>
-                  </div>
-                </Col>
-              </Row>
-            </Permissioned>
-          </Grid>
-        );
-      }
-    } else if (topicInfo.state === TOPIC_SNAPSHOT_STATE_QUEUED) {
+                </div>
+              </Col>
+            </Row>
+          </Permissioned>
+          <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
+            <Row>
+              <Col lg={12}>
+                <div className="topic-stuck-created-or-error">
+                  <p><FormattedMessage {...localMessages.otherErrorInstructions} /></p>
+                </div>
+              </Col>
+            </Row>
+          </Permissioned>
+        </Grid>
+      );
+    } else if (this.determineVersionStatus(topicInfo) === VERSION_QUEUED) {
       contentToShow = (
         <div>
           <div className="controlbar controlbar-topic">

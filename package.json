@@ -34,6 +34,7 @@
     "d3-cloud": "1.2.4",
     "d3-scale-chromatic": "^1.1.1",
     "dc": "^2.0.0-beta.33",
+    "dogpile": "^0.1.2",
     "flexboxgrid": "6.3.1",
     "highcharts": "^6.1.4",
     "highcharts-treemap": "^0.1.7",

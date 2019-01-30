@@ -14,7 +14,7 @@ import ActionMenu from '../../common/ActionMenu';
 import StoryTable from '../../common/StoryTable';
 import { fetchQuerySampleStories, fetchDemoQuerySampleStories, resetSampleStories } from '../../../actions/explorerActions';
 import { selectStory, resetStory, fetchStory } from '../../../actions/storyActions';
-import { postToDownloadUrl } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, formatQueryForServer, formatDemoQueryForServer } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
 
@@ -126,25 +126,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     if (ownProps.isLoggedIn) {
       const runTheseQueries = queries || ownProps.queries;
       runTheseQueries.map((q) => {
-        const infoToQuery = {
-          start_date: q.startDate,
-          end_date: q.endDate,
-          q: q.q,
-          uid: q.uid,
-          sources: q.sources.map(s => s.id),
-          collections: q.collections.map(c => c.id),
-        };
+        const infoToQuery = formatQueryForServer(q);
         return dispatch(fetchQuerySampleStories(infoToQuery));
       });
     } else if (queries || ownProps.queries) { // else assume DEMO mode, but assume the queries have been loaded
       const runTheseQueries = queries || ownProps.queries;
       runTheseQueries.map((q, index) => {
-        const demoInfo = {
-          index, // should be same as q.index btw
-          search_id: q.searchId, // may or may not have these
-          query_id: q.id,
-          q: q.q, // only if no query id, means demo user added a keyword
-        };
+        const demoInfo = formatDemoQueryForServer(q, index);
         return dispatch(fetchDemoQuerySampleStories(demoInfo)); // id
       });
     }

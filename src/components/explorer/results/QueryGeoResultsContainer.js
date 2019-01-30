@@ -13,7 +13,7 @@ import { fetchDemoQueryGeo, fetchQueryGeo, resetGeo } from '../../../actions/exp
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import messages from '../../../resources/messages';
-import { postToDownloadUrl, COVERAGE_REQUIRED } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, COVERAGE_REQUIRED, formatQueryForServer, formatDemoQueryForServer } from '../../../lib/explorerUtil';
 
 const localMessages = {
   title: { id: 'explorer.geo.title', defaultMessage: 'Geographic Coverage' },
@@ -137,25 +137,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     if (ownProps.isLoggedIn) {
       const runTheseQueries = queries || ownProps.queries;
       runTheseQueries.map((q) => {
-        const infoToQuery = {
-          start_date: q.startDate,
-          end_date: q.endDate,
-          q: q.q,
-          uid: q.uid,
-          sources: q.sources.map(s => s.id),
-          collections: q.collections.map(c => c.id),
-        };
+        const infoToQuery = formatQueryForServer(q);
         return dispatch(fetchQueryGeo(infoToQuery));
       });
     } else if (queries || ownProps.queries) { // else assume DEMO mode, but assume the queries have been loaded
       const runTheseQueries = queries || ownProps.queries;
       runTheseQueries.map((q, index) => {
-        const demoInfo = {
-          index, // should be same as q.index btw
-          search_id: q.searchId, // may or may not have these
-          query_id: q.id,
-          q: q.q, // only if no query id, means demo user added a keyword
-        };
+        const demoInfo = formatDemoQueryForServer(q, index);
         return dispatch(fetchDemoQueryGeo(demoInfo)); // id
       });
     }

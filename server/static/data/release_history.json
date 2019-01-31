@@ -13,6 +13,11 @@
           "apps": [ "sources" ],
           "type": "Fixed",
           "note": "Viewing lists of collections in Source Mgr works more consistently"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "The story details page (in a topic) shows the media source more prominently"
         }
       ]
     },

@@ -1,6 +1,22 @@
 {
   "releases": [
     {
+      "date": "2019-1-31",
+      "version": "v3.8.4",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Uploading a spreadsheet to a collection works again"
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Viewing lists of collections in Source Mgr works more consistently"
+        }
+      ]
+    },
+    {
       "date": "2019-1-28",
       "version": "v3.8.3",
       "notes": [

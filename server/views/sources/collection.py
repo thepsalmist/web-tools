@@ -79,8 +79,8 @@ def api_collection_set(tag_sets_id):
         info = apicache.tag_set_with_public_collections(user_mediacloud_key(), tag_sets_id)
 
     add_user_favorite_flag_to_collections(info['tags'])
-    # rename to make more sense here
-    info['collections'] = sorted(info['tags'], key=itemgetter('label', 'tag'))
+    # rename to make more sense here (already sorted)
+    info['collections'] = info['tags']
     del info['tags']
     return jsonify(info)
 

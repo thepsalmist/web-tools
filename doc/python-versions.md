@@ -33,7 +33,7 @@ eval "$(pyenv virtualenv-init -)"
 ```
 
 And then create a virtualenv for this project.  The name is important, because the `.python-version` file
-refers to it so it loads autoamtically when you enter the directory (if `eval "$(pyenv virtualenv-init -)"` 
+refers to it so it loads automatically when you enter the directory (if `eval "$(pyenv virtualenv-init -)"` 
 is in your `.profile`):
 ```
 pyenv virtualenv 3.6.5 mc-web-tools

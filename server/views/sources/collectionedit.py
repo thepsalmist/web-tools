@@ -8,6 +8,8 @@ from server.util.mail import send_html_email
 from werkzeug.utils import secure_filename
 import csv as pycsv
 from multiprocessing import Pool
+from collections import defaultdict
+from deco import concurrent, synchronized
 
 from server import app, config, TOOL_API_KEY
 from server.util.config import ConfigException
@@ -186,8 +188,8 @@ def _parse_sources_from_csv_upload(filepath):
         return sources_to_update, sources_to_create
 
 
-# worker function to help update sources in parallel
-def _update_source_worker(source_info):
+def _update_source_worker2(source_info):
+    # worker function to help update sources NOT in parallel
     user_mc = user_admin_mediacloud_client()
     media_id = source_info['media_id']
     # logger.debug("Updating media {}".format(media_id))
@@ -195,6 +197,25 @@ def _update_source_worker(source_info):
                                 and k not in SOURCE_LIST_CSV_METADATA_PROPS}
     response = user_mc.mediaUpdate(media_id, source_no_metadata_no_id)
     return response
+
+
+@concurrent
+def _update_source_worker(source_info):
+    # worker function to help update sources in parallel
+    user_mc = user_admin_mediacloud_client()
+    media_id = source_info['media_id']
+    # logger.debug("Updating media {}".format(media_id))
+    source_no_metadata_no_id = {k: v for k, v in list(source_info.items()) if k != 'media_id'
+                                and k not in SOURCE_LIST_CSV_METADATA_PROPS}
+    response = user_mc.mediaUpdate(media_id, source_no_metadata_no_id)
+    return response
+
+
+@synchronized
+def _update_sources_in_parallel(sources):
+    for m in sources:
+        m['response'] = _update_source_worker(m)
+    return sources
 
 
 def _create_media_worker(media_list):
@@ -230,7 +251,6 @@ def _create_or_update_sources(source_list_from_csv, create_new):
         chunk_size = 5  # @ 10, each call takes over a minute; @ 5 each takes around ~40 secs
         media_to_create_batches = [sources_to_create_no_metadata[x:x + chunk_size]
                                    for x in range(0, len(sources_to_create_no_metadata), chunk_size)]
-
         if use_pool:
             pool = Pool(processes=MEDIA_UPDATE_POOL_SIZE)  # process updates in parallel with worker function
             creation_batched_responses = pool.map(_create_media_worker, media_to_create_batches)
@@ -261,23 +281,33 @@ def _create_or_update_sources(source_list_from_csv, create_new):
     # process all the entries we think are updates in parallel so it happens quickly
     if len(sources_to_update) > 0:
         if use_pool:
-            pool = Pool(processes=MEDIA_UPDATE_POOL_SIZE)    # process updates in parallel with worker function
-            update_responses = pool.map(_update_source_worker, sources_to_update)  # blocks until they are all done
+            #pool = Pool(processes=MEDIA_UPDATE_POOL_SIZE)    # process updates in parallel with worker function
+            #update_responses = pool.map(_update_source_worker, sources_to_update)  # blocks until they are all done
+            sources_to_update = _update_sources_in_parallel(sources_to_update)
+            for m in sources_to_update:
+                response = m['response']
+                src['status'] = 'existing' if response['success'] == 1 else 'error'
+                src['status_message'] = 'unable to update existing source' if \
+                    response['success'] == 0 else 'updated existing source'
+                if response['success'] == 1:
+                    successful.append(src)
+                else:
+                    errors.append(src)
+                results.append(src)
         else:
-            update_responses = [_update_source_worker(job) for job in sources_to_update]
-
-        for idx, response in enumerate(update_responses):
-            src = sources_to_update[idx]
-            src['status'] = 'existing' if response['success'] == 1 else 'error'
-            src['status_message'] = 'unable to update existing source' if \
-                response['success'] == 0 else 'updated existing source'
-            if response['success'] == 1:
-                successful.append(src)
-            else:
-                errors.append(src)
-            results.append(src)
-        if use_pool:
-            pool.terminate()  # extra safe garbage collection
+            update_responses = [_update_source_worker2(job) for job in sources_to_update]
+            for idx, response in enumerate(update_responses):
+                src = sources_to_update[idx]
+                src['status'] = 'existing' if response['success'] == 1 else 'error'
+                src['status_message'] = 'unable to update existing source' if \
+                    response['success'] == 0 else 'updated existing source'
+                if response['success'] == 1:
+                    successful.append(src)
+                else:
+                    errors.append(src)
+                results.append(src)
+        #if use_pool:
+            #pool.terminate()  # extra safe garbage collection
 
     time_info = time.time()
     # logger.debug("successful :  %s", successful)

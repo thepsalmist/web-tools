@@ -26,6 +26,7 @@ const TopicInfo = (props) => {
   sourcesAndCollections = topic.media_tags ? [...sourcesAndCollections, ...topic.media_tags] : sourcesAndCollections;
   return (
     <React.Fragment>
+      <p>topic Version coming soon</p>
       <p>{topic.description}</p>
       <p>
         <b><FormattedMessage {...localMessages.state} /></b>: {topic.state }

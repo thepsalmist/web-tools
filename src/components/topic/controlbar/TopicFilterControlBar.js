@@ -7,7 +7,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import TimespanSelectorContainer from './timespans/TimespanSelectorContainer';
 import LinkWithFilters from '../LinkWithFilters';
 import { filteredLinkTo, filteredLocation } from '../../util/location';
-import { FilterButton, HomeButton, ExploreButton } from '../../common/IconButton';
+import { FilterButton, HomeButton, ExploreButton, EditButton } from '../../common/IconButton';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
 import { toggleFilterControls, filterByFocus, filterByQuery, fetchTopicFocalSetsList, fetchFocalSetDefinitions, setTopicNeedsNewSnapshot, topicStartSpider } from '../../../actions/topicActions';
@@ -16,14 +16,16 @@ import FilterSelectorContainer from './FilterSelectorContainer';
 import { REMOVE_FOCUS } from './FocusSelector';
 import ActiveFiltersContainer from './ActiveFiltersContainer';
 import { asyncContainerize } from '../../common/hocs/AsyncContainer';
-import ModifyTopicDialog from './ModifyTopicDialog';
 import { LEVEL_WARNING } from '../../common/Notice';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 import AboutTopicDialog from './AboutTopicDialog';
 
 const localMessages = {
-  editPermissions: { id: 'topic.editPermissions', defaultMessage: 'Edit Topic Permissions' },
-  editSettings: { id: 'topic.editSettings', defaultMessage: 'Edit Topic Settings' },
+  permissions: { id: 'topic.changePermissions', defaultMessage: 'Permissions' },
+  changePermissionsDetails: { id: 'topic.changePermissions.details', defaultMessage: 'Control who else can see and/or change this topic' },
+  settings: { id: 'topic.changeSettings', defaultMessage: 'Settings' },
+  changeSettingsDetails: { id: 'topic.changeSettings.details', defaultMessage: 'Edit this topic\'s configuration and visibility' },
+
   filterTopic: { id: 'topic.filter', defaultMessage: 'Filter this Topic' },
   startedSpider: { id: 'topic.startedSpider', defaultMessage: 'Started a new spidering job for this topic' },
   summaryMessage: { id: 'snapshot.required', defaultMessage: 'You have made some changes that you can only see if you generate a new Snapshot. <a href="{url}">Generate one now</a>.' },
@@ -42,7 +44,7 @@ class TopicFilterControlBar extends React.Component {
 
   render() {
     const { topicId, topic, location, filters, goToUrl, handleFilterToggle, handleFocusSelected,
-      needsNewSnapshot, handleQuerySelected, handleSpiderRequest, selectedTimespan } = this.props;
+      handleQuerySelected, selectedTimespan } = this.props;
     const { formatMessage } = this.props.intl;
     // both the focus and timespans selectors need the snapshot to be selected first
     let subControls = null;
@@ -88,11 +90,17 @@ class TopicFilterControlBar extends React.Component {
                 </LinkWithFilters>
                 <AboutTopicDialog />
                 <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-                  <ModifyTopicDialog
-                    topicId={topicId}
-                    onUrlChange={goToUrl}
-                    needsNewSnapshot={needsNewSnapshot}
-                    onSpiderRequest={handleSpiderRequest}
+                  <EditButton
+                    label={formatMessage(localMessages.settings)}
+                    description={formatMessage(localMessages.changeSettingsDetails)}
+                    onClick={() => goToUrl(`/topics/${topicId}/edit`)}
+                    id="modify-topic-settings"
+                  />
+                  <EditButton
+                    label={formatMessage(localMessages.permissions)}
+                    description={formatMessage(localMessages.changePermissionsDetails)}
+                    onClick={() => goToUrl(`/topics/${topicId}/edit`)}
+                    id="modify-topic-settings"
                   />
                 </Permissioned>
                 {jumpsExplorer}
@@ -138,7 +146,6 @@ TopicFilterControlBar.propTypes = {
   handleFilterToggle: PropTypes.func.isRequired,
   handleFocusSelected: PropTypes.func.isRequired,
   handleQuerySelected: PropTypes.func.isRequired,
-  handleSpiderRequest: PropTypes.func.isRequired,
   // from merge
   goToUrl: PropTypes.func.isRequired,
 };
@@ -146,7 +153,6 @@ TopicFilterControlBar.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.focalSets.foci.fetchStatus,
   snapshots: state.topics.selected.snapshots.list,
-  needsNewSnapshot: state.topics.selected.needsNewSnapshot,
   selectedTimespan: state.topics.selected.timespans.selected,
 });
 

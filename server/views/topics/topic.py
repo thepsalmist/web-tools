@@ -97,8 +97,12 @@ def _topic_summary(topics_id):
         return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
     topic = local_mc.topic(topics_id)
     # add in snapshot and latest snapshot job status
+    snapshots = local_mc.topicSnapshotList(topics_id)
+    #snapshots = sorted([s['snapshot_date'] for s in snapshots], key=lambda, reverse=True)
+    # snapshots = sorted(snapshots, key=snapshots.snapshot_date)
+    snapshots = sorted(snapshots, key=lambda d:d['snapshot_date'])
     topic['snapshots'] = {
-        'list': local_mc.topicSnapshotList(topics_id),
+        'list': snapshots,
         'jobStatus': mc.topicSnapshotGenerateStatus(topics_id)['job_states']    # need to know if one is running
     }
     # add in spider job status
@@ -153,6 +157,7 @@ def get_topic_info_per_snapshot_timespan(topic_id):
 def topic_snapshots_list(topics_id):
     user_mc = user_admin_mediacloud_client()
     snapshots = user_mc.topicSnapshotList(topics_id)
+    snapshots = sorted(snapshots)
     snapshot_status = mc.topicSnapshotGenerateStatus(topics_id)['job_states']    # need to know if one is running
     return jsonify({'list': snapshots, 'jobStatus': snapshot_status})
 

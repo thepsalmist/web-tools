@@ -19,9 +19,9 @@ const PublicTopicsContainer = (props) => {
         topics={topics.filter(t => t.state === TOPIC_SNAPSHOT_STATE_COMPLETED)}
         linkGenerator={(t) => {
           if (isLoggedIn) {
-            return `/topics/${t.topics_id}/summary`;
+            return `/topics/${t.topics_id}/versions/summary`;
           }
-          return `/topics/public/${t.topics_id}/summary`;
+          return `/topics/public/${t.topics_id}/versions/summary`;
         }}
         onSetFavorited={(id, isFav) => { onSetFavorited(id, isFav); onFetchAyncData(); }}
         emptyMsg={localMessages.empty}

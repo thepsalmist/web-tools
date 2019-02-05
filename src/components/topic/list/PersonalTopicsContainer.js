@@ -21,7 +21,7 @@ const PersonalTopicsContainer = (props) => {
     <div className="personal-topics-list">
       <TopicPreviewList
         topics={(showAll === true) ? topics : topicsUserOwns(topics, user)}
-        linkGenerator={t => `/topics/${t.topics_id}/summary`}
+        linkGenerator={t => `/topics/${t.topics_id}/versions/summary`}
         onSetFavorited={(id, isFav) => { onSetFavorited(id, isFav); onFetchAyncData(); }}
         emptyMsg={localMessages.empty}
       />

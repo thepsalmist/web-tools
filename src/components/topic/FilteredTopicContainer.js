@@ -2,9 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import withAsyncData from '../common/hocs/AsyncDataContainer';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { ErrorNotice } from '../common/Notice';
 import TopicFilterControlBar from './controlbar/TopicFilterControlBar';
+import { filterBySnapshot, filterByTimespan, filterByFocus, filterByQuery } from '../../actions/topicActions';
 import * as fetchConstants from '../../lib/fetchConstants';
 
 const localMessages = {
@@ -74,6 +76,7 @@ FilteredTopicContainer.propTypes = {
   children: PropTypes.node,
   location: PropTypes.object.isRequired,
   params: PropTypes.object.isRequired,
+  fetchStatus: PropTypes.string.isRequired,
   fetchStatusInfo: PropTypes.string,
   fetchStatusSnapshot: PropTypes.string,
   // from state
@@ -86,6 +89,7 @@ FilteredTopicContainer.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   filters: state.topics.selected.filters,
   topicId: state.topics.selected.id,
+  fetchStatus: state.topics.selected.info.fetchStatus,
   fetchStatusInfo: state.topics.selected.info.fetchStatus,
   fetchStatusSnapshot: state.topics.selected.snapshots.fetchStatus,
   topicInfo: state.topics.selected.info,
@@ -93,9 +97,29 @@ const mapStateToProps = (state, ownProps) => ({
   snapshots: state.topics.selected.snapshots.list,
 });
 
+const fetchAsyncData = (dispatch, { location }) => {
+  // now that filters are set, fetch the topic summary info
+  const { query } = location;
+  const { snapshotId } = query;
+  if (snapshotId) {
+    dispatch(filterBySnapshot(query.snapshotId));
+  }
+  if (location.query.focusId) {
+    dispatch(filterByFocus(query.focusId));
+  }
+  if (location.query.timespanId) {
+    dispatch(filterByTimespan(query.timespanId));
+  }
+  if (location.query.q) {
+    dispatch(filterByQuery(query.q));
+  }
+};
+
 export default
 injectIntl(
   connect(mapStateToProps)(
-    FilteredTopicContainer
+    withAsyncData(fetchAsyncData)(
+      FilteredTopicContainer
+    )
   )
 );

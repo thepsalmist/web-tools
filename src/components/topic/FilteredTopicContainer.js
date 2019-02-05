@@ -1,11 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { replace } from 'react-router-redux';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import { filteredLocation, urlWithFilters } from '../util/location';
 import withAsyncData from '../common/hocs/AsyncDataContainer';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { ErrorNotice } from '../common/Notice';
 import TopicFilterControlBar from './controlbar/TopicFilterControlBar';
+import { addNotice } from '../../actions/appActions';
+import { snapshotIsUsable, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
+  TOPIC_SNAPSHOT_STATE_ERROR } from '../../reducers/topics/selected/snapshots';
+import { ErrorNotice, LEVEL_INFO, LEVEL_WARNING, LEVEL_ERROR } from '../common/Notice';
 import { filterBySnapshot, filterByTimespan, filterByFocus, filterByQuery } from '../../actions/topicActions';
 import * as fetchConstants from '../../lib/fetchConstants';
 
@@ -21,9 +26,9 @@ class FilteredTopicContainer extends React.Component {
     return (hasUsableSnapshot.length > 0);
   }
 
-  snapshotIsSet() {
+  filtersAreSet() {
     const { filters, topicId } = this.props;
-    return (topicId && (filters.snapshotId && this.hasUsableSnapshot()));
+    return ((topicId !== null) && (filters.snapshotId !== null) && (filters.timespanId !== null));
   }
 
   render() {
@@ -31,7 +36,7 @@ class FilteredTopicContainer extends React.Component {
       fetchStatusSnapshot } = this.props;
     let subContent = null;
     // If the generation process is still ongoing, ask the user to wait a few minutes
-    if (this.snapshotIsSet()) {
+    if (this.filtersAreSet()) {
       let childContent;
       // show spinner until there is a valid timespan
       if (filters.timespanId) {
@@ -97,8 +102,8 @@ const mapStateToProps = (state, ownProps) => ({
   snapshots: state.topics.selected.snapshots.list,
 });
 
-const fetchAsyncData = (dispatch, { location }) => {
-  // now that filters are set, fetch the topic summary info
+const fetchAsyncData = (dispatch, { topicInfo, location, intl }) => {
+  // get filters
   const { query } = location;
   const { snapshotId } = query;
   if (snapshotId) {
@@ -112,6 +117,127 @@ const fetchAsyncData = (dispatch, { location }) => {
   }
   if (location.query.q) {
     dispatch(filterByQuery(query.q));
+  }
+  switch (topicInfo.state) {
+    case TOPIC_SNAPSHOT_STATE_QUEUED:
+      dispatch(addNotice({
+        level: LEVEL_INFO,
+        message: intl.formatMessage(localMessages.spiderQueued),
+        details: intl.formatMessage(localMessages.queueAge, {
+          queueName: topicInfo.job_queue,
+          lastUpdated: topicInfo.spiderJobs[0].last_updated,
+        }),
+      }));
+      break;
+    case TOPIC_SNAPSHOT_STATE_RUNNING:
+      dispatch(addNotice({
+        level: LEVEL_INFO,
+        message: intl.formatMessage(localMessages.topicRunning),
+        details: topicInfo.message,
+      }));
+      break;
+    case TOPIC_SNAPSHOT_STATE_ERROR:
+      dispatch(addNotice({
+        level: LEVEL_ERROR,
+        message: intl.formatMessage(localMessages.hasAnError),
+        details: topicInfo.message,
+      }));
+      break;
+    case TOPIC_SNAPSHOT_STATE_COMPLETED:
+      // everything is ok
+      break;
+    default:
+      // got some unknown bad state
+      dispatch(addNotice({
+        level: LEVEL_ERROR,
+        message: intl.formatMessage(localMessages.otherError, { state: topicInfo.state }),
+      }));
+      break;
+  }
+  // show any warnings based on the snapshot state
+  const snapshots = topicInfo.snapshots.list;
+  const snapshotJobStatus = topicInfo.snapshots.jobStatus;
+  const firstReadySnapshot = snapshots.find(s => snapshotIsUsable(s));
+  // if no snapshot specified, pick the first usable snapshot
+  if ((snapshotId === null) || (snapshotId === undefined)) {
+    // default to the latest ready snapshot if none is specified on url
+    if (firstReadySnapshot) {
+      const newSnapshotId = firstReadySnapshot.snapshots_id;
+      const newLocation = filteredLocation(location, {
+        snapshotId: newSnapshotId,
+        timespanId: null,
+        focusId: null,
+        q: null,
+      });
+      dispatch(replace(newLocation)); // do a replace, not a push here so the non-snapshot url isn't in the history
+      dispatch(filterBySnapshot(newSnapshotId));
+    } else if (snapshots.length > 0) {
+      // first snapshot doesn't show up as a job, so we gotta check for status here and alert if it is importing :-(
+      const firstSnapshot = snapshots[0];
+      if (!snapshotIsUsable(firstSnapshot)) {
+        dispatch(addNotice({
+          level: LEVEL_INFO,
+          message: intl.formatMessage(localMessages.snapshotImporting),
+        }));
+      }
+    }
+  } else if (firstReadySnapshot.snapshots_id !== parseInt(snapshotId, 10)) {
+    // if snaphot is specific in URL, but it is not the latest then show a warning
+    dispatch(addNotice({
+      level: LEVEL_WARNING,
+      htmlMessage: intl.formatHTMLMessage(localMessages.notUsingLatestSnapshot, {
+        url: urlWithFilters(location.pathname, {
+          snapshotId: firstReadySnapshot.snapshots_id,
+        }),
+      }),
+    }));
+  }
+  // if a snapshot is in progress then show the user a note about its state
+  if (snapshotJobStatus && snapshotJobStatus.length > 0) {
+    const latestSnapshotJobStatus = topicInfo.snapshots.jobStatus[0];
+    switch (latestSnapshotJobStatus.state) {
+      case TOPIC_SNAPSHOT_STATE_QUEUED:
+        dispatch(addNotice({
+          level: LEVEL_INFO,
+          message: intl.formatMessage(localMessages.snapshotQueued),
+          details: latestSnapshotJobStatus.message,
+        }));
+        break;
+      case TOPIC_SNAPSHOT_STATE_RUNNING:
+        dispatch(addNotice({
+          level: LEVEL_INFO,
+          message: intl.formatMessage(localMessages.snapshotRunning),
+          details: latestSnapshotJobStatus.message,
+        }));
+        break;
+      case TOPIC_SNAPSHOT_STATE_ERROR:
+        dispatch(addNotice({
+          level: LEVEL_ERROR,
+          message: intl.formatMessage(localMessages.snapshotFailed),
+          details: latestSnapshotJobStatus.message,
+        }));
+        break;
+      case TOPIC_SNAPSHOT_STATE_COMPLETED:
+        const latestSnapshot = snapshots[0];
+        if (!snapshotIsUsable(latestSnapshot)) {
+          dispatch(addNotice({
+            level: LEVEL_INFO,
+            message: intl.formatMessage(localMessages.snapshotImporting),
+          }));
+        }
+        break;
+      default:
+        // don't alert user about anything
+    }
+  } else if (snapshots.length > 1) {
+    // for some reason the second snapshot isn't showing up in the jobs list
+    const latestSnapshot = snapshots[0];
+    if (!snapshotIsUsable(latestSnapshot)) {
+      dispatch(addNotice({
+        level: LEVEL_INFO,
+        message: intl.formatMessage(localMessages.snapshotImporting),
+      }));
+    }
   }
 };
 

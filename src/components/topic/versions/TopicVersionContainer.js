@@ -3,15 +3,12 @@ import React from 'react';
 import { push } from 'react-router-redux';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import { updateTopic, selectTopic, topicStartSpider /* TODO shoudl be above */ } from '../../../actions/topicActions';
 import { addNotice } from '../../../actions/appActions';
 import { TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
   TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
 import { LEVEL_WARNING } from '../../common/Notice';
 import TopicVersionStatusContainer from './TopicVersionStatusContainer';
 import TopicVersionErrorStatusContainer from './TopicVersionErrorStatusContainer';
-import { ADMIN_MAX_RECOMMENDED_STORIES, MAX_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 import PageTitle from '../../common/PageTitle';
 import { VERSION_ERROR, VERSION_ERROR_EXCEEDED, VERSION_CREATING, VERSION_QUEUED, VERSION_RUNNING, VERSION_READY } from '../../../lib/topicFilterUtil';
 
@@ -42,7 +39,7 @@ class TopicContainer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { topicId, topicInfo, asyncFetch, needsNewSnapshot, addAppNotice } = this.props;
+    const { topicId, topicInfo, needsNewSnapshot, addAppNotice } = this.props;
     const { formatMessage } = this.props.intl;
     // if they edited the topic, or the topic changed then reload (unless it is just a isFav change)
     let topicInfoHasChanged = false;
@@ -52,7 +49,6 @@ class TopicContainer extends React.Component {
       }
     });
     if (topicInfoHasChanged || (nextProps.topicId !== topicId)) {
-      asyncFetch();
       // warn user if they made changes that require a new snapshot
       if (needsNewSnapshot) {
         addAppNotice({ level: LEVEL_WARNING, message: formatMessage(localMessages.needsSnapshotWarning) });
@@ -70,7 +66,7 @@ class TopicContainer extends React.Component {
     switch (topicInfo.state) {
       case TOPIC_SNAPSHOT_STATE_ERROR:
       case TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED:
-        if (topicInfo.message && topicInfo.message.indexOf('exceeds topic max')) {
+        if (topicInfo.message && topicInfo.message.indexOf('exceeds topic max') > -1) {
           return VERSION_ERROR_EXCEEDED;
         }
         return VERSION_ERROR;
@@ -125,7 +121,6 @@ TopicContainer.propTypes = {
   location: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
   addAppNotice: PropTypes.func.isRequired,
   handleSpiderRequest: PropTypes.func.isRequired,
   handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func.isRequired,
@@ -154,9 +149,7 @@ const mapDispatchToProps = dispatch => ({
   goToUrl: (url) => {
     dispatch(push(url));
   },
-  asyncFetch: () => {
-  },
-  handleUpdateMaxStoriesAndSpiderRequest: (topicInfo, textInput) => {
+  /* handleUpdateMaxStoriesAndSpiderRequest: (topicInfo, textInput) => {
     const maxStories = parseInt(textInput.value, 10) > MAX_RECOMMENDED_STORIES ? parseInt(textInput.value, 10) : ADMIN_MAX_RECOMMENDED_STORIES;
 
     return dispatch(updateTopic(topicInfo.topics_id, { max_stories: maxStories }))
@@ -164,18 +157,12 @@ const mapDispatchToProps = dispatch => ({
       .then(() => window.location.reload());
   },
   handleSpiderRequest: topicId => dispatch(topicStartSpider(topicId)).then(() => window.location.reload()),
+  */
 });
-
-const fetchAsyncData = (dispatch, { params }) => {
-  dispatch(selectTopic(params.topicId));
-  // any versioning handling
-};
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncData(fetchAsyncData)(
-      TopicContainer
-    )
+    TopicContainer
   )
 );

@@ -82,9 +82,15 @@ class FilteredTopicContainer extends React.Component {
             <ErrorNotice><FormattedHTMLMessage {...localMessages.exceededStories} /></ErrorNotice>
           );
         }
+        subContent = (
+          <ErrorNotice><FormattedHTMLMessage {...localMessages.otherError} /></ErrorNotice>
+        );
       }
     }
-    return (subContent);
+    return (
+      subContent,
+      children
+    );
   }
 }
 
@@ -194,7 +200,7 @@ const fetchAsyncData = (dispatch, { topicInfo, location, intl }) => {
         }));
       }
     }
-  } else if (firstReadySnapshot.snapshots_id !== parseInt(snapshotId, 10)) {
+  } else if (firstReadySnapshot && firstReadySnapshot.snapshots_id !== parseInt(snapshotId, 10)) {
     // if snaphot is specific in URL, but it is not the latest then show a warning
     dispatch(addNotice({
       level: LEVEL_WARNING,

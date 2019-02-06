@@ -64,7 +64,7 @@ const topicRoutes = (
           <Route path="list" component={TopicVersionListContainer} onEnter={requireAuth} />
           <Route path="settings" component={TopicSettingsContainer} onEnter={requireAuth} />
           <Route path="permissions" component={TopicPermissionsContainer} onEnter={requireAuth} />
-          <Route path="/topics/:topicId/versions/summary" component={TopicSummaryContainer} onEnter={requireAuth} />
+          <Route path="summary" component={TopicSummaryContainer} onEnter={requireAuth} />
           <Route path="/topics/:topicId/media" component={InfluentialMediaContainer} onEnter={requireAuth} />
           <Route path="/topics/:topicId/media/:mediaId" component={MediaContainer} onEnter={requireAuth} />
           <Route path="/topics/:topicId/stories" component={InfluentialStoriesContainer} onEnter={requireAuth} />

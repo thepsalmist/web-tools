@@ -59,7 +59,7 @@ class TopicSummaryContainer extends React.Component {
         </Row>
       );
     }
-    if (!user.isLoggedIn || this.filtersAreSet()) {
+    if (!user.isLoggedIn || this.filtersAreSet()) { // TODO: but what if only one filter (snapshot) is set?
       let viewContent;
       switch (this.state.selectedViewIndex) {
         case 0:

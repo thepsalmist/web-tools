@@ -222,6 +222,7 @@ const messages = {
 
   currentlyDownloadingCsv: { id: 'download.csv.downloading', defaultMessage: 'Your CSV is downloading.' },
   learnMoreAboutColumnsCsv: { id: 'download.csv.learnMore', defaultMessage: 'Learn more about the columns' },
+  doesNotIncludeUndateable: { id: 'attentionChart.help.text.noUndateable', defaultMessage: '<p>This chart does not include stories that we have marked as "undateable".</p>' },
   attentionChartHelpText: { id: 'attentionChart.help.text',
     defaultMessage: '<p>The vertical axis shows the number of stories that are about the topic in the stories we have collected.</p><p>Roll over the line chart to see the stories per day in each timespan shown on the graph.</p><p>Click the download button in the top right to download the raw counts in a CSV spreadsheet.  Click the three lines in the top right of the chart to export the chart as an image file.</p>',
   },

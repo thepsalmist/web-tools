@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage, FormattedNumber, injectIntl, FormattedDate } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import { fetchCollectionSourceList, scrapeSourceFeeds, removeSourcesFromCollection, fetchSourceReviewInfo }
   from '../../../actions/sourceActions';
@@ -392,19 +392,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(stateProps.collectionId);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, { collectionId }) => dispatch(fetchCollectionSourceList(collectionId))
+  .then(results => results.sources.forEach(source => dispatch(fetchSourceReviewInfo(source.media_id))));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncData(fetchAsyncData)(
       withCsvDownloadNotifyContainer(
         ManageSourcesContainer
       )

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import GeoChart from '../../vis/GeoChart';
 import DataCard from '../../common/DataCard';
 import { fetchCollectionGeo } from '../../../actions/sourceActions';
@@ -75,17 +75,13 @@ const mapStateToProps = state => ({
   geolist: state.sources.collections.selected.collectionGeoTag.list,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  asyncFetch: () => {
-    dispatch(fetchCollectionGeo(ownProps.collectionId));
-  },
-});
+const fetchAsyncData = (dispatch, { collectionId }) => dispatch(fetchCollectionGeo(collectionId));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, [localMessages.intro, messages.heatMapHelpText])(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData)(
         CollectionGeographyContainer
       )
     )

@@ -5,7 +5,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { fetchFeaturedCollectionList } from '../../../actions/sourceActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import DataCard from '../../common/DataCard';
 import { ExploreButton } from '../../common/IconButton';
 
@@ -63,20 +63,12 @@ const mapStateToProps = state => ({
   collections: state.sources.collections.featured.list,
 });
 
-
-const mapDispatchToProps = dispatch => ({
-  fetchData: () => {
-    dispatch(fetchFeaturedCollectionList());
-  },
-  asyncFetch: () => {
-    dispatch(fetchFeaturedCollectionList());
-  },
-});
+const fetchAsyncData = dispatch => dispatch(fetchFeaturedCollectionList());
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       FeaturedCollectionsContainer
     )
   )

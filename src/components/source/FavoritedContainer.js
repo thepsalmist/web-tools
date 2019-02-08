@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../common/hocs/AsyncContainer';
+import withAsyncData from '../common/hocs/AsyncDataContainer';
 import { fetchFavoriteSources, fetchFavoriteCollections } from '../../actions/systemActions';
 import SourceList from '../common/SourceList';
 import CollectionList from '../common/CollectionList';
@@ -51,34 +51,30 @@ const FavoritedContainer = (props) => {
 
 FavoritedContainer.propTypes = {
   // from state
-  fetchStatus: PropTypes.string,
+  fetchStatus: PropTypes.array,
   total: PropTypes.number,
   // from parent
   favoritedSources: PropTypes.array.isRequired,
   favoritedCollections: PropTypes.array.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
-  fetchStatus: state.sources.collections.favorited.fetchStatus,
+export const mapStateToProps = state => ({
+  fetchStatus: [state.sources.collections.favorited.fetchStatus, state.sources.sources.favorited.fetchStatus],
   favoritedSources: state.sources.sources.favorited.list,
   favoritedCollections: state.sources.collections.favorited.list,
 });
 
-const mapDispatchToProps = dispatch => ({
-  asyncFetch: () => {
-    dispatch(fetchFavoriteCollections());
-    dispatch(fetchFavoriteSources());
-  },
-});
+export const fetchAsyncData = (dispatch) => {
+  dispatch(fetchFavoriteCollections());
+  dispatch(fetchFavoriteSources());
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       FavoritedContainer
     )
   )

@@ -79,7 +79,6 @@ InfluentialStoriesContainer.propTypes = {
   filters: PropTypes.object.isRequired,
   // from parent
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   handleChangeSort: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
@@ -105,7 +104,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  sortData: (sort) => {
+  handleChangeSort: (sort) => {
     dispatch(push(pagedAndSortedLocation(ownProps.location, null, sort)));
     dispatch(sortTopicInfluentialStories(sort));
   },

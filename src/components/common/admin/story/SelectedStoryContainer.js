@@ -7,7 +7,7 @@ import { Row, Col } from 'react-flexbox-grid/lib';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import withAsyncFetch from '../../hocs/AsyncContainer';
+import withAsyncData from '../../hocs/AsyncDataContainer';
 import ActionMenu from '../../ActionMenu';
 import { EditButton, ReadItNowButton, DownloadButton } from '../../IconButton';
 import { fetchStory } from '../../../../actions/storyActions';
@@ -147,8 +147,6 @@ class SelectedStoryContainer extends React.Component {
 }
 
 SelectedStoryContainer.propTypes = {
-  // from parent
-  asyncFetch: PropTypes.func.isRequired,
   // from store
   fetchStatus: PropTypes.string.isRequired,
   selectedStory: PropTypes.object.isRequired,
@@ -159,19 +157,13 @@ SelectedStoryContainer.propTypes = {
   handleStoryEditClick: PropTypes.func.isRequired,
 };
 
-
 const mapStateToProps = state => ({
   fetchStatus: state.story.info.fetchStatus,
   selectedStory: state.story.info,
-  selectedStoryId: parseInt(state.story.info.stories_id, 10),
+  selectedStoryId: state.story.info.stories_id,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  asyncFetch: () => {
-    if (ownProps.params && ownProps.params.id !== undefined) {
-      dispatch(fetchStory(parseInt(ownProps.params.id, 10)));
-    }
-  },
+const mapDispatchToProps = dispatch => ({
   handleStoryCachedTextClick: (storiesId) => {
     dispatch(push(`admin/story/${storiesId}/cached`));
   },
@@ -180,10 +172,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
+const fetchAsyncData = (dispatch, { id }) => dispatch(fetchStory(id));
+
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+    withAsyncData(fetchAsyncData, ['id'])(
       SelectedStoryContainer
     )
   )

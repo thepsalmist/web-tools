@@ -37,7 +37,6 @@ TimespanSelectorContainer.propTypes = {
   location: PropTypes.object.isRequired,
   filters: PropTypes.object.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   handleTimespanSelected: PropTypes.func.isRequired,
   setExpanded: PropTypes.func.isRequired,
   handlePeriodSelected: PropTypes.func.isRequired,

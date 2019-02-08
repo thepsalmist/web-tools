@@ -24,7 +24,8 @@ const localMessages = {
 
 class TopicVersionReadyStatusContainer extends React.Component {
   shouldComponentUpdate(nextProps) {
-    return (this.props.filters.snapshotId !== nextProps.filters.snapshotId);
+    return ((this.props.filters.snapshotId !== nextProps.filters.snapshotId)
+      || (this.props.filters.timespanId !== nextProps.filters.timespanId));
   }
 
   setupFilterControls() {

@@ -15,6 +15,7 @@ import TimespanSelectorContainer from '../controlbar/timespans/TimespanSelectorC
 import { toggleFilterControls, filterByFocus, filterByQuery, filterByTimespan, fetchTopicFocalSetsList, fetchFocalSetDefinitions, setTopicNeedsNewSnapshot, topicStartSpider } from '../../../actions/topicActions';
 import { updateFeedback, addNotice } from '../../../actions/appActions';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
+import { nullOrUndefined } from '../../../lib/formValidators';
 
 const localMessages = {
   topicRunning: { id: 'topic.topicRunning', defaultMessage: 'We are scraping the web for all the stories in include in your topic.' },
@@ -22,6 +23,10 @@ const localMessages = {
 };
 
 class TopicVersionReadyStatusContainer extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    return (this.props.filters.snapshotId !== nextProps.filters.snapshotId);
+  }
+
   setupFilterControls() {
     const { topicId, filters, location, handleFocusSelected, handleQuerySelected } = this.props;
     const { formatMessage } = this.props.intl;
@@ -50,7 +55,7 @@ class TopicVersionReadyStatusContainer extends React.Component {
 
   setupJumpToExplorer() {
     const { selectedTimespan, topicInfo, filters } = this.props;
-  // set up links to jump to other tools
+    // set up links to jump to other tools
     if (selectedTimespan) {
       const queryName = `${topicInfo.name}`;
       let queryKeywords = `timespans_id:${filters.timespanId} `;
@@ -125,10 +130,10 @@ TopicVersionReadyStatusContainer.propTypes = {
   needsNewSnapshot: PropTypes.bool,
   selectedTimespan: PropTypes.object,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   handleFilterToggle: PropTypes.func.isRequired,
   handleFocusSelected: PropTypes.func.isRequired,
   handleQuerySelected: PropTypes.func.isRequired,
+  onFetchAyncData: PropTypes.func.isRequired,
   // from merge
   goToUrl: PropTypes.func.isRequired,
 };
@@ -140,6 +145,7 @@ const mapStateToProps = (state, ownProps) => ({
   fetchStatusInfo: state.topics.selected.info.fetchStatus,
   topicInfo: state.topics.selected.info,
   params: ownProps.params,
+  snapshotId: state.topics.selected.filters.snapshotId,
   snapshots: state.topics.selected.snapshots.list,
   selectedTimespan: state.topics.selected.timespans.selected,
 });
@@ -200,7 +206,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-const fetchAsyncData = (dispatch, { topicInfo, location, intl }) => {
+const fetchAsyncData = (dispatch, { topicId, snapshotId, snapshots, location, intl }) => {
   const { query } = location;
   if (location.query.focusId) {
     dispatch(filterByFocus(query.focusId));
@@ -211,7 +217,7 @@ const fetchAsyncData = (dispatch, { topicInfo, location, intl }) => {
   if (location.query.q) {
     dispatch(filterByQuery(query.q));
   }
-  if (topicId !== null && snapshotId !== null) {
+  if (!nullOrUndefined(topicId) && !nullOrUndefined(snapshotId)) {
     // here we want to determine if the topic needs a new snapshot and let everything know
     dispatch(fetchTopicFocalSetsList(topicId, { snapshotId }))
       .then((focalSets) => {
@@ -221,7 +227,7 @@ const fetchAsyncData = (dispatch, { topicInfo, location, intl }) => {
               dispatch(setTopicNeedsNewSnapshot(true));
               dispatch(addNotice({
                 level: LEVEL_WARNING,
-                htmlMessage: ownProps.intl.formatHTMLMessage(localMessages.summaryMessage, {
+                htmlMessage: intl.formatHTMLMessage(localMessages.summaryMessage, {
                   url: `#/topics/${topicId}/snapshot/generate`,
                 }),
               }));
@@ -229,7 +235,7 @@ const fetchAsyncData = (dispatch, { topicInfo, location, intl }) => {
           });
       });
   }
-}
+};
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
@@ -243,7 +249,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncData(fetchAsyncData)(
+    withAsyncData(fetchAsyncData, ['snapshotId'])(
       TopicVersionReadyStatusContainer
     )
   )

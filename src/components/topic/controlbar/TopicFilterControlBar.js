@@ -70,7 +70,7 @@ TopicFilterControlBar.propTypes = {
   // from parent
   topicId: PropTypes.number,
   topic: PropTypes.object,
-  location: PropTypes.object.isRequired,
+  location: PropTypes.object,
   filters: PropTypes.object.isRequired,
   setupFilterControls: PropTypes.func,
   setupJumpToExplorer: PropTypes.func,
@@ -80,7 +80,7 @@ TopicFilterControlBar.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   filters: state.topics.selected.filters,
   topicInfo: state.topics.selected.info,
-  topicId: parseInt(ownProps.params.topicId, 10),
+  topicId: parseInt(ownProps.topicId, 10),
 });
 
 const mapDispatchToProps = dispatch => ({

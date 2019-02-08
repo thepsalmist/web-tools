@@ -101,8 +101,8 @@ class TopicVersionContainer extends React.Component {
         topicId={topicId}
         topic={topicInfo}
         showFilter="placeholder" // TODO: if filters are set
-        setupJumpToExplorer={setupJumpToExplorer} // defined in child Component VersionReady
-        setupFilterControls={setupFilterControls} // TODO: if filters are set
+        // setupJumpToExplorer={setupJumpToExplorer} // defined in child Component VersionReady
+        // setupFilterControls={setupFilterControls} // TODO: if filters are set
       />
     );
 

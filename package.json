@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": ">=10.13.0"
+    "node": ">=10.15.0"
   },
   "scripts": {
     "explorer-dev": "MC_APP_NAME=explorer webpack-serve --config config/webpack.config.js --port 2992 --content build/public",

@@ -35,6 +35,11 @@ class TopicSummaryContainer extends React.Component {
     selectedViewIndex: 0,
   };
 
+  shouldComponentUpdate(nextProps) {
+    return ((this.props.filters.snapshotId !== nextProps.filters.snapshotId)
+      || (this.props.filters.timespanId !== nextProps.filters.timespanId));
+  }
+
   filtersAreSet() {
     const { filters, topicId } = this.props;
     return (topicId && filters.snapshotId && filters.timespanId);

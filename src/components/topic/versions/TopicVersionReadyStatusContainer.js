@@ -96,9 +96,13 @@ class TopicVersionReadyStatusContainer extends React.Component {
   }
 
   render() {
-    const { children, filters } = this.props;
-    let childContent = children;
+    const { children, topicId, filters, location, handleFocusSelected, handleQuerySelected } = this.props;
+    const { formatMessage } = this.props.intl;
+    let childContent = null;
+    // let timespanContent = null;
     // if ready, load subtopic filtering capability and timespan info
+    // const timespanControls = <TimespanSelectorContainer topicId={topicId} location={location} filters={filters} />;
+
     if (this.filtersAreSet()) {
       // show spinner until there is a valid timespan
       if (filters.timespanId) {
@@ -108,7 +112,22 @@ class TopicVersionReadyStatusContainer extends React.Component {
       }
     }
     return (
-      childContent
+      <div>
+        <FilterButton tooltip={formatMessage(localMessages.filterTopic)} />
+        <ActiveFiltersContainer
+          onRemoveFocus={handleFocusSelected}
+          onRemoveQuery={handleQuerySelected}
+        />
+        <FilterSelectorContainer
+          location={location}
+          onFocusSelected={handleFocusSelected}
+          onQuerySelected={handleQuerySelected}
+        />
+        <div className="sub">
+          <TimespanSelectorContainer topicId={topicId} location={location} filters={filters} />
+          {childContent}
+        </div>
+      </div>
     );
   }
 }
@@ -126,6 +145,7 @@ TopicVersionReadyStatusContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
   snapshots: PropTypes.array.isRequired,
+  snapshotId: PropTypes.number,
   // from state
   needsNewSnapshot: PropTypes.bool,
   selectedTimespan: PropTypes.object,
@@ -249,7 +269,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncData(fetchAsyncData, ['snapshotId'])(
+    withAsyncData(fetchAsyncData, ['snapshotId', 'timespanId'])(
       TopicVersionReadyStatusContainer
     )
   )

@@ -4,7 +4,7 @@ import { FormattedMessage, FormattedDate, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import { fetchSourceFeedRecentStories } from '../../../actions/sourceActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import StoryTable from '../../common/StoryTable';
 import DataCard from '../../common/DataCard';
 import { parseSolrShortDate } from '../../../lib/dateUtil';
@@ -15,51 +15,34 @@ const localMessages = {
   fullTextRss: { id: 'story.fullTextRss', defaultMessage: 'Full Text in RSS?' },
 };
 
-class FeedRecentStoriesContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { feedId, fetchData } = this.props;
-    if ((nextProps.feedId !== feedId)) {
-      fetchData(nextProps.feedId);
-    }
-  }
-
-  render() {
-    const { stories } = this.props;
-    const extraHeaderColumns = (
-      <React.Fragment>
-        <th><FormattedMessage {...localMessages.collectedDate} /></th>
-        <th><FormattedMessage {...localMessages.fullTextRss} /></th>
-      </React.Fragment>
-    );
-    const extraColumns = story => (
-      <React.Fragment>
-        <td className="numeric"><FormattedDate value={parseSolrShortDate(story.collect_date)} /></td>
-        <td className="numeric">{story.full_text_rss}</td>
-      </React.Fragment>
-    );
-    return (
-      <Row className="feed-recent-stories">
-        <Col lg={12}>
-          <DataCard>
-            <h2><FormattedMessage {...localMessages.title} /></h2>
-            <StoryTable
-              stories={stories}
-              extraHeaderColumns={extraHeaderColumns}
-              extraColumns={extraColumns}
-            />
-          </DataCard>
-        </Col>
-      </Row>
-    );
-  }
-}
+const FeedRecentStoriesContainer = ({ stories }) => (
+  <Row className="feed-recent-stories">
+    <Col lg={12}>
+      <DataCard>
+        <h2><FormattedMessage {...localMessages.title} /></h2>
+        <StoryTable
+          stories={stories}
+          extraHeaderColumns={(
+            <React.Fragment>
+              <th><FormattedMessage {...localMessages.collectedDate} /></th>
+              <th><FormattedMessage {...localMessages.fullTextRss} /></th>
+            </React.Fragment>
+          )}
+          extraColumns={story => (
+            <React.Fragment>
+              <td className="numeric"><FormattedDate value={parseSolrShortDate(story.collect_date)} /></td>
+              <td className="numeric">{story.full_text_rss}</td>
+            </React.Fragment>
+          )}
+        />
+      </DataCard>
+    </Col>
+  </Row>
+);
 
 FeedRecentStoriesContainer.propTypes = {
   // from parent
   feedId: PropTypes.number.isRequired,
-  // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
   // from state
@@ -72,19 +55,12 @@ const mapStateToProps = state => ({
   fetchStatus: state.sources.sources.selected.feed.stories.fetchStatus,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (newFeedId) => {
-    dispatch(fetchSourceFeedRecentStories(newFeedId));
-  },
-  asyncFetch: () => {
-    dispatch(fetchSourceFeedRecentStories(ownProps.feedId));
-  },
-});
+const fetchAsyncData = (dispatch, { feedId }) => dispatch(fetchSourceFeedRecentStories(feedId));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData, ['feedId'])(
       FeedRecentStoriesContainer
     )
   )

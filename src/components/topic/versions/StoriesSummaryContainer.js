@@ -16,7 +16,7 @@ import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import TopicStoryTable from '../TopicStoryTable';
 import messages from '../../../resources/messages';
-import { filteredLinkTo, filteredLocation, filtersAsUrlParams } from '../../util/location';
+import { urlWithFilters, filteredLocation, filtersAsUrlParams } from '../../util/location';
 import { HELP_STORIES_CSV_COLUMNS } from '../../../lib/helpConstants';
 
 const localMessages = {
@@ -121,7 +121,7 @@ StoriesSummaryContainer.propTypes = {
   // from dispatch
   handleFocusSelected: PropTypes.func.isRequired,
   sortData: PropTypes.func.isRequired,
-  handleExplore: PropTypes.func.isRequired,
+  handleExplore: PropTypes.string.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   sort: PropTypes.string.isRequired,
@@ -152,10 +152,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   sortData: (sort) => {
     dispatch(sortTopicTopStories(sort));
   },
-  handleExplore: () => {
-    const exploreUrl = filteredLinkTo(`/topics/${ownProps.topicId}/stories`, ownProps.filters);
-    dispatch(push(exploreUrl));
-  },
+  handleExplore: urlWithFilters(`/topics/${ownProps.topicId}/stories`, ownProps.filters),
 });
 
 const fetchAsyncData = (dispatch, props) => {

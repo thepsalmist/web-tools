@@ -33,7 +33,7 @@ const TopicFilterControlBar = (props) => {
         <Grid>
           <Row>
             <Col lg={6} className="left">
-              <LinkWithFilters to={`/topics/${topicId}/summary`}>
+              <LinkWithFilters to={`/topics/${topicId}/versions/summary`}>
                 <HomeButton />
                 <b><FormattedMessage {...localMessages.topicHomepage} /></b>
               </LinkWithFilters>

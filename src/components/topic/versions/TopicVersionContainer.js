@@ -63,10 +63,6 @@ class TopicVersionContainer extends React.Component {
     // has snapshot info changed?
   }
 
-  shouldComponentUpdate(nextProps) {
-    return (this.props.filters.snapshotId !== nextProps.filters.snapshotId);
-  }
-
   determineVersionStatus(topicInfo) {
     const { snapshotCount } = this.props;
     switch (topicInfo.state) {
@@ -162,6 +158,7 @@ const mapStateToProps = (state, ownProps) => ({
   fetchStatusInfo: state.topics.selected.info.fetchStatus,
   topicInfo: state.topics.selected.info,
   topicId: parseInt(ownProps.params.topicId, 10),
+  snapshotId: parseInt(ownProps.location.query.snapshotId, 10),
   needsNewSnapshot: state.topics.selected.needsNewSnapshot,
   snapshotCount: state.topics.selected.snapshots.list.length,
 });
@@ -318,7 +315,7 @@ const fetchAsyncData = (dispatch, { topicInfo, location, intl }) => {
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncData(fetchAsyncData)(
+    withAsyncData(fetchAsyncData, ['snapshotId'])(
       TopicVersionContainer
     )
   )

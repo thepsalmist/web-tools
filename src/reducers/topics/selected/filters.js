@@ -30,14 +30,14 @@ const info = createReducer({
   [LOCATION_CHANGE]: (payload, state) => {
     // for some reason when the user hits the back button we need to manually re-render
     // if the timespan has changed
-    const updates = {};
     if (payload.query.timespanId !== undefined) {
       const newTimespanId = parseInt(payload.query.timespanId, 10); // gotta intify it, since it comes from url as string
       if (newTimespanId !== state.timespanId) {
-        updates.timespanId = newTimespanId;
+        return { timespanId: newTimespanId };
       }
     }
-    return updates;
+    // no changes to make to the state
+    return undefined;
   },
 });
 

@@ -79,7 +79,6 @@ InfluentialStoriesContainer.propTypes = {
   filters: PropTypes.object.isRequired,
   // from parent
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   handleChangeSort: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,

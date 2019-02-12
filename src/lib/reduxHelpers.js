@@ -71,11 +71,18 @@ export function createReducer(handlers) {
   // and now set up the reducer method
   return (state = desiredInitialState, action) => {
     if (action.type in actionLookup) {
-      return Object.assign({}, state, {
-        ...state,
-        ...actionLookup[action.type](action.payload, state),
-      });
+      // run the reducer and if it returns new things, change the state
+      const reducerResults = actionLookup[action.type](action.payload, state);
+      if (reducerResults) {
+        return Object.assign({}, state, {
+          ...state,
+          ...reducerResults,
+        });
+      }
+      // otherwise return the state as is so the object itself doesn't change and trigger a dumb re-render
+      return state;
     }
+    // otherwise this isn't an action we need to handle, so just return the state as is
     return state;
   };
 }

@@ -36,7 +36,10 @@ class TopicVersionReadyStatusContainer extends React.Component {
     return (
       <div>
         <FilterButton tooltip={formatMessage(localMessages.filterTopic)} />
-        <ActiveFiltersContainer />
+        <ActiveFiltersContainer
+          onRemoveFocus={() => handleFocusSelected(REMOVE_FOCUS)}
+          onRemoveQuery={() => handleQuerySelected(null)}
+        />
         <FilterSelectorContainer
           location={location}
           onFocusSelected={handleFocusSelected}
@@ -111,8 +114,8 @@ class TopicVersionReadyStatusContainer extends React.Component {
       <div>
         <FilterButton tooltip={formatMessage(localMessages.filterTopic)} />
         <ActiveFiltersContainer
-          onRemoveFocus={handleFocusSelected}
-          onRemoveQuery={handleQuerySelected}
+          onRemoveFocus={() => handleFocusSelected(REMOVE_FOCUS)}
+          onRemoveQuery={() => handleQuerySelected(null)}
         />
         <FilterSelectorContainer
           location={location}

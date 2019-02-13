@@ -15,7 +15,7 @@ const localMessages = {
 
 
 const StarredSearchResultsContainer = (props) => {
-  const { favoritedCollections, favoritedSources, handleToggleAndSelectMedia, fetchStatus } = props;
+  const { favoritedCollections, favoritedSources, onToggleSelected, fetchStatus } = props;
   const { formatMessage } = props.intl;
   let content = null;
   if (fetchStatus === FETCH_ONGOING) {
@@ -27,12 +27,12 @@ const StarredSearchResultsContainer = (props) => {
         <CollectionResultsTable
           title={formatMessage(localMessages.collTitle, { name: '' })}
           collections={favoritedCollections}
-          handleToggleAndSelectMedia={handleToggleAndSelectMedia}
+          onToggleSelected={onToggleSelected}
         />
         <SourceResultsTable
           title={formatMessage(localMessages.sourceTitle, { name: '' })}
           sources={favoritedSources}
-          handleToggleAndSelectMedia={handleToggleAndSelectMedia}
+          onToggleSelected={onToggleSelected}
         />
       </div>
     );
@@ -47,7 +47,7 @@ StarredSearchResultsContainer.propTypes = {
   // form compositional chain
   intl: PropTypes.object.isRequired,
   // from parent
-  handleToggleAndSelectMedia: PropTypes.func.isRequired,
+  onToggleSelected: PropTypes.func.isRequired,
   hintTextMsg: PropTypes.object,
   // from state
 

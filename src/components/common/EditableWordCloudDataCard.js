@@ -18,7 +18,9 @@ import { getBrandDarkColor } from '../../styles/colors';
 import { downloadSvg } from '../util/svg';
 import ActionMenu from './ActionMenu';
 import { WarningNotice } from './Notice';
-import { VIEW_1K, VIEW_10K } from '../../lib/topicFilterUtil';
+
+const VIEW_1K = 1000;
+const VIEW_10K = 10000;
 
 const VIEW_CLOUD = 'VIEW_CLOUD';
 const VIEW_ORDERED = 'VIEW_ORDERED';

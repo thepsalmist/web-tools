@@ -2,6 +2,10 @@ import { createAction } from 'redux-actions';
 import { createAsyncAction } from '../../lib/reduxHelpers';
 import * as api from '../../lib/serverApi/explorer';
 
+export const SET_QUERY_WORD_COUNT_SAMPLE_SIZE = 'SET_QUERY_WORD_COUNT_SAMPLE_SIZE';
+export const setQueryWordCountSampleSize = createAction(SET_QUERY_WORD_COUNT_SAMPLE_SIZE, sampleSize => sampleSize);
+
+
 export const UPDATE_TIMESTAMP_FOR_QUERIES = 'UPDATE_TIMESTAMP_FOR_QUERIES';
 export const updateTimestampForQueries = createAction(UPDATE_TIMESTAMP_FOR_QUERIES, queries => queries);
 

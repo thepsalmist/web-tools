@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 import ActionMenu from '../../common/ActionMenu';
@@ -118,6 +118,7 @@ class QueryTotalAttentionResultsContainer extends React.Component {
 }
 
 QueryTotalAttentionResultsContainer.propTypes = {
+  // from parent
   lastSearchTime: PropTypes.number.isRequired,
   queries: PropTypes.array.isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
@@ -125,8 +126,6 @@ QueryTotalAttentionResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from dispatch
   results: PropTypes.array.isRequired,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
 };
@@ -137,15 +136,13 @@ const mapStateToProps = state => ({
   results: state.explorer.storySplitCount.results,
 });
 
-const mapDispatchToProps = () => ({
-  asyncFetch: () => null, // don't do anything, becuase the attention-over-time widget is fetching the data for us
-});
+const fetchAsyncData = () => null;
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps)(
     withSummary(localMessages.title, localMessages.helpIntro, [localMessages.helpDetails, messages.countsVsPercentageHelp])(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData)(
         QueryTotalAttentionResultsContainer
       )
     )

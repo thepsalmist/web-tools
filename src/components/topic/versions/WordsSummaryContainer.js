@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
+import { connect } from 'react-redux';
 import withSampleSize from '../../common/composers/SampleSize';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
-import { filteredLinkTo, filtersAsUrlParams } from '../../util/location';
+import { urlWithFilters, filtersAsUrlParams } from '../../util/location';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import EditableWordCloudDataCard from '../../common/EditableWordCloudDataCard';
@@ -57,7 +57,7 @@ WordsSummaryContainer.propTypes = {
   // from dispatch
   fetchData: PropTypes.func.isRequired,
   initSampleSize: PropTypes.string,
-  handleExplore: PropTypes.func.isRequired,
+  handleExplore: PropTypes.string.isRequired,
   // from state
   topicInfo: PropTypes.object,
   words: PropTypes.array,
@@ -78,10 +78,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(fetchTopicTopWords(ownProps.topicId, { ...ownProps.filters, sample_size: filtersWithSampleSize.sample_size }));
   },
   pushToUrl: url => dispatch(push(url)),
-  handleExplore: () => {
-    const exploreUrl = filteredLinkTo(`/topics/${ownProps.topicId}/words`, ownProps.filters);
-    dispatch(push(exploreUrl));
-  },
+  handleExplore: urlWithFilters(`/topics/${ownProps.topicId}/words`, ownProps.filters),
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {

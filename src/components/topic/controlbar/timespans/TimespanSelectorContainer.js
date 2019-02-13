@@ -78,9 +78,12 @@ const mapStateToProps = state => ({
 
 // when you switch snapshots we need to find the matching timespan in the new snapshot
 function findMatchingTimespan(timespan, timespanList) {
-  return timespanList.list.find(ts => (
-    ((ts.period === timespan.period) && (ts.start_date === timespan.start_date) && (ts.end_date === timespan.end_date))
-  ));
+  if (timespanList && timespanList.list) {
+    return timespanList.list.find(ts => (
+      ((ts.period === timespan.period) && (ts.start_date === timespan.start_date) && (ts.end_date === timespan.end_date))
+    ));
+  }
+  return [];
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -128,7 +131,7 @@ const fetchAsyncData = (dispatch, { topicId, snapshotId, focusId, timespanId, se
 
 export default
 connect(mapStateToProps, mapDispatchToProps)(
-  withAsyncData(fetchAsyncData, ['snapshotId', 'timespanId', 'focusId'])(
+  withAsyncData(fetchAsyncData, ['snapshotId', 'focusId'])( // remember timespans are the children of snapshot and focus
     TimespanSelectorContainer
   )
 );

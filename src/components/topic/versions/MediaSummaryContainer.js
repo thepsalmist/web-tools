@@ -93,7 +93,7 @@ MediaSummaryContainer.propTypes = {
   filters: PropTypes.object.isRequired,
   // from dispatch
   sortData: PropTypes.func.isRequired,
-  handleExplore: PropTypes.func.isRequired,
+  handleExplore: PropTypes.string.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   sort: PropTypes.string.isRequired,
@@ -112,7 +112,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   sortData: (sort) => {
     dispatch(sortTopicTopMedia(sort));
   },
-  handleExplore: urlWithFilters(`/topics/${ownProps.topicId}/stories`, ownProps.filters),
+  handleExplore: urlWithFilters(`/topics/${ownProps.topicId}/media`, ownProps.filters),
 });
 
 const fetchAsyncData = (dispatch, props) => {

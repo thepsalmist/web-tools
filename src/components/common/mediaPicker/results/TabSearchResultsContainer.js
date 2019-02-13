@@ -26,7 +26,7 @@ class TabSearchResultsContainer extends React.Component {
   };
 
   render() {
-    const { queryResults, handleToggleAndSelectMedia, fetchStatus, displayResults } = this.props;
+    const { queryResults, onToggleSelected, fetchStatus } = this.props;
     const { formatMessage } = this.props.intl;
     const tabs = (
       <div className="media-picker-results-container">
@@ -44,7 +44,7 @@ class TabSearchResultsContainer extends React.Component {
       </div>
     );
     let tabContent = null;
-    if (fetchStatus === FETCH_ONGOING || !displayResults) {
+    if (fetchStatus === FETCH_ONGOING) {
       // we have to do this here to show a loading spinner when first searching (and featured collections are showing)
       tabContent = <LoadingSpinner />;
     } else if (this.state.selectedViewIndex === VIEW_FAVORITES
@@ -55,17 +55,17 @@ class TabSearchResultsContainer extends React.Component {
             title={formatMessage(localMessages.title, { name: 'Starred' })}
             favoritedCollections={queryResults.favoritedCollections}
             favoritedSources={queryResults.favoritedSources}
-            handleToggleAndSelectMedia={handleToggleAndSelectMedia}
+            onToggleSelected={onToggleSelected}
           />
         </div>
       );
-    } else if (displayResults && queryResults && (queryResults.featured)) {
+    } else if (queryResults && (queryResults.featured)) {
       tabContent = (
         <div className="media-picker-tabbed-content-wrapper">
           <CollectionResultsTable
             title={formatMessage(localMessages.featured)}
             collections={queryResults.featured}
-            handleToggleAndSelectMedia={handleToggleAndSelectMedia}
+            onToggleSelected={onToggleSelected}
           />
         </div>
       );
@@ -86,7 +86,7 @@ TabSearchResultsContainer.propTypes = {
   // form compositional chain
   intl: PropTypes.object.isRequired,
   // from parent
-  handleToggleAndSelectMedia: PropTypes.func.isRequired,
+  onToggleSelected: PropTypes.func.isRequired,
   whichTagSet: PropTypes.number,
   hintTextMsg: PropTypes.object,
   onSearch: PropTypes.func.isRequired,
@@ -95,7 +95,6 @@ TabSearchResultsContainer.propTypes = {
   queryResults: PropTypes.object,
   initItems: PropTypes.object,
   fetchStatus: PropTypes.string,
-  displayResults: PropTypes.bool,
 };
 
 export default

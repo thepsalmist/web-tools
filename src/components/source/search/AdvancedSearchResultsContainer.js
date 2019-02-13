@@ -4,7 +4,7 @@ import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import AdvancedSearchResults, { ADD_ALL_THIS_PAGE, ADD_ALL_PAGES } from './AdvancedSearchResults';
 import { fetchSourceByMetadata, fetchCollectionByMetadata,
   selectAdvancedSearchCollection, selectAdvancedSearchSource } from '../../../actions/sourceActions';
@@ -16,13 +16,6 @@ const FIRST_PAGE = true;
 class AdvancedSearchResultsContainer extends React.Component {
   componentDidMount = () => {
     this.setState({ allOrNoneCheck: false });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { searchString, tags, fetchData } = this.props;
-    if ((nextProps.searchString !== searchString) || (nextProps.tags !== tags)) {
-      fetchData(nextProps.searchString, nextProps.tags);
-    }
   }
 
   addOrRemoveToSelectedSources= (mediaId, checked) => {
@@ -98,8 +91,6 @@ AdvancedSearchResultsContainer.propTypes = {
   dispatchCollectionSelection: PropTypes.func.isRequired,
   dispatchToCreateWithSearch: PropTypes.func.isRequired,
   dispatchReset: PropTypes.func,
-  fetchData: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   // from form healper
   buttonLabel: PropTypes.string,
   initialValues: PropTypes.object,
@@ -114,15 +105,7 @@ const mapStateToProps = state => ({
   queriedCollections: state.sources.search.advanced.collections.list,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (searchString, tags) => {
-    dispatch(fetchSourceByMetadata({ searchString, tags }));
-    dispatch(fetchCollectionByMetadata(searchString));
-  },
-  asyncFetch: () => {
-    dispatch(fetchSourceByMetadata({ searchString: ownProps.searchString, tags: ownProps.tags }));
-    dispatch(fetchCollectionByMetadata(ownProps.searchString));
-  },
+const mapDispatchToProps = dispatch => ({
   // depending on checked value, all or page or a selected set or no items are to be selected
   dispatchSourceSelection: (mediaId, checked) => {
     dispatch(selectAdvancedSearchSource({ ids: mediaId.length > 0 ? mediaId : [], checked }));
@@ -166,10 +149,15 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
+const fetchAsyncData = (dispatch, { searchString, tags }) => {
+  dispatch(fetchSourceByMetadata({ searchString, tags: tags.map(t => t.tags_id) }));
+  dispatch(fetchCollectionByMetadata(searchString));
+};
+
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+    withAsyncData(fetchAsyncData, ['searchString', 'tags'])(
       AdvancedSearchResultsContainer
     )
   )

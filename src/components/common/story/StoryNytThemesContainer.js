@@ -4,7 +4,7 @@ import { FormattedMessage, FormattedNumber, injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import { connect } from 'react-redux';
 import { fetchStoryNytThemes } from '../../../actions/storyActions';
-import withAsyncFetch from '../hocs/AsyncContainer';
+import withAsyncData from '../hocs/AsyncDataContainer';
 import withHelp from '../hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
 import DataCard from '../DataCard';
@@ -25,13 +25,6 @@ class StoryNytThemesContainer extends React.Component {
   state = {
     showingFullList: false,
   };
-
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, storyId } = this.props;
-    if (nextProps.storyId !== storyId) {
-      fetchData(nextProps.storyId);
-    }
-  }
 
   downloadCsv = () => {
     const { storyId } = this.props;
@@ -133,10 +126,6 @@ StoryNytThemesContainer.propTypes = {
   storyId: PropTypes.number.isRequired,
   tags: PropTypes.array.isRequired,
   hideFullListOption: PropTypes.bool,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
-  // from dispatch
-  fetchData: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   themes: PropTypes.array,
@@ -147,20 +136,13 @@ const mapStateToProps = state => ({
   themes: state.story.nytThemes.list,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (storyId) => {
-    dispatch(fetchStoryNytThemes(storyId));
-  },
-  asyncFetch: () => {
-    dispatch(fetchStoryNytThemes(ownProps.storyId));
-  },
-});
+const fetchAsyncData = (dispatch, { storyId }) => dispatch(fetchStoryNytThemes(storyId));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, messages.nytThemeHelpDetails)(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData, ['storyId'])(
         StoryNytThemesContainer
       )
     )

@@ -15,7 +15,7 @@ const localMessages = {
 
 
 const CollectionSearchResultsContainer = (props) => {
-  const { selectedMediaQueryKeyword, initCollections, collectionResults, onSearch, handleToggleAndSelectMedia, fetchStatus, hintTextMsg } = props;
+  const { selectedMediaQueryKeyword, initCollections, collectionResults, onSearch, onToggleSelected, fetchStatus, hintTextMsg } = props;
   const { formatMessage } = props.intl;
   let content = null;
   if (fetchStatus === FETCH_ONGOING) {
@@ -26,7 +26,7 @@ const CollectionSearchResultsContainer = (props) => {
       <CollectionResultsTable
         title={formatMessage(localMessages.title, { name: selectedMediaQueryKeyword })}
         collections={collectionResults.list}
-        handleToggleAndSelectMedia={handleToggleAndSelectMedia}
+        onToggleSelected={onToggleSelected}
       />
     );
   } else if (initCollections) {
@@ -51,7 +51,7 @@ CollectionSearchResultsContainer.propTypes = {
   // form compositional chain
   intl: PropTypes.object.isRequired,
   // from parent
-  handleToggleAndSelectMedia: PropTypes.func.isRequired,
+  onToggleSelected: PropTypes.func.isRequired,
   whichTagSet: PropTypes.number,
   hintTextMsg: PropTypes.object,
   onSearch: PropTypes.func.isRequired,

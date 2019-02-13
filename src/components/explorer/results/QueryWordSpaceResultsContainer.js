@@ -7,7 +7,6 @@ import withSummary from '../../common/hocs/SummarizedVizualization';
 import { postToDownloadUrl, downloadExplorerSvg } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import WordSpace from '../../vis/WordSpace';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withQueryResults from './QueryResultsSelector';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 
@@ -69,7 +68,6 @@ QueryWordSpaceResultsContainer.propTypes = {
   tabSelector: PropTypes.object.isRequired,
   // from dispatch
   handleWordCloudClick: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   results: PropTypes.array.isRequired,
@@ -84,22 +82,15 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleWordCloudClick: (word) => {
     ownProps.onQueryModificationRequested(word.term);
   },
-  asyncFetch: () => {
-    // pass through because the WordsResults container fetches all the data for us!
-  },
-  fetchData: () => {
-    // pass through because the WordsResults container fetches all the data for us!
-  },
 });
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, messages.wordSpaceLayoutHelp)(
-      withAsyncFetch(
-        withQueryResults(
-          QueryWordSpaceResultsContainer
-        )
+      // pass through with no async fetch because the WordsResults container fetches all the data for us!
+      withQueryResults()(
+        QueryWordSpaceResultsContainer
       )
     )
   )

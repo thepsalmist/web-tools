@@ -72,13 +72,8 @@ class MediaPickerResultsContainer extends React.Component {
     updateMediaQuerySelection(values);
   }
 
-  handleToggleAndSelectMedia(media) {
-    const { handleToggleAndSelectMedia } = this.props;
-    handleToggleAndSelectMedia(media);
-  }
-
   render() {
-    const { selectedMediaQueryType, toggleConcurrency, handleToggleAndSelectMedia } = this.props;
+    const { selectedMediaQueryType, toggleConcurrency, handleToggleSelected } = this.props;
     let content = null;
     const whichMedia = {};
     whichMedia.fetchStatus = null;
@@ -87,8 +82,7 @@ class MediaPickerResultsContainer extends React.Component {
         content = (
           <CountryCollectionSearchResultsContainer
             whichTagSet={TAG_SET_ABYZ_GEO_COLLECTIONS}
-            handleMediaConcurrency={toggleConcurrency}
-            handleToggleAndSelectMedia={handleToggleAndSelectMedia}
+            onToggleSelected={handleToggleSelected}
           />
         );
         break;
@@ -96,20 +90,23 @@ class MediaPickerResultsContainer extends React.Component {
         content = (
           <AllCollectionSearchResultsContainer
             whichTagSet={VALID_COLLECTION_IDS}
-            handleMediaConcurrency={toggleConcurrency}
-            handleToggleAndSelectMedia={handleToggleAndSelectMedia}
+            onToggleSelected={handleToggleSelected}
           />
         );
         break;
       case PICK_SOURCE:
-        content = <SourceSearchResultsContainer handleMediaConcurrency={toggleConcurrency} handleToggleAndSelectMedia={handleToggleAndSelectMedia} />;
+        content = (
+          <SourceSearchResultsContainer
+            onToggleSelected={handleToggleSelected}
+          />
+        );
         break;
       case PICK_FEATURED:
         content = (
           <FeaturedFavoriteSearchResultsContainer
             whichTagSet={VALID_COLLECTION_IDS}
             handleMediaConcurrency={toggleConcurrency}
-            handleToggleAndSelectMedia={handleToggleAndSelectMedia}
+            onToggleSelected={handleToggleSelected}
           />
         );
         break;
@@ -127,7 +124,7 @@ class MediaPickerResultsContainer extends React.Component {
 MediaPickerResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   toggleConcurrency: PropTypes.func.isRequired,
-  handleToggleAndSelectMedia: PropTypes.func.isRequired,
+  handleToggleSelected: PropTypes.func.isRequired,
   updateMediaQuerySelection: PropTypes.func.isRequired,
   selectedMediaQueryType: PropTypes.number,
   resetComponents: PropTypes.func.isRequired,
@@ -162,7 +159,7 @@ const mapDispatchToProps = dispatch => ({
       dispatch(toggleMedia({ selectedMedia, setSelected: onOrOff })); // for search results selectedMedia >> results
     }
   },
-  handleToggleAndSelectMedia: (selectedMedia) => {
+  handleToggleSelected: (selectedMedia) => {
     if (selectedMedia) {
       // dispatch(toggleMedia(selectedMedia));
       dispatch(selectMedia(selectedMedia)); // disable button too

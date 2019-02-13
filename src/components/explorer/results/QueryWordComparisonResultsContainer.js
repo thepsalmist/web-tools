@@ -3,13 +3,13 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withQueryResults from './QueryResultsSelector';
 import { selectComparativeWordField, updateQuery } from '../../../actions/explorerActions';
-import { queryChangedEnoughToUpdate, getUidIndex } from '../../../lib/explorerUtil';
+import { getUidIndex } from '../../../lib/explorerUtil';
 import { getBrandDarkColor } from '../../../styles/colors';
 import ComparativeOrderedWordCloud from '../../vis/ComparativeOrderedWordCloud';
 import OrderedWordCloud from '../../vis/OrderedWordCloud';
-import WordSelectWrapper from './WordSelectWrapper';
+import WordSelectWrapper, { LEFT, RIGHT } from './WordSelectWrapper';
 
 const localMessages = {
   title: { id: 'explorer.comparativeWords.title', defaultMessage: 'Compare Top Words' },
@@ -17,64 +17,44 @@ const localMessages = {
   centerTitle: { id: 'explorer.comparativeWords.center', defaultMessage: 'Word used in both' },
   sideTitle: { id: 'explorer.comparativeWords.right', defaultMessage: 'Words unique to {name} in the top 100 words in the sampled stories' },
   downloadCsv: { id: 'explorer.entities.downloadCsv', defaultMessage: 'Download { name } word count comparison CSV' },
-
 };
-const LEFT = 0;
-const RIGHT = 1;
 
 class QueryWordComparisonResultsContainer extends React.Component {
+  state = {
+    leftQuery: undefined,
+    rightQuery: undefined,
+  };
+
   componentWillMount() {
-    const { queries, selectComparativeWords, leftQuery } = this.props;
-    const leftQ = queries[0];
-    const rightQ = queries.length > 1 ? queries[1] : queries[0];
-    if (leftQuery === null) {
-      selectComparativeWords(leftQ, LEFT); // default selection. we can't do this if the user has set the UI widget
-      selectComparativeWords(rightQ, RIGHT);
-    }
+    const { queries } = this.props;
+    this.setDefaultQueries(queries);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { lastSearchTime, selectComparativeWords, leftQuery, rightQuery } = this.props;
-    let leftQ = null;
-    let rightQ = null;
-    if (nextProps.lastSearchTime !== lastSearchTime) {
-      // if a search query change from the top
-      const { temp } = nextProps.queries[0];
-      leftQ = temp;
-      rightQ = nextProps.queries.length > 1 ? nextProps.queries[1] : nextProps.queries[0];
-      selectComparativeWords(leftQ, LEFT);
-      selectComparativeWords(rightQ, RIGHT);
-    } else if ((nextProps.leftQuery && nextProps.leftQuery !== leftQuery)
-      || (nextProps.rightQuery && nextProps.rightQuery !== rightQuery)) {
-      // if a change in the comparison UI selection
-      leftQ = nextProps.leftQuery;
-      rightQ = nextProps.rightQuery;
-      selectComparativeWords(leftQ, LEFT);
-      selectComparativeWords(rightQ, RIGHT);
+    const { queries } = this.props;
+    if (nextProps.queries !== queries) {
+      this.setDefaultQueries(nextProps.queries);
     }
   }
 
-  shouldComponentUpdate(nextProps) {
-    const { results, queries, leftQuery, rightQuery } = this.props;
-    const shouldChange = queryChangedEnoughToUpdate(queries, nextProps.queries, results, nextProps.results);
-    // also check if they changed their view choices
-    return (shouldChange || (nextProps.leftQuery !== leftQuery || nextProps.rightQuery !== rightQuery)
-    );
+  setDefaultQueries(queries) {
+    this.setState({
+      leftQuery: queries[0],
+      rightQuery: queries[1],
+    });
   }
 
-  selectAndFetchComparedQueries = (queryObj, target) => {
-    const { selectComparativeWords, leftQuery, rightQuery } = this.props;
-    // don't let user set the dropdowns to the same value
-    if (target === LEFT && queryObj !== rightQuery) {
-      selectComparativeWords(queryObj, LEFT);
-    } else if (target === RIGHT && queryObj !== leftQuery) {
-      selectComparativeWords(queryObj, RIGHT);
+  handleQuerySelectionChange = (queryObj, target) => {
+    if (target === LEFT) {
+      this.setState({ leftQuery: queryObj });
+    } else if (target === RIGHT) {
+      this.setState({ rightQuery: queryObj });
     }
   }
 
   render() {
-    const { queries, results, handleWordCloudClick, leftQuery, rightQuery } = this.props;
-    if (results && results.length > 0 && !rightQuery) {
+    const { queries, results, handleWordCloudClick } = this.props;
+    if (results && results.length > 0 && !this.state.rightQuery) {
       return (
         <Grid>
           <Row>
@@ -92,14 +72,14 @@ class QueryWordComparisonResultsContainer extends React.Component {
     }
     if (results && results.length > 1) {
       let wordSelectorContent;
+      // only show selector if more than two queries
       if (queries.length > 2) {
-        // only show selector if more than two queries
         wordSelectorContent = (
           <WordSelectWrapper
             queries={queries}
-            selectComparativeWords={this.selectAndFetchComparedQueries}
-            leftQuery={leftQuery}
-            rightQuery={rightQuery}
+            onQuerySelectionChange={this.handleQuerySelectionChange}
+            leftQuery={this.state.leftQuery}
+            rightQuery={this.state.rightQuery}
           />
         );
       }
@@ -111,15 +91,15 @@ class QueryWordComparisonResultsContainer extends React.Component {
                 <h2><FormattedMessage {...localMessages.title} /></h2>
                 {wordSelectorContent}
                 <ComparativeOrderedWordCloud
-                  leftWords={results[getUidIndex(leftQuery.uid, results)].results}
-                  rightWords={results[getUidIndex(rightQuery.uid, results)].results}
-                  leftTextColor={leftQuery.color}
-                  rightTextColor={rightQuery.color}
+                  leftWords={results[getUidIndex(this.state.leftQuery.uid, results)].results}
+                  rightWords={results[getUidIndex(this.state.rightQuery.uid, results)].results}
+                  leftTextColor={this.state.leftQuery.color}
+                  rightTextColor={this.state.rightQuery.color}
                   textColor={getBrandDarkColor()}
                   onWordClick={handleWordCloudClick}
-                  leftTitleMsg={<FormattedMessage {...localMessages.sideTitle} values={{ name: leftQuery.label }} />}
+                  leftTitleMsg={<FormattedMessage {...localMessages.sideTitle} values={{ name: this.state.leftQuery.label }} />}
                   centerTitleMsg={<FormattedMessage {...localMessages.centerTitle} />}
-                  rightTitleMsg={<FormattedMessage {...localMessages.sideTitle} values={{ name: rightQuery.label }} />}
+                  rightTitleMsg={<FormattedMessage {...localMessages.sideTitle} values={{ name: this.state.rightQuery.label }} />}
                 />
               </Col>
             </Row>
@@ -141,22 +121,15 @@ QueryWordComparisonResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from dispatch
   results: PropTypes.array.isRequired,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   handleWordCloudClick: PropTypes.func.isRequired,
   selectComparativeWords: PropTypes.func.isRequired,
-  leftQuery: PropTypes.object,
-  rightQuery: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
-  lastSearchTime: state.explorer.lastSearchTime.time,
   fetchStatus: state.explorer.topWords.fetchStatus,
   results: state.explorer.topWords.results,
-  leftQuery: state.explorer.topWordsComparison.left,
-  rightQuery: state.explorer.topWordsComparison.right,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -173,21 +146,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.selectComparativeWords(ownProps.queries[0], LEFT);
-      if (ownProps.queries[1] && ownProps.queries[1].q !== '*') {
-        dispatchProps.selectComparativeWords(ownProps.queries[1], RIGHT);
-      }
-    },
-  });
-}
-
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withQueryResults()(
       QueryWordComparisonResultsContainer
     )
   )

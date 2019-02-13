@@ -94,7 +94,10 @@ TabSearchResultsContainer.propTypes = {
   selectedMediaQueryType: PropTypes.number,
   queryResults: PropTypes.object,
   initItems: PropTypes.object,
-  fetchStatus: PropTypes.string,
+  fetchStatus: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.array,
+  ]).isRequired,
 };
 
 export default

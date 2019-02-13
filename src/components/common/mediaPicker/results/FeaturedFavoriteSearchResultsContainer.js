@@ -106,7 +106,7 @@ FeaturedFavoriteSearchResultsContainer.propTypes = {
   featured: PropTypes.object,
   favoritedCollections: PropTypes.object,
   favoritedSources: PropTypes.object,
-  fetchStatus: PropTypes.string,
+  fetchStatus: PropTypes.array.isRequired,
   displayResults: PropTypes.bool,
 };
 

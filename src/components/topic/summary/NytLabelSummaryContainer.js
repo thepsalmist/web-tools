@@ -149,9 +149,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  asyncFetch: () => {
-    dispatch(fetchTopicNytLabelCounts(ownProps.topicId, ownProps.filters));
-  },
   updateQueryFilter: (newQueryFilter) => {
     const newFilters = {
       ...ownProps.filters,

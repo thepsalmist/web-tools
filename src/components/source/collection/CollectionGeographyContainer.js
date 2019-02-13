@@ -60,8 +60,6 @@ CollectionGeographyContainer.propTypes = {
   // from state
   geolist: PropTypes.array.isRequired,
   fetchStatus: PropTypes.string,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
   // from parent
   collectionName: PropTypes.string.isRequired,
   collectionId: PropTypes.number.isRequired,

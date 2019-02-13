@@ -48,17 +48,11 @@ const mapStateToProps = state => ({
   isLoggedIn: state.user.isLoggedIn,
 });
 
-const mapDispatchToProps = dispatch => ({
-  asyncFetch: () => {
-    dispatch(fetchPublicTopicsList());
-  },
-});
-
 const fetchAsyncData = dispatch => dispatch(fetchPublicTopicsList());
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps)(
     withAsyncData(fetchAsyncData)(
       PublicTopicsContainer
     )

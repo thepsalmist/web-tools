@@ -4,7 +4,6 @@ import { push, replace } from 'react-router-redux';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import withFilters from '../../common/hocs/FilteredTopics';
 import { filteredLocation, urlWithFilters } from '../../util/location';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import TopicControlBar from '../controlbar/TopicControlBar';
@@ -36,6 +35,11 @@ const localMessages = {
 };
 
 class TopicVersionContainer extends React.Component {
+  constructor() {
+    super();
+    this.setSideBarContent = this.setSideBarContent.bind(this);
+  }
+
   state = {
     sideBarContent: null,
   };
@@ -100,12 +104,10 @@ class TopicVersionContainer extends React.Component {
   render() {
     const { children, topicId, topicInfo, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, fetchStatusSnapshot, fetchStatusInfo } = this.props;
     // show a big error if there is one to show
-    let contentToShow = children;
-    const childrenWithExtraProp = React.Children.map(children, (child) => {
-      React.cloneElement(child, {
-        setSideBarContent: this.setSideBarContent,
-      });
-    });
+
+    const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent: this.setSideBarContent }));
+
+    let contentToShow = childrenWithExtraProp;
 
     const controlbar = (
       <TopicControlBar
@@ -155,8 +157,6 @@ TopicVersionContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   // from dispatch
   addAppNotice: PropTypes.func.isRequired,
-  handleSpiderRequest: PropTypes.func,
-  handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func,
   // from state
   filters: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string.isRequired,
@@ -165,6 +165,8 @@ TopicVersionContainer.propTypes = {
   topicInfo: PropTypes.object,
   needsNewSnapshot: PropTypes.bool.isRequired,
   snapshotCount: PropTypes.number.isRequired,
+  handleSpiderRequest: PropTypes.func.isRequired,
+  handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func.isRequired,
   goToUrl: PropTypes.func.isRequired,
 };
 
@@ -337,9 +339,7 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withAsyncData(fetchAsyncData, ['snapshotId'])(
-      withFilters()(
-        TopicVersionContainer
-      )
+      TopicVersionContainer
     )
   )
 );

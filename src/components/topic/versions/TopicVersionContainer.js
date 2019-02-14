@@ -4,9 +4,10 @@ import { push, replace } from 'react-router-redux';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
+import withFilters from '../../common/hocs/FilteredTopics';
 import { filteredLocation, urlWithFilters } from '../../util/location';
 import LoadingSpinner from '../../common/LoadingSpinner';
-import TopicFilterControlBar from '../controlbar/TopicFilterControlBar';
+import TopicControlBar from '../controlbar/TopicControlBar';
 import { addNotice } from '../../../actions/appActions';
 import { snapshotIsUsable, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
   TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
@@ -35,6 +36,10 @@ const localMessages = {
 };
 
 class TopicVersionContainer extends React.Component {
+  state = {
+    sideBarContent: null,
+  };
+
   componentWillMount() {
     const { needsNewSnapshot, addAppNotice } = this.props;
     const { formatMessage } = this.props.intl;
@@ -61,6 +66,10 @@ class TopicVersionContainer extends React.Component {
       }
     }
     // has snapshot info changed?
+  }
+
+  setSideBarContent(sideBarContent) {
+    this.setState({ sideBarContent });
   }
 
   determineVersionStatus(topicInfo) {
@@ -92,13 +101,20 @@ class TopicVersionContainer extends React.Component {
     const { children, topicId, topicInfo, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, fetchStatusSnapshot, fetchStatusInfo } = this.props;
     // show a big error if there is one to show
     let contentToShow = children;
+    const childrenWithExtraProp = React.Children.map(children, (child) => {
+      React.cloneElement(child, {
+        setSideBarContent: this.setSideBarContent,
+      });
+    });
+
     const controlbar = (
-      <TopicFilterControlBar
+      <TopicControlBar
+        {...this.props}
         topicId={topicId}
         topic={topicInfo}
-        showFilter="placeholder" // TODO: if filters are set
+        sideBarContent={this.state.sideBarContent}
+        // implements handleRenderFilters and evaluates showFilters
         // setupJumpToExplorer={setupJumpToExplorer} // defined in child Component VersionReady
-        // setupFilterControls={setupFilterControls} // TODO: if filters are set
       />
     );
 
@@ -106,7 +122,7 @@ class TopicVersionContainer extends React.Component {
       // if the topic is running the initial spider and then show under construction message
       contentToShow = (
         <div>
-          {children}
+          {childrenWithExtraProp}
           <TopicVersionStatusContainer />
         </div>
       );
@@ -163,7 +179,11 @@ const mapStateToProps = (state, ownProps) => ({
   snapshotCount: state.topics.selected.snapshots.list.length,
 });
 
-const mapDispatchToProps = dispatch => ({
+function filtersAreSet(topicId, filters) {
+  return (filters && (topicId !== null) && (filters.snapshotId !== null) && (filters.timespanId !== null));
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
   addAppNotice: (info) => {
     dispatch(addNotice(info));
   },
@@ -179,6 +199,7 @@ const mapDispatchToProps = dispatch => ({
   },
   handleSpiderRequest: topicId => dispatch(topicStartSpider(topicId)).then(() => window.location.reload()),
   */
+  showFilters: filtersAreSet(ownProps.topicId, ownProps.filters),
 });
 
 const fetchAsyncData = (dispatch, { topicInfo, location, intl }) => {
@@ -316,7 +337,9 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withAsyncData(fetchAsyncData, ['snapshotId'])(
-      TopicVersionContainer
+      withFilters()(
+        TopicVersionContainer
+      )
     )
   )
 );

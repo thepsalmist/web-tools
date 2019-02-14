@@ -3,16 +3,13 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
-import { filteredLinkTo, filteredLocation } from '../../util/location';
+import { filteredLinkTo } from '../../util/location';
+import TopicFilterBar from '../controlbar/TopicFilterBar';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import LoadingSpinner from '../../common/LoadingSpinner';
-import { ExploreButton, FilterButton } from '../../common/IconButton';
-import ActiveFiltersContainer from '../controlbar/ActiveFiltersContainer';
-import FilterSelectorContainer from '../controlbar/FilterSelectorContainer';
-import { REMOVE_FOCUS } from '../controlbar/FocusSelector';
+import { ExploreButton } from '../../common/IconButton';
 import { LEVEL_WARNING } from '../../common/Notice';
-import TimespanSelectorContainer from '../controlbar/timespans/TimespanSelectorContainer';
-import { toggleFilterControls, filterByFocus, filterByQuery, filterByTimespan, fetchTopicFocalSetsList, fetchFocalSetDefinitions, setTopicNeedsNewSnapshot, topicStartSpider } from '../../../actions/topicActions';
+import { filterByFocus, filterByQuery, filterByTimespan, fetchTopicFocalSetsList, fetchFocalSetDefinitions, setTopicNeedsNewSnapshot, topicStartSpider } from '../../../actions/topicActions';
 import { updateFeedback, addNotice } from '../../../actions/appActions';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 import { nullOrUndefined } from '../../../lib/formValidators';
@@ -23,35 +20,6 @@ const localMessages = {
 };
 
 class TopicVersionReadyStatusContainer extends React.Component {
-  setupFilterControls() {
-    const { topicId, filters, location, handleFocusSelected, handleQuerySelected } = this.props;
-    const { formatMessage } = this.props.intl;
-    let timespanControls = null;
-    // give HOC components to render in the filter control in control bar
-    // both the focus and timespans selectors need the snapshot to be selected first
-
-    if ((filters.snapshotId !== null) && (filters.snapshotId !== undefined)) {
-      timespanControls = <TimespanSelectorContainer topicId={topicId} location={location} filters={filters} />;
-    }
-    return (
-      <div>
-        <FilterButton tooltip={formatMessage(localMessages.filterTopic)} />
-        <ActiveFiltersContainer
-          onRemoveFocus={() => handleFocusSelected(REMOVE_FOCUS)}
-          onRemoveQuery={() => handleQuerySelected(null)}
-        />
-        <FilterSelectorContainer
-          location={location}
-          onFocusSelected={handleFocusSelected}
-          onQuerySelected={handleQuerySelected}
-        />
-        <div className="sub">
-          {timespanControls}
-        </div>
-      </div>
-    );
-  }
-
   setupJumpToExplorer() {
     const { selectedTimespan, topicInfo, filters } = this.props;
     // set up links to jump to other tools
@@ -83,25 +51,23 @@ class TopicVersionReadyStatusContainer extends React.Component {
     return null;
   }
 
-  filtersAreSet() {
-    const { filters, topicId } = this.props;
-    return ((topicId !== null) && (filters.snapshotId !== null) && (filters.timespanId !== null));
-  }
-
   hasUsableSnapshot() {
     const { snapshots } = this.props;
     const hasUsableSnapshot = snapshots.filter(d => d.isUsable);
     return (hasUsableSnapshot.length > 0);
   }
 
+  filtersAreSet() { // use this or
+    const { topicId, filters } = this.props;
+    return ((topicId !== null) && (filters.snapshotId !== null) && (filters.timespanId !== null));
+  }
+
   render() {
-    const { children, topicId, filters, location, handleFocusSelected, handleQuerySelected } = this.props;
-    const { formatMessage } = this.props.intl;
+    const { children, filters, setSideBarContent } = this.props;
     let childContent = null;
     // let timespanContent = null;
     // if ready, load subtopic filtering capability and timespan info
     // const timespanControls = <TimespanSelectorContainer topicId={topicId} location={location} filters={filters} />;
-
     if (this.filtersAreSet()) {
       // show spinner until there is a valid timespan
       if (filters.timespanId) {
@@ -112,18 +78,8 @@ class TopicVersionReadyStatusContainer extends React.Component {
     }
     return (
       <div>
-        <FilterButton tooltip={formatMessage(localMessages.filterTopic)} />
-        <ActiveFiltersContainer
-          onRemoveFocus={() => handleFocusSelected(REMOVE_FOCUS)}
-          onRemoveQuery={() => handleQuerySelected(null)}
-        />
-        <FilterSelectorContainer
-          location={location}
-          onFocusSelected={handleFocusSelected}
-          onQuerySelected={handleQuerySelected}
-        />
         <div className="sub">
-          <TimespanSelectorContainer topicId={topicId} location={location} filters={filters} />
+          <TopicFilterBar setSideBarContent={setSideBarContent} />
           {childContent}
         </div>
       </div>
@@ -149,12 +105,10 @@ TopicVersionReadyStatusContainer.propTypes = {
   needsNewSnapshot: PropTypes.bool,
   selectedTimespan: PropTypes.object,
   // from dispatch
-  handleFilterToggle: PropTypes.func.isRequired,
-  handleFocusSelected: PropTypes.func.isRequired,
-  handleQuerySelected: PropTypes.func.isRequired,
   onFetchAyncData: PropTypes.func.isRequired,
   // from merge
   goToUrl: PropTypes.func.isRequired,
+  setSideBarContent: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -200,21 +154,6 @@ function latestSnapshotIsRunning(snapshots) {
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleFilterToggle: () => {
-    dispatch(toggleFilterControls());
-  },
-  handleFocusSelected: (focus) => {
-    const selectedFocusId = (focus.foci_id === REMOVE_FOCUS) ? null : focus.foci_id;
-    const newLocation = filteredLocation(ownProps.location, { focusId: selectedFocusId, timespanId: null });
-    dispatch(push(newLocation));
-    dispatch(filterByFocus(selectedFocusId));
-  },
-  handleQuerySelected: (query) => {
-    const queryToApply = ((query === null) || (query.length === 0)) ? null : query; // treat empty query as removal of query string, using null because '' != *
-    const newLocation = filteredLocation(ownProps.location, { q: queryToApply });
-    dispatch(push(newLocation));
-    dispatch(filterByQuery(queryToApply));
-  },
   redirectToUrl: (url, filters) => dispatch(push(filteredLinkTo(url, filters))),
 
   handleSpiderRequest: () => {

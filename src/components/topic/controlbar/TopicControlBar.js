@@ -2,12 +2,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
-import { FormattedMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import { FormattedMessage, injectIntl } from 'react-intl';
+// import ActiveFiltersContainer from './ActiveFiltersContainer';
+// import FilterSelectorContainer from './FilterSelectorContainer';
 import LinkWithFilters from '../LinkWithFilters';
-import { HomeButton, EditButton } from '../../common/IconButton';
+import { HomeButton, EditButton /* FilterButton */ } from '../../common/IconButton';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
+// import TimespanSelectorContainer from './timespans/TimespanSelectorContainer';
+// import { REMOVE_FOCUS } from './FocusSelector';
 import AboutTopicDialog from './AboutTopicDialog';
 
 const localMessages = {
@@ -23,8 +27,8 @@ const localMessages = {
   jumpToExplorer: { id: 'topic.controlBar.jumpToExplorer', defaultMessage: 'Query on Explorer' },
 };
 
-const TopicFilterControlBar = (props) => {
-  const { topicId, setupFilterControls, setupJumpToExplorer, goToUrl } = props;
+const TopicControlBar = (props) => {
+  const { topicId, sideBarContent, setupJumpToExplorer, goToUrl } = props;
   const { formatMessage } = props.intl;
 
   return (
@@ -54,9 +58,7 @@ const TopicFilterControlBar = (props) => {
               </Permissioned>
               {setupJumpToExplorer}
             </Col>
-            <Col lg={6} className="right">
-              {setupFilterControls}
-            </Col>
+            {sideBarContent}
           </Row>
         </Grid>
       </div>
@@ -64,7 +66,7 @@ const TopicFilterControlBar = (props) => {
   );
 };
 
-TopicFilterControlBar.propTypes = {
+TopicControlBar.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
   // from parent
@@ -72,10 +74,11 @@ TopicFilterControlBar.propTypes = {
   topic: PropTypes.object,
   location: PropTypes.object,
   filters: PropTypes.object.isRequired,
-  setupFilterControls: PropTypes.func,
+  sideBarContent: PropTypes.node,
   setupJumpToExplorer: PropTypes.func,
   goToUrl: PropTypes.func,
 };
+
 
 const mapStateToProps = (state, ownProps) => ({
   filters: state.topics.selected.filters,
@@ -92,6 +95,6 @@ const mapDispatchToProps = dispatch => ({
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    TopicFilterControlBar
+    TopicControlBar
   )
 );

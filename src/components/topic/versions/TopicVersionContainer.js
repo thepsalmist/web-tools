@@ -165,8 +165,8 @@ TopicVersionContainer.propTypes = {
   topicInfo: PropTypes.object,
   needsNewSnapshot: PropTypes.bool.isRequired,
   snapshotCount: PropTypes.number.isRequired,
-  handleSpiderRequest: PropTypes.func.isRequired,
-  handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func.isRequired,
+  handleSpiderRequest: PropTypes.func,
+  handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func,
   goToUrl: PropTypes.func.isRequired,
 };
 

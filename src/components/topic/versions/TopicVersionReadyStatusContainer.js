@@ -63,7 +63,7 @@ class TopicVersionReadyStatusContainer extends React.Component {
   }
 
   render() {
-    const { children, filters, setSideBarContent } = this.props;
+    const { children, topicId, filters, setSideBarContent, location } = this.props;
     let childContent = null;
     // let timespanContent = null;
     // if ready, load subtopic filtering capability and timespan info
@@ -79,7 +79,7 @@ class TopicVersionReadyStatusContainer extends React.Component {
     return (
       <div>
         <div className="sub">
-          <TopicFilterBar setSideBarContent={setSideBarContent} />
+          <TopicFilterBar topicId={topicId} setSideBarContent={setSideBarContent} location={location} />
           {childContent}
         </div>
       </div>

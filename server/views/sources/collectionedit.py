@@ -161,24 +161,24 @@ def _parse_sources_from_csv_upload(filepath):
                 # python 2.7 csv module doesn't support unicode so have to do the decode/encode here for cleaned up val
                 updated_src = line['media_id'] not in ['', None]
                 # decode all keys as long as there is a key  re Unicode vs ascii
-                newline = {k.decode('utf-8', errors='replace').encode('ascii', errors='ignore').lower(): v for
+                newline = {k.lower(): v for
                            k, v in list(line.items()) if k not in ['', None]}
-                newline_decoded = {k: v.decode('utf-8', errors='replace').encode('ascii', errors='ignore') for
+                newline_no_empties = {k: v for
                                    k, v in list(newline.items()) if v not in ['', None]}
                 empties = {k: v for k, v in list(newline.items()) if v in ['', None]}
 
                 # source urls have to start with the http, so add it if the user didn't
-                if newline_decoded['url'][:7] not in ['http://', 'http://'] and \
-                        newline_decoded['url'][:8] not in ['https://', 'https://']:
-                    newline_decoded['url'] = 'http://{}'.format(newline_decoded['url'])
+                if newline_no_empties['url'][:7] not in ['http://', 'http://'] and \
+                    newline_no_empties['url'][:8] not in ['https://', 'https://']:
+                    newline_no_empties['url'] = 'http://{}'.format(newline_no_empties['url'])
 
                 # sources must have a name for updates
                 if updated_src:
-                    if 'name' not in newline_decoded:
-                        raise Exception("Missing name for source " + str(newline_decoded['media_id'] + " " +
-                                                                         str(newline_decoded['url'])))
-                    newline_decoded.update(empties)
-                    sources_to_update.append(newline_decoded)
+                    if 'name' not in newline_no_empties:
+                        raise Exception("Missing name for source " + str(newline_no_empties['media_id'] + " " +
+                                                                         str(newline_no_empties['url'])))
+                        newline_no_empties.update(empties)
+                    sources_to_update.append(newline_no_empties)
                 else:
                     sources_to_create.append(newline_decoded)
             except Exception as e:

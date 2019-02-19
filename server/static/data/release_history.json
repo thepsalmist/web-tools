@@ -1,6 +1,18 @@
 {
   "releases": [
     {
+      "date": "2019-2-15",
+      "version": "v3.8.4",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Collection spreadsheet upload works",
+          "details": "Removed older string handling"
+        }
+      ]
+    },
+    {
       "date": "2019-1-28",
       "version": "v3.8.3",
       "notes": [

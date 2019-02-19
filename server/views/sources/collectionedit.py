@@ -192,7 +192,7 @@ def _parse_sources_from_csv_upload(filepath):
 def _update_source_worker(source_info):
     user_mc = user_admin_mediacloud_client()
     media_id = source_info['media_id']
-    # logger.debug("Updating media {}".format(media_id))
+    logger.debug("Updating media {}".format(media_id))
     source_no_metadata_no_id = {k: v for k, v in list(source_info.items()) if k != 'media_id'
                                 and k not in SOURCE_LIST_CSV_METADATA_PROPS}
     response = user_mc.mediaUpdate(media_id, source_no_metadata_no_id)
@@ -221,7 +221,7 @@ def _create_or_update_sources(source_list_from_csv, create_new):
         else:
             sources_to_update.append(src)
     # process all the entries we think are creations in one batch call
-    use_pool = True
+    use_pool = False
     if len(sources_to_create) > 0:
         # remove metadata so they don't save badly (will do metadata later)
         sources_to_create_no_metadata = []

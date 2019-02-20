@@ -8,6 +8,8 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../../lib/auth';
 import { VERSION_ERROR_EXCEEDED } from '../../../lib/topicFilterUtil';
 import { ADMIN_MAX_RECOMMENDED_STORIES } from '../../../lib/formValidators';
+import TopicInfo from '../controlbar/TopicInfo';
+import TopicStoryInfo from '../controlbar/TopicStoryInfo';
 
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Version status' },
@@ -24,7 +26,7 @@ const localMessages = {
 
 class TopicVersionErrorStatusContainer extends React.Component {
   render() {
-    const { topicInfo, error, handleUpdateMaxStoriesAndSpiderRequest, handleSpiderRequest } = this.props;
+    const { topicInfo, filters, error, handleUpdateMaxStoriesAndSpiderRequest, handleSpiderRequest } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     if (error === VERSION_ERROR_EXCEEDED) {
@@ -50,13 +52,17 @@ class TopicVersionErrorStatusContainer extends React.Component {
                   placeholder={ADMIN_MAX_RECOMMENDED_STORIES}
                 />
               </Col>
-              <Col lg={6}>
+              <Col lg={4}>
                 <AppButton
                   label={formatMessage(localMessages.updateMaxStories)}
                   onClick={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo, this.textInputRef)}
                   type="submit"
                   primary
                 />
+              </Col>
+              <Col lg={4}>
+                <TopicInfo topic={topicInfo} />
+                <TopicStoryInfo topic={topicInfo} filters={filters} />
               </Col>
             </Row>
           </Permissioned>
@@ -76,7 +82,7 @@ class TopicVersionErrorStatusContainer extends React.Component {
         <Grid>
           <Permissioned onlyTopic={PERMISSION_ADMIN}>
             <Row>
-              <Col lg={12}>
+              <Col lg={6}>
                 <div className="topic-stuck-created-or-error">
                   <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
                   <AppButton
@@ -86,6 +92,10 @@ class TopicVersionErrorStatusContainer extends React.Component {
                     color="primary"
                   />
                 </div>
+              </Col>
+              <Col lg={4}>
+                <TopicInfo topic={topicInfo} />
+                <TopicStoryInfo topic={topicInfo} filters={filters} />
               </Col>
             </Row>
           </Permissioned>
@@ -108,6 +118,7 @@ class TopicVersionErrorStatusContainer extends React.Component {
 TopicVersionErrorStatusContainer.propTypes = {
   // from state
   topicInfo: PropTypes.object,
+  filters: PropTypes.object,
   error: PropTypes.string,
   handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func,
   handleSpiderRequest: PropTypes.func,

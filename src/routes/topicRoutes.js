@@ -6,7 +6,6 @@ import TopicsHomepage from '../components/topic/homepage/TopicsHomepage';
 import TopicContainer from '../components/topic/TopicContainer';
 import TopicVersionReadyStatusContainer from '../components/topic/versions/TopicVersionReadyStatusContainer';
 import TopicVersionListContainer from '../components/topic/versions/TopicVersionListContainer';
-import TopicSettingsContainer from '../components/topic/versions/TopicSettingsContainer';
 import TopicSummaryContainer from '../components/topic/versions/TopicSummaryContainer';
 import TopicVersionContainer from '../components/topic/versions/TopicVersionContainer';
 import PublicTopicSummaryContainer from '../components/topic/versions/PublicTopicSummaryContainer';
@@ -57,12 +56,11 @@ const topicRoutes = (
     <Route path="/topics/status" component={TopicStatusDashboardContainer} onEnter={requireAuth} />
 
     <Route path="/topics/:topicId" component={TopicContainer} onEnter={requireAuth}>
-      <Route path="modify" component={EditTopicContainer} onEnter={requireAuth} />
-      <Route path="edit" component={EditTopicSettingsContainer} onEnter={requireAuth} />
+      <Route path="edit" component={EditTopicContainer} onEnter={requireAuth} />
 
       <Route path="/topics/:topicId/versions" component={TopicVersionContainer} onEnter={requireAuth}>
         <Route path="list" component={TopicVersionListContainer} onEnter={requireAuth} />
-        <Route path="settings" component={TopicSettingsContainer} onEnter={requireAuth} />
+        <Route path="settings" component={EditTopicSettingsContainer} onEnter={requireAuth} />
         <Route path="permissions" component={TopicPermissionsContainer} onEnter={requireAuth} />
         <Route component={TopicVersionReadyStatusContainer} onEnter={requireAuth}>
           <Route path="/topics/:topicId/summary" component={TopicSummaryContainer} onEnter={requireAuth} />

@@ -19,7 +19,8 @@ const localMessages = {
   changePermissionsDetails: { id: 'topic.changePermissions.details', defaultMessage: 'Control who else can see and/or change this topic' },
   settings: { id: 'topic.changeSettings', defaultMessage: 'Settings' },
   changeSettingsDetails: { id: 'topic.changeSettings.details', defaultMessage: 'Edit this topic\'s configuration and visibility' },
-
+  versionList: { id: 'topic.changeSettings', defaultMessage: 'Versions' },
+  viewVersionLists: { id: 'topic.changeSettings', defaultMessage: 'View Versions' },
   filterTopic: { id: 'topic.filter', defaultMessage: 'Filter this Topic' },
   startedSpider: { id: 'topic.startedSpider', defaultMessage: 'Started a new spidering job for this topic' },
   summaryMessage: { id: 'snapshot.required', defaultMessage: 'You have made some changes that you can only see if you generate a new Snapshot. <a href="{url}">Generate one now</a>.' },
@@ -36,25 +37,40 @@ const TopicControlBar = (props) => {
       <div className="main">
         <Grid>
           <Row>
-            <Col lg={6} className="left">
+            <Col lg={8} className="left">
               <LinkWithFilters to={`/topics/${topicId}/summary`}>
                 <HomeButton />
                 <b><FormattedMessage {...localMessages.topicHomepage} /></b>
               </LinkWithFilters>
               <AboutTopicDialog />
               <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-                <EditButton
-                  label={formatMessage(localMessages.settings)}
-                  description={formatMessage(localMessages.changeSettingsDetails)}
-                  onClick={() => goToUrl(`/topics/${topicId}/edit`)}
-                  id="modify-topic-settings"
-                />
-                <EditButton
-                  label={formatMessage(localMessages.permissions)}
-                  description={formatMessage(localMessages.changePermissionsDetails)}
-                  onClick={() => goToUrl(`/topics/${topicId}/edit`)}
-                  id="modify-topic-settings"
-                />
+                <LinkWithFilters to={`/topics/${topicId}/versions/settings`}>
+                  <EditButton
+                    label={formatMessage(localMessages.settings)}
+                    description={formatMessage(localMessages.changeSettingsDetails)}
+                    onClick={() => goToUrl(`/topics/${topicId}/versions/settings`)}
+                    id="modify-topic-settings"
+                  />
+                  <b><FormattedMessage {...localMessages.settings} /></b>
+                </LinkWithFilters>
+                <LinkWithFilters to={`/topics/${topicId}/versions/permissions`}>
+                  <EditButton
+                    label={formatMessage(localMessages.permissions)}
+                    description={formatMessage(localMessages.changePermissionsDetails)}
+                    onClick={() => goToUrl(`/topics/${topicId}/versions/permissions`)}
+                    id="modify-topic-permissions"
+                  />
+                  <b><FormattedMessage {...localMessages.permissions} /></b>
+                </LinkWithFilters>
+                <LinkWithFilters to={`/topics/${topicId}/versions/list`}>
+                  <EditButton
+                    label={formatMessage(localMessages.versionList)}
+                    description={formatMessage(localMessages.viewVersionLists)}
+                    onClick={() => goToUrl(`/topics/${topicId}/versions/list`)}
+                    id="modify-topic-permissions"
+                  />
+                  <b><FormattedMessage {...localMessages.versionList} /></b>
+                </LinkWithFilters>
               </Permissioned>
               {setupJumpToExplorer}
             </Col>

@@ -24,38 +24,36 @@ const localMessages = {
   failed: { id: 'topic.edit.save.failed', defaultMessage: 'Sorry, that didn\'t work!' },
 };
 
-class EditTopicSettingsContainer extends React.Component {
-  render() {
-    // so we have to get them from the formData
-    const { topicInfo, topicId, reallyHandleSave } = this.props;
-    const { formatMessage } = this.props.intl;
-    const initialValues = { ...topicInfo, buttonLabel: formatMessage(messages.save) };
-    return (
-      <div className="topic-edit-form">
-        <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
-        <Grid>
-          <TopicPageTitle value={localMessages.editTopicTitle} />
-          <Row>
-            <Col lg={12}>
-              <h1><FormattedMessage {...localMessages.editTopicTitle} /></h1>
-              <p><FormattedMessage {...localMessages.editTopicText} /></p>
-            </Col>
-          </Row>
-          <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-            <TopicSettingsForm
-              topicId={topicId}
-              initialValues={initialValues}
-              onSubmit={reallyHandleSave}
-              mode={TOPIC_FORM_MODE_EDIT}
-              enableReinitialize
-              destroyOnUnmount
-            />
-          </Permissioned>
-        </Grid>
-      </div>
-    );
-  }
-}
+const EditTopicSettingsContainer = (props) => {
+  // so we have to get them from the formData
+  const { topicInfo, topicId, reallyHandleSave } = props;
+  const { formatMessage } = props.intl;
+  const initialValues = { ...topicInfo, buttonLabel: formatMessage(messages.save) };
+  return (
+    <div className="topic-edit-form">
+      <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
+      <Grid>
+        <TopicPageTitle value={localMessages.editTopicTitle} />
+        <Row>
+          <Col lg={12}>
+            <h1><FormattedMessage {...localMessages.editTopicTitle} /></h1>
+            <p><FormattedMessage {...localMessages.editTopicText} /></p>
+          </Col>
+        </Row>
+        <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
+          <TopicSettingsForm
+            topicId={topicId}
+            initialValues={initialValues}
+            onSubmit={reallyHandleSave}
+            mode={TOPIC_FORM_MODE_EDIT}
+            enableReinitialize
+            destroyOnUnmount
+          />
+        </Permissioned>
+      </Grid>
+    </div>
+  );
+};
 
 EditTopicSettingsContainer.propTypes = {
   // from context

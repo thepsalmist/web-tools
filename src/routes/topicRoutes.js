@@ -7,6 +7,7 @@ import TopicContainer from '../components/topic/TopicContainer';
 // import TopicVersionErrorStatusContainer from '../components/topic/versions/TopicVersionErrorStatusContainer';
 import TopicVersionReadyStatusContainer from '../components/topic/versions/TopicVersionReadyStatusContainer';
 import TopicVersionListContainer from '../components/topic/versions/TopicVersionListContainer';
+import TopicNewVersionContainer from '../components/topic/versions/TopicNewVersionContainer';
 import TopicSummaryContainer from '../components/topic/versions/TopicSummaryContainer';
 import TopicVersionContainer from '../components/topic/versions/TopicVersionContainer';
 import PublicTopicSummaryContainer from '../components/topic/versions/PublicTopicSummaryContainer';
@@ -61,6 +62,7 @@ const topicRoutes = (
       <Route path="list" component={TopicVersionListContainer} onEnter={requireAuth} />
       <Route path="permissions" component={TopicPermissionsContainer} onEnter={requireAuth} />
       <Route path="settings" component={EditTopicSettingsContainer} onEnter={requireAuth} />
+      <Route path="newVersion" component={TopicNewVersionContainer} onEnter={requireAuth} />
       <Route path="/topics/:topicId/versions" component={TopicVersionContainer} onEnter={requireAuth}>
         <Route component={TopicVersionReadyStatusContainer} onEnter={requireAuth}>
           <Route path="/topics/:topicId/summary" component={TopicSummaryContainer} onEnter={requireAuth} />

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { push, replace } from 'react-router-redux';
+import { replace } from 'react-router-redux';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
@@ -74,7 +74,7 @@ class TopicVersionContainer extends React.Component {
   }
 
   render() {
-    const { children, topicId, topicInfo, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, fetchStatusSnapshot, fetchStatusInfo, handleCreateSnapshot } = this.props;
+    const { children, topicId, topicInfo, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, fetchStatusSnapshot, fetchStatusInfo } = this.props;
     // show a big error if there is one to show
 
     const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent: this.setSideBarContent }));
@@ -87,7 +87,6 @@ class TopicVersionContainer extends React.Component {
         topicId={topicId}
         topic={topicInfo}
         sideBarContent={this.state.sideBarContent}
-        handleCreateSnapshot={handleCreateSnapshot}
         // implements handleRenderFilters and evaluates showFilters
         // setupJumpToExplorer={setupJumpToExplorer} // defined in child Component VersionReady
       />
@@ -141,8 +140,6 @@ TopicVersionContainer.propTypes = {
   snapshotCount: PropTypes.number.isRequired,
   handleSpiderRequest: PropTypes.func,
   handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func,
-  goToUrl: PropTypes.func.isRequired,
-  handleCreateSnapshot: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -163,9 +160,6 @@ function filtersAreSet(topicId, filters) {
 const mapDispatchToProps = (dispatch, ownProps) => ({
   addAppNotice: (info) => {
     dispatch(addNotice(info));
-  },
-  goToUrl: (url) => {
-    dispatch(push(url));
   },
   /* handleUpdateMaxStoriesAndSpiderRequest: (topicInfo, textInput) => {
     const maxStories = parseInt(textInput.value, 10) > MAX_RECOMMENDED_STORIES ? parseInt(textInput.value, 10) : ADMIN_MAX_RECOMMENDED_STORIES;

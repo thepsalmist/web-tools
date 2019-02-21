@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { replace } from 'react-router-redux';
+import { push, replace } from 'react-router-redux';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
@@ -10,9 +10,9 @@ import messages from '../../../resources/messages';
 import BackLinkingControlBar from '../BackLinkingControlBar';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
-import { filteredLocation, urlWithFilters } from '../../util/location';
+import { filteredLocation, urlWithFilters, filteredLinkTo } from '../../util/location';
 import { addNotice } from '../../../actions/appActions';
-import { filterBySnapshot, createSnapshot } from '../../../actions/topicActions';
+import { filterBySnapshot } from '../../../actions/topicActions';
 import { LEVEL_INFO, LEVEL_WARNING, LEVEL_ERROR } from '../../common/Notice';
 import { snapshotIsUsable, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
   TOPIC_SNAPSHOT_STATE_ERROR } from '../../../reducers/topics/selected/snapshots';
@@ -36,7 +36,7 @@ const localMessages = {
 };
 
 const TopicVersionListContainer = (props) => {
-  const { topicId, versions, handleCreateSnapshot } = props;
+  const { topicId, versions, filters, handleCreateSnapshot } = props;
   const { formatMessage } = props.intl;
   let versionListContent;
   if (versions.length > 0) {
@@ -79,7 +79,7 @@ const TopicVersionListContainer = (props) => {
             type="submit"
             disabled={cannotCreate}
             label={formatMessage(localMessages.createButton)}
-            onClick={handleCreateSnapshot}
+            onClick={() => handleCreateSnapshot(topicId, filters)}
             primary
           />
         </Permissioned>
@@ -93,6 +93,7 @@ TopicVersionListContainer.propTypes = {
   // from parent
   versions: PropTypes.array.isRequired,
   topicId: PropTypes.number.isRequired,
+  filters: PropTypes.object.isRequired,
   // from compositional chain
   intl: PropTypes.object.isRequired,
   handleCreateSnapshot: PropTypes.func.isRequired,
@@ -109,8 +110,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  handleCreateSnapshot: (info) => {
-    dispatch(createSnapshot(info));
+  handleCreateSnapshot: (topicId, filters) => {
+    // TODO: should we just dispatch to the next screen, or also create the snapshot?
+    // dispatch(createSnapshot(info));
+    const url = `/topics/${topicId}/newVersion`;
+    dispatch(push(filteredLinkTo(url, filters)));
   },
 });
 

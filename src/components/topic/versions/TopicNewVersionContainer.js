@@ -4,6 +4,8 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import PageTitle from '../../common/PageTitle';
 import AppButton from '../../common/AppButton';
+import BackLinkingControlBar from '../BackLinkingControlBar';
+import messages from '../../../resources/messages';
 
 const localMessages = {
   description: { id: 'topics.adminList.title', defaultMessage: 'To make changes to a Topic, you must create a new version. Pick what kind of change you want to make and then follows prompts to build a new version.' },
@@ -15,6 +17,7 @@ const localMessages = {
 
 const TopicNewVersionContainer = props => (
   <div className="topic-container">
+    <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${props.topicId}/summary`} />
     <Grid>
       <PageTitle value={localMessages.title} />
       <FormattedMessage {...localMessages.description} />
@@ -43,7 +46,7 @@ const TopicNewVersionContainer = props => (
 TopicNewVersionContainer.propTypes = {
   // from state
   filters: PropTypes.object,
-  topicInfo: PropTypes.object,
+  topicId: PropTypes.number,
   formatMessage: PropTypes.object,
   // from context
   intl: PropTypes.object.isRequired,

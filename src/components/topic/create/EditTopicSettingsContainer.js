@@ -14,7 +14,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
 import TopicSettingsForm from './TopicSettingsForm';
 import { TOPIC_FORM_MODE_EDIT } from './TopicDetailForm';
-import TopicPageTitle from '../TopicPageTitle';
+// import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
   editTopicTitle: { id: 'topic.edit.title', defaultMessage: 'Topic Settings' },
@@ -33,10 +33,8 @@ const EditTopicSettingsContainer = (props) => {
     <div className="topic-edit-form">
       <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
       <Grid>
-        <TopicPageTitle value={localMessages.editTopicTitle} />
         <Row>
           <Col lg={12}>
-            <h1><FormattedMessage {...localMessages.editTopicTitle} /></h1>
             <p><FormattedMessage {...localMessages.editTopicText} /></p>
           </Col>
         </Row>
@@ -73,6 +71,8 @@ EditTopicSettingsContainer.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   filters: state.topics.selected.filters,
+  fetchStatus: state.topics.selected.info.fetchStatus,
+  fetchStatusInfo: state.topics.selected.info.fetchStatus,
   topicId: parseInt(ownProps.params.topicId, 10),
   topicInfo: state.topics.selected.info,
   timespan: state.topics.selected.timespans.selected,

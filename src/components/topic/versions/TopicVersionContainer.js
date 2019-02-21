@@ -74,7 +74,7 @@ class TopicVersionContainer extends React.Component {
   }
 
   render() {
-    const { children, topicId, topicInfo, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, fetchStatusSnapshot, fetchStatusInfo } = this.props;
+    const { children, topicId, topicInfo, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, fetchStatusSnapshot, fetchStatusInfo, handleCreateSnapshot } = this.props;
     // show a big error if there is one to show
 
     const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent: this.setSideBarContent }));
@@ -87,6 +87,7 @@ class TopicVersionContainer extends React.Component {
         topicId={topicId}
         topic={topicInfo}
         sideBarContent={this.state.sideBarContent}
+        handleCreateSnapshot={handleCreateSnapshot}
         // implements handleRenderFilters and evaluates showFilters
         // setupJumpToExplorer={setupJumpToExplorer} // defined in child Component VersionReady
       />
@@ -103,6 +104,7 @@ class TopicVersionContainer extends React.Component {
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
       contentToShow = [
         <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} handleUpdateMaxStoriesAndSpiderRequest={handleUpdateMaxStoriesAndSpiderRequest} />,
+        children,
       ];
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR) {
       contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR} handleSpiderRequest={handleSpiderRequest} />;
@@ -140,6 +142,7 @@ TopicVersionContainer.propTypes = {
   handleSpiderRequest: PropTypes.func,
   handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func,
   goToUrl: PropTypes.func.isRequired,
+  handleCreateSnapshot: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({

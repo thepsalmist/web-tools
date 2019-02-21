@@ -9,7 +9,11 @@ export const FETCH_CREATE_TOPIC_QUERY_STORY_COUNT = 'FETCH_CREATE_TOPIC_QUERY_ST
 export const FETCH_CREATE_TOPIC_QUERY_WORDS = 'FETCH_CREATE_TOPIC_QUERY_WORDS';
 export const GO_TO_CREATE_TOPIC_STEP = 'GO_TO_CREATE_TOPIC_STEP';
 
+export const CREATE_SNAPSHOT = 'CREATE_SNAPSHOT';
+
 export const createTopic = createAsyncAction(CREATE_TOPIC, api.createTopic);
+
+export const createSnapshot = createAsyncAction(CREATE_SNAPSHOT, api.createSnapshot);
 
 export const fetchStoryCountByQuery = createAsyncAction(FETCH_CREATE_TOPIC_QUERY_STORY_COUNT, api.fetchStoryCountByQuery);
 

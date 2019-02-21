@@ -9,7 +9,7 @@ import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../../lib/auth';
 import { VERSION_ERROR_EXCEEDED } from '../../../lib/topicFilterUtil';
 import { ADMIN_MAX_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 import TopicInfo from '../controlbar/TopicInfo';
-import TopicStoryInfo from '../controlbar/TopicStoryInfo';
+// import TopicStoryInfo from '../controlbar/TopicStoryInfo';
 
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Version status' },
@@ -26,7 +26,7 @@ const localMessages = {
 
 class TopicVersionErrorStatusContainer extends React.Component {
   render() {
-    const { topicInfo, filters, error, handleUpdateMaxStoriesAndSpiderRequest, handleSpiderRequest } = this.props;
+    const { topicInfo, error, handleUpdateMaxStoriesAndSpiderRequest, handleSpiderRequest } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     if (error === VERSION_ERROR_EXCEEDED) {
@@ -62,7 +62,6 @@ class TopicVersionErrorStatusContainer extends React.Component {
               </Col>
               <Col lg={4}>
                 <TopicInfo topic={topicInfo} />
-                <TopicStoryInfo topic={topicInfo} filters={filters} />
               </Col>
             </Row>
           </Permissioned>
@@ -95,7 +94,6 @@ class TopicVersionErrorStatusContainer extends React.Component {
               </Col>
               <Col lg={4}>
                 <TopicInfo topic={topicInfo} />
-                <TopicStoryInfo topic={topicInfo} filters={filters} />
               </Col>
             </Row>
           </Permissioned>

@@ -38,7 +38,9 @@ class TopicFilterBar extends React.Component {
         />
       </React.Fragment>
     );
-    setSideBarContent(content);
+    if (setSideBarContent) {
+      setSideBarContent(content);
+    }
   }
 
   render() {

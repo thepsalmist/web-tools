@@ -108,7 +108,7 @@ TopicVersionReadyStatusContainer.propTypes = {
   onFetchAyncData: PropTypes.func.isRequired,
   // from merge
   goToUrl: PropTypes.func.isRequired,
-  setSideBarContent: PropTypes.func.isRequired,
+  setSideBarContent: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({

@@ -7,6 +7,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 // import ActiveFiltersContainer from './ActiveFiltersContainer';
 // import FilterSelectorContainer from './FilterSelectorContainer';
 import LinkWithFilters from '../LinkWithFilters';
+import { filteredLinkTo } from '../../util/location';
 import { HomeButton, EditButton /* FilterButton */ } from '../../common/IconButton';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
@@ -29,7 +30,7 @@ const localMessages = {
 };
 
 const TopicControlBar = (props) => {
-  const { topicId, sideBarContent, setupJumpToExplorer, goToUrl } = props;
+  const { topicId, filters, sideBarContent, setupJumpToExplorer, goToUrl } = props;
   const { formatMessage } = props.intl;
 
   return (
@@ -44,29 +45,29 @@ const TopicControlBar = (props) => {
               </LinkWithFilters>
               <AboutTopicDialog />
               <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-                <LinkWithFilters to={`/topics/${topicId}/versions/settings`}>
+                <LinkWithFilters to={`/topics/${topicId}/settings`}>
                   <EditButton
                     label={formatMessage(localMessages.settings)}
                     description={formatMessage(localMessages.changeSettingsDetails)}
-                    onClick={() => goToUrl(`/topics/${topicId}/versions/settings`)}
+                    onClick={() => goToUrl(`/topics/${topicId}/settings`, filters)}
                     id="modify-topic-settings"
                   />
                   <b><FormattedMessage {...localMessages.settings} /></b>
                 </LinkWithFilters>
-                <LinkWithFilters to={`/topics/${topicId}/versions/permissions`}>
+                <LinkWithFilters to={`/topics/${topicId}/permissions`}>
                   <EditButton
                     label={formatMessage(localMessages.permissions)}
                     description={formatMessage(localMessages.changePermissionsDetails)}
-                    onClick={() => goToUrl(`/topics/${topicId}/versions/permissions`)}
+                    onClick={() => goToUrl(`/topics/${topicId}/permissions`)}
                     id="modify-topic-permissions"
                   />
                   <b><FormattedMessage {...localMessages.permissions} /></b>
                 </LinkWithFilters>
-                <LinkWithFilters to={`/topics/${topicId}/versions/list`}>
+                <LinkWithFilters to={`/topics/${topicId}/list`}>
                   <EditButton
                     label={formatMessage(localMessages.versionList)}
                     description={formatMessage(localMessages.viewVersionLists)}
-                    onClick={() => goToUrl(`/topics/${topicId}/versions/list`)}
+                    onClick={() => goToUrl(`/topics/${topicId}/list`)}
                     id="modify-topic-permissions"
                   />
                   <b><FormattedMessage {...localMessages.versionList} /></b>
@@ -103,8 +104,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  goToUrl: (url) => {
-    dispatch(push(url));
+  goToUrl: (url, filters) => {
+    dispatch(push(filteredLinkTo(url, filters)));
   },
 });
 

@@ -4,6 +4,7 @@ import Redirect from 'react-router/lib/Redirect';
 import IndexRedirect from 'react-router/lib/IndexRedirect';
 import TopicsHomepage from '../components/topic/homepage/TopicsHomepage';
 import TopicContainer from '../components/topic/TopicContainer';
+// import TopicVersionErrorStatusContainer from '../components/topic/versions/TopicVersionErrorStatusContainer';
 import TopicVersionReadyStatusContainer from '../components/topic/versions/TopicVersionReadyStatusContainer';
 import TopicVersionListContainer from '../components/topic/versions/TopicVersionListContainer';
 import TopicSummaryContainer from '../components/topic/versions/TopicSummaryContainer';
@@ -57,11 +58,10 @@ const topicRoutes = (
 
     <Route path="/topics/:topicId" component={TopicContainer} onEnter={requireAuth}>
       <Route path="edit" component={EditTopicContainer} onEnter={requireAuth} />
-
+      <Route path="list" component={TopicVersionListContainer} onEnter={requireAuth} />
+      <Route path="permissions" component={TopicPermissionsContainer} onEnter={requireAuth} />
+      <Route path="settings" component={EditTopicSettingsContainer} onEnter={requireAuth} />
       <Route path="/topics/:topicId/versions" component={TopicVersionContainer} onEnter={requireAuth}>
-        <Route path="list" component={TopicVersionListContainer} onEnter={requireAuth} />
-        <Route path="settings" component={EditTopicSettingsContainer} onEnter={requireAuth} />
-        <Route path="permissions" component={TopicPermissionsContainer} onEnter={requireAuth} />
         <Route component={TopicVersionReadyStatusContainer} onEnter={requireAuth}>
           <Route path="/topics/:topicId/summary" component={TopicSummaryContainer} onEnter={requireAuth} />
           <Route path="/topics/:topicId/media" component={InfluentialMediaContainer} onEnter={requireAuth} />

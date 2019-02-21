@@ -13,7 +13,7 @@ import { snapshotIsUsable, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_
 import { LEVEL_INFO, LEVEL_WARNING, LEVEL_ERROR } from '../../common/Notice';
 import TopicVersionStatusContainer from './TopicVersionStatusContainer';
 import TopicVersionErrorStatusContainer from './TopicVersionErrorStatusContainer';
-import PageTitle from '../../common/PageTitle';
+// import PageTitle from '../../common/PageTitle';
 import { filterBySnapshot } from '../../../actions/topicActions';
 import * as fetchConstants from '../../../lib/fetchConstants';
 import { VERSION_ERROR, VERSION_ERROR_EXCEEDED, VERSION_CREATING, VERSION_QUEUED, VERSION_RUNNING, VERSION_READY } from '../../../lib/topicFilterUtil';
@@ -43,34 +43,6 @@ class TopicVersionContainer extends React.Component {
   state = {
     sideBarContent: null,
   };
-
-  componentWillMount() {
-    const { needsNewSnapshot, addAppNotice } = this.props;
-    const { formatMessage } = this.props.intl;
-    // warn user if they made changes that require a new snapshot
-    if (needsNewSnapshot) {
-      addAppNotice({ level: LEVEL_WARNING, message: formatMessage(localMessages.needsSnapshotWarning) });
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { topicId, topicInfo, needsNewSnapshot, addAppNotice, filters } = this.props;
-    const { formatMessage } = this.props.intl;
-    // if they edited the topic, or the topic changed then reload (unless it is just a isFav change)
-    let topicInfoHasChanged = false;
-    Object.keys(topicInfo).forEach((key) => {
-      if ((key !== 'isFavorite') && (topicInfo[key] !== nextProps.topicInfo[key])) {
-        topicInfoHasChanged = true;
-      }
-    });
-    if (topicInfoHasChanged || (nextProps.topicId !== topicId) || filters.snapshotId !== nextProps.filters.snapshotId) {
-      // warn user if they made changes that require a new snapshot
-      if (needsNewSnapshot) {
-        addAppNotice({ level: LEVEL_WARNING, message: formatMessage(localMessages.needsSnapshotWarning) });
-      }
-    }
-    // has snapshot info changed?
-  }
 
   setSideBarContent(sideBarContent) {
     this.setState({ sideBarContent });
@@ -129,7 +101,9 @@ class TopicVersionContainer extends React.Component {
         </div>
       );
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
-      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} handleUpdateMaxStoriesAndSpiderRequest={handleUpdateMaxStoriesAndSpiderRequest} />;
+      contentToShow = [
+        <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} handleUpdateMaxStoriesAndSpiderRequest={handleUpdateMaxStoriesAndSpiderRequest} />,
+      ];
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR) {
       contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR} handleSpiderRequest={handleSpiderRequest} />;
     } else if (this.determineVersionStatus(topicInfo) === VERSION_QUEUED) {
@@ -140,12 +114,10 @@ class TopicVersionContainer extends React.Component {
       contentToShow = <LoadingSpinner />;
     }
     return ( // running or complete
-      <div className="topic-version-container">
-        <PageTitle value={topicInfo.name} />
-        {controlbar}
-        {contentToShow}
-      </div>
-    );
+      [
+        controlbar,
+        contentToShow,
+      ]);
   }
 }
 

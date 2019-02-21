@@ -9,9 +9,9 @@ import { addNotice } from '../../actions/appActions';
 import { selectTopic, fetchTopicSummary } from '../../actions/topicActions';
 import PageTitle from '../common/PageTitle';
 
-class TopicContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { topicId, topicInfo, asyncFetch } = this.props;
+const TopicContainer = (props) => {
+  /* componentWillReceiveProps(nextProps) {
+    const { topicInfo } = this.props;
     // if they edited the topic, or the topic changed then reload (unless it is just a isFav change)
     let topicInfoHasChanged = false;
     Object.keys(topicInfo).forEach((key) => {
@@ -19,23 +19,22 @@ class TopicContainer extends React.Component {
         topicInfoHasChanged = true;
       }
     });
-    if (topicInfoHasChanged || (nextProps.topicId !== topicId)) {
-      asyncFetch();
+    if (topicInfoHasChanged) {
+      // asyncFetch();
     }
   }
+  */
 
-  render() {
-    const { children, topicInfo, topicId, filters } = this.props;
-    // show a big error if there is one to show
-    return ( // running or complete
-      <div className="topic-container">
-        <PageTitle value={topicInfo.name} />
-        <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} filters={filters} />
-        {children}
-      </div>
-    );
-  }
-}
+  const { children, topicInfo, topicId, filters } = props;
+  // show a big error if there is one to show
+  return ( // running or complete
+    <div className="topic-container">
+      <PageTitle value={topicInfo.name} />
+      <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} filters={filters} />
+      {children}
+    </div>
+  );
+};
 
 TopicContainer.propTypes = {
   // from context
@@ -44,7 +43,6 @@ TopicContainer.propTypes = {
   location: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
   addAppNotice: PropTypes.func.isRequired,
   // from state
   filters: PropTypes.object.isRequired,
@@ -66,8 +64,6 @@ const mapDispatchToProps = dispatch => ({
   },
   goToUrl: (url) => {
     dispatch(push(url));
-  },
-  asyncFetch: () => {
   },
 });
 

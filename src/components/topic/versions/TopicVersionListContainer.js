@@ -21,6 +21,7 @@ const localMessages = {
   versions: { id: 'topic.versions', defaultMessage: 'Version List' },
   versionNumber: { id: 'topic.versionNumber', defaultMessage: 'Version Number {number}' },
   versionDate: { id: 'topic.versionDate', defaultMessage: 'Date: {date}' },
+  versionStatus: { id: 'topic.versionStatus', defaultMessage: 'Status: {status}' },
   createdBy: { id: 'topic.createdBy', defaultMessage: 'Created by: ' },
   createButton: { id: 'topic.create', defaultMessage: 'Create A New Version ' },
   viewButton: { id: 'topic.viewBy', defaultMessage: 'Find Out More ' },
@@ -44,6 +45,7 @@ const TopicVersionListContainer = (props) => {
         <h2><FormattedMessage {...localMessages.versionNumber} values={{ number: idx }} /></h2>
         <FormattedMessage {...localMessages.versionDate} values={{ date: u.snapshot_date }} />
         <br />
+        <FormattedMessage {...localMessages.versionStatus} values={{ status: u.message }} />
         <AppButton
           style={{ marginTop: 30 }}
           type="submit"

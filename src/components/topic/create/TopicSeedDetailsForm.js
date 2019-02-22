@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { reduxForm, Field } from 'redux-form';
 import { FormattedMessage } from 'react-intl';
+import { Field } from 'redux-form';
 import { Row, Col } from 'react-flexbox-grid/lib';
-import AppButton from '../../common/AppButton';
 import withIntlForm from '../../common/hocs/IntlForm';
+import QueryHelpDialog from '../../common/help/QueryHelpDialog';
 import TopicAdvancedForm from './TopicAdvancedForm';
+import messages from '../../../resources/messages';
 
 const localMessages = {
   basics: { id: 'topic.form.section.basics', defaultMessage: 'Basics' },
@@ -14,21 +15,23 @@ const localMessages = {
   advancedSettings: { id: 'topic.form.detail.advancedSettings', defaultMessage: 'Advanced Settings' },
   description: { id: 'topic.form.detail.description', defaultMessage: 'Description (why are you making this?)' },
   descriptionError: { id: 'topic.form.detail.desciption.error', defaultMessage: 'Your topic need a description.' },
-  maxStories: { id: 'topic.form.detail.maxStories', defaultMessage: 'Maximum # of Stories' },
-  maxSeedStoriesHelp: { id: 'topic.form.detail.maxStories', defaultMessage: 'Public users can make topics with up to 100,000 total stories.  Change this if you want to allow a special case exception.' },
+  seedQuery: { id: 'topic.form.detail.seedQuery', defaultMessage: 'Seed Query' },
+  seedQueryError: { id: 'topic.form.detail.seedQuery.error', defaultMessage: 'You must give us a seed query to start this topic from.' },
+  seedQueryDescription: { id: 'topic.form.detail.seedQuery.about', defaultMessage: 'Enter a boolean query to select stories that will seed the Topic.  Links in stories already in our database that match this query will be followed to find more stories that might not be in our database already.' },
+  queryEditWarning: { id: 'topic.form.detal.query.edit.warning', defaultMessage: '<b>Be careful!</b> If you plan to edit the query and make a new snapshot make sure you only increase the scope of the query.  If you reduce the scope there will be stories from previous snapshots included that don\'t match your new reduced query.' },
+  startDate: { id: 'topic.form.detail.startDate', defaultMessage: 'Start Date' },
+  endDate: { id: 'topic.form.detail.endDate', defaultMessage: 'End Date' },
   public: { id: 'topic.form.detail.public', defaultMessage: 'Public?' },
   logogram: { id: 'topic.form.detail.logogram', defaultMessage: 'Content in a Logographic Language? (ie. Chinese or Japanese Kanji?)' },
-  crimsonHexagon: { id: 'topic.form.detail.crimsonHexagon', defaultMessage: 'Crimson Hexagon Id' },
-  crimsonHexagonHelp: { id: 'topic.form.detail.crimsonHexagon.help', defaultMessage: 'If you have set up a Crimson Hexagon monitor on our associated account, enter it\'s numeric ID here and we will automatically pull in all the stories linked to by tweets in your monitor.' },
-  maxIterations: { id: 'topic.form.detail.maxIterations', defaultMessage: 'Max Spider Iterations' },
-  maxIterationsHelp: { id: 'topic.form.detail.maxIterations.help', defaultMessage: 'You can change how many rounds of spidering you want to do.  If you expect this topic to explode with lots and lots of linked-to stories about the same topic, then keep this small.  Otherwise leave it with the default of 15.' },
+  createTopic: { id: 'topic.form.detail.create', defaultMessage: 'Create' },
+  dateError: { id: 'topic.form.detail.date.error', defaultMessage: 'Please provide a date in YYYY-MM-DD format.' },
 };
 
-const TopicSettingsForm = (props) => {
-  const { renderTextField, renderCheckbox, handleSubmit, pristine, submitting, asyncValidating, initialValues, onSubmit } = props;
+const TopicDetailForm = (props) => {
+  const { renderTextField, renderCheckbox, initialValues } = props;
   const { formatMessage } = props.intl;
   return (
-    <form className="edit-topic-settings" name="topicForm" onSubmit={handleSubmit(onSubmit.bind(this))}>
+    <div>
       <Row>
         <Col lg={12}>
           <h2><FormattedMessage {...localMessages.basics} /></h2>
@@ -37,20 +40,21 @@ const TopicSettingsForm = (props) => {
       <Row>
         <Col lg={6}>
           <Field
-            name="name"
+            name="start_date"
             component={renderTextField}
+            type="inline"
             fullWidth
-            label={formatMessage(localMessages.name)}
+            label={formatMessage(localMessages.startDate)}
           />
         </Col>
-      </Row>
-      <Row>
-        <Col lg={12}>
+        <Col lg={6}>
           <Field
-            name="description"
+            name="end_date"
             component={renderTextField}
+            type="inline"
             fullWidth
-            label={formatMessage(localMessages.description)}
+            label={formatMessage(localMessages.endDate)}
+            helpertext={formatMessage(localMessages.endDate)}
           />
         </Col>
       </Row>
@@ -74,23 +78,30 @@ const TopicSettingsForm = (props) => {
           />
         </Col>
       </Row>
-      <TopicAdvancedForm initialValues={initialValues} />
       <Row>
         <Col lg={12}>
-          <AppButton
-            style={{ marginTop: 30 }}
-            type="submit"
-            disabled={pristine || submitting || asyncValidating === true}
-            label={initialValues.buttonLabel}
-            primary
+          <Field
+            name="solr_seed_query"
+            component={renderTextField}
+            multiline
+            rows={2}
+            rowsMax={4}
+            fullWidth
+            label={formatMessage(localMessages.seedQuery)}
+            helpertext={formatMessage(localMessages.seedQueryError)}
           />
+          <small>
+            <b><QueryHelpDialog trigger={formatMessage(messages.queryHelpLink)} /></b>
+            <FormattedMessage {...localMessages.seedQueryDescription} />
+          </small>
         </Col>
       </Row>
-    </form>
+      <TopicAdvancedForm initialValues={initialValues} />
+    </div>
   );
 };
 
-TopicSettingsForm.propTypes = {
+TopicDetailForm.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
   renderTextField: PropTypes.func.isRequired,
@@ -98,24 +109,9 @@ TopicSettingsForm.propTypes = {
   renderSelect: PropTypes.func.isRequired,
   // from parent
   initialValues: PropTypes.object,
-  handleSubmit: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  pristine: PropTypes.bool.isRequired,
-  error: PropTypes.string,
-  asyncValidating: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool,
-  ]).isRequired,
-  submitting: PropTypes.bool.isRequired,
-};
-
-const reduxFormConfig = {
-  form: 'topicForm',
 };
 
 export default
 withIntlForm(
-  reduxForm(reduxFormConfig)(
-    TopicSettingsForm
-  )
+  TopicDetailForm
 );

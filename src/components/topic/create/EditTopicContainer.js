@@ -18,9 +18,7 @@ import { updateFeedback } from '../../../actions/appActions';
 import BackLinkingControlBar from '../BackLinkingControlBar';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
-import TopicForm from './TopicForm';
-import { TOPIC_FORM_MODE_EDIT } from './TopicDetailForm';
-import UpdateForStorySearchWarning from '../UpdateForStorySearchWarning';
+import TopicForm, { TOPIC_FORM_MODE_EDIT } from './TopicForm';
 import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
@@ -148,7 +146,6 @@ class EditTopicContainer extends React.Component {
             <Col lg={12}>
               <h1><FormattedMessage {...localMessages.editTopicTitle} /></h1>
               <p><FormattedMessage {...localMessages.editTopicText} /></p>
-              {(topicInfo.is_story_index_ready === false) && (<UpdateForStorySearchWarning />)}
             </Col>
           </Row>
           {dialogContent}

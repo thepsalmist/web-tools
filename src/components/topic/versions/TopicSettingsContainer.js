@@ -14,7 +14,7 @@ import BackLinkingControlBar from '../BackLinkingControlBar';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
 import TopicForm from '../create/TopicForm';
-import { TOPIC_FORM_MODE_EDIT } from '../create/TopicDetailForm';
+import { TOPIC_FORM_MODE_EDIT } from '../create/TopicSeedDetailsForm';
 import UpdateForStorySearchWarning from '../UpdateForStorySearchWarning';
 import TopicPageTitle from '../TopicPageTitle';
 

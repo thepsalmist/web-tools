@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
+import { push } from 'react-router-redux';
+import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import PageTitle from '../../common/PageTitle';
 import AppButton from '../../common/AppButton';
 import BackLinkingControlBar from '../BackLinkingControlBar';
+import { filteredLinkTo } from '../../util/location';
 import messages from '../../../resources/messages';
 
 const localMessages = {
@@ -27,6 +30,7 @@ const TopicNewVersionContainer = props => (
           <FormattedMessage {...localMessages.createNewVersionDesc} />
           <AppButton
             label={props.intl.formatMessage(localMessages.createNewVersion)}
+            onClick={() => props.goToUrl(`/topics/${props.topicId}/edit`, props.filters)}
             primary
           />
         </Col>
@@ -35,6 +39,7 @@ const TopicNewVersionContainer = props => (
           <FormattedMessage {...localMessages.addNewSubtopicsDesc} />
           <AppButton
             label={props.intl.formatMessage(localMessages.addNewSubtopics)}
+            onClick={() => props.goToUrl(`/topics/${props.topicId}/snapshot/foci`, props.filters)}
             primary
           />
         </Col>
@@ -50,9 +55,24 @@ TopicNewVersionContainer.propTypes = {
   formatMessage: PropTypes.object,
   // from context
   intl: PropTypes.object.isRequired,
+  goToUrl: PropTypes.func.isRequired,
 };
+
+const mapStateToProps = (state, ownProps) => ({
+  filters: state.topics.selected.filters,
+  topicInfo: state.topics.selected.info,
+  topicId: parseInt(ownProps.params.topicId, 10),
+});
+
+const mapDispatchToProps = dispatch => ({
+  goToUrl: (url, filters) => {
+    dispatch(push(filteredLinkTo(url, filters)));
+  },
+});
 
 export default
 injectIntl(
-  TopicNewVersionContainer
+  connect(mapStateToProps, mapDispatchToProps)(
+    TopicNewVersionContainer
+  )
 );

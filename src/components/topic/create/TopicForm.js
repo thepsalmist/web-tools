@@ -5,7 +5,8 @@ import { FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../common/AppButton';
 import withIntlForm from '../../common/hocs/IntlForm';
-import TopicDetailForm from './TopicDetailForm';
+import TopicCreateForm from './TopicCreateForm';
+import TopicSeedDetailsForm from './TopicSeedDetailsForm';
 import MediaPickerDialog from '../../common/mediaPicker/MediaPickerDialog';
 import SourceCollectionsMediaForm from '../../common/form/SourceCollectionsMediaForm';
 import { emptyString, invalidDate, validDate } from '../../../lib/formValidators';
@@ -14,6 +15,7 @@ import { fetchTopicWithNameExists } from '../../../actions/topicActions';
 import { assetUrl } from '../../../lib/assetUtil';
 
 export const TOPIC_FORM_MODE_CREATE = 'TOPIC_FORM_MODE_CREATE';
+export const TOPIC_FORM_MODE_EDIT = 'TOPIC_FORM_MODE_EDIT';
 
 const localMessages = {
   nameError: { id: 'topic.form.detail.name.error', defaultMessage: 'Your topic needs a name.' },
@@ -49,17 +51,27 @@ class TopicForm extends React.Component {
       />
     );
     mediaLabel = <label htmlFor="media"><FormattedMessage {...localMessages.selectSandC} /></label>;
-
+    let useForm = (
+      <TopicCreateForm
+        defaultValue={initialValues}
+        mode={mode}
+      />
+    );
+    if (mode === TOPIC_FORM_MODE_EDIT) {
+      useForm = (
+        <TopicSeedDetailsForm
+          defaultValue={initialValues}
+          mode={mode}
+        />
+      );
+    }
     return (
       <form className="create-topic" name="topicForm" onSubmit={handleSubmit(onSubmit.bind(this))}>
         <input type="hidden" name="topicId" value={topicId} />
         <Row><Col lg={12}><hr /></Col></Row>
         <Row>
           <Col lg={10}>
-            <TopicDetailForm
-              defaultValue={initialValues}
-              mode={mode}
-            />
+            {useForm}
           </Col>
           <Col lg={2}>
             <a target="_new" href="http://bit.ly/creating-topics-guide">

@@ -5,10 +5,9 @@ import { FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../common/AppButton';
 import withIntlForm from '../../common/hocs/IntlForm';
-import TopicAdvancedForm from './TopicAdvancedForm';
 
 const localMessages = {
-  basics: { id: 'topic.form.section.basics', defaultMessage: 'Basics' },
+  basics: { id: 'topic.form.section.basics', defaultMessage: 'Settings' },
   name: { id: 'topic.form.detail.name', defaultMessage: 'Topic Name (what is this about?)' },
   nameError: { id: 'topic.form.detail.name.error', defaultMessage: 'Your topic needs a short dsecriptive name.' },
   advancedSettings: { id: 'topic.form.detail.advancedSettings', defaultMessage: 'Advanced Settings' },
@@ -74,7 +73,6 @@ const TopicSettingsForm = (props) => {
           />
         </Col>
       </Row>
-      <TopicAdvancedForm initialValues={initialValues} />
       <Row>
         <Col lg={12}>
           <AppButton

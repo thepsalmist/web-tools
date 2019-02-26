@@ -28,7 +28,7 @@ const localMessages = {
 };
 
 const TopicDetailForm = (props) => {
-  const { renderTextField, renderCheckbox, initialValues } = props;
+  const { renderTextField, initialValues } = props;
   const { formatMessage } = props.intl;
   return (
     <div>
@@ -55,26 +55,6 @@ const TopicDetailForm = (props) => {
             fullWidth
             label={formatMessage(localMessages.endDate)}
             helpertext={formatMessage(localMessages.endDate)}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={8}>
-          <Field
-            name="is_public"
-            component={renderCheckbox}
-            fullWidth
-            label={formatMessage(localMessages.public)}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={8}>
-          <Field
-            name="is_logogram"
-            component={renderCheckbox}
-            fullWidth
-            label={formatMessage(localMessages.logogram)}
           />
         </Col>
       </Row>

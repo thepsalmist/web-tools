@@ -101,12 +101,15 @@ def _topic_summary(topics_id):
     #snapshots = sorted([s['snapshot_date'] for s in snapshots], key=lambda, reverse=True)
     # snapshots = sorted(snapshots, key=snapshots.snapshot_date)
     snapshots = sorted(snapshots, key=lambda d:d['snapshot_date'])
+    jobStatuses = mc.topicSnapshotGenerateStatus(topics_id)['job_states']
+    most_recent_usable_snapshot = get_most_recent_snapshot_version(topics_id)
     topic['snapshots'] = {
         'list': snapshots,
-        'jobStatus': mc.topicSnapshotGenerateStatus(topics_id)['job_states']    # need to know if one is running
+        'jobStatus': jobStatuses,    # need to know if one is running
     }
     # add in spider job status
     topic['spiderJobs'] = local_mc.topicSpiderStatus(topics_id)['job_states']
+    topic['currentVersion'] = most_recent_usable_snapshot
     if is_user_logged_in():
         _add_user_favorite_flag_to_topics([topic])
 
@@ -129,7 +132,7 @@ def _add_user_favorite_flag_to_topics(topics):
     return topics
 
 
-def get_topic_info_per_snapshot_timespan(topic_id):
+def get_most_recent_snapshot_version(topic_id):
     if not is_user_logged_in():
         local_mc = mc
     else:
@@ -141,14 +144,15 @@ def get_topic_info_per_snapshot_timespan(topic_id):
     overall_timespan = {}
     for snp in snapshots['list']:
         if snp['searchable'] == 1 and snp['state'] == "completed":
-            most_recent_running_snapshot = snp
+            most_recent_completed_snapshot = snp
+            most_recent_completed_snapshot['versions'] = len(snapshots['list'])
             timespans = cached_topic_timespan_list(user_mediacloud_key(), topic_id,
-                                                   most_recent_running_snapshot['snapshots_id'])
+                                                   most_recent_completed_snapshot['snapshots_id'])
             for ts in timespans:
                 if ts['period'] == "overall":
                     overall_timespan = ts
 
-    return {'snapshot': most_recent_running_snapshot, 'timespan': overall_timespan}
+    return most_recent_completed_snapshot
 
 
 @app.route('/api/topics/<topics_id>/snapshots/list', methods=['GET'])

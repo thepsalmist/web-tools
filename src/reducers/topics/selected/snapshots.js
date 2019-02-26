@@ -15,6 +15,7 @@ const snapshots = createAsyncReducer({
   initialState: {
     list: [],
     jobStatus: [],
+    currentVersion: null,
   },
   action: FETCH_TOPIC_SNAPSHOTS_LIST,
   FETCH_TOPIC_SUMMARY_RESOLVED: payload => ({ // topic summary includes list of snapshots
@@ -24,6 +25,7 @@ const snapshots = createAsyncReducer({
       isUsable: snapshotIsUsable(s),
     })),
     jobStatus: payload.snapshots.jobStatus,
+    currentVersion: payload.snapshots.currentVersion,
   }),
   handleSuccess: payload => ({
     // add in an isUsable property to centralize that logic to one place (ie. here!)
@@ -33,6 +35,7 @@ const snapshots = createAsyncReducer({
       isUsable: snapshotIsUsable(s),
     })),
     jobStatus: payload.jobStatus,
+    currentVersion: payload.snapshots.currentVersion,
   }),
 });
 

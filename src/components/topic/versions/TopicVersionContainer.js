@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { filteredLocation, urlWithFilters } from '../../util/location';
 import LoadingSpinner from '../../common/LoadingSpinner';
-import TopicControlBar from '../controlbar/TopicControlBar';
 import { addNotice } from '../../../actions/appActions';
 import { snapshotIsUsable, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
   TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
@@ -35,19 +34,6 @@ const localMessages = {
 };
 
 class TopicVersionContainer extends React.Component {
-  constructor() {
-    super();
-    this.setSideBarContent = this.setSideBarContent.bind(this);
-  }
-
-  state = {
-    sideBarContent: null,
-  };
-
-  setSideBarContent(sideBarContent) {
-    this.setState({ sideBarContent });
-  }
-
   determineVersionStatus(topicInfo) {
     const { snapshotCount } = this.props;
     switch (topicInfo.state) {
@@ -74,37 +60,21 @@ class TopicVersionContainer extends React.Component {
   }
 
   render() {
-    const { children, topicId, topicInfo, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, fetchStatusSnapshot, fetchStatusInfo } = this.props;
+    const { children, topicInfo, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, fetchStatusSnapshot, fetchStatusInfo, setSideBarContent } = this.props;
     // show a big error if there is one to show
 
-    const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent: this.setSideBarContent }));
-
-    let contentToShow = childrenWithExtraProp;
-
-    const controlbar = (
-      <TopicControlBar
-        {...this.props}
-        topicId={topicId}
-        topic={topicInfo}
-        sideBarContent={this.state.sideBarContent}
-        // implements handleRenderFilters and evaluates showFilters
-        // setupJumpToExplorer={setupJumpToExplorer} // defined in child Component VersionReady
-      />
-    );
-
+    let contentToShow = children; // has a filters renderer in it - show if a completed topic
+    const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent }));
+    contentToShow = childrenWithExtraProp;
     if (this.determineVersionStatus(topicInfo) === VERSION_CREATING) {
       // if the topic is running the initial spider and then show under construction message
       contentToShow = (
         <div>
-          {childrenWithExtraProp}
           <TopicVersionStatusContainer />
         </div>
       );
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
-      contentToShow = [
-        <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} handleUpdateMaxStoriesAndSpiderRequest={handleUpdateMaxStoriesAndSpiderRequest} />,
-        children,
-      ];
+      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} handleUpdateMaxStoriesAndSpiderRequest={handleUpdateMaxStoriesAndSpiderRequest} />;
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR) {
       contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR} handleSpiderRequest={handleSpiderRequest} />;
     } else if (this.determineVersionStatus(topicInfo) === VERSION_QUEUED) {
@@ -114,11 +84,7 @@ class TopicVersionContainer extends React.Component {
       // how to distinguish between fetch-ongoing and a generating snapshot?
       contentToShow = <LoadingSpinner />;
     }
-    return ( // running or complete
-      [
-        controlbar,
-        contentToShow,
-      ]);
+    return contentToShow;
   }
 }
 
@@ -140,6 +106,7 @@ TopicVersionContainer.propTypes = {
   snapshotCount: PropTypes.number.isRequired,
   handleSpiderRequest: PropTypes.func,
   handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func,
+  setSideBarContent: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({

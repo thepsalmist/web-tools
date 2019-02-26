@@ -8,33 +8,47 @@ import TopicHeaderContainer from './TopicHeaderContainer';
 import { addNotice } from '../../actions/appActions';
 import { selectTopic, fetchTopicSummary } from '../../actions/topicActions';
 import PageTitle from '../common/PageTitle';
+import TopicControlBar from './controlbar/TopicControlBar';
 
-const TopicContainer = (props) => {
-  /* componentWillReceiveProps(nextProps) {
-    const { topicInfo } = this.props;
-    // if they edited the topic, or the topic changed then reload (unless it is just a isFav change)
-    let topicInfoHasChanged = false;
-    Object.keys(topicInfo).forEach((key) => {
-      if ((key !== 'isFavorite') && (topicInfo[key] !== nextProps.topicInfo[key])) {
-        topicInfoHasChanged = true;
-      }
-    });
-    if (topicInfoHasChanged) {
-      // asyncFetch();
-    }
+class TopicContainer extends React.Component {
+  constructor() {
+    super();
+    this.setSideBarContent = this.setSideBarContent.bind(this);
   }
-  */
 
-  const { children, topicInfo, topicId, filters } = props;
-  // show a big error if there is one to show
-  return ( // running or complete
-    <div className="topic-container">
-      <PageTitle value={topicInfo.name} />
-      <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} filters={filters} />
-      {children}
-    </div>
-  );
-};
+  state = {
+    sideBarContent: null,
+  };
+
+  setSideBarContent(sideBarContent) {
+    this.setState({ sideBarContent });
+  }
+
+  render() {
+    const { children, topicInfo, topicId, filters } = this.props;
+    // show a big error if there is one to show
+    const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent: this.setSideBarContent }));
+
+    const controlbar = (
+      <TopicControlBar
+        {...this.props}
+        topicId={topicId}
+        topic={topicInfo}
+        sideBarContent={this.state.sideBarContent}
+        // implements handleRenderFilters and evaluates showFilters
+        // setupJumpToExplorer={setupJumpToExplorer} // defined in child Component VersionReady
+      />
+    );
+    return ( // running or complete
+      <div className="topic-container">
+        <PageTitle value={topicInfo.name} />
+        <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} filters={filters} />
+        {controlbar}
+        {childrenWithExtraProp}
+      </div>
+    );
+  }
+}
 
 TopicContainer.propTypes = {
   // from context
@@ -56,6 +70,7 @@ const mapStateToProps = (state, ownProps) => ({
   fetchStatus: state.topics.selected.info.fetchStatus,
   topicInfo: state.topics.selected.info,
   topicId: parseInt(ownProps.params.topicId, 10),
+  currentVersion: state.topics.selected.info.currentVersion,
 });
 
 const mapDispatchToProps = dispatch => ({

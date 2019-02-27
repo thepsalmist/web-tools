@@ -65,7 +65,7 @@ const topicRoutes = (
         <Route path="/topics/:topicId/stories" component={InfluentialStoriesContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/stories/explore" component={InfluentialStoryExplorerContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/stories/:storiesId/update" component={StoryUpdateContainer} onEnter={requireAuth} />
-        <Route path="/topics/:topicId/stories/:storiesId/cached" component={StoryCachedContainer} onEnter={requireAuth} />
+        <Route path="/topics/:topicId/stories/:id/cached" component={StoryCachedContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/stories/:storiesId" component={StoryContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/attention" component={AttentionContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/words" component={InfluentialWordsContainer} onEnter={requireAuth} />

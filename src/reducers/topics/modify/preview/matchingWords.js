@@ -1,4 +1,4 @@
-import { FETCH_CREATE_TOPIC_QUERY_WORDS } from '../../../../actions/topicActions';
+import { FETCH_MODIFY_TOPIC_QUERY_WORDS } from '../../../../actions/topicActions';
 import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 
 const matchingWords = createAsyncReducer({
@@ -6,7 +6,7 @@ const matchingWords = createAsyncReducer({
     list: [], // the thing you queried for
     totals: [], // options topic/focus-level totals to compare to
   },
-  action: FETCH_CREATE_TOPIC_QUERY_WORDS,
+  action: FETCH_MODIFY_TOPIC_QUERY_WORDS,
   handleSuccess: payload => ({
     total: payload.length,
     list: payload,

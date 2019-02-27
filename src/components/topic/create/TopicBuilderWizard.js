@@ -9,11 +9,11 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import BackLinkingControlBar from '../BackLinkingControlBar';
-import TopicCreate1ConfigureContainer from './TopicCreate1ConfigureContainer';
+import TopicConfigureContainer from './TopicConfigureContainer';
 import TopicCreate2PreviewContainer from './TopicCreate2PreviewContainer';
 import TopicCreate3ValidateContainer from './TopicCreate3ValidateContainer';
 import TopicCreate4ConfirmContainer from './TopicCreate4ConfirmContainer';
-import { goToCreateTopicStep } from '../../../actions/topicActions';
+import { goToTopicStep } from '../../../actions/topicActions';
 
 const localMessages = {
   backToTopicManager: { id: 'backToTopicManager', defaultMessage: 'back to Home' },
@@ -25,17 +25,17 @@ const localMessages = {
 
 class TopicBuilderWizard extends React.Component {
   componentWillMount = () => {
-    const { startStep, goToStep } = this.props;
-    goToStep(startStep || 0);
+    const { startStep, goToStep, mode } = this.props;
+    goToStep(startStep || 0, mode);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location, goToStep } = this.props;
+    const { location, goToStep, mode } = this.props;
     if (nextProps.location.pathname !== location.pathname) {
       const url = nextProps.location.pathname;
       const lastPathPart = url.slice(url.lastIndexOf('/') + 1, url.length);
       const stepNumber = parseInt(lastPathPart, 10);
-      goToStep(stepNumber);
+      goToStep(stepNumber, mode);
     }
   }
 
@@ -45,14 +45,15 @@ class TopicBuilderWizard extends React.Component {
   }
 
   render() {
-    const { currentStep, location, initialValues } = this.props;
+    const { currentStep, location, initialValues, currentStepTexts, mode } = this.props;
     const steps = [
-      TopicCreate1ConfigureContainer,
+      TopicConfigureContainer,
       TopicCreate2PreviewContainer,
       TopicCreate3ValidateContainer,
       TopicCreate4ConfirmContainer,
     ];
     const CurrentStepComponent = steps[currentStep];
+    const stepTexts = currentStepTexts[currentStep];
     const stepLabelStyle = { height: 45 };
     return (
       <div className="topic-builder-wizard">
@@ -72,7 +73,7 @@ class TopicBuilderWizard extends React.Component {
             </Step>
           </Stepper>
         </BackLinkingControlBar>
-        <CurrentStepComponent location={location} initialValues={initialValues} />
+        <CurrentStepComponent location={location} initialValues={initialValues} currentStepText={stepTexts} mode={mode} />
       </div>
     );
   }
@@ -84,6 +85,8 @@ TopicBuilderWizard.propTypes = {
   initialValues: PropTypes.object,
   startStep: PropTypes.number,
   location: PropTypes.object,
+  mode: PropTypes.string.isRequired,
+  currentStepTexts: PropTypes.array,
   // from state
   currentStep: PropTypes.number.isRequired,
   // from dispatch
@@ -92,16 +95,16 @@ TopicBuilderWizard.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  currentStep: state.topics.create.preview.workflow.currentStep,
+  currentStep: state.topics.modify.preview.workflow.currentStep,
 });
 
 const mapDispatchToProps = dispatch => ({
-  goToStep: (step) => {
-    dispatch(push(`/topics/create/${step}`));
-    dispatch(goToCreateTopicStep(step));
+  goToStep: (step, mode) => {
+    dispatch(push(`/topics/${mode}/${step}`));
+    dispatch(goToTopicStep(step));
   },
   handleUnmount: () => {
-    dispatch(goToCreateTopicStep(0));
+    dispatch(goToTopicStep(0));
   },
 });
 

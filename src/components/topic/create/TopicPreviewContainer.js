@@ -17,10 +17,9 @@ const localMessages = {
   next: { id: 'topic.create.preview.next', defaultMessage: 'Validate Some Stories' },
 };
 
-const TopicCreate2PreviewContainer = (props) => {
-  const { handleNextStep, handlePreviousStep, formData } = props;
+const TopicPreviewContainer = (props) => {
+  const { handleNextStep, handlePreviousStep, formData, mode } = props;
   const { formatMessage } = props.intl;
-
   const content = <TopicCreatePreview formData={formData} />;
 
   return (
@@ -35,18 +34,20 @@ const TopicCreate2PreviewContainer = (props) => {
       <br />
       <Row>
         <Col lg={12} md={12} sm={12}>
-          <AppButton variant="outlined" label={formatMessage(localMessages.prev)} onClick={() => handlePreviousStep()} />
+          <AppButton variant="outlined" label={formatMessage(localMessages.prev)} onClick={() => handlePreviousStep(mode)} />
           &nbsp; &nbsp;
-          <AppButton primary type="submit" label={formatMessage(localMessages.next)} onClick={() => handleNextStep()} />
+          <AppButton primary type="submit" label={formatMessage(localMessages.next)} onClick={() => handleNextStep(mode)} />
         </Col>
       </Row>
     </Grid>
   );
 };
 
-TopicCreate2PreviewContainer.propTypes = {
+TopicPreviewContainer.propTypes = {
   // from parent
   location: PropTypes.object.isRequired,
+  mode: PropTypes.string.isRequired,
+  currentStepText: PropTypes.object,
   // form composition
   intl: PropTypes.object.isRequired,
   // from state
@@ -60,17 +61,17 @@ TopicCreate2PreviewContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  currentStep: state.topics.create.preview.workflow.currentStep,
+  currentStep: state.topics.modify.preview.workflow.currentStep,
   formData: state.form.topicForm.values,
 });
 
 const mapDispatchToProps = dispatch => ({
-  handlePreviousStep: () => {
-    dispatch(push('/topics/create/0'));
+  handlePreviousStep: (mode) => {
+    dispatch(push(`/topics/${mode}/0`));
     dispatch(goToTopicStep(0));
   },
-  handleNextStep: () => {
-    dispatch(push('/topics/create/2'));
+  handleNextStep: (mode) => {
+    dispatch(push(`/topics/${mode}/2`));
     dispatch(goToTopicStep(2));
   },
 });
@@ -87,7 +88,7 @@ export default
 injectIntl(
   withIntlForm(
     connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      TopicCreate2PreviewContainer
+      TopicPreviewContainer
     )
   )
 );

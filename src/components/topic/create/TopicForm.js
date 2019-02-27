@@ -14,8 +14,8 @@ import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil'
 import { fetchTopicWithNameExists } from '../../../actions/topicActions';
 import { assetUrl } from '../../../lib/assetUtil';
 
-export const TOPIC_FORM_MODE_CREATE = 'TOPIC_FORM_MODE_CREATE';
-export const TOPIC_FORM_MODE_EDIT = 'TOPIC_FORM_MODE_EDIT';
+export const TOPIC_FORM_MODE_CREATE = 'create';
+export const TOPIC_FORM_MODE_EDIT = 'edit';
 
 const localMessages = {
   nameError: { id: 'topic.form.detail.name.error', defaultMessage: 'Your topic needs a name.' },

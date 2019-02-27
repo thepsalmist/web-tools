@@ -59,10 +59,10 @@ const topicRoutes = (
 
     <Route path="/topics/:topicId" component={TopicContainer} onEnter={requireAuth}>
       <Route path="edit" component={EditTopicContainer} onEnter={requireAuth} />
-      <Route path="list" component={TopicVersionListContainer} onEnter={requireAuth} />
+      <Route path="versions" component={TopicVersionListContainer} onEnter={requireAuth} />
       <Route path="permissions" component={TopicPermissionsContainer} onEnter={requireAuth} />
       <Route path="settings" component={EditTopicSettingsContainer} onEnter={requireAuth} />
-      <Route path="newVersion" component={TopicNewVersionContainer} onEnter={requireAuth} />
+      <Route path="new-version" component={TopicNewVersionContainer} onEnter={requireAuth} />
       <Route path="/topics/:topicId/versions" component={TopicVersionContainer} onEnter={requireAuth}>
         <Route component={TopicVersionReadyStatusContainer} onEnter={requireAuth}>
           <Route path="/topics/:topicId/summary" component={TopicSummaryContainer} onEnter={requireAuth} />

@@ -1,4 +1,4 @@
-import { FETCH_CREATE_TOPIC_QUERY_STORY_SAMPLE } from '../../../../actions/topicActions';
+import { FETCH_MODIFY_TOPIC_QUERY_STORY_SAMPLE } from '../../../../actions/topicActions';
 import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 
 const matchingStorySamples = createAsyncReducer({
@@ -6,7 +6,7 @@ const matchingStorySamples = createAsyncReducer({
     list: [],
     links_ids: {},
   },
-  action: FETCH_CREATE_TOPIC_QUERY_STORY_SAMPLE,
+  action: FETCH_MODIFY_TOPIC_QUERY_STORY_SAMPLE,
   handleSuccess: payload => ({
     total: payload.length,
     list: payload,

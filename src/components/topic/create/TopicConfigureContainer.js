@@ -3,11 +3,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import withIntlForm from '../../common/hocs/IntlForm';
-import TopicForm, { TOPIC_FORM_MODE_CREATE } from './TopicForm';
+import TopicForm from './TopicForm';
 import { goToTopicStep } from '../../../actions/topicActions';
 import { fetchSystemUser } from '../../../actions/systemActions';
 import messages from '../../../resources/messages';
@@ -15,10 +15,6 @@ import { getCurrentDate, getMomentDateSubtraction } from '../../../lib/dateUtil'
 import { MAX_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 
 const localMessages = {
-  title: { id: 'topic.create.setup.title', defaultMessage: 'Step 1: Create A Topic' },
-  about: { id: 'topic.create.setup.about',
-    defaultMessage: 'Create A Topic then click Preview' },
-  createTopicText: { id: 'topic.create.text', defaultMessage: 'You can create a new Topic to add to the MediaCloud system. Copy and paste the keyword query from an Explorer search into here, and then select dates and media sources and/or collections.  The stories in our database that match will be "seed stories".  Our system will follow links from those stories to find others that match your keyword query, even if they are in sources we don\'t otherwise cover. The combination of stories in our system, and stories that we find via this "spidering" process, will create your Topic.' },
   addCollectionsTitle: { id: 'topic.create.addCollectionsTitle', defaultMessage: 'Select Sources And Collections' },
   addCollectionsIntro: { id: 'topic.create.addCollectionsIntro', defaultMessage: 'The following are the Sources and Collections associated with this topic:' },
   sourceCollectionsError: { id: 'topic.create.form.detail.sourcesCollections.error', defaultMessage: 'You must select at least one Source or one Collection to seed this topic.' },
@@ -26,8 +22,8 @@ const localMessages = {
 
 const formSelector = formValueSelector('topicForm');
 
-const TopicCreate1ConfigureContainer = (props) => {
-  const { finishStep, handleMediaChange, handleMediaDelete, formData, maxStories } = props;
+const TopicConfigureContainer = (props) => {
+  const { finishStep, handleMediaChange, handleMediaDelete, formData, maxStories, currentStepText, mode } = props;
   const { formatMessage } = props.intl;
   const endDate = getCurrentDate();
   const startDate = getMomentDateSubtraction(endDate, 3, 'months');
@@ -37,16 +33,16 @@ const TopicCreate1ConfigureContainer = (props) => {
     <Grid>
       <Row>
         <Col lg={10}>
-          <h1><FormattedMessage {...localMessages.title} /></h1>
-          <p><FormattedMessage {...localMessages.createTopicText} /></p>
+          <h1>{currentStepText.title}</h1>
+          <p>{currentStepText.topicText}</p>
         </Col>
       </Row>
       <TopicForm
         initialValues={initialValues}
-        onSubmit={() => finishStep(1)}
+        onSubmit={() => finishStep(1, mode)}
         title={formatMessage(localMessages.addCollectionsTitle)}
         intro={formatMessage(localMessages.addCollectionsIntro)}
-        mode={TOPIC_FORM_MODE_CREATE}
+        mode={mode}
         onMediaChange={handleMediaChange}
         onMediaDelete={handleMediaDelete}
       />
@@ -54,11 +50,13 @@ const TopicCreate1ConfigureContainer = (props) => {
   );
 };
 
-TopicCreate1ConfigureContainer.propTypes = {
+TopicConfigureContainer.propTypes = {
   // from parent
   location: PropTypes.object.isRequired,
   initialValues: PropTypes.object,
   currentStep: PropTypes.number,
+  currentStepText: PropTypes.object,
+  mode: PropTypes.string.isRequired,
   // form composition
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
@@ -83,8 +81,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  finishStep: (step) => {
-    dispatch(push(`/topics/create/${step}`));
+  finishStep: (step, mode) => {
+    dispatch(push(`/topics/${mode}/${step}`));
     dispatch(goToTopicStep(step));
   },
   handleMediaChange: (sourceAndCollections) => {
@@ -113,7 +111,7 @@ injectIntl(
     reduxForm(reduxFormConfig)(
       connect(mapStateToProps, mapDispatchToProps)(
         withAsyncData(fetchAsyncData)(
-          TopicCreate1ConfigureContainer
+          TopicConfigureContainer
         )
       )
     )

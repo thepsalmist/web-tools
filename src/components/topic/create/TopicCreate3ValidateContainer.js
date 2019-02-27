@@ -11,7 +11,7 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import AppButton from '../../common/AppButton';
 import StoryFeedbackRow from './StoryFeedbackRow';
-import { goToCreateTopicStep, fetchStorySampleByQuery } from '../../../actions/topicActions';
+import { goToTopicStep, fetchStorySampleByQuery } from '../../../actions/topicActions';
 
 const NUM_TO_SHOW = 30;
 const VALIDATION_CUTOFF = 0.9;
@@ -181,13 +181,13 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   handleEditSeedQueryRequest: () => {
-    dispatch(goToCreateTopicStep(0));
+    dispatch(goToTopicStep(0));
   },
   handlePreviousStep: () => {
-    dispatch(goToCreateTopicStep(1));
+    dispatch(goToTopicStep(1));
   },
   handleNextStep: () => {
-    dispatch(goToCreateTopicStep(3));
+    dispatch(goToTopicStep(3));
   },
 });
 

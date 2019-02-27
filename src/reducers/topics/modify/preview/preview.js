@@ -5,7 +5,7 @@ import matchingStoryCounts from './matchingStoryCounts';
 import matchingWords from './matchingWords';
 import workflow from './workflow';
 
-const createTopicReducer = combineReducers({
+const modifyTopicReducer = combineReducers({
   workflow,
   matchingAttention,
   matchingStories,
@@ -13,4 +13,4 @@ const createTopicReducer = combineReducers({
   matchingWords,
 });
 
-export default createTopicReducer;
+export default modifyTopicReducer;

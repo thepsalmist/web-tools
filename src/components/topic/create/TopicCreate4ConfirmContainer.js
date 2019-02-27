@@ -9,7 +9,7 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import SourceOrCollectionChip from '../../common/SourceOrCollectionChip';
 import messages from '../../../resources/messages';
-import { createTopic, goToCreateTopicStep } from '../../../actions/topicActions';
+import { createTopic, goToTopicStep } from '../../../actions/topicActions';
 import { updateFeedback, addNotice } from '../../../actions/appActions';
 import AppButton from '../../common/AppButton';
 import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/auth';
@@ -132,7 +132,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handlePreviousStep: () => {
     dispatch(push('/topics/create/1'));
-    dispatch(goToCreateTopicStep(1));
+    dispatch(goToTopicStep(1));
   },
   handleCreateTopic: (storyCount, user, values) => {
     if (((storyCount > MIN_RECOMMENDED_STORIES) && (storyCount < MAX_RECOMMENDED_STORIES))

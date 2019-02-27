@@ -1,4 +1,4 @@
-import { FETCH_CREATE_TOPIC_QUERY_ATTENTION } from '../../../../actions/topicActions';
+import { FETCH_MODIFY_TOPIC_QUERY_ATTENTION } from '../../../../actions/topicActions';
 import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 import { cleanDateCounts } from '../../../../lib/dateUtil';
 
@@ -7,7 +7,7 @@ const matchingAttention = createAsyncReducer({
     total: null,
     counts: [],
   },
-  action: FETCH_CREATE_TOPIC_QUERY_ATTENTION,
+  action: FETCH_MODIFY_TOPIC_QUERY_ATTENTION,
   handleSuccess: payload => ({
     total: payload.results.total_story_count,
     counts: cleanDateCounts(payload.results.counts),

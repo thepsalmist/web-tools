@@ -113,7 +113,7 @@ const mapDispatchToProps = dispatch => ({
   handleCreateSnapshot: (topicId, filters) => {
     // TODO: should we just dispatch to the next screen, or also create the snapshot?
     // dispatch(createSnapshot(info));
-    const url = `/topics/${topicId}/newVersion`;
+    const url = `/topics/${topicId}/new-version`;
     dispatch(push(filteredLinkTo(url, filters)));
   },
 });

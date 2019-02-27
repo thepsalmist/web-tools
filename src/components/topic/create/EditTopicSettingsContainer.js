@@ -13,7 +13,7 @@ import BackLinkingControlBar from '../BackLinkingControlBar';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
 import TopicSettingsForm from './TopicSettingsForm';
-import { TOPIC_FORM_MODE_EDIT } from './TopicSeedDetailsForm';
+import { TOPIC_FORM_MODE_EDIT } from './TopicForm';
 // import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {

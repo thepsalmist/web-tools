@@ -8,6 +8,7 @@ import { WarningNotice } from '../../common/Notice';
 import TopicBuilderWizard from './TopicBuilderWizard';
 import { getUserRoles, hasPermissions, PERMISSION_TOPIC_ADMIN } from '../../../lib/auth';
 import PageTitle from '../../common/PageTitle';
+import { TOPIC_FORM_MODE_CREATE } from './TopicForm';
 
 const localMessages = {
   pageTitle: { id: 'topic.create.pageTitle', defaultMessage: 'Create a Topic' },
@@ -16,18 +17,31 @@ const localMessages = {
 
 const CreateTopicContainer = (props) => {
   const { canCreateTopic, runningTopics, user } = props;
+  const { formatMessage } = props.intl;
   // users can only have one running topic at once
   if (!hasPermissions(getUserRoles(user), PERMISSION_TOPIC_ADMIN) && !canCreateTopic) {
     return (
       <WarningNotice><FormattedHTMLMessage {...localMessages.cannotCreateTopic} values={{ name: runningTopics[0].name, id: runningTopics[0].topics_id }} /></WarningNotice>
     );
   }
+  const stepTexts = [
+    {
+      title: formatMessage(localMessages.pageTitle),
+      topicText: 'banana',
+    },
+    {
+      title: 'page two',
+      topicText: 'apple',
+    },
+  ];
   return (
     <React.Fragment>
       <PageTitle value={localMessages.pageTitle} />
       <TopicBuilderWizard
         startStep={0}
         location={window.location}
+        mode={TOPIC_FORM_MODE_CREATE}
+        currentStepTexts={stepTexts}
       />
     </React.Fragment>
   );
@@ -44,9 +58,9 @@ CreateTopicContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.create.userRunningTopicStatus.fetchStatus,
-  canCreateTopic: state.topics.create.userRunningTopicStatus.allowed,
-  runningTopics: state.topics.create.userRunningTopicStatus.runningTopics,
+  fetchStatus: state.topics.modify.userRunningTopicStatus.fetchStatus,
+  canCreateTopic: state.topics.modify.userRunningTopicStatus.allowed,
+  runningTopics: state.topics.modify.userRunningTopicStatus.runningTopics,
   user: state.user,
 });
 

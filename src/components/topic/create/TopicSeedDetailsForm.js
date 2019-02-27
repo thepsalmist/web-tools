@@ -9,7 +9,7 @@ import TopicAdvancedForm from './TopicAdvancedForm';
 import messages from '../../../resources/messages';
 
 const localMessages = {
-  basics: { id: 'topic.form.section.basics', defaultMessage: 'Basics' },
+  basics: { id: 'topic.form.section.basics', defaultMessage: 'Seed Query Details' },
   name: { id: 'topic.form.detail.name', defaultMessage: 'Topic Name (what is this about?)' },
   nameError: { id: 'topic.form.detail.name.error', defaultMessage: 'Your topic needs a short dsecriptive name.' },
   advancedSettings: { id: 'topic.form.detail.advancedSettings', defaultMessage: 'Advanced Settings' },

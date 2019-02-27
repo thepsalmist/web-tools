@@ -22,7 +22,7 @@ import TopicForm, { TOPIC_FORM_MODE_EDIT } from './TopicForm';
 import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
-  editTopicTitle: { id: 'topic.edit.title', defaultMessage: 'Topic Settings' },
+  editTopicTitle: { id: 'topic.edit.title', defaultMessage: 'Edit Topic Seed Queries and Create a New Version' },
   editTopicText: { id: 'topic.edit.text', defaultMessage: 'You can update this Topic. If you make changes to the query, media sourcs, or dates, those will be reflected in the next snapshot you run.' },
   editTopic: { id: 'topic.edit', defaultMessage: 'Edit Topic' },
   editTopicCollectionsTitle: { id: 'topic.edit.editTopicCollectionsTitle', defaultMessage: 'Edit Sources and Collections' },

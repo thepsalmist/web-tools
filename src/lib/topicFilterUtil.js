@@ -1,5 +1,7 @@
 import { combineQueryParams } from '../components/util/location';
 
+export const VIEW_1K = 1000;
+
 export const TOPIC_PERSONAL = 'personal';
 
 export const TOPIC_PUBLIC = 'public';

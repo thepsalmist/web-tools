@@ -79,6 +79,7 @@ def api_collection_set(tag_sets_id):
         info = apicache.tag_set_with_public_collections(user_mediacloud_key(), tag_sets_id)
 
     add_user_favorite_flag_to_collections(info['tags'])
+
     # rename to make more sense here
     for t in info['tags']:
         t['sort_key'] = t['label'] if t['label'] else t['tag']

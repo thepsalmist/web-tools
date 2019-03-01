@@ -2,13 +2,29 @@
   "releases": [
     {
       "date": "2019-2-19",
-      "version": "v3.8.5",
+      "version": "v3.8.5",        
       "notes": [
         {
           "apps": [ "sources" ],
           "type": "Fixed",
           "note": "Collection spreadsheet upload works",
           "details": "Removed older string handling, removed pooling for now"
+        }
+      ]
+    },
+    {
+      "date": "2019-1-31",
+      "version": "v3.8.4",
+      "notes": [    
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Viewing lists of collections in Source Mgr works more consistently"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "The story details page (in a topic) shows the media source more prominently"
         }
       ]
     },

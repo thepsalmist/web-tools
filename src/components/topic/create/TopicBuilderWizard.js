@@ -11,8 +11,8 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import BackLinkingControlBar from '../BackLinkingControlBar';
 import TopicConfigureContainer from './TopicConfigureContainer';
 import TopicPreviewContainer from './TopicPreviewContainer';
-import TopicCreate3ValidateContainer from './TopicCreate3ValidateContainer';
-import TopicCreate4ConfirmContainer from './TopicCreate4ConfirmContainer';
+import TopicValidateContainer from './TopicValidateContainer';
+import TopicConfirmContainer from './TopicConfirmContainer';
 import { goToTopicStep } from '../../../actions/topicActions';
 
 const localMessages = {
@@ -49,8 +49,8 @@ class TopicBuilderWizard extends React.Component {
     const steps = [
       TopicConfigureContainer,
       TopicPreviewContainer,
-      TopicCreate3ValidateContainer,
-      TopicCreate4ConfirmContainer,
+      TopicValidateContainer,
+      TopicConfirmContainer,
     ];
     const CurrentStepComponent = steps[currentStep];
     const stepTexts = currentStepTexts[currentStep];

@@ -17,25 +17,20 @@ import { LEVEL_ERROR, LEVEL_WARNING, WarningNotice } from '../../common/Notice';
 import { MAX_RECOMMENDED_STORIES, MIN_RECOMMENDED_STORIES, WARNING_LIMIT_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 
 const localMessages = {
-  title: { id: 'topic.create.confirm.title', defaultMessage: 'Step 3: Confirm Your New Topic' },
   name: { id: 'topic.create.confirm.name', defaultMessage: 'Name' },
   description: { id: 'topic.create.confirm.description', defaultMessage: 'Description' },
   state: { id: 'topic.create.state', defaultMessage: 'Not yet saved.' },
   storyCount: { id: 'topic.create.story.count', defaultMessage: 'Seed Stories' },
   topicSaved: { id: 'topic.create.saved', defaultMessage: 'We saved your new Topic.' },
   topicNotSaved: { id: 'topic.create.notSaved', defaultMessage: 'That didn\'t work!' },
-  feedback: { id: 'topic.create.failed', defaultMessage: 'Successfully created your new topic!' },
   failed: { id: 'topic.create.feedback', defaultMessage: 'Sorry, something went wrong.' },
-  createTopic: { id: 'topic.create', defaultMessage: 'Create Topic' },
   notEnoughStories: { id: 'topic.create.notenough', defaultMessage: "Sorry, we can't save this topic because you need a minimum of 500 seed stories." },
   tooManyStories: { id: 'topic.create.toomany', defaultMessage: "Sorry, we can't save this topic because you need to select less than 100,000 seed stories." },
   warningLimitStories: { id: 'topic.create.warningLimit', defaultMessage: 'Approaching story limit. Proceed with caution.' },
-  creatingTitle: { id: 'topic.creating.title', defaultMessage: 'Please wait - we\'re creating your Topic now' },
-  creatingDetail: { id: 'topic.creating.detail', defaultMessage: 'We are creating your topic now.  This can take a minute or so, just to make sure everyting is in order.  Once it is created, you\'ll be shown a page telling you we are gathering the stories.' },
 };
 
-const TopicCreate4ConfirmContainer = (props) => {
-  const { formValues, finishStep, handlePreviousStep, storyCount, handleSubmit, pristine, submitting } = props;
+const TopicConfirmContainer = (props) => {
+  const { formValues, finishStep, handlePreviousStep, storyCount, handleSubmit, pristine, submitting, currentStepText } = props;
   const { formatMessage } = props.intl;
   let sourcesAndCollections = [];
   sourcesAndCollections = formValues.sourcesAndCollections.filter(s => s.media_id).map(s => s.media_id);
@@ -72,8 +67,8 @@ const TopicCreate4ConfirmContainer = (props) => {
       <Grid className="topic-container">
         <Row>
           <Col lg={10}>
-            <h2><FormattedMessage {...localMessages.creatingTitle} /></h2>
-            <p><FormattedMessage {...localMessages.creatingDetail} /></p>
+            <h2>{currentStepText.savingTitle}</h2>
+            <p>{currentStepText.savingDesc}</p>
             <LoadingSpinner />
             {topicDetailsContent}
           </Col>
@@ -87,7 +82,7 @@ const TopicCreate4ConfirmContainer = (props) => {
       <Grid className="topic-container">
         <Row>
           <Col lg={10}>
-            <h2><FormattedMessage {...localMessages.title} /></h2>
+            <h2>{currentStepText.title}</h2>
             <WarningNotice><FormattedMessage {...localMessages.state} /></WarningNotice>
             {topicDetailsContent}
             <br />
@@ -96,7 +91,7 @@ const TopicCreate4ConfirmContainer = (props) => {
             <AppButton
               type="submit"
               disabled={pristine || submitting}
-              label={formatMessage(localMessages.createTopic)}
+              label={currentStepText.saveTopic}
               primary
             />
           </Col>
@@ -106,9 +101,11 @@ const TopicCreate4ConfirmContainer = (props) => {
   );
 };
 
-TopicCreate4ConfirmContainer.propTypes = {
+TopicConfirmContainer.propTypes = {
   // from parent
   initialValues: PropTypes.object,
+  currentStepText: PropTypes.object,
+  mode: PropTypes.string.isRequired,
   // form context
   intl: PropTypes.object.isRequired,
   handleCreateTopic: PropTypes.func.isRequired,
@@ -202,7 +199,7 @@ export default
 withIntlForm(
   reduxForm(reduxFormConfig)(
     connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-      TopicCreate4ConfirmContainer
+      TopicConfirmContainer
     )
   )
 );

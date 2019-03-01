@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { injectIntl, FormattedHTMLMessage, FormattedMessage } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -17,21 +17,18 @@ const NUM_TO_SHOW = 30;
 const VALIDATION_CUTOFF = 0.9;
 
 const localMessages = {
-  title: { id: 'topic.create.validate.title', defaultMessage: 'Step 3: Validate 30 Random Stories' },
-  about: { id: 'topic.create.validate.about',
-    defaultMessage: 'To make sure the stories that match your seed query are relevant to your research, you need to review this random sample to see if these are the kinds of stories you want. For each story, click "yes" if it is about the topic you are interested in.  Click "no" if it is not about the topic you are intereseted in.' },
-  warningTitle: { id: 'topic.create.validate.warningTitle', defaultMessage: 'Relevance Low' },
-  warning: { id: 'topic.create.validate.warning',
+  warningTitle: { id: 'topic.modify.validate.warningTitle', defaultMessage: 'Relevance Low' },
+  warning: { id: 'topic.modify.validate.warning',
     defaultMessage: 'It seems that not enough of the stories are relevant to the topic you\'re researching. We recommend at least 90% of stories from the list presented must be relevant for the topic to work well. We suggest going back to your query and try either changing the search terms (to narrow in a bit more), your time period (to focus around any key events), or media sources (to specify media from the place you care about). If you\'re unable to generate relevant stories after that, please feel free to reach us at support@mediacloud.org for help.' },
-  randomStory: { id: 'topic.create.validate.randomStory', defaultMessage: 'Random Story' },
-  usefulStory: { id: 'topic.create.validate.randomStory', defaultMessage: 'Is this Relevant?' },
-  prev: { id: 'topic.create.warning.prev', defaultMessage: 'back to preview' },
-  next: { id: 'topic.create.warning.next', defaultMessage: 'review and confirm' },
-  warningIgnore: { id: 'topic.create.warning.warningIgnore', defaultMessage: 'Ignore and Create Topic Anway' },
-  warningOk: { id: 'topic.create.warning.warningOk', defaultMessage: 'I\'ll edit my seed query' },
+  randomStory: { id: 'topic.modify.validate.randomStory', defaultMessage: 'Random Story' },
+  usefulStory: { id: 'topic.modify.validate.randomStory', defaultMessage: 'Is this Relevant?' },
+  prev: { id: 'topic.modify.warning.prev', defaultMessage: 'back to preview' },
+  next: { id: 'topic.modify.warning.next', defaultMessage: 'review and confirm' },
+  warningIgnore: { id: 'topic.modify.warning.warningIgnore', defaultMessage: 'Ignore and {mode} Topic Anway' },
+  warningOk: { id: 'topic.modify.warning.warningOk', defaultMessage: 'I\'ll edit my seed query' },
 };
 
-class TopicCreate3ValidateContainer extends React.Component {
+class TopicValidateContainer extends React.Component {
   state = {
     matchCount: 0,
     warningOpen: false,
@@ -72,31 +69,27 @@ class TopicCreate3ValidateContainer extends React.Component {
   }
 
   render = () => {
-    const { handlePreviousStep, stories } = this.props;
+    const { handlePreviousStep, stories, mode, currentStepText } = this.props;
     const { formatMessage } = this.props.intl;
 
     return (
       <Grid>
-        <h1>
-          <FormattedHTMLMessage {...localMessages.title} />
-        </h1>
-        <p>
-          <FormattedHTMLMessage {...localMessages.about} />
-        </p>
+        <h1>{currentStepText.title}</h1>
+        <p>{currentStepText.description}</p>
         <br />
-        <Row start="lg" className="topic-create-sample-story-table">
+        <Row start="lg" className="topic-modify-sample-story-table">
           <Col lg={12}>
-            <Row start="lg" className="topic-create-sample-story-table-header">
-              <Col lg={8} className="topic-create-story-title-col">
+            <Row start="lg" className="topic-modify-sample-story-table-header">
+              <Col lg={8} className="topic-modify-story-title-col">
                 <b><FormattedMessage {...localMessages.randomStory} /></b>
               </Col>
-              <Col lg={4} className="topic-create-match-col">
+              <Col lg={4} className="topic-modify-match-col">
                 <b><FormattedMessage {...localMessages.usefulStory} /></b>
               </Col>
             </Row>
           </Col>
           <Col lg={12}>
-            <Row start="lg" className="topic-create-sample-story-container">
+            <Row start="lg" className="topic-modify-sample-story-container">
               <Col lg={12}>
                 {stories.map(story => (
                   <StoryFeedbackRow
@@ -141,7 +134,7 @@ class TopicCreate3ValidateContainer extends React.Component {
           </DialogContent>
           <DialogActions>
             <AppButton onClick={this.handleWarningIgnore}>
-              <FormattedMessage {...localMessages.warningIgnore} />
+              <FormattedMessage {...localMessages.warningIgnore} values={{ mode }} />
             </AppButton>
             <AppButton onClick={this.handleWarningOk} primary>
               <FormattedMessage {...localMessages.warningOk} />
@@ -153,13 +146,14 @@ class TopicCreate3ValidateContainer extends React.Component {
   }
 }
 
-TopicCreate3ValidateContainer.propTypes = {
+TopicValidateContainer.propTypes = {
   // from parent
   location: PropTypes.object.isRequired,
+  currentStepText: PropTypes.object,
+  mode: PropTypes.string.isRequired,
   // form composition
   intl: PropTypes.object.isRequired,
   // from state
-  currentStep: PropTypes.number,
   fetchStatus: PropTypes.string.isRequired,
   total: PropTypes.number.isRequired,
   stories: PropTypes.array.isRequired,
@@ -213,7 +207,7 @@ injectIntl(
   withIntlForm(
     connect(mapStateToProps, mapDispatchToProps)(
       withAsyncData(fetchAsyncData)(
-        TopicCreate3ValidateContainer
+        TopicValidateContainer
       )
     )
   )

@@ -96,6 +96,8 @@ TopicSettingsForm.propTypes = {
   renderSelect: PropTypes.func.isRequired,
   // from parent
   initialValues: PropTypes.object,
+  mode: PropTypes.string.isRequired,
+  currentStepText: PropTypes.object,
   handleSubmit: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   pristine: PropTypes.bool.isRequired,

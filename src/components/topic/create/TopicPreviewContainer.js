@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import { injectIntl, FormattedHTMLMessage } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
@@ -10,27 +10,20 @@ import { goToTopicStep } from '../../../actions/topicActions';
 import TopicCreatePreview from './preview/TopicCreatePreview';
 
 const localMessages = {
-  title: { id: 'topic.create.preview.title', defaultMessage: 'Step 2: Preview Your Topic' },
-  about: { id: 'topic.create.preview.about',
-    defaultMessage: '<b>Make sure your topic looks right before you create it</b>.  We start your topic by finding all the stories in our database that match your query. From there we follow all the links and download them. We check if they match your keywords, and if they do then we add them to your topic (this is called "spidering"). Check the result below and make sure your topic is finding you the stories you want before creating it.' },
   prev: { id: 'topic.create.preview.prev', defaultMessage: 'back to seed query' },
   next: { id: 'topic.create.preview.next', defaultMessage: 'Validate Some Stories' },
 };
 
 const TopicPreviewContainer = (props) => {
-  const { handleNextStep, handlePreviousStep, formData, mode } = props;
+  const { handleNextStep, handlePreviousStep, formData, mode, currentStepText } = props;
   const { formatMessage } = props.intl;
   if (formData !== undefined) {
     const content = <TopicCreatePreview formData={formData} />;
 
     return (
       <Grid>
-        <h1>
-          <FormattedHTMLMessage {...localMessages.title} />
-        </h1>
-        <p>
-          <FormattedHTMLMessage {...localMessages.about} />
-        </p>
+        <h1>{currentStepText.title}</h1>
+        <p>{currentStepText.description}</p>
         { content }
         <br />
         <Row>

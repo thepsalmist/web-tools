@@ -8,19 +8,19 @@ $not-match: #fb6568;
 $not-match-dark: #ce5456;
 $not-match-darker: #9e3d3f;
 
-.topic-create-sample-story-table {
+.topic-modify-sample-story-table {
 
   margin: 10px 0px 60px 0px;
   border-bottom: 1px solid $material-grey200;
 
-  .topic-create-sample-story-table-header {
+  .topic-modify-sample-story-table-header {
     background-color: $material-grey200;
     line-height: 2;
     font-size: 16px;
     padding: 10px;
   }
 
-  .topic-create-sample-story-container {
+  .topic-modify-sample-story-container {
     .story-feedback-row {
       b {
         font-size: 18px;

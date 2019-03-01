@@ -34,7 +34,7 @@ const TopicConfigureContainer = (props) => {
       <Row>
         <Col lg={10}>
           <h1>{currentStepText.title}</h1>
-          <p>{currentStepText.topicText}</p>
+          <p>{currentStepText.description}</p>
         </Col>
       </Row>
       <TopicForm

@@ -58,11 +58,11 @@ class MediaOutlinkContainer extends React.Component {
   render() {
     const { topicId, topicName, filters, media, helpButton, showTweetCounts } = this.props;
     const { formatMessage } = this.props.intl;
-    let content = <MediaOutlinkTableContainer showTweetCounts={showTweetCounts} media={media} topicId={topicId} onChangeSort={this.onChangeSort} />;
+    let content = <MediaOutlinkTableContainer topicId={topicId} mediaId={media.media_id} showTweetCounts={showTweetCounts} />;
     if (this.state.view === VIEW_TREE) {
       content = <MediaOutlinkTreeMapContainer topicId={topicId} topicName={topicName} media={media} />;
     }
-    const svgFilename = `${topicDownloadFilename(topicName, filters)}-inlinks-to-${media.media_id})`;
+    const svgFilename = `${topicDownloadFilename(topicName, filters)}-outlinks-to-${media.media_id})`;
     return (
       <DataCard>
         <div className="actions">
@@ -76,17 +76,17 @@ class MediaOutlinkContainer extends React.Component {
           <ActionMenu actionTextMsg={messages.viewOptions}>
             <MenuItem
               className="action-icon-menu-item"
-              disabled={this.state.view === VIEW_TREE}
-              onClick={() => this.setView(VIEW_TREE)}
-            >
-              <ListItemText><FormattedMessage {...localMessages.modeTree} /></ListItemText>
-            </MenuItem>
-            <MenuItem
-              className="action-icon-menu-item"
               disabled={this.state.view === VIEW_TABLE}
               onClick={() => this.setView(VIEW_TABLE)}
             >
               <ListItemText><FormattedMessage {...localMessages.modeTable} /> </ListItemText>
+            </MenuItem>
+            <MenuItem
+              className="action-icon-menu-item"
+              disabled={this.state.view === VIEW_TREE}
+              onClick={() => this.setView(VIEW_TREE)}
+            >
+              <ListItemText><FormattedMessage {...localMessages.modeTree} /></ListItemText>
             </MenuItem>
           </ActionMenu>
         </div>
@@ -105,13 +105,12 @@ MediaOutlinkContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
   // from parent
-  media: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   topicName: PropTypes.string.isRequired,
-
+  media: PropTypes.object.isRequired,
+  // from state
   filters: PropTypes.object.isRequired,
   showTweetCounts: PropTypes.bool.isRequired,
-  allOutlinks: PropTypes.array,
 };
 
 const mapStateToProps = state => ({

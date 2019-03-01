@@ -18,7 +18,8 @@ function withSummary(titleMessage, introMessage, detailedMessage, wide) {
         extraContent: null,
       };
 
-      toggleShowingDetails = () => {
+      toggleShowingDetails = (evt) => {
+        evt.preventDefault();
         this.setState(prevState => ({ showingDetails: !prevState.showingDetails }));
       }
 
@@ -43,7 +44,7 @@ function withSummary(titleMessage, introMessage, detailedMessage, wide) {
               <span className="summary-details">
                 {detailsContent}
                 <p>
-                  <a onTouchTap={this.toggleShowingDetails}>
+                  <a href="#hide" onClick={this.toggleShowingDetails}>
                     <FormattedHTMLMessage {...localMessage.hideDescription} />
                   </a>
                 </p>
@@ -51,7 +52,7 @@ function withSummary(titleMessage, introMessage, detailedMessage, wide) {
             );
           } else {
             showDetailsButton = (
-              <a onTouchTap={this.toggleShowingDetails}>
+              <a href="#show" onClick={this.toggleShowingDetails}>
                 <FormattedHTMLMessage {...localMessage.showDetails} />
               </a>
             );

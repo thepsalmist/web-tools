@@ -28,7 +28,8 @@ class SourceSearchResultsContainer extends React.Component {
     showAdvancedOptions: false,
   }
 
-  toggleAdvancedOptions = () => {
+  toggleAdvancedOptions = (evt) => {
+    evt.preventDefault();
     this.setState(prevState => ({ showAdvancedOptions: !prevState.showAdvancedOptions }));
   }
 
@@ -56,7 +57,7 @@ class SourceSearchResultsContainer extends React.Component {
   }
 
   render() {
-    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, handleToggleAndSelectMedia } = this.props;
+    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     let resultContent = null;
@@ -68,7 +69,7 @@ class SourceSearchResultsContainer extends React.Component {
             onAdvancedSelection={val => this.updateMediaQuery(val)}
             hintText={formatMessage(localMessages.hintText)}
           />
-          <a onTouchTap={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.hideAdvancedOptions} /></a>
+          <a href="#toggle" onClick={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.hideAdvancedOptions} /></a>
         </div>
       );
     } else {
@@ -79,7 +80,7 @@ class SourceSearchResultsContainer extends React.Component {
             onSearch={val => this.updateMediaQuery(val)}
             hintText={formatMessage(localMessages.hintText)}
           />
-          <a onTouchTap={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.showAdvancedOptions} /></a>
+          <a href="#toggle" onClick={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.showAdvancedOptions} /></a>
         </div>
       );
     }
@@ -90,7 +91,7 @@ class SourceSearchResultsContainer extends React.Component {
         <SourceResultsTable
           title={formatMessage(localMessages.title, { name: selectedMediaQueryKeyword })}
           sources={sourceResults.list}
-          handleToggleAndSelectMedia={handleToggleAndSelectMedia}
+          onToggleSelected={onToggleSelected}
         />
       );
     } else {
@@ -107,14 +108,17 @@ class SourceSearchResultsContainer extends React.Component {
 
 SourceSearchResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
+  // from parent
+  onToggleSelected: PropTypes.func.isRequired,
+  // from state
   fetchStatus: PropTypes.string,
-  handleToggleAndSelectMedia: PropTypes.func.isRequired,
-  updateMediaQuerySelection: PropTypes.func.isRequired,
-  updateAdvancedMediaQuerySelection: PropTypes.func.isRequired,
-  selectedMediaQueryKeyword: PropTypes.string,
   selectedMediaQueryType: PropTypes.number,
+  selectedMediaQueryKeyword: PropTypes.string,
   sourceResults: PropTypes.object,
   formQuery: PropTypes.object,
+  // from dispatch
+  updateMediaQuerySelection: PropTypes.func.isRequired,
+  updateAdvancedMediaQuerySelection: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -143,7 +147,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   updateAdvancedMediaQuerySelection: (values) => {
     if (values.mediaKeyword || (values.tags && values.tags.length > 0)) {
       if (values.allMedia) { // handle the "all media" placeholder selection
-        ownProps.handleToggleAndSelectMedia({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
+        ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
       } else {
         dispatch(selectMediaPickerQueryArgs(values));
         dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: values.tags.map(tag => tag.tags_id) }));

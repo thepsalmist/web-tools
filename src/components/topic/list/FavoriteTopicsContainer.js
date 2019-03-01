@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchFavoriteTopicsList } from '../../../actions/topicActions';
 import TopicPreviewList from './TopicPreviewList';
 
@@ -11,13 +11,13 @@ const localMessages = {
 };
 
 const FavoriteTopicsContainer = (props) => {
-  const { topics, onSetFavorited, asyncFetch } = props;
+  const { topics, onSetFavorited, onFetchAyncData } = props;
   return (
     <div className="favorite-topics-list">
       <TopicPreviewList
         topics={topics}
         linkGenerator={t => `/topics/${t.topics_id}/summary`}
-        onSetFavorited={(id, isFav) => { onSetFavorited(id, isFav); asyncFetch(); }}
+        onSetFavorited={(id, isFav) => { onSetFavorited(id, isFav); onFetchAyncData(); }}
         emptyMsg={localMessages.empty}
       />
     </div>
@@ -29,10 +29,9 @@ FavoriteTopicsContainer.propTypes = {
   onSetFavorited: PropTypes.func,
   // from state
   topics: PropTypes.array,
-  // from context
+  // from compositonla chain
   intl: PropTypes.object.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
+  onFetchAyncData: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -40,16 +39,12 @@ const mapStateToProps = state => ({
   topics: state.topics.favoriteList.topics,
 });
 
-const mapDispatchToProps = dispatch => ({
-  asyncFetch: () => {
-    dispatch(fetchFavoriteTopicsList());
-  },
-});
+const fetchAsyncData = dispatch => dispatch(fetchFavoriteTopicsList());
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       FavoriteTopicsContainer
     )
   )

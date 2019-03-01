@@ -48,8 +48,8 @@
 }
 
 .info-notice > div {
-    background-color: $material-green500;
-  }
+  background-color: $material-green500;
+}
 
 .warning-notice > div {
   background-color: $material-orange500;
@@ -57,4 +57,10 @@
 
 .error-notice > div {
   background-color: $material-red500;
+}
+
+.info-notice {
+  a {
+    color: $white !important;
+  }
 }

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
 import { fetchCreateFocusMediaTypeStoryCounts } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
 import BubbleRowChart from '../../../../../vis/BubbleRowChart';
@@ -50,9 +50,6 @@ MediaTypeStoryCountsPreviewContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
-  // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   // from state
   counts: PropTypes.array,
   fetchStatus: PropTypes.string.isRequired,
@@ -63,25 +60,12 @@ const mapStateToProps = state => ({
   counts: state.topics.selected.focalSets.create.mediaTypeStoryCounts.story_counts,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchData: (topicId) => {
-    dispatch(fetchCreateFocusMediaTypeStoryCounts(topicId));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.topicId);
-    },
-
-  });
-}
+const fetchAsyncData = (dispatch, { topicId }) => dispatch(fetchCreateFocusMediaTypeStoryCounts(topicId));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       MediaTypeStoryCountsPreviewContainer
     )
   )

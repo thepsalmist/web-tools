@@ -8,3 +8,4 @@ export * from './system/recentNewsActions';
 export * from './system/statActions';
 export * from './system/searchActions';
 export * from './system/userActions';
+export * from './system/analyticsActions';

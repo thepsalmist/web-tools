@@ -6,6 +6,7 @@ import StoryDetailsContainer from '../components/common/admin/story/StoryDetails
 import UpdateStoryContainer from '../components/common/admin/story/UpdateStoryContainer';
 import StoryCachedContainer from '../components/common/admin/story/StoryCachedContainer';
 import AdminWrapper from '../components/common/admin/AdminWrapper';
+import AnalyticsDashboard from '../components/common/admin/analytics/AnalyticsDashboard';
 import { requireAuth } from './routes';
 
 const adminRoutes = (
@@ -20,6 +21,8 @@ const adminRoutes = (
       <Route path="/admin/story/:id/details" component={StoryDetailsContainer} onEnter={requireAuth} />
       <Route path="/admin/story/:id/update" component={UpdateStoryContainer} onEnter={requireAuth} />
       <Route path="/admin/story/:id/cached" component={StoryCachedContainer} onEnter={requireAuth} />
+
+      <Route path="/admin/analytics" component={AnalyticsDashboard} onEnter={requireAuth} />
 
     </Route>
 

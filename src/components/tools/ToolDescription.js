@@ -6,11 +6,13 @@ const ToolDescription = (props) => {
   const { name, description, screenshotUrl, url, className } = props;
   const { formatMessage } = props.intl;
   return (
-    <div className={`tool-description ${className}`} onTouchTap={() => { window.location = url; }}>
-      <h2><FormattedMessage {...name} /></h2>
-      <p><FormattedMessage {...description} /></p>
-      <img src={screenshotUrl} alt={formatMessage(name)} width="100%" />
-    </div>
+    <a href={url}>
+      <div className={`tool-description ${className}`}>
+        <h2><FormattedMessage {...name} /></h2>
+        <p><FormattedMessage {...description} /></p>
+        <img src={screenshotUrl} alt={formatMessage(name)} width="100%" />
+      </div>
+    </a>
   );
 };
 

@@ -8,7 +8,6 @@ import topics from './topics/topics';
 import explorer from './explorer/explorer';
 import sources from './sources/sources';
 import system from './system/system';
-import notebook from './notebook/notebook';
 import story from './story/story';
 
 const LIMIT_REDUCERS = true; // so we enforce that apps don't accidently use another apps reducer
@@ -42,7 +41,6 @@ function getRootReducer(appName) {
     system,
     form,
     routing,
-    notebook,
     story,
   };
 

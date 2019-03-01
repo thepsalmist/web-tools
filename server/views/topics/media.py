@@ -5,13 +5,14 @@ import flask_login
 from multiprocessing import Pool
 
 from server import app, TOOL_API_KEY
-from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS
+from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_DOWNLOAD_SAMPLE_SIZE
 from server.auth import user_mediacloud_key, user_mediacloud_client, user_admin_mediacloud_client, is_user_logged_in
 from server.util import csv
 from server.views.topics import validated_sort, TOPIC_MEDIA_CSV_PROPS
 from server.views.topics.attention import stream_topic_split_story_counts_csv
 from server.views.topics.stories import stream_story_list_csv
 import server.views.topics.apicache as apicache
+import server.views.apicache as base_apicache
 from server.util.request import filters_from_args, api_error_handler
 from server.views.topics import access_public_topic
 
@@ -60,14 +61,15 @@ def topic_media_csv(topics_id):
 @flask_login.login_required
 @api_error_handler
 def topic_media_split_story_count(topics_id, media_id):
-    return jsonify(apicache.topic_split_story_counts(user_mediacloud_key(), topics_id))
+    return jsonify(apicache.topic_split_story_counts(user_mediacloud_key(), topics_id,
+                                                     q="media_id:{}".format(media_id)))
 
 
 @app.route('/api/topics/<topics_id>/media/<media_id>/split-story/count.csv', methods=['GET'])
 @flask_login.login_required
 def topic_media_story_split_count_csv(topics_id, media_id):
     return stream_topic_split_story_counts_csv(user_mediacloud_key(), 'media-'+str(media_id)+'-split-story-counts',
-                                     topics_id, fq="media_id:"+media_id)
+                                               topics_id, q="media_id:{}".format(media_id))
 
 
 @app.route('/api/topics/<topics_id>/media/<media_id>/stories', methods=['GET'])
@@ -77,7 +79,7 @@ def media_stories(topics_id, media_id):
     sort = validated_sort(request.args.get('sort'))
     limit = request.args.get('limit')
     stories = apicache.topic_story_list(user_mediacloud_key(), topics_id,
-                               media_id=media_id, sort=sort, limit=limit)
+                                        media_id=media_id, sort=sort, limit=limit)
     return jsonify(stories)
 
 
@@ -96,7 +98,7 @@ def media_inlinks(topics_id, media_id):
     sort = validated_sort(request.args.get('sort'))
     limit = request.args.get('limit')
     inlinks = apicache.topic_story_list(user_mediacloud_key(), topics_id,
-                               link_to_media_id=media_id, sort=sort, limit=limit)
+                                        link_to_media_id=media_id, sort=sort, limit=limit)
     return jsonify(inlinks)
 
 
@@ -138,7 +140,7 @@ def media_outlinks(topics_id, media_id):
     sort = validated_sort(request.args.get('sort'))
     limit = request.args.get('limit')
     outlinks = apicache.topic_story_list(user_mediacloud_key(), topics_id,
-                                link_from_media_id=media_id, sort=sort, limit=limit)
+                                         link_from_media_id=media_id, sort=sort, limit=limit)
     return jsonify(outlinks)
 
 
@@ -178,15 +180,12 @@ def media_outlinks_csv(topics_id, media_id):
 def get_topic_media_links_csv(topics_id):
     user_mc = user_mediacloud_client()
     topic = user_mc.topic(topics_id)
-
-    #page through results for timespand
+    # page through results for timespand
     return stream_media_link_list_csv(user_mediacloud_key(), topic['name'] + '-stories', topics_id)
 
+
 def stream_media_link_list_csv(user_mc_key, filename, topics_id, **kwargs):
-
-    all_stories = []
-    params=kwargs.copy()
-
+    params = kwargs.copy()
     merged_args = {
         'snapshots_id': request.args['snapshotId'],
         'timespans_id': request.args['timespanId'],
@@ -207,7 +206,7 @@ def stream_media_link_list_csv(user_mc_key, filename, topics_id, **kwargs):
 
 
 def _media_info_worker(info):
-    return apicache.get_media(info['key'], info['media_id'])
+    return base_apicache.media(info['key'], info['media_id'])
 
 
 # generator you can use to handle a long list of stories row by row (one row per story)
@@ -291,6 +290,7 @@ def media_words_csv(topics_id, media_id):
     query = apicache.add_to_user_query('media_id:'+media_id)
     ngram_size = request.args['ngram_size'] if 'ngram_size' in request.args else 1  # default to word count
     word_counts = apicache.topic_ngram_counts(user_mediacloud_key(), topics_id, ngram_size=ngram_size, q=query,
-                                              num_words=WORD_COUNT_DOWNLOAD_NUM_WORDS)
+                                              num_words=WORD_COUNT_DOWNLOAD_NUM_WORDS,
+                                              sample_size=WORD_COUNT_DOWNLOAD_SAMPLE_SIZE)
     return csv.stream_response(word_counts, apicache.WORD_COUNT_DOWNLOAD_COLUMNS,
                                'topic-{}-media-{}-sampled-ngrams-{}-word'.format(topics_id, media_id, ngram_size))

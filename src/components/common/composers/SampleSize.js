@@ -1,21 +1,26 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { VIEW_1K } from '../../../lib/topicFilterUtil';
 
 /**
  * Wrap any component that wants to display an EditableWordCloud. This passes
  * a `fetchData` helper to the child component,.
  */
-const withSampleSize = (ChildComponent) => {
+const withSampleSize = (ChildComponent, onSampleSizeChange) => {
   class SampleSize extends React.Component {
     state = {
       sampleSize: VIEW_1K,
     };
 
     setSampleSize = (nextSize) => {
-      const { fetchData, filters } = this.props;
+      const { fetchData, filters, dispatch } = this.props;
       this.setState({ sampleSize: nextSize });
-      fetchData({ filters, sample_size: nextSize });
+      if (onSampleSizeChange) {
+        onSampleSizeChange(dispatch, this.props, nextSize);
+      } else {
+        fetchData({ filters, sample_size: nextSize });
+      }
     }
 
     render() {
@@ -33,10 +38,11 @@ const withSampleSize = (ChildComponent) => {
   }
   SampleSize.propTypes = {
     // from compositional chain
-    fetchData: PropTypes.func.isRequired,
+    fetchData: PropTypes.func,
     filters: PropTypes.object,
+    dispatch: PropTypes.func.isRequired,
   };
-  return SampleSize;
+  return connect()(SampleSize);
 };
 
 export default withSampleSize;

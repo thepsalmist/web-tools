@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
 import { fetchCreateFocusTopCountriesStoryCounts } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
 import PackedBubbleChart from '../../../../../vis/PackedBubbleChart';
@@ -15,44 +15,35 @@ const localMessages = {
   intro: { id: 'topic.snapshot.topCountries.storyCount.intro', defaultMessage: 'Stories about however many most-talked-about-countries' },
 };
 
-class TopCountriesStoryCountsPreviewContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { topicId, numCountries, fetchData } = this.props;
-    if (nextProps.numCountries !== numCountries) {
-      fetchData(topicId, nextProps.numCountries);
-    }
-  }
-
-  render() {
-    const { counts } = this.props;
-    const { formatNumber } = this.props.intl;
-    let content = null;
-    if (counts !== null) {
-      const data = counts.map((info, idx) => ({
-        value: info.count,
-        fill: mapD3Top10Colors(idx),
-        rolloverText: `${info.label}: ${formatNumber(info.count)}`,
-      }));
-      content = (
-        <PackedBubbleChart
-          data={data}
-          domId={BUBBLE_CHART_DOM_ID}
-          width={700}
-          padding={30}
-        />
-      );
-    }
-    return (
-      <DataCard>
-        <h2>
-          <FormattedMessage {...localMessages.title} />
-        </h2>
-        <p><FormattedMessage {...localMessages.intro} /></p>
-        {content}
-      </DataCard>
+const TopCountriesStoryCountsPreviewContainer = (props) => {
+  const { counts } = props;
+  const { formatNumber } = props.intl;
+  let content = null;
+  if (counts !== null) {
+    const data = counts.map((info, idx) => ({
+      value: info.count,
+      fill: mapD3Top10Colors(idx),
+      rolloverText: `${info.label}: ${formatNumber(info.count)}`,
+    }));
+    content = (
+      <PackedBubbleChart
+        data={data}
+        domId={BUBBLE_CHART_DOM_ID}
+        width={700}
+        padding={30}
+      />
     );
   }
-}
+  return (
+    <DataCard>
+      <h2>
+        <FormattedMessage {...localMessages.title} />
+      </h2>
+      <p><FormattedMessage {...localMessages.intro} /></p>
+      {content}
+    </DataCard>
+  );
+};
 
 TopCountriesStoryCountsPreviewContainer.propTypes = {
   // from compositional chain
@@ -60,9 +51,6 @@ TopCountriesStoryCountsPreviewContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   numCountries: PropTypes.number.isRequired,
-  // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   // from state
   counts: PropTypes.array,
   fetchStatus: PropTypes.string.isRequired,
@@ -73,25 +61,12 @@ const mapStateToProps = state => ({
   counts: state.topics.selected.focalSets.create.topCountriesStoryCounts.story_counts,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchData: (topicId, numCountries) => {
-    dispatch(fetchCreateFocusTopCountriesStoryCounts(topicId, { numCountries }));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.topicId, ownProps.numCountries);
-    },
-
-  });
-}
+const fetchAsyncData = (dispatch, { topicId, numCountries }) => dispatch(fetchCreateFocusTopCountriesStoryCounts(topicId, { numCountries }));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData, ['numCountries'])(
       TopCountriesStoryCountsPreviewContainer
     )
   )

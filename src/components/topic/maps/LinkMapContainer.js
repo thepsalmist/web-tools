@@ -4,7 +4,6 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import LinkMapForm from './LinkMapForm';
-import { selectTopic, filterBySnapshot, filterByFocus, filterByTimespan } from '../../../actions/topicActions';
 import { generateParamStr } from '../../../lib/apiUtil';
 import TopicPageTitle from '../TopicPageTitle';
 
@@ -18,15 +17,6 @@ const localMessages = {
 class LinkMapContainer extends React.Component {
   state = {
     viewMap: false,
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, filters } = this.props;
-    if (nextProps.filters.snapshotId !== filters.snapshotId
-      || nextProps.filters.timespanId !== filters.timespanId
-      || nextProps.filters.focusId !== filters.focusId) {
-      fetchData(nextProps);
-    }
   }
 
   enableViewMap = () => {
@@ -71,7 +61,6 @@ LinkMapContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   // from parent
   handleFetchMapData: PropTypes.func.isRequired,
 };
@@ -89,21 +78,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
     window.location = url;
   },
-  fetchData: () => {
-    dispatch(selectTopic(ownProps.params.topicId));
-    // select any filters that are there
-    const { query } = ownProps.location;
-    if (ownProps.location.query.snapshotId) {
-      dispatch(filterBySnapshot(query.snapshotId));
-    }
-    if (ownProps.location.query.focusId) {
-      dispatch(filterByFocus(query.focusId));
-    }
-    if (ownProps.location.query.timespanId) {
-      dispatch(filterByTimespan(query.timespanId));
-    }
-  },
 });
+
 
 export default
 injectIntl(

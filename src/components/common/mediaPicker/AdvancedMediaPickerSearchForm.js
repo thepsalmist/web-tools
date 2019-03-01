@@ -54,28 +54,24 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         <Row>
           <Col lg={6}>
             <MetadataPickerContainer
-              autocomplete
-              isClearable
               id={TAG_SET_PUBLICATION_COUNTRY}
               name="publicationCountry"
               form="advancedQueryForm"
               label={formatMessage(localMessages.pubCountrySuggestion)}
+              async
             />
           </Col>
           <Col lg={6}>
             <MetadataPickerContainer
-              autocomplete
-              isClearable
               id={TAG_SET_PUBLICATION_STATE}
               name="publicationState"
               form="advancedQueryForm"
               label={formatMessage(localMessages.pubStateSuggestion)}
+              async
             />
           </Col>
           <Col lg={6}>
             <MetadataPickerContainer
-              autocomplete
-              isClearable
               id={TAG_SET_PRIMARY_LANGUAGE}
               name="primaryLanguage"
               form="advancedQueryForm"
@@ -84,20 +80,16 @@ class AdvancedMediaPickerSearchForm extends React.Component {
           </Col>
           <Col lg={6}>
             <MetadataPickerContainer
-              autocomplete
-              isClearable
               id={TAG_SET_COUNTRY_OF_FOCUS}
               name="countryOfFocus"
               form="advancedQueryForm"
               label={formatMessage(localMessages.pCountryOfFocusSuggestion)}
+              async
             />
           </Col>
           <Col lg={6}>
             <MetadataPickerContainer
-              autocomplete
-              isClearable
               id={TAG_SET_MEDIA_TYPE}
-              showDescription
               name="mediaType"
               form="advancedQueryForm"
               label={formatMessage(localMessages.pMediaType)}

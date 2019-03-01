@@ -5,7 +5,7 @@ import * as d3 from 'd3';
 import { connect } from 'react-redux';
 import ReactHighcharts from 'react-highcharts';
 import DataCard from '../../common/DataCard';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import initHighcharts from '../../vis/initHighcharts';
 import { fetchTopicFocalSetsList } from '../../../actions/topicActions';
 
@@ -80,28 +80,19 @@ const buildFociComparisonChart = (focalSets, maxStories, height = undefined) => 
 
 initHighcharts();
 
-class FociStoryCountComparisonContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { filters, fetchData } = this.props;
-    if (nextProps.filters !== filters) {
-      fetchData(nextProps);
-    }
-  }
-
-  render() {
-    const { focalSets, timespanStoryCount } = this.props;
-    const { formatMessage } = this.props.intl;
-    const config = buildFociComparisonChart(focalSets, timespanStoryCount);
-    config.title.text = formatMessage(localMessages.chartTitle);
-    config.yAxis.title.text = formatMessage(localMessages.chartYAxisLabel);
-    return (
-      <DataCard>
-        <h2><FormattedMessage {...localMessages.title} /></h2>
-        <ReactHighcharts config={config} />
-      </DataCard>
-    );
-  }
-}
+const FociStoryCountComparisonContainer = (props) => {
+  const { focalSets, timespanStoryCount } = props;
+  const { formatMessage } = props.intl;
+  const config = buildFociComparisonChart(focalSets, timespanStoryCount);
+  config.title.text = formatMessage(localMessages.chartTitle);
+  config.yAxis.title.text = formatMessage(localMessages.chartYAxisLabel);
+  return (
+    <DataCard>
+      <h2><FormattedMessage {...localMessages.title} /></h2>
+      <ReactHighcharts config={config} />
+    </DataCard>
+  );
+};
 
 FociStoryCountComparisonContainer.propTypes = {
   // from compositional chain
@@ -109,10 +100,7 @@ FociStoryCountComparisonContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
-  // from state
+  // from store
   fetchStatus: PropTypes.string.isRequired,
   focalSets: PropTypes.array,
   timespanStoryCount: PropTypes.number.isRequired,
@@ -124,19 +112,14 @@ const mapStateToProps = state => ({
   timespanStoryCount: state.topics.selected.timespans.selected.story_count,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (props) => {
-    dispatch(fetchTopicFocalSetsList(props.topicId, { ...props.filters, includeStoryCounts: 1 }));
-  },
-  asyncFetch: () => {
-    dispatch(fetchTopicFocalSetsList(ownProps.topicId, { ...ownProps.filters, includeStoryCounts: 1 }));
-  },
-});
+const fetchAsyncData = (dispatch, { topicId, filters }) => {
+  dispatch(fetchTopicFocalSetsList(topicId, { ...filters, includeStoryCounts: 1 }));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withFilteredAsyncData(fetchAsyncData)(
       FociStoryCountComparisonContainer
     )
   )

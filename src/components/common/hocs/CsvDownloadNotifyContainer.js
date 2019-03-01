@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import messages from '../../../resources/messages';
 import { updateFeedback } from '../../../actions/appActions';
@@ -24,16 +24,15 @@ const withCsvDownloadNotifyContainer = (ChildComponent) => {
 
   const mapDispatchToProps = (dispatch, ownProps) => ({
     notifyOfCsvDownload: (urlToDetails) => { // can handle case with no URL to show for details about the download
-      const htmlMessage = ownProps.intl.formatMessage(messages.currentlyDownloadingCsv);
       dispatch(updateFeedback({
         classes: 'info-notice',
         open: true,
-        message: htmlMessage,
-        action: (urlToDetails) ? ownProps.intl.formatHTMLMessage(messages.learnMoreAboutColumnsCsv) : undefined,
-        onActionClick: (urlToDetails) ? () => {
-          const win = window.open(urlToDetails, '_blank');
-          win.focus();
-        } : undefined,
+        message: ownProps.intl.formatMessage(messages.currentlyDownloadingCsv),
+        action: (
+          <a href={urlToDetails} rel="noopener noreferrer" target="_blank">
+            <FormattedMessage {...messages.learnMoreAboutColumnsCsv} />
+          </a>
+        ),
       }));
     },
   });

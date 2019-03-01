@@ -15,7 +15,10 @@ const TopicPageTitle = (props) => {
 
 TopicPageTitle.propTypes = {
   // from parent
-  value: PropTypes.object,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
   // from state
   topicName: PropTypes.string.isRequired,
 };

@@ -6,7 +6,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import withSummary from '../../common/hocs/SummarizedVizualization';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import EntitiesTable from '../../common/EntitiesTable';
@@ -87,60 +86,25 @@ class QueryTopEntitiesOrgsResultsContainer extends React.Component {
 }
 
 QueryTopEntitiesOrgsResultsContainer.propTypes = {
-  lastSearchTime: PropTypes.number.isRequired,
   queries: PropTypes.array.isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
-  // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  results: PropTypes.array.isRequired,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
-  // from state
-  fetchStatus: PropTypes.string.isRequired,
   handleEntitySelection: PropTypes.func.isRequired,
   selectedTabIndex: PropTypes.number.isRequired,
   tabSelector: PropTypes.object.isRequired,
+  // from state
+  lastSearchTime: PropTypes.number.isRequired,
+  results: PropTypes.array.isRequired,
+  fetchStatus: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => ({
-  lastSearchTime: state.explorer.lastSearchTime.time,
   fetchStatus: state.explorer.topEntitiesOrgs.fetchStatus,
   results: state.explorer.topEntitiesOrgs.results,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (queries) => {
-    // this should trigger when the user clicks the Search button or changes the URL
-    // for n queries, run the dispatch with each parsed query
-    dispatch(resetEntitiesOrgs());
-    if (ownProps.isLoggedIn) {
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q) => {
-        const infoToQuery = {
-          start_date: q.startDate,
-          end_date: q.endDate,
-          q: q.q,
-          uid: q.uid,
-          sources: q.sources.map(s => s.id),
-          collections: q.collections.map(c => c.id),
-        };
-        return dispatch(fetchTopEntitiesOrgs(infoToQuery));
-      });
-    } else if (queries || ownProps.queries) { // else assume DEMO mode, but assume the queries have been loaded
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q, index) => {
-        const demoInfo = {
-          index, // should be same as q.index btw
-          search_id: q.searchId, // may or may not have these
-          query_id: q.id,
-          q: q.q, // only if no query id, means demo user added a keyword
-        };
-        return dispatch(fetchDemoTopEntitiesOrgs(demoInfo)); // id
-      });
-    }
-  },
   handleEntitySelection: (entity, isCannedSearch) => {
     const queryClauseToAdd = ` tags_id_stories:${entity}`;
     if (isCannedSearch === undefined) {
@@ -149,22 +113,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.queries);
-    },
-  });
-}
-
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.helpIntro, [messages.entityHelpDetails])(
-      withAsyncFetch(
-        withQueryResults(
-          QueryTopEntitiesOrgsResultsContainer
-        )
+      withQueryResults(resetEntitiesOrgs, fetchTopEntitiesOrgs, fetchDemoTopEntitiesOrgs)(
+        QueryTopEntitiesOrgsResultsContainer
       )
     )
   )

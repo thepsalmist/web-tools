@@ -39,7 +39,7 @@ class QueryPickerItem extends React.Component {
     const { onQuerySelected, query } = this.props;
     // don't allow selection in demo sample mode
     if (query.searchId === undefined) {
-      onQuerySelected();
+      onQuerySelected(query);
     }
   };
 
@@ -164,55 +164,62 @@ class QueryPickerItem extends React.Component {
       fullQuery = fullQuery.slice(0, fullQuery.indexOf('...') - 1);
     }
     return (
-      <div
-        className={`query-picker-item ${extraClassNames}`}
-        onTouchTap={() => this.handleBlurAndSelection()}
+      <a
+        href="#Edit this query"
+        onClick={(evt) => {
+          evt.preventDefault();
+          this.handleBlurAndSelection();
+        }}
       >
-        {headerInfo}
-        <Dialog
-          modal="false"
-          open={this.state.labelChangeDialogOpen}
-          onClose={this.handleLabelClose}
+        <div
+          className={`query-picker-item ${extraClassNames}`}
         >
-          <DialogTitle>{formatMessage(localMessages.title)}</DialogTitle>
-          <DialogContent>
-            <p>
-              <FormattedMessage {...localMessages.queryDialog} />
-            </p>
-            <FormControl
-              className="query-picker-editable-name"
-              id="labelInDialog"
-              name="labelInDialog"
-              defaultValue={fullQuery}
-              maxLength={QUERY_LABEL_CHARACTER_LIMIT}
-              onChange={(event) => {
-                this.updateLabelInDialog(event.target.value);
-              }}
-            >
-              <Input
-                inputRef={focusUsernameInputField}
-                placeholder={query.label || formatMessage(localMessages.searchHint)}
+          {headerInfo}
+          <Dialog
+            modal="false"
+            open={this.state.labelChangeDialogOpen}
+            onClose={this.handleLabelClose}
+          >
+            <DialogTitle>{formatMessage(localMessages.title)}</DialogTitle>
+            <DialogContent>
+              <p>
+                <FormattedMessage {...localMessages.queryDialog} />
+              </p>
+              <FormControl
+                className="query-picker-editable-name"
+                id="labelInDialog"
+                name="labelInDialog"
+                defaultValue={fullQuery}
+                maxLength={QUERY_LABEL_CHARACTER_LIMIT}
+                onChange={(event) => {
+                  this.updateLabelInDialog(event.target.value);
+                }}
+              >
+                <Input
+                  inputRef={focusUsernameInputField}
+                  placeholder={query.label || formatMessage(localMessages.searchHint)}
+                />
+              </FormControl>
+            </DialogContent>
+            <DialogActions>
+              <AppButton
+                className="query-item-header-dialog-button"
+                label={formatMessage(messages.cancel)}
+                variant="outlined"
+                onClick={this.handleLabelClose}
+                key="picker-cancel"
               />
-            </FormControl>
-          </DialogContent>
-          <DialogActions>
-            <AppButton
-              className="query-item-header-dialog-button"
-              label={formatMessage(messages.cancel)}
-              variant="outlined"
-              onClick={this.handleLabelClose}
-              key="picker-cancel"
-            />
-            <AppButton
-              label={formatMessage(messages.rename)}
-              primary
-              onClick={() => this.handleLabelChangeAndClose(query)}
-              key="picker-ok"
-            />,
-          </DialogActions>
-        </Dialog>
-        {subT}
-      </div>
+              <AppButton
+                label={formatMessage(messages.rename)}
+                primary
+                onClick={() => this.handleLabelChangeAndClose(query)}
+                key="picker-ok"
+              />,
+            </DialogActions>
+          </Dialog>
+          {subT}
+        </div>
+      </a>
     );
   }
 }

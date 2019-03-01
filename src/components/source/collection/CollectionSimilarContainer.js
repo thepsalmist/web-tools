@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchSimilarCollections } from '../../../actions/sourceActions';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import CollectionList from '../../common/CollectionList';
@@ -36,8 +36,6 @@ CollectionSimilarContainer.propTypes = {
   // from parent
   collectionId: PropTypes.number.isRequired,
   similarCollections: PropTypes.array,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
@@ -49,17 +47,13 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  asyncFetch: () => {
-    dispatch(fetchSimilarCollections(ownProps.collectionId));
-  },
-});
+const fetchAsyncData = (dispatch, { collectionId }) => dispatch(fetchSimilarCollections(collectionId));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpText])(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData)(
         CollectionSimilarContainer
       )
     )

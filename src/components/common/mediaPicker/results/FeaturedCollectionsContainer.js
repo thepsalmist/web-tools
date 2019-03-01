@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../hocs/AsyncContainer';
+import withAsyncData from '../../hocs/AsyncDataContainer';
 import { fetchMediaPickerFeaturedCollections } from '../../../../actions/systemActions';
 import CollectionResultsTable from './CollectionResultsTable';
 import * as fetchConstants from '../../../../lib/fetchConstants';
@@ -14,7 +14,7 @@ const localMessages = {
 };
 
 const FeaturedCollectionsContainer = (props) => {
-  const { fetchStatus, collections, handleToggleAndSelectMedia } = props;
+  const { fetchStatus, collections, onToggleSelected } = props;
   const { formatMessage } = props.intl;
   if (fetchStatus !== fetchConstants.FETCH_SUCCEEDED) {
     return <LoadingSpinner />;
@@ -23,16 +23,18 @@ const FeaturedCollectionsContainer = (props) => {
     <CollectionResultsTable
       title={formatMessage(localMessages.title)}
       collections={collections}
-      handleToggleAndSelectMedia={handleToggleAndSelectMedia}
+      onToggleSelected={onToggleSelected}
     />
   );
 };
 
 FeaturedCollectionsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
+  // from parent
+  onToggleSelected: PropTypes.func.isRequired,
+  // from store
   fetchStatus: PropTypes.string,
   collections: PropTypes.array,
-  handleToggleAndSelectMedia: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -40,16 +42,12 @@ const mapStateToProps = state => ({
   collections: state.system.mediaPicker.featured ? state.system.mediaPicker.featured.list : null,
 });
 
-const mapDispatchToProps = dispatch => ({
-  asyncFetch: () => {
-    dispatch(fetchMediaPickerFeaturedCollections(TAG_SET_MC_ID));
-  },
-});
+const fetchAsyncData = dispatch => dispatch(fetchMediaPickerFeaturedCollections(TAG_SET_MC_ID));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       FeaturedCollectionsContainer
     )
   )

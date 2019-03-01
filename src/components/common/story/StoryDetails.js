@@ -40,7 +40,7 @@ const StoryDetails = (props) => {
         </li>
         <li>
           <FormattedHTMLMessage {...localMessages.publisher} />
-          <Link to={mediaLink}>{story.media_name}</Link>
+          <Link to={mediaLink}>{story.media.name}</Link>
         </li>
         <li>
           <FormattedHTMLMessage

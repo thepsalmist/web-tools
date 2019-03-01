@@ -9,7 +9,7 @@ import Divider from '@material-ui/core/Divider';
 import ListItemText from '@material-ui/core/ListItemText';
 import ActionMenu from '../../common/ActionMenu';
 import { fetchTopicSplitStoryCounts, fetchTopicFocalSetSplitStoryCounts } from '../../../actions/topicActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import DataCard from '../../common/DataCard';
 import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTimeChart';
@@ -48,13 +48,6 @@ const setColorsByUsPartisanship = (series, nameProperty, colorProperty) => {
 class FociAttentionComparisonContainer extends React.Component {
   state = {
     view: LINE_VIEW,
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { selectedFocalSet, filters, fetchData } = this.props;
-    if ((nextProps.selectedFocalSet !== selectedFocalSet) || (nextProps.filters.timespanId !== filters.timespanId)) {
-      fetchData(nextProps.topicId, nextProps.selectedFocalSet.focal_sets_id, nextProps.filters);
-    }
   }
 
   setView = (nextView) => {
@@ -182,10 +175,6 @@ FociAttentionComparisonContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   selectedTimePeriod: PropTypes.string.isRequired,
   attentionAggregationMenuItems: PropTypes.array.isRequired, // from hoc
-  // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   foci: PropTypes.array.isRequired,
@@ -200,31 +189,23 @@ const mapStateToProps = state => ({
   overallCounts: state.topics.selected.summary.splitStoryCount.counts,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchData: (topicId, focalSetId, filters) => {
-    if (topicId !== null) {
-      if ((focalSetId !== null) && (focalSetId !== undefined)) {
-        // fetch the total counts, then counts for each foci
-        dispatch(fetchTopicSplitStoryCounts(topicId, filters))
-          .then(() => dispatch(fetchTopicFocalSetSplitStoryCounts(topicId, focalSetId, filters)));
-      }
+const fetchAsyncData = (dispatch, props) => {
+  const { topicId, selectedFocalSet, filters } = props;
+  const focalSetId = selectedFocalSet.focal_sets_id;
+  if (topicId !== null) {
+    if ((focalSetId !== null) && (focalSetId !== undefined)) {
+      // fetch the total counts, then counts for each foci
+      dispatch(fetchTopicSplitStoryCounts(topicId, filters))
+        .then(() => dispatch(fetchTopicFocalSetSplitStoryCounts(topicId, focalSetId, filters)));
     }
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.topicId, ownProps.selectedFocalSet.focal_sets_id, ownProps.filters);
-    },
-  });
-}
+  }
+};
 
 export default
-connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+connect(mapStateToProps)(
   withAttentionAggregation(
-    withAsyncFetch(
-      injectIntl(
+    injectIntl(
+      withFilteredAsyncData(fetchAsyncData, ['selectedFocalSet'])( // refetch data if sort property has changed
         FociAttentionComparisonContainer
       )
     )

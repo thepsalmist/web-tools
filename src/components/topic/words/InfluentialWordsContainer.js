@@ -41,4 +41,9 @@ const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
 });
 
-export default connect(mapStateToProps)(injectIntl(InfluentialWordsContainer));
+export default
+connect(mapStateToProps)(
+  injectIntl(
+    InfluentialWordsContainer
+  )
+);

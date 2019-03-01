@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import DataCard from '../../common/DataCard';
 import messages from '../../../resources/messages';
 import withHelp from '../../common/hocs/HelpfulContainer';
@@ -128,7 +128,6 @@ CollectionMetadataCoverageSummaryContainer.propTypes = {
   collection: PropTypes.object.isRequired,
   sources: PropTypes.array,
   // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
@@ -140,18 +139,18 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  asyncFetch: () => {
-  },
   navToSource: (mediaId) => {
     dispatch(push(`/sources/${mediaId}`));
   },
 });
 
+const fetchAsyncData = () => true; // the other widget fetches the data for us here, so no call needed but we want it to spin
+
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpText])(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData)(
         CollectionMetadataCoverageSummaryContainer
       )
     )

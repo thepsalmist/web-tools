@@ -50,8 +50,8 @@ TopicWordsPreview.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.create.preview.matchingWords.fetchStatus,
-  words: state.topics.create.preview.matchingWords.list,
+  fetchStatus: state.topics.modify.preview.matchingWords.fetchStatus,
+  words: state.topics.modify.preview.matchingWords.list,
 });
 
 const fetchAsyncData = (dispatch, { query }) => {

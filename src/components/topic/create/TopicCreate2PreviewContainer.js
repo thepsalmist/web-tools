@@ -60,7 +60,7 @@ TopicCreate2PreviewContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  currentStep: state.topics.create.preview.workflow.currentStep,
+  currentStep: state.topics.modify.preview.workflow.currentStep,
   formData: state.form.topicForm.values,
 });
 

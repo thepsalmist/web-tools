@@ -52,9 +52,9 @@ TopicStorySamplePreview.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.create.preview.matchingStories.fetchStatus,
-  sort: state.topics.create.preview.matchingStories.total,
-  stories: state.topics.create.preview.matchingStories.list,
+  fetchStatus: state.topics.modify.preview.matchingStories.fetchStatus,
+  sort: state.topics.modify.preview.matchingStories.total,
+  stories: state.topics.modify.preview.matchingStories.list,
 });
 
 const fetchAsyncData = (dispatch, { query }) => {

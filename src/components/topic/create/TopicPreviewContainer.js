@@ -20,27 +20,29 @@ const localMessages = {
 const TopicPreviewContainer = (props) => {
   const { handleNextStep, handlePreviousStep, formData, mode } = props;
   const { formatMessage } = props.intl;
-  const content = <TopicCreatePreview formData={formData} />;
+  if (formData !== undefined) {
+    const content = <TopicCreatePreview formData={formData} />;
 
-  return (
-    <Grid>
-      <h1>
-        <FormattedHTMLMessage {...localMessages.title} />
-      </h1>
-      <p>
-        <FormattedHTMLMessage {...localMessages.about} />
-      </p>
-      { content }
-      <br />
-      <Row>
-        <Col lg={12} md={12} sm={12}>
-          <AppButton variant="outlined" label={formatMessage(localMessages.prev)} onClick={() => handlePreviousStep(mode)} />
-          &nbsp; &nbsp;
-          <AppButton primary type="submit" label={formatMessage(localMessages.next)} onClick={() => handleNextStep(mode)} />
-        </Col>
-      </Row>
-    </Grid>
-  );
+    return (
+      <Grid>
+        <h1>
+          <FormattedHTMLMessage {...localMessages.title} />
+        </h1>
+        <p>
+          <FormattedHTMLMessage {...localMessages.about} />
+        </p>
+        { content }
+        <br />
+        <Row>
+          <Col lg={12} md={12} sm={12}>
+            <AppButton variant="outlined" label={formatMessage(localMessages.prev)} onClick={() => handlePreviousStep(mode)} />
+            &nbsp; &nbsp;
+            <AppButton primary type="submit" label={formatMessage(localMessages.next)} onClick={() => handleNextStep(mode)} />
+          </Col>
+        </Row>
+      </Grid>
+    );
+  } return (<div />);
 };
 
 TopicPreviewContainer.propTypes = {

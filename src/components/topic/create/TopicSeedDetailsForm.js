@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Field } from 'redux-form';
+import { reduxForm, Field, propTypes } from 'redux-form';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import QueryHelpDialog from '../../common/help/QueryHelpDialog';
@@ -27,7 +27,7 @@ const localMessages = {
   dateError: { id: 'topic.form.detail.date.error', defaultMessage: 'Please provide a date in YYYY-MM-DD format.' },
 };
 
-const TopicDetailForm = (props) => {
+const TopicSeedDetailsForm = (props) => {
   const { renderTextField, initialValues } = props;
   const { formatMessage } = props.intl;
   return (
@@ -76,12 +76,17 @@ const TopicDetailForm = (props) => {
           </small>
         </Col>
       </Row>
-      <TopicAdvancedForm initialValues={initialValues} />
+      <TopicAdvancedForm
+        initialValues={initialValues}
+        destroyOnUnmount={false}
+        form="topicForm"
+        forceUnregisterOnUnmount
+      />
     </div>
   );
 };
 
-TopicDetailForm.propTypes = {
+TopicSeedDetailsForm.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
   renderTextField: PropTypes.func.isRequired,
@@ -93,5 +98,7 @@ TopicDetailForm.propTypes = {
 
 export default
 withIntlForm(
-  TopicDetailForm
+  reduxForm({ propTypes })(
+    TopicSeedDetailsForm
+  )
 );

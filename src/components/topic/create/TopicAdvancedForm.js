@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { reduxForm, Field } from 'redux-form';
+import { reduxForm, Field, propTypes } from 'redux-form';
 import { FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -93,13 +93,9 @@ TopicAdvancedForm.propTypes = {
   submitting: PropTypes.bool.isRequired,
 };
 
-const reduxFormConfig = {
-  form: 'topicForm',
-};
-
 export default
 withIntlForm(
-  reduxForm(reduxFormConfig)(
+  reduxForm({ propTypes })(
     TopicAdvancedForm
   )
 );

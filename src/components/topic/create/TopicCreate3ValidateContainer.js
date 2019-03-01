@@ -173,10 +173,10 @@ TopicCreate3ValidateContainer.propTypes = {
 
 const mapStateToProps = state => ({
   formData: state.form.topicForm.values,
-  currentStep: state.topics.create.preview.workflow.currentStep,
-  fetchStatus: state.topics.create.preview.matchingStories.fetchStatus,
-  total: state.topics.create.preview.matchingStories.total,
-  stories: state.topics.create.preview.matchingStories.list,
+  currentStep: state.topics.modify.preview.workflow.currentStep,
+  fetchStatus: state.topics.modify.preview.matchingStories.fetchStatus,
+  total: state.topics.modify.preview.matchingStories.total,
+  stories: state.topics.modify.preview.matchingStories.list,
 });
 
 const mapDispatchToProps = dispatch => ({

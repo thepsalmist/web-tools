@@ -52,9 +52,9 @@ TopicAttentionPreview.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.create.preview.matchingAttention.fetchStatus,
-  total: state.topics.create.preview.matchingAttention.total,
-  counts: state.topics.create.preview.matchingAttention.counts,
+  fetchStatus: state.topics.modify.preview.matchingAttention.fetchStatus,
+  total: state.topics.modify.preview.matchingAttention.total,
+  counts: state.topics.modify.preview.matchingAttention.counts,
 });
 
 const fetchAsyncData = (dispatch, { query }) => {

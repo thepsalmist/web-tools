@@ -7,14 +7,16 @@ import TopicWordsPreview from './TopicWordsPreview';
 
 const TopicCreatePreview = (props) => {
   const { formData } = props;
-
-  return (
-    <div className="topic-container">
-      <TopicStoryCountPreview query={formData} />
-      <TopicAttentionPreview query={formData} />
-      <TopicWordsPreview query={formData} />
-    </div>
-  );
+  if (formData !== undefined) {
+    return (
+      <div className="topic-container">
+        <TopicStoryCountPreview query={formData} />
+        <TopicAttentionPreview query={formData} />
+        <TopicWordsPreview query={formData} />
+      </div>
+    );
+  }
+  return (<div />);
 };
 
 TopicCreatePreview.propTypes = {

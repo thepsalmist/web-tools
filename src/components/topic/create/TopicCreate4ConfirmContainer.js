@@ -125,7 +125,7 @@ TopicCreate4ConfirmContainer.propTypes = {
 
 const mapStateToProps = state => ({
   formValues: state.form.topicForm.values,
-  storyCount: state.topics.create.preview.matchingStoryCounts.count,
+  storyCount: state.topics.modify.preview.matchingStoryCounts.count,
   user: state.user,
 });
 

@@ -62,6 +62,7 @@ const mapStateToProps = state => ({
   canCreateTopic: state.topics.modify.userRunningTopicStatus.allowed,
   runningTopics: state.topics.modify.userRunningTopicStatus.runningTopics,
   user: state.user,
+  formData: state.form.topicForm,
 });
 
 const fetchAsyncData = dispatch => dispatch(fetchUserQueuedAndRunningTopics());

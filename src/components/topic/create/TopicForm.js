@@ -54,12 +54,18 @@ class TopicForm extends React.Component {
     let useForm = (
       <TopicCreateForm
         defaultValue={initialValues}
+        destroyOnUnmount={false}
+        form="topicForm"
+        forceUnregisterOnUnmount
         mode={mode}
       />
     );
     if (mode === TOPIC_FORM_MODE_EDIT) {
       useForm = (
         <TopicSeedDetailsForm
+          destroyOnUnmount={false}
+          form="topicForm"
+          forceUnregisterOnUnmount
           defaultValue={initialValues}
           mode={mode}
         />

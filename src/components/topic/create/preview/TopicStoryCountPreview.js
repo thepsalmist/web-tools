@@ -103,8 +103,8 @@ TopicStoryCountPreview.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.create.preview.matchingStoryCounts.fetchStatus,
-  count: state.topics.create.preview.matchingStoryCounts.count,
+  fetchStatus: state.topics.modify.preview.matchingStoryCounts.fetchStatus,
+  count: state.topics.modify.preview.matchingStoryCounts.count,
   user: state.user,
 });
 

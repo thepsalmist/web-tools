@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Field } from 'redux-form';
+import { reduxForm, Field, propTypes } from 'redux-form';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import TopicSeedDetailsForm from './TopicSeedDetailsForm';
@@ -45,7 +45,12 @@ const TopicCreateForm = (props) => {
           />
         </Col>
       </Row>
-      <TopicSeedDetailsForm initialValues={initialValues} />
+      <TopicSeedDetailsForm
+        initialValues={initialValues}
+        destroyOnUnmount={false}
+        form="topicForm"
+        forceUnregisterOnUnmount
+      />
     </div>
   );
 };
@@ -62,5 +67,7 @@ TopicCreateForm.propTypes = {
 
 export default
 withIntlForm(
-  TopicCreateForm
+  reduxForm({ propTypes })(
+    TopicCreateForm
+  ),
 );

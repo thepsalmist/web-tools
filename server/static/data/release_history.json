@@ -1,6 +1,18 @@
 {
   "releases": [
     {
+      "date": "2019-3-01",
+      "version": "v3.8.6",        
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Raw story now displays",
+          "details": "Story id now properly locating raw story html"
+        }
+      ]
+    },
+    {
       "date": "2019-2-19",
       "version": "v3.8.5",        
       "notes": [

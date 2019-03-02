@@ -447,7 +447,7 @@ EditableWordCloudDataCard.propTypes = {
   hideGoogleWord2Vec: PropTypes.bool, // show an option to draw a word2vec map basde on w2v_x / w2v_y from GoogleNews model
   onViewModeClick: PropTypes.func.isRequired,
   onViewSampleSizeClick: PropTypes.func,
-  initSampleSize: PropTypes.string,
+  initSampleSize: PropTypes.number,
   actionsAsLinksUnderneath: PropTypes.bool, // show the actions as links under the viz (ie. in a SummarizedVisualization card)
   domId: PropTypes.string.isRequired, // unique dom id needed to support CSV downloading
   // from compositional chain

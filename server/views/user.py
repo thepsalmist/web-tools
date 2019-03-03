@@ -1,15 +1,16 @@
 import logging
-from flask import jsonify, request, redirect
+from flask import jsonify, request, redirect, render_template
 import flask_login
 from mediacloud.error import MCException
 
 from server import app, auth, mc
-from server.auth import user_mediacloud_client, user_admin_mediacloud_client
+from server.auth import user_mediacloud_client, user_name
+from server.util.mail import send_html_email
 from server.util.request import api_error_handler, form_fields_required, arguments_required, json_error_response
 
 logger = logging.getLogger(__name__)
 
-AUTH_MANAGEMENT_DOMAIN = 'https://tools.mediacloud.org' # because it is too hard to tell which site you are on
+AUTH_MANAGEMENT_DOMAIN = 'https://tools.mediacloud.org'  # because it is too hard to tell which site you are on
 ACTIVATION_URL = AUTH_MANAGEMENT_DOMAIN + "/api/user/activate/confirm"
 PASSWORD_RESET_URL = AUTH_MANAGEMENT_DOMAIN + "/api/user/reset-password-request-receive"
 
@@ -23,9 +24,9 @@ def login_with_password():
     password = request.form["password"]
     # try to log them in
     results = mc.authLogin(username, password)
-    userEmail = results['profile']['email']
+    user_email = results['profile']['email']
     # grab other user info and merge
-    results["user"] = mc.userList(search=userEmail)['users'][0]
+    results["user"] = mc.userList(search=user_email)['users'][0]
 
     merged_user_info = results['profile'].copy()  # start with x's keys and values
     merged_user_info.update(results["user"])
@@ -78,7 +79,8 @@ def activation_confirm():
         if results['success'] is 1:
             redirect_to_return = redirect(AUTH_MANAGEMENT_DOMAIN + '/#/user/activated?success=1')
         else:
-            redirect_to_return = redirect(AUTH_MANAGEMENT_DOMAIN + '/#/user/activated?success=0&msg=' + results['error'])
+            redirect_to_return = redirect(AUTH_MANAGEMENT_DOMAIN + '/#/user/activated?success=0&msg=' +
+                                          results['error'])
     except MCException as mce:
         # this is long stack trace so we have to trim it for url length support
         redirect_to_return = redirect(AUTH_MANAGEMENT_DOMAIN + '/#/user/activated?success=0&msg=' + str(mce[:300]))
@@ -120,7 +122,8 @@ def request_password_reset_receive():
 @api_error_handler
 def reset_password():
     logger.debug("reset password for %s", request.form['email'])
-    results = mc.authResetPassword(request.form["email"], request.form['password_reset_token'], request.form['new_password'])
+    results = mc.authResetPassword(request.form["email"], request.form['password_reset_token'],
+                                   request.form['new_password'])
     return jsonify(results)
 
 
@@ -160,3 +163,25 @@ def reset_api_key():
 def logout():
     flask_login.logout_user()
     return redirect("/")
+
+
+@app.route('/api/user/request-data', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def request_data():
+    content_title = "Your Data Download Request"
+    content_body = "We received your data download request. You can expect to hear from us in a few days with" \
+                   "more information."
+    action_text = "Read our privacy policy"
+    action_url = "https://mediacloud.org/privacy-policy"
+    send_html_email(content_title,
+                    [user_name(), 'noreply@mediacloud.org'],
+                    render_template("emails/generic.txt",
+                                    content_title=content_title, content_body=content_body, action_text=action_text,
+                                    action_url=action_url),
+                    render_template("emails/generic.html",
+                                    email_title=content_title, content_title=content_title, content_body=content_body,
+                                    action_text=action_text, action_url=action_url)
+                    )
+    return jsonify({'status': 'ok'})
+

@@ -40,3 +40,7 @@ export function resendActionationEmail(email) {
 export function resetApiKey() {
   return createPostingApiPromise('/api/user/reset-api-key');
 }
+
+export function requestData() {
+  return createApiPromise('/api/user/request-data');
+}

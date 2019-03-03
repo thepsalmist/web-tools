@@ -165,7 +165,7 @@ def logout():
     return redirect("/")
 
 
-@app.route('/api/user/request-data', methods=['GET'])
+@app.route('/api/user/request-data', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
 def request_data():
@@ -175,7 +175,7 @@ def request_data():
     action_text = "Read our privacy policy"
     action_url = "https://mediacloud.org/privacy-policy"
     send_html_email(content_title,
-                    [user_name(), 'noreply@mediacloud.org'],
+                    [user_name(), 'support@mediacloud.org'],
                     render_template("emails/generic.txt",
                                     content_title=content_title, content_body=content_body, action_text=action_text,
                                     action_url=action_url),
@@ -185,3 +185,26 @@ def request_data():
                     )
     return jsonify({'status': 'ok'})
 
+
+@app.route('/api/user/delete', methods=['POST'])
+@form_fields_required('email')
+@api_error_handler
+@flask_login.login_required
+def api_user_delete():
+    email = request.form['email']
+    user = flask_login.current_user
+    if email == user.name:  # double-check confirmation they typed in
+        # delete them from the front-end system database
+
+        # delete them from the back-end system
+        results = mc.userDelete(user.profile['auth_users_id'])  # need to do this with the tool's admin account
+        try:
+            if ('success' in results) and (results['success'] is 1):
+                return logout()
+            else:
+                return json_error_response("We failed to delete your account, sorry!", 400)
+        except MCException as mce:
+            logger.exception(mce)
+            return json_error_response("We failed to delete your account, sorry!", 400)
+    else:
+        return json_error_response("Your email confirmation didn't match.", 400)

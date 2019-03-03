@@ -5,10 +5,12 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import messages from '../../resources/messages';
 import AppButton from '../common/AppButton';
-import { resetApiKey, requestData } from '../../actions/userActions';
+import { resetApiKey, requestData, deleteAccount } from '../../actions/userActions';
 import { addNotice, updateFeedback } from '../../actions/appActions';
 import { LEVEL_ERROR } from '../common/Notice';
 import PageTitle from '../common/PageTitle';
+import ConfirmAccountDeletionDialog from './ConfirmAccountDeletionDialog';
+import { logout } from '../../lib/auth';
 
 const API_REQUESTS_UNLIMITED = 0;
 
@@ -27,77 +29,111 @@ const localMessages = {
   requestData: { id: 'user.profile.requestData', defaultMessage: 'Request Data' },
   requestDataAbout: { id: 'user.profile.requestDataAbout', defaultMessage: 'You have the right to request a dump of all the data we have associated with your account.' },
   requestDataWorked: { id: 'user.profile.requestDataWorked', defaultMessage: 'Your request to get all your data has been received. We will respond via email in the next few days.' },
+
+  dangerZone: { id: 'user.profile.deleteAccount', defaultMessage: 'Danger Zone' },
+  deleteAccount: { id: 'user.profile.deleteAccount', defaultMessage: 'Delete Account' },
+  deleteAccountAbout: { id: 'user.profile.deleteAccountAbout', defaultMessage: 'This is will remove all your account details and saved searches from our system. Any Topics you created will not be deleted.' },
+  emailMismatch: { id: 'user.profile.delete.emailMismatch', defaultMessage: 'The email you entered did not match.  We did not delete your account.' },
 };
 
-const UserProfileContainer = (props) => {
-  const { profile, handleResetApiKey, handleRequestData } = props;
-  const { formatMessage } = props.intl;
-  const adminContent = (profile.auth_roles.includes('admin')) ? <FormattedHTMLMessage {...localMessages.admin} /> : null;
-  return (
-    <div className="user-profile">
-      <Grid>
-        <PageTitle value={messages.userProfile} />
-        <Row>
-          <Col lg={12}>
-            <h1><FormattedMessage {...messages.userProfile} /></h1>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={12}>
-            {adminContent}
-            <ul>
-              <li><FormattedHTMLMessage {...localMessages.email} values={{ email: profile.email }} /></li>
-              <li><FormattedHTMLMessage {...localMessages.name} values={{ name: profile.full_name }} /></li>
-              <li>
-                <FormattedHTMLMessage
-                  {...localMessages.apiRequests}
-                  values={{
-                    requested: profile.weekly_requests_sum,
-                    allowed: (profile.weekly_requests_limit === API_REQUESTS_UNLIMITED) ? formatMessage(messages.unlimited) : profile.weekly_requests_limit,
-                  }}
-                />
-              </li>
-              <li>
-                <FormattedHTMLMessage
-                  {...localMessages.apiRequestedItems}
-                  values={{
-                    requested: profile.weekly_requested_items_sum,
-                    allowed: (profile.weekly_requested_items_limit === API_REQUESTS_UNLIMITED) ? formatMessage(messages.unlimited) : profile.weekly_requests_limit,
-                  }}
-                />
-              </li>
-              <li><FormattedHTMLMessage {...localMessages.apiKey} values={{ key: profile.api_key }} /></li>
-            </ul>
-          </Col>
-        </Row>
+class UserProfileContainer extends React.Component {
+  state = {
+    deleteAcountDialogOpen: false,
+  }
 
-        <Row>
-          <Col lg={12}>
-            <h2><FormattedMessage {...localMessages.otherActions} /></h2>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={12}>
-            <AppButton
-              label={formatMessage(localMessages.resetKey)}
-              onClick={handleResetApiKey}
-            />
-            <FormattedMessage {...localMessages.resetKeyAbout} />
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={12}>
-            <AppButton
-              label={formatMessage(localMessages.requestData)}
-              onClick={handleRequestData}
-            />
-            <FormattedMessage {...localMessages.requestDataAbout} />
-          </Col>
-        </Row>
-      </Grid>
-    </div>
-  );
-};
+  render() {
+    const { profile, handleResetApiKey, handleRequestData, handleDeleteAccount } = this.props;
+    const { formatMessage } = this.props.intl;
+    const adminContent = (profile.auth_roles.includes('admin')) ? <FormattedHTMLMessage {...localMessages.admin} /> : null;
+    return (
+      <div className="user-profile">
+        <Grid>
+          <PageTitle value={messages.userProfile} />
+          <Row>
+            <Col lg={12}>
+              <h1><FormattedMessage {...messages.userProfile} /></h1>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={12}>
+              {adminContent}
+              <ul>
+                <li><FormattedHTMLMessage {...localMessages.email} values={{ email: profile.email }} /></li>
+                <li><FormattedHTMLMessage {...localMessages.name} values={{ name: profile.full_name }} /></li>
+                <li>
+                  <FormattedHTMLMessage
+                    {...localMessages.apiRequests}
+                    values={{
+                      requested: profile.weekly_requests_sum,
+                      allowed: (profile.weekly_requests_limit === API_REQUESTS_UNLIMITED) ? formatMessage(messages.unlimited) : profile.weekly_requests_limit,
+                    }}
+                  />
+                </li>
+                <li>
+                  <FormattedHTMLMessage
+                    {...localMessages.apiRequestedItems}
+                    values={{
+                      requested: profile.weekly_requested_items_sum,
+                      allowed: (profile.weekly_requested_items_limit === API_REQUESTS_UNLIMITED) ? formatMessage(messages.unlimited) : profile.weekly_requests_limit,
+                    }}
+                  />
+                </li>
+                <li><FormattedHTMLMessage {...localMessages.apiKey} values={{ key: profile.api_key }} /></li>
+              </ul>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col lg={12}>
+              <h2><FormattedMessage {...localMessages.otherActions} /></h2>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={12}>
+              <AppButton
+                label={formatMessage(localMessages.resetKey)}
+                onClick={handleResetApiKey}
+              />
+              <FormattedMessage {...localMessages.resetKeyAbout} />
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={12}>
+              <AppButton
+                label={formatMessage(localMessages.requestData)}
+                onClick={handleRequestData}
+              />
+              <FormattedMessage {...localMessages.requestDataAbout} />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col lg={10}>
+              <h2 className="error-background"><FormattedMessage {...localMessages.dangerZone} /></h2>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={12}>
+              <AppButton
+                label={formatMessage(localMessages.deleteAccount)}
+                onClick={() => this.setState({ deleteAcountDialogOpen: true })}
+              />
+              <FormattedMessage {...localMessages.deleteAccountAbout} />
+            </Col>
+          </Row>
+        </Grid>
+        <ConfirmAccountDeletionDialog
+          open={this.state.deleteAcountDialogOpen}
+          onCancel={() => this.setState({ deleteAcountDialogOpen: false })}
+          onDeleteAccount={(confirmEmail) => {
+            this.setState({ deleteAcountDialogOpen: false });
+            handleDeleteAccount(profile.email, confirmEmail);
+          }}
+        />
+      </div>
+    );
+  }
+}
 
 UserProfileContainer.propTypes = {
   // from state
@@ -105,6 +141,7 @@ UserProfileContainer.propTypes = {
   // from dispatch
   handleResetApiKey: PropTypes.func.isRequired,
   handleRequestData: PropTypes.func.isRequired,
+  handleDeleteAccount: PropTypes.func.isRequired,
   // from compositional chain
   intl: PropTypes.object.isRequired,
 };
@@ -133,6 +170,21 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.requestDataWorked) }));
         }
       });
+  },
+  handleDeleteAccount: (userEmail, confirmationEmail) => {
+    if (userEmail !== confirmationEmail) {
+      dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.emailMismatch) }));
+    } else {
+      dispatch(deleteAccount(confirmationEmail))
+        .then((results) => {
+          if (results.error) {
+            dispatch(addNotice({ message: results.error, level: LEVEL_ERROR }));
+          } else {
+            logout();
+            window.location = '/';
+          }
+        });
+    }
   },
 });
 

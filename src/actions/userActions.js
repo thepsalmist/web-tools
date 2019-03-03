@@ -28,3 +28,6 @@ export const resetApiKey = createAsyncAction(RESET_API_KEY, api.resetApiKey);
 
 export const REQUEST_DATA = 'REQUEST_DATA';
 export const requestData = createAsyncAction(REQUEST_DATA, api.requestData);
+
+export const DELETE_ACCOUNT = 'DELETE_ACCOUNT';
+export const deleteAccount = createAsyncAction(DELETE_ACCOUNT, api.deleteAccount, email => email);

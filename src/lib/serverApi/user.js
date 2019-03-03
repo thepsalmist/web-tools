@@ -42,5 +42,9 @@ export function resetApiKey() {
 }
 
 export function requestData() {
-  return createApiPromise('/api/user/request-data');
+  return createPostingApiPromise('/api/user/request-data');
+}
+
+export function deleteAccount(email) {
+  return createPostingApiPromise('/api/user/delete', { email });
 }

@@ -304,7 +304,7 @@ def _create_or_update_sources(source_list_from_csv, create_new):
 
 
 def _email_batch_source_update_results(audit_feedback):
-    email_title = "Source Batch Updates "
+    email_title = "Source Batch Updates"
     content_title = "You just uploaded {} sources to a collection.".format(len(audit_feedback))
     updated_sources = []
     for updated in audit_feedback:

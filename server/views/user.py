@@ -208,3 +208,19 @@ def api_user_delete():
             return json_error_response("We failed to delete your account, sorry!", 400)
     else:
         return json_error_response("Your email confirmation didn't match.", 400)
+
+
+@app.route('/api/user/update', methods=['POST'])
+@form_fields_required('full_name', 'notes')
+@api_error_handler
+@flask_login.login_required
+def api_user_update():
+    valid_params = {
+        'full_name': request.form['full_name'],
+        'notes': request.form['notes'],
+    }
+    user = flask_login.current_user
+    results = mc.userUpdate(user.profile['auth_users_id'], **valid_params)  # need to do this with the tool admin client
+    user_mc = user_mediacloud_client()
+    results['profile'] = user_mc.userProfile()
+    return jsonify(results)

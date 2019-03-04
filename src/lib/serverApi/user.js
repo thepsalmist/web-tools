@@ -48,3 +48,8 @@ export function requestData() {
 export function deleteAccount(email) {
   return createPostingApiPromise('/api/user/delete', { email });
 }
+
+export function updateProfile(profile) {
+  const acceptedParams = acceptParams(profile, ['full_name', 'notes']);
+  return createPostingApiPromise('/api/user/update', acceptedParams);
+}

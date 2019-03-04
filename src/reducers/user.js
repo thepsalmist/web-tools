@@ -1,6 +1,6 @@
 import { resolve, reject } from 'redux-simple-promise';
 import Raven from 'raven-js';
-import { LOGIN_WITH_PASSWORD, LOGIN_WITH_COOKIE, RESET_API_KEY } from '../actions/userActions';
+import { LOGIN_WITH_PASSWORD, LOGIN_WITH_COOKIE, RESET_API_KEY, UPDATE_PROFILE } from '../actions/userActions';
 import * as fetchConstants from '../lib/fetchConstants';
 
 const INITIAL_STATE = {
@@ -67,7 +67,11 @@ export default function user(state = INITIAL_STATE, action) {
     case resolve(RESET_API_KEY):
       return Object.assign({}, state, {
         key: action.payload.profile.api_key,
-        profile: action.payload.profile,
+        profile: { ...state.profile, ...action.payload.profile },
+      });
+    case resolve(UPDATE_PROFILE):
+      return Object.assign({}, state, {
+        profile: { ...state.profile, ...action.payload.profile },
       });
     default:
       return state;

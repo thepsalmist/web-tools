@@ -7,9 +7,8 @@ import PageTitle from '../../common/PageTitle';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../../lib/auth';
 import { VERSION_ERROR_EXCEEDED } from '../../../lib/topicFilterUtil';
-import { ADMIN_MAX_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 import TopicInfo from '../controlbar/TopicInfo';
-// import TopicStoryInfo from '../controlbar/TopicStoryInfo';
+import messages from '../../../resources/messages';
 
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Version status' },
@@ -18,15 +17,13 @@ const localMessages = {
   topicTooBigDesc: { id: 'topic.state.error.topicTooBigDesc', defaultMessage: 'We limit the size of topics to make sure that our system doesn\'t get overrun with gathering content from the entire web.' },
   topicTooBigInstructions: { id: 'topic.state.error.topicTooBigInstructions', defaultMessage: 'Try making a new topic with a more specific query or a smaller date range. Email us at support@mediacloud.org if you have questions' },
   trySpidering: { id: 'topic.state.trySpidering', defaultMessage: 'Manually run this topic' },
-  updateMaxStories: { id: 'topic.state.updateMaxStories', defaultMessage: 'Increase Max Stories and Respider' },
-  maxStories: { id: 'topic.state.maxStories', defaultMessage: 'Max Stories' },
   otherError: { id: 'topic.state.error.otherError', defaultMessage: 'Sorry, this topic has an error.  It says it is "{state}".' },
   otherErrorInstructions: { id: 'topic.state.error.otherErrorInstructions', defaultMessage: 'Email us at support@mediacloud.org if you have questions' },
 };
 
 class TopicVersionErrorStatusContainer extends React.Component {
   render() {
-    const { topicInfo, error, handleUpdateMaxStoriesAndSpiderRequest, handleSpiderRequest } = this.props;
+    const { topicInfo, error, goToCreateNewVersion } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     if (error === VERSION_ERROR_EXCEEDED) {
@@ -43,19 +40,10 @@ class TopicVersionErrorStatusContainer extends React.Component {
           </Row>
           <Permissioned onlyTopic={PERMISSION_ADMIN}>
             <Row>
-              <Col lg={2}>
-                <input
-                  id="maxStories"
-                  ref={(input) => { this.textInputRef = input; }}
-                  label={formatMessage(localMessages.maxStories)}
-                  rows={1}
-                  placeholder={ADMIN_MAX_RECOMMENDED_STORIES}
-                />
-              </Col>
               <Col lg={4}>
                 <AppButton
-                  label={formatMessage(localMessages.updateMaxStories)}
-                  onClick={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo, this.textInputRef)}
+                  label={formatMessage(messages.createNewVersion)}
+                  onClick={() => goToCreateNewVersion(topicInfo)}
                   type="submit"
                   primary
                 />
@@ -85,8 +73,8 @@ class TopicVersionErrorStatusContainer extends React.Component {
                 <div className="topic-stuck-created-or-error">
                   <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
                   <AppButton
-                    label={formatMessage(localMessages.trySpidering)}
-                    onClick={() => handleSpiderRequest(topicInfo.topics_id)}
+                    label={formatMessage(messages.createNewVersion)}
+                    onClick={() => goToCreateNewVersion(topicInfo.topics_id)}
                     type="submit"
                     color="primary"
                   />
@@ -118,8 +106,7 @@ TopicVersionErrorStatusContainer.propTypes = {
   topicInfo: PropTypes.object,
   filters: PropTypes.object,
   error: PropTypes.string,
-  handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func,
-  handleSpiderRequest: PropTypes.func,
+  goToCreateNewVersion: PropTypes.func,
   // from context
   intl: PropTypes.object.isRequired,
 };

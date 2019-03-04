@@ -60,7 +60,7 @@ class TopicVersionContainer extends React.Component {
   }
 
   render() {
-    const { children, topicInfo, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, fetchStatusSnapshot, fetchStatusInfo, setSideBarContent } = this.props;
+    const { children, topicInfo, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo, setSideBarContent } = this.props;
     // show a big error if there is one to show
 
     let contentToShow = children; // has a filters renderer in it - show if a completed topic
@@ -70,15 +70,15 @@ class TopicVersionContainer extends React.Component {
       // if the topic is running the initial spider and then show under construction message
       contentToShow = (
         <div>
-          <TopicVersionStatusContainer />
+          <TopicVersionStatusContainer topicInfo={topicInfo} />
         </div>
       );
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
-      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} handleUpdateMaxStoriesAndSpiderRequest={handleUpdateMaxStoriesAndSpiderRequest} />;
+      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} goToCreateNewVersion={goToCreateNewVersion} />;
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR) {
-      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR} handleSpiderRequest={handleSpiderRequest} />;
+      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR} goToCreateNewVersion={goToCreateNewVersion} />;
     } else if (this.determineVersionStatus(topicInfo) === VERSION_QUEUED) {
-      contentToShow = <TopicVersionStatusContainer />;
+      contentToShow = <TopicVersionStatusContainer topicInfo={topicInfo} />;
     } else if (fetchStatusInfo !== fetchConstants.FETCH_SUCCEEDED
       && fetchStatusSnapshot !== fetchConstants.FETCH_SUCCEEDED) {
       // how to distinguish between fetch-ongoing and a generating snapshot?
@@ -104,8 +104,7 @@ TopicVersionContainer.propTypes = {
   topicInfo: PropTypes.object,
   needsNewSnapshot: PropTypes.bool.isRequired,
   snapshotCount: PropTypes.number.isRequired,
-  handleSpiderRequest: PropTypes.func,
-  handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func,
+  goToCreateNewVersion: PropTypes.func,
   setSideBarContent: PropTypes.func,
 };
 
@@ -128,14 +127,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   addAppNotice: (info) => {
     dispatch(addNotice(info));
   },
-  /* handleUpdateMaxStoriesAndSpiderRequest: (topicInfo, textInput) => {
-    const maxStories = parseInt(textInput.value, 10) > MAX_RECOMMENDED_STORIES ? parseInt(textInput.value, 10) : ADMIN_MAX_RECOMMENDED_STORIES;
-
-    return dispatch(updateTopic(topicInfo.topics_id, { max_stories: maxStories }))
-      .then(dispatch(topicStartSpider(topicInfo.topics_id)))
-      .then(() => window.location.reload());
+  /* goToCreateNewVersion: (topicInfo, textInput) => {
+    dispatch(push(goToCreateVersion(topicInfo.topics_id)))
   },
-  handleSpiderRequest: topicId => dispatch(topicStartSpider(topicId)).then(() => window.location.reload()),
   */
   showFilters: filtersAreSet(ownProps.topicId, ownProps.filters),
 });

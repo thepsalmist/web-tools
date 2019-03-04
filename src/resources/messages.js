@@ -26,6 +26,7 @@ const messages = {
   topicSnapshot: { id: 'topic.snapshot', defaultMessage: 'Snapshot' },
   topicTimespan: { id: 'topic.timespan', defaultMessage: 'Timespan' },
   createNewTopic: { id: 'topics.create', defaultMessage: 'Create a New Topic' },
+  createNewVersion: { id: 'topics.update.version', defaultMessage: 'Create a New Version' },
 
   topicNameProp: { id: 'topic.prop.name', defaultMessage: 'Name' },
   topicDescriptionProp: { id: 'topic.prop.description', defaultMessage: 'Description' },

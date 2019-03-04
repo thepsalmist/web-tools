@@ -140,7 +140,7 @@ def get_most_recent_snapshot_version(topic_id):
     snapshots = {
         'list': local_mc.topicSnapshotList(topic_id),
     }
-    most_recent_running_snapshot = {}
+    most_recent_completed_snapshot = {}
     overall_timespan = {}
     for snp in snapshots['list']:
         if snp['searchable'] == 1 and snp['state'] == "completed":

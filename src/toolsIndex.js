@@ -1,14 +1,15 @@
 import ReactGA from 'react-ga';
+import doNotTrack from 'donottrack';
 import { setAppName, setVersion, APP_TOOLS } from './config';
 import { setAppColors } from './styles/colors';
 import routes from './routes/toolsRoutes';
 import initializeApp from './index';
 
 /**
- * This serves as the primary entry point to the Media Cloud Topic Mapper app.
+ * This serves as the primary entry point to the Media Cloud Tools app.
  */
 
-ReactGA.initialize('UA-60744513-9');
+if (!doNotTrack(false)) ReactGA.initialize('UA-60744513-9');
 
 setVersion('3.8.2');
 

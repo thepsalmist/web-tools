@@ -50,7 +50,7 @@ StoryWordsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
   onViewSampleSizeClick: PropTypes.func.isRequired,
-  initSampleSize: PropTypes.string.isRequired,
+  initSampleSize: PropTypes.number.isRequired,
   // from parent
   storiesId: PropTypes.number.isRequired,
   topicName: PropTypes.string.isRequired,

@@ -14,13 +14,14 @@ import TopicPreviewContainer from './TopicPreviewContainer';
 import TopicValidateContainer from './TopicValidateContainer';
 import TopicConfirmContainer from './TopicConfirmContainer';
 import { goToTopicStep } from '../../../actions/topicActions';
+import { TOPIC_FORM_MODE_EDIT } from './TopicForm';
 
 const localMessages = {
   backToTopicManager: { id: 'backToTopicManager', defaultMessage: 'back to Home' },
-  step0Name: { id: 'topic.create.step0Name', defaultMessage: 'Configure' },
-  step1Name: { id: 'topic.create.step1Name', defaultMessage: 'Preview' },
-  step2Name: { id: 'topic.create.step2Name', defaultMessage: 'Validate' },
-  step3Name: { id: 'topic.create.step3Name', defaultMessage: 'Confirm' },
+  step0Name: { id: 'topic.modify.step0Name', defaultMessage: 'Configure' },
+  step1Name: { id: 'topic.modify.step1Name', defaultMessage: 'Preview' },
+  step2Name: { id: 'topic.modify.step2Name', defaultMessage: 'Validate' },
+  step3Name: { id: 'topic.modify.step3Name', defaultMessage: 'Confirm' },
 };
 
 class TopicBuilderWizard extends React.Component {
@@ -45,7 +46,7 @@ class TopicBuilderWizard extends React.Component {
   }
 
   render() {
-    const { currentStep, location, initialValues, currentStepTexts, mode } = this.props;
+    const { currentStep, location, initialValues, currentStepTexts, mode, topicInfo } = this.props;
     const steps = [
       TopicConfigureContainer,
       TopicPreviewContainer,
@@ -73,7 +74,7 @@ class TopicBuilderWizard extends React.Component {
             </Step>
           </Stepper>
         </BackLinkingControlBar>
-        <CurrentStepComponent location={location} initialValues={initialValues} currentStepText={stepTexts} mode={mode} />
+        <CurrentStepComponent location={location} initialValues={initialValues} currentStepText={stepTexts} mode={mode} topicInfo={topicInfo} />
       </div>
     );
   }
@@ -89,6 +90,7 @@ TopicBuilderWizard.propTypes = {
   currentStepTexts: PropTypes.array,
   // from state
   currentStep: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object,
   // from dispatch
   goToStep: PropTypes.func.isRequired,
   handleUnmount: PropTypes.func.isRequired,
@@ -96,11 +98,16 @@ TopicBuilderWizard.propTypes = {
 
 const mapStateToProps = state => ({
   currentStep: state.topics.modify.preview.workflow.currentStep,
+  topicInfo: state.topics.selected.info,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   goToStep: (step, mode) => {
-    dispatch(push(`/topics/${mode}/${step}`));
+    let topicPhrase = '';
+    if (mode === TOPIC_FORM_MODE_EDIT) {
+      topicPhrase = `/${ownProps.params.topicId}`;
+    }
+    dispatch(push(`/topics${topicPhrase}/${mode}/${step}`));
     dispatch(goToTopicStep(step));
   },
   handleUnmount: () => {

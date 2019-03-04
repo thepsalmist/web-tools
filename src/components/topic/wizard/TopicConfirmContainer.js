@@ -9,12 +9,13 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import SourceOrCollectionChip from '../../common/SourceOrCollectionChip';
 import messages from '../../../resources/messages';
-import { createTopic, goToTopicStep } from '../../../actions/topicActions';
+import { createTopic, goToTopicStep, updateTopic } from '../../../actions/topicActions';
 import { updateFeedback, addNotice } from '../../../actions/appActions';
 import AppButton from '../../common/AppButton';
 import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/auth';
 import { LEVEL_ERROR, LEVEL_WARNING, WarningNotice } from '../../common/Notice';
 import { MAX_RECOMMENDED_STORIES, MIN_RECOMMENDED_STORIES, WARNING_LIMIT_RECOMMENDED_STORIES } from '../../../lib/formValidators';
+import { TOPIC_FORM_MODE_EDIT } from './TopicForm';
 
 const localMessages = {
   name: { id: 'topic.create.confirm.name', defaultMessage: 'Name' },
@@ -30,7 +31,7 @@ const localMessages = {
 };
 
 const TopicConfirmContainer = (props) => {
-  const { formValues, finishStep, handlePreviousStep, storyCount, handleSubmit, pristine, submitting, currentStepText } = props;
+  const { formValues, finishStep, handlePreviousStep, storyCount, handleSubmit, pristine, submitting, currentStepText, mode } = props;
   const { formatMessage } = props.intl;
   let sourcesAndCollections = [];
   sourcesAndCollections = formValues.sourcesAndCollections.filter(s => s.media_id).map(s => s.media_id);
@@ -78,7 +79,7 @@ const TopicConfirmContainer = (props) => {
   }
   // havne't submitted yet
   return (
-    <form className="create-topic" name="topicForm" onSubmit={handleSubmit(finishStep.bind(this))}>
+    <form className="create-topic" name="topicForm" onSubmit={handleSubmit(finishStep.bind(this, mode))}>
       <Grid className="topic-container">
         <Row>
           <Col lg={10}>
@@ -86,7 +87,7 @@ const TopicConfirmContainer = (props) => {
             <WarningNotice><FormattedMessage {...localMessages.state} /></WarningNotice>
             {topicDetailsContent}
             <br />
-            <AppButton flat label={formatMessage(messages.previous)} onClick={() => handlePreviousStep()} />
+            <AppButton flat label={formatMessage(messages.previous)} onClick={() => handlePreviousStep(mode)} />
             &nbsp; &nbsp;
             <AppButton
               type="submit"
@@ -127,8 +128,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handlePreviousStep: () => {
-    dispatch(push('/topics/create/1'));
+  handlePreviousStep: (mode) => {
+    dispatch(push(`/topics/${mode}/1`));
     dispatch(goToTopicStep(1));
   },
   handleCreateTopic: (storyCount, user, values) => {
@@ -181,11 +182,67 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
     return null;
   },
+  handleUpdateTopic: (storyCount, user, values) => {
+    if (((storyCount > MIN_RECOMMENDED_STORIES) && (storyCount < MAX_RECOMMENDED_STORIES))
+      || hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) { // min/max limits dont apply to admin users
+      // all good, so submit!
+      const queryInfo = {
+        name: values.name,
+        description: values.description,
+        start_date: values.start_date,
+        end_date: values.end_date,
+        solr_seed_query: values.solr_seed_query,
+        max_iterations: values.max_iterations,
+        ch_monitor_id: values.ch_monitor_id === undefined ? '' : values.ch_monitor_id,
+        is_public: values.is_public ? 1 : 0,
+        is_logogram: values.is_logogram ? 1 : 0,
+        max_stories: values.max_stories,
+      };
+      queryInfo.is_public = queryInfo.is_public ? 1 : 0;
+      if ('sourcesAndCollections' in values) {
+        queryInfo['sources[]'] = values.sourcesAndCollections.filter(s => s.media_id).map(s => s.media_id);
+        queryInfo['collections[]'] = values.sourcesAndCollections.filter(s => s.tags_id).map(s => s.tags_id);
+      } else {
+        queryInfo['sources[]'] = '';
+        queryInfo['collections[]'] = '';
+      }
+      return dispatch(updateTopic(queryInfo)).then((results) => {
+        if (results.topics_id) {
+          // let them know it worked
+          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          return dispatch(push(`/topics/${results.topics_id}/summary`));
+        }
+        return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
+      });
+    }
+    if (!hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {
+      // min/max don't apply to admins
+      if (storyCount > WARNING_LIMIT_RECOMMENDED_STORIES && storyCount < MAX_RECOMMENDED_STORIES) {
+        dispatch(updateFeedback({ classes: 'warning-notice', open: true, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
+        return dispatch(addNotice({ level: LEVEL_WARNING, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
+      }
+      if (storyCount > MAX_RECOMMENDED_STORIES) {
+        dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
+        return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
+      }
+      if (storyCount < MIN_RECOMMENDED_STORIES) {
+        dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.notEnoughStories) }));
+        return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.notEnoughStories) }));
+      }
+    }
+    return null;
+  },
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    finishStep: () => dispatchProps.handleCreateTopic(stateProps.storyCount, stateProps.user, stateProps.formValues),
+    finishStep: (mode) => {
+      if (mode === TOPIC_FORM_MODE_EDIT) {
+        dispatchProps.handleUpdateTopic(stateProps.storyCount, stateProps.user, stateProps.formValues);
+      } else {
+        dispatchProps.handleCreateTopic(stateProps.storyCount, stateProps.user, stateProps.formValues);
+      }
+    },
   });
 }
 

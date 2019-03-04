@@ -7,7 +7,7 @@ import { injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import withIntlForm from '../../common/hocs/IntlForm';
-import TopicForm from './TopicForm';
+import TopicForm, { TOPIC_FORM_MODE_EDIT } from './TopicForm';
 import { goToTopicStep } from '../../../actions/topicActions';
 import { fetchSystemUser } from '../../../actions/systemActions';
 import messages from '../../../resources/messages';
@@ -23,12 +23,24 @@ const localMessages = {
 const formSelector = formValueSelector('topicForm');
 
 const TopicConfigureContainer = (props) => {
-  const { finishStep, handleMediaChange, handleMediaDelete, formData, maxStories, currentStepText, mode } = props;
+  const { finishStep, handleMediaChange, handleMediaDelete, formData, maxStories, currentStepText, mode, topicInfo } = props;
   const { formatMessage } = props.intl;
   const endDate = getCurrentDate();
   const startDate = getMomentDateSubtraction(endDate, 3, 'months');
   const sAndC = (formData && formData.sourcesAndCollections) || [];
-  const initialValues = { start_date: startDate, end_date: endDate, max_iterations: 15, max_topic_stories: maxStories, buttonLabel: formatMessage(messages.preview), sourcesAndCollections: sAndC };
+  let initialValues = { start_date: startDate, end_date: endDate, max_iterations: 15, max_topic_stories: maxStories, buttonLabel: formatMessage(messages.preview), sourcesAndCollections: sAndC };
+
+  if (topicInfo !== null && topicInfo !== undefined) {
+    const sources = topicInfo.media ? topicInfo.media.map(t => ({ ...t })) : [];
+    const collections = topicInfo.media_tags ? topicInfo.media_tags.map(t => ({ ...t, name: t.label })) : [];
+    const sourcesAndCollections = sources.concat(collections);
+    initialValues = {
+      ...topicInfo,
+      sourcesAndCollections,
+      buttonLabel: formatMessage(messages.preview),
+    };
+  }
+
   return (
     <Grid>
       <Row>
@@ -57,6 +69,7 @@ TopicConfigureContainer.propTypes = {
   currentStep: PropTypes.number,
   currentStepText: PropTypes.object,
   mode: PropTypes.string.isRequired,
+  topicInfo: PropTypes.object,
   // form composition
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
@@ -82,7 +95,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   finishStep: (step, mode) => {
-    dispatch(push(`/topics/${mode}/${step}`));
+    let topicPhrase = '';
+    if (mode === TOPIC_FORM_MODE_EDIT) {
+      topicPhrase = `/${ownProps.topicInfo.topics_id}`;
+    }
+    dispatch(push(`/topics${topicPhrase}/${mode}/${step}`));
     dispatch(goToTopicStep(step));
   },
   handleMediaChange: (sourceAndCollections) => {

@@ -13,7 +13,7 @@ import { updateFeedback } from '../../../actions/appActions';
 import BackLinkingControlBar from '../BackLinkingControlBar';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
-import TopicForm, { TOPIC_FORM_MODE_EDIT } from '../create/TopicForm';
+import TopicForm, { TOPIC_FORM_MODE_EDIT } from '../wizard/TopicForm';
 import UpdateForStorySearchWarning from '../UpdateForStorySearchWarning';
 import TopicPageTitle from '../TopicPageTitle';
 

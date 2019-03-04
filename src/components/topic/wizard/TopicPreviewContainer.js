@@ -8,6 +8,7 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
 import { goToTopicStep } from '../../../actions/topicActions';
 import TopicCreatePreview from './preview/TopicCreatePreview';
+import { TOPIC_FORM_MODE_EDIT } from './TopicForm';
 
 const localMessages = {
   prev: { id: 'topic.create.preview.prev', defaultMessage: 'back to seed query' },
@@ -60,13 +61,22 @@ const mapStateToProps = state => ({
   formData: state.form.topicForm.values,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   handlePreviousStep: (mode) => {
-    dispatch(push(`/topics/${mode}/0`));
+    let topicPhrase = '';
+    if (mode === TOPIC_FORM_MODE_EDIT) {
+      topicPhrase = `/${ownProps.topicInfo.topics_id}`;
+    }
+    dispatch(push(`/topics${topicPhrase}/${mode}/0`));
     dispatch(goToTopicStep(0));
   },
   handleNextStep: (mode) => {
-    dispatch(push(`/topics/${mode}/2`));
+    let topicPhrase = '';
+    if (mode === TOPIC_FORM_MODE_EDIT) {
+      topicPhrase = `/${ownProps.topicInfo.topics_id}`;
+    }
+    dispatch(push(`/topics${topicPhrase}/${mode}/2`));
+
     dispatch(goToTopicStep(2));
   },
 });

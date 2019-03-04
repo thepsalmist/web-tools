@@ -63,11 +63,11 @@ const TopicControlBar = (props) => {
                   />
                   <b><FormattedMessage {...localMessages.permissions} /></b>
                 </LinkWithFilters>
-                <LinkWithFilters to={`/topics/${topicId}/list`}>
+                <LinkWithFilters to={`/topics/${topicId}/versions`}>
                   <EditButton
                     label={formatMessage(localMessages.versionList)}
                     description={formatMessage(localMessages.viewVersionLists)}
-                    onClick={() => goToUrl(`/topics/${topicId}/list`)}
+                    onClick={() => goToUrl(`/topics/${topicId}/versions`)}
                     id="modify-topic-permissions"
                   />
                   <b><FormattedMessage {...localMessages.versionList} /></b>

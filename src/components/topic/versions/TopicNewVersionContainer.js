@@ -30,7 +30,7 @@ const TopicNewVersionContainer = props => (
           <FormattedMessage {...localMessages.createNewVersionDesc} />
           <AppButton
             label={props.intl.formatMessage(localMessages.createNewVersion)}
-            onClick={() => props.goToUrl(`/topics/${props.topicId}/edit`, props.filters)}
+            onClick={() => props.goToUrl(`/topics/${props.topicId}/update`, props.filters)}
             primary
           />
         </Col>

@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import { push } from 'react-router-redux';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -12,6 +13,7 @@ import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import AppButton from '../../common/AppButton';
 import StoryFeedbackRow from './StoryFeedbackRow';
 import { goToTopicStep, fetchStorySampleByQuery } from '../../../actions/topicActions';
+import { TOPIC_FORM_MODE_EDIT } from './TopicForm';
 
 const NUM_TO_SHOW = 30;
 const VALIDATION_CUTOFF = 0.9;
@@ -41,8 +43,8 @@ class TopicValidateContainer extends React.Component {
   }
 
   handleWarningIgnore = () => {
-    const { handleNextStep } = this.props;
-    handleNextStep();
+    const { handleNextStep, mode } = this.props;
+    handleNextStep(mode);
   }
 
   handleYesClick = (options, prevSelection) => {
@@ -107,13 +109,13 @@ class TopicValidateContainer extends React.Component {
         <br />
         <Row>
           <Col lg={12} md={12} sm={12}>
-            <AppButton label={formatMessage(localMessages.prev)} onClick={() => handlePreviousStep()} />
+            <AppButton label={formatMessage(localMessages.prev)} onClick={() => handlePreviousStep(mode)} />
             &nbsp; &nbsp;
             <AppButton
               type="submit"
               label={formatMessage(localMessages.next)}
               primary
-              onClick={this.handleConfirm}
+              onClick={() => this.handleConfirm(mode)}
             />
           </Col>
         </Row>
@@ -173,14 +175,25 @@ const mapStateToProps = state => ({
   stories: state.topics.modify.preview.matchingStories.list,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   handleEditSeedQueryRequest: () => {
     dispatch(goToTopicStep(0));
   },
-  handlePreviousStep: () => {
+  handlePreviousStep: (mode) => {
+    let topicPhrase = '';
+    if (mode === TOPIC_FORM_MODE_EDIT) {
+      topicPhrase = `/${ownProps.topicInfo.topics_id}`;
+    }
+    dispatch(push(`/topics${topicPhrase}/${mode}/1`));
+
     dispatch(goToTopicStep(1));
   },
-  handleNextStep: () => {
+  handleNextStep: (mode) => {
+    let topicPhrase = '';
+    if (mode === TOPIC_FORM_MODE_EDIT) {
+      topicPhrase = `/${ownProps.topicInfo.topics_id}`;
+    }
+    dispatch(push(`/topics${topicPhrase}/${mode}/3`));
     dispatch(goToTopicStep(3));
   },
 });

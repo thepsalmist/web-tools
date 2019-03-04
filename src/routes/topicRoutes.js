@@ -26,9 +26,9 @@ import { requireAuth } from './routes';
 import systemRoutes from './systemRoutes';
 import TopicsApp from '../components/topic/TopicsApp';
 import About from '../components/topic/About';
-import CreateTopicContainer from '../components/topic/create/CreateTopicContainer';
-import EditTopicContainer from '../components/topic/create/EditTopicContainer';
-import EditTopicSettingsContainer from '../components/topic/create/EditTopicSettingsContainer';
+import CreateTopicContainer from '../components/topic/wizard/CreateTopicContainer';
+import EditWizardTopicContainer from '../components/topic/wizard/EditWizardTopicContainer';
+import EditTopicSettingsContainer from '../components/topic/wizard/EditTopicSettingsContainer';
 import AttentionContainer from '../components/topic/attention/AttentionContainer';
 import WordContainer from '../components/topic/words/WordContainer';
 import TopicPermissionsContainer from '../components/topic/permissions/TopicPermissionsContainer';
@@ -58,7 +58,9 @@ const topicRoutes = (
     <Route path="/topics/status" component={TopicStatusDashboardContainer} onEnter={requireAuth} />
 
     <Route path="/topics/:topicId" component={TopicContainer} onEnter={requireAuth}>
-      <Route path="edit" component={EditTopicContainer} onEnter={requireAuth} />
+      <Route path="/topics/:topicId/update" component={EditWizardTopicContainer} onEnter={requireAuth}>
+        <Route path="/topics/:topicId/update/:step" component={EditWizardTopicContainer} onEnter={requireAuth} />
+      </Route>
       <Route path="versions" component={TopicVersionListContainer} onEnter={requireAuth} />
       <Route path="permissions" component={TopicPermissionsContainer} onEnter={requireAuth} />
       <Route path="settings" component={EditTopicSettingsContainer} onEnter={requireAuth} />

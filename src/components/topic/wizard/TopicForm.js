@@ -15,7 +15,7 @@ import { fetchTopicWithNameExists } from '../../../actions/topicActions';
 import { assetUrl } from '../../../lib/assetUtil';
 
 export const TOPIC_FORM_MODE_CREATE = 'create';
-export const TOPIC_FORM_MODE_EDIT = 'edit';
+export const TOPIC_FORM_MODE_EDIT = 'update';
 
 const localMessages = {
   nameError: { id: 'topic.form.detail.name.error', defaultMessage: 'Your topic needs a name.' },

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import { reset } from 'redux-form';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchUserQueuedAndRunningTopics } from '../../../actions/topicActions';
 import { WarningNotice } from '../../common/Notice';
@@ -12,6 +13,7 @@ import { TOPIC_FORM_MODE_CREATE } from './TopicForm';
 
 const localMessages = {
   pageTitle: { id: 'topic.modify.pageTitle', defaultMessage: 'Create a Topic' },
+  pageDesc: { id: 'topic.modify.pageTitle', defaultMessage: 'Create a Topic' },
   cannotCreateTopic: { id: 'topic.modify.cannotCreateTopic', defaultMessage: 'You cannot create a new topic right now because you are currently running another topic: {name} #{id}' },
   previewTitle: { id: 'topic.modify.preview.title', defaultMessage: 'Step 2: Preview Your Topic' },
   previewDesc: { id: 'topic.modify.preview.about',
@@ -41,7 +43,7 @@ const CreateTopicContainer = (props) => {
   const stepTexts = [
     {
       title: formatMessage(localMessages.pageTitle),
-      description: 'banana',
+      description: formatMessage(localMessages.pageDesc),
     },
     {
       title: formatMessage(localMessages.previewTitle),
@@ -90,7 +92,10 @@ const mapStateToProps = state => ({
   formData: state.form.topicForm,
 });
 
-const fetchAsyncData = dispatch => dispatch(fetchUserQueuedAndRunningTopics());
+const fetchAsyncData = (dispatch) => {
+  reset(); // reset form
+  dispatch(fetchUserQueuedAndRunningTopics());
+};
 
 export default
 injectIntl(

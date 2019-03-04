@@ -30,7 +30,7 @@ const TopicConfigureContainer = (props) => {
   const sAndC = (formData && formData.sourcesAndCollections) || [];
   let initialValues = { start_date: startDate, end_date: endDate, max_iterations: 15, max_topic_stories: maxStories, buttonLabel: formatMessage(messages.preview), sourcesAndCollections: sAndC };
 
-  if (topicInfo !== null && topicInfo !== undefined) {
+  if (mode === TOPIC_FORM_MODE_EDIT) {
     const sources = topicInfo.media ? topicInfo.media.map(t => ({ ...t })) : [];
     const collections = topicInfo.media_tags ? topicInfo.media_tags.map(t => ({ ...t, name: t.label })) : [];
     const sourcesAndCollections = sources.concat(collections);

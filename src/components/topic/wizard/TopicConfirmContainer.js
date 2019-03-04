@@ -208,7 +208,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         queryInfo['sources[]'] = '';
         queryInfo['collections[]'] = '';
       }
-      return dispatch(updateTopic(queryInfo.topics_id, { ...queryInfo })).then((results) => {
+      return dispatch(updateAndCreateNewTopicVersion(queryInfo.topics_id, { ...queryInfo })).then((results) => {
+        // We start a new spider for new version
         if (results.topics_id) {
           // let them know it worked
           dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));

@@ -3,13 +3,13 @@ import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
+import { PERMISSION_ADMIN } from '../../../../lib/auth';
+import Permissioned from '../../Permissioned';
 import withIntlForm from '../../hocs/IntlForm';
 import { invalidEmail } from '../../../../lib/formValidators';
+import messages from '../../../../resources/messages';
 
 const localMessages = {
-  nameLabel: { id: 'user.update.name.label', defaultMessage: 'User Name' },
-  emailLabel: { id: 'user.update.email.label', defaultMessage: 'Email' },
-  notesLabel: { id: 'user.update.notes.label', defaultMessage: 'Notes' },
   activeLabel: { id: 'user.update.active.label', defaultMessage: 'Active?' },
   nameError: { id: 'user.update.name.error', defaultMessage: 'You must have a name for this user.' },
   emailError: { id: 'user.update.url.error', defaultMessage: 'You must have an email for this user.' },
@@ -24,14 +24,14 @@ const UserDetailsForm = (props) => {
       <Row>
         <Col lg={2}>
           <span className="label unlabeled-field-label">
-            <FormattedMessage {...localMessages.nameLabel} />
+            <FormattedMessage {...messages.userFullName} />
           </span>
         </Col>
         <Col lg={4}>
           <Field
             name="full_name"
             component={renderTextField}
-            label={localMessages.nameLabel}
+            label={messages.userFullName}
             fullWidth
           />
         </Col>
@@ -39,80 +39,82 @@ const UserDetailsForm = (props) => {
       <Row>
         <Col lg={2}>
           <span className="label unlabeled-field-label">
-            <FormattedMessage {...localMessages.emailLabel} />
-          </span>
-        </Col>
-        <Col lg={4}>
-          <Field
-            name="email"
-            component={renderTextField}
-            label={localMessages.emailLabel}
-            fullWidth
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={2}>
-          <span className="label unlabeled-field-label">
-            <FormattedMessage {...localMessages.notesLabel} />
+            <FormattedMessage {...messages.userNotes} />
           </span>
         </Col>
         <Col lg={6}>
           <Field
             name="notes"
             component={renderTextField}
-            label={localMessages.notesLabel}
+            label={messages.userNotes}
             rows={4}
             multiline
             fullWidth
           />
         </Col>
       </Row>
-      <Row>
-        <Col lg={2}>
-          <span className="label unlabeled-field-label">
-            <FormattedMessage {...localMessages.activeLabel} />
-          </span>
-        </Col>
-        <Col lg={2}>
-          <Field
-            name="active"
-            component={renderCheckbox}
-            fullWidth
-            label={localMessages.isActiveLabel}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={2}>
-          <span className="label unlabeled-field-label">
-            <FormattedMessage {...localMessages.maxStoriesLabel} />
-          </span>
-        </Col>
-        <Col lg={2}>
-          <Field
-            name="max_topic_stories"
-            component={renderTextField}
-            fullWidth
-            label={localMessages.isActiveLabel}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={2}>
-          <span className="label unlabeled-field-label">
-            <FormattedMessage {...localMessages.weeklyQuotaLabel} />
-          </span>
-        </Col>
-        <Col lg={2}>
-          <Field
-            name="weekly_requests_limit"
-            component={renderTextField}
-            fullWidth
-            label={localMessages.isActiveLabel}
-          />
-        </Col>
-      </Row>
+      <Permissioned onlyRole={PERMISSION_ADMIN}>
+        <Row>
+          <Col lg={2}>
+            <span className="label unlabeled-field-label">
+              <FormattedMessage {...messages.userEmail} />
+            </span>
+          </Col>
+          <Col lg={4}>
+            <Field
+              name="email"
+              component={renderTextField}
+              label={messages.userEmail}
+              fullWidth
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={2}>
+            <span className="label unlabeled-field-label">
+              <FormattedMessage {...localMessages.activeLabel} />
+            </span>
+          </Col>
+          <Col lg={2}>
+            <Field
+              name="active"
+              component={renderCheckbox}
+              fullWidth
+              label={localMessages.isActiveLabel}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={2}>
+            <span className="label unlabeled-field-label">
+              <FormattedMessage {...localMessages.maxStoriesLabel} />
+            </span>
+          </Col>
+          <Col lg={2}>
+            <Field
+              name="max_topic_stories"
+              component={renderTextField}
+              fullWidth
+              label={localMessages.isActiveLabel}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={2}>
+            <span className="label unlabeled-field-label">
+              <FormattedMessage {...localMessages.weeklyQuotaLabel} />
+            </span>
+          </Col>
+          <Col lg={2}>
+            <Field
+              name="weekly_requests_limit"
+              component={renderTextField}
+              fullWidth
+              label={localMessages.isActiveLabel}
+            />
+          </Col>
+        </Row>
+      </Permissioned>
     </div>
   );
 };

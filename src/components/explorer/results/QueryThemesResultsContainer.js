@@ -3,7 +3,6 @@ import React from 'react';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import withSummary from '../../common/hocs/SummarizedVizualization';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withUpdatingQuery from '../../common/hocs/UpdateQueryContainer';
 import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import ActionMenu from '../../common/ActionMenu';
@@ -111,76 +110,27 @@ QueryThemesResultsContainer.propTypes = {
   // from composition
   intl: PropTypes.object.isRequired,
   onShowLoginDialog: PropTypes.func.isRequired,
-  // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  results: PropTypes.array.isRequired,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
-  // from state
-  fetchStatus: PropTypes.string.isRequired,
   openUpdateQueryDialog: PropTypes.func.isRequired,
   selectedTabIndex: PropTypes.number.isRequired,
   tabSelector: PropTypes.object.isRequired,
-  selectedQuery: PropTypes.object.isRequired,
+  // from state
+  fetchStatus: PropTypes.string.isRequired,
+  results: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => ({
-  lastSearchTime: state.explorer.lastSearchTime.time,
   fetchStatus: state.explorer.topThemes.fetchStatus,
   results: state.explorer.topThemes.results,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (queries) => {
-    // this should trigger when the user clicks the Search button or changes the URL
-    // for n queries, run the dispatch with each parsed query
-    dispatch(resetThemes());
-    if (ownProps.isLoggedIn) {
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q) => {
-        const infoToQuery = {
-          start_date: q.startDate,
-          end_date: q.endDate,
-          q: q.q,
-          index: q.index,
-          sources: q.sources.map(s => s.id),
-          collections: q.collections.map(c => c.id),
-        };
-        return dispatch(fetchTopThemes(infoToQuery));
-      });
-    } else if (queries || ownProps.queries) { // else assume DEMO mode, but assume the queries have been loaded
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q, index) => {
-        const demoInfo = {
-          index, // should be same as q.index btw
-          search_id: q.searchId, // may or may not have these
-          query_id: q.id,
-          q: q.q, // only if no query id, means demo user added a keyword
-        };
-        return dispatch(fetchDemoTopThemes(demoInfo)); // id
-      });
-    }
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.queries);
-    },
-  });
-}
-
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps)(
     withSummary(localMessages.title, localMessages.helpIntro, [localMessages.helpDetail, messages.nytThemeHelpDetails])(
-      withAsyncFetch(
-        withQueryResults(
-          withLoginRequired(
-            withUpdatingQuery(
-              QueryThemesResultsContainer
-            )
+      withQueryResults(resetThemes, fetchTopThemes, fetchDemoTopThemes)(
+        withLoginRequired(
+          withUpdatingQuery(
+            QueryThemesResultsContainer
           )
         )
       )

@@ -32,6 +32,7 @@ import SnapshotGenerate from '../components/topic/snapshots/SnapshotGenerate';
 import ManageTimespansContainer from '../components/topic/snapshots/timespans/ManageTimespansContainer';
 import InfluentialWordsContainer from '../components/topic/words/InfluentialWordsContainer';
 import TopicStatusDashboardContainer from '../components/topic/list/TopicStatusDashboardContainer';
+import TopicSearchContainer from '../components/topic/search/TopicSearchContainer';
 
 const topicRoutes = (
   <Route path="/" component={TopicsApp}>
@@ -46,6 +47,8 @@ const topicRoutes = (
     <Route path="/topics/create" component={CreateTopicContainer} onEnter={requireAuth}>
       <Route path="/topics/create/:step" component={CreateTopicContainer} onEnter={requireAuth} />
     </Route>
+
+    <Route path="/topics/search" component={TopicSearchContainer} onEnter={requireAuth} />
 
     <Route path="/topics/status" component={TopicStatusDashboardContainer} onEnter={requireAuth} />
 
@@ -62,7 +65,7 @@ const topicRoutes = (
         <Route path="/topics/:topicId/stories" component={InfluentialStoriesContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/stories/explore" component={InfluentialStoryExplorerContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/stories/:storiesId/update" component={StoryUpdateContainer} onEnter={requireAuth} />
-        <Route path="/topics/:topicId/stories/:storiesId/cached" component={StoryCachedContainer} onEnter={requireAuth} />
+        <Route path="/topics/:topicId/stories/:id/cached" component={StoryCachedContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/stories/:storiesId" component={StoryContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/attention" component={AttentionContainer} onEnter={requireAuth} />
         <Route path="/topics/:topicId/words" component={InfluentialWordsContainer} onEnter={requireAuth} />

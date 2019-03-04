@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { push } from 'react-router-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
@@ -13,6 +12,7 @@ import { getUserRoles, hasPermissions, PERMISSION_MEDIA_EDIT } from '../../../li
 import Permissioned from '../../common/Permissioned';
 import { nullOrUndefined } from '../../../lib/formValidators';
 import messages from '../../../resources/messages';
+import PageTitle from '../../common/PageTitle';
 
 const localMessages = {
   mainTitle: { id: 'source.maintitle', defaultMessage: 'Modify this Source' },
@@ -38,7 +38,7 @@ const EditSourceContainer = (props) => {
   };
   return (
     <div className="edit-source">
-      <Helmet><title>{`${formatMessage(messages.edit)} ${source.name} | ${formatMessage(messages.sourcesToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
+      <PageTitle value={[messages.edit, source.name]} />
       <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
         <Grid>
           <Row>

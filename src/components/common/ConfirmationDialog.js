@@ -6,6 +6,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import AppButton from './AppButton';
+import { intlIfObject } from '../../lib/stringUtil';
 
 class ConfirmationDialog extends React.Component {
   handleOk = () => {
@@ -20,28 +21,28 @@ class ConfirmationDialog extends React.Component {
 
   render() {
     const { open, title, children, okText } = this.props;
+    const { formatMessage } = this.props.intl;
     const actions = [
       <AppButton
         key={1}
         label="Cancel"
-        onTouchTap={this.handleCancel}
+        onClick={this.handleCancel}
       />,
       <AppButton
         key={2}
-        label={okText}
+        label={intlIfObject(formatMessage, okText)}
         primary
-        onTouchTap={this.handleOk}
+        onClick={this.handleOk}
       />,
     ];
     return (
       <div>
         <Dialog
-          modal={false}
           className="app-dialog"
           open={open}
           onClose={this.handleCancel}
         >
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>{intlIfObject(formatMessage, title)}</DialogTitle>
           <DialogContent>
             {children}
           </DialogContent>
@@ -58,8 +59,8 @@ ConfirmationDialog.propTypes = {
   children: PropTypes.node.isRequired,
   // from parent
   open: PropTypes.bool.isRequired,
-  title: PropTypes.string.isRequired,
-  okText: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  okText: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   onOk: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
 };

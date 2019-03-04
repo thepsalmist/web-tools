@@ -1,7 +1,7 @@
 import logging
 from flask import jsonify, request
 import flask_login
-from server import app, db
+from server import app, user_db
 from server.auth import user_name
 from server.util.request import arguments_required
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 @arguments_required('queryName', 'timestamp', 'queryParams')
 def save_user_search():
     username = user_name()
-    db.add_item_to_users_list(username, 'searches', request.args)
+    user_db.add_item_to_users_list(username, 'searches', request.args)
     return jsonify({'savedQuery': request.args['queryName']})
 
 
@@ -21,7 +21,7 @@ def save_user_search():
 @flask_login.login_required
 def load_user_searches():
     username = user_name()
-    search_list = db.get_users_lists(username, 'searches')
+    search_list = user_db.get_users_lists(username, 'searches')
     return jsonify({'list': search_list})
 
 
@@ -30,5 +30,5 @@ def load_user_searches():
 @arguments_required('queryName', 'timestamp', 'queryParams')
 def delete_user_search():
     username = user_name()
-    result = db.remove_item_from_users_list(username, 'searches', {'timestamp': request.args['timestamp']})
+    result = user_db.remove_item_from_users_list(username, 'searches', {'timestamp': request.args['timestamp']})
     return jsonify({'success': result.raw_result})

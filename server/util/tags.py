@@ -1,14 +1,14 @@
 import re
 import logging
 import os
-from mediacloud import MediaCloud
+from mediacloud.api import MediaCloud
 from operator import itemgetter
 import json
 import codecs
 
 from server import base_dir
 from server.auth import user_mediacloud_client
-from server.cache import cache, key_generator
+from server.cache import cache
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +70,7 @@ def processed_for_themes_query_clause():
     :return: A solr query clause you can use to filter for stories that have been tagged by any version
      of our CLIFF geotagging engine (ie. tagged with people, places, and organizations)
     '''
-    return u"(tags_id_stories:{})".format(NYT_LABELER_1_0_0_TAG_ID)
+    return "(tags_id_stories:{})".format(NYT_LABELER_1_0_0_TAG_ID)
 
 
 def processed_for_entities_query_clause():
@@ -78,7 +78,7 @@ def processed_for_entities_query_clause():
     :return: A solr query clause you can use to filter for stories that have been tagged by any version
      of our CLIFF geotagging engine (ie. tagged with people, places, and organizations)
     '''
-    return u"(tags_id_stories:({} {}))".format(CLIFF_CLAVIN_2_4_1_TAG_ID, CLIFF_CLAVIN_2_3_0_TAG_ID)
+    return "(tags_id_stories:({} {}))".format(CLIFF_CLAVIN_2_4_1_TAG_ID, CLIFF_CLAVIN_2_3_0_TAG_ID)
 
 
 def processed_for_entities_tag_ids():
@@ -96,7 +96,7 @@ def is_metadata_tag_set(tag_sets_id):
     :return: True if it is a valid metadata tag set, False if it is not
     '''
     for name_to_tags_sets_id in VALID_METADATA_IDS:
-        if int(tag_sets_id) in name_to_tags_sets_id.values():
+        if int(tag_sets_id) in list(name_to_tags_sets_id.values()):
             return True
     return False
 
@@ -162,13 +162,15 @@ def tag_set_with_tags(mc_api_key, tag_sets_id, only_public_tags=False, use_file_
     # double check the show_on_media because that controls public or not
     tag_list = [t for t in all_tags if (only_public_tags is False) or
                 (t['show_on_media'] is 1 or t['show_on_media'] is True)]
-    tag_list = sorted(tag_list, key=itemgetter('label'))
+    for t in tag_list:
+        t['sort_key'] = t['label'] if t['label'] else t['tag']
+    tag_list = sorted(tag_list, key=itemgetter('sort_key'))
     tag_set['tags'] = tag_list
     tag_set['name'] = tag_set['label']  # for backwards compatibility
     return tag_set
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def _cached_tag_page(tag_sets_id, last_tags_id, rows, public_only):
     # user agnositic here because the list of tags in a collection only changes for users based on public_only
     local_mc = user_mediacloud_client()
@@ -176,7 +178,7 @@ def _cached_tag_page(tag_sets_id, last_tags_id, rows, public_only):
     return tag_list
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def cached_tag_set_file(file_path):
     # hold the file in memory to reduce reads
     with codecs.open(file_path, 'r', 'utf-8') as json_data:
@@ -201,7 +203,7 @@ def media_with_tag(user_mc_key, tags_id, cached=False):
     return sorted(all_media, key=lambda t: t['name'].lower())
 
 
-@cache.cache_on_arguments(function_key_generator=key_generator)
+@cache.cache_on_arguments()
 def cached_media_with_tag_page(tags_id, max_media_id):
     '''
     We have to do this on the page, not the full list because memcache has a 1MB cache upper limit,

@@ -10,7 +10,6 @@ div [data-reactroot] {
   border: 1px solid $material-grey200;
   border-bottom: 0px;
   cursor: pointer;
-  color: $explorer-primary;
   &:last-child {
     border-bottom: 1px solid $material-grey200;
   }
@@ -81,6 +80,10 @@ div [data-reactroot] {
 
       .select-media-ok-button {
         margin-left: 30px;
+      }
+
+      .app-button {
+        margin-right: 10px;
       }
 
     }

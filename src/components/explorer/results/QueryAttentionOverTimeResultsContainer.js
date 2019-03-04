@@ -8,7 +8,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { fetchQuerySplitStoryCount, fetchDemoQuerySplitStoryCount, resetSentenceCounts, setSentenceDataPoint, resetSentenceDataPoint } from '../../../actions/explorerActions';
 import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import withQueryResults from './QueryResultsSelector';
@@ -16,7 +15,7 @@ import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTim
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import { oneDayLater, solrFormat } from '../../../lib/dateUtil';
-import { postToDownloadUrl, ACTION_MENU_ITEM_CLASS } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, postToCombinedDownloadUrl, ACTION_MENU_ITEM_CLASS, ensureSafeResults } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
@@ -28,6 +27,7 @@ const localMessages = {
   withKeywords: { id: 'explorer.attention.mode.withkeywords', defaultMessage: 'View Story Count (default)' },
   withoutKeywords: { id: 'explorer.attention.mode.withoutkeywords', defaultMessage: 'View Story Percentage' },
   downloadCsv: { id: 'explorer.attention.downloadCsv', defaultMessage: 'Download { name } stories over time CSV' },
+  downloadAllCsv: { id: 'explorer.attention.downloadAllCsv', defaultMessage: 'Download all stories over time CSV' },
 };
 
 const VIEW_NORMALIZED = 'VIEW_NORMALIZED';
@@ -68,6 +68,10 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
     postToDownloadUrl('/api/explorer/stories/split-count.csv', query);
   }
 
+  downloadAllQueriesCsv = (queries) => {
+    postToCombinedDownloadUrl('/api/explorer/stories/split-count-all.csv', queries);
+  }
+
   render() {
     const { results, queries, selectedTimePeriod } = this.props;
     // stich together bubble chart data
@@ -75,18 +79,18 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
     // because these results are indexed, we can merge these two arrays
     // we may have more results than queries b/c queries can be deleted but not executed
     // so we have to do the following
-    const safeResults = results.map((r, idx) => Object.assign({}, r, queries[idx]));
-    // stich together line chart data
+
     let series = [];
-    if (safeResults && safeResults.length > 0) {
+    const safeResults = ensureSafeResults(queries, results);
+    if (safeResults) {
       series = [
         ...safeResults.map((query, idx) => { // add series for all the results
-          if (query.counts || query.normalizedCounts) {
+          if (query.results && (query.results.counts || query.results.normalizedCounts)) {
             let data;
             if (this.state.view === VIEW_NORMALIZED) {
-              data = dataAsSeries(query.counts, 'ratio');
+              data = dataAsSeries(query.results.counts, 'ratio');
             } else {
-              data = dataAsSeries(query.counts);
+              data = dataAsSeries(query.results.counts);
             }
             return {
               id: idx,
@@ -97,59 +101,72 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
           } return {};
         }),
       ];
-    }
-    return (
-      <React.Fragment>
-        <AttentionOverTimeChart
-          series={series}
-          height={300}
-          backgroundColor="#f5f5f5"
-          onDataPointClick={this.handleDataPointClick}
-          normalizeYAxis={this.state.view === VIEW_NORMALIZED}
-          interval={selectedTimePeriod}
-        />
-        <div className="actions">
-          <ActionMenu actionTextMsg={messages.downloadOptions}>
-            {safeResults.map((q, idx) => (
+      return (
+        <React.Fragment>
+          <AttentionOverTimeChart
+            series={series}
+            height={300}
+            backgroundColor="#f5f5f5"
+            onDataPointClick={this.handleDataPointClick}
+            normalizeYAxis={this.state.view === VIEW_NORMALIZED}
+            interval={selectedTimePeriod}
+          />
+          <div className="actions">
+            <ActionMenu actionTextMsg={messages.downloadOptions}>
+              {safeResults.map((q, idx) => (
+                <MenuItem
+                  key={idx}
+                  className={ACTION_MENU_ITEM_CLASS}
+                  onClick={() => this.downloadCsv(q)}
+                >
+                  <ListItemText>
+                    <FormattedMessage {...localMessages.downloadCsv} values={{ name: q.label }} />
+                  </ListItemText>
+                  <ListItemIcon>
+                    <DownloadButton />
+                  </ListItemIcon>
+                </MenuItem>
+              ))}
               <MenuItem
-                key={idx}
+                key="all"
                 className={ACTION_MENU_ITEM_CLASS}
-                onClick={() => this.downloadCsv(q)}
+                onClick={() => this.downloadAllQueriesCsv(queries)}
               >
                 <ListItemText>
-                  <FormattedMessage {...localMessages.downloadCsv} values={{ name: q.label }} />
+                  <FormattedMessage {...localMessages.downloadAllCsv} />
                 </ListItemText>
                 <ListItemIcon>
                   <DownloadButton />
                 </ListItemIcon>
               </MenuItem>
-            ))}
-          </ActionMenu>
-          <ActionMenu actionTextMsg={messages.viewOptions}>
-            <MenuItem
-              className={ACTION_MENU_ITEM_CLASS}
-              disabled={this.state.view === VIEW_REGULAR}
-              onClick={() => this.setView(VIEW_REGULAR)}
-            >
-              <ListItemText>
-                <FormattedMessage {...localMessages.withKeywords} />
-              </ListItemText>
-            </MenuItem>
-            <MenuItem
-              className={ACTION_MENU_ITEM_CLASS}
-              disabled={this.state.view === VIEW_NORMALIZED}
-              onClick={() => this.setView(VIEW_NORMALIZED)}
-            >
-              <ListItemText>
-                <FormattedMessage {...localMessages.withoutKeywords} />
-              </ListItemText>
-            </MenuItem>
-            <Divider />
-            {this.props.attentionAggregationMenuItems}
-          </ActionMenu>
-        </div>
-      </React.Fragment>
-    );
+            </ActionMenu>
+            <ActionMenu actionTextMsg={messages.viewOptions}>
+              <MenuItem
+                className={ACTION_MENU_ITEM_CLASS}
+                disabled={this.state.view === VIEW_REGULAR}
+                onClick={() => this.setView(VIEW_REGULAR)}
+              >
+                <ListItemText>
+                  <FormattedMessage {...localMessages.withKeywords} />
+                </ListItemText>
+              </MenuItem>
+              <MenuItem
+                className={ACTION_MENU_ITEM_CLASS}
+                disabled={this.state.view === VIEW_NORMALIZED}
+                onClick={() => this.setView(VIEW_NORMALIZED)}
+              >
+                <ListItemText>
+                  <FormattedMessage {...localMessages.withoutKeywords} />
+                </ListItemText>
+              </MenuItem>
+              <Divider />
+              {this.props.attentionAggregationMenuItems}
+            </ActionMenu>
+          </div>
+        </React.Fragment>
+      );
+    }
+    return <div>Error</div>;
   }
 }
 
@@ -164,11 +181,8 @@ QueryAttentionOverTimeResultsContainer.propTypes = {
   attentionAggregationMenuItems: PropTypes.array.isRequired,
   selectedTimePeriod: PropTypes.string.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
   daySpread: PropTypes.bool,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   selectDataPoint: PropTypes.func.isRequired,
@@ -183,37 +197,7 @@ const mapStateToProps = state => ({
   results: state.explorer.storySplitCount.results,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (queries) => {
-    // this should trigger when the user clicks the Search button or changes the URL
-    // for n queries, run the dispatch with each parsed query
-    dispatch(resetSentenceCounts()); // necessary if a query deletion has occurred
-    if (ownProps.isLoggedIn) {
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q) => {
-        const infoToQuery = {
-          start_date: q.startDate,
-          end_date: q.endDate,
-          q: q.q,
-          index: q.index,
-          sources: q.sources.map(s => s.id),
-          collections: q.collections.map(c => c.id),
-        };
-        return dispatch(fetchQuerySplitStoryCount(infoToQuery));
-      });
-    } else if (queries || ownProps.queries) { // else assume DEMO mode, but assume the queries have been loaded
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q, index) => {
-        const demoInfo = {
-          index, // should be same as q.index btw
-          search_id: q.searchId, // may or may not have these
-          query_id: q.id, // could be undefined
-          q: q.q, // only if no query id, means demo user added a keyword
-        };
-        return dispatch(fetchDemoQuerySplitStoryCount(demoInfo));
-      });
-    }
-  },
+const mapDispatchToProps = dispatch => ({
   selectDataPoint: (clickedDataPoint) => {
     dispatch(resetSentenceDataPoint());
     dispatch(setSentenceDataPoint(clickedDataPoint));
@@ -223,9 +207,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.queries);
-    },
     shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
       const { selectedTimePeriod } = stateProps;
       return nextProps.selectedTimePeriod !== selectedTimePeriod;
@@ -238,11 +219,9 @@ injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withSummary(localMessages.lineChartTitle, localMessages.descriptionIntro, [localMessages.descriptionDetail, messages.countsVsPercentageHelp])(
       withAttentionAggregation(
-        withAsyncFetch(
-          withQueryResults(
-            withLoginRequired(
-              QueryAttentionOverTimeResultsContainer
-            )
+        withQueryResults(resetSentenceCounts, fetchQuerySplitStoryCount, fetchDemoQuerySplitStoryCount)(
+          withLoginRequired(
+            QueryAttentionOverTimeResultsContainer
           )
         )
       )

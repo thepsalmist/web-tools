@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchSourceStats } from '../../../actions/sourceActions';
 import StatBar from '../../common/statbar/StatBar';
 import messages from '../../../resources/messages';
@@ -69,16 +69,12 @@ const mapStateToProps = state => ({
   sourceInfo: state.sources.sources.selected.stats,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  asyncFetch: () => {
-    dispatch(fetchSourceStats(ownProps.sourceId));
-  },
-});
+const fetchAsyncData = (dispatch, { sourceId }) => dispatch(fetchSourceStats(sourceId));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       SourceStatInfo
     )
   )

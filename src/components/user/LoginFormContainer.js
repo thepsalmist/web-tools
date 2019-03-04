@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import { Helmet } from 'react-helmet';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import LoginForm from './LoginForm';
+import PageTitle from '../common/PageTitle';
 
 const localMessages = {
   loginTitle: { id: 'login.title', defaultMessage: 'Login' },
@@ -18,11 +18,11 @@ class LoginContainer extends React.Component {
   }
 
   render() {
-    const { formatMessage, isLoggedIn } = this.props.intl;
+    const { isLoggedIn } = this.props.intl;
     const className = `logged-in-${isLoggedIn}`;
     return (
       <Grid>
-        <Helmet><title>{formatMessage(localMessages.loginTitle)}</title></Helmet>
+        <PageTitle value={localMessages.loginTitle} />
         <Row>
           <Col lg={12} className={className}>
             <h2><FormattedMessage {...localMessages.loginTitle} /></h2>

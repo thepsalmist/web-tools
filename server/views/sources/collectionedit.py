@@ -4,17 +4,18 @@ import flask_login
 import time
 from flask import request, jsonify, render_template
 from mediacloud.tags import MediaTag, TAG_ACTION_ADD, TAG_ACTION_REMOVE
-from server.util.mail import send_html_email
 from werkzeug.utils import secure_filename
 import csv as pycsv
 from multiprocessing import Pool
 
 from server import app, config, TOOL_API_KEY
-from server.util.config import ConfigException
 from server.auth import user_admin_mediacloud_client, user_mediacloud_key, user_name
+from server.util.config import ConfigException
+from server.util.mail import send_html_email
 from server.util.request import json_error_response, form_fields_required, api_error_handler
 from server.views.sources.collection import allowed_file
 from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS
+import server.views.sources.apicache as apicache
 from server.util.csv import SOURCE_LIST_CSV_METADATA_PROPS
 from server.util.tags import VALID_METADATA_IDS, METADATA_PUB_COUNTRY_NAME, \
     format_name_from_label, tags_in_tag_set, media_with_tag
@@ -60,6 +61,7 @@ def collection_update(collection_id):
     tags = tags_to_add + tags_to_remove
     if len(tags) > 0:
         user_mc.tagMedia(tags)
+        apicache.invalidate_collection_source_representation_cache(user_mediacloud_key(), collection_id)
     return jsonify(updated_collection['tag'])
 
 
@@ -82,6 +84,8 @@ def remove_sources_from_collection(collection_id):
 
     if len(current_media) > 0:
         results = user_mc.tagMedia(current_media)
+
+    apicache.invalidate_collection_source_representation_cache(user_mediacloud_key(), collection_id)
     return jsonify(results)
 
 
@@ -127,7 +131,7 @@ def upload_file():
             all_errors += errors
         try:
             mail_enabled = config.get('SMTP_ENABLED')
-            if mail_enabled is '1':
+            if mail_enabled == u'1':
                 _email_batch_source_update_results(audit)
         except ConfigException:
             logger.debug("Skipping collection file upload confirmation email")
@@ -151,29 +155,30 @@ def _parse_sources_from_csv_upload(filepath):
         reader.fieldnames = acceptable_column_names
         sources_to_create = []
         sources_to_update = []
-        reader.next()   # skip column headers
+        next(reader)   # skip column headers
         for line in reader:
             try:
                 # python 2.7 csv module doesn't support unicode so have to do the decode/encode here for cleaned up val
-                updatedSrc = line['media_id'] not in ['', None]
+                updated_src = line['media_id'] not in ['', None]
                 # decode all keys as long as there is a key  re Unicode vs ascii
-                newline = {k.decode('utf-8', errors='replace').encode('ascii', errors='ignore').lower(): v for
-                           k, v in line.items() if k not in ['', None]}
-                newline_decoded = {k: v.decode('utf-8', errors='replace').encode('ascii', errors='ignore') for
-                                   k, v in newline.items() if v not in ['', None]}
-                empties = {k: v for k, v in newline.items() if v in ['', None]}
+                newline = {k.lower(): v for
+                           k, v in list(line.items()) if k not in ['', None]}
+                newline_no_empties = {k: v for
+                                   k, v in list(newline.items()) if v not in ['', None]}
+                empties = {k: v for k, v in list(newline.items()) if v in ['', None]}
 
                 # source urls have to start with the http, so add it if the user didn't
-                if newline_decoded['url'][:7] not in [u'http://', 'http://'] and \
-                                newline_decoded['url'][:8] not in [u'https://', 'https://']:
-                    newline_decoded['url'] = u'http://{}'.format(newline_decoded['url'])
+                if newline_no_empties['url'][:7] not in ['http://', 'http://'] and \
+                    newline_no_empties['url'][:8] not in ['https://', 'https://']:
+                    newline_no_empties['url'] = 'http://{}'.format(newline_no_empties['url'])
 
                 # sources must have a name for updates
-                if updatedSrc:
-                    if 'name' not in newline_decoded:
-                        raise Exception("Missing name for source " + str(newline_decoded['media_id'] + " " + str(newline_decoded['url'])))
-                    newline_decoded.update(empties)
-                    sources_to_update.append(newline_decoded)
+                if updated_src:
+                    if 'name' not in newline_no_empties:
+                        raise Exception("Missing name for source " + str(newline_no_empties['media_id'] + " " +
+                                                                         str(newline_no_empties['url'])))
+                        newline_no_empties.update(empties)
+                    sources_to_update.append(newline_no_empties)
                 else:
                     sources_to_create.append(newline_decoded)
             except Exception as e:
@@ -187,8 +192,8 @@ def _parse_sources_from_csv_upload(filepath):
 def _update_source_worker(source_info):
     user_mc = user_admin_mediacloud_client()
     media_id = source_info['media_id']
-    # logger.debug("Updating media {}".format(media_id))
-    source_no_metadata_no_id = {k: v for k, v in source_info.items() if k != 'media_id'
+    logger.debug("Updating media {}".format(media_id))
+    source_no_metadata_no_id = {k: v for k, v in list(source_info.items()) if k != 'media_id'
                                 and k not in SOURCE_LIST_CSV_METADATA_PROPS}
     response = user_mc.mediaUpdate(media_id, source_no_metadata_no_id)
     return response
@@ -201,7 +206,6 @@ def _create_media_worker(media_list):
 
 def _create_or_update_sources(source_list_from_csv, create_new):
     time_start = time.time()
-    user_mc = user_admin_mediacloud_client()
     successful = []
     errors = []
     # logger.debug("@@@@@@@@@@@@@@@@@@@@@@")
@@ -217,21 +221,21 @@ def _create_or_update_sources(source_list_from_csv, create_new):
         else:
             sources_to_update.append(src)
     # process all the entries we think are creations in one batch call
-    use_pool = True
+    use_pool = False
     if len(sources_to_create) > 0:
         # remove metadata so they don't save badly (will do metadata later)
         sources_to_create_no_metadata = []
         for src in sources_to_create:
             sources_to_create_no_metadata.append(
-                {k: v for k, v in src.items() if k not in SOURCE_LIST_CSV_METADATA_PROPS})
+                {k: v for k, v in list(src.items()) if k not in SOURCE_LIST_CSV_METADATA_PROPS})
         # parallelize media creation to make it faster
         chunk_size = 5  # @ 10, each call takes over a minute; @ 5 each takes around ~40 secs
         media_to_create_batches = [sources_to_create_no_metadata[x:x + chunk_size]
-                                   for x in xrange(0, len(sources_to_create_no_metadata), chunk_size)]
+                                   for x in range(0, len(sources_to_create_no_metadata), chunk_size)]
 
         if use_pool:
             pool = Pool(processes=MEDIA_UPDATE_POOL_SIZE)  # process updates in parallel with worker function
-            creation_batched_responses = pool.map(_create_media_worker, media_to_create_batches)  # blocks until they are all done
+            creation_batched_responses = pool.map(_create_media_worker, media_to_create_batches)
         else:
             creation_batched_responses = [_create_media_worker(job) for job in
                                           media_to_create_batches]  # blocks until they are all done
@@ -262,7 +266,7 @@ def _create_or_update_sources(source_list_from_csv, create_new):
             pool = Pool(processes=MEDIA_UPDATE_POOL_SIZE)    # process updates in parallel with worker function
             update_responses = pool.map(_update_source_worker, sources_to_update)  # blocks until they are all done
         else:
-            update_responses = [_update_source_worker(job) for job in sources_to_update]  # blocks until they are all done
+            update_responses = [_update_source_worker(job) for job in sources_to_update]
 
         for idx, response in enumerate(update_responses):
             src = sources_to_update[idx]
@@ -288,7 +292,7 @@ def _create_or_update_sources(source_list_from_csv, create_new):
             if source['url'] in info_by_url:
                 info_by_url[source['url']].update(source)
         update_metadata_for_sources(info_by_url)
-        return results, info_by_url.values(), errors
+        return results, list(info_by_url.values()), errors
 
     # if a successful update, just return what we have, success
     update_metadata_for_sources(successful)
@@ -300,7 +304,7 @@ def _create_or_update_sources(source_list_from_csv, create_new):
 
 
 def _email_batch_source_update_results(audit_feedback):
-    email_title = "Source Batch Updates "
+    email_title = "Source Batch Updates"
     content_title = "You just uploaded {} sources to a collection.".format(len(audit_feedback))
     updated_sources = []
     for updated in audit_feedback:
@@ -331,15 +335,14 @@ def _tag_media_worker(tags):
 def update_metadata_for_sources(source_list):
     tags = []
     for m in VALID_METADATA_IDS:
-        mid = m.values()[0]
-        mkey = m.keys()[0]
+        mid = list(m.values())[0]
+        mkey = list(m.keys())[0]
         tag_codes = tags_in_tag_set(TOOL_API_KEY, mid)
         for source in source_list:
             if mkey in source:
                 metadata_tag_name = source[mkey]
                 if metadata_tag_name not in ['', None]:
                     # hack until we have a better match check
-                    matching = []
                     if mkey == METADATA_PUB_COUNTRY_NAME:  # template pub_###
                         matching = [t for t in tag_codes if t['tag'] == 'pub_' + metadata_tag_name]
                     else:
@@ -351,12 +354,11 @@ def update_metadata_for_sources(source_list):
                         tags.append(MediaTag(source['media_id'], tags_id=metadata_tag_id, action=TAG_ACTION_ADD))
     # now do all the tags in parallel batches so it happens quickly
     if len(tags) > 0:
-        chunks = [tags[x:x + 50] for x in xrange(0, len(tags), 50)]  # do 50 tags in each request
+        chunks = [tags[x:x + 50] for x in range(0, len(tags), 50)]  # do 50 tags in each request
         use_pool = False
         if use_pool:
-            pool = Pool(processes=MEDIA_METADATA_UPDATE_POOL_SIZE )  # process updates in parallel with worker function
+            pool = Pool(processes=MEDIA_METADATA_UPDATE_POOL_SIZE)  # process updates in parallel with worker function
             pool.map(_tag_media_worker, chunks)  # blocks until they are all done
             pool.terminate()  # extra safe garbage collection
         else:
             [_tag_media_worker(job) for job in chunks]
-

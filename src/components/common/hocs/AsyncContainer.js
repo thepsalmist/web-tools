@@ -28,10 +28,11 @@ export const asyncContainerize = (ChildComponent, loadingSpinnerSize) => {
       this.state = { asyncFetchResult };
     }
 
-    componentWillReceiveProps(nextProps) {
+    static getDerivedStateFromProps(nextProps) {
       if (nextProps.fetchStatus === fetchConstants.FETCH_SUCCEEDED) {
-        this.setState({ hasShowResults: true });
+        return { hasShowResults: true };
       }
+      return null;
     }
 
     render() {
@@ -44,7 +45,7 @@ export const asyncContainerize = (ChildComponent, loadingSpinnerSize) => {
         const error = { message: `asyncContainerize: No asyncFetch defined for your ${ChildComponent.displayName || ChildComponent.name} container!`, child: ChildComponent };
         throw error;
       }
-      const fetchStatusToUse = (typeof fetchStatus === 'string') ? fetchStatus : fetchConstants.combineFetchStatuses(fetchStatus);
+      const fetchStatusToUse = fetchConstants.combineFetchStatuses(fetchStatus);
       let content = null;
       if (this.state.asyncFetchResult === 'hide') {
         content = null;
@@ -72,7 +73,6 @@ export const asyncContainerize = (ChildComponent, loadingSpinnerSize) => {
           case fetchConstants.FETCH_FAILED:
             content = (
               <div className="async-loading">
-                <ChildComponent {...this.props} />
                 <div className="loading-overlay">
                   <div className="overlay-content">
                     <ErrorTryAgain onTryAgain={asyncFetch} />

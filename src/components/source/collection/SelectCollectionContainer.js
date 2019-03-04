@@ -4,9 +4,8 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { Grid } from 'react-flexbox-grid/lib';
-import { Helmet } from 'react-helmet';
 import { selectCollection, fetchCollectionDetails } from '../../../actions/sourceActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import SourceControlBar from '../controlbar/SourceControlBar';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
@@ -14,7 +13,7 @@ import { EditButton, ExploreButton } from '../../common/IconButton';
 import SourceMgrHeaderContainer from '../SourceMgrHeaderContainer';
 import { getCurrentDate, oneMonthBefore } from '../../../lib/dateUtil';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
-import messages from '../../../resources/messages';
+import PageTitle from '../../common/PageTitle';
 
 const localMessages = {
   searchNow: { id: 'collection.details.searchNow', defaultMessage: 'Search in Explorer' },
@@ -24,13 +23,6 @@ const localMessages = {
 };
 
 class SelectCollectionContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { collectionId, fetchData } = this.props;
-    if ((nextProps.collectionId !== collectionId)) {
-      fetchData(nextProps.collectionId);
-    }
-  }
-
   componentWillUnmount() {
     const { removeCollectionId } = this.props;
     removeCollectionId();
@@ -47,10 +39,9 @@ class SelectCollectionContainer extends React.Component {
 
   render() {
     const { children, collection } = this.props;
-    const { formatMessage } = this.props.intl;
     return (
       <div className="collection-container">
-        <Helmet><title>{`${collection.label} | ${formatMessage(messages.sourcesToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
+        <PageTitle value={collection.label} />
         <SourceMgrHeaderContainer />
         <SourceControlBar>
           <a href="search-in-explorer" onClick={this.searchInExplorer}>
@@ -83,8 +74,6 @@ class SelectCollectionContainer extends React.Component {
 SelectCollectionContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   removeCollectionId: PropTypes.func.isRequired,
   // from context
   location: PropTypes.object.isRequired,
@@ -103,24 +92,21 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   removeCollectionId: () => {
     dispatch(selectCollection(null));
   },
-  fetchData: (collectionId) => {
-    dispatch(selectCollection(collectionId));
-    dispatch(fetchCollectionDetails(collectionId));
-  },
-  asyncFetch: () => {
-    dispatch(selectCollection(ownProps.params.collectionId));
-    dispatch(fetchCollectionDetails(ownProps.params.collectionId));
-  },
 });
+
+const fetchAsyncData = (dispatch, { collectionId }) => {
+  dispatch(selectCollection(collectionId));
+  dispatch(fetchCollectionDetails(collectionId));
+};
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+    withAsyncData(fetchAsyncData, ['collectionId'])(
       SelectCollectionContainer
     )
   )

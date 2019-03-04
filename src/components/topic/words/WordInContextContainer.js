@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import slugify from 'slugify';
 import { fetchWordSampleSentences } from '../../../actions/topicActions';
 import withHelp from '../../common/hocs/HelpfulContainer';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import DataCard from '../../common/DataCard';
 import WordTree from '../../vis/WordTree';
 import messages from '../../../resources/messages';
@@ -22,13 +22,6 @@ const localMessages = {
 };
 
 class WordInContextContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, filters } = this.props;
-    if (nextProps.filters !== filters || (nextProps.stem !== this.props.stem)) {
-      fetchData(nextProps);
-    }
-  }
-
   getUniqueDomId = () => {
     const { topicId } = this.props;
     return `word-in-context-${topicId}`;
@@ -73,14 +66,13 @@ WordInContextContainer.propTypes = {
   term: PropTypes.string.isRequired,
   topicId: PropTypes.number.isRequired,
   topicName: PropTypes.string.isRequired,
-  filters: PropTypes.object.isRequired,
   // from store
+  fetchStatus: PropTypes.string.isRequired,
   fragments: PropTypes.array.isRequired,
-  // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  // from context
+  // from compositional chain
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
+  filters: PropTypes.object.isRequired,
 };
 
 
@@ -89,20 +81,15 @@ const mapStateToProps = state => ({
   fragments: state.topics.selected.word.sampleSentences.fragments,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (props) => {
-    dispatch(fetchWordSampleSentences(props.topicId, props.term, props.filters));
-  },
-  asyncFetch: () => {
-    dispatch(fetchWordSampleSentences(ownProps.topicId, ownProps.term, ownProps.filters));
-  },
-});
+const fetchAsyncData = (dispatch, props) => {
+  dispatch(fetchWordSampleSentences(props.topicId, props.term, props.filters));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordTreeHelpText])(
-      withAsyncFetch(
+      withFilteredAsyncData(fetchAsyncData, ['stem'])(
         WordInContextContainer
       )
     )

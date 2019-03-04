@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { push } from 'react-router-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
@@ -13,6 +12,7 @@ import CollectionForm from './form/CollectionForm';
 import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import Permissioned from '../../common/Permissioned';
 import { nullOrUndefined } from '../../../lib/formValidators';
+import PageTitle from '../../common/PageTitle';
 
 const localMessages = {
   mainTitle: { id: 'collection.maintitle', defaultMessage: 'Create New Collection' },
@@ -44,7 +44,6 @@ class CreateCollectionContainer extends React.Component {
   render() {
     const { handleSave, prefillSrcIds, prefillCollectionIds, sourcesToPrefill, collectionsToPrefill } = this.props;
     const { formatMessage } = this.props.intl;
-    const titleHandler = parentTitle => `${formatMessage(localMessages.mainTitle)} | ${parentTitle}`;
     const initialValues = {};
     let readyToShowForm = false;
     if ((prefillSrcIds || prefillCollectionIds)) {
@@ -73,7 +72,7 @@ class CreateCollectionContainer extends React.Component {
     return (
       <div className="create-collection">
         <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
-          <Helmet><title>{titleHandler()}</title></Helmet>
+          <PageTitle value={localMessages.mainTitle} />
           <Grid>
             <Row>
               <Col lg={12}>

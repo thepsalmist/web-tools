@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchCollectionSplitStoryCount } from '../../../actions/sourceActions';
 import DataCard from '../../common/DataCard';
 import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
@@ -70,7 +70,7 @@ class CollectionSplitStoryCountContainer extends React.Component {
           <ActionMenu>
             <MenuItem
               className="action-icon-menu-item"
-              onTouchTap={this.downloadCsv}
+              onClick={this.downloadCsv}
             >
               <ListItemText><FormattedMessage {...messages.downloadCSV} /></ListItemText>
               <ListItemIcon><DownloadButton /></ListItemIcon>
@@ -128,7 +128,6 @@ CollectionSplitStoryCountContainer.propTypes = {
   collectionName: PropTypes.string.isRequired,
   filename: PropTypes.string,
   // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
@@ -140,17 +139,15 @@ const mapStateToProps = state => ({
   partialStories: state.sources.collections.selected.collectionSplitStoryCount.partial_stories,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  asyncFetch: () => {
-    dispatch(fetchCollectionSplitStoryCount(ownProps.collectionId, { separate_spidered: true }));
-  },
-});
+const fetchAsyncData = (dispatch, { collectionId }) => dispatch(
+  fetchCollectionSplitStoryCount(collectionId, { separate_spidered: true })
+);
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpText, messages.attentionChartHelpText])(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData)(
         CollectionSplitStoryCountContainer
       )
     )

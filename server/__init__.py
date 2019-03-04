@@ -10,13 +10,14 @@ import flask_login
 from raven.conf import setup_logging
 from raven.contrib.flask import Sentry
 from raven.handlers.logging import SentryHandler
-import mediacloud
+import mediacloud.api
 from cliff.api import Cliff
 import redis
+import jinja2
 
 from server.sessions import RedisSessionInterface
 from server.util.config import get_default_config, ConfigException
-from server.database import AppDatabase
+from server.database import UserDatabase, AnalyticsDatabase
 
 SERVER_MODE_DEV = "dev"
 SERVER_MODE_PROD = "prod"
@@ -32,7 +33,8 @@ data_dir = os.path.join(base_dir, 'server', 'static', 'data')
 # setup logging
 with open(os.path.join(base_dir, 'config', 'server-logging.json'), 'r') as f:
     logging_config = json.load(f)
-    logging_config['handlers']['file']['filename'] = os.path.join(base_dir, logging_config['handlers']['file']['filename'])
+    logging_config['handlers']['file']['filename'] = os.path.join(base_dir,
+                                                                  logging_config['handlers']['file']['filename'])
 logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)
 logger.info("---------------------------------------------------------------------------")
@@ -44,10 +46,10 @@ config = get_default_config()
 
 server_mode = config.get('SERVER_MODE').lower()
 if server_mode not in [SERVER_MODE_DEV, SERVER_MODE_PROD]:
-    logger.error(u"Unknown server mode '{}', set a mode in the `config/app.config` file".format(server_mode))
+    logger.error("Unknown server mode '{}', set a mode in the `config/app.config` file".format(server_mode))
     sys.exit(1)
 else:
-    logger.info(u"Started server in %s mode", server_mode)
+    logger.info("Started server in %s mode", server_mode)
 
 # setup optional sentry logging service
 try:
@@ -62,27 +64,27 @@ except ConfigException as e:
 TOOL_API_KEY = config.get('MEDIA_CLOUD_API_KEY')
 
 mc = mediacloud.api.AdminMediaCloud(TOOL_API_KEY)
-logger.info(u"Connected to mediacloud")
+logger.info("Connected to mediacloud")
 
 # Connect to CLIFF if the settings are there
 cliff = None
 try:
     cliff = Cliff(config.get('CLIFF_URL'))
 except KeyError as e:
-    logger.warn(u"no CLIFF connection")
+    logger.warn("no CLIFF connection")
 
 NYT_THEME_LABELLER_URL = config.get('NYT_THEME_LABELLER_URL')
 
 # Connect to the app's mongo DB
-db = AppDatabase(config.get('MONGO_URL'))
 try:
-    db.check_connection()
+    user_db = UserDatabase(config.get('MONGO_URL'))
+    analytics_db = AnalyticsDatabase(config.get('MONGO_URL'))
+    user_db.check_connection()
+    logger.info("Connected to DB: {}".format(config.get('MONGO_URL')))
 except Exception as err:
-    logger.error(u"DB error: {0}".format(err))
+    logger.error("DB error: {0}".format(err))
     logger.exception(err)
     sys.exit()
-
-logger.info(u"Connected to DB: {}".format(config.get('MONGO_URL')))
 
 
 def is_dev_mode():
@@ -108,8 +110,8 @@ def create_app():
     try:
         sentry_dsn = config.get('SENTRY_DSN')
         Sentry(my_app, dsn=sentry_dsn)
-    except ConfigException as e:
-        logger.warn(e)
+    except ConfigException as ce:
+        logger.warn(ce)
     # set up webpack
     if is_dev_mode():
         manifest_path = '../build/manifest.json'
@@ -131,7 +133,7 @@ def create_app():
     webpack.init_app(my_app)
     # set up mail sending
     try:
-        if config.get('SMTP_ENABLED') == u'1':
+        if config.get('SMTP_ENABLED') == '1':
             mail_config = {     # @see https://pythonhosted.org/Flask-Mail/
                 'MAIL_SERVER': config.get('SMTP_SERVER'),
                 'MAIL_PORT': int(config.get('SMTP_PORT')),
@@ -141,7 +143,15 @@ def create_app():
             }
             my_app.config.update(mail_config)
             mail.init_app(my_app)
-            logger.info(u'Mailing from {} via {}'.format(config.get('SMTP_USER'), config.get('SMTP_SERVER')))
+            logger.info('Mailing from {} via {}'.format(config.get('SMTP_USER'), config.get('SMTP_SERVER')))
+            # need to tell jinja to look in "emails" directory directly for the shared email templates
+            # because the `imports` in them don't include relative paths
+            my_loader = jinja2.ChoiceLoader([
+                my_app.jinja_loader,
+                jinja2.FileSystemLoader([os.path.join(base_dir, 'server', 'templates'),
+                                         os.path.join(base_dir, 'server', 'templates', 'emails')])
+            ])
+            my_app.jinja_loader = my_loader
         else:
             logger.warn("Mail configured, but not enabled")
     except ConfigException as ce:
@@ -178,12 +188,12 @@ def index():
 import server.views.user
 import server.views.app
 import server.views.admin.users
+import server.views.admin.analytics
 import server.views.download
 import server.views.stories
 import server.views.media_search
 import server.views.media_picker
 import server.views.sources.search
-import server.views.notebook.management
 import server.views.metadata
 if (server_app == SERVER_APP_SOURCES) or is_dev_mode():
     import server.views.sources.collection
@@ -195,7 +205,8 @@ if (server_app == SERVER_APP_SOURCES) or is_dev_mode():
     import server.views.sources.geocount
 if (server_app == SERVER_APP_TOPICS) or is_dev_mode():
     import server.views.topics.media
-    import server.views.topics.splitstories
+    import server.views.topics.attention
+    import server.views.topics.story
     import server.views.topics.stories
     import server.views.topics.topic
     import server.views.topics.words

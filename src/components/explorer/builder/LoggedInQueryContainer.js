@@ -2,11 +2,18 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { updateTimestampForQueries, resetSelected, resetSentenceCounts, resetSampleStories, resetStoryCounts, resetGeo, selectQuery, removeDeletedQueries } from '../../../actions/explorerActions';
+import { updateTimestampForQueries, resetSelected, resetSentenceCounts, resetSampleStories,
+  resetStoryCounts, resetGeo, selectQuery, removeDeletedQueries, removeNewStatusFromQueries,
+  countSourceCollectionUsage } from '../../../actions/explorerActions';
 import { resetStory } from '../../../actions/storyActions';
-import QueryBuilderContainer from './QueryBuilderContainer';
+import QueryPickerContainer from './QueryPickerContainer';
 import QueryResultsContainer from '../results/QueryResultsContainer';
 import composeUrlBasedQueryContainer from '../UrlBasedQueryContainer';
+import PageTitle from '../../common/PageTitle';
+
+const localMessages = {
+  title: { id: 'explorer.queryBuilder.title', defaultMessage: 'Search' },
+};
 
 class LoggedInQueryContainer extends React.Component {
   componentWillMount() {
@@ -25,13 +32,14 @@ class LoggedInQueryContainer extends React.Component {
     const isEditable = false;
     return (
       <div className="query-container query-container-logged-in">
-        <QueryBuilderContainer isEditable={isEditable} onSearch={() => handleSearch()} />
+        <PageTitle value={localMessages.title} />
+        <QueryPickerContainer isEditable={isEditable} onSearch={() => handleSearch(queries)} />
         <QueryResultsContainer
           lastSearchTime={lastSearchTime}
           queries={queries}
           params={location}
           samples={samples}
-          onSearch={() => handleSearch()}
+          onSearch={() => handleSearch(queries)}
         />
       </div>
     );
@@ -75,8 +83,17 @@ const mapDispatchToProps = dispatch => ({
     dispatch(resetStoryCounts());
     dispatch(resetGeo());
   },
-  reallyHandleSearch: () => {
+  handleSearch: (queries) => {
+    // track usage here because we don't know what results tab the user is on and only wanna count it once
+    const sources = queries
+      .map(q => q.sources.map(s => s.media_id))
+      .reduce((combined, current) => [...combined, ...current]);
+    const collections = queries
+      .map(q => q.collections.map(c => c.tags_id))
+      .reduce((combined, current) => [...combined, ...current]);
+    dispatch(countSourceCollectionUsage({ sources, collections }));
     dispatch(removeDeletedQueries());
+    dispatch(removeNewStatusFromQueries());
     dispatch(updateTimestampForQueries()); // but this doesn't update the query... only the timestamp.. nextprops.queries should be new?
     // update URL location according to updated queries
   },
@@ -85,17 +102,9 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    handleSearch: () => {
-      dispatchProps.reallyHandleSearch(stateProps.queries);
-    },
-  });
-}
-
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     composeUrlBasedQueryContainer()(
       LoggedInQueryContainer
     )

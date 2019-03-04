@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AttentionOverTimeChart from '../../../vis/AttentionOverTimeChart';
 import { fetchAttentionByQuery } from '../../../../actions/topicActions';
 import withDescription from '../../../common/hocs/DescribedDataCard';
@@ -17,37 +17,28 @@ const localMessages = {
   },
 };
 
-class TopicAttentionPreview extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, query } = this.props;
-    if (nextProps.query !== query) {
-      fetchData(nextProps.query);
-    }
-  }
-
-  render() {
-    const { total, counts, query } = this.props;
-    return (
-      <DataCard>
-        <h2>
-          <FormattedMessage {...localMessages.title} />
-        </h2>
-        <AttentionOverTimeChart
-          lineColor={getBrandDarkColor()}
-          total={total}
-          series={[{
-            id: 0,
-            name: query.name,
-            color: getBrandDarkColor(),
-            data: counts.map(c => [c.date, c.count]),
-            showInLegend: false,
-          }]}
-          height={250}
-        />
-      </DataCard>
-    );
-  }
-}
+const TopicAttentionPreview = (props) => {
+  const { total, counts, query } = props;
+  return (
+    <DataCard>
+      <h2>
+        <FormattedMessage {...localMessages.title} />
+      </h2>
+      <AttentionOverTimeChart
+        lineColor={getBrandDarkColor()}
+        total={total}
+        series={[{
+          id: 0,
+          name: query.name,
+          color: getBrandDarkColor(),
+          data: counts.map(c => [c.date, c.count]),
+          showInLegend: false,
+        }]}
+        height={250}
+      />
+    </DataCard>
+  );
+};
 
 TopicAttentionPreview.propTypes = {
   // from composition chain
@@ -58,9 +49,6 @@ TopicAttentionPreview.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   total: PropTypes.number,
   counts: PropTypes.array,
-  // from dispath
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -69,37 +57,27 @@ const mapStateToProps = state => ({
   counts: state.topics.create.preview.matchingAttention.counts,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchData: (query) => {
-    const infoForQuery = {
-      q: query.solr_seed_query,
-      start_date: query.start_date,
-      end_date: query.end_date,
-    };
-    infoForQuery['collections[]'] = [];
-    infoForQuery['sources[]'] = [];
+const fetchAsyncData = (dispatch, { query }) => {
+  const infoForQuery = {
+    q: query.solr_seed_query,
+    start_date: query.start_date,
+    end_date: query.end_date,
+  };
+  infoForQuery['collections[]'] = [];
+  infoForQuery['sources[]'] = [];
 
-    if ('sourcesAndCollections' in query) { // in FieldArrays on the form
-      infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
-      infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
-    }
-    dispatch(fetchAttentionByQuery(infoForQuery));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.query);
-    },
-  });
-}
+  if ('sourcesAndCollections' in query) { // in FieldArrays on the form
+    infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
+    infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
+  }
+  dispatch(fetchAttentionByQuery(infoForQuery));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps)(
     withDescription(localMessages.descriptionIntro, localMessages.helpText)(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData, ['query'])(
         TopicAttentionPreview
       )
     )

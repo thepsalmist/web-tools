@@ -3,7 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { Helmet } from 'react-helmet';
 import messages from '../../resources/messages';
 import { TOPICS_URL, EXPLORER_URL, SOURCES_URL } from '../common/header/NavToolbar';
 import ToolDescription from './ToolDescription';
@@ -12,6 +11,7 @@ import SystemStatsContainer from '../common/statbar/SystemStatsContainer';
 import LoginForm from '../user/LoginForm';
 import DataCard from '../common/DataCard';
 import { assetUrl } from '../../lib/assetUtil';
+import PageTitle from '../common/PageTitle';
 
 const localMessages = {
   title: { id: 'tools.home.title', defaultMessage: 'Welcome to Media Cloud' },
@@ -21,7 +21,6 @@ const localMessages = {
 
 const ToolsHomeContainer = (props) => {
   const { isLoggedIn } = props;
-  const { formatMessage } = props.intl;
   const notLoggedInContent = (
     <Row>
       <Col lg={8}>
@@ -45,7 +44,7 @@ const ToolsHomeContainer = (props) => {
   const content = (isLoggedIn) ? loggedInContent : notLoggedInContent;
   return (
     <div className="tools-home about-page">
-      <Helmet><title>{`${formatMessage(messages.toolsToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
+      <PageTitle />
       <Grid>
         <Row>
           <Col lg={12}>

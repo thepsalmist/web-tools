@@ -3,13 +3,14 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import { fetchCollectionList } from '../../../../actions/sourceActions';
 import CollectionTable from '../../../common/CollectionTable';
 import TabSelector from '../../../common/TabSelector';
 import { TAG_SET_MC_ID, isCollectionTagSet } from '../../../../lib/tagUtil';
 import { PERMISSION_MEDIA_EDIT, getUserRoles, hasPermissions } from '../../../../lib/auth';
 import Permissioned from '../../../common/Permissioned';
+import PageTitle from '../../../common/PageTitle';
 
 const localMessages = {
   private: { id: 'sources.collections.mc.private', defaultMessage: 'Private' },
@@ -36,6 +37,7 @@ class MCCollectionListContainer extends React.Component {
     }
     return (
       <div className="mc-collections-table">
+        <PageTitle value={name} />
         <Grid>
           <h1>{name}</h1>
           <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
@@ -71,8 +73,6 @@ MCCollectionListContainer.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
   linkToFullUrl: PropTypes.bool,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -83,16 +83,12 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-const mapDispatchToProps = dispatch => ({
-  asyncFetch: () => {
-    dispatch(fetchCollectionList(TAG_SET_MC_ID));
-  },
-});
+const fetchAsyncData = dispatch => dispatch(fetchCollectionList(TAG_SET_MC_ID));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       MCCollectionListContainer
     )
   )

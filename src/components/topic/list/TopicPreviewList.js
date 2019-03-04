@@ -58,12 +58,14 @@ const TopicPreviewList = (props) => {
               <DataCard>
                 <div className="content" id={`topic-preview-${topic.topics_id}`}>
                   <div>
-                    <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-                      <FavoriteToggler
-                        isFavorited={topic.isFavorite}
-                        onSetFavorited={isFav => onSetFavorited(topic.topics_id, isFav)}
-                      />
-                    </Permissioned>
+                    { onSetFavorited && (
+                      <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
+                        <FavoriteToggler
+                          isFavorited={topic.isFavorite}
+                          onSetFavorited={isFav => onSetFavorited(topic.topics_id, isFav)}
+                        />
+                      </Permissioned>
+                    )}
                     <h2><Link to={linkGenerator(topic)}>{topic.name}</Link></h2>
                     <FormattedMessage
                       {...localMessages.range}

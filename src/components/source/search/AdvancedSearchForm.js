@@ -40,6 +40,7 @@ const AdvancedSearchForm = (props) => {
             name="publicationCountry"
             form="advancedQueryForm"
             label={formatMessage(localMessages.pubCountrySuggestion)}
+            async
           />
         </Col>
         <Col lg={6}>
@@ -49,6 +50,7 @@ const AdvancedSearchForm = (props) => {
             name="publicationState"
             form="advancedQueryForm"
             label={formatMessage(localMessages.pubStateSuggestion)}
+            async
           />
         </Col>
         <Col lg={6}>
@@ -67,6 +69,7 @@ const AdvancedSearchForm = (props) => {
             name="countryOfFocus"
             form="advancedQueryForm"
             label={formatMessage(localMessages.pCountryOfFocusSuggestion)}
+            async
           />
         </Col>
         <Col lg={6}>

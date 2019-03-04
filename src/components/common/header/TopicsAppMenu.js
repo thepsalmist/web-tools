@@ -4,6 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import Menu from '@material-ui/core/Menu';
+import Divider from '@material-ui/core/Divider';
 import MenuItem from '@material-ui/core/MenuItem';
 import messages from '../../../resources/messages';
 import AppMenu from './AppMenu';
@@ -20,32 +21,25 @@ const localMessages = {
 
 
 const TopicsAppMenu = (props) => {
-  let menu;
+  let menuItems = [
+    <MenuItem key="home" onClick={() => { props.handleItemClick('home', true); }}>
+      <FormattedMessage {...localMessages.home} />
+    </MenuItem>,
+    <MenuItem key="search" onClick={() => { props.handleItemClick('topics/search', true); }}>
+      <FormattedMessage {...messages.search} />
+    </MenuItem>,
+    <Divider key="div1" />,
+    <MenuItem key="create" onClick={() => { props.handleItemClick('topics/create', true); }}>
+      <FormattedMessage {...messages.createNewTopic} />
+    </MenuItem>,
+  ];
   if (props.isLoggedIn && hasPermissions(getUserRoles(props.user), PERMISSION_MEDIA_EDIT)) {
-    menu = (
-      <Menu>
-        <MenuItem onClick={() => { props.handleItemClick('home', true); }}>
-          <FormattedMessage {...localMessages.home} />
-        </MenuItem>
-        <MenuItem onClick={() => { props.handleItemClick('topics/create', true); }}>
-          <FormattedMessage {...messages.createNewTopic} />
-        </MenuItem>
-        <MenuItem onClick={() => { props.handleItemClick('topics/status', true); }}>
-          <FormattedMessage {...localMessages.listTopics} />
-        </MenuItem>
-      </Menu>
-    );
-  } else {
-    menu = (
-      <Menu>
-        <MenuItem onClick={() => { props.handleItemClick('home', true); }}>
-          <FormattedMessage {...localMessages.home} />
-        </MenuItem>
-        <MenuItem onClick={() => { props.handleItemClick('topics/create', true); }}>
-          <FormattedMessage {...messages.createNewTopic} />
-        </MenuItem>
-      </Menu>
-    );
+    menuItems = menuItems.concat([
+      <Divider key="div2" />,
+      <MenuItem key="status" onClick={() => { props.handleItemClick('topics/status', true); }}>
+        <FormattedMessage {...localMessages.listTopics} />
+      </MenuItem>,
+    ]);
   }
   return (
     <AppMenu
@@ -53,7 +47,7 @@ const TopicsAppMenu = (props) => {
       titleMsg={localMessages.menuTitle}
       showMenu={getAppName() === 'topics' && props.isLoggedIn}
       onTitleClick={() => { props.handleItemClick('', getAppName() === 'topics'); }}
-      menuComponent={menu}
+      menuComponent={(<Menu>{menuItems}</Menu>)}
     />
   );
 };

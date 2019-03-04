@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { reduxForm, reset } from 'redux-form';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
@@ -12,6 +11,7 @@ import { emptyString } from '../../../../lib/formValidators';
 import { suggestSource } from '../../../../actions/sourceActions';
 import { updateFeedback } from '../../../../actions/appActions';
 import AppButton from '../../../common/AppButton';
+import PageTitle from '../../../common/PageTitle';
 
 const localMessages = {
   mainTitle: { id: 'source.suggest.maintitle', defaultMessage: 'Suggest A Source' },
@@ -25,10 +25,9 @@ const localMessages = {
 const SuggestSourceContainer = (props) => {
   const { initialValues, pristine, submitting, handleSubmit, handleSave } = props;
   const { formatMessage } = props.intl;
-  const titleHandler = formatMessage(localMessages.mainTitle);
   return (
     <div>
-      <Helmet><title>{titleHandler}</title></Helmet>
+      <PageTitle value={localMessages.mainTitle} />
       <Grid>
         <Row>
           <Col lg={12}>

@@ -11,6 +11,10 @@ body {
 
 a {
   text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 p {
@@ -18,17 +22,19 @@ p {
 }
 
 h1 {
-  margin-top: 40px;
+  padding-top: 40px;
+  margin-top: 0px;
 }
 
 h2 {
-  margin-bottom: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 0px;
 }
 
 h3 {
   small {
     display: inline-block;
-    margin-left: 8px;
+    padding-left: 8px;
     font-weight: normal;
   }
 }
@@ -131,4 +137,12 @@ code {
 
 .warning-background {
   background-color: $warning-color;
+}
+
+.error {
+  color: $error-color;
+}
+
+.error-background {
+  background-color: $error-color;
 }

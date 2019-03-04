@@ -27,7 +27,8 @@ const localMessages = {
   about: { id: 'nav.about', defaultMessage: 'About' },
 };
 
-const goToHome = () => {
+const goToHome = (evt) => {
+  evt.preventDefault();
   window.location.href = '/#/home';
 };
 
@@ -38,7 +39,7 @@ const NavToolbar = (props) => {
       <Grid>
         <Row>
           <Col lg={6}>
-            <a href={`#${formatMessage(localMessages.goHome)}`} onClick={goToHome}>
+            <a href={`#${formatMessage(localMessages.goHome)}`} onClick={evt => goToHome(evt)}>
               <img
                 className="app-logo"
                 alt={formatMessage(messages.suiteName)}

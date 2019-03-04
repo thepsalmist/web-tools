@@ -1,12 +1,14 @@
 import logging
-from server.cache import cache, key_generator
+from flask import request, jsonify, send_from_directory
 import os
+import flask_login
 import json
-from server import mc
-from flask import send_from_directory
-from server.auth import is_user_logged_in
 import datetime
 from slugify import slugify
+
+from server import mc, app, analytics_db
+from server.auth import is_user_logged_in
+from server.util.request import api_error_handler
 
 logger = logging.getLogger(__name__)
 
@@ -37,20 +39,19 @@ def access_public_topic(topics_id):
 
 
 # helper for preview queries
-#tags_id is either a string or a list, which is handled in either case by the len() test. ALL_MEDIA is the exception
+# tags_id is either a string or a list, which is handled in either case by the len() test. ALL_MEDIA is the exception
 def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
-    query = u'({})'.format(solr_seed_query)
+    query = '({})'.format(solr_seed_query)
 
-    #if isinstance(tags_ids, basestring) or isinstance(tags_ids, list):
     if len(media_ids) > 0 or len(tags_ids) > 0:
         if tags_ids == [ALL_MEDIA] or tags_ids == ALL_MEDIA:
             return query
         query += " AND ("
         # add in the media sources they specified
         if len(media_ids) > 0:
-            media_ids = media_ids.split(',') if isinstance(media_ids, basestring) else media_ids
-            query_media_ids = u" ".join([str(m) for m in media_ids])
-            query_media_ids = u" media_id:({})".format(query_media_ids)
+            media_ids = media_ids.split(',') if isinstance(media_ids, str) else media_ids
+            query_media_ids = " ".join([str(m) for m in media_ids])
+            query_media_ids = " media_id:({})".format(query_media_ids)
             query += '('+query_media_ids+')'
 
         # conjunction
@@ -58,23 +59,21 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
             query += " OR "
 
         # add in the collections they specified
-        if len(tags_ids) == 0:
-            tags_ids = []
-        else:
-            tags_ids = tags_ids.split(',') if isinstance(tags_ids, basestring) else tags_ids
-            query_tags_ids = u" ".join([str(t) for t in tags_ids])
-            query_tags_ids = u" tags_id_media:({})".format(query_tags_ids)
-            query += u'('+query_tags_ids+')'
+        if len(tags_ids) > 0:
+            tags_ids = tags_ids.split(',') if isinstance(tags_ids, str) else tags_ids
+            query_tags_ids = " ".join([str(t) for t in tags_ids])
+            query_tags_ids = " tags_id_media:({})".format(query_tags_ids)
+            query += '('+query_tags_ids+')'
         query += ')'
 
     return query
 
 
 def concatenate_query_and_dates(start_date, end_date):
-    date_query = u""
+    date_query = ""
     if start_date:
-        testa = datetime.datetime.strptime(start_date, u'%Y-%m-%d').date()
-        testb = datetime.datetime.strptime(end_date, u'%Y-%m-%d').date()
+        testa = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+        testb = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
         date_query = mc.publish_date_query(testa, testb, True, True)
     return date_query
 
@@ -90,7 +89,7 @@ def parse_query_with_keywords(args):
     # try statement will fail?
     try:    # if user arguments are present and allowed by the client endpoint, use them, otherwise use defaults
         current_query = args['q']
-        if (current_query == ''):
+        if current_query == '':
             current_query = "*"
         if 'startDate' in args:
             start_date = args['startDate']
@@ -107,39 +106,38 @@ def parse_query_with_keywords(args):
         media_ids = []
 
         if 'sources' in args:
-            if isinstance(args['sources'], basestring):
+            if isinstance(args['sources'], str):
                 media_ids = args['sources'].split(',') if 'sources' in args and len(args['sources']) > 0 else []
             else:
                 media_ids = args['sources']
 
         if 'collections' in args:
-            if isinstance(args['collections'], basestring):
+            if isinstance(args['collections'], str):
                 if len(args['collections']) == 0:
                     tags_ids = []
                 else:
-                    tags_ids = args['collections'].split(',') # make a list
+                    tags_ids = args['collections'].split(',')  # make a list
             else:
                 tags_ids = args['collections']
         else:
             tags_ids = DEFAULT_COLLECTION_IDS
 
         solr_q = concatenate_query_for_solr(solr_seed_query=current_query,
-                                                media_ids=media_ids,
-                                                tags_ids=tags_ids)
+                                            media_ids=media_ids,
+                                            tags_ids=tags_ids)
         solr_fq = concatenate_query_and_dates(start_date, end_date)
-
 
     # otherwise, default
     except Exception as e:
         # tags_ids = args['collections'] if 'collections' in args and len(args['collections']) > 0 else []
-        logger.warn("user custom query failed, there's a problem with the arguments " + str(e))
+        logger.warning("user custom query failed, there's a problem with the arguments " + str(e))
 
     return solr_q, solr_fq
 
 
 def _parse_query_for_sample_search(sample_search_id, query_id):
-    sample_searches = load_sample_searches()
-    current_query_info = sample_searches[int(sample_search_id)]['queries'][int(query_id)]
+    these_sample_searches = load_sample_searches()
+    current_query_info = these_sample_searches[int(sample_search_id)]['queries'][int(query_id)]
     solr_q = concatenate_query_for_solr(solr_seed_query=current_query_info['q'],
                                         media_ids=current_query_info['sources'],
                                         tags_ids=current_query_info['collections'])
@@ -149,12 +147,12 @@ def _parse_query_for_sample_search(sample_search_id, query_id):
 
 def parse_as_sample(search_id_or_query, query_id=None):
     try:
-        if isinstance(search_id_or_query, int): # special handling for an indexed query
+        if isinstance(search_id_or_query, int):  # special handling for an indexed query
             sample_search_id = search_id_or_query
             return _parse_query_for_sample_search(sample_search_id, query_id)
 
     except Exception as e:
-        logger.warn("error " + str(e))
+        logger.warning("error " + str(e))
 
 
 sample_searches = None  # use as singeton, not cache so that we can change the file and restart and see changes
@@ -182,4 +180,20 @@ def file_name_for_download(label, type_of_download):
     length_limited_label = label
     if len(label) > 30:
         length_limited_label = label[:30]
-    return u'{}-{}'.format(slugify(length_limited_label), type_of_download)
+    return '{}-{}'.format(slugify(length_limited_label), type_of_download)
+
+
+@app.route('/api/explorer/count-stats', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def count_stats():
+    # count the uses of sources or collection whenever the user clicks the search button
+    sources = request.args['sources'].split(",") if 'sources' in request.args else None
+    collections = request.args['collections'].split(",") if 'collections' in request.args else None
+    for media_id in sources:
+        analytics_db.increment_count(analytics_db.TYPE_MEDIA, media_id,
+                                     analytics_db.ACTION_EXPLORER_QUERY, sources.count(media_id))
+    for collection_id in collections:
+        analytics_db.increment_count(analytics_db.TYPE_COLLECTION, collection_id,
+                                     analytics_db.ACTION_EXPLORER_QUERY, collections.count(collection_id))
+    return jsonify({'status': 'ok'})

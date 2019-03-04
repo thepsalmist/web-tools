@@ -9,15 +9,11 @@ import { getBrandDarkColor, getBrandDarkerColor } from '../../styles/colors';
 
 initHighcharts();
 
-const localMessages = {
-  tooltipText: { id: 'chart.treeMap.tooltip.text', defaultMessage: '{count} of stories are from {name}.' },
-};
-
 /**
  * Pass in data - an array of `name`/`value` objects
  */
 const TreeMap = (props) => {
-  const { title, data, onLeafClick, domId } = props;
+  const { title, data, onLeafClick, domId, tooltipMessage } = props;
   const { formatNumber, formatMessage } = props.intl;
   const totalCount = data.map(d => d.value).reduce((acc, d) => acc + d, 0);
   const config = {
@@ -48,7 +44,7 @@ const TreeMap = (props) => {
         // important to name this, rather than use arrow function, so `this` is preserved to be what highcharts gives us
         const fraction = this.value / totalCount;
         const rounded = formatNumber(fraction, { style: 'percent', maximumFractionDigits: 2 });
-        const pct = formatMessage(localMessages.tooltipText, { count: rounded, name: this.name });
+        const pct = formatMessage(tooltipMessage, { count: rounded, name: this.name });
         return pct;
       },
     },
@@ -83,6 +79,7 @@ TreeMap.propTypes = {
   onLeafClick: PropTypes.func,
   color: PropTypes.string,
   domId: PropTypes.string.isRequired, // to make download work
+  tooltipMessage: PropTypes.object, // support count and name variables
   // from composition chain
   intl: PropTypes.object.isRequired,
 };

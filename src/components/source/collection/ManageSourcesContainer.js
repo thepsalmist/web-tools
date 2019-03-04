@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage, FormattedNumber, injectIntl, FormattedDate } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import { fetchCollectionSourceList, scrapeSourceFeeds, removeSourcesFromCollection, fetchSourceReviewInfo }
   from '../../../actions/sourceActions';
@@ -19,6 +19,7 @@ import { SOURCE_SCRAPE_STATE_QUEUED, SOURCE_SCRAPE_STATE_RUNNING, SOURCE_SCRAPE_
 import FilledStarIcon from '../../common/icons/FilledStarIcon';
 import { googleFavIconUrl } from '../../../lib/urlUtil';
 import { parseSolrShortDate, jobStatusDateToMoment } from '../../../lib/dateUtil';
+import PageTitle from '../../common/PageTitle';
 
 const REVIEW = 0;
 const REMOVE = 1;
@@ -95,7 +96,7 @@ class ManageSourcesContainer extends React.Component {
   }
 
   render() {
-    const { collectionId, scrapeFeeds, sources, removeSource } = this.props;
+    const { collectionId, collection, scrapeFeeds, sources, removeSource } = this.props;
     const { formatMessage, formatDate } = this.props.intl;
     let viewSources = '';
     let viewDesc = '';
@@ -107,7 +108,7 @@ class ManageSourcesContainer extends React.Component {
             <Col lg={11}>
               <p><FormattedMessage {...localMessages.reviewDesc} /></p>
             </Col>
-            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.review))} />
+            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.review, { count: '' }))} />
           </Row>
         );
         break;
@@ -128,7 +129,7 @@ class ManageSourcesContainer extends React.Component {
               <Col lg={11}>
                 <p><FormattedMessage {...localMessages.reviewDesc} /></p>
               </Col>
-              <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.remove))} />
+              <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.remove, { count: '' }))} />
             </Row>
             <Row>
               {removeAllButton}
@@ -143,7 +144,7 @@ class ManageSourcesContainer extends React.Component {
             <Col lg={11}>
               <p><FormattedMessage {...localMessages.unscrapeableDesc} /></p>
             </Col>
-            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.unscrapeable))} />
+            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.unscrapeable, { count: '' }))} />
           </Row>
         );
         break;
@@ -154,7 +155,7 @@ class ManageSourcesContainer extends React.Component {
             <Col lg={11}>
               <p><FormattedMessage {...localMessages.workingDesc} /></p>
             </Col>
-            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.working))} />
+            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.working, { count: '' }))} />
           </Row>
         );
         break;
@@ -163,7 +164,7 @@ class ManageSourcesContainer extends React.Component {
         viewDesc = (
           <Row>
             <Col lg={11} />
-            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.all))} />
+            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.all, { count: '' }))} />
           </Row>
         );
         break;
@@ -189,6 +190,7 @@ class ManageSourcesContainer extends React.Component {
     );
     return (
       <Grid>
+        <PageTitle value={[localMessages.title, collection.label]} />
         <Row>
           <Col lg={8}>
             <h1><FormattedMessage {...localMessages.title} /></h1>
@@ -390,19 +392,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(stateProps.collectionId);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, { collectionId }) => dispatch(fetchCollectionSourceList(collectionId))
+  .then(results => results.sources.forEach(source => dispatch(fetchSourceReviewInfo(source.media_id))));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncData(fetchAsyncData)(
       withCsvDownloadNotifyContainer(
         ManageSourcesContainer
       )

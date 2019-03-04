@@ -47,15 +47,17 @@ def source_suggestion_update(suggestion_id):
         # if approved, we have to create it
         flattend_tags = [t['tags_id'] for t in suggestion['tags_ids']]
 
-        media_source_to_create = { 'url': suggestion['url'],
-              'name': suggestion['name'],
-              'feeds': [suggestion['feed_url']],
-              'tags_ids': flattend_tags,
-              'editor_notes': 'Suggested approved by {} on because {}.  Suggested by {} on {} because {} (id #{}).'.format(
-                  user_name(),  datetime.now().strftime("%I:%M%p on %B %d, %Y"), reason,
-                  suggestion['email'], suggestion['date_submitted'], suggestion['reason'], suggestion['media_suggestions_id']
-              )
-            }
+        media_source_to_create = {
+            'url': suggestion['url'],
+            'name': suggestion['name'],
+            'feeds': [suggestion['feed_url']],
+            'tags_ids': flattend_tags,
+            'editor_notes': 'Suggested approved by {} on because {}.  Suggested by {} on {} because {}'
+                            '(id #{}).'.format(user_name(),  datetime.now().strftime("%I:%M%p on %B %d, %Y"), reason,
+                                               suggestion['email'], suggestion['date_submitted'], suggestion['reason'],
+                                               suggestion['media_suggestions_id']
+                                               )
+        }
         creation_results = user_mc.mediaCreate([media_source_to_create])[0]
         if creation_results['status'] == 'error':
             status = "pending"  # so the email update looks good.
@@ -76,10 +78,10 @@ def source_suggestion_update(suggestion_id):
     # send an email confirmation
     send_html_email(email_title,
                     [user_name(), 'source-suggestion@mediacloud.org'],
-                    render_template("emails/generic.txt",
-                                    content_title=content_title, content_body=content_body, action_text=action_text, action_url=action_url),
-                    render_template("emails/generic.html",
-                                    email_title=email_title, content_title=content_title, content_body=content_body, action_text=action_text, action_url=action_url)
+                    render_template("emails/generic.txt", content_title=content_title, content_body=content_body,
+                                    action_text=action_text, action_url=action_url),
+                    render_template("emails/generic.html", email_title=email_title, content_title=content_title,
+                                    content_body=content_body, action_text=action_text, action_url=action_url)
                     )
     # and return that it worked or not
     if status == "pending":
@@ -103,13 +105,11 @@ def source_suggest():
     # send an email confirmation
     email_title = "Thanks for Suggesting " + url
     send_html_email(email_title,
-        [user_name(), 'source-suggestion@mediacloud.org'],
-        render_template("emails/source_suggestion_ack.txt",
-                        username=user_name(), name=name, url=url, feed_url=feed_url, reason=reason),
-        render_template("emails/source_suggestion_ack.html",
-                        username=user_name(), name=name, url=url, feed_url=feed_url, reason=reason)
-    )
+                    [user_name(), 'source-suggestion@mediacloud.org'],
+                    render_template("emails/source_suggestion_ack.txt", username=user_name(), name=name, url=url,
+                                    feed_url=feed_url, reason=reason),
+                    render_template("emails/source_suggestion_ack.html", username=user_name(), name=name, url=url,
+                                    feed_url=feed_url, reason=reason)
+                    )
     # and return that it worked
     return jsonify(new_suggestion)
-
-

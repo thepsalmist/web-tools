@@ -6,9 +6,10 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchAdminTopicList } from '../../../actions/topicActions';
 import TopicStatusTable from './TopicStatusTable';
+import PageTitle from '../../common/PageTitle';
 
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Admin: Topic Status Dashboard' },
@@ -29,6 +30,7 @@ class TopicStatusDashboardContainer extends React.Component {
     const topicsToShow = topics.filter(t => t.state === this.state.selectedTopicState);
     return (
       <Grid>
+        <PageTitle value={localMessages.title} />
         <Row>
           <Col lg={12}>
             <h1><FormattedMessage {...localMessages.title} /></h1>
@@ -57,8 +59,6 @@ TopicStatusDashboardContainer.propTypes = {
   topics: PropTypes.array,
   // from context
   intl: PropTypes.object.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -66,16 +66,12 @@ const mapStateToProps = state => ({
   topics: state.topics.adminList.topics,
 });
 
-const mapDispatchToProps = dispatch => ({
-  asyncFetch: () => {
-    dispatch(fetchAdminTopicList());
-  },
-});
+const fetchAsyncData = dispatch => dispatch(fetchAdminTopicList());
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       TopicStatusDashboardContainer
     )
   )

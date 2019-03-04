@@ -21,10 +21,10 @@ const localMessages = {
 };
 
 class AdvancedMediaPickerSearchForm extends React.Component {
-  handleSearchButtonClick = (evt) => {
+  handleSearchButtonClick = (evt, inputRef) => {
     const { onAdvancedSelection } = this.props;
     evt.preventDefault();
-    const searchStr = document.getElementsByTagName('input')[0].value; // note: this is a brittle hack
+    const searchStr = inputRef.value;
     onAdvancedSelection({ mediaKeyword: searchStr });
   }
 
@@ -44,6 +44,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
             <Field
               name="advancedSearchQueryString"
               value={initValues}
+              ref={(input) => { this.textInputRef = input; }}
               component={renderTextField}
               label={formatMessage(localMessages.searchSuggestion)}
               fullWidth
@@ -53,28 +54,24 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         <Row>
           <Col lg={6}>
             <MetadataPickerContainer
-              autocomplete
-              isClearable
               id={TAG_SET_PUBLICATION_COUNTRY}
               name="publicationCountry"
               form="advancedQueryForm"
               label={formatMessage(localMessages.pubCountrySuggestion)}
+              async
             />
           </Col>
           <Col lg={6}>
             <MetadataPickerContainer
-              autocomplete
-              isClearable
               id={TAG_SET_PUBLICATION_STATE}
               name="publicationState"
               form="advancedQueryForm"
               label={formatMessage(localMessages.pubStateSuggestion)}
+              async
             />
           </Col>
           <Col lg={6}>
             <MetadataPickerContainer
-              autocomplete
-              isClearable
               id={TAG_SET_PRIMARY_LANGUAGE}
               name="primaryLanguage"
               form="advancedQueryForm"
@@ -83,20 +80,16 @@ class AdvancedMediaPickerSearchForm extends React.Component {
           </Col>
           <Col lg={6}>
             <MetadataPickerContainer
-              autocomplete
-              isClearable
               id={TAG_SET_COUNTRY_OF_FOCUS}
               name="countryOfFocus"
               form="advancedQueryForm"
               label={formatMessage(localMessages.pCountryOfFocusSuggestion)}
+              async
             />
           </Col>
           <Col lg={6}>
             <MetadataPickerContainer
-              autocomplete
-              isClearable
               id={TAG_SET_MEDIA_TYPE}
-              showDescription
               name="mediaType"
               form="advancedQueryForm"
               label={formatMessage(localMessages.pMediaType)}
@@ -108,7 +101,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
             <AppButton
               style={{ marginTop: 30 }}
               label={formatMessage(localMessages.search)}
-              onClick={this.handleSearchButtonClick}
+              onClick={evt => this.handleSearchButtonClick(evt, this.textInputRef)}
               color="primary"
             />
           </Col>

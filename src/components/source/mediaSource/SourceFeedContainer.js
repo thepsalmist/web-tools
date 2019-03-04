@@ -5,9 +5,8 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import Link from 'react-router/lib/Link';
 import { push } from 'react-router-redux';
-import { Helmet } from 'react-helmet';
 import { fetchSourceFeeds, scrapeSourceFeeds, fetchSourceDetails } from '../../../actions/sourceActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import MediaSourceIcon from '../../common/icons/MediaSourceIcon';
 import SourceFeedTable from '../SourceFeedTable';
 import messages from '../../../resources/messages';
@@ -17,21 +16,16 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import { updateFeedback } from '../../../actions/appActions';
 import { SOURCE_SCRAPE_STATE_QUEUED, SOURCE_SCRAPE_STATE_RUNNING } from '../../../reducers/sources/sources/selected/sourceDetails';
+import PageTitle from '../../common/PageTitle';
 
 const localMessages = {
+  pageTitle: { id: 'source.feeds.pageTitle', defaultMessage: 'Feeds' },
   title: { id: 'source.feeds.title', defaultMessage: '{name} | Source Feeds | Media Cloud' },
   sourceFeedsTitle: { id: 'source.details.feeds.title', defaultMessage: '{name}: Feeds' },
   add: { id: 'source.deatils.feeds.add', defaultMessage: 'Add A Feed' },
 };
 
 class SourceFeedContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { sourceId, fetchData } = this.props;
-    if ((nextProps.sourceId !== sourceId)) {
-      fetchData(nextProps.sourceId);
-    }
-  }
-
   downloadCsv = () => {
     const { sourceId } = this.props;
     const url = `/api/sources/${sourceId}/feeds/feeds.csv`;
@@ -51,7 +45,7 @@ class SourceFeedContainer extends React.Component {
     }
     return (
       <Grid className="details source-details">
-        <Helmet><title>{formatMessage(localMessages.title, { name: sourceName })}</title></Helmet>
+        <PageTitle value={[localMessages.pageTitle, sourceName]} />
         <Row>
           <Col lg={11} xs={11}>
             <h1>
@@ -94,8 +88,6 @@ class SourceFeedContainer extends React.Component {
 SourceFeedContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   scrapeFeeds: PropTypes.func.isRequired,
   pushToUrl: PropTypes.func.isRequired,
   // from context
@@ -117,13 +109,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (sourceId) => {
-    dispatch(fetchSourceFeeds(sourceId));
-  },
   pushToUrl: url => dispatch(push(url)),
-  asyncFetch: () => {
-    dispatch(fetchSourceFeeds(ownProps.params.sourceId));
-  },
   scrapeFeeds: () => {
     dispatch(scrapeSourceFeeds(ownProps.params.sourceId))
       .then((results) => {
@@ -140,10 +126,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
+const fetchAsyncData = (dispatch, { sourceId }) => dispatch(fetchSourceFeeds(sourceId));
+
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+    withAsyncData(fetchAsyncData, ['sourceId'])(
       SourceFeedContainer
     )
   )

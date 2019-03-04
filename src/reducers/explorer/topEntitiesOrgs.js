@@ -5,11 +5,11 @@ import { FETCH_TOP_ENTITIES_ORGS, RESET_ENTITIES_ORGS } from '../../actions/expl
 
 const topEntitiesPeople = createIndexedAsyncReducer({
   initialState: ({
-    fetchStatus: '', fetchStatuses: [], results: [],
+    fetchStatus: '', fetchStatuses: [], fetchUids: [], results: [],
   }),
   action: FETCH_TOP_ENTITIES_ORGS,
   [RESET_ENTITIES_ORGS]: () => ({
-    fetchStatus: '', fetchStatuses: [], results: [],
+    fetchStatus: '', fetchStatuses: [], fetchUids: [], results: [],
   }),
 });
 export default topEntitiesPeople;

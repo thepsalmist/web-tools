@@ -3,6 +3,7 @@ import React from 'react';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import ReleaseNotes from './ReleaseNotes';
+import PageTitle from '../PageTitle';
 
 const localMessages = {
   releaseNotes: { id: 'recentNews.releaseNotes', defaultMessage: 'Release Notes' },
@@ -11,6 +12,7 @@ const localMessages = {
 const RecentNews = props => (
   <div className="recent-news">
     <Grid>
+      <PageTitle value={localMessages.releaseNotes} />
       <Row>
         <Col lg={12}>
           <h1><FormattedMessage {...localMessages.releaseNotes} /></h1>

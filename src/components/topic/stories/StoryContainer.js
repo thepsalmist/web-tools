@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { push } from 'react-router-redux';
 import Dialog from '@material-ui/core/Dialog';
@@ -10,11 +9,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Link from 'react-router/lib/Link';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { selectStory, fetchStory } from '../../../actions/storyActions';
 import { fetchTopicStoryInfo } from '../../../actions/topicActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import StoryWordsContainer from './StoryWordsContainer';
 import StoryInlinksContainer from './StoryInlinksContainer';
 import StoryOutlinksContainer from './StoryOutlinksContainer';
@@ -32,13 +32,14 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE, PERMISSION_STORY_EDIT, PERMISSION_ADMIN } from '../../../lib/auth';
 import StatBar from '../../common/statbar/StatBar';
 import AppButton from '../../common/AppButton';
-import { urlToTopicMapper } from '../../../lib/urlUtil';
-import { filteredLinkTo } from '../../util/location';
+import { trimToMaxLength } from '../../../lib/stringUtil';
+import { filteredLinkTo, urlWithFilters } from '../../util/location';
+import { storyPubDateToTimestamp } from '../../../lib/dateUtil';
+import TopicPageTitle from '../TopicPageTitle';
 
 const MAX_STORY_TITLE_LENGTH = 70; // story titles longer than this will be trimmed and ellipses added
 
 const localMessages = {
-  mainTitle: { id: 'story.details.mainTitle', defaultMessage: 'Story: {title} | {topicName} | Topic Manager | Media Cloud' },
   removeTitle: { id: 'story.details.remove', defaultMessage: 'Remove from Next Snapshot' },
   removeAbout: { id: 'story.details.remove.about', defaultMessage: 'If story is clearly not related to the Topic, or is messing up your analysis, you can remove it from the next Snapshot.  Be careful, because this means it won\'t show up anywhere on the new Snapshot you generate.' },
   unknownLanguage: { id: 'story.details.language.unknown', defaultMessage: 'Unknown' },
@@ -49,6 +50,8 @@ const localMessages = {
   readCachedCopy: { id: 'story.details.readCached', defaultMessage: 'Read Cached Text (admin only)' },
   viewCachedHtml: { id: 'story.details.viewCachedHtml', defaultMessage: 'View Cached HTML (admin only)' },
   storyOptions: { id: 'story.details.storyOptions', defaultMessage: 'Story Options' },
+  mediaSourceInfo: { id: 'admin.story.fullDescription', defaultMessage: 'Published in {media} on {publishDate}' },
+  publishedIn: { id: 'story.details.publishedIn', defaultMessage: 'Published In ' },
 };
 
 class StoryContainer extends React.Component {
@@ -57,9 +60,9 @@ class StoryContainer extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
+    const { refetchAsyncData } = this.props;
     if (nextProps.storiesId !== this.props.storiesId) {
-      const { fetchData } = this.props;
-      fetchData(nextProps.storiesId, nextProps.filters);
+      refetchAsyncData(nextProps);
     }
   }
 
@@ -74,14 +77,11 @@ class StoryContainer extends React.Component {
   render() {
     const { storyInfo, topicStoryInfo, topicId, storiesId, topicName,
       handleStoryCachedTextClick, handleStoryEditClick, filters } = this.props;
-    const { formatMessage, formatNumber } = this.props.intl;
-    let displayTitle = storyInfo.title;
-    if (storyInfo.title && storyInfo.title.length > MAX_STORY_TITLE_LENGTH) {
-      displayTitle = `${storyInfo.title.substr(0, MAX_STORY_TITLE_LENGTH)}...`;
-    }
+    const { formatMessage, formatNumber, formatDate } = this.props.intl;
+    const mediaUrl = `/topics/${topicId}/media/${storyInfo.media.media_id}`;
     return (
       <div>
-        <Helmet><title>{formatMessage(localMessages.mainTitle, { title: displayTitle, topicName })}</title></Helmet>
+        <TopicPageTitle value={trimToMaxLength(storyInfo.title, 20)} />
         <Grid>
           <Row>
             <Col lg={12}>
@@ -113,8 +113,12 @@ class StoryContainer extends React.Component {
                   </Permissioned>
                 </ActionMenu>
                 <StoryIcon height={32} />
-                {displayTitle}
+                {trimToMaxLength(storyInfo.title, MAX_STORY_TITLE_LENGTH)}
               </h1>
+              <h2>
+                <FormattedMessage {...localMessages.publishedIn} />
+                <Link to={filteredLinkTo(mediaUrl, filters)}>{storyInfo.media.name}</Link>
+              </h2>
               <Dialog
                 modal={false}
                 open={this.state.open}
@@ -132,7 +136,7 @@ class StoryContainer extends React.Component {
                   <AppButton
                     label={formatMessage(messages.ok)}
                     primary
-                    onTouchTap={this.handleRemoveDialogClose}
+                    onClick={this.handleRemoveDialogClose}
                   />
                 </DialogActions>
               </Dialog>
@@ -147,6 +151,7 @@ class StoryContainer extends React.Component {
                   { message: messages.outlinks, data: formatNumber(topicStoryInfo.outlink_count) },
                   { message: messages.facebookShares, data: formatNumber(topicStoryInfo.facebook_share_count) },
                   { message: messages.language, data: storyInfo.language || formatMessage(localMessages.unknownLanguage) },
+                  { message: messages.storyDate, data: formatDate(storyPubDateToTimestamp(storyInfo.publish_date)) },
                 ]}
                 columnWidth={2}
               />
@@ -183,7 +188,7 @@ class StoryContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={6}>
-              <StoryDetails mediaLink={urlToTopicMapper(topicId)} story={storyInfo} />
+              <StoryDetails mediaLink={urlWithFilters(mediaUrl, filters).substring(2)} story={storyInfo} />
             </Col>
           </Row>
           <Row>
@@ -201,10 +206,10 @@ StoryContainer.propTypes = {
   // from context
   params: PropTypes.object.isRequired, // params from router
   intl: PropTypes.object.isRequired,
-  // from parent
+  // from compositional chain
+  dispatch: PropTypes.func.isRequired,
   // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
+  refetchAsyncData: PropTypes.func.isRequired,
   handleStoryCachedTextClick: PropTypes.func.isRequired,
   handleStoryEditClick: PropTypes.func.isRequired,
   // from state
@@ -213,12 +218,13 @@ StoryContainer.propTypes = {
   storiesId: PropTypes.number.isRequired,
   topicName: PropTypes.string.isRequired,
   topicId: PropTypes.number.isRequired,
-  fetchStatus: PropTypes.string.isRequired,
+  fetchStatus: PropTypes.array.isRequired,
   filters: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  fetchStatus: state.story.info.fetchStatus,
+  // check both of these to the spinner doesn't stop until the topic-specific stats are ready
+  fetchStatus: [state.story.info.fetchStatus, state.topics.selected.story.info.fetchStatus],
   filters: state.topics.selected.filters,
   storiesId: parseInt(ownProps.params.storiesId, 10),
   topicId: state.topics.selected.id,
@@ -227,15 +233,19 @@ const mapStateToProps = (state, ownProps) => ({
   storyInfo: state.story.info,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (storiesId, filters) => {
-    dispatch(selectStory(storiesId));
-    const q = {
-      ...filters,
-      id: ownProps.params.topicId,
-    };
-    dispatch(fetchStory(storiesId, q));
-    dispatch(fetchTopicStoryInfo(ownProps.params.topicId, storiesId, filters));
+const fetchAsyncData = (dispatch, props) => {
+  dispatch(selectStory(props.storiesId));
+  const q = {
+    ...props.filters,
+    id: props.topicId,
+  };
+  dispatch(fetchStory(props.storiesId, q));
+  dispatch(fetchTopicStoryInfo(props.topicId, props.storiesId, props.filters));
+};
+
+const mapDispatchToProps = dispatch => ({
+  refetchAsyncData: (props) => {
+    fetchAsyncData(dispatch, props);
   },
   handleStoryCachedTextClick: (topicId, storiesId, filters) => {
     dispatch(push(filteredLinkTo(`topics/${topicId}/stories/${storiesId}/cached`, filters)));
@@ -245,16 +255,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => dispatchProps.fetchData(stateProps.storiesId, stateProps.filters),
-  });
-}
-
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withAsyncFetch(
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncData(fetchAsyncData)(
       StoryContainer
     )
   )

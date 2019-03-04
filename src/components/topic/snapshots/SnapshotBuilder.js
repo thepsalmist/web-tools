@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { injectIntl } from 'react-intl';
+import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
   title: { id: 'snapshot.builder.title', defaultMessage: 'Snapshot Builder' },
@@ -9,7 +9,7 @@ const localMessages = {
 
 const SnapshotBuilder = props => (
   <div className="snapshot-builder">
-    <Helmet><title>{props.intl.formatMessage(localMessages.title)}</title></Helmet>
+    <TopicPageTitle value={localMessages.title} />
     {props.children}
   </div>
 );

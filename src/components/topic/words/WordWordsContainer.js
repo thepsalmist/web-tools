@@ -7,7 +7,7 @@ import slugify from 'slugify';
 import withSampleSize from '../../common/composers/SampleSize';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import { fetchTopicTopWords } from '../../../actions/topicActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import EditableWordCloudDataCard from '../../common/EditableWordCloudDataCard';
 import { filteredLinkTo, filtersAsUrlParams, combineQueryParams } from '../../util/location';
@@ -25,34 +25,26 @@ const localMessages = {
 
 const WORD_CLOUD_DOM_ID = 'word-cloud';
 
-class WordWordsContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, filters } = this.props;
-    if (nextProps.filters !== filters || (nextProps.stem !== this.props.stem || nextProps.term !== this.props.term)) {
-      fetchData(nextProps);
-    }
-  }
-
-  render() {
-    const { topicInfo, filters, term, handleWordCloudClick, initSampleSize, onViewSampleSizeClick } = this.props;
-    const { formatMessage } = this.props.intl;
-    const urlDownload = `/api/topics/${topicInfo.topics_id}/words.csv?${filtersAsUrlParams({ ...filters, q: combineQueryParams(filters.q, `${term}*`) })}`;
-    return (
-      <EditableWordCloudDataCard
-        words={this.props.words}
-        explore={filteredLinkTo(`/topics/${topicInfo.topics_id}/words`, filters)}
-        initSampleSize={initSampleSize}
-        downloadUrl={urlDownload}
-        onViewModeClick={handleWordCloudClick}
-        onViewSampleSizeClick={onViewSampleSizeClick}
-        title={formatMessage(messages.topWords)}
-        domId={WORD_CLOUD_DOM_ID}
-        svgDownloadPrefix={`${topicDownloadFilename(topicInfo.name, filters)}-word-${slugify(term)}--words`}
-        includeTopicWord2Vec
-      />
-    );
-  }
-}
+const WordWordsContainer = (props) => {
+  const { topicInfo, filters, words, term, handleWordCloudClick, initSampleSize, onViewSampleSizeClick } = props;
+  const { formatMessage } = props.intl;
+  const urlDownload = `/api/topics/${topicInfo.topics_id}/words.csv?${filtersAsUrlParams({ ...filters, q: combineQueryParams(filters.q, `${term}*`) })}`;
+  return (
+    <EditableWordCloudDataCard
+      width={700}
+      words={words}
+      explore={filteredLinkTo(`/topics/${topicInfo.topics_id}/words`, filters)}
+      initSampleSize={initSampleSize}
+      downloadUrl={urlDownload}
+      onViewModeClick={handleWordCloudClick}
+      onViewSampleSizeClick={onViewSampleSizeClick}
+      title={formatMessage(messages.topWords)}
+      domId={WORD_CLOUD_DOM_ID}
+      svgDownloadPrefix={`${topicDownloadFilename(topicInfo.name, filters)}-word-${slugify(term)}--words`}
+      includeTopicWord2Vec
+    />
+  );
+};
 
 WordWordsContainer.propTypes = {
   // from compositional chain
@@ -67,8 +59,6 @@ WordWordsContainer.propTypes = {
   term: PropTypes.string.isRequired,
   stem: PropTypes.string.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   handleWordCloudClick: PropTypes.func,
   // from state
   fetchStatus: PropTypes.string.isRequired,
@@ -83,15 +73,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  asyncFetch: () => {
-    const filterObj = mergeFilters(ownProps, `${ownProps.stem}*`, { sample_size: VIEW_1K });
-    dispatch(fetchTopicTopWords(ownProps.topicId, filterObj));
-  },
-  fetchData: (props) => {
-    const currentProps = props || ownProps;
-    const filterObj = mergeFilters(currentProps, `${ownProps.stem}*`);
-    dispatch(fetchTopicTopWords(ownProps.topicId, filterObj));
-  },
   handleWordCloudClick: (word) => {
     const params = generateParamStr({ ...ownProps.filters, stem: word.stem, term: word.term });
     const url = `/topics/${ownProps.topicId}/words/${word.term}*?${params}`;
@@ -99,12 +80,17 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
+const fetchAsyncData = (dispatch, props) => {
+  const filterObj = mergeFilters(props, `${props.stem}*`, { sample_size: VIEW_1K });
+  dispatch(fetchTopicTopWords(props.topicId, filterObj));
+};
+
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordCloudTopicWord2VecLayoutHelp])(
       withSampleSize(
-        withAsyncFetch(
+        withFilteredAsyncData(fetchAsyncData, ['stem', 'term'])(
           withCsvDownloadNotifyContainer(
             WordWordsContainer
           )

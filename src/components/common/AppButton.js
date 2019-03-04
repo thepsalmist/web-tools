@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import React from 'react';
 import Button from '@material-ui/core/Button';
+import { intlMessageShape } from '../../lib/reactUtil';
 
 /**
  * Simple wrapper so we can style all the button the same.  Use this instead of
@@ -73,6 +74,12 @@ AppButton.propTypes = {
   className: PropTypes.string,
   children: PropTypes.node,
   icon: PropTypes.node,
+  label: PropTypes.oneOfType([
+    // pass in a string to use as the label
+    PropTypes.string,
+    // or pass in a message to be formatted
+    PropTypes.shape(intlMessageShape),
+  ]).isRequired,
   // from composition chain
   intl: PropTypes.object.isRequired,
 };

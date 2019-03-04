@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
@@ -10,8 +9,8 @@ import WordWordsContainer from './WordWordsContainer';
 import WordStoriesContainer from './WordStoriesContainer';
 import WordSplitStoryCountContainer from './WordSplitStoryCountContainer';
 import WordInContextContainer from './WordInContextContainer';
-import messages from '../../../resources/messages';
 import WordSimilarWordsContainer from './WordSimilarWordsContainer';
+import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
   mainTitle: { id: 'word.details.mainTitle', defaultMessage: 'Word: "{title}"' },
@@ -36,7 +35,7 @@ class WordContainer extends React.Component {
     const { formatMessage } = this.props.intl;
     return (
       <div>
-        <Helmet><title>{`${formatMessage(localMessages.mainTitle, { title: term })} | ${topicName} | ${formatMessage(messages.topicsToolName)} | ${formatMessage(messages.suiteName)}`}</title></Helmet>
+        <TopicPageTitle value={formatMessage(localMessages.mainTitle, { title: term })} />
         <Grid>
           <Row>
             <Col lg={12}>

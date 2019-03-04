@@ -8,7 +8,7 @@ import { Row, Col } from 'react-flexbox-grid/lib';
 import ActionMenu from '../../../common/ActionMenu';
 import { fetchWordSampleSentences, resetSelectedWord } from '../../../../actions/explorerActions';
 import withHelp from '../../../common/hocs/HelpfulContainer';
-import withAsyncFetch from '../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import DataCard from '../../../common/DataCard';
 import WordTree from '../../../vis/WordTree';
 import messages from '../../../../resources/messages';
@@ -30,14 +30,6 @@ class WordInContextDrillDownContainer extends React.Component {
   constructor(props) {
     super(props);
     this.rootRef = React.createRef();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { lastSearchTime, fetchData, selectedWord } = this.props;
-    if ((nextProps.lastSearchTime !== lastSearchTime
-      || nextProps.selectedWord !== selectedWord) && nextProps.selectedWord) {
-      fetchData(nextProps.selectedWord);
-    }
   }
 
   shouldComponentUpdate(nextProps) {
@@ -76,13 +68,13 @@ class WordInContextDrillDownContainer extends React.Component {
             <ActionMenu>
               <MenuItem
                 className="action-icon-menu-item"
-                onTouchTap={handleClose}
+                onClick={handleClose}
               >
                 <FormattedMessage {...localMessages.close} />
               </MenuItem>
               <MenuItem
                 className="action-icon-menu-item"
-                onTouchTap={() => {
+                onClick={() => {
                   const wordToAdd = selectedWord.word;
                   handleClose();
                   handleAddToAllQueries(wordToAdd);
@@ -92,7 +84,7 @@ class WordInContextDrillDownContainer extends React.Component {
               </MenuItem>
               <MenuItem
                 className="action-icon-menu-item"
-                onTouchTap={this.handleDownloadSvg}
+                onClick={this.handleDownloadSvg}
               >
                 <FormattedMessage {...messages.downloadSVG} />
               </MenuItem>
@@ -129,11 +121,8 @@ WordInContextDrillDownContainer.propTypes = {
   selectedWord: PropTypes.object,
   fragments: PropTypes.array,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   handleAddToAllQueries: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
@@ -148,9 +137,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (params) => {
-    dispatch(fetchWordSampleSentences(params));
-  },
   handleAddToAllQueries: (word) => {
     ownProps.onQueryModificationRequested(word);
     dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.addingToQueries, { word }) }));
@@ -160,19 +146,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(stateProps.selectedWord);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, { selectedWord }) => dispatch(fetchWordSampleSentences(selectedWord));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpText, messages.wordTreeHelpText])(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData, ['selectedWord'])(
         WordInContextDrillDownContainer
       )
     )

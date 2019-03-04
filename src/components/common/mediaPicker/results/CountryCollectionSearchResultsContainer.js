@@ -21,12 +21,12 @@ class CountryCollectionSearchResultsContainer extends React.Component {
   }
 
   render() {
-    const { selectedMediaQueryType, selectedMediaQueryKeyword, collectionResults, handleToggleAndSelectMedia, fetchCountryStatus } = this.props;
+    const { selectedMediaQueryType, selectedMediaQueryKeyword, collectionResults, onToggleSelected, fetchCountryStatus } = this.props;
     return (
       <div>
         <CollectionSearchResultsContainer
           fetchStatus={fetchCountryStatus}
-          handleToggleAndSelectMedia={handleToggleAndSelectMedia}
+          onToggleSelected={onToggleSelected}
           selectedMediaQueryType={selectedMediaQueryType}
           selectedMediaQueryKeyword={selectedMediaQueryKeyword}
           collectionResults={collectionResults}
@@ -43,7 +43,7 @@ CountryCollectionSearchResultsContainer.propTypes = {
   // form compositional chain
   intl: PropTypes.object.isRequired,
   // from parent
-  handleToggleAndSelectMedia: PropTypes.func.isRequired,
+  onToggleSelected: PropTypes.func.isRequired,
   whichTagSet: PropTypes.number,
   // from dispatch
   updateMediaQuerySelection: PropTypes.func.isRequired,

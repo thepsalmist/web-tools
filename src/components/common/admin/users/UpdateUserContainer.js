@@ -3,12 +3,13 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../../hocs/AsyncContainer';
+import withAsyncData from '../../hocs/AsyncDataContainer';
 import { selectSystemUser, updateSystemUser, fetchSystemUser } from '../../../../actions/systemActions';
 import { updateFeedback } from '../../../../actions/appActions';
 import UserForm from './UserForm';
 import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import Permissioned from '../../Permissioned';
+import PageTitle from '../../PageTitle';
 
 const localMessages = {
   userTitle: { id: 'user.details.title', defaultMessage: '{name}: ' },
@@ -36,6 +37,7 @@ const UpdateUserContainer = (props) => {
   }
   return (
     <Grid className="details user-details">
+      <PageTitle value={localMessages.updateTitle} />
       <h1>
         <FormattedMessage {...localMessages.updateTitle} />
       </h1>
@@ -55,7 +57,6 @@ UpdateUserContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from dispatch
   handleSave: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   // from context
   params: PropTypes.object.isRequired, // params from router
   // from state
@@ -90,16 +91,17 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         }
       });
   },
-  asyncFetch: () => {
-    dispatch(selectSystemUser(ownProps.params.id));
-    dispatch(fetchSystemUser(ownProps.params.id));
-  },
 });
+
+const fetchAsyncData = (dispatch, { userId }) => {
+  dispatch(selectSystemUser(userId));
+  dispatch(fetchSystemUser(userId));
+};
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+    withAsyncData(fetchAsyncData)(
       UpdateUserContainer
     )
   )

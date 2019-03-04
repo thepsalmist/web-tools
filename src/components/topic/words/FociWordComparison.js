@@ -9,7 +9,7 @@ import { filtersAsUrlParams } from '../../util/location';
 
 const localMessages = {
   title: { id: 'topic.attention.series.overall', defaultMessage: 'Compare Top Words' },
-  intro: { id: 'topic.attention.bubbleChart.title', defaultMessage: 'Download a comparison between top words in each subtopic.' },
+  intro: { id: 'topic.attention.bubbleChart.title', defaultMessage: 'Download a comparison between top words in each subtopic (within this timespan).' },
 };
 
 class FociWordComparison extends React.Component {

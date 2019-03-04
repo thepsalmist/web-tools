@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import withDescription from '../../../common/hocs/DescribedDataCard';
 import OrderedWordCloud from '../../../vis/OrderedWordCloud';
 import DataCard from '../../../common/DataCard';
@@ -16,32 +16,23 @@ const localMessages = {
 };
 const WORD_CLOUD_DOM_ID = 'topic-summary-word-cloud';
 
-class TopicWordsPreview extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, query } = this.props;
-    if (nextProps.query !== query) {
-      fetchData(nextProps.query);
-    }
-  }
-
-  render() {
-    const { words } = this.props;
-    const { formatMessage } = this.props.intl;
-    return (
-      <DataCard>
-        <h2>
-          <FormattedMessage {...messages.topWords} />
-        </h2>
-        <OrderedWordCloud
-          words={words}
-          title={formatMessage(messages.topWords)}
-          domId={WORD_CLOUD_DOM_ID}
-          width={700}
-        />
-      </DataCard>
-    );
-  }
-}
+const TopicWordsPreview = (props) => {
+  const { words } = props;
+  const { formatMessage } = props.intl;
+  return (
+    <DataCard>
+      <h2>
+        <FormattedMessage {...messages.topWords} />
+      </h2>
+      <OrderedWordCloud
+        words={words}
+        title={formatMessage(messages.topWords)}
+        domId={WORD_CLOUD_DOM_ID}
+        width={700}
+      />
+    </DataCard>
+  );
+};
 
 TopicWordsPreview.propTypes = {
   // from compositional chain
@@ -53,12 +44,9 @@ TopicWordsPreview.propTypes = {
   height: PropTypes.number,
   maxFontSize: PropTypes.number,
   minFontSize: PropTypes.number,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
   // from state
-  words: PropTypes.array,
   fetchStatus: PropTypes.string.isRequired,
+  words: PropTypes.array,
 };
 
 const mapStateToProps = state => ({
@@ -66,37 +54,27 @@ const mapStateToProps = state => ({
   words: state.topics.create.preview.matchingWords.list,
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchData: (query) => {
-    const infoForQuery = {
-      q: query.solr_seed_query,
-      start_date: query.start_date,
-      end_date: query.end_date,
-    };
-    infoForQuery['collections[]'] = [];
-    infoForQuery['sources[]'] = [];
+const fetchAsyncData = (dispatch, { query }) => {
+  const infoForQuery = {
+    q: query.solr_seed_query,
+    start_date: query.start_date,
+    end_date: query.end_date,
+  };
+  infoForQuery['collections[]'] = [];
+  infoForQuery['sources[]'] = [];
 
-    if ('sourcesAndCollections' in query) { // in FieldArrays on the form
-      infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
-      infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
-    }
-    dispatch(fetchWordsByQuery(infoForQuery));
-  },
-});
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.query);
-    },
-  });
-}
+  if ('sourcesAndCollections' in query) { // in FieldArrays on the form
+    infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
+    infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
+  }
+  dispatch(fetchWordsByQuery(infoForQuery));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps)(
     withDescription(localMessages.descriptionIntro, [messages.wordcloudHelpText])(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData, ['query'])(
         TopicWordsPreview
       )
     )

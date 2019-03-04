@@ -7,7 +7,6 @@ import withSummary from '../../common/hocs/SummarizedVizualization';
 import { postToDownloadUrl, downloadExplorerSvg } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import WordSpace from '../../vis/WordSpace';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withQueryResults from './QueryResultsSelector';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 
@@ -29,28 +28,31 @@ class QueryWordSpaceResultsContainer extends React.Component {
   render() {
     const { results, queries, selectedTabIndex, tabSelector } = this.props;
     const domId = `${WORD_SPACE_DOM_ID}-${selectedTabIndex}`;
-    return (
-      <div>
-        {tabSelector}
-        <WordSpace
-          words={results[selectedTabIndex].list.slice(0, 50)}
-          domId={domId}
-          xProperty="google_w2v_x"
-          yProperty="google_w2v_y"
-          noDataMsg={localMessages.noGoogleW2VData}
-          length={660}
-        />
-        <div className="actions">
-          <ActionMenu actionTextMsg={messages.downloadOptions}>
-            <SVGAndCSVMenu
-              downloadCsv={() => this.handleDownloadCsv(queries[selectedTabIndex])}
-              downloadSvg={() => downloadExplorerSvg(queries[selectedTabIndex].label, 'sampled-word-space', domId)}
-              label={queries[selectedTabIndex].label}
-            />
-          </ActionMenu>
+    if (results.length > 0) {
+      return (
+        <div>
+          {tabSelector}
+          <WordSpace
+            words={results[selectedTabIndex].results.slice(0, 50)}
+            domId={domId}
+            xProperty="google_w2v_x"
+            yProperty="google_w2v_y"
+            noDataMsg={localMessages.noGoogleW2VData}
+            length={660}
+          />
+          <div className="actions">
+            <ActionMenu actionTextMsg={messages.downloadOptions}>
+              <SVGAndCSVMenu
+                downloadCsv={() => this.handleDownloadCsv(queries[selectedTabIndex])}
+                downloadSvg={() => downloadExplorerSvg(queries[selectedTabIndex].label, 'sampled-word-space', domId)}
+                label={queries[selectedTabIndex].label}
+              />
+            </ActionMenu>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+    return <div>Error</div>;
   }
 }
 
@@ -66,7 +68,6 @@ QueryWordSpaceResultsContainer.propTypes = {
   tabSelector: PropTypes.object.isRequired,
   // from dispatch
   handleWordCloudClick: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   results: PropTypes.array.isRequired,
@@ -81,22 +82,15 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleWordCloudClick: (word) => {
     ownProps.onQueryModificationRequested(word.term);
   },
-  asyncFetch: () => {
-    // pass through because the WordsResults container fetches all the data for us!
-  },
-  fetchData: () => {
-    // pass through because the WordsResults container fetches all the data for us!
-  },
 });
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.descriptionIntro, messages.wordSpaceLayoutHelp)(
-      withAsyncFetch(
-        withQueryResults(
-          QueryWordSpaceResultsContainer
-        )
+      // pass through with no async fetch because the WordsResults container fetches all the data for us!
+      withQueryResults()(
+        QueryWordSpaceResultsContainer
       )
     )
   )

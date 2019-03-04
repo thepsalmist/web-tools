@@ -2,14 +2,14 @@ import codecs
 import os
 import logging
 
-COMMENT_CHAR = u'#'
+COMMENT_CHAR = '#'
 
 logger = logging.getLogger(__name__)
 
 
 def _variables_from_file(filepath):
     vars = {}
-    logger.info(u"Loading configuration from {}".format(filepath))
+    logger.info("Loading configuration from {}".format(filepath))
     try:
         f = codecs.open(filepath, 'r', 'utf-8')
         for line in f:
@@ -17,15 +17,15 @@ def _variables_from_file(filepath):
                 continue
             if line.strip()[0] == COMMENT_CHAR:
                 continue
-            parts = line.split(u"=")
+            parts = line.split("=")
             key = parts[0].strip().upper()
             value = parts[1].strip()
-            logger.debug(u"  {}={}".format(key, value))
+            logger.debug("  {}={}".format(key, value))
             if key in vars:
-                raise ConfigException(u"Config variable '{}' is declared twice in {}".format(key, filepath))
+                raise ConfigException("Config variable '{}' is declared twice in {}".format(key, filepath))
             vars[key] = value
     except IOError:
-        logger.info(u"No local app.config file found; relying on environment variables for configuration")
+        logger.info("No local app.config file found; relying on environment variables for configuration")
 
     return vars
 
@@ -51,7 +51,7 @@ class EnvOrFileBasedConfig(object):
             try:
                 return self.variables[variable_name]
             except KeyError:
-                error_details = u"Config variable '{}' not declared in env-var nor in {}".format(variable_name, self.file_path)
+                error_details = "Config variable '{}' not declared in env-var nor in {}".format(variable_name, self.file_path)
                 logger.warn(error_details)
                 raise ConfigException(error_details)
 

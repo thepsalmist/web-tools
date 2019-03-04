@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { fetchMediaStories, sortMediaStories, filterByFocus } from '../../../actions/topicActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
@@ -24,18 +24,6 @@ const localMessages = {
 };
 
 class MediaStoriesContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { fetchData, filters, sort } = this.props;
-    if ((nextProps.filters !== filters) || (nextProps.sort !== sort)) {
-      fetchData(nextProps);
-    }
-  }
-
-  onChangeSort = (newSort) => {
-    const { sortData } = this.props;
-    sortData(newSort);
-  }
-
   downloadCsv = () => {
     const { mediaId, topicId, filters, notifyOfCsvDownload } = this.props;
     const filtersAsParams = filtersAsUrlParams(filters);
@@ -45,7 +33,7 @@ class MediaStoriesContainer extends React.Component {
   }
 
   render() {
-    const { inlinkedStories, showTweetCounts, topicId, helpButton, handleFocusSelected } = this.props;
+    const { inlinkedStories, showTweetCounts, topicId, helpButton, handleFocusSelected, handleChangeSort } = this.props;
     const { formatMessage } = this.props.intl;
     return (
       <DataCard>
@@ -60,7 +48,7 @@ class MediaStoriesContainer extends React.Component {
           stories={inlinkedStories}
           showTweetCounts={showTweetCounts}
           topicId={topicId}
-          onChangeSort={this.onChangeSort}
+          onChangeSort={handleChangeSort}
           onChangeFocusSelection={handleFocusSelected}
         />
       </DataCard>
@@ -73,20 +61,17 @@ MediaStoriesContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
   notifyOfCsvDownload: PropTypes.func.isRequired,
+  filters: PropTypes.object.isRequired,
   // from parent
   mediaId: PropTypes.number.isRequired,
   topicId: PropTypes.number.isRequired,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
   // from fetchData
-  fetchData: PropTypes.func.isRequired,
-  sortData: PropTypes.func.isRequired,
+  handleChangeSort: PropTypes.func.isRequired,
   handleFocusSelected: PropTypes.func.isRequired,
   // from state
-  sort: PropTypes.string.isRequired,
-  filters: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string.isRequired,
   inlinkedStories: PropTypes.array.isRequired,
+  sort: PropTypes.string.isRequired,
   showTweetCounts: PropTypes.bool.isRequired,
 };
 
@@ -94,43 +79,35 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.mediaSource.stories.fetchStatus,
   inlinkedStories: state.topics.selected.mediaSource.stories.stories,
   sort: state.topics.selected.mediaSource.stories.sort,
-  filters: state.topics.selected.filters,
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (stateProps) => {
-    const params = {
-      ...stateProps.filters,
-      sort: stateProps.sort,
-      limit: STORIES_TO_SHOW,
-    };
-    dispatch(fetchMediaStories(ownProps.topicId, ownProps.mediaId, params));
-  },
   handleFocusSelected: (focusId) => {
     const newLocation = filteredLocation(ownProps.location, { focusId, timespanId: null });
     dispatch(push(newLocation));
     dispatch(filterByFocus(focusId));
   },
-  sortData: (sort) => {
+  handleChangeSort: (sort) => {
     dispatch(sortMediaStories(sort));
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(stateProps);
-    },
-  });
-}
+const fetchAsyncData = (dispatch, props) => {
+  const params = {
+    ...props.filters,
+    sort: props.sort,
+    limit: STORIES_TO_SHOW,
+  };
+  dispatch(fetchMediaStories(props.topicId, props.mediaId, params));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpIntro, messages.storiesTableHelpText])(
-      withAsyncFetch(
-        withCsvDownloadNotifyContainer(
+      withCsvDownloadNotifyContainer(
+        withFilteredAsyncData(fetchAsyncData, ['sort'])(
           MediaStoriesContainer
         )
       )

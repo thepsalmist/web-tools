@@ -14,6 +14,7 @@ import { emptyString, invalidEmail, passwordTooShort, stringsDoNotMatch } from '
 import withIntlForm from '../common/hocs/IntlForm';
 import { addNotice } from '../../actions/appActions';
 import { LEVEL_ERROR } from '../common/Notice';
+import PageTitle from '../common/PageTitle';
 
 const localMessages = {
   intro: { id: 'user.signup.intro', defaultMessage: 'Create an account to use all our tools for free.' },
@@ -23,7 +24,6 @@ const localMessages = {
   missingNotes: { id: 'user.missingNotes', defaultMessage: 'You have to tell us a little about why you want to use Media Cloud.' },
   feedback: { id: 'user.signUp.feedback', defaultMessage: 'Successfully signed up.' },
   notesHint: { id: 'user.notes.hint', defaultMessage: 'Tell us a little about what you want to use Media Cloud for' },
-  subscribeToNewsletter: { id: 'user.signUp.subscribeToNewsletter', defaultMessage: 'Subscribe to Newsletter?' },
   userAlreadyExists: { id: 'user.signUp.error.alreadyExists', defaultMessage: 'Sorry, but a user with that email already exists! Did you <a href="/#/request-password-reset">need to reset your password</a>?' },
   signupSuccess: { id: 'user.signUp.success',
     defaultMessage: '<h1>Clink the link we just emailed you</h1>'
@@ -41,10 +41,11 @@ class SignupContainer extends React.Component {
   }
 
   render() {
-    const { handleSubmit, handleSignupSubmission, pristine, submitting, renderTextField, renderCheckbox } = this.props;
+    const { handleSubmit, handleSignupSubmission, pristine, submitting, renderTextField } = this.props;
     const { formatMessage } = this.props.intl;
     return (
       <Grid>
+        <PageTitle value={messages.userSignup} />
         <form onSubmit={handleSubmit(handleSignupSubmission.bind(this))} className="app-form signup-form">
           <Row>
             <Col lg={12}>
@@ -99,22 +100,13 @@ class SignupContainer extends React.Component {
             <Col lg={6}>
               <Field
                 name="notes"
-                multiLine
+                multiline
                 fullWidth
                 rows={2}
                 rowsMax={4}
                 component={renderTextField}
-                hintText={formatMessage(localMessages.notesHint)}
+                placeholder={formatMessage(localMessages.notesHint)}
                 label={messages.userNotes}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={6}>
-              <Field
-                name="subscribeToNewsletter"
-                component={renderCheckbox}
-                label={localMessages.subscribeToNewsletter}
               />
             </Col>
           </Row>
@@ -144,7 +136,6 @@ SignupContainer.propTypes = {
   redirect: PropTypes.string,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,
-  renderCheckbox: PropTypes.func.isRequired,
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   // from state

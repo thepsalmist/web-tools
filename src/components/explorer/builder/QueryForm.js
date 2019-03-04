@@ -63,7 +63,7 @@ class QueryForm extends React.Component {
 
   evalAllQueriesForValidMedia = () => {
     const { queries, mediaUpdates } = this.props;
-    const anyQueriesNoMedia = this.getAllActiveQueries(queries).filter(q => (q.index !== mediaUpdates.index) && q.media && q.media.length === 0).length; // if any query is missing media
+    const anyQueriesNoMedia = this.getAllActiveQueries(queries).filter(q => (q.uid !== mediaUpdates.uid) && q.media && q.media.length === 0).length; // if any query is missing media
     const thisCurrentQueryFormNoMedia = mediaUpdates && (mediaUpdates.media === undefined || mediaUpdates.media.length === 0) && mediaUpdates.sources.length === 0 && mediaUpdates.collections.length === 0;
     return anyQueriesNoMedia || thisCurrentQueryFormNoMedia;
   }
@@ -278,7 +278,7 @@ QueryForm.propTypes = {
 
 
 const mapStateToProps = state => ({
-  mediaUpdates: formSelector(state, 'index', 'media', 'sources', 'collections'),
+  mediaUpdates: formSelector(state, 'uid', 'media', 'sources', 'collections'),
   queries: state.explorer.queries.queries ? state.explorer.queries.queries : null,
 });
 

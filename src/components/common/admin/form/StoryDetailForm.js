@@ -6,8 +6,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../hocs/IntlForm';
 import AppButton from '../../AppButton';
-import { emptyString, invalidDate } from '../../../../lib/formValidators';
-import { isValidSolrDate } from '../../../../lib/dateUtil';
+import { emptyString } from '../../../../lib/formValidators';
+import { isValidDBDate } from '../../../../lib/dateUtil';
 import messages from '../../../../resources/messages';
 
 const localMessages = {
@@ -15,7 +15,7 @@ const localMessages = {
   nameError: { id: 'story.nameError', defaultMessage: 'Your story needs a title' },
   urlError: { id: 'story.urlError', defaultMessage: 'Your story needs a url' },
   guidLabel: { id: 'story.update.guid.label', defaultMessage: 'GUID' },
-  dateError: { id: 'stoyr.update.date.error', defaultMessage: 'Please provide a date in YYYY-MM-DD format.' },
+  dateError: { id: 'stoyr.update.date.error', defaultMessage: 'Please provide a date in YYYY-MM-DD HH:mm:ss format.' },
   titleError: { id: 'stoyr.update.title.error', defaultMessage: 'Your story needs a title.' },
   guidError: { id: 'stoyr.update.guid.error', defaultMessage: 'Your story needs a guid.' },
 };
@@ -143,10 +143,7 @@ function validate(values) {
   if (emptyString(values.url)) {
     errors.url = localMessages.urlError;
   }
-  if (invalidDate(values.custom_date) || !isValidSolrDate(values.custom_date)) {
-    errors.custom_date = localMessages.dateError;
-  }
-  if (invalidDate(values.publish_date) || !isValidSolrDate(values.publish_date)) {
+  if (!isValidDBDate(values.publish_date)) {
     errors.publish_date = localMessages.dateError;
   }
   return errors;

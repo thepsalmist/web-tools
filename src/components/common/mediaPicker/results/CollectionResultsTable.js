@@ -15,7 +15,7 @@ const localMessages = {
 const INCLUDE_SOURCE_COUNTS = false;
 
 const CollectionResultsTable = (props) => {
-  const { title, collections, handleToggleAndSelectMedia } = props;
+  const { title, collections, onToggleSelected } = props;
   let content = null;
   let mediaCountHeader;
   if (INCLUDE_SOURCE_COUNTS) {
@@ -34,7 +34,7 @@ const CollectionResultsTable = (props) => {
           </tr>
           {collections.map((c, idx) => {
             const ActionButton = c.selected ? DeleteButton : AddButton;
-            const actionContent = <ActionButton onClick={() => handleToggleAndSelectMedia(c)} />;
+            const actionContent = <ActionButton onClick={() => onToggleSelected(c)} />;
             let mediaCountValue;
             if (INCLUDE_SOURCE_COUNTS) {
               mediaCountValue = <td className="numeric">{(c.media_count === 100) ? `${c.media_count}+` : c.media_count}</td>;
@@ -69,7 +69,7 @@ CollectionResultsTable.propTypes = {
   // from parent
   title: PropTypes.string,
   collections: PropTypes.array,
-  handleToggleAndSelectMedia: PropTypes.func,
+  onToggleSelected: PropTypes.func,
 };
 
 export default

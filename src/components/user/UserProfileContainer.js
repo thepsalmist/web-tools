@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
+import { Link } from 'react-router';
 import messages from '../../resources/messages';
 import AppButton from '../common/AppButton';
 import { resetApiKey, requestData, deleteAccount } from '../../actions/userActions';
@@ -21,6 +22,12 @@ const localMessages = {
   apiRequests: { id: 'user.profile.apiRequests', defaultMessage: '<b>API Weekly Requests:</b> {requested} / {allowed}' },
   apiRequestedItems: { id: 'user.profile.apiRequestedItems', defaultMessage: '<b>API Weekly Requested Items:</b> {requested} / {allowed}' },
   apiKey: { id: 'user.profile.apiKey', defaultMessage: '<b>API Key (don\'t share this!):</b> {key}' },
+  maxTopicSize: { id: 'user.profile.maxTopicSize', defaultMessage: '<b>Max Topic Size:</b> {storyCount}' },
+  notes: { id: 'user.profile.notes', defaultMessage: '<b>Notes:</b> {notes}' },
+
+  editProfile: { id: 'user.profile.editProfile', defaultMessage: 'Edit Profile' },
+  editProfileAbout: { id: 'user.profile.editProfileAbout', defaultMessage: 'Change your name or the notes about why you use Media Cloud' },
+
   resetKey: { id: 'user.profile.apiKey.reset', defaultMessage: 'Reset API Key' },
   resetKeyAbout: { id: 'user.profile.apiKey.resetKeyAbout', defaultMessage: 'If you accidently share your API key with other people, or publicly, you should reset it.' },
   resetWorked: { id: 'user.profile.apiKey.resetWorked', defaultMessage: 'We reset your API key successfully' },
@@ -79,6 +86,8 @@ class UserProfileContainer extends React.Component {
                   />
                 </li>
                 <li><FormattedHTMLMessage {...localMessages.apiKey} values={{ key: profile.api_key }} /></li>
+                <li><FormattedHTMLMessage {...localMessages.maxTopicSize} values={{ storyCount: profile.max_topic_stories }} /></li>
+                <li><FormattedHTMLMessage {...localMessages.notes} values={{ notes: profile.notes }} /></li>
               </ul>
             </Col>
           </Row>
@@ -86,6 +95,16 @@ class UserProfileContainer extends React.Component {
           <Row>
             <Col lg={12}>
               <h2><FormattedMessage {...localMessages.otherActions} /></h2>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={12}>
+              <Link to="/user/profile/edit">
+                <AppButton
+                  label={formatMessage(localMessages.editProfile)}
+                />
+              </Link>
+              <FormattedMessage {...localMessages.editProfileAbout} />
             </Col>
           </Row>
           <Row>
@@ -178,7 +197,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       dispatch(deleteAccount(confirmationEmail))
         .then((results) => {
           if (results.error) {
-            dispatch(addNotice({ message: results.error, level: LEVEL_ERROR }));
+            dispatch(updateFeedback({ open: true, message: results.error }));
           } else {
             logout();
             window.location = '/';

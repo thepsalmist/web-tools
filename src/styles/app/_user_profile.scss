@@ -1,11 +1,18 @@
 .user-profile {
+  padding-bottom: 50px;
+  font-size: 16px;
+
+  li {
+    margin-bottom: 5px;
+  }
+
   .app-button {
     margin-right: 10px;
     margin-top: 5px;
     margin-bottom: 5px;
   }
-}
 
-h2 {
-  padding: 10px;
+  h2 {
+    padding: 10px;
+  }
 }

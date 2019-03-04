@@ -31,3 +31,6 @@ export const requestData = createAsyncAction(REQUEST_DATA, api.requestData);
 
 export const DELETE_ACCOUNT = 'DELETE_ACCOUNT';
 export const deleteAccount = createAsyncAction(DELETE_ACCOUNT, api.deleteAccount, email => email);
+
+export const UPDATE_PROFILE = 'UPDATE_PROFILE';
+export const updateProfile = createAsyncAction(UPDATE_PROFILE, api.updateProfile, profile => profile);

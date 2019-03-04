@@ -3,7 +3,7 @@ from flask import jsonify, request, redirect, render_template
 import flask_login
 from mediacloud.error import MCException
 
-from server import app, auth, mc
+from server import app, auth, mc, user_db
 from server.auth import user_mediacloud_client, user_name
 from server.util.mail import send_html_email
 from server.util.request import api_error_handler, form_fields_required, arguments_required, json_error_response
@@ -195,7 +195,7 @@ def api_user_delete():
     user = flask_login.current_user
     if email == user.name:  # double-check confirmation they typed in
         # delete them from the front-end system database
-
+        user_db.delete_user(user.name)
         # delete them from the back-end system
         results = mc.userDelete(user.profile['auth_users_id'])  # need to do this with the tool's admin account
         try:
@@ -208,3 +208,19 @@ def api_user_delete():
             return json_error_response("We failed to delete your account, sorry!", 400)
     else:
         return json_error_response("Your email confirmation didn't match.", 400)
+
+
+@app.route('/api/user/update', methods=['POST'])
+@form_fields_required('full_name', 'notes')
+@api_error_handler
+@flask_login.login_required
+def api_user_update():
+    valid_params = {
+        'full_name': request.form['full_name'],
+        'notes': request.form['notes'],
+    }
+    user = flask_login.current_user
+    results = mc.userUpdate(user.profile['auth_users_id'], **valid_params)  # need to do this with the tool admin client
+    user_mc = user_mediacloud_client()
+    results['profile'] = user_mc.userProfile()
+    return jsonify(results)

@@ -9,7 +9,7 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import SourceOrCollectionChip from '../../common/SourceOrCollectionChip';
 import messages from '../../../resources/messages';
-import { createTopic, goToTopicStep, updateTopic } from '../../../actions/topicActions';
+import { createTopic, goToTopicStep, updateAndCreateNewTopicVersion } from '../../../actions/topicActions';
 import { updateFeedback, addNotice } from '../../../actions/appActions';
 import AppButton from '../../common/AppButton';
 import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/auth';
@@ -32,18 +32,38 @@ const localMessages = {
 };
 
 const TopicConfirmContainer = (props) => {
-  const { formValues, finishStep, handlePreviousStep, storyCount, handleSubmit, pristine, submitting, currentStepText, mode } = props;
+  const { formValues, finishStep, handlePreviousStep, storyCount, handleSubmit, pristine, submitting, currentStepText, mode, topicInfo } = props;
   const { formatMessage } = props.intl;
   let sourcesAndCollections = [];
   sourcesAndCollections = formValues.sourcesAndCollections.filter(s => s.media_id).map(s => s.media_id);
   sourcesAndCollections.concat(formValues.sourcesAndCollections.filter(s => s.tags_id).map(s => s.tags_id));
-  const topicDetailsContent = (
+  let previousVersion = null;
+  if (mode === TOPIC_FORM_MODE_EDIT) {
+    previousVersion = (
+      <div>
+        <p>
+          <b><FormattedMessage {...messages.topicPublicProp} /></b>: { topicInfo.is_public ? formatMessage(messages.yes) : formatMessage(messages.no) }
+          <br />
+          <b><FormattedMessage {...messages.topicStartDateProp} /></b>: {topicInfo.start_date}
+          <br />
+          <b><FormattedMessage {...messages.topicEndDateProp} /></b>: {topicInfo.end_date}
+          <br />
+          <b><FormattedMessage {...localMessages.storyCount} /></b>: {topicInfo.storyCount}
+        </p>
+        <p>
+          <b><FormattedHTMLMessage {...messages.topicQueryProp} /></b>: <code>{topicInfo.solr_seed_query}</code>
+        </p>
+        <p>
+          <b><FormattedHTMLMessage {...messages.topicSourceCollectionsProp} /></b>:
+        </p>
+        {formValues.sourcesAndCollections.map(object => (
+          <SourceOrCollectionChip key={object.tags_id || object.media_id} object={object} />
+        ))}
+      </div>
+    );
+  }
+  const topicNewVersionContent = (
     <div>
-      <p>
-        <b><FormattedMessage {...localMessages.name} /></b>: {formValues.name}
-        <br />
-        <b><FormattedMessage {...localMessages.description} /></b>: {formValues.description}
-      </p>
       <p>
         <b><FormattedMessage {...messages.topicPublicProp} /></b>: { formValues.is_public ? formatMessage(messages.yes) : formatMessage(messages.no) }
         <br />
@@ -68,11 +88,12 @@ const TopicConfirmContainer = (props) => {
     return (
       <Grid className="topic-container">
         <Row>
-          <Col lg={10}>
+          {previousVersion}
+          <Col lg={6}>
             <h2>{currentStepText.savingTitle}</h2>
             <p>{currentStepText.savingDesc}</p>
             <LoadingSpinner />
-            {topicDetailsContent}
+            {topicNewVersionContent}
           </Col>
         </Row>
       </Grid>
@@ -83,11 +104,20 @@ const TopicConfirmContainer = (props) => {
     <form className="create-topic" name="topicForm" onSubmit={handleSubmit(finishStep.bind(this, mode))}>
       <Grid className="topic-container">
         <Row>
-          <Col lg={10}>
+          <Col lg={12}>
             <h2>{currentStepText.title}</h2>
             <WarningNotice><FormattedMessage {...localMessages.state} /></WarningNotice>
-            {topicDetailsContent}
-            <br />
+          </Col>
+        </Row>
+        <Row>
+          {previousVersion}
+          <Col lg={6}>
+            <h2>{currentStepText.newVersion}</h2>
+            {topicNewVersionContent}
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={6}>
             <AppButton flat label={formatMessage(messages.previous)} onClick={() => handlePreviousStep(mode)} />
             &nbsp; &nbsp;
             <AppButton
@@ -108,6 +138,7 @@ TopicConfirmContainer.propTypes = {
   initialValues: PropTypes.object,
   currentStepText: PropTypes.object,
   mode: PropTypes.string.isRequired,
+  topicInfo: PropTypes.object,
   // form context
   intl: PropTypes.object.isRequired,
   handleCreateTopic: PropTypes.func.isRequired,

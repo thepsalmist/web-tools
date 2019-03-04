@@ -15,7 +15,7 @@ import AppButton from '../../common/AppButton';
 import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/auth';
 import { LEVEL_ERROR, LEVEL_WARNING, WarningNotice } from '../../common/Notice';
 import { MAX_RECOMMENDED_STORIES, MIN_RECOMMENDED_STORIES, WARNING_LIMIT_RECOMMENDED_STORIES } from '../../../lib/formValidators';
-import { TOPIC_FORM_MODE_EDIT } from './TopicForm';
+import { TOPIC_FORM_MODE_CREATE, TOPIC_FORM_MODE_EDIT } from './TopicForm';
 
 const localMessages = {
   name: { id: 'topic.create.confirm.name', defaultMessage: 'Name' },
@@ -24,6 +24,7 @@ const localMessages = {
   storyCount: { id: 'topic.create.story.count', defaultMessage: 'Seed Stories' },
   topicSaved: { id: 'topic.create.saved', defaultMessage: 'We saved your new Topic.' },
   topicNotSaved: { id: 'topic.create.notSaved', defaultMessage: 'That didn\'t work!' },
+  feedback: { id: 'topic.edit.save.feedback', defaultMessage: 'We were able to {mode} your topic.' },
   failed: { id: 'topic.create.feedback', defaultMessage: 'Sorry, something went wrong.' },
   notEnoughStories: { id: 'topic.create.notenough', defaultMessage: "Sorry, we can't save this topic because you need a minimum of 500 seed stories." },
   tooManyStories: { id: 'topic.create.toomany', defaultMessage: "Sorry, we can't save this topic because you need to select less than 100,000 seed stories." },
@@ -159,7 +160,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       return dispatch(createTopic(queryInfo)).then((results) => {
         if (results.topics_id) {
           // let them know it worked
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_CREATE }) }));
           return dispatch(push(`/topics/${results.topics_id}/summary`));
         }
         return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
@@ -187,6 +188,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       || hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) { // min/max limits dont apply to admin users
       // all good, so submit!
       const queryInfo = {
+        topics_id: values.topics_id,
         name: values.name,
         description: values.description,
         start_date: values.start_date,
@@ -206,10 +208,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         queryInfo['sources[]'] = '';
         queryInfo['collections[]'] = '';
       }
-      return dispatch(updateTopic(queryInfo)).then((results) => {
+      return dispatch(updateTopic(queryInfo.topics_id, { ...queryInfo })).then((results) => {
         if (results.topics_id) {
           // let them know it worked
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
           return dispatch(push(`/topics/${results.topics_id}/summary`));
         }
         return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));

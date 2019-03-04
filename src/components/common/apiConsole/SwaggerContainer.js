@@ -10,7 +10,6 @@ class SwaggerContainer extends Component {
       dom_id: '#swagger-wrapper',
       url: specUrl,
       presets: [presets.apis],
-      enableCORS: false,
       onComplete: () => {
         if (user.isLoggedIn) {
           swaggerUi.preauthorizeApiKey('key', user.key);

@@ -161,6 +161,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 const fetchAsyncData = (dispatch, { topicId }) => {
   dispatch(fetchFocalSetDefinitions(topicId));
+  // TODO: determine if there are updates, give user option to spider too
 };
 
 export default

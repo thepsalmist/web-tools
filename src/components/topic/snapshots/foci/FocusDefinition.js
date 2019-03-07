@@ -12,7 +12,7 @@ import messages from '../../../../resources/messages';
 const localMessages = {
   focusDelete: { id: 'focusDefinition.delete', defaultMessage: 'Delete this Subtopic' },
   deleteConfirmTitle: { id: 'focusDefinition.delete.confirm.title', defaultMessage: 'Are You Sure?' },
-  deleteConfirmDescription: { id: 'focusDefinition.delete.confirm.description', defaultMessage: 'Click "delete" to actually delete this subtopic from the next snapshot.  You can\'t undo this.  Clicking delete means that your next snapshot will NOT include this subtopic.  Your current snapshot (which you are looking at now) will continue to have it.  After doing this you need to generate a new snapshot.' },
+  deleteConfirmDescription: { id: 'focusDefinition.delete.confirm.description', defaultMessage: 'Click "delete" to actually delete this subtopic from the next version.  You can\'t undo this.  Clicking delete means that your next version will NOT include this subtopic.  Your current version (which you are looking at now) will continue to have it.  After doing this you need to create a new snapshot.' },
 };
 
 class FocusDefinition extends React.Component {

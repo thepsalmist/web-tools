@@ -367,3 +367,7 @@ export function topicSimilarWords(topicId, theWord, params) {
   const acceptedParams = acceptParams(params, ['snapshotId']);
   return createApiPromise(`/api/topics/${topicId}/words/${theWord}/similar`, acceptedParams);
 }
+
+export function getMediaTypes() {
+  return createApiPromise('/api/media-types/list');
+}

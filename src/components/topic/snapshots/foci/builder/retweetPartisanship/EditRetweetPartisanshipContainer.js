@@ -19,27 +19,36 @@ const localMessages = {
 };
 
 const EditRetweetPartisanshipContainer = (props) => {
-  const { topicId, onPreviousStep, handleSubmit, finishStep } = props;
+  const { topicId, onPreviousStep, handleSubmit, finishStep, location } = props;
   const { formatMessage } = props.intl;
+  let content = (
+    <div>
+      <Row>
+        <Col lg={8} md={12}>
+          <h1><FormattedMessage {...localMessages.title} /></h1>
+          <p><FormattedMessage {...localMessages.about} /></p>
+        </Col>
+      </Row>
+      <Row>
+        <Col lg={8} md={12}>
+          <RetweetCoveragePreviewContainer topicId={topicId} />
+        </Col>
+      </Row>
+      <Row>
+        <Col lg={8} md={12}>
+          <RetweetStoryCountsPreviewContainer topicId={topicId} />
+        </Col>
+      </Row>
+    </div>
+  );
+
+  if (!location.query.timespan_id) {
+    content = <FormattedMessage {...messages.topicNotCompleteNoPreview} />;
+  }
   return (
     <Grid>
       <form className="focus-create-edit-retweet" name="focusCreateEditRetweetForm" onSubmit={handleSubmit(finishStep.bind(this))}>
-        <Row>
-          <Col lg={8} md={12}>
-            <h1><FormattedMessage {...localMessages.title} /></h1>
-            <p><FormattedMessage {...localMessages.about} /></p>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={8} md={12}>
-            <RetweetCoveragePreviewContainer topicId={topicId} />
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={8} md={12}>
-            <RetweetStoryCountsPreviewContainer topicId={topicId} />
-          </Col>
-        </Row>
+        {content}
         <Row>
           <Col lg={8} xs={12}>
             <br />
@@ -67,6 +76,7 @@ EditRetweetPartisanshipContainer.propTypes = {
   finishStep: PropTypes.func.isRequired,
   // from compositional helper
   intl: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,
 };

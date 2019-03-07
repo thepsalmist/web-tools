@@ -135,10 +135,10 @@ class TopicValidateContainer extends React.Component {
             </p>
           </DialogContent>
           <DialogActions>
-            <AppButton onClick={this.handleWarningIgnore}>
+            <AppButton label={formatMessage(localMessages.handleWarningIgnore)} onClick={this.handleWarningIgnore}>
               <FormattedMessage {...localMessages.warningIgnore} values={{ mode }} />
             </AppButton>
-            <AppButton onClick={this.handleWarningOk} primary>
+            <AppButton label={formatMessage(localMessages.handleWarningOk)} onClick={this.handleWarningOk} primary>
               <FormattedMessage {...localMessages.warningOk} />
             </AppButton>
           </DialogActions>

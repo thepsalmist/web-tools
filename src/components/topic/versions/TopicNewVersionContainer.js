@@ -12,7 +12,7 @@ import messages from '../../../resources/messages';
 
 const localMessages = {
   description: { id: 'topics.adminList.title', defaultMessage: 'To make changes to a Topic, you must create a new version. Pick what kind of change you want to make and then follows prompts to build a new version.' },
-  createNewVersion: { id: 'topics.createNewVersion', defaultMessage: 'Create New Version' },
+  createNewVersion: { id: 'topics.createNewVersion', defaultMessage: 'Change Seed Query' },
   createNewVersionDesc: { id: 'topics.createNewVersion.desc', defaultMessage: 'Change the search terms, dates, or media sources and collections. Once you save your changes, we start building a new version with stories that match your new seed query and follow new links to discover more stories.' },
   addNewSubtopics: { id: 'topics.addNewSubtopics', defaultMessage: 'Add New Subtopics' },
   addNewSubtopicsDesc: { id: 'topics.addNewSubtopics.desc', defaultMessage: 'Slice and dice your topic into subtopics to support comparative analysis. You can create subtopics with a growing list of techniques; allowing you to group stories by simple boolean queries, the country of focus, the themes included, and more.' },

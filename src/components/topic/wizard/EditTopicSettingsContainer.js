@@ -7,7 +7,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { filteredLinkTo } from '../../util/location';
 import withIntlForm from '../../common/hocs/IntlForm';
 import messages from '../../../resources/messages';
-import { updateTopic, /* resetTopic, */ setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
+import { updateAndCreateNewTopicVersion, /* resetTopic, */ setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import BackLinkingControlBar from '../BackLinkingControlBar';
 import Permissioned from '../../common/Permissioned';
@@ -87,7 +87,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     infoToSave.is_public = infoToSave.is_public ? 1 : 0;
     infoToSave.is_logogram = infoToSave.is_logogram ? 1 : 0;
     infoToSave.ch_monitor_id = values.ch_monitor_id === undefined ? '' : values.ch_monitor_id;
-    return dispatch(updateTopic(ownProps.params.topicId, infoToSave))
+    return dispatch(updateAndCreateNewTopicVersion(ownProps.params.topicId, infoToSave))
       .then((results) => {
         if (results.topics_id) {
           // let them know it worked

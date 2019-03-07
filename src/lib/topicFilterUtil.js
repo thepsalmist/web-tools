@@ -4,6 +4,7 @@ export const VERSION_ERROR = 'error';
 export const VERSION_ERROR_EXCEEDED = 'errorExceededMaxStories';
 export const VERSION_CREATING = 'creating';
 export const VERSION_QUEUED = 'queuedToRun';
+export const VERSION_BUILDING = 'building';
 export const VERSION_RUNNING = 'running';
 // better desriptors
 // const VERSION_RUNNING_SPIDERING = 'runningAndSpidering';

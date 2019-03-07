@@ -26,6 +26,7 @@ const localMessages = {
   createButton: { id: 'topic.create', defaultMessage: 'Create A New Version ' },
   viewButton: { id: 'topic.viewBy', defaultMessage: 'Find Out More ' },
   hasAnError: { id: 'topic.hasError', defaultMessage: 'Sorry, this topic has an error!' },
+  otherError: { id: 'topic.otherError', defaultMessage: 'Sorry, this topic has an error!' },
   spiderQueued: { id: 'topic.spiderQueued', defaultMessage: 'This topic is in the queue for spidering stories.  Please reload after a bit to see if it has started spidering.' },
   snapshotQueued: { id: 'snapshotGenerating.warning.queued', defaultMessage: 'We will start creating the new snapshot soon. Please reload this page in a few hours to check if your data is ready.' },
   snapshotRunning: { id: 'snapshotGenerating.warning.running', defaultMessage: 'We are creating a new snapshot right now. Please reload this page in a few hours to check if your data is ready.' },

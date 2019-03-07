@@ -5,6 +5,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import PageTitle from '../../common/PageTitle';
 import AppButton from '../../common/AppButton';
 import TopicInfo from '../controlbar/TopicInfo';
+import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/auth';
 
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Admin: Topic Status Dashboard' },
@@ -15,7 +16,7 @@ const localMessages = {
 const TopicVersionStatusContainer = props => (
   <Grid>
     <PageTitle value={localMessages.title} />
-    <h2>{props.intl.formatMessage(localMessages.label, { state: props.topicInfo.state })}</h2>
+    <h2>{props.intl.formatMessage(localMessages.label, { state: hasPermissions(getUserRoles(props.user), PERMISSION_ADMIN) ? props.topicInfo.state : props.displayState })}</h2>
     <Row>
       <Col lg={6}>
         <AppButton
@@ -34,8 +35,10 @@ TopicVersionStatusContainer.propTypes = {
   // from state
   filters: PropTypes.object,
   topicInfo: PropTypes.object,
+  user: PropTypes.object,
   // from context
   intl: PropTypes.object.isRequired,
+  displayState: PropTypes.string,
 };
 
 export default

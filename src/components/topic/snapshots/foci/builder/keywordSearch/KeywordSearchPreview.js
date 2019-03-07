@@ -11,7 +11,11 @@ const localMessages = {
 };
 
 const KeywordSearchPreview = (props) => {
-  const { topicId, keywords } = props;
+  const { topicId, keywords, location } = props;
+  // if no timespan, no data
+  if (!location.query.timespan_id) {
+    return 'can\'t preview - no timespan';
+  }
   return (
     <div className="focal-create-boolean-keyword-preview">
       <Row>
@@ -34,6 +38,7 @@ const KeywordSearchPreview = (props) => {
 KeywordSearchPreview.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
   // from parent
   keywords: PropTypes.string.isRequired,
   topicId: PropTypes.number.isRequired,

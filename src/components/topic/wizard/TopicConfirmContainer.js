@@ -62,7 +62,9 @@ const TopicConfirmContainer = (props) => {
     return (
       <Grid className="topic-container">
         <Row>
-          {previousVersion}
+          <Col lg={6}>
+            {previousVersion}
+          </Col>
           <Col lg={6}>
             <h2>{currentStepText.savingTitle}</h2>
             <p>{currentStepText.savingDesc}</p>
@@ -84,7 +86,9 @@ const TopicConfirmContainer = (props) => {
           </Col>
         </Row>
         <Row>
-          {previousVersion}
+          <Col lg={6}>
+            {previousVersion}
+          </Col>
           <Col lg={6}>
             <h2>{currentStepText.newVersion}</h2>
             {topicNewVersionContent}

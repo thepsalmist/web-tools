@@ -1,21 +1,22 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { reduxForm, Field } from 'redux-form';
 import { connect } from 'react-redux';
-import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
+import { FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import Link from 'react-router/lib/Link';
+import withIntlForm from '../../../common/hocs/IntlForm';
 import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AppButton from '../../../common/AppButton';
+import messages from '../../../../resources/messages';
 import ConfirmationDialog from '../../../common/ConfirmationDialog';
-import { fetchFocalSetDefinitions, deleteFocalSetDefinition, deleteFocusDefinition, setTopicNeedsNewSnapshot }
+import { fetchFocalSetDefinitions, deleteFocalSetDefinition, deleteFocusDefinition, setTopicNeedsNewSnapshot, updateAndCreateNewTopicVersion }
   from '../../../../actions/topicActions';
 import { updateFeedback } from '../../../../actions/appActions';
 import FocalSetDefinitionSummary from './FocalSetDefinitionSummary';
 import BackLinkingControlBar from '../../BackLinkingControlBar';
 import FocusIcon from '../../../common/icons/FocusIcon';
-import messages from '../../../../resources/messages';
-import Permissioned from '../../../common/Permissioned';
-import { PERMISSION_ADMIN } from '../../../../lib/auth';
+import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../../lib/auth';
 import TopicVersionInfo from '../../TopicVersionInfo';
 
 const localMessages = {
@@ -29,7 +30,8 @@ const localMessages = {
   removeFocusSucceeded: { id: 'focus.remove.succeeded', defaultMessage: 'Removed the Subtopic' },
   removeFocusFailed: { id: 'focus.remove.failed', defaultMessage: 'Sorry, but removing the Subtopic failed :-(' },
   backToTopic: { id: 'backToTopic', defaultMessage: 'back to the topic' },
-  createSubtopicAndStartSpider: { id: 'focalSets.manage.about', defaultMessage: 'Create Subtopic and Start Spider' },
+  createVersionAndStartSpider: { id: 'focalSets.manage.about', defaultMessage: 'Create New Version' },
+  startSpidering: { id: 'focalSets.manage.about', defaultMessage: 'Spider after creating new version.' },
 };
 
 class ManageFocalSetsContainer extends React.Component {
@@ -58,8 +60,32 @@ class ManageFocalSetsContainer extends React.Component {
   }
 
   render() {
-    const { topicId, topicInfo, focalSetDefinitions } = this.props;
+    const { topicId, topicInfo, focalSetDefinitions, renderCheckbox, user, formValues, handleCreateVersionAndStartSpider } = this.props;
     const { formatMessage } = this.props.intl;
+    let startSpideringOption = null;
+    // jf role and also if can spider TODO
+    if (hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {
+      startSpideringOption = (
+        <div>
+          <Field
+            form="topicVersionSpiderOrNotForm"
+            name="start_spidering"
+            component={renderCheckbox}
+            label={formatMessage(localMessages.startSpidering)}
+            type="inline"
+            defaultValue
+          />
+          <Link to={`/topics/${topicId}/snapshot/foci/create`}>
+            <AppButton
+              type="submit"
+              label={formatMessage(localMessages.createVersionAndStartSpider)}
+              onClick={() => handleCreateVersionAndStartSpider(formValues)}
+            />
+          </Link>
+        </div>
+      );
+    }
+
     const removeConfirmationDialog = (
       <ConfirmationDialog
         open={this.state.removeDialogOpen}
@@ -113,13 +139,11 @@ class ManageFocalSetsContainer extends React.Component {
                 </Link>
               </div>
             </Col>
-            <Permissioned onlyRole={PERMISSION_ADMIN}>
-              <Col lg={6}>
-                <Link to={`/topics/${topicId}/snapshot/foci/create`}>
-                  <AppButton label={formatMessage(localMessages.createSubtopicAndStartSpider)}>{formatMessage(localMessages.createSubtopicAndStartSpider)}</AppButton>
-                </Link>
-              </Col>
-            </Permissioned>
+            <Col lg={6}>
+              <form className="topic-version-subtopic-start-spider" name="topicVersionSpiderOrNotForm">
+                {startSpideringOption}
+              </form>
+            </Col>
 
           </Row>
         </Grid>
@@ -134,12 +158,16 @@ ManageFocalSetsContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
+  renderCheckbox: PropTypes.object,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   focalSetDefinitions: PropTypes.array.isRequired,
+  formValues: PropTypes.object,
+  user: PropTypes.object.isRequired,
   // from dispatch
   handleDeleteFocalSetDefinition: PropTypes.func.isRequired,
   handleDeleteFocusDefinition: PropTypes.func.isRequired,
+  handleCreateVersionAndStartSpider: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -147,6 +175,8 @@ const mapStateToProps = (state, ownProps) => ({
   topicInfo: state.topics.selected.info,
   focalSetDefinitions: state.topics.selected.focalSets.definitions.list,
   fetchStatus: state.topics.selected.focalSets.definitions.fetchStatus,
+  user: state.user,
+  formValues: state.form.topicVersionSpiderOrNotForm ? state.form.topicVersionSpiderOrNotForm.values : null,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -174,6 +204,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         }
       });
   },
+  handleCreateVersionAndStartSpider: (topicId, startSpidering) => {
+    dispatch(updateAndCreateNewTopicVersion(topicId, { start_spider: startSpidering }));
+  },
 });
 
 const fetchAsyncData = (dispatch, { topicId }) => {
@@ -181,10 +214,12 @@ const fetchAsyncData = (dispatch, { topicId }) => {
 };
 
 export default
-injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncData(fetchAsyncData)(
-      ManageFocalSetsContainer
+withIntlForm(
+  reduxForm({ form: 'topicVersionSpiderOrNotForm' })(
+    connect(mapStateToProps, mapDispatchToProps)(
+      withAsyncData(fetchAsyncData)(
+        ManageFocalSetsContainer
+      )
     )
   )
 );

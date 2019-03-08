@@ -144,6 +144,7 @@ ManageFocalSetsContainer.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
+  topicInfo: state.topics.selected.info,
   focalSetDefinitions: state.topics.selected.focalSets.definitions.list,
   fetchStatus: state.topics.selected.focalSets.definitions.fetchStatus,
 });
@@ -177,7 +178,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 const fetchAsyncData = (dispatch, { topicId }) => {
   dispatch(fetchFocalSetDefinitions(topicId));
-  // TODO: determine if there are updates, give user option to spider too
 };
 
 export default

@@ -10,6 +10,9 @@ const localMessages = {
 const TopicVersionInfo = (props) => {
   const { topicInfo } = props;
   const { formatMessage } = props.intl;
+  let sourcesAndCollections = topicInfo.media ? [...topicInfo.media] : [];
+  sourcesAndCollections = topicInfo.media_tags ? [...sourcesAndCollections, ...topicInfo.media_tags] : sourcesAndCollections;
+
   return (
     <React.Fragment>
       <p>
@@ -27,7 +30,7 @@ const TopicVersionInfo = (props) => {
       <p>
         <b><FormattedHTMLMessage {...messages.topicSourceCollectionsProp} /></b>:
       </p>
-      {topicInfo.sourcesAndCollections.map(object => (
+      {sourcesAndCollections.map(object => (
         <SourceOrCollectionChip key={object.tags_id || object.media_id} object={object} />
       ))}
     </React.Fragment>

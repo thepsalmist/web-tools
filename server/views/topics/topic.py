@@ -239,11 +239,11 @@ def topic_update(topics_id):
 
     # create snapshot and then conditionally spider (for admins)
     topic_version = len(snapshots) + 1
-    start_spider = request.form['start_spider'] if 'start_spider' in request.form else False
-    new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=topic_version) # vs. generate into...
+    start_spider = request.form['start_spidering'] if 'start_spidering' in request.form else False
+    new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=topic_version)['snapshot'] # vs. generate into...
     if start_spider:  # or not admin
         spider_job = user_mc.topicSpider(topics_id,
-                                         new_snapshot.snapshots_id)  # kick off a spider, which will also fill/generate snapshot data
+                                         new_snapshot['snapshots_id'])  # kick off a spider, which will also fill/generate snapshot data
 
     return topic_summary(result['topics'][0]['topics_id'])  # give them back new data, so they can update the client
 

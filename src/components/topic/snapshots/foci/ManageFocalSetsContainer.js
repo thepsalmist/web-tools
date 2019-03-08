@@ -208,7 +208,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       });
   },
   handleCreateVersionAndStartSpider: (topicId, formValues) => {
-    dispatch(updateAndCreateNewTopicVersion(topicId, { formValues  }));
+    dispatch(updateAndCreateNewTopicVersion(topicId, { start_spidering: formValues.start_spidering }));
   },
 });
 

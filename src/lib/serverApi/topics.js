@@ -235,7 +235,8 @@ export function fetchWordsByQuery(params) {
 
 export function updateAndCreateNewTopicVersion(topicId, params) {
   const acceptedParams = acceptParams(params, ['name', 'description', 'solr_seed_query', 'is_public', 'max_stories', 'max_iterations',
-    'ch_monitor_id', 'start_date', 'end_date', 'spidered', 'sources[]', 'collections[]', 'is_logogram']);
+    'ch_monitor_id', 'start_date', 'end_date', 'spidered', 'sources[]', 'collections[]', 'is_logogram',
+    'start_spidering']);
   return createPostingApiPromise(`/api/topics/${topicId}/update`, acceptedParams, 'put');
 }
 

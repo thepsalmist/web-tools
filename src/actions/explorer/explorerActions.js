@@ -45,10 +45,6 @@ export const UPDATE_QUERY_SOURCE_LOOKUP_INFO = 'UPDATE_QUERY_SOURCE_LOOKUP_INFO'
 export const updateQuerySourceLookupInfo = createAction(UPDATE_QUERY_SOURCE_LOOKUP_INFO, query => query);
 
 
-export const PREPARE_QUERIES = 'PREPARE_QUERIES';
-export const prepareQueries = createAsyncAction(PREPARE_QUERIES, api.prepareQueries);
-
-
 export const FETCH_TOP_ENTITIES_PEOPLE = 'FETCH_TOP_ENTITIES_PEOPLE';
 export const FETCH_TOP_ENTITIES_ORGS = 'FETCH_TOP_ENTITIES_ORGS';
 export const RESET_ENTITIES_PEOPLE = 'RESET_ENTITIES_PEOPLE';

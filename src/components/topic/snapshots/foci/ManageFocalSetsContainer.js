@@ -67,6 +67,7 @@ class ManageFocalSetsContainer extends React.Component {
     if (hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {
       startSpideringOption = (
         <div>
+          <h3>Placeholder: Your topic has new updates - we suggest you create a new version</h3>
           <Field
             form="topicVersionSpiderOrNotForm"
             name="start_spidering"
@@ -79,7 +80,7 @@ class ManageFocalSetsContainer extends React.Component {
             <AppButton
               type="submit"
               label={formatMessage(localMessages.createVersionAndStartSpider)}
-              onClick={() => handleCreateVersionAndStartSpider(formValues)}
+              onClick={() => handleCreateVersionAndStartSpider(topicId, formValues)}
             />
           </Link>
         </div>
@@ -114,7 +115,9 @@ class ManageFocalSetsContainer extends React.Component {
             </Col>
           </Row>
           <Row>
-            <TopicVersionInfo topicInfo={topicInfo} />
+            <div className="topic-container">
+              <TopicVersionInfo topicInfo={topicInfo} />
+            </div>
           </Row>
           <Row>
             <Col lg={10} xs={12}>
@@ -204,8 +207,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         }
       });
   },
-  handleCreateVersionAndStartSpider: (topicId, startSpidering) => {
-    dispatch(updateAndCreateNewTopicVersion(topicId, { start_spider: startSpidering }));
+  handleCreateVersionAndStartSpider: (topicId, formValues) => {
+    dispatch(updateAndCreateNewTopicVersion(topicId, { formValues  }));
   },
 });
 

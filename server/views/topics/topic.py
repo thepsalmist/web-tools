@@ -230,12 +230,17 @@ def topic_update(topics_id):
         media_ids_to_add = None
         tag_ids_to_add = None
 
+
+
     result = user_mc.topicUpdate(topics_id,  media_ids=media_ids_to_add, media_tags_ids=tag_ids_to_add, **args)
     topic = result['topics'][0]
+    snapshots = user_mc.topicSnapshotList(topics_id)
+    snapshots = sorted(snapshots, key=lambda d: d['snapshot_date'])
+
     # create snapshot and then conditionally spider (for admins)
-    topic_version = int(topic['currentVersion']) + 1
+    topic_version = len(snapshots) + 1
     start_spider = request.form['start_spider'] if 'start_spider' in request.form else False
-    new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=topic_version)
+    new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=topic_version) # vs. generate into...
     if start_spider:  # or not admin
         spider_job = user_mc.topicSpider(topics_id,
                                          new_snapshot.snapshots_id)  # kick off a spider, which will also fill/generate snapshot data

@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedMessage, FormattedHTMLMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
 import { push } from 'react-router-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import LoadingSpinner from '../../common/LoadingSpinner';
-import SourceOrCollectionChip from '../../common/SourceOrCollectionChip';
 import messages from '../../../resources/messages';
 import { createTopic, goToTopicStep, updateAndCreateNewTopicVersion } from '../../../actions/topicActions';
 import { updateFeedback, addNotice } from '../../../actions/appActions';
@@ -16,6 +15,7 @@ import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/aut
 import { LEVEL_ERROR, LEVEL_WARNING, WarningNotice } from '../../common/Notice';
 import { MAX_RECOMMENDED_STORIES, MIN_RECOMMENDED_STORIES, WARNING_LIMIT_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 import { TOPIC_FORM_MODE_CREATE, TOPIC_FORM_MODE_EDIT } from './TopicForm';
+import TopicVersionInfo from '../TopicVersionInfo';
 
 const localMessages = {
   name: { id: 'topic.create.confirm.name', defaultMessage: 'Name' },
@@ -33,7 +33,7 @@ const localMessages = {
 };
 
 const TopicConfirmContainer = (props) => {
-  const { formValues, finishStep, handlePreviousStep, storyCount, handleSubmit, pristine, submitting, currentStepText, mode, topicInfo, renderCheckbox } = props;
+  const { formValues, finishStep, handlePreviousStep, handleSubmit, pristine, submitting, currentStepText, mode, topicInfo, renderCheckbox } = props;
   const { formatMessage } = props.intl;
   let sourcesAndCollections = [];
   sourcesAndCollections = formValues.sourcesAndCollections.filter(s => s.media_id).map(s => s.media_id);
@@ -41,28 +41,7 @@ const TopicConfirmContainer = (props) => {
   let previousVersion = null;
   let startSpideringOption = null;
   if (mode === TOPIC_FORM_MODE_EDIT) {
-    previousVersion = (
-      <div>
-        <p>
-          <b><FormattedMessage {...messages.topicPublicProp} /></b>: { topicInfo.is_public ? formatMessage(messages.yes) : formatMessage(messages.no) }
-          <br />
-          <b><FormattedMessage {...messages.topicStartDateProp} /></b>: {topicInfo.start_date}
-          <br />
-          <b><FormattedMessage {...messages.topicEndDateProp} /></b>: {topicInfo.end_date}
-          <br />
-          <b><FormattedMessage {...localMessages.storyCount} /></b>: {topicInfo.storyCount}
-        </p>
-        <p>
-          <b><FormattedHTMLMessage {...messages.topicQueryProp} /></b>: <code>{topicInfo.solr_seed_query}</code>
-        </p>
-        <p>
-          <b><FormattedHTMLMessage {...messages.topicSourceCollectionsProp} /></b>:
-        </p>
-        {formValues.sourcesAndCollections.map(object => (
-          <SourceOrCollectionChip key={object.tags_id || object.media_id} object={object} />
-        ))}
-      </div>
-    );
+    previousVersion = <TopicVersionInfo topicInfo={topicInfo} />;
     if (hasPermissions(getUserRoles(props.user), PERMISSION_ADMIN)) {
       startSpideringOption = (
         <Field
@@ -77,26 +56,7 @@ const TopicConfirmContainer = (props) => {
     }
   }
   const topicNewVersionContent = (
-    <div>
-      <p>
-        <b><FormattedMessage {...messages.topicPublicProp} /></b>: { formValues.is_public ? formatMessage(messages.yes) : formatMessage(messages.no) }
-        <br />
-        <b><FormattedMessage {...messages.topicStartDateProp} /></b>: {formValues.start_date}
-        <br />
-        <b><FormattedMessage {...messages.topicEndDateProp} /></b>: {formValues.end_date}
-        <br />
-        <b><FormattedMessage {...localMessages.storyCount} /></b>: {storyCount}
-      </p>
-      <p>
-        <b><FormattedHTMLMessage {...messages.topicQueryProp} /></b>: <code>{formValues.solr_seed_query}</code>
-      </p>
-      <p>
-        <b><FormattedHTMLMessage {...messages.topicSourceCollectionsProp} /></b>:
-      </p>
-      {formValues.sourcesAndCollections.map(object => (
-        <SourceOrCollectionChip key={object.tags_id || object.media_id} object={object} />
-      ))}
-    </div>
+    <TopicVersionInfo topicInfo={formValues} />
   );
   if (submitting) {
     return (

@@ -14,18 +14,22 @@ import FocalSetDefinitionSummary from './FocalSetDefinitionSummary';
 import BackLinkingControlBar from '../../BackLinkingControlBar';
 import FocusIcon from '../../../common/icons/FocusIcon';
 import messages from '../../../../resources/messages';
+import Permissioned from '../../../common/Permissioned';
+import { PERMISSION_ADMIN } from '../../../../lib/auth';
+import TopicVersionInfo from '../../TopicVersionInfo';
 
 const localMessages = {
   focalSetsManageAbout: { id: 'focalSets.manage.about',
     defaultMessage: 'Every Subtopic is part of a Set. All the Subtopics within a Set share the same Technique. Our tools lets you compare Subtopics with a Set, but they don\'t let you easily compare Subtopics in different Sets.' },
   removeFocalSetTitle: { id: 'focalSets.manage.remove.title', defaultMessage: 'Really Remove this Set?' },
-  removeFocalSetAbout: { id: 'focalSets.manage.remove.about', defaultMessage: '<p>Removing a Set means that the next Snapshot you make will NOT include it.  This will NOT remove the Set from this Snapshot.</p><p>Are you sure you want to remove this Set? All the Subtopic that are part of it will be removed from the next Snapshot as well.</p>' },
+  removeFocalSetAbout: { id: 'focalSets.manage.remove.about', defaultMessage: '<p>Removing a Set means that the next Version you make will NOT include it.  This will NOT remove the Set from this Version.</p><p>Are you sure you want to remove this Set? All the Subtopic that are part of it will be removed from the next Snapshot as well.</p>' },
   removeOk: { id: 'focalSets.manage.remove.ok', defaultMessage: 'Remove It' },
   removeFocalSetSucceeded: { id: 'focalSets.manage.remove.succeeded', defaultMessage: 'Removed the Set' },
   removeFocalSetFailed: { id: 'focalSets.manage.remove.failed', defaultMessage: 'Sorry, but removing the Set failed :-(' },
   removeFocusSucceeded: { id: 'focus.remove.succeeded', defaultMessage: 'Removed the Subtopic' },
   removeFocusFailed: { id: 'focus.remove.failed', defaultMessage: 'Sorry, but removing the Subtopic failed :-(' },
   backToTopic: { id: 'backToTopic', defaultMessage: 'back to the topic' },
+  createSubtopicAndStartSpider: { id: 'focalSets.manage.about', defaultMessage: 'Create Subtopic and Start Spider' },
 };
 
 class ManageFocalSetsContainer extends React.Component {
@@ -54,7 +58,7 @@ class ManageFocalSetsContainer extends React.Component {
   }
 
   render() {
-    const { topicId, focalSetDefinitions } = this.props;
+    const { topicId, topicInfo, focalSetDefinitions } = this.props;
     const { formatMessage } = this.props.intl;
     const removeConfirmationDialog = (
       <ConfirmationDialog
@@ -84,6 +88,9 @@ class ManageFocalSetsContainer extends React.Component {
             </Col>
           </Row>
           <Row>
+            <TopicVersionInfo topicInfo={topicInfo} />
+          </Row>
+          <Row>
             <Col lg={10} xs={12}>
               <div className="focal-set-definition-list">
                 {focalSetDefinitions.map(focalSetDef => (
@@ -99,13 +106,21 @@ class ManageFocalSetsContainer extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col lg={12}>
+            <Col lg={6}>
               <div id="create-foci-button">
                 <Link to={`/topics/${topicId}/snapshot/foci/create`}>
                   <AppButton primary label={formatMessage(messages.addFocus)}>{formatMessage(messages.addFocus)}</AppButton>
                 </Link>
               </div>
             </Col>
+            <Permissioned onlyRole={PERMISSION_ADMIN}>
+              <Col lg={6}>
+                <Link to={`/topics/${topicId}/snapshot/foci/create`}>
+                  <AppButton label={formatMessage(localMessages.createSubtopicAndStartSpider)}>{formatMessage(localMessages.createSubtopicAndStartSpider)}</AppButton>
+                </Link>
+              </Col>
+            </Permissioned>
+
           </Row>
         </Grid>
         {removeConfirmationDialog}
@@ -117,6 +132,7 @@ class ManageFocalSetsContainer extends React.Component {
 ManageFocalSetsContainer.propTypes = {
   // from composition
   topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,

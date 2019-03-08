@@ -3,6 +3,12 @@
 /*# sourceMappingURL=swagger-ui.css.map*/
 
 .swagger-ui {
+  /* better padding */
+  padding: 0px !important;
+  .wrapper {
+    padding: 0px !important;
+  }
+  margin-bottom: 50px;
   /* hide this so we can show our own header */
   .information-container {
     display: none;

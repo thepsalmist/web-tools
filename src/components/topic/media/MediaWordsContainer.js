@@ -51,7 +51,7 @@ MediaWordsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
   onViewSampleSizeClick: PropTypes.func.isRequired,
-  initSampleSize: PropTypes.string.isRequired,
+  initSampleSize: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   filters: PropTypes.object.isRequired,
   // from parent
   mediaId: PropTypes.number.isRequired,

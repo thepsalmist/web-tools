@@ -38,43 +38,41 @@ const TopicControlBar = (props) => {
       <div className="main">
         <Grid>
           <Row>
-            <Col lg={8} className="left">
+            <Col lg={8} className="control-bar-settings left">
               <LinkWithFilters to={`/topics/${topicId}/summary`}>
                 <HomeButton />
                 <b><FormattedMessage {...localMessages.topicHomepage} /></b>
               </LinkWithFilters>
               <AboutTopicDialog />
-              <div className="control-bar-style">
-                <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-                  <LinkWithFilters to={`/topics/${topicId}/settings`}>
-                    <EditButton
-                      label={formatMessage(localMessages.settings)}
-                      description={formatMessage(localMessages.changeSettingsDetails)}
-                      onClick={() => goToUrl(`/topics/${topicId}/settings`, filters)}
-                      id="modify-topic-settings"
-                    />
-                    <b><FormattedMessage {...localMessages.settings} /></b>
-                  </LinkWithFilters>
-                  <LinkWithFilters to={`/topics/${topicId}/permissions`} className="permissions">
-                    <EditButton
-                      label={formatMessage(localMessages.permissions)}
-                      description={formatMessage(localMessages.changePermissionsDetails)}
-                      onClick={() => goToUrl(`/topics/${topicId}/permissions`)}
-                      id="modify-topic-permissions"
-                    />
-                    <b><FormattedMessage {...localMessages.permissions} /></b>
-                  </LinkWithFilters>
-                  <LinkWithFilters to={`/topics/${topicId}/versions`}>
-                    <EditButton
-                      label={formatMessage(localMessages.versionList)}
-                      description={formatMessage(localMessages.viewVersionLists)}
-                      onClick={() => goToUrl(`/topics/${topicId}/versions`)}
-                      id="modify-topic-permissions"
-                    />
-                    <b><FormattedMessage {...localMessages.versionList} /></b>
-                  </LinkWithFilters>
-                </Permissioned>
-              </div>
+              <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
+                <LinkWithFilters to={`/topics/${topicId}/settings`}>
+                  <EditButton
+                    label={formatMessage(localMessages.settings)}
+                    description={formatMessage(localMessages.changeSettingsDetails)}
+                    onClick={() => goToUrl(`/topics/${topicId}/settings`, filters)}
+                    id="modify-topic-settings"
+                  />
+                  <b><FormattedMessage {...localMessages.settings} /></b>
+                </LinkWithFilters>
+                <LinkWithFilters to={`/topics/${topicId}/permissions`} className="permissions">
+                  <EditButton
+                    label={formatMessage(localMessages.permissions)}
+                    description={formatMessage(localMessages.changePermissionsDetails)}
+                    onClick={() => goToUrl(`/topics/${topicId}/permissions`)}
+                    id="modify-topic-permissions"
+                  />
+                  <b><FormattedMessage {...localMessages.permissions} /></b>
+                </LinkWithFilters>
+                <LinkWithFilters to={`/topics/${topicId}/versions`}>
+                  <EditButton
+                    label={formatMessage(localMessages.versionList)}
+                    description={formatMessage(localMessages.viewVersionLists)}
+                    onClick={() => goToUrl(`/topics/${topicId}/versions`)}
+                    id="modify-topic-permissions"
+                  />
+                  <b><FormattedMessage {...localMessages.versionList} /></b>
+                </LinkWithFilters>
+              </Permissioned>
               {setupJumpToExplorer}
             </Col>
             {sideBarContent}

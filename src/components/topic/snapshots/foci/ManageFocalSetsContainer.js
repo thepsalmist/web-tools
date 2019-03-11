@@ -30,8 +30,8 @@ const localMessages = {
   removeFocusSucceeded: { id: 'focus.remove.succeeded', defaultMessage: 'Removed the Subtopic' },
   removeFocusFailed: { id: 'focus.remove.failed', defaultMessage: 'Sorry, but removing the Subtopic failed :-(' },
   backToTopic: { id: 'backToTopic', defaultMessage: 'back to the topic' },
-  createVersionAndStartSpider: { id: 'focalSets.manage.about', defaultMessage: 'Create New Version' },
-  startSpidering: { id: 'focalSets.manage.about', defaultMessage: 'Spider after creating new version.' },
+  createVersionAndStartSpider: { id: 'focalSets.manage.about', defaultMessage: 'Generate New Version' },
+  startSpidering: { id: 'focalSets.manage.about', defaultMessage: 'Spider after generating new version.' },
 };
 
 class ManageFocalSetsContainer extends React.Component {
@@ -60,11 +60,12 @@ class ManageFocalSetsContainer extends React.Component {
   }
 
   render() {
-    const { topicId, topicInfo, focalSetDefinitions, renderCheckbox, user, formValues, handleCreateVersionAndStartSpider } = this.props;
+    const { topicId, topicInfo, focalSetDefinitions, focalSetAll, renderCheckbox, user, formValues, handleCreateVersionAndStartSpider } = this.props;
     const { formatMessage } = this.props.intl;
     let startSpideringOption = null;
     // jf role and also if can spider TODO
-    if (hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {
+    if (hasPermissions(getUserRoles(user), PERMISSION_ADMIN)
+      && (focalSetDefinitions.length !== focalSetAll.length)) {
       startSpideringOption = (
         <div>
           <h3>Placeholder: Your topic has new updates - we suggest you create a new version</h3>
@@ -115,6 +116,13 @@ class ManageFocalSetsContainer extends React.Component {
             </Col>
           </Row>
           <Row>
+            <Col lg={6}>
+              <form className="topic-version-subtopic-start-spider" name="topicVersionSpiderOrNotForm">
+                {startSpideringOption}
+              </form>
+            </Col>
+          </Row>
+          <Row>
             <div className="topic-container">
               <TopicVersionInfo topicInfo={topicInfo} />
             </div>
@@ -142,12 +150,6 @@ class ManageFocalSetsContainer extends React.Component {
                 </Link>
               </div>
             </Col>
-            <Col lg={6}>
-              <form className="topic-version-subtopic-start-spider" name="topicVersionSpiderOrNotForm">
-                {startSpideringOption}
-              </form>
-            </Col>
-
           </Row>
         </Grid>
         {removeConfirmationDialog}
@@ -161,10 +163,11 @@ ManageFocalSetsContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
-  renderCheckbox: PropTypes.object,
+  renderCheckbox: PropTypes.func,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   focalSetDefinitions: PropTypes.array.isRequired,
+  focalSetAll: PropTypes.array.isRequired,
   formValues: PropTypes.object,
   user: PropTypes.object.isRequired,
   // from dispatch
@@ -177,6 +180,7 @@ const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   topicInfo: state.topics.selected.info,
   focalSetDefinitions: state.topics.selected.focalSets.definitions.list,
+  focalSetAll: state.topics.selected.focalSets.all.list,
   fetchStatus: state.topics.selected.focalSets.definitions.fetchStatus,
   user: state.user,
   formValues: state.form.topicVersionSpiderOrNotForm ? state.form.topicVersionSpiderOrNotForm.values : null,

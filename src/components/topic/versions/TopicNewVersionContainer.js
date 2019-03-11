@@ -19,29 +19,38 @@ const localMessages = {
 };
 
 const TopicNewVersionContainer = props => (
-  <div className="topic-container">
+  <div className="topic-container topic-new-version-container">
     <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${props.topicId}/summary`} />
     <Grid>
       <PageTitle value={localMessages.title} />
-      <FormattedMessage {...localMessages.description} />
+      <h2><FormattedMessage {...localMessages.description} /></h2>
       <Row>
         <Col lg={6}>
           <h2><FormattedMessage {...localMessages.createNewVersion} /></h2>
-          <FormattedMessage {...localMessages.createNewVersionDesc} />
-          <AppButton
-            label={props.intl.formatMessage(localMessages.createNewVersion)}
-            onClick={() => props.goToUrl(`/topics/${props.topicId}/update`, props.filters)}
-            primary
-          />
+          <p><FormattedMessage {...localMessages.createNewVersionDesc} /></p>
+          <Row>
+            <Col lg={6}>
+              <AppButton
+                label={props.intl.formatMessage(localMessages.createNewVersion)}
+                onClick={() => props.goToUrl(`/topics/${props.topicId}/update`, props.filters)}
+                primary
+              />
+            </Col>
+          </Row>
         </Col>
         <Col lg={6}>
           <h2><FormattedMessage {...localMessages.addNewSubtopics} /></h2>
-          <FormattedMessage {...localMessages.addNewSubtopicsDesc} />
-          <AppButton
-            label={props.intl.formatMessage(localMessages.addNewSubtopics)}
-            onClick={() => props.goToUrl(`/topics/${props.topicId}/snapshot/foci`, props.filters)}
-            primary
-          />
+          <p><FormattedMessage {...localMessages.addNewSubtopicsDesc} /></p>
+          <Row>
+            <Col lg={6}>
+              <AppButton
+                label={props.intl.formatMessage(localMessages.addNewSubtopics)}
+                onClick={() => props.goToUrl(`/topics/${props.topicId}/snapshot/foci`, props.filters)}
+                primary
+              />
+            </Col>
+          </Row>
+
         </Col>
       </Row>
     </Grid>

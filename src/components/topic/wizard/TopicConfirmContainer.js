@@ -131,7 +131,7 @@ TopicConfirmContainer.propTypes = {
   finishStep: PropTypes.func.isRequired,
   handlePreviousStep: PropTypes.func.isRequired,
   storyCount: PropTypes.number,
-  renderCheckbox: PropTypes.object,
+  renderCheckbox: PropTypes.func,
 };
 
 const mapStateToProps = state => ({

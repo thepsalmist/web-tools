@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { replace } from 'react-router-redux';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+import { push, replace } from 'react-router-redux';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import { filteredLocation, urlWithFilters } from '../../util/location';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { addNotice } from '../../../actions/appActions';
 import { snapshotIsUsable, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
@@ -16,6 +15,7 @@ import TopicVersionErrorStatusContainer from './TopicVersionErrorStatusContainer
 import { filterBySnapshot } from '../../../actions/topicActions';
 import * as fetchConstants from '../../../lib/fetchConstants';
 import { emptyString } from '../../../lib/formValidators';
+import { filteredLocation, urlWithFilters, filteredLinkTo } from '../../util/location';
 import { VERSION_ERROR, VERSION_ERROR_EXCEEDED, VERSION_CREATING, VERSION_BUILDING, VERSION_QUEUED, VERSION_RUNNING, VERSION_READY } from '../../../lib/topicFilterUtil';
 
 const localMessages = {
@@ -78,9 +78,9 @@ class TopicVersionContainer extends React.Component {
         </div>
       );
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
-      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} goToCreateNewVersion={goToCreateNewVersion} />;
+      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)} />;
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR) {
-      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR} goToCreateNewVersion={goToCreateNewVersion} />;
+      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR} goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)} />;
     } else if (fetchStatusInfo !== fetchConstants.FETCH_SUCCEEDED
       && fetchStatusSnapshot !== fetchConstants.FETCH_SUCCEEDED) {
       // complete
@@ -131,10 +131,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   addAppNotice: (info) => {
     dispatch(addNotice(info));
   },
-  /* goToCreateNewVersion: (topicInfo, textInput) => {
-    dispatch(push(goToCreateVersion(topicInfo.topics_id)))
+  goToCreateNewVersion: (topicInfo, filters) => {
+    const url = `/topics/${topicInfo.topics_id}/update`;
+    dispatch(push(filteredLinkTo(url, filters)));
   },
-  */
   showFilters: filtersAreSet(ownProps.topicId, ownProps.filters),
 });
 

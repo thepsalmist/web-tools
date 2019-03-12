@@ -162,7 +162,9 @@ def tag_set_with_tags(mc_api_key, tag_sets_id, only_public_tags=False, use_file_
     # double check the show_on_media because that controls public or not
     tag_list = [t for t in all_tags if (only_public_tags is False) or
                 (t['show_on_media'] is 1 or t['show_on_media'] is True)]
-    tag_list = sorted(tag_list, key=itemgetter('label'))
+    for t in tag_list:
+        t['sort_key'] = t['label'] if t['label'] else t['tag']
+    tag_list = sorted(tag_list, key=itemgetter('sort_key'))
     tag_set['tags'] = tag_list
     tag_set['name'] = tag_set['label']  # for backwards compatibility
     return tag_set

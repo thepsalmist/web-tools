@@ -157,20 +157,18 @@ def _cached_topic_media_link_list_page(user_mc_key, topics_id, link_id, **kwargs
     return local_mc.topicMediaLinks(topics_id, link_id=link_id, **kwargs)
 
 
-def topic_ngram_counts(user_mc_key, topics_id, ngram_size, q, num_words=WORD_COUNT_UI_NUM_WORDS, sample_size=WORD_COUNT_SAMPLE_SIZE):
-    word_counts = topic_word_counts(user_mediacloud_key(), topics_id,
+def topic_ngram_counts(user_mc_key, topics_id, ngram_size, q, num_words=WORD_COUNT_UI_NUM_WORDS,
+                       sample_size=WORD_COUNT_SAMPLE_SIZE):
+    word_counts = topic_word_counts(user_mc_key, topics_id,
                                     q=q, ngram_size=ngram_size, num_words=num_words, sample_size=sample_size)
-    # add in normalization
     for w in word_counts:
         w['sample_size'] = sample_size
-        w['ratio'] = float(w['count']) / float(WORD_COUNT_SAMPLE_SIZE)
+        w['ratio'] = min(1, float(w['count']) / float(w['sample_size']))  # term could appear in more than one story
     return word_counts
 
 
 def topic_word_counts(user_mc_key, topics_id, **kwargs):
-    '''
-    Return sampled word counts based on filters.
-    '''
+    # Return sampled word counts based on filters.
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     merged_args = {
         'snapshots_id': snapshots_id,

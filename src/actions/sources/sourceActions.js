@@ -5,9 +5,6 @@ import * as api from '../../lib/serverApi/sources';
 export const SELECT_SOURCE = 'SELECT_SOURCE';
 export const selectSource = createAction(SELECT_SOURCE, id => id);
 
-export const FETCH_SOURCE_LIST = 'FETCH_SOURCE_LIST';
-export const fetchSourceList = createAsyncAction(FETCH_SOURCE_LIST, api.sourceList);
-
 export const FETCH_SOURCES_BY_IDS = 'FETCH_SOURCES_BY_IDS';
 export const fetchSourcesByIds = createAsyncAction(FETCH_SOURCES_BY_IDS, api.sourcesByIds, props => props);
 

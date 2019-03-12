@@ -103,7 +103,7 @@ const fetchAsyncData = (dispatch, props) => {
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withSummary(localMessages.title, localMessages.descriptionIntro, [messages.attentionChartHelpText])(
+    withSummary(localMessages.title, localMessages.descriptionIntro, [messages.doesNotIncludeUndateable, messages.attentionChartHelpText])(
       withAttentionAggregation(
         withFilteredAsyncData(fetchAsyncData)(
           SplitStoryCountSummaryContainer

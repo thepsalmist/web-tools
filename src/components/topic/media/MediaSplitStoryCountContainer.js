@@ -91,7 +91,7 @@ const fetchAsyncData = (dispatch, props) => dispatch(fetchMediaSplitStoryCounts(
 export default
 injectIntl(
   connect(mapStateToProps)(
-    withHelp(localMessages.helpTitle, [localMessages.helpText, messages.attentionChartHelpText])(
+    withHelp(localMessages.helpTitle, [localMessages.helpText, messages.doesNotIncludeUndateable, messages.attentionChartHelpText])(
       withAttentionAggregation(
         withFilteredAsyncData(fetchAsyncData)(
           MediaSplitStoryCountContainer,

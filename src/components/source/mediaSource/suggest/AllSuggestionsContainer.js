@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { fetchSourceSuggestions } from '../../../../actions/sourceActions';
-import withAsyncFetch from '../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import SourceSuggestion from './SourceSuggestion';
 import PageTitle from '../../../common/PageTitle';
 
@@ -44,16 +44,12 @@ const mapStateToProps = state => ({
   suggestions: state.sources.sources.suggestions.list,
 });
 
-const mapDispatchToProps = dispatch => ({
-  asyncFetch: () => {
-    dispatch(fetchSourceSuggestions({ all: true }));
-  },
-});
+const fetchAsyncData = dispatch => dispatch(fetchSourceSuggestions({ all: true }));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       AllSuggestionsContainer
     )
   )

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import GeoChart from '../../vis/GeoChart';
 import DataCard from '../../common/DataCard';
 import { fetchSourceGeo } from '../../../actions/sourceActions';
@@ -63,8 +63,6 @@ SourceGeographyContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string,
   geolist: PropTypes.array.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
   // from parent
   intro: PropTypes.string,
   // from composition
@@ -78,17 +76,13 @@ const mapStateToProps = state => ({
   geolist: state.sources.sources.selected.geoTag.list,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  asyncFetch: () => {
-    dispatch(fetchSourceGeo(ownProps.source.media_id));
-  },
-});
+const fetchAsyncData = (dispatch, { source }) => dispatch(fetchSourceGeo(source.media_id));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, [localMessages.intro, messages.heatMapHelpText])(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData)(
         SourceGeographyContainer
       )
     )

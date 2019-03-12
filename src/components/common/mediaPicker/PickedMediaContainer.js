@@ -41,6 +41,7 @@ class PickedMediaContainer extends React.Component {
         <div className="select-media-menu">
           {options.map((option, idx) => (
             <a
+              key={option.value}
               href="#select"
               onClick={(evt) => {
                 evt.preventDefault();

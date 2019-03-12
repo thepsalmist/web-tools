@@ -8,7 +8,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { fetchQuerySplitStoryCount, fetchDemoQuerySplitStoryCount, resetSentenceCounts, setSentenceDataPoint, resetSentenceDataPoint } from '../../../actions/explorerActions';
 import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import withQueryResults from './QueryResultsSelector';
@@ -182,11 +181,8 @@ QueryAttentionOverTimeResultsContainer.propTypes = {
   attentionAggregationMenuItems: PropTypes.array.isRequired,
   selectedTimePeriod: PropTypes.string.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
   daySpread: PropTypes.bool,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   selectDataPoint: PropTypes.func.isRequired,
@@ -201,25 +197,7 @@ const mapStateToProps = state => ({
   results: state.explorer.storySplitCount.results,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (queries) => {
-    // this should trigger when the user clicks the Search button or changes the URL
-    // for n queries, run the dispatch with each parsed query
-    dispatch(resetSentenceCounts()); // necessary if a query deletion has occurred
-    if (ownProps.isLoggedIn) {
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q) => {
-        const infoToQuery = formatQueryForServer(q);
-        return dispatch(fetchQuerySplitStoryCount(infoToQuery));
-      });
-    } else if (queries || ownProps.queries) { // else assume DEMO mode, but assume the queries have been loaded
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q, index) => {
-        const demoInfo = formatDemoQueryForServer(q, index);
-        return dispatch(fetchDemoQuerySplitStoryCount(demoInfo));
-      });
-    }
-  },
+const mapDispatchToProps = dispatch => ({
   selectDataPoint: (clickedDataPoint) => {
     dispatch(resetSentenceDataPoint());
     dispatch(setSentenceDataPoint(clickedDataPoint));
@@ -229,9 +207,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.queries);
-    },
     shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
       const { selectedTimePeriod } = stateProps;
       return nextProps.selectedTimePeriod !== selectedTimePeriod;
@@ -244,11 +219,9 @@ injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withSummary(localMessages.lineChartTitle, localMessages.descriptionIntro, [localMessages.descriptionDetail, messages.countsVsPercentageHelp])(
       withAttentionAggregation(
-        withAsyncFetch(
-          withQueryResults(
-            withLoginRequired(
-              QueryAttentionOverTimeResultsContainer
-            )
+        withQueryResults(resetSentenceCounts, fetchQuerySplitStoryCount, fetchDemoQuerySplitStoryCount)(
+          withLoginRequired(
+            QueryAttentionOverTimeResultsContainer
           )
         )
       )

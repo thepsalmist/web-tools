@@ -80,7 +80,9 @@ def api_collection_set(tag_sets_id):
 
     add_user_favorite_flag_to_collections(info['tags'])
     # rename to make more sense here
-    info['collections'] = sorted(info['tags'], key=itemgetter('label', 'tag'))
+    for t in info['tags']:
+        t['sort_key'] = t['label'] if t['label'] else t['tag']
+    info['collections'] = sorted(info['tags'], key=itemgetter('sort_key'))
     del info['tags']
     return jsonify(info)
 

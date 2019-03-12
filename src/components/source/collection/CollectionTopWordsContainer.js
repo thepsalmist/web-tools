@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { fetchCollectionTopWords } from '../../../actions/sourceActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import PeriodicEditableWordCloudDataCard from '../../common/PeriodicEditableWordCloudDataCard';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
@@ -58,7 +58,6 @@ CollectionTopWordsContainer.propTypes = {
   collectionId: PropTypes.number.isRequired,
   collectionName: PropTypes.string.isRequired,
   // from dispath
-  asyncFetch: PropTypes.func.isRequired,
   fetchData: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
@@ -81,20 +80,16 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      // need to calculateTimePeriods here in order to default to week correctly
-      dispatchProps.fetchData(stateProps.timePeriod, calculateTimePeriods(stateProps.timePeriod));
-    },
-  });
-}
+const fetchAsyncData = (dispatch, { collectionId, timePeriod }) => {
+  // need to calculateTimePeriods here in order to default to week correctly
+  dispatch(fetchCollectionTopWords(collectionId, { timePeriod, q: calculateTimePeriods(timePeriod) }));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withHelp(localMessages.helpTitle, [localMessages.intro, messages.wordSpaceLayoutHelp])(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData)(
         CollectionTopWordsContainer
       )
     )

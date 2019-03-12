@@ -58,5 +58,5 @@ def api_system_user_update(user_id):
 @flask_login.login_required
 def api_system_user_delete(user_id):
     user_mc = user_admin_mediacloud_client()
-    results = user_mc .userDelete(user_id)
+    results = user_mc.userDelete(user_id)
     return jsonify(results)

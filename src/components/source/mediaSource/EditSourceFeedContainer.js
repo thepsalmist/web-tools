@@ -7,7 +7,7 @@ import { push } from 'react-router-redux';
 import Link from 'react-router/lib/Link';
 import { SubmissionError } from 'redux-form';
 import MediaSourceIcon from '../../common/icons/MediaSourceIcon';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { selectSourceFeed, updateFeed, fetchSourceFeed } from '../../../actions/sourceActions';
 import { updateFeedback, addNotice } from '../../../actions/appActions';
 import { LEVEL_ERROR } from '../../common/Notice';
@@ -28,13 +28,6 @@ const localMessages = {
 };
 
 class EditSourceFeedContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { feedId, fetchData } = this.props;
-    if ((nextProps.feedId !== feedId)) {
-      fetchData(nextProps.feedId);
-    }
-  }
-
   downloadCsv = () => {
     const { feedId, sourceId } = this.props;
     const url = `/api/sources/${sourceId}/feeds/${feedId}feeds.csv`;
@@ -82,8 +75,6 @@ class EditSourceFeedContainer extends React.Component {
 EditSourceFeedContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   handleSave: PropTypes.func.isRequired,
   // from context
   params: PropTypes.object.isRequired, // params from router
@@ -131,20 +122,17 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         }
       });
   },
-  fetchData: (feedId) => {
-    dispatch(selectSourceFeed(feedId));
-    dispatch(fetchSourceFeed(feedId));
-  },
-  asyncFetch: () => {
-    dispatch(selectSourceFeed(ownProps.params.feedId));
-    dispatch(fetchSourceFeed(ownProps.params.sourceId, ownProps.params.feedId));
-  },
 });
+
+const fetchAsyncData = (dispatch, { sourceId, feedId }) => {
+  dispatch(selectSourceFeed(feedId));
+  dispatch(fetchSourceFeed(sourceId, feedId));
+};
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+    withAsyncData(fetchAsyncData, ['feedId'])(
       EditSourceFeedContainer
     )
   )

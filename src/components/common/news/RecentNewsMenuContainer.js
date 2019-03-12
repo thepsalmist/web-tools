@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { fetchRecentNews } from '../../../actions/systemActions';
-import withAsyncFetch from '../hocs/AsyncContainer';
+import withAsyncData from '../hocs/AsyncDataContainer';
 import RecentNewsMenu from './RecentNewsMenu';
 
 const MAX_ITEMS = 8;
@@ -33,15 +33,11 @@ const mapStateToProps = state => ({
   recentNews: state.system.recentNews.releases,
 });
 
-const mapDispatchToProps = dispatch => ({
-  asyncFetch: () => {
-    dispatch(fetchRecentNews());
-  },
-});
+const fetchAsyncData = dispatch => dispatch(fetchRecentNews());
 
 export default
-connect(mapStateToProps, mapDispatchToProps)(
-  withAsyncFetch(
+connect(mapStateToProps)(
+  withAsyncData(fetchAsyncData)(
     RecentNewsMenuContainer
   )
 );

@@ -8,7 +8,7 @@ import { getCurrentDate, oneMonthBefore } from '../../../lib/dateUtil';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 import { selectSource, fetchSourceDetails } from '../../../actions/sourceActions';
 import SourceControlBar from '../controlbar/SourceControlBar';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import { EditButton, ExploreButton } from '../../common/IconButton';
@@ -24,13 +24,6 @@ const localMessages = {
 };
 
 class SelectSourceContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { sourceId, fetchData } = this.props;
-    if ((nextProps.sourceId !== sourceId)) {
-      fetchData(nextProps.sourceId);
-    }
-  }
-
   componentWillUnmount() {
     const { removeSourceId } = this.props;
     removeSourceId();
@@ -82,8 +75,6 @@ class SelectSourceContainer extends React.Component {
 SelectSourceContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   removeSourceId: PropTypes.func.isRequired,
   // from context
   location: PropTypes.object.isRequired,
@@ -106,24 +97,21 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   removeSourceId: () => {
     dispatch(selectSource(null));
   },
-  fetchData: (sourceId) => {
-    dispatch(selectSource(sourceId));
-    dispatch(fetchSourceDetails(sourceId));
-  },
-  asyncFetch: () => {
-    dispatch(selectSource(ownProps.params.sourceId));
-    dispatch(fetchSourceDetails(ownProps.params.sourceId));
-  },
 });
+
+const fetchAsyncData = (dispatch, { sourceId }) => {
+  dispatch(selectSource(sourceId));
+  dispatch(fetchSourceDetails(sourceId));
+};
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+    withAsyncData(fetchAsyncData, ['sourceId'])(
       SelectSourceContainer
     )
   )

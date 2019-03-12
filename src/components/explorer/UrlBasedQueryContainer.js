@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { schemeCategory10 } from 'd3';
 import { push } from 'react-router-redux';
-import withAsyncFetch from '../common/hocs/AsyncContainer';
+import withAsyncData from '../common/hocs/AsyncDataContainer';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { LEVEL_ERROR } from '../common/Notice';
 import { addNotice } from '../../actions/appActions';
@@ -260,9 +260,6 @@ function composeUrlBasedQueryContainer() {
           }
         });
       },
-      asyncFetch: () => {
-        dispatch(fetchSampleSearches()); // inefficient: we need the sample searches loaded just in case
-      },
       updateUrl: (queries, isLoggedIn) => {
         const unDeletedQueries = queries.filter(q => q.deleted !== true);
         const nonEmptyQueries = unDeletedQueries.filter(q => q.q !== undefined && q.q !== '');
@@ -285,9 +282,11 @@ function composeUrlBasedQueryContainer() {
       },
     });
 
+    const fetchAsyncData = dispatch => dispatch(fetchSampleSearches()); // inefficient: we need the sample searches loaded just in case
+
     return injectIntl(
       connect(mapStateToProps, mapDispatchToProps)(
-        withAsyncFetch(
+        withAsyncData(fetchAsyncData)(
           UrlBasedQueryContainer
         )
       )

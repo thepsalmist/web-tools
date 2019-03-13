@@ -191,6 +191,7 @@ const fetchAsyncData = (dispatch, { topicInfo, location, intl }) => {
   // if no snapshot specified, pick the first usable snapshot
   if (emptyString(snapshotId)) {
     // default to the latest snapshot if none is specified on url
+    // or first if none is usable
     if (topicVersionInfo.versionList.length > 0) {
       const firstSnapshot = topicVersionInfo.versionList[0];
       const newestSnapshotId = topicVersionInfo.lastReadySnapshot ? topicVersionInfo.lastReadySnapshot.snapshots_id : firstSnapshot.snapshots_id;

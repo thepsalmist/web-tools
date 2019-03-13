@@ -98,8 +98,8 @@ def _topic_summary(topics_id):
     topic = local_mc.topic(topics_id)
     # add in snapshot and latest snapshot job status
     snapshots = local_mc.topicSnapshotList(topics_id)
-    for s, index in snapshots:
-        s['notes'] = index
+    #for idx in range(0, len(snapshots)):
+    #    snapshots[idx]['note'] = idx
     # snapshots = sorted(snapshots, key=snapshots.snapshot_date)
     snapshots = sorted(snapshots, key=lambda d:d['snapshot_date'])
     jobStatuses = mc.topicSnapshotGenerateStatus(topics_id)['job_states']

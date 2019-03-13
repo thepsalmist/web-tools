@@ -1,4 +1,5 @@
 import { snapshotIsUsable } from '../reducers/topics/selected/snapshots';
+import { nullOrUndefined } from './formValidators';
 
 export function getTopicVersionInfo(topicInfo) {
   // get latest version and status
@@ -22,6 +23,7 @@ export function getTopicVersionInfo(topicInfo) {
 export function getCurrentVersionFromSnapshot(topicInfo, currentSnapshotId) {
   // get latest version and status
   const snapshots = topicInfo.snapshots.list;
+  if (!currentSnapshotId || nullOrUndefined(currentSnapshotId)) return '';
   const currentVersion = snapshots.find(s => s.snapshots_id === currentSnapshotId).note;
 
   return currentVersion;

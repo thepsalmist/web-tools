@@ -9,6 +9,7 @@ import TopicOwnerList from '../TopicOwnerList';
 
 const localMessages = {
   state: { id: 'topic.state', defaultMessage: 'State' },
+  latestVersion: { id: 'topic.latest', defaultMessage: 'Latest Version' },
   timespan: { id: 'topic.summary.timespan', defaultMessage: '<b>Timespan</b>: {start} to {end} ({period})' },
 };
 
@@ -26,8 +27,8 @@ const TopicInfo = (props) => {
   sourcesAndCollections = topic.media_tags ? [...sourcesAndCollections, ...topic.media_tags] : sourcesAndCollections;
   return (
     <React.Fragment>
-      <p>topic Version coming soon</p>
-      <p>{topic.description}</p>
+      <p>{topic.latestVersion}</p>
+      <p><FormattedMessage {...localMessages.latestVersion} values={{ version: topic.latestVersion }} /></p>
       <p>
         <b><FormattedMessage {...localMessages.state} /></b>: {topic.state }
         <br />

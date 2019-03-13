@@ -17,10 +17,13 @@ import { LEVEL_INFO, LEVEL_WARNING, LEVEL_ERROR } from '../../common/Notice';
 import { snapshotIsUsable, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
   TOPIC_SNAPSHOT_STATE_ERROR } from '../../../reducers/topics/selected/snapshots';
 
+const ONE_BASED_ARRAY = 1;
+
 const localMessages = {
   versions: { id: 'topic.versions', defaultMessage: 'Version List' },
-  versionNumber: { id: 'topic.versionNumber', defaultMessage: 'Version Number {number}' },
-  versionDate: { id: 'topic.versionDate', defaultMessage: 'Date: {date}' },
+  versionNumber: { id: 'topic.versionNumber', defaultMessage: 'Version {number}' },
+  versionState: { id: 'topic.versionState', defaultMessage: '{state}' },
+  versionDate: { id: 'topic.versionDate', defaultMessage: '{date}' },
   versionStatus: { id: 'topic.versionStatus', defaultMessage: 'Status: {status}' },
   createdBy: { id: 'topic.createdBy', defaultMessage: 'Created by: ' },
   createButton: { id: 'topic.create', defaultMessage: 'Create A New Version ' },
@@ -38,21 +41,29 @@ const localMessages = {
 };
 
 const TopicVersionListContainer = (props) => {
-  const { topicId, versions, filters, handleCreateSnapshot } = props;
+  const { topicId, versions, filters, handleCreateSnapshot, goToVersion } = props;
   const { formatMessage } = props.intl;
   let versionListContent;
   if (versions.length > 0) {
     versionListContent = versions.map((u, idx) => (
       <div>
-        <h2><FormattedMessage {...localMessages.versionNumber} values={{ number: idx }} /></h2>
-        <FormattedMessage {...localMessages.versionDate} values={{ date: u.snapshot_date }} />
-        <br />
-        <FormattedMessage {...localMessages.versionStatus} values={{ status: u.message }} />
-        <AppButton
-          style={{ marginTop: 30 }}
-          type="submit"
-          label={formatMessage(localMessages.viewButton)}
-        />
+        <Row>
+          <div className="topic-version-list-title">
+            <h2><FormattedMessage {...localMessages.versionNumber} values={{ number: idx + ONE_BASED_ARRAY, status: u.state }} /></h2>
+            <FormattedMessage {...localMessages.versionDate} values={{ date: u.snapshot_date }} />
+          </div>
+          <div className="topic-version-list-info">
+            <h2><FormattedMessage {...localMessages.versionState} values={{ state: u.state }} /></h2>
+            <FormattedMessage {...localMessages.versionStatus} values={{ status: u.message }} />
+            <br />
+            <AppButton
+              style={{ marginTop: 30 }}
+              type="submit"
+              onClick={() => goToVersion(topicId, { ...filters, snapshotId: u.snapshots_id })}
+              label={formatMessage(localMessages.viewButton)}
+            />
+          </div>
+        </Row>
       </div>
     )).sort((f1, f2) => {
       if (f1.snapshot_date < f2.snapshot_date) {
@@ -99,6 +110,7 @@ TopicVersionListContainer.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
   handleCreateSnapshot: PropTypes.func.isRequired,
+  goToVersion: PropTypes.func.isRequired,
 };
 const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
@@ -116,6 +128,12 @@ const mapDispatchToProps = dispatch => ({
     // TODO: should we just dispatch to the next screen, or also create the snapshot?
     // dispatch(createSnapshot(info));
     const url = `/topics/${topicId}/new-version`;
+    dispatch(push(filteredLinkTo(url, filters)));
+  },
+  goToVersion: (topicId, filters) => {
+    // TODO: should we just dispatch to the next screen, or also create the snapshot?
+    // dispatch(createSnapshot(info));
+    const url = `/topics/${topicId}/summary`;
     dispatch(push(filteredLinkTo(url, filters)));
   },
 });

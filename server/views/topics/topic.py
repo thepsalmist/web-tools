@@ -98,7 +98,8 @@ def _topic_summary(topics_id):
     topic = local_mc.topic(topics_id)
     # add in snapshot and latest snapshot job status
     snapshots = local_mc.topicSnapshotList(topics_id)
-    #snapshots = sorted([s['snapshot_date'] for s in snapshots], key=lambda, reverse=True)
+    for s, index in snapshots:
+        s['notes'] = index
     # snapshots = sorted(snapshots, key=snapshots.snapshot_date)
     snapshots = sorted(snapshots, key=lambda d:d['snapshot_date'])
     jobStatuses = mc.topicSnapshotGenerateStatus(topics_id)['job_states']
@@ -109,7 +110,8 @@ def _topic_summary(topics_id):
     }
     # add in spider job status
     topic['spiderJobs'] = local_mc.topicSpiderStatus(topics_id)['job_states']
-    topic['currentVersion'] = most_recent_usable_snapshot
+    topic['latestVersion'] = len(snapshots)
+    topic['latestUsableVersion'] = 'note' in most_recent_usable_snapshot if most_recent_usable_snapshot else -1
     if is_user_logged_in():
         _add_user_favorite_flag_to_topics([topic])
 
@@ -163,7 +165,8 @@ def topic_snapshots_list(topics_id):
     snapshots = user_mc.topicSnapshotList(topics_id)
     snapshots = sorted(snapshots)
     snapshot_status = mc.topicSnapshotGenerateStatus(topics_id)['job_states']    # need to know if one is running
-    return jsonify({'list': snapshots, 'jobStatus': snapshot_status})
+    latest = len(snapshots) + 1
+    return jsonify({'list': snapshots, 'jobStatus': snapshot_status, 'latestVersion': latest['note']})
 
 
 @app.route('/api/topics/<topics_id>/snapshots/generate', methods=['POST'])

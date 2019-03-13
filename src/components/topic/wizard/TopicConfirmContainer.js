@@ -50,7 +50,7 @@ const TopicConfirmContainer = (props) => {
           fullWidth
           label={formatMessage(localMessages.startSpidering)}
           type="inline"
-          defaultValue
+          value
         />
       );
     }
@@ -142,8 +142,12 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handlePreviousStep: (mode) => {
-    dispatch(push(`/topics/${mode}/1`));
-    dispatch(goToTopicStep(1));
+    let topicPhrase = '';
+    if (mode === TOPIC_FORM_MODE_EDIT) {
+      topicPhrase = `/${ownProps.params.topicId}`;
+    }
+    dispatch(push(`/topics${topicPhrase}/${mode}/2`));
+    dispatch(goToTopicStep(2));
   },
   handleCreateTopic: (storyCount, user, values) => {
     if (((storyCount > MIN_RECOMMENDED_STORIES) && (storyCount < MAX_RECOMMENDED_STORIES))
@@ -226,7 +230,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         // We start a new spider for new version
         if (results.topics_id) {
           // let them know it worked
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
           return dispatch(push(`/topics/${results.topics_id}/summary`));
         }
         return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));

@@ -25,7 +25,7 @@ class TopicContainer extends React.Component {
   }
 
   render() {
-    const { children, topicInfo, topicId, filters } = this.props;
+    const { children, topicInfo, topicId, filters, currentVersion } = this.props;
     // show a big error if there is one to show
     const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent: this.setSideBarContent }));
 
@@ -42,7 +42,7 @@ class TopicContainer extends React.Component {
     return ( // running or complete
       <div className="topic-container">
         <PageTitle value={topicInfo.name} />
-        <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} filters={filters} />
+        <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} currentVersion={currentVersion} filters={filters} />
         {controlbar}
         {childrenWithExtraProp}
       </div>
@@ -56,6 +56,7 @@ TopicContainer.propTypes = {
   children: PropTypes.node,
   location: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
+  currentVersion: PropTypes.number,
   // from dispatch
   addAppNotice: PropTypes.func.isRequired,
   // from state
@@ -70,7 +71,7 @@ const mapStateToProps = (state, ownProps) => ({
   fetchStatus: state.topics.selected.info.fetchStatus,
   topicInfo: state.topics.selected.info,
   topicId: parseInt(ownProps.params.topicId, 10),
-  currentVersion: state.topics.selected.info.currentVersion,
+  currentVersion: parseInt(ownProps.location.query.snapshotId, 10),
 });
 
 const mapDispatchToProps = dispatch => ({

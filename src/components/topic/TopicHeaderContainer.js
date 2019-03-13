@@ -7,6 +7,7 @@ import { setTopicFavorite } from '../../actions/topicActions';
 import { updateFeedback } from '../../actions/appActions';
 import messages from '../../resources/messages';
 import { filteredLinkTo } from '../util/location';
+import { getCurrentVersionFromSnapshot } from '../../lib/topicVersionUtil';
 
 const localMessages = {
   topicFavorited: { id: 'topic.favorited', defaultMessage: 'Starred this topic' },
@@ -15,14 +16,14 @@ const localMessages = {
 };
 
 const TopicHeaderContainer = (props) => {
-  const { topicId, filters, topicInfo, handleSetFavorited } = props;
+  const { topicId, filters, topicInfo, handleSetFavorited, currentVersion } = props;
   const { formatMessage } = props.intl;
   let title = '';
   if (topicInfo.is_public === 1) {
     title += `${formatMessage(messages.topicPublicProp)} `;
   }
   title += `${formatMessage(messages.topicName)}: ${topicInfo.name}`;
-  const version = `${formatMessage(localMessages.topicVersion, { version: topicInfo.currentVersion.versions })}`;
+  const version = `${formatMessage(localMessages.topicVersion, { version: getCurrentVersionFromSnapshot(topicInfo, currentVersion) })}`;
 
   title = `${title}-${version}`;
   let content = null;
@@ -51,6 +52,7 @@ TopicHeaderContainer.propTypes = {
   topicId: PropTypes.number,
   topicInfo: PropTypes.object,
   filters: PropTypes.object,
+  currentVersion: PropTypes.number,
   // from context
   intl: PropTypes.object.isRequired,
   // from dispatch

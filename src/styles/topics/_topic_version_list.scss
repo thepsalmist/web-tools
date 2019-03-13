@@ -1,0 +1,17 @@
+@import '../_constants';
+
+.topic-version-list-title {
+  h2 {
+    color: blue;
+  }
+}
+
+.topic-version-list-info {
+  margin-left: 15px;
+  padding-left: 10px;
+  margin-bottom: 20px;
+  border-left: 1px solid gray;
+  h2 {
+    font-weight: bold;
+  }
+}

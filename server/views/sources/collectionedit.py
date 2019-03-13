@@ -163,10 +163,8 @@ def _parse_sources_from_csv_upload(filepath):
                 # python 2.7 csv module doesn't support unicode so have to do the decode/encode here for cleaned up val
                 updated_src = line['media_id'] not in ['', None]
                 # decode all keys as long as there is a key  re Unicode vs ascii
-                newline = {k.lower(): v for
-                           k, v in list(line.items()) if k not in ['', None]}
-                newline_no_empties = {k: v for
-                                   k, v in list(newline.items()) if v not in ['', None]}
+                newline = {k.lower(): v for k, v in list(line.items()) if k not in ['', None]}
+                newline_decoded = {k: v for k, v in list(newline.items()) if v not in ['', None]}
                 # empties = {k: v for k, v in list(newline.items()) if v in ['', None]}
 
                 # source urls have to start with the http, so add it if the user didn't

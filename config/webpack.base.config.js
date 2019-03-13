@@ -2,6 +2,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
+const WebpackBar = require('webpackbar');
 
 // many of the webpack directives need an absolute path
 const basedir = path.resolve(__dirname, '../');
@@ -16,7 +18,12 @@ const baseConfig = {
     new webpack.LoaderOptionsPlugin({ options: {} }),
     // this writes CSS files for our Flask server to read
     new MiniCssExtractPlugin({ filename: '[name].[hash].css' }),
+    // strip out all the locales from moment.js except `en` (saves > 100kB)
+    new MomentLocalesPlugin(),
+    // provide much cleaner feedback while building on the command line
+    new WebpackBar(),
   ],
+  stats: 'minimal',
   module: {
     rules: [
       { // run linting check on all the javascript code before trying to compile it
@@ -27,16 +34,17 @@ const baseConfig = {
       },
       { // compile all our javascript code
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/, // we don't want to recompile the imported packages
-        use: {
-          loader: 'babel-loader', // run all the code through bable to transpile it down to vanilla JS
+        include: path.resolve(basedir, 'src'), // don't compile imported packages
+        use: [
+          'cache-loader', // cache the transpiled files to make builds slightly faster
+          { loader: 'babel-loader' }, // run all the code through bable to transpile it down to vanilla JS
           // don't put options here; otherwise they override what is in the .babelrc
-        },
+        ],
       },
       { // compile the scss for react-flexbox-grid by itself because it doesn't work wth MiniCssExtractPlugin for some reason
         test: /\.css$/,
-        loader: 'style-loader!css-loader',
         include: /flexboxgrid/,
+        loader: 'style-loader!css-loader',
       },
       { // turn all our SCSS into regular CSS
         test: /\.(scss|css)$/,

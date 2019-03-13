@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormattedHTMLMessage, FormattedMessage, injectIntl } from 'react-intl';
 import AppButton from '../../../common/AppButton';
-import withAsyncFetch from '../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import { createSourcesByUrl } from '../../../../actions/sourceActions';
 import messages from '../../../../resources/messages';
 import { updateFeedback } from '../../../../actions/appActions';
@@ -22,13 +22,6 @@ class AddByUrlConfirmer extends Component {
     showNew: false,
     showExisting: false,
     showError: false,
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { urls, fetchData } = this.props;
-    if ((nextProps.urls !== urls)) {
-      fetchData(nextProps.urls);
-    }
   }
 
   render() {
@@ -85,9 +78,6 @@ AddByUrlConfirmer.propTypes = {
   onCancel: PropTypes.func,
   // from compositional chain
   intl: PropTypes.object.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
-  fetchData: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string,
   sources: PropTypes.array,
@@ -104,24 +94,19 @@ const mapStateToProps = state => ({
   errorSources: state.sources.collections.form.urlsToAdd.error,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (urls) => {
-    dispatch(createSourcesByUrl(urls))
-      .then((results) => {
-        if (results.status !== 1) {
-          dispatch(updateFeedback({ classes: 'error-notice', open: true, message: results.message }));
-        }
-      });
-  },
-  asyncFetch: () => {
-    dispatch(createSourcesByUrl(ownProps.urls));
-  },
-});
+const fetchAsyncData = (dispatch, { urls }) => {
+  dispatch(createSourcesByUrl(urls))
+    .then((results) => {
+      if (results.status !== 1) {
+        dispatch(updateFeedback({ classes: 'error-notice', open: true, message: results.message }));
+      }
+    });
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData, ['urls'])(
       AddByUrlConfirmer
     )
   )

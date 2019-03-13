@@ -49,7 +49,7 @@ UserForm.propTypes = {
   renderTextField: PropTypes.func.isRequired,
   renderSelect: PropTypes.func.isRequired,
   collections: PropTypes.array,
-  // from form healper
+  // from form helper
   handleSubmit: PropTypes.func,
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,

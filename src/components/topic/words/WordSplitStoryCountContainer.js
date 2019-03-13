@@ -74,7 +74,7 @@ const fetchAsyncData = (dispatch, props) => dispatch(fetchWordSplitStoryCounts(p
 export default
 injectIntl(
   connect(mapStateToProps)(
-    withHelp(localMessages.helpTitle, localMessages.helpText)(
+    withHelp(localMessages.helpTitle, [localMessages.helpText, messages.doesNotIncludeUndateable, messages.attentionChartHelpText])(
       withFilteredAsyncData(fetchAsyncData, ['stem'])(
         WordSplitStoryCountContainer
       )

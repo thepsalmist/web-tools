@@ -8,7 +8,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { fetchQuerySplitStoryCount, fetchDemoQuerySplitStoryCount, resetSentenceCounts, setSentenceDataPoint, resetSentenceDataPoint } from '../../../actions/explorerActions';
 import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import withQueryResults from './QueryResultsSelector';
@@ -16,7 +15,7 @@ import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTim
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import { oneDayLater, solrFormat } from '../../../lib/dateUtil';
-import { postToDownloadUrl, ACTION_MENU_ITEM_CLASS, ensureSafeResults, formatQueryForServer, formatDemoQueryForServer } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, postToCombinedDownloadUrl, ACTION_MENU_ITEM_CLASS, ensureSafeResults } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
@@ -28,6 +27,7 @@ const localMessages = {
   withKeywords: { id: 'explorer.attention.mode.withkeywords', defaultMessage: 'View Story Count (default)' },
   withoutKeywords: { id: 'explorer.attention.mode.withoutkeywords', defaultMessage: 'View Story Percentage' },
   downloadCsv: { id: 'explorer.attention.downloadCsv', defaultMessage: 'Download { name } stories over time CSV' },
+  downloadAllCsv: { id: 'explorer.attention.downloadAllCsv', defaultMessage: 'Download all stories over time CSV' },
 };
 
 const VIEW_NORMALIZED = 'VIEW_NORMALIZED';
@@ -66,6 +66,10 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
 
   downloadCsv = (query) => {
     postToDownloadUrl('/api/explorer/stories/split-count.csv', query);
+  }
+
+  downloadAllQueriesCsv = (queries) => {
+    postToCombinedDownloadUrl('/api/explorer/stories/split-count-all.csv', queries);
   }
 
   render() {
@@ -123,6 +127,18 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
                   </ListItemIcon>
                 </MenuItem>
               ))}
+              <MenuItem
+                key="all"
+                className={ACTION_MENU_ITEM_CLASS}
+                onClick={() => this.downloadAllQueriesCsv(queries)}
+              >
+                <ListItemText>
+                  <FormattedMessage {...localMessages.downloadAllCsv} />
+                </ListItemText>
+                <ListItemIcon>
+                  <DownloadButton />
+                </ListItemIcon>
+              </MenuItem>
             </ActionMenu>
             <ActionMenu actionTextMsg={messages.viewOptions}>
               <MenuItem
@@ -165,11 +181,8 @@ QueryAttentionOverTimeResultsContainer.propTypes = {
   attentionAggregationMenuItems: PropTypes.array.isRequired,
   selectedTimePeriod: PropTypes.string.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
   daySpread: PropTypes.bool,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   selectDataPoint: PropTypes.func.isRequired,
@@ -184,25 +197,7 @@ const mapStateToProps = state => ({
   results: state.explorer.storySplitCount.results,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (queries) => {
-    // this should trigger when the user clicks the Search button or changes the URL
-    // for n queries, run the dispatch with each parsed query
-    dispatch(resetSentenceCounts()); // necessary if a query deletion has occurred
-    if (ownProps.isLoggedIn) {
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q) => {
-        const infoToQuery = formatQueryForServer(q);
-        return dispatch(fetchQuerySplitStoryCount(infoToQuery));
-      });
-    } else if (queries || ownProps.queries) { // else assume DEMO mode, but assume the queries have been loaded
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q, index) => {
-        const demoInfo = formatDemoQueryForServer(q, index);
-        return dispatch(fetchDemoQuerySplitStoryCount(demoInfo));
-      });
-    }
-  },
+const mapDispatchToProps = dispatch => ({
   selectDataPoint: (clickedDataPoint) => {
     dispatch(resetSentenceDataPoint());
     dispatch(setSentenceDataPoint(clickedDataPoint));
@@ -212,9 +207,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.queries);
-    },
     shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
       const { selectedTimePeriod } = stateProps;
       return nextProps.selectedTimePeriod !== selectedTimePeriod;
@@ -227,11 +219,9 @@ injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withSummary(localMessages.lineChartTitle, localMessages.descriptionIntro, [localMessages.descriptionDetail, messages.countsVsPercentageHelp])(
       withAttentionAggregation(
-        withAsyncFetch(
-          withQueryResults(
-            withLoginRequired(
-              QueryAttentionOverTimeResultsContainer
-            )
+        withQueryResults(resetSentenceCounts, fetchQuerySplitStoryCount, fetchDemoQuerySplitStoryCount)(
+          withLoginRequired(
+            QueryAttentionOverTimeResultsContainer
           )
         )
       )

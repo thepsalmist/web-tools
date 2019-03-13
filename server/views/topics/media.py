@@ -5,7 +5,7 @@ import flask_login
 from multiprocessing import Pool
 
 from server import app, TOOL_API_KEY
-from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS
+from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_DOWNLOAD_SAMPLE_SIZE
 from server.auth import user_mediacloud_key, user_mediacloud_client, user_admin_mediacloud_client, is_user_logged_in
 from server.util import csv
 from server.views.topics import validated_sort, TOPIC_MEDIA_CSV_PROPS
@@ -290,6 +290,7 @@ def media_words_csv(topics_id, media_id):
     query = apicache.add_to_user_query('media_id:'+media_id)
     ngram_size = request.args['ngram_size'] if 'ngram_size' in request.args else 1  # default to word count
     word_counts = apicache.topic_ngram_counts(user_mediacloud_key(), topics_id, ngram_size=ngram_size, q=query,
-                                              num_words=WORD_COUNT_DOWNLOAD_NUM_WORDS)
+                                              num_words=WORD_COUNT_DOWNLOAD_NUM_WORDS,
+                                              sample_size=WORD_COUNT_DOWNLOAD_SAMPLE_SIZE)
     return csv.stream_response(word_counts, apicache.WORD_COUNT_DOWNLOAD_COLUMNS,
                                'topic-{}-media-{}-sampled-ngrams-{}-word'.format(topics_id, media_id, ngram_size))

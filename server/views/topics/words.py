@@ -3,7 +3,8 @@ from flask import request, jsonify
 import flask_login
 
 from server import app, TOOL_API_KEY
-from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_SAMPLE_SIZE
+from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_DOWNLOAD_SAMPLE_SIZE, \
+    WORD_COUNT_UI_NUM_WORDS
 import server.util.csv as csv
 from server.util.request import api_error_handler, arguments_required, filters_from_args, json_error_response
 from server.auth import user_mediacloud_key, is_user_logged_in
@@ -26,7 +27,8 @@ def topic_compare_subtopic_top_words(topics_id):
     selected_focal_sets_id = request.args['focal_sets_id']
     word_count = request.args['word_count'] if 'word_count' in request.args else 20
     # first we need to figure out which timespan they are working on
-    selected_snapshot_timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id, snapshots_id=snapshots_id)
+    selected_snapshot_timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id,
+                                                                      snapshots_id=snapshots_id)
     selected_timespan = None
     for t in selected_snapshot_timespans:
         if t['timespans_id'] == int(timespans_id):
@@ -60,28 +62,41 @@ def topic_word(topics_id, word):
     return jsonify(response)
 
 
+def _find_overall_timespan(topics_id, snapshots_id):
+    selected_snapshot_timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id,
+                                                                      snapshots_id=snapshots_id)
+    for timespan in selected_snapshot_timespans:
+        if timespan['period'] == 'overall':
+            return timespan
+    raise RuntimeError('Missing overall timespan in snapshot {} (topic {})!'.format(snapshots_id, topics_id))
+
+
 @app.route('/api/topics/<topics_id>/words', methods=['GET'])
 @api_error_handler
 def topic_words(topics_id):
     sample_size = request.args['sample_size'] if 'sample_size' in request.args else WORD_COUNT_SAMPLE_SIZE
 
     if access_public_topic(topics_id):
-        results = apicache.topic_word_counts(TOOL_API_KEY, topics_id, snapshots_id=None, timespans_id=None, foci_id=None, q=None)
+        results = apicache.topic_word_counts(TOOL_API_KEY, topics_id, sample_size=sample_size,
+                                             snapshots_id=None, timespans_id=None, foci_id=None, q=None)
     elif is_user_logged_in():
-        results = apicache.topic_word_counts(user_mediacloud_key(), topics_id, sample_size=sample_size)[:200]
+        # grab the top words, respecting all the filters
+        results = apicache.topic_word_counts(user_mediacloud_key(), topics_id, sample_size=sample_size)
     else:
         return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
 
     totals = []  # important so that these get reset on the client when they aren't requested
     logger.debug(request.args)
     if (is_user_logged_in()) and ('withTotals' in request.args) and (request.args['withTotals'] == "true"):
-        # handle requests to return these results
-        # and also data to compare it to for the whole topic focus
-        totals = apicache.topic_word_counts(user_mediacloud_key(), topics_id, timespans_id=None, q=None, sample_size=sample_size)
+        # return along with the results for the overall timespan, to facilitate comparison
+        snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+        overall_timespan = _find_overall_timespan(topics_id, snapshots_id)
+        totals = apicache.topic_word_counts(user_mediacloud_key(), topics_id, sample_size=sample_size,
+                                            timespans_id=overall_timespan['timespans_id'], foci_id=None, q=None)
 
     response = {
-        'list': results,
-        'totals': totals,
+        'list': results[:WORD_COUNT_UI_NUM_WORDS],
+        'totals': totals[:WORD_COUNT_UI_NUM_WORDS],
         'sample_size': str(sample_size)
     }
     return jsonify(response)
@@ -92,7 +107,7 @@ def topic_words(topics_id):
 @api_error_handler
 def topic_words_csv(topics_id):
     query = apicache.add_to_user_query(None)
-    sample_size = request.args['sample_size'] if 'sample_size' in request.args else WORD_COUNT_SAMPLE_SIZE
+    sample_size = request.args['sample_size'] if 'sample_size' in request.args else WORD_COUNT_DOWNLOAD_SAMPLE_SIZE
     ngram_size = request.args['ngram_size'] if 'ngram_size' in request.args else 1  # default to word count
     word_counts = apicache.topic_ngram_counts(user_mediacloud_key(), topics_id, ngram_size=ngram_size, q=query,
                                               num_words=WORD_COUNT_DOWNLOAD_NUM_WORDS, sample_size=sample_size)
@@ -112,7 +127,7 @@ def topic_word_split_story_counts(topics_id, word):
 @api_error_handler
 def topic_word_split_story_counts_csv(topics_id, word):
     return stream_topic_split_story_counts_csv(user_mediacloud_key(), 'word-'+word+'-split-story-counts',
-        topics_id, q=word)
+                                               topics_id, q=word)
 
 
 @app.route('/api/topics/<topics_id>/words/<word>/stories', methods=['GET'])
@@ -145,7 +160,9 @@ def topic_word_associated_words(topics_id, word):
 def topic_word_associated_words_csv(topics_id, word):
     query = apicache.add_to_user_query(word)
     ngram_size = request.args['ngram_size'] if 'ngram_size' in request.args else 1  # default to word count
-    word_counts = apicache.topic_ngram_counts(user_mediacloud_key(), topics_id, ngram_size=ngram_size, q=query)
+    word_counts = apicache.topic_ngram_counts(user_mediacloud_key(), topics_id, ngram_size=ngram_size, q=query,
+                                              num_words=WORD_COUNT_DOWNLOAD_NUM_WORDS,
+                                              sample_size=WORD_COUNT_DOWNLOAD_SAMPLE_SIZE)
     return csv.stream_response(word_counts, apicache.WORD_COUNT_DOWNLOAD_COLUMNS,
                                'topic-{}-{}-sampled-ngrams-{}-word'.format(topics_id, word, ngram_size))
 
@@ -158,19 +175,19 @@ def topic_word_usage_sample(topics_id, word):
     q = apicache.add_to_user_query(word)
     # need to use tool API key here because non-admin users can't pull sentences
     results = apicache.topic_sentence_sample(TOOL_API_KEY, topics_id, sample_size=1000, q=q)
-    # TODO: only pull the 5 words before and after so we
+    # only pull the 5 words before and after so we aren't leaking full content to users
     fragments = [_sentence_fragment_around(word, s['sentence']) for s in results if s['sentence'] is not None]
     fragments = [f for f in fragments if f is not None]
     return jsonify({'fragments': fragments})
 
 
 def _sentence_fragment_around(keyword, sentence):
-    '''
+    """
     Turn a sentence into a sentence fragment, including just the 5 words before and after the keyword we are looking at.
     We do this to enforce our rule that full sentences (even without metadata) never leave our servers).
     Warning: this makes simplistic assumptions about word tokenization
     ::return:: a sentence fragment around keyword, or None if keyword can't be found
-    '''
+    """
     try:
         words = sentence.split()  # super naive, but works ok
         keyword_index = None

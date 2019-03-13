@@ -8,13 +8,12 @@ import ListItemText from '@material-ui/core/ListItemText';
 import AppButton from '../../common/AppButton';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import StoryTable from '../../common/StoryTable';
 import { fetchQuerySampleStories, fetchDemoQuerySampleStories, resetSampleStories } from '../../../actions/explorerActions';
 import { selectStory, resetStory, fetchStory } from '../../../actions/storyActions';
-import { postToDownloadUrl, formatQueryForServer, formatDemoQueryForServer } from '../../../lib/explorerUtil';
+import { postToDownloadUrl } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
 
@@ -97,10 +96,9 @@ QuerySampleStoriesResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   onShowLoginDialog: PropTypes.func.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
   // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
+  shouldUpdate: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   handleStorySelection: PropTypes.func.isRequired,
@@ -117,26 +115,7 @@ const mapStateToProps = state => ({
   internalItemSelected: state.story.info.stories_id,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (queries) => {
-    // this should trigger when the user clicks the Search button or changes the URL
-    // for n queries, run the dispatch with each parsed query
-    dispatch(resetStory());
-    dispatch(resetSampleStories());
-    if (ownProps.isLoggedIn) {
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q) => {
-        const infoToQuery = formatQueryForServer(q);
-        return dispatch(fetchQuerySampleStories(infoToQuery));
-      });
-    } else if (queries || ownProps.queries) { // else assume DEMO mode, but assume the queries have been loaded
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q, index) => {
-        const demoInfo = formatDemoQueryForServer(q, index);
-        return dispatch(fetchDemoQuerySampleStories(demoInfo)); // id
-      });
-    }
-  },
+const mapDispatchToProps = dispatch => ({
   handleStorySelection: (query, story) => {
     // we should select and fetch since that's the pattern, even if we have the story info
     dispatch(selectStory(story.stories_id));
@@ -146,9 +125,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.queries);
-    },
     shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
       const { internalItemSelected } = stateProps;
       return nextProps.internalItemSelected !== internalItemSelected;
@@ -160,11 +136,9 @@ export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withSummary(localMessages.title, localMessages.helpIntro, localMessages.helpDetails)(
-      withAsyncFetch(
-        withLoginRequired(
-          withQueryResults(
-            QuerySampleStoriesResultsContainer
-          )
+      withLoginRequired(
+        withQueryResults([resetStory, resetSampleStories], fetchQuerySampleStories, fetchDemoQuerySampleStories)(
+          QuerySampleStoriesResultsContainer
         )
       )
     )

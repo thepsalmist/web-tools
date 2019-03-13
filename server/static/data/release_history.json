@@ -1,6 +1,16 @@
 {
   "releases": [
     {
+      "date": "2019-2-19",
+      "version": "v3.8.5",
+      "notes": [
+        {
+          "note": "Collection spreadsheet upload works",
+          "details": "Removed older string handling, removed pooling for now"
+        }
+      ]
+    },
+    {
       "date": "2019-1-31",
       "version": "v3.8.4",
       "notes": [

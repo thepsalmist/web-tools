@@ -5,7 +5,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import * as d3 from 'd3';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import DataCard from '../../common/DataCard';
 import { fetchCollectionSourceRepresentation } from '../../../actions/sourceActions';
 import messages from '../../../resources/messages';
@@ -116,7 +116,6 @@ CollectionSourceRepresentation.propTypes = {
   // from parent
   collection: PropTypes.object.isRequired,
   // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
   navToSource: PropTypes.func.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
@@ -128,20 +127,19 @@ const mapStateToProps = state => ({
   sources: state.sources.collections.selected.collectionSourceRepresentation.sources,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  asyncFetch: () => {
-    dispatch(fetchCollectionSourceRepresentation(ownProps.collection.tags_id));
-  },
+const mapDispatchToProps = dispatch => ({
   navToSource: (element) => {
     dispatch(push(`/sources/${element.data.id}`));
   },
 });
 
+const fetchAsyncData = (dispatch, { collection }) => dispatch(fetchCollectionSourceRepresentation(collection.tags_id));
+
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpText])(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData)(
         CollectionSourceRepresentation
       )
     )

@@ -107,12 +107,17 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
     merged_args = {
         'snapshots_id': request.args['snapshotId'],
         'timespans_id': request.args['timespanId'],
-        'foci_id': request.args['focusId'] if 'foci_id' in request.args else None,
+        'foci_id': request.args['focusId'] if 'focusId' in request.args else None,
         'q': request.args['q'] if 'q' in request.args else None,
         'sort': request.args['sort'] if 'sort' in request.args else None,
     }
     params.update(merged_args)
-    #
+
+    story_count = apicache.topic_story_count(user_mediacloud_key(), topics_id,
+                                             snapshots_id=params['snapshots_id'], timespans_id=params['timespans_id'],
+                                             foci_id = params['foci_id'], q=params['q'])
+    logger.info("Total stories to download: {}".format(story_count))
+
     if 'as_attachment' in params:
         del params['as_attachment']
     if 'fb_data' in params:

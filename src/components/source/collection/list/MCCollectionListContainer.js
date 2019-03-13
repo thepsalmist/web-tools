@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../../../common/hocs/AsyncContainer';
+import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import { fetchCollectionList } from '../../../../actions/sourceActions';
 import CollectionTable from '../../../common/CollectionTable';
 import TabSelector from '../../../common/TabSelector';
@@ -73,8 +73,6 @@ MCCollectionListContainer.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
   linkToFullUrl: PropTypes.bool,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -85,16 +83,12 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-const mapDispatchToProps = dispatch => ({
-  asyncFetch: () => {
-    dispatch(fetchCollectionList(TAG_SET_MC_ID));
-  },
-});
+const fetchAsyncData = dispatch => dispatch(fetchCollectionList(TAG_SET_MC_ID));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       MCCollectionListContainer
     )
   )

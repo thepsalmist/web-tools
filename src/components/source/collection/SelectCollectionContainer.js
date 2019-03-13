@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import { Grid } from 'react-flexbox-grid/lib';
 import { selectCollection, fetchCollectionDetails } from '../../../actions/sourceActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import SourceControlBar from '../controlbar/SourceControlBar';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
@@ -23,13 +23,6 @@ const localMessages = {
 };
 
 class SelectCollectionContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { collectionId, fetchData } = this.props;
-    if ((nextProps.collectionId !== collectionId)) {
-      fetchData(nextProps.collectionId);
-    }
-  }
-
   componentWillUnmount() {
     const { removeCollectionId } = this.props;
     removeCollectionId();
@@ -81,8 +74,6 @@ class SelectCollectionContainer extends React.Component {
 SelectCollectionContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   removeCollectionId: PropTypes.func.isRequired,
   // from context
   location: PropTypes.object.isRequired,
@@ -101,24 +92,21 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   removeCollectionId: () => {
     dispatch(selectCollection(null));
   },
-  fetchData: (collectionId) => {
-    dispatch(selectCollection(collectionId));
-    dispatch(fetchCollectionDetails(collectionId));
-  },
-  asyncFetch: () => {
-    dispatch(selectCollection(ownProps.params.collectionId));
-    dispatch(fetchCollectionDetails(ownProps.params.collectionId));
-  },
 });
+
+const fetchAsyncData = (dispatch, { collectionId }) => {
+  dispatch(selectCollection(collectionId));
+  dispatch(fetchCollectionDetails(collectionId));
+};
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+    withAsyncData(fetchAsyncData, ['collectionId'])(
       SelectCollectionContainer
     )
   )

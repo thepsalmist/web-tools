@@ -129,7 +129,6 @@ SourceSearchContainer.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(

@@ -6,7 +6,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import Link from 'react-router/lib/Link';
 import { push } from 'react-router-redux';
 import { fetchSourceFeeds, scrapeSourceFeeds, fetchSourceDetails } from '../../../actions/sourceActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import MediaSourceIcon from '../../common/icons/MediaSourceIcon';
 import SourceFeedTable from '../SourceFeedTable';
 import messages from '../../../resources/messages';
@@ -26,13 +26,6 @@ const localMessages = {
 };
 
 class SourceFeedContainer extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    const { sourceId, fetchData } = this.props;
-    if ((nextProps.sourceId !== sourceId)) {
-      fetchData(nextProps.sourceId);
-    }
-  }
-
   downloadCsv = () => {
     const { sourceId } = this.props;
     const url = `/api/sources/${sourceId}/feeds/feeds.csv`;
@@ -95,8 +88,6 @@ class SourceFeedContainer extends React.Component {
 SourceFeedContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   scrapeFeeds: PropTypes.func.isRequired,
   pushToUrl: PropTypes.func.isRequired,
   // from context
@@ -118,13 +109,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchData: (sourceId) => {
-    dispatch(fetchSourceFeeds(sourceId));
-  },
   pushToUrl: url => dispatch(push(url)),
-  asyncFetch: () => {
-    dispatch(fetchSourceFeeds(ownProps.params.sourceId));
-  },
   scrapeFeeds: () => {
     dispatch(scrapeSourceFeeds(ownProps.params.sourceId))
       .then((results) => {
@@ -141,10 +126,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
+const fetchAsyncData = (dispatch, { sourceId }) => dispatch(fetchSourceFeeds(sourceId));
+
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+    withAsyncData(fetchAsyncData, ['sourceId'])(
       SourceFeedContainer
     )
   )

@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { fetchSourceTopWords } from '../../../actions/sourceActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
 import EditableWordCloudDataCard from '../../common/EditableWordCloudDataCard';
@@ -61,8 +61,6 @@ SourceTopWordsContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   words: PropTypes.array,
   timePeriod: PropTypes.string.isRequired,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
@@ -80,20 +78,16 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      // need to calculateTimePeriods here in order to default to week correctly
-      dispatchProps.fetchData(stateProps.timePeriod, calculateTimePeriods(stateProps.timePeriod));
-    },
-  });
-}
+const fetchAsyncData = (dispatch, { source, timePeriod }) => {
+  // need to calculateTimePeriods here in order to default to week correctly
+  dispatch(fetchSourceTopWords(source.media_id, { timePeriod, q: calculateTimePeriods(timePeriod) }));
+};
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withHelp(localMessages.helpTitle, [localMessages.intro, messages.wordSpaceLayoutHelp])(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData)(
         SourceTopWordsContainer
       )
     )

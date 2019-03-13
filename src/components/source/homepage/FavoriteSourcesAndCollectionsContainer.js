@@ -4,9 +4,9 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import Link from 'react-router/lib/Link';
 import DataCard from '../../common/DataCard';
-import { fetchFavoriteCollections, fetchFavoriteSources } from '../../../actions/systemActions';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { ExploreButton } from '../../common/IconButton';
+import { fetchAsyncData, mapStateToProps } from '../FavoritedContainer';
 
 const NUMBER_TO_SHOW = 8; // how many of each to show
 
@@ -61,33 +61,16 @@ const FavoriteSourcesAndCollectionsContainer = (props) => {
 };
 
 FavoriteSourcesAndCollectionsContainer.propTypes = {
-  fetchStatus: PropTypes.string.isRequired,
+  fetchStatus: PropTypes.array.isRequired,
   favoritedSources: PropTypes.array.isRequired,
   favoritedCollections: PropTypes.array.isRequired,
   intl: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
-  fetchStatus: state.sources.collections.favorited.fetchStatus,
-  favoritedSources: state.sources.sources.favorited.list,
-  favoritedCollections: state.sources.collections.favorited.list,
-});
-
-const mapDispatchToProps = dispatch => ({
-  fetchData: () => {
-    dispatch(fetchFavoriteCollections());
-    dispatch(fetchFavoriteSources());
-  },
-  asyncFetch: () => {
-    dispatch(fetchFavoriteCollections());
-    dispatch(fetchFavoriteSources());
-  },
-});
-
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       FavoriteSourcesAndCollectionsContainer
     )
   )

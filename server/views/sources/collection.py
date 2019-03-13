@@ -13,8 +13,10 @@ from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_
 from server.util.request import arguments_required, form_fields_required, api_error_handler
 from server.util.tags import TAG_SETS_ID_COLLECTIONS, format_name_from_label, media_with_tag
 from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS, SOURCE_FEED_LIST_CSV_PROPS
+from server.views.sources.feeds import source_feed_list
 from server.views.favorites import add_user_favorite_flag_to_collections, add_user_favorite_flag_to_sources
 from server.views.sources.geocount import stream_geo_csv, cached_geotag_count
+from server.views.stories import QUERY_LAST_YEAR
 from server.views.sources.stories_split_by_time import stream_split_stories_csv
 import server.views.sources.apicache as apicache
 from server.views.sources.words import word_count, stream_wordcount_csv
@@ -68,19 +70,22 @@ def api_collection_set_geo():
 @flask_login.login_required
 @api_error_handler
 def api_collection_set(tag_sets_id):
-    '''
-    Return a list of all the (public only or public and private, depending on user role) collections in a tag set.  Not cached because this can change, and load time isn't terrible.
+    """
+    Return a list of all the (public only or public and private, depending on user role) collections in a tag set.
+    Not cached because this can change, and load time isn't terrible.
     :param tag_sets_id: the tag set to query for public collections
     :return: dict of info and list of collections in
-    '''
+    """
     if user_has_auth_role(ROLE_MEDIA_EDIT):
         info = apicache.tag_set_with_private_collections(user_mediacloud_key(), tag_sets_id)
     else:
         info = apicache.tag_set_with_public_collections(user_mediacloud_key(), tag_sets_id)
 
     add_user_favorite_flag_to_collections(info['tags'])
-    # rename to make more sense here (already sorted)
-    info['collections'] = info['tags']
+    # rename to make more sense here
+    for t in info['tags']:
+        t['sort_key'] = t['label'] if t['label'] else t['tag']
+    info['collections'] = sorted(info['tags'], key=itemgetter('sort_key'))
     del info['tags']
     return jsonify(info)
 
@@ -188,7 +193,7 @@ def api_collection_sources_feed_status_csv(collection_id, source_type):
     collection = user_mc.tag(collection_id)
     type = str(source_type).lower()
     media_in_collection = media_with_tag(user_mediacloud_key(), collection_id)
-    media_info_in_collection = fetch_collection_source_feed_info(media_in_collection)
+    media_info_in_collection = _fetch_collection_source_feed_info(media_in_collection)
     if type == 'review':
         filtered_media = [m for m in media_info_in_collection if m['active_feed_count'] > 0 and m['num_stories_90'] == 0 and m['num_stories_last_year'] > 0]
     elif type == 'remove':
@@ -202,6 +207,47 @@ def api_collection_sources_feed_status_csv(collection_id, source_type):
     file_prefix = "Collection {} ({}) - sources feed {}".format(collection_id, collection['tag'], source_type)
     properties_to_include = SOURCE_FEED_LIST_CSV_PROPS
     return csv.download_media_csv(filtered_media, file_prefix, properties_to_include)
+
+
+def _media_list_edit_worker(media_id):
+    user_mc = user_admin_mediacloud_client()
+    # latest scrape job
+    scrape_jobs = user_mc.feedsScrapeStatus(media_id)
+    latest_scrape_job = None
+    if len(scrape_jobs['job_states']) > 0:
+        latest_scrape_job = scrape_jobs['job_states'][0]
+    # active feed count
+    feeds = source_feed_list(media_id)
+    active_syndicated_feeds = [f for f in feeds if f['active'] and f['type'] == 'syndicated']
+    active_feed_count = len(active_syndicated_feeds)
+    query = "media_id:{}".format(media_id)
+    full_count = apicache.timeperiod_story_count(user_mc, query, QUERY_LAST_YEAR)['count']
+    return {
+        'media_id': media_id,
+        'latest_scrape_job': latest_scrape_job,
+        'active_feed_count': active_feed_count,
+        'num_stories_last_year': full_count,
+    }
+
+
+def _fetch_collection_source_feed_info(media_in_collection):
+    # for editing users, add in last scrape and active feed count (if requested)
+    use_pool = True
+    jobs = [m['media_id'] for m in media_in_collection]
+    if use_pool:
+        pool = Pool(processes=FEED_SCRAPE_JOB_POOL_SIZE)
+        job_results = pool.map(_media_list_edit_worker, jobs)  # blocks until they are all done
+    else:
+        job_results = [_media_list_edit_worker(job) for job in jobs]
+
+    job_by_media_id = {j['media_id']: j for j in job_results}
+    for m in media_in_collection:
+        m['num_stories_last_year'] = job_by_media_id[m['media_id']]['num_stories_last_year']
+        m['latest_scrape_job'] = job_by_media_id[m['media_id']]['latest_scrape_job']
+        m['active_feed_count'] = job_by_media_id[m['media_id']]['active_feed_count']
+    if use_pool:
+        pool.terminate()
+    return media_in_collection
 
 
 @app.route('/api/collections/<collection_id>/sources/story-split/historical-counts')
@@ -218,7 +264,7 @@ def collection_source_story_split_historical_counts(collection_id):
 def collection_source_story_split_historical_counts_csv(collection_id):
     results = _collection_source_story_split_historical_counts(collection_id)
     date_cols = None
-    #TODO verify this
+    # TODO verify this
     for source in results:
         if date_cols is None:
             date_cols = sorted([s['date'] for s in source['splits_over_time']])
@@ -260,13 +306,13 @@ def _collection_source_story_split_historical_counts(collection_id):
 @api_error_handler
 def collection_source_split_stories(collection_id):
     collections_query = "tags_id_media:{}".format(collection_id)
-    exclude_spidered_stories = " tags_id_media:{} AND NOT tags_id_stories:{}".format(str(collection_id),
-                                                                                8875452) if 'separate_spidered' in request.args else collections_query
-    interval = 'day' # default, and not currently passed to the calls above
+    exclude_spidered_stories = " tags_id_media:{} AND NOT tags_id_stories:{}".format(str(collection_id), 8875452)\
+        if 'separate_spidered' in request.args else collections_query
+    interval = 'day'  # default, and not currently passed to the calls above
 
     all_results = apicache.last_year_split_story_count(user_mediacloud_key(), collections_query)
-    non_spidered_results = apicache.last_year_split_story_count(user_mediacloud_key(),
-                                                                exclude_spidered_stories)  # same if request.args doesn't ask to exclude_spidered
+    # same if request.args doesn't ask to exclude_spidered
+    non_spidered_results = apicache.last_year_split_story_count(user_mediacloud_key(), exclude_spidered_stories)
 
     all_stories = {
         'total_story_count': all_results['total_story_count'],
@@ -283,8 +329,8 @@ def collection_source_split_stories(collection_id):
 @flask_login.login_required
 @api_error_handler
 def collection_split_stories_csv(collection_id):
-    user_mc = user_mediacloud_client()
-    return stream_split_stories_csv(user_mediacloud_key(), 'splitStoryCounts-Collection-' + collection_id, collection_id, "tags_id_media")
+    return stream_split_stories_csv(user_mediacloud_key(), 'splitStoryCounts-Collection-' + collection_id,
+                                    collection_id, "tags_id_media")
 
 
 def _tag_set_info(user_mc_key, tag_sets_id):
@@ -393,5 +439,3 @@ def collection_create():
     if len(tags) > 0:
         user_mc.tagMedia(tags)
     return jsonify(new_collection['tag'])
-
-

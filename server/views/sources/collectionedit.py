@@ -4,7 +4,6 @@ import flask_login
 import time
 from flask import request, jsonify, render_template
 from mediacloud.tags import MediaTag, TAG_ACTION_ADD, TAG_ACTION_REMOVE
-from server.util.mail import send_html_email
 from werkzeug.utils import secure_filename
 import csv as pycsv
 from multiprocessing import Pool
@@ -12,8 +11,9 @@ from collections import defaultdict
 from deco import concurrent, synchronized
 
 from server import app, config, TOOL_API_KEY
-from server.util.config import ConfigException
 from server.auth import user_admin_mediacloud_client, user_mediacloud_key, user_name
+from server.util.config import ConfigException
+from server.util.mail import send_html_email
 from server.util.request import json_error_response, form_fields_required, api_error_handler
 from server.views.sources.collection import allowed_file
 from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS
@@ -163,22 +163,24 @@ def _parse_sources_from_csv_upload(filepath):
                 # python 2.7 csv module doesn't support unicode so have to do the decode/encode here for cleaned up val
                 updated_src = line['media_id'] not in ['', None]
                 # decode all keys as long as there is a key  re Unicode vs ascii
-                newline = {k.lower(): v for k, v in list(line.items()) if k not in ['', None]}
-                newline_decoded = {k: v for k, v in list(newline.items()) if v not in ['', None]}
-                empties = {k: v for k, v in list(newline.items()) if v in ['', None]}
+                newline = {k.lower(): v for
+                           k, v in list(line.items()) if k not in ['', None]}
+                newline_no_empties = {k: v for
+                                   k, v in list(newline.items()) if v not in ['', None]}
+                # empties = {k: v for k, v in list(newline.items()) if v in ['', None]}
 
                 # source urls have to start with the http, so add it if the user didn't
-                if newline_decoded['url'][:7] not in ['http://', 'http://'] and \
-                        newline_decoded['url'][:8] not in ['https://', 'https://']:
-                    newline_decoded['url'] = 'http://{}'.format(newline_decoded['url'])
+                if newline_no_empties['url'][:7] not in ['http://', 'http://'] and \
+                                newline_no_empties['url'][:8] not in ['https://', 'https://']:
+                    newline_no_empties['url'] = 'http://{}'.format(newline_no_empties['url'])
 
                 # sources must have a name for updates
                 if updated_src:
-                    if 'name' not in newline_decoded:
-                        raise Exception("Missing name for source " + str(newline_decoded['media_id'] + " " +
-                                                                         str(newline_decoded['url'])))
-                    newline_decoded.update(empties)
-                    sources_to_update.append(newline_decoded)
+                    if 'name' not in newline_no_empties:
+                        raise Exception("Missing name for source " + str(newline_no_empties['media_id'] + " " +
+                                                                         str(newline_no_empties['url'])))
+                        newline_no_empties.update(empties)
+                    sources_to_update.append(newline_no_empties)
                 else:
                     sources_to_create.append(newline_decoded)
             except Exception as e:
@@ -204,7 +206,7 @@ def _update_source_worker(source_info):
     # worker function to help update sources in parallel
     user_mc = user_admin_mediacloud_client()
     media_id = source_info['media_id']
-    # logger.debug("Updating media {}".format(media_id))
+    logger.debug("Updating media {}".format(media_id))
     source_no_metadata_no_id = {k: v for k, v in list(source_info.items()) if k != 'media_id'
                                 and k not in SOURCE_LIST_CSV_METADATA_PROPS}
     response = user_mc.mediaUpdate(media_id, source_no_metadata_no_id)
@@ -240,7 +242,7 @@ def _create_or_update_sources(source_list_from_csv, create_new):
         else:
             sources_to_update.append(src)
     # process all the entries we think are creations in one batch call
-    use_pool = True
+    use_pool = False
     if len(sources_to_create) > 0:
         # remove metadata so they don't save badly (will do metadata later)
         sources_to_create_no_metadata = []
@@ -281,8 +283,8 @@ def _create_or_update_sources(source_list_from_csv, create_new):
     # process all the entries we think are updates in parallel so it happens quickly
     if len(sources_to_update) > 0:
         if use_pool:
-            #pool = Pool(processes=MEDIA_UPDATE_POOL_SIZE)    # process updates in parallel with worker function
-            #update_responses = pool.map(_update_source_worker, sources_to_update)  # blocks until they are all done
+            # pool = Pool(processes=MEDIA_UPDATE_POOL_SIZE)    # process updates in parallel with worker function
+            # update_responses = pool.map(_update_source_worker, sources_to_update)  # blocks until they are all done
             sources_to_update = _update_sources_in_parallel(sources_to_update)
             for m in sources_to_update:
                 response = m['response']
@@ -306,8 +308,8 @@ def _create_or_update_sources(source_list_from_csv, create_new):
                 else:
                     errors.append(src)
                 results.append(src)
-        #if use_pool:
-            #pool.terminate()  # extra safe garbage collection
+        # if use_pool:
+            # pool.terminate()  # extra safe garbage collection
 
     time_info = time.time()
     # logger.debug("successful :  %s", successful)
@@ -332,7 +334,7 @@ def _create_or_update_sources(source_list_from_csv, create_new):
 
 
 def _email_batch_source_update_results(audit_feedback):
-    email_title = "Source Batch Updates "
+    email_title = "Source Batch Updates"
     content_title = "You just uploaded {} sources to a collection.".format(len(audit_feedback))
     updated_sources = []
     for updated in audit_feedback:

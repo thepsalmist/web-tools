@@ -7,7 +7,7 @@ import AppButton from '../../common/AppButton';
 import { WarningNotice } from '../../common/Notice';
 import TopicInfo from '../controlbar/TopicInfo';
 import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/auth';
-import { getCurrentVersionFromSnapshot, getTotalVersions } from '../../../lib/topicVersionUtil';
+import { getCurrentVersionFromSnapshot } from '../../../lib/topicVersionUtil';
 
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Admin: Topic Status Dashboard' },
@@ -20,9 +20,9 @@ const localMessages = {
 const TopicVersionStatusContainer = props => (
   <Grid>
     <PageTitle value={localMessages.title} />
-    {getCurrentVersionFromSnapshot(props.topicInfo, props.currentVersion) !== getTotalVersions(props.topicInfo) && <WarningNotice><FormattedMessage {...localMessages.versionError} /></WarningNotice>}
+    {getCurrentVersionFromSnapshot(props.topicInfo, props.currentVersion) !== props.topicInfo.latestVersion && <WarningNotice><FormattedMessage {...localMessages.versionError} /></WarningNotice>}
     <h2>{props.intl.formatMessage(localMessages.label, { state: hasPermissions(getUserRoles(props.user), PERMISSION_ADMIN) ? props.topicInfo.state : props.displayState })}</h2>
-    <h3>{props.intl.formatMessage(localMessages.versionInfo, { currentVersion: getCurrentVersionFromSnapshot(props.topicInfo, props.currentVersion), numVersions: getTotalVersions(props.topicInfo) })}</h3>
+    <h3>{props.intl.formatMessage(localMessages.versionInfo, { currentVersion: getCurrentVersionFromSnapshot(props.topicInfo, props.currentVersion), numVersions: props.topicInfo.latestVersion })}</h3>
     <Row>
       <Col lg={6}>
         <AppButton

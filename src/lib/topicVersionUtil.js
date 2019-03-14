@@ -26,9 +26,10 @@ export function getCurrentVersionFromSnapshot(topicInfo, currentSnapshotId) {
   if (!currentSnapshotId || nullOrUndefined(currentSnapshotId)) return '';
   const currentVersion = snapshots.find(s => s.snapshots_id === parseInt(currentSnapshotId, 10)).note;
 
-  return currentVersion;
+  return parseInt(currentVersion, 10);
 }
 
+// shouldn't need this because we calc the list length in python and put in the topic JSON object
 export function getTotalVersions(topicInfo) {
   return topicInfo.snapshots.list.length;
 }

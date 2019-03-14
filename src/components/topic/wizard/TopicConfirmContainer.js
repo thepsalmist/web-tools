@@ -144,7 +144,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handlePreviousStep: (mode) => {
     let topicPhrase = '';
     if (mode === TOPIC_FORM_MODE_EDIT) {
-      topicPhrase = `/${ownProps.params.topicId}`;
+      topicPhrase = `/${ownProps.topicInfo.topics_id}`;
     }
     dispatch(push(`/topics${topicPhrase}/${mode}/2`));
     dispatch(goToTopicStep(2));

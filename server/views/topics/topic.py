@@ -113,7 +113,7 @@ def _topic_summary(topics_id):
     }
     # add in spider job status
     topic['spiderJobs'] = local_mc.topicSpiderStatus(topics_id)['job_states']
-    topic['latestVersion'] = len(snapshots)
+    topic['latestVersion'] = len(snapshots) + ARRAY_BASE_ONE
     topic['latestUsableVersion'] = 'note' in most_recent_usable_snapshot if most_recent_usable_snapshot else -1
     if is_user_logged_in():
         _add_user_favorite_flag_to_topics([topic])

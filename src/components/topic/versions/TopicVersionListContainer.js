@@ -41,7 +41,7 @@ const localMessages = {
 };
 
 const TopicVersionListContainer = (props) => {
-  const { topicId, versions, filters, handleCreateSnapshot, goToVersion } = props;
+  const { topicId, topicInfo, versions, filters, handleCreateSnapshot, goToVersion } = props;
   const { formatMessage } = props.intl;
   let versionListContent;
   if (versions.length > 0) {
@@ -72,7 +72,24 @@ const TopicVersionListContainer = (props) => {
       return -1;
     });
   } else {
-    versionListContent = <FormattedMessage {...localMessages.versionNumber} values={{ number: 1 }} />;
+    versionListContent = (
+      <Row>
+        <div className="topic-version-list-title">
+          <h2><FormattedMessage {...localMessages.versionNumber} values={{ number: 1 }} /></h2>
+        </div>
+        <div className="topic-version-list-info">
+          <h2><FormattedMessage {...localMessages.versionState} values={{ state: topicInfo.state }} /></h2>
+          <FormattedMessage {...localMessages.versionStatus} values={{ status: 'TBD' }} />
+          <br />
+          <AppButton
+            style={{ marginTop: 30 }}
+            type="submit"
+            onClick={() => goToVersion(topicId)}
+            label={formatMessage(localMessages.viewButton)}
+          />
+        </div>
+      </Row>
+    );
   }
   const cannotCreate = false; // TODO: if any snapshot is building
 
@@ -106,6 +123,7 @@ TopicVersionListContainer.propTypes = {
   // from parent
   versions: PropTypes.array.isRequired,
   topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
   // from compositional chain
   intl: PropTypes.object.isRequired,

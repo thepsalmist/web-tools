@@ -29,7 +29,7 @@ class TopicContainer extends React.Component {
     const { children, topicInfo, topicId, filters, currentVersionId } = this.props;
     // show a big error if there is one to show
     const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent: this.setSideBarContent }));
-    const currentVersionNum = getCurrentVersionFromSnapshot(topicInfo, currentVersionId);
+    const currentVersionNum = parseInt(getCurrentVersionFromSnapshot(topicInfo, currentVersionId), 10);
     const controlbar = (
       <TopicControlBar
         {...this.props}

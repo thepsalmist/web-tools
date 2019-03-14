@@ -17,7 +17,7 @@ import * as fetchConstants from '../../../lib/fetchConstants';
 import { emptyString } from '../../../lib/formValidators';
 import { filteredLocation, urlWithFilters, filteredLinkTo } from '../../util/location';
 import { VERSION_ERROR, VERSION_ERROR_EXCEEDED, VERSION_CREATING, VERSION_BUILDING, VERSION_QUEUED, VERSION_RUNNING, VERSION_READY } from '../../../lib/topicFilterUtil';
-import { getTopicVersionInfo } from '../../../lib/topicVersionUtil';
+import { getTopicVersionInfo, getCurrentVersionFromSnapshot } from '../../../lib/topicVersionUtil';
 
 const localMessages = {
   needsSnapshotWarning: { id: 'needSnapshot.warning', defaultMessage: 'You\'ve made changes to your Topic that require a new snapshot to be generated!' },
@@ -188,36 +188,40 @@ const fetchAsyncData = (dispatch, { topicInfo, location, intl }) => {
   // show any warnings based on the snapshot/version state
   const topicVersionInfo = getTopicVersionInfo(topicInfo);
 
-  // if no snapshot specified, pick the first usable snapshot
+  // if no snapshot specified, pick the latest usable snapshot
   if (emptyString(snapshotId)) {
     // default to the latest snapshot if none is specified on url
-    // or first if none is usable
+    // or the first snapshot if none is usable
     // TODO: WarningNotice if user is not looking at most recent and usable
     if (topicVersionInfo.versionList.length > 0) {
       const firstSnapshot = topicVersionInfo.versionList[0];
-      const newestSnapshotId = topicVersionInfo.lastReadySnapshot ? topicVersionInfo.lastReadySnapshot.snapshots_id : firstSnapshot.snapshots_id;
+      const latestSnapshotId = topicVersionInfo.lastReadySnapshot ? topicVersionInfo.lastReadySnapshot.snapshots_id : firstSnapshot.snapshots_id;
       const newLocation = filteredLocation(location, {
-        snapshotId: newestSnapshotId,
+        snapshotId: latestSnapshotId,
         timespanId: null,
         focusId: null,
         q: null,
       });
       dispatch(replace(newLocation)); // do a replace, not a push here so the non-snapshot url isn't in the history
-      dispatch(filterBySnapshot(newestSnapshotId));
+      dispatch(filterBySnapshot(latestSnapshotId));
     }
+
+    // if nothing is ready/usable, put up a notice
     if (!topicVersionInfo.lastReadySnapshot) {
       dispatch(addNotice({
         level: LEVEL_INFO,
         message: intl.formatMessage(localMessages.snapshotImporting),
       }));
     }
-  } else if (topicVersionInfo.lastReadySnapshot && topicVersionInfo.lastReadySnapshot.snapshots_id !== parseInt(snapshotId, 10)) {
+  } else if ((topicVersionInfo.lastReadySnapshot
+      && topicVersionInfo.lastReadySnapshot.snapshots_id !== parseInt(snapshotId, 10))
+      || topicVersionInfo.versionList.length !== getCurrentVersionFromSnapshot(topicInfo, snapshotId)) {
     // if snaphot is specific in URL, but it is not the latest then show a warning
     dispatch(addNotice({
       level: LEVEL_WARNING,
       htmlMessage: intl.formatHTMLMessage(localMessages.notUsingLatestSnapshot, {
         url: urlWithFilters(location.pathname, {
-          snapshotId: topicVersionInfo.lastReadySnapshot.snapshots_id,
+          snapshotId,
         }),
       }),
     }));

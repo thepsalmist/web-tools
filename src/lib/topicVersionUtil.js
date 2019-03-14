@@ -24,7 +24,7 @@ export function getCurrentVersionFromSnapshot(topicInfo, currentSnapshotId) {
   // get latest version and status
   const snapshots = topicInfo.snapshots.list;
   if (!currentSnapshotId || nullOrUndefined(currentSnapshotId)) return '';
-  const currentVersion = snapshots.find(s => s.snapshots_id === currentSnapshotId).note;
+  const currentVersion = snapshots.find(s => s.snapshots_id === parseInt(currentSnapshotId, 10)).note;
 
   return currentVersion;
 }

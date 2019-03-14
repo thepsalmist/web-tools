@@ -13,11 +13,10 @@ import messages from '../../../resources/messages';
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Version status' },
   hasAnError: { id: 'topic.hasError', defaultMessage: 'Sorry, this topic has an error!' },
-  topicTooBig: { id: 'topic.state.error.topicTooBig', defaultMessage: 'Error, your topic is too big' },
+  topicTooBig: { id: 'topic.state.error.topicTooBig', defaultMessage: 'Error, your topic version is too big' },
   topicTooBigDesc: { id: 'topic.state.error.topicTooBigDesc', defaultMessage: 'We limit the size of topics to make sure that our system doesn\'t get overrun with gathering content from the entire web.' },
-  topicTooBigInstructions: { id: 'topic.state.error.topicTooBigInstructions', defaultMessage: 'Try making a new topic with a more specific query or a smaller date range. Email us at support@mediacloud.org if you have questions' },
-  trySpidering: { id: 'topic.state.trySpidering', defaultMessage: 'Manually run this topic' },
-  otherError: { id: 'topic.state.error.otherError', defaultMessage: 'Sorry, this topic has an error.  It says it is "{state}".' },
+  topicTooBigInstructions: { id: 'topic.state.error.topicTooBigInstructions', defaultMessage: 'Try making a new version with a more specific query or a smaller date range. Email us at support@mediacloud.org if you have questions' },
+  otherError: { id: 'topic.state.error.otherError', defaultMessage: 'Sorry, this version has an error.  It says it is "{state}".' },
   otherErrorInstructions: { id: 'topic.state.error.otherErrorInstructions', defaultMessage: 'Email us at support@mediacloud.org if you have questions' },
 };
 

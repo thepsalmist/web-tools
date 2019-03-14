@@ -75,7 +75,7 @@ class ManageFocalSetsContainer extends React.Component {
             component={renderCheckbox}
             label={formatMessage(localMessages.startSpidering)}
             type="inline"
-            defaultValue
+            initialValues="checked"
           />
           <Link to={`/topics/${topicId}/snapshot/foci/create`}>
             <AppButton

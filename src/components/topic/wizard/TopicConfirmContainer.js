@@ -50,7 +50,7 @@ const TopicConfirmContainer = (props) => {
           fullWidth
           label={formatMessage(localMessages.startSpidering)}
           type="inline"
-          value
+          initialValues="checked"
         />
       );
     }

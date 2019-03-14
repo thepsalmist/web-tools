@@ -63,9 +63,9 @@ class TopicVersionContainer extends React.Component {
   }
 
   render() {
-    const { children, topicInfo, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo, setSideBarContent, user, currentVersion, filters } = this.props;
+    const { children, topicInfo, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo, setSideBarContent, user, currentVersionId, filters } = this.props;
     // show a big error if there is one to show
-
+    const currentVersionNum = getCurrentVersionFromSnapshot(topicInfo, currentVersionId);
     let contentToShow = children; // has a filters renderer in it - show if a completed topic
     const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent }));
     contentToShow = childrenWithExtraProp;
@@ -75,13 +75,19 @@ class TopicVersionContainer extends React.Component {
       // if the topic is running the initial spider and then show under construction message
       contentToShow = (
         <div>
-          <TopicVersionStatusContainer topicInfo={topicInfo} displayState={VERSION_BUILDING} user={user} currentVersion={currentVersion} filters={filters} />
+          <TopicVersionStatusContainer
+            topicInfo={topicInfo}
+            displayState={VERSION_BUILDING}
+            user={user}
+            currentVersion={currentVersionNum}
+            filters={filters}
+          />
         </div>
       );
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
-      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)} />;
+      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)} currentVersion={currentVersionNum} />;
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR) {
-      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR} goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)} />;
+      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR} goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)} currentVersion={currentVersionNum} />;
     } else if (fetchStatusInfo !== fetchConstants.FETCH_SUCCEEDED
       && fetchStatusSnapshot !== fetchConstants.FETCH_SUCCEEDED) {
       // complete
@@ -110,7 +116,7 @@ TopicVersionContainer.propTypes = {
   goToCreateNewVersion: PropTypes.func,
   setSideBarContent: PropTypes.func,
   user: PropTypes.object,
-  currentVersion: PropTypes.number,
+  currentVersionId: PropTypes.number,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -120,7 +126,7 @@ const mapStateToProps = (state, ownProps) => ({
   topicInfo: state.topics.selected.info,
   topicId: parseInt(ownProps.params.topicId, 10),
 
-  currentVersion: parseInt(ownProps.location.query.snapshotId, 10),
+  currentVersionId: parseInt(ownProps.location.query.snapshotId, 10),
   needsNewSnapshot: state.topics.selected.needsNewSnapshot,
   snapshotCount: state.topics.selected.snapshots.list.length,
   user: state.user,

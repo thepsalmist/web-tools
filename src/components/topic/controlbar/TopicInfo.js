@@ -9,7 +9,7 @@ import TopicOwnerList from '../TopicOwnerList';
 
 const localMessages = {
   state: { id: 'topic.state', defaultMessage: 'State' },
-  viewingVersion: { id: 'topic.latest', defaultMessage: 'You are viewing Version: {version}' },
+  viewingVersion: { id: 'topic.latest', defaultMessage: 'You are viewing version {version}' },
   latestVersion: { id: 'topic.latest', defaultMessage: 'Latest Version: {version}' },
   timespan: { id: 'topic.summary.timespan', defaultMessage: '<b>Timespan</b>: {start} to {end} ({period})' },
 };
@@ -65,7 +65,7 @@ const TopicInfo = (props) => {
 
 TopicInfo.propTypes = {
   topic: PropTypes.object.isRequired,
-  currentVersion: PropTypes.string.isRequired,
+  currentVersion: PropTypes.number.isRequired,
   intl: PropTypes.object.isRequired,
 };
 

@@ -8,6 +8,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../../lib/auth';
 import { VERSION_ERROR_EXCEEDED } from '../../../lib/topicFilterUtil';
 import TopicInfo from '../controlbar/TopicInfo';
+import { WarningNotice } from '../../common/Notice';
 import messages from '../../../resources/messages';
 
 const localMessages = {
@@ -18,11 +19,12 @@ const localMessages = {
   topicTooBigInstructions: { id: 'topic.state.error.topicTooBigInstructions', defaultMessage: 'Try making a new version with a more specific query or a smaller date range. Email us at support@mediacloud.org if you have questions' },
   otherError: { id: 'topic.state.error.otherError', defaultMessage: 'Sorry, this version has an error.  It says it is "{state}".' },
   otherErrorInstructions: { id: 'topic.state.error.otherErrorInstructions', defaultMessage: 'Email us at support@mediacloud.org if you have questions' },
+  versionError: { id: 'topics.status.versionError', defaultMessage: 'You are not viewing the latest version for this topic.' },
 };
 
 class TopicVersionErrorStatusContainer extends React.Component {
   render() {
-    const { topicInfo, error, goToCreateNewVersion } = this.props;
+    const { topicInfo, error, goToCreateNewVersion, currentVersion } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     if (error === VERSION_ERROR_EXCEEDED) {
@@ -32,6 +34,7 @@ class TopicVersionErrorStatusContainer extends React.Component {
             <Col lg={12}>
               <div className="topic-stuck-created-or-error">
                 <PageTitle value={localMessages.title} />
+                {currentVersion !== topicInfo.latestVersion && <WarningNotice><FormattedMessage {...localMessages.versionError} /></WarningNotice>}
                 <h1><FormattedMessage {...localMessages.topicTooBig} /></h1>
                 <p><FormattedMessage {...localMessages.topicTooBigDesc} /></p>
               </div>
@@ -48,7 +51,7 @@ class TopicVersionErrorStatusContainer extends React.Component {
                 />
               </Col>
               <Col lg={4}>
-                <TopicInfo topic={topicInfo} />
+                <TopicInfo topic={topicInfo} currentVersion={currentVersion} />
               </Col>
             </Row>
           </Permissioned>
@@ -80,7 +83,7 @@ class TopicVersionErrorStatusContainer extends React.Component {
                 </div>
               </Col>
               <Col lg={4}>
-                <TopicInfo topic={topicInfo} />
+                <TopicInfo topic={topicInfo} currentVersion={currentVersion} />
               </Col>
             </Row>
           </Permissioned>
@@ -106,6 +109,7 @@ TopicVersionErrorStatusContainer.propTypes = {
   filters: PropTypes.object,
   error: PropTypes.string,
   goToCreateNewVersion: PropTypes.func,
+  currentVersion: PropTypes.number.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
 };

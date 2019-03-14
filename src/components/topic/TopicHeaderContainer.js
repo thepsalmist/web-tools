@@ -7,7 +7,6 @@ import { setTopicFavorite } from '../../actions/topicActions';
 import { updateFeedback } from '../../actions/appActions';
 import messages from '../../resources/messages';
 import { filteredLinkTo } from '../util/location';
-import { getCurrentVersionFromSnapshot } from '../../lib/topicVersionUtil';
 
 const localMessages = {
   topicFavorited: { id: 'topic.favorited', defaultMessage: 'Starred this topic' },
@@ -23,7 +22,7 @@ const TopicHeaderContainer = (props) => {
     title += `${formatMessage(messages.topicPublicProp)} `;
   }
   title += `${formatMessage(messages.topicName)}: ${topicInfo.name}`;
-  const version = `${formatMessage(localMessages.topicVersion, { version: getCurrentVersionFromSnapshot(topicInfo, currentVersion) })}`;
+  const version = `${formatMessage(localMessages.topicVersion, { version: currentVersion })}`;
 
   title = `${title}-${version}`;
   let content = null;

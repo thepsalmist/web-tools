@@ -104,7 +104,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleChangeSort: (sort) => {
+  sortData: (sort) => {
     dispatch(push(pagedAndSortedLocation(ownProps.location, null, sort)));
     dispatch(sortTopicInfluentialStories(sort));
   },

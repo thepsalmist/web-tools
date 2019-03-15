@@ -11,7 +11,7 @@ const localMessages = {
   // startSpidering: { id: 'focalSets.manage.about', defaultMessage: 'Spider after generating new version.' },
 };
 const TopicVersionGenerationOptions = (props) => {
-  const { topicInfo, handleCreateVersionAndStartSpider, formValues } = props;
+  const { topicInfo, handleCreateVersionAndStartSpider } = props;
   const { formatMessage } = props.intl;
   const topicId = topicInfo.topics_id;
   return (

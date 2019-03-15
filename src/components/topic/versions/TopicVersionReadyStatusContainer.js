@@ -9,8 +9,8 @@ import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { ExploreButton } from '../../common/IconButton';
 import { LEVEL_WARNING } from '../../common/Notice';
-import { filterByFocus, filterByQuery, filterByTimespan, fetchTopicFocalSetsList, fetchFocalSetDefinitions, setTopicNeedsNewSnapshot, topicStartSpider } from '../../../actions/topicActions';
-import { updateFeedback, addNotice } from '../../../actions/appActions';
+import { filterByFocus, filterByQuery, filterByTimespan, fetchTopicFocalSetsList, fetchFocalSetDefinitions, setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
+import { addNotice } from '../../../actions/appActions';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 import { nullOrUndefined } from '../../../lib/formValidators';
 
@@ -154,7 +154,7 @@ function latestSnapshotIsRunning(snapshots) {
   return (latestSnapshot.state === 'running') || ((latestSnapshot.state === 'completed') && (latestSnapshot.searchable === 0));
 }
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   redirectToUrl: (url, filters) => dispatch(push(filteredLinkTo(url, filters))),
 });
 

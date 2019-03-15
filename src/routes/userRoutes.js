@@ -14,6 +14,7 @@ import ResetPasswordContainer from '../components/user/ResetPasswordContainer';
 import ResetPasswordSuccessMessage from '../components/user/ResetPasswordSuccessMessage';
 import UserProfileContainer from '../components/user/UserProfileContainer';
 import ResendActivationForm from '../components/user/ResendActivationForm';
+import UserEditProfileContainer from '../components/user/UserEditProfileContainer';
 
 const userRoutes = (
   <Route path="/user">
@@ -35,6 +36,8 @@ const userRoutes = (
 
     <Route path="change-password" component={ChangePasswordContainer} onEnter={requireAuth} />
     <Route path="change-password-success" component={ChangePasswordSuccessMessage} onEnter={requireAuth} />
+
+    <Route path="profile/edit" component={UserEditProfileContainer} onEnter={requireAuth} />
 
   </Route>
 );

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { VIEW_1K } from '../../../lib/topicFilterUtil';
+import { VIEW_1K } from '../EditableWordCloudDataCard';
 
 /**
  * Wrap any component that wants to display an EditableWordCloud. This passes

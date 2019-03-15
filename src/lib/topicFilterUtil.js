@@ -18,9 +18,6 @@ export const TOPIC_PUBLIC = 'public';
 
 export const TOPIC_STARRED = 'favorited';
 
-export const VIEW_1K = '1000';
-export const VIEW_10K = '10000';
-
 export function mergeFilters(currentProps, specificQueryFragment) {
   let filterObj = {};
   if (currentProps.filters) {

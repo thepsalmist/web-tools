@@ -21,12 +21,12 @@ class AllCollectionSearchResultsContainer extends React.Component {
   }
 
   render() {
-    const { selectedMediaQueryType, selectedMediaQueryKeyword, collectionResults, handleToggleAndSelectMedia, fetchStatus } = this.props;
+    const { selectedMediaQueryType, selectedMediaQueryKeyword, collectionResults, onToggleSelected, fetchStatus } = this.props;
     return (
       <div>
         <CollectionSearchResultsContainer
           fetchStatus={fetchStatus}
-          handleToggleAndSelectMedia={handleToggleAndSelectMedia}
+          onToggleSelected={onToggleSelected}
           selectedMediaQueryType={selectedMediaQueryType}
           selectedMediaQueryKeyword={selectedMediaQueryKeyword}
           collectionResults={collectionResults}
@@ -43,7 +43,7 @@ AllCollectionSearchResultsContainer.propTypes = {
   // form compositional chain
   intl: PropTypes.object.isRequired,
   // from parent
-  handleToggleAndSelectMedia: PropTypes.func.isRequired,
+  onToggleSelected: PropTypes.func.isRequired,
   whichTagSet: PropTypes.array,
   // from dispatch
   updateMediaQuerySelection: PropTypes.func.isRequired,

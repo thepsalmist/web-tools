@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../../hocs/AsyncContainer';
+import withAsyncData from '../../hocs/AsyncDataContainer';
 import { fetchStory, selectStory, updateStory } from '../../../../actions/storyActions';
 import { fetchMetadataValuesForPrimaryLanguage } from '../../../../actions/systemActions'; // TODO relocate metadata actions into system if we use more often...
 import { updateFeedback } from '../../../../actions/appActions';
@@ -59,7 +59,6 @@ UpdateStoryContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from dispatch
   handleSave: PropTypes.func.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
   // from context
   params: PropTypes.object.isRequired, // params from router
   // from state
@@ -68,12 +67,12 @@ UpdateStoryContainer.propTypes = {
   tags: PropTypes.array,
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   fetchStatus: state.story.info.fetchStatus,
   story: state.story.info,
-  storyId: ownProps.params.id,
   tags: state.system.metadata.primaryLanguage.tags,
 });
+
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleSave: (values) => {
     const infoToSave = {
@@ -90,17 +89,18 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         }
       });
   },
-  asyncFetch: () => {
-    dispatch(fetchMetadataValuesForPrimaryLanguage(TAG_SET_PRIMARY_LANGUAGE));
-    dispatch(selectStory(ownProps.params.id));
-    dispatch(fetchStory(ownProps.params.id));
-  },
 });
+
+const fetchAsyncData = (dispatch, { params }) => {
+  dispatch(fetchMetadataValuesForPrimaryLanguage(TAG_SET_PRIMARY_LANGUAGE));
+  dispatch(selectStory(params.id));
+  dispatch(fetchStory(params.id));
+};
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+    withAsyncData(fetchAsyncData, ['params'])(
       UpdateStoryContainer
     )
   )

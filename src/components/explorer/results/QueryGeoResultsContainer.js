@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import withQueryResults from './QueryResultsSelector';
 import GeoChart from '../../vis/GeoChart';
@@ -13,7 +12,7 @@ import { fetchDemoQueryGeo, fetchQueryGeo, resetGeo } from '../../../actions/exp
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import messages from '../../../resources/messages';
-import { postToDownloadUrl, COVERAGE_REQUIRED, formatQueryForServer, formatDemoQueryForServer } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, COVERAGE_REQUIRED } from '../../../lib/explorerUtil';
 
 const localMessages = {
   title: { id: 'explorer.geo.title', defaultMessage: 'Geographic Coverage' },
@@ -107,11 +106,8 @@ QueryGeoResultsContainer.propTypes = {
   // from composition
   intl: PropTypes.object.isRequired,
   // from dispatch
-  fetchData: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
   handleCountryClick: PropTypes.func.isRequired,
-  // from mergeProps
-  asyncFetch: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   tabSelector: PropTypes.object.isRequired,
@@ -129,43 +125,14 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     const countryQueryClause = `tags_id_stories:${data.tags_id}`;
     ownProps.onQueryModificationRequested(countryQueryClause);
   },
-  fetchData: (queries) => {
-    /* this should trigger when the user clicks the Search button or changes the URL
-     for n queries, run the dispatch with each parsed query
-    */
-    dispatch(resetGeo());
-    if (ownProps.isLoggedIn) {
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q) => {
-        const infoToQuery = formatQueryForServer(q);
-        return dispatch(fetchQueryGeo(infoToQuery));
-      });
-    } else if (queries || ownProps.queries) { // else assume DEMO mode, but assume the queries have been loaded
-      const runTheseQueries = queries || ownProps.queries;
-      runTheseQueries.map((q, index) => {
-        const demoInfo = formatDemoQueryForServer(q, index);
-        return dispatch(fetchDemoQueryGeo(demoInfo)); // id
-      });
-    }
-  },
 });
-
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.queries);
-    },
-  });
-}
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.help, [messages.heatMapHelpText])(
-      withAsyncFetch(
-        withQueryResults(
-          QueryGeoResultsContainer
-        )
+      withQueryResults(resetGeo, fetchQueryGeo, fetchDemoQueryGeo)(
+        QueryGeoResultsContainer
       )
     )
   )

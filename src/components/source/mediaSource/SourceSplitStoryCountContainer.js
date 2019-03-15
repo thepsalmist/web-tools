@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { getBrandDarkColor } from '../../../styles/colors';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchSourceSplitStoryCount } from '../../../actions/sourceActions';
 import DataCard from '../../common/DataCard';
 import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
@@ -118,8 +118,6 @@ SourceSplitStoryCountContainer.propTypes = {
   sourceId: PropTypes.number.isRequired,
   sourceName: PropTypes.string.isRequired,
   filename: PropTypes.string,
-  // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
@@ -131,17 +129,13 @@ const mapStateToProps = state => ({
   partialStories: state.sources.sources.selected.splitStoryCount.partial_stories,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  asyncFetch: () => {
-    dispatch(fetchSourceSplitStoryCount(ownProps.sourceId, { separate_spidered: true }));
-  },
-});
+const fetchAsyncData = (dispatch, { sourceId }) => dispatch(fetchSourceSplitStoryCount(sourceId, { separate_spidered: true }));
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, [localMessages.helpText, messages.attentionChartHelpText])(
-      withAsyncFetch(
+      withAsyncData(fetchAsyncData)(
         SourceSplitStoryCountContainer
       )
     )

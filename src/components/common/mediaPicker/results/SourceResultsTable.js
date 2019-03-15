@@ -13,7 +13,7 @@ const localMessages = {
 };
 
 const SourceResultsTable = (props) => {
-  const { title, sources, handleToggleAndSelectMedia } = props;
+  const { title, sources, onToggleSelected } = props;
   let content = null;
   if (sources.length > 0) {
     content = (
@@ -28,7 +28,7 @@ const SourceResultsTable = (props) => {
           </tr>
           {sources.map((s, idx) => {
             const ActionButton = s.selected ? DeleteButton : AddButton;
-            const actionContent = <ActionButton onClick={() => handleToggleAndSelectMedia(s)} />;
+            const actionContent = <ActionButton onClick={() => onToggleSelected(s)} />;
             return (
               <tr key={`${s.media_id}`} className={(idx % 2 === 0) ? 'even' : 'odd'}>
                 <td><a href={urlToSource(s.media_id)} target="new">{s.name}</a></td>
@@ -59,7 +59,7 @@ SourceResultsTable.propTypes = {
   // from parent
   title: PropTypes.string,
   sources: PropTypes.array,
-  handleToggleAndSelectMedia: PropTypes.func,
+  onToggleSelected: PropTypes.func,
 };
 
 export default

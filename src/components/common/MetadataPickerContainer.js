@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Field } from 'redux-form';
 import { FETCH_SUCCEEDED } from '../../lib/fetchConstants';
-import withAsyncFetch from './hocs/AsyncContainer';
+import withAsyncData from './hocs/AsyncDataContainer';
 import { fetchMetadataValuesForCountry, fetchMetadataValuesForState, fetchMetadataValuesForPrimaryLanguage,
   fetchMetadataValuesForCountryOfFocus, fetchMetadataValuesForMediaType, searchMetadataValues }
   from '../../actions/systemActions';
@@ -85,27 +85,6 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  fetchTagsInCollection: (tagId) => {
-    switch (ownProps.id) {
-      case TAG_SET_PUBLICATION_COUNTRY:
-        dispatch(fetchMetadataValuesForCountry(tagId));
-        break;
-      case TAG_SET_PUBLICATION_STATE:
-        dispatch(fetchMetadataValuesForState(tagId));
-        break;
-      case TAG_SET_PRIMARY_LANGUAGE:
-        dispatch(fetchMetadataValuesForPrimaryLanguage(tagId));
-        break;
-      case TAG_SET_COUNTRY_OF_FOCUS:
-        dispatch(fetchMetadataValuesForCountryOfFocus(tagId));
-        break;
-      case TAG_SET_MEDIA_TYPE:
-        dispatch(fetchMetadataValuesForMediaType(tagId));
-        break;
-      default:
-        break;
-    }
-  },
   handleLoadOptions: (searchString, callback) => {
     if (searchString && (searchString.length > 0)) {
       dispatch(searchMetadataValues(ownProps.id, { name: searchString }))
@@ -117,22 +96,40 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    asyncFetch: () => {
-      // these sets don't change, so only refetch them if you don't have them already in the store
-      const alreadyLoadedTags = ((stateProps.fetchStatus === FETCH_SUCCEEDED) && (stateProps.tags.length > 0));
-      if (!alreadyLoadedTags) {
-        dispatchProps.fetchTagsInCollection(ownProps.id);
-      }
-    },
-  });
-}
+const fetchAsyncData = (dispatch, props) => {
+  const alreadyLoadedTags = ((props.fetchStatus === FETCH_SUCCEEDED) && (props.tags.length > 0));
+  if (!alreadyLoadedTags) {
+    let fetcher;
+    switch (props.id) {
+      case TAG_SET_PUBLICATION_COUNTRY:
+        fetcher = fetchMetadataValuesForCountry;
+        break;
+      case TAG_SET_PUBLICATION_STATE:
+        fetcher = fetchMetadataValuesForState;
+        break;
+      case TAG_SET_PRIMARY_LANGUAGE:
+        fetcher = fetchMetadataValuesForPrimaryLanguage;
+        break;
+      case TAG_SET_COUNTRY_OF_FOCUS:
+        fetcher = fetchMetadataValuesForCountryOfFocus;
+        break;
+      case TAG_SET_MEDIA_TYPE:
+        fetcher = fetchMetadataValuesForMediaType;
+        break;
+      default:
+        break;
+    }
+    if (fetcher) {
+      return dispatch(fetcher(props.id));
+    }
+  }
+  return null;
+};
 
 export default
-connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+connect(mapStateToProps, mapDispatchToProps)(
   withIntlForm(
-    withAsyncFetch(
+    withAsyncData(fetchAsyncData)(
       MetadataPickerContainer
     )
   )

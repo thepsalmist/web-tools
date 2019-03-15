@@ -2,6 +2,10 @@ import { createAction } from 'redux-actions';
 import { createAsyncAction } from '../../lib/reduxHelpers';
 import * as api from '../../lib/serverApi/explorer';
 
+export const SET_QUERY_WORD_COUNT_SAMPLE_SIZE = 'SET_QUERY_WORD_COUNT_SAMPLE_SIZE';
+export const setQueryWordCountSampleSize = createAction(SET_QUERY_WORD_COUNT_SAMPLE_SIZE, sampleSize => sampleSize);
+
+
 export const UPDATE_TIMESTAMP_FOR_QUERIES = 'UPDATE_TIMESTAMP_FOR_QUERIES';
 export const updateTimestampForQueries = createAction(UPDATE_TIMESTAMP_FOR_QUERIES, queries => queries);
 
@@ -39,10 +43,6 @@ export const updateQueryCollectionLookupInfo = createAction(UPDATE_QUERY_COLLECT
 
 export const UPDATE_QUERY_SOURCE_LOOKUP_INFO = 'UPDATE_QUERY_SOURCE_LOOKUP_INFO';
 export const updateQuerySourceLookupInfo = createAction(UPDATE_QUERY_SOURCE_LOOKUP_INFO, query => query);
-
-
-export const PREPARE_QUERIES = 'PREPARE_QUERIES';
-export const prepareQueries = createAsyncAction(PREPARE_QUERIES, api.prepareQueries);
 
 
 export const FETCH_TOP_ENTITIES_PEOPLE = 'FETCH_TOP_ENTITIES_PEOPLE';

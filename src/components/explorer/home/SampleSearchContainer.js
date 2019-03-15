@@ -3,7 +3,7 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import withAsyncFetch from '../../common/hocs/AsyncContainer';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import ItemSlider from '../../common/ItemSlider';
 import SampleSearchItem from './SampleSearchItem';
 import { fetchSampleSearches } from '../../../actions/explorerActions';
@@ -56,11 +56,11 @@ const SampleSearchContainer = (props) => {
 };
 
 SampleSearchContainer.propTypes = {
-  samples: PropTypes.array,
+  // from compositional chan
   intl: PropTypes.object.isRequired,
-  fetchData: PropTypes.func.isRequired,
+  // from store
+  samples: PropTypes.array,
   user: PropTypes.object.isRequired,
-  asyncFetch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -69,20 +69,12 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-
-const mapDispatchToProps = dispatch => ({
-  fetchData: () => {
-    dispatch(fetchSampleSearches());
-  },
-  asyncFetch: () => {
-    dispatch(fetchSampleSearches());
-  },
-});
+const fetchAsyncData = dispatch => dispatch(fetchSampleSearches());
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncFetch(
+  connect(mapStateToProps)(
+    withAsyncData(fetchAsyncData)(
       SampleSearchContainer
     )
   )

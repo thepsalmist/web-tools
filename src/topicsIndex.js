@@ -1,4 +1,5 @@
 import ReactGA from 'react-ga';
+import doNotTrack from 'donottrack';
 import { setAppName, setVersion, APP_TOPIC_MAPPER } from './config';
 import { setAppColors } from './styles/colors';
 import routes from './routes/topicRoutes';
@@ -8,7 +9,7 @@ import initializeApp from './index';
  * This serves as the primary entry point to the Media Cloud Topic Mapper app.
  */
 
-ReactGA.initialize('UA-60744513-7');
+if (!doNotTrack(false)) ReactGA.initialize('UA-60744513-7');
 
 setVersion('3.8.2');
 

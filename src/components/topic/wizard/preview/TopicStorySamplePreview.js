@@ -47,7 +47,6 @@ TopicStorySamplePreview.propTypes = {
   total: PropTypes.number,
   stories: PropTypes.array,
   // from dispath
-  asyncFetch: PropTypes.func.isRequired,
   fetchData: PropTypes.func.isRequired,
 };
 

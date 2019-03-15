@@ -75,7 +75,9 @@ const TopicControlBar = (props) => {
               </Permissioned>
               {setupJumpToExplorer}
             </Col>
-            {sideBarContent}
+            <Col lg={4}>
+              {sideBarContent}
+            </Col>
           </Row>
         </Grid>
       </div>

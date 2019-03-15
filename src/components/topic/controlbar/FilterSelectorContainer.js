@@ -17,7 +17,7 @@ const FilterSelectorContainer = (props) => {
     <div className="filter">
       <Grid>
         <Row className="filter-selector">
-          <Col lg={4}>
+          <Col lg={5}>
             {snapshotId && (
               <FocusSelectorContainer
                 topicId={topicId}
@@ -27,6 +27,7 @@ const FilterSelectorContainer = (props) => {
               />
             )}
           </Col>
+          <Col lg={1} />
           <Col lg={5}>
             <QuerySelectorContainer
               topicId={topicId}

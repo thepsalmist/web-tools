@@ -11,7 +11,7 @@ const localMessages = {
   // startSpidering: { id: 'focalSets.manage.about', defaultMessage: 'Spider after generating new version.' },
 };
 const TopicVersionGenerationOptions = (props) => {
-  const { topicInfo, handleCreateVersionAndStartSpider } = props;
+  const { topicInfo, handleCreateVersionAndStartSpider, formValues } = props;
   const { formatMessage } = props.intl;
   const topicId = topicInfo.topics_id;
   return (
@@ -46,6 +46,7 @@ TopicVersionGenerationOptions.propTypes = {
   intl: PropTypes.object.isRequired,
   topicInfo: PropTypes.object.isRequired,
   handleCreateVersionAndStartSpider: PropTypes.func.isRequired,
+  formValues: PropTypes.object.isRequired,
 };
 
 export default injectIntl(TopicVersionGenerationOptions);

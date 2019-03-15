@@ -25,7 +25,7 @@ const localMessages = {
 
 const InfluentialStoriesContainer = (props) => {
   const { stories, filters, showTweetCounts, sort, topicId, previousButton, nextButton, helpButton,
-    sortData, notifyOfCsvDownload } = props;
+    handleChangeSort, notifyOfCsvDownload } = props;
   const { formatMessage } = props.intl;
   return (
     <Grid>
@@ -56,7 +56,7 @@ const InfluentialStoriesContainer = (props) => {
               topicId={topicId}
               stories={stories}
               showTweetCounts={showTweetCounts}
-              onChangeSort={newSort => sortData(newSort)}
+              onChangeSort={newSort => handleChangeSort(newSort)}
               sortedBy={sort}
             />
             { previousButton }

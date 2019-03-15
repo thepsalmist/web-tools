@@ -9,11 +9,11 @@ import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyC
 import { fetchTopicTopWords } from '../../../actions/topicActions';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
-import EditableWordCloudDataCard from '../../common/EditableWordCloudDataCard';
+import EditableWordCloudDataCard, { VIEW_1K } from '../../common/EditableWordCloudDataCard';
 import { filteredLinkTo, filtersAsUrlParams, combineQueryParams } from '../../util/location';
 import messages from '../../../resources/messages';
 import { generateParamStr } from '../../../lib/apiUtil';
-import { VIEW_1K, mergeFilters } from '../../../lib/topicFilterUtil';
+import { mergeFilters } from '../../../lib/topicFilterUtil';
 import { topicDownloadFilename } from '../../util/topicUtil';
 
 const localMessages = {

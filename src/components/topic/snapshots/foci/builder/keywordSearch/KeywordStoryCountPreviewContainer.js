@@ -67,7 +67,6 @@ KeywordStoryCountPreviewContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   keywords: PropTypes.string.isRequired,
-  // from dispatch
   // from state
   counts: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,

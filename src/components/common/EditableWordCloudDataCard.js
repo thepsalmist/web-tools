@@ -19,8 +19,8 @@ import { downloadSvg } from '../util/svg';
 import ActionMenu from './ActionMenu';
 import { WarningNotice } from './Notice';
 
-const VIEW_1K = 1000;
-const VIEW_10K = 10000;
+export const VIEW_1K = 1000;
+export const VIEW_10K = 10000;
 
 const VIEW_CLOUD = 'VIEW_CLOUD';
 const VIEW_ORDERED = 'VIEW_ORDERED';

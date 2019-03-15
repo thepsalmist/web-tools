@@ -17,6 +17,7 @@ import { nullOrUndefined } from '../../../lib/formValidators';
 const localMessages = {
   topicRunning: { id: 'topic.topicRunning', defaultMessage: 'We are scraping the web for all the stories in include in your topic.' },
   filterTopic: { id: 'topic.filter', defaultMessage: 'Filter this Topic' },
+  summaryMessage: { id: 'topic.summary', defaultMessage: 'You need to generate a new version {url}' },
 };
 
 class TopicVersionReadyStatusContainer extends React.Component {
@@ -155,13 +156,6 @@ function latestSnapshotIsRunning(snapshots) {
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   redirectToUrl: (url, filters) => dispatch(push(filteredLinkTo(url, filters))),
-
-  handleSpiderRequest: () => {
-    dispatch(topicStartSpider(ownProps.topicId))
-      .then(() => {
-        dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.startedSpider) }));
-      });
-  },
 });
 
 const fetchAsyncData = (dispatch, { topicId, snapshotId, snapshots, location, intl }) => {

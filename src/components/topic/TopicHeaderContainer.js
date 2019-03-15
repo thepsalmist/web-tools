@@ -24,7 +24,7 @@ const TopicHeaderContainer = (props) => {
   title += `${formatMessage(messages.topicName)}: ${topicInfo.name}`;
   const version = `${formatMessage(localMessages.topicVersion, { version: currentVersion })}`;
 
-  title = `${title}-${version}`;
+  title = `${title} - ${version}`;
   let content = null;
   if (topicInfo !== null) {
     content = (

@@ -14,7 +14,7 @@ import TopicInfo from './TopicInfo';
 import TopicStoryInfo from './TopicStoryInfo';
 
 const localMessages = {
-  aboutTopic: { id: 'topic.controlBar.about', defaultMessage: 'About this Topic' },
+  aboutTopic: { id: 'topic.controlBar.about', defaultMessage: 'About' },
 };
 
 class AboutTopicDialog extends React.Component {

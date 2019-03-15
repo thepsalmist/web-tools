@@ -9,7 +9,13 @@
   &.controlbar-topic {
     background-color: $white !important;
 
+    .controlbar-item {
+      margin-right: 5px;
+      display: inline-block;
+    }
+
     .about-topic {
+      display: inline-block;
       .app-icon-help {
         background-color: $topics-primary;
         path, circle {
@@ -20,11 +26,6 @@
 
     .jumps {
       font-weight: bold;
-      margin-left: 15px;
-    }
-
-    .about-topic {
-      display: inline-block;
       margin-left: 15px;
     }
 

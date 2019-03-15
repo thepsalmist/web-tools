@@ -44,12 +44,14 @@ const TopicSettingsForm = (props) => {
         </Col>
       </Row>
       <Row>
-        <Col lg={12}>
+        <Col lg={6}>
           <Field
             name="description"
             component={renderTextField}
             fullWidth
             label={formatMessage(localMessages.description)}
+            rows={4}
+            multiline
           />
         </Col>
       </Row>

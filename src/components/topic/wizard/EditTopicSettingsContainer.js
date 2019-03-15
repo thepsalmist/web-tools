@@ -2,8 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
-import { FormattedMessage } from 'react-intl';
-import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import { Grid } from 'react-flexbox-grid/lib';
 import { filteredLinkTo } from '../../util/location';
 import withIntlForm from '../../common/hocs/IntlForm';
 import messages from '../../../resources/messages';
@@ -17,8 +16,6 @@ import { TOPIC_FORM_MODE_EDIT } from './TopicForm';
 // import TopicPageTitle from '../TopicPageTitle';
 
 const localMessages = {
-  editTopicTitle: { id: 'topic.edit.title', defaultMessage: 'Topic Settings' },
-  editTopicText: { id: 'topic.edit.text', defaultMessage: 'You can update this Topic. If you make changes to the query, media sourcs, or dates, those will be reflected in the next snapshot you run.' },
   editTopic: { id: 'topic.edit', defaultMessage: 'Edit Topic Settings' },
   feedback: { id: 'topic.edit.save.feedback', defaultMessage: 'We saved your changes' },
   failed: { id: 'topic.edit.save.failed', defaultMessage: 'Sorry, that didn\'t work!' },
@@ -33,11 +30,6 @@ const EditTopicSettingsContainer = (props) => {
     <div className="topic-edit-form">
       <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
       <Grid>
-        <Row>
-          <Col lg={12}>
-            <p><FormattedMessage {...localMessages.editTopicText} /></p>
-          </Col>
-        </Row>
         <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
           <TopicSettingsForm
             topicId={topicId}

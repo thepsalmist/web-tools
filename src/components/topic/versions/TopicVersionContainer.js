@@ -17,6 +17,7 @@ import * as fetchConstants from '../../../lib/fetchConstants';
 import { emptyString } from '../../../lib/formValidators';
 import { filteredLocation, urlWithFilters, filteredLinkTo } from '../../util/location';
 import { VERSION_ERROR, VERSION_ERROR_EXCEEDED, VERSION_CREATING, VERSION_BUILDING, VERSION_QUEUED, VERSION_RUNNING, VERSION_READY } from '../../../lib/topicFilterUtil';
+import { getTopicVersionInfo, getCurrentVersionFromSnapshot } from '../../../lib/topicVersionUtil';
 
 const localMessages = {
   needsSnapshotWarning: { id: 'needSnapshot.warning', defaultMessage: 'You\'ve made changes to your Topic that require a new snapshot to be generated!' },
@@ -49,7 +50,7 @@ class TopicVersionContainer extends React.Component {
         return VERSION_QUEUED;
       case TOPIC_SNAPSHOT_STATE_RUNNING:
         if (snapshotCount === 0) {
-          return VERSION_BUILDING;
+          return VERSION_RUNNING;
         }
         // also evaluate another kind of error like VERSION_RUNNING_ERROR
         return VERSION_RUNNING;
@@ -62,25 +63,31 @@ class TopicVersionContainer extends React.Component {
   }
 
   render() {
-    const { children, topicInfo, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo, setSideBarContent, user, filters } = this.props;
+    const { children, topicInfo, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo, setSideBarContent, user, currentVersionId, filters } = this.props;
     // show a big error if there is one to show
-
+    const currentVersionNum = getCurrentVersionFromSnapshot(topicInfo, currentVersionId);
     let contentToShow = children; // has a filters renderer in it - show if a completed topic
     const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent }));
     contentToShow = childrenWithExtraProp;
     if (this.determineVersionStatus(topicInfo) === VERSION_CREATING
         || this.determineVersionStatus(topicInfo) === VERSION_QUEUED
-        || this.determineVersionStatus(topicInfo) === VERSION_BUILDING) {
+        || this.determineVersionStatus(topicInfo) === VERSION_RUNNING) {
       // if the topic is running the initial spider and then show under construction message
       contentToShow = (
         <div>
-          <TopicVersionStatusContainer topicInfo={topicInfo} displayState={VERSION_BUILDING} user={user} filters={filters} />
+          <TopicVersionStatusContainer
+            topicInfo={topicInfo}
+            displayState={VERSION_BUILDING}
+            user={user}
+            currentVersion={currentVersionNum}
+            filters={filters}
+          />
         </div>
       );
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
-      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)} />;
+      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)} currentVersion={currentVersionNum} />;
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR) {
-      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR} goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)} />;
+      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR} goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)} currentVersion={currentVersionNum} />;
     } else if (fetchStatusInfo !== fetchConstants.FETCH_SUCCEEDED
       && fetchStatusSnapshot !== fetchConstants.FETCH_SUCCEEDED) {
       // complete
@@ -109,6 +116,7 @@ TopicVersionContainer.propTypes = {
   goToCreateNewVersion: PropTypes.func,
   setSideBarContent: PropTypes.func,
   user: PropTypes.object,
+  currentVersionId: PropTypes.number,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -117,7 +125,8 @@ const mapStateToProps = (state, ownProps) => ({
   fetchStatusInfo: state.topics.selected.info.fetchStatus,
   topicInfo: state.topics.selected.info,
   topicId: parseInt(ownProps.params.topicId, 10),
-  snapshotId: parseInt(ownProps.location.query.snapshotId, 10),
+
+  currentVersionId: parseInt(ownProps.location.query.snapshotId, 10),
   needsNewSnapshot: state.topics.selected.needsNewSnapshot,
   snapshotCount: state.topics.selected.snapshots.list.length,
   user: state.user,
@@ -183,43 +192,48 @@ const fetchAsyncData = (dispatch, { topicInfo, location, intl }) => {
       break;
   }
   // show any warnings based on the snapshot/version state
-  const snapshots = topicInfo.snapshots.list;
-  const snapshotJobStatus = topicInfo.snapshots.jobStatus;
-  const firstReadySnapshot = snapshots.find(s => snapshotIsUsable(s));
-  // if no snapshot specified, pick the first usable snapshot
+  const topicVersionInfo = getTopicVersionInfo(topicInfo);
+
+  // if no snapshot specified, pick the latest usable snapshot
   if (emptyString(snapshotId)) {
     // default to the latest snapshot if none is specified on url
-    if (snapshots.length > 0) {
-      const firstSnapshot = snapshots[0];
-      const newestSnapshotId = firstReadySnapshot ? firstReadySnapshot.snapshots_id : firstSnapshot.snapshots_id;
+    // or the first snapshot if none is usable
+    // TODO: WarningNotice if user is not looking at most recent and usable
+    if (topicVersionInfo.versionList.length > 0) {
+      const firstSnapshot = topicVersionInfo.versionList[0];
+      const latestSnapshotId = topicVersionInfo.lastReadySnapshot ? topicVersionInfo.lastReadySnapshot.snapshots_id : firstSnapshot.snapshots_id;
       const newLocation = filteredLocation(location, {
-        snapshotId: newestSnapshotId,
+        snapshotId: latestSnapshotId,
         timespanId: null,
         focusId: null,
         q: null,
       });
       dispatch(replace(newLocation)); // do a replace, not a push here so the non-snapshot url isn't in the history
-      dispatch(filterBySnapshot(newestSnapshotId));
+      dispatch(filterBySnapshot(latestSnapshotId));
     }
-    if (!firstReadySnapshot) {
+
+    // if nothing is ready/usable, put up a notice
+    if (!topicVersionInfo.lastReadySnapshot) {
       dispatch(addNotice({
         level: LEVEL_INFO,
         message: intl.formatMessage(localMessages.snapshotImporting),
       }));
     }
-  } else if (firstReadySnapshot && firstReadySnapshot.snapshots_id !== parseInt(snapshotId, 10)) {
+  } else if ((topicVersionInfo.lastReadySnapshot
+      && topicVersionInfo.lastReadySnapshot.snapshots_id !== parseInt(snapshotId, 10))
+      || topicVersionInfo.versionList.length !== getCurrentVersionFromSnapshot(topicInfo, snapshotId)) {
     // if snaphot is specific in URL, but it is not the latest then show a warning
     dispatch(addNotice({
       level: LEVEL_WARNING,
       htmlMessage: intl.formatHTMLMessage(localMessages.notUsingLatestSnapshot, {
         url: urlWithFilters(location.pathname, {
-          snapshotId: firstReadySnapshot.snapshots_id,
+          snapshotId,
         }),
       }),
     }));
   }
   // if a snapshot is in progress then show the user a note about its state
-  if (snapshotJobStatus && snapshotJobStatus.length > 0) {
+  if (topicVersionInfo.snapshotJobStatus && topicVersionInfo.snapshotJobStatus.length > 0) {
     const latestSnapshotJobStatus = topicInfo.snapshots.jobStatus[0];
     switch (latestSnapshotJobStatus.state) {
       case TOPIC_SNAPSHOT_STATE_QUEUED:
@@ -244,7 +258,7 @@ const fetchAsyncData = (dispatch, { topicInfo, location, intl }) => {
         }));
         break;
       case TOPIC_SNAPSHOT_STATE_COMPLETED:
-        const latestSnapshot = snapshots[0];
+        const latestSnapshot = topicVersionInfo.versionList[0];
         if (!snapshotIsUsable(latestSnapshot)) {
           dispatch(addNotice({
             level: LEVEL_INFO,
@@ -255,9 +269,9 @@ const fetchAsyncData = (dispatch, { topicInfo, location, intl }) => {
       default:
         // don't alert user about anything
     }
-  } else if (snapshots.length > 1) {
+  } else if (topicVersionInfo.versionList.length > 1) {
     // for some reason the second snapshot isn't showing up in the jobs list
-    const latestSnapshot = snapshots[0];
+    const latestSnapshot = topicVersionInfo.versionList[0];
     if (!snapshotIsUsable(latestSnapshot)) {
       dispatch(addNotice({
         level: LEVEL_INFO,

@@ -21,21 +21,21 @@ const TopicVersionGenerationOptions = (props) => {
         <AppButton
           type="submit"
           label={formatMessage(localMessages.createVersion)}
-          onClick={() => handleCreateVersionAndStartSpider(topicId, formValues)}
+          onClick={() => handleCreateVersionAndStartSpider(topicId, topicInfo)}
         />
       </Link>
       <Link to={`/topics/${topicId}/snapshot/foci/create`}>
         <AppButton
           type="submit"
           label={formatMessage(localMessages.createVersionAndGenerate)}
-          onClick={() => handleCreateVersionAndStartSpider(topicId, formValues)}
+          onClick={() => handleCreateVersionAndStartSpider(topicId, topicInfo)}
         />
       </Link>
       <Link to={`/topics/${topicId}/snapshot/foci/create`}>
         <AppButton
           type="submit"
           label={formatMessage(localMessages.createVersionGenerateAndStartSpider)}
-          onClick={() => handleCreateVersionAndStartSpider(topicId, formValues)}
+          onClick={() => handleCreateVersionAndStartSpider(topicId, topicInfo)}
         />
       </Link>
     </React.Fragment>

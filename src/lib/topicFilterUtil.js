@@ -12,6 +12,8 @@ export const VERSION_RUNNING = 'running';
 export const VERSION_READY = 'completed';
 export const VERSION_CANCELLED = 'cancelled';
 
+export const VIEW_1K = 1000;
+
 export const TOPIC_PERSONAL = 'personal';
 
 export const TOPIC_PUBLIC = 'public';

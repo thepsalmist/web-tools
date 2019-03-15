@@ -9,11 +9,13 @@ import TopicOwnerList from '../TopicOwnerList';
 
 const localMessages = {
   state: { id: 'topic.state', defaultMessage: 'State' },
+  viewingVersion: { id: 'topic.latest', defaultMessage: 'You are viewing version {version}' },
+  latestVersion: { id: 'topic.latest', defaultMessage: 'Latest Version: {version}' },
   timespan: { id: 'topic.summary.timespan', defaultMessage: '<b>Timespan</b>: {start} to {end} ({period})' },
 };
 
 const TopicInfo = (props) => {
-  const { topic } = props;
+  const { topic, currentVersion } = props;
   const { formatMessage } = props.intl;
   let stateMessage = '';
   if (topic.state !== 'error') {
@@ -24,42 +26,46 @@ const TopicInfo = (props) => {
   }
   let sourcesAndCollections = topic.media ? [...topic.media] : [];
   sourcesAndCollections = topic.media_tags ? [...sourcesAndCollections, ...topic.media_tags] : sourcesAndCollections;
+  // TODO: change topic state to reflect status of current snapshot... waiting for info
   return (
     <React.Fragment>
-      <p>topic Version coming soon</p>
-      <p>{topic.description}</p>
-      <p>
-        <b><FormattedMessage {...localMessages.state} /></b>: {topic.state }
-        <br />
-        {stateMessage}
-        <br />
-        <b><FormattedMessage {...messages.topicPublicProp} /></b>: { topic.is_public ? formatMessage(messages.yes) : formatMessage(messages.no) }
-        <br />
-        <b><FormattedMessage {...messages.topicStartDateProp} /></b>: {topic.start_date}
-        <br />
-        <b><FormattedMessage {...messages.topicEndDateProp} /></b>: {topic.end_date}
-      </p>
-      <p>
-        <b><FormattedHTMLMessage {...messages.topicQueryProp} /></b>
-        <code>{topic.solr_seed_query}</code>
-      </p>
-      <p>
-        <b><FormattedHTMLMessage {...messages.topicSourceCollectionsProp} /></b>
-      </p>
-      {sourcesAndCollections.map(object => (
-        <SourceOrCollectionChip key={object.tags_id || object.media_id} object={object} autoLink />
-      ))}
-      <p>
-        <b><FormattedHTMLMessage {...messages.topicValidationProp} /></b>
-        <code>{topic.pattern}</code>
-      </p>
-      <TopicOwnerList owners={topic.owners} />
+      <div className="topic-info-sidebar">
+        <p><FormattedMessage {...localMessages.viewingVersion} values={{ version: currentVersion }} /></p>
+        <p><FormattedMessage {...localMessages.latestVersion} values={{ version: topic.latestVersion }} /></p>
+        <p>
+          <b><FormattedMessage {...localMessages.state} /></b>: {topic.state }
+          <br />
+          {stateMessage}
+          <br />
+          <b><FormattedMessage {...messages.topicPublicProp} /></b>: { topic.is_public ? formatMessage(messages.yes) : formatMessage(messages.no) }
+          <br />
+          <b><FormattedMessage {...messages.topicStartDateProp} /></b>: {topic.start_date}
+          <br />
+          <b><FormattedMessage {...messages.topicEndDateProp} /></b>: {topic.end_date}
+        </p>
+        <p>
+          <b><FormattedHTMLMessage {...messages.topicQueryProp} /></b>
+          <code>{topic.solr_seed_query}</code>
+        </p>
+        <p>
+          <b><FormattedHTMLMessage {...messages.topicSourceCollectionsProp} /></b>
+        </p>
+        {sourcesAndCollections.map(object => (
+          <SourceOrCollectionChip key={object.tags_id || object.media_id} object={object} autoLink />
+        ))}
+        <p>
+          <b><FormattedHTMLMessage {...messages.topicValidationProp} /></b>
+          <code>{topic.pattern}</code>
+        </p>
+        <TopicOwnerList owners={topic.owners} />
+      </div>
     </React.Fragment>
   );
 };
 
 TopicInfo.propTypes = {
   topic: PropTypes.object.isRequired,
+  currentVersion: PropTypes.number.isRequired,
   intl: PropTypes.object.isRequired,
 };
 

@@ -63,21 +63,21 @@ class ManageFocalSetsContainer extends React.Component {
     const { topicId, topicInfo, focalSetDefinitions, focalSetAll, renderCheckbox, user, formValues, handleCreateVersionAndStartSpider } = this.props;
     const { formatMessage } = this.props.intl;
     let startSpideringOption = null;
-    // jf role and also if can spider TODO
+
+    // TODO: waiting on more info
     if (hasPermissions(getUserRoles(user), PERMISSION_ADMIN)
       && (focalSetDefinitions.length !== focalSetAll.length)) {
       startSpideringOption = (
         <div>
-          <h3>Placeholder: Your topic has new updates - we suggest you create a new version</h3>
+          <h3>Placeholder: Your topic has new subtopics - we suggest you (generate a new version, generate into same version, spider again?)</h3>
           <Field
-            form="topicVersionSpiderOrNotForm"
             name="start_spidering"
             component={renderCheckbox}
             label={formatMessage(localMessages.startSpidering)}
             type="inline"
-            defaultValue
+            initialValues="checked"
           />
-          <Link to={`/topics/${topicId}/snapshot/foci/create`}>
+          <Link to={`/topics/${topicId}/summary/`}>
             <AppButton
               type="submit"
               label={formatMessage(localMessages.createVersionAndStartSpider)}

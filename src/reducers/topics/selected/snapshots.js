@@ -15,18 +15,9 @@ const snapshots = createAsyncReducer({
   initialState: {
     list: [],
     jobStatus: [],
-    currentVersion: null,
+    latestVersion: null,
   },
   action: FETCH_TOPIC_SNAPSHOTS_LIST,
-  FETCH_TOPIC_SUMMARY_RESOLVED: payload => ({ // topic summary includes list of snapshots
-    list: payload.snapshots.list.map(s => ({
-      ...s,
-      snapshotDate: snapshotDateToMoment(s.snapshot_date),
-      isUsable: snapshotIsUsable(s),
-    })),
-    jobStatus: payload.snapshots.jobStatus,
-    currentVersion: payload.snapshots.currentVersion,
-  }),
   handleSuccess: payload => ({
     // add in an isUsable property to centralize that logic to one place (ie. here!)
     list: payload.list.map(s => ({
@@ -35,7 +26,16 @@ const snapshots = createAsyncReducer({
       isUsable: snapshotIsUsable(s),
     })),
     jobStatus: payload.jobStatus,
-    currentVersion: payload.snapshots.currentVersion,
+    latestVersion: payload.snapshots.latestVersion,
+  }),
+  FETCH_TOPIC_SUMMARY_RESOLVED: payload => ({ // topic summary includes list of snapshots
+    list: payload.snapshots.list.map(s => ({
+      ...s,
+      snapshotDate: snapshotDateToMoment(s.snapshot_date),
+      isUsable: snapshotIsUsable(s),
+    })),
+    jobStatus: payload.snapshots.jobStatus,
+    latestVersion: payload.snapshots.latestVersion,
   }),
 });
 

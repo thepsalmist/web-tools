@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 WORD2VEC_TIMESPAN_POOL_PROCESSES = 10
 
+ARRAY_BASE_ONE = 1
 
 @app.route('/api/topics/queued-and-running', methods=['GET'])
 @flask_login.login_required
@@ -98,9 +99,12 @@ def _topic_summary(topics_id):
     topic = local_mc.topic(topics_id)
     # add in snapshot and latest snapshot job status
     snapshots = local_mc.topicSnapshotList(topics_id)
-    #snapshots = sorted([s['snapshot_date'] for s in snapshots], key=lambda, reverse=True)
+
     # snapshots = sorted(snapshots, key=snapshots.snapshot_date)
     snapshots = sorted(snapshots, key=lambda d:d['snapshot_date'])
+    for idx in range(0, len(snapshots)):
+        if snapshots[idx]['note'] in [None,'']:
+            snapshots[idx]['note'] = idx + ARRAY_BASE_ONE;
     jobStatuses = mc.topicSnapshotGenerateStatus(topics_id)['job_states']
     most_recent_usable_snapshot = get_most_recent_snapshot_version(topics_id)
     topic['snapshots'] = {
@@ -109,7 +113,8 @@ def _topic_summary(topics_id):
     }
     # add in spider job status
     topic['spiderJobs'] = local_mc.topicSpiderStatus(topics_id)['job_states']
-    topic['currentVersion'] = most_recent_usable_snapshot
+    topic['latestVersion'] = len(snapshots) + ARRAY_BASE_ONE
+    topic['latestUsableVersion'] = 'note' in most_recent_usable_snapshot if most_recent_usable_snapshot else -1
     if is_user_logged_in():
         _add_user_favorite_flag_to_topics([topic])
 
@@ -162,8 +167,13 @@ def topic_snapshots_list(topics_id):
     user_mc = user_admin_mediacloud_client()
     snapshots = user_mc.topicSnapshotList(topics_id)
     snapshots = sorted(snapshots)
+    # if note is missing
+    for idx in range(0, len(snapshots)):
+        if snapshots[idx]['note'] in [None,'']:
+            snapshots[idx]['note'] = idx
     snapshot_status = mc.topicSnapshotGenerateStatus(topics_id)['job_states']    # need to know if one is running
-    return jsonify({'list': snapshots, 'jobStatus': snapshot_status})
+    latest = len(snapshots) + 1
+    return jsonify({'list': snapshots, 'jobStatus': snapshot_status, 'latestVersion': latest['note']})
 
 
 @app.route('/api/topics/<topics_id>/snapshots/generate', methods=['POST'])

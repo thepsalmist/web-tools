@@ -13,7 +13,7 @@
         {
           "apps": [ "topics" ],
           "type": "Fixed",
-          "note": "The detailed word cloud for Topics works again"
+          "note": "The detailed word cloud for Topics correctly respects your subtopic now"
         },
         {
           "apps": [ "topics", "explorer", "sources", "tools" ],
@@ -35,6 +35,11 @@
           "apps": [ "sources" ],
           "type": "Fixed",
           "note": "All our emails now say [Media Cloud] in the subject line"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Downlading Topic top themes CSV/SVG works again"
         }
       ]
     },

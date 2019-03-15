@@ -15,6 +15,7 @@ import attention from './attention';
 import word from './word/word';
 import nytlabels from './nytlabels';
 import geotags from './geotags';
+import snapshotStoryCounts from './snapshotStoryCounts';
 
 function id(state = null, action) {
   switch (action.type) {
@@ -62,6 +63,7 @@ const selected = combineReducers({
   word,
   nytlabels,
   geotags,
+  snapshotStoryCounts,
 });
 
 const rootReducer = (state, action) => {

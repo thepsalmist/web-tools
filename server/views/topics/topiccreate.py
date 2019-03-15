@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 import json
 from flask import jsonify, request
@@ -14,6 +13,7 @@ from server.views.topics.foci.retweetpartisanship import create_retweet_partisan
 
 logger = logging.getLogger(__name__)
 VERSION_1 = 1
+
 
 @app.route('/api/topics/create/preview/split-story/count', methods=['POST'])
 @flask_login.login_required

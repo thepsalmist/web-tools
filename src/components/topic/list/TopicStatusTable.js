@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage, FormattedDate } from 'react-intl';
 import Link from 'react-router/lib/Link';
+import { TOPIC_SNAPSHOT_STATE_RUNNING, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
 
 const localMessages = {
   name: { id: 'topic.adminList.table.name', defaultMessage: 'Name' },
@@ -18,12 +19,12 @@ const MAX_MESSAGE_CHARS = 600;
 const classNameForState = (state) => {
   let className;
   switch (state) {
-    case 'completed':
-    case 'running':
+    case TOPIC_SNAPSHOT_STATE_COMPLETED:
+    case TOPIC_SNAPSHOT_STATE_RUNNING:
       className = 'topic-state-ok';
       break;
-    case 'created but not queued':
-    case 'error':
+    case TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED:
+    case TOPIC_SNAPSHOT_STATE_ERROR:
     default:
       className = 'topic-state-error';
   }

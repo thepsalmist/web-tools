@@ -372,3 +372,7 @@ export function topicSimilarWords(topicId, theWord, params) {
 export function getMediaTypes() {
   return createApiPromise('/api/media-types/list');
 }
+
+export function topicSnapshotStoryCounts(topicId) {
+  return createApiPromise(`/api/topics/${topicId}/stories/counts-by-snapshot`);
+}

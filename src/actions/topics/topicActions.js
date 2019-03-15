@@ -91,3 +91,6 @@ export const fetchTopicWord2Vec = createAsyncAction(FETCH_TOPIC_WORD2VEC, api.to
 
 // pass in topicId, snapshotId, focusId, q
 export const fetchTopicWord2VecTimespans = createAsyncAction(FETCH_TOPIC_WORD2VEC_TIMESPANS, api.topicWord2VecTimespans);
+
+export const FETCH_TOPIC_SNAPSHOT_STORY_COUNTS = 'FETCH_TOPIC_SNAPSHOT_STORY_COUNTS';
+export const fetchSnapshotStoryCounts = createAsyncAction(FETCH_TOPIC_SNAPSHOT_STORY_COUNTS, api.topicSnapshotStoryCounts, id => id);

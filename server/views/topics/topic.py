@@ -6,10 +6,12 @@ from functools import partial
 from deco import concurrent, synchronized
 
 from server import app, user_db, mc
+from server.views.topics import concatenate_query_for_solr, concatenate_solr_dates
 from server.util.stringutil import ids_from_comma_separated_str
 from server.util.request import form_fields_required, arguments_required, api_error_handler
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client, user_name, is_user_logged_in
-from server.views.topics.apicache import cached_topic_timespan_list, topic_word_counts, cached_topic_word_counts
+import server.views.apicache as shared_apicache
+import server.views.topics.apicache as apicache
 from server.views.topics import access_public_topic
 
 logger = logging.getLogger(__name__)
@@ -17,6 +19,7 @@ logger = logging.getLogger(__name__)
 WORD2VEC_TIMESPAN_POOL_PROCESSES = 10
 
 ARRAY_BASE_ONE = 1
+
 
 @app.route('/api/topics/queued-and-running', methods=['GET'])
 @flask_login.login_required
@@ -86,6 +89,13 @@ def sorted_public_topic_list():
 @api_error_handler
 def topic_summary(topics_id):
     topic = _topic_summary(topics_id)
+    topic['seed_query_story_count'] = shared_apicache.story_count(
+        user_mediacloud_key(),
+        q=concatenate_query_for_solr(solr_seed_query=topic['solr_seed_query'],
+                                     media_ids=[m['media_id'] for m in topic['media']],
+                                     tags_ids=[t['tags_id'] for t in topic['media_tags']]),
+        fq=concatenate_solr_dates(start_date=topic['start_date'], end_date=topic['end_date'])
+    )['count']
     return jsonify(topic)
 
 
@@ -151,7 +161,7 @@ def get_most_recent_snapshot_version(topic_id):
         if snp['searchable'] == 1 and snp['state'] == "completed":
             most_recent_completed_snapshot = snp
             most_recent_completed_snapshot['versions'] = len(snapshots['list'])
-            timespans = cached_topic_timespan_list(user_mediacloud_key(), topic_id,
+            timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topic_id,
                                                    most_recent_completed_snapshot['snapshots_id'])
             for ts in timespans:
                 if ts['period'] == "overall":
@@ -190,7 +200,7 @@ def topic_snapshot_generate(topics_id):
 @api_error_handler
 def topic_timespan_list(topics_id, snapshots_id):
     foci_id = request.args.get('focusId')
-    timespans = cached_topic_timespan_list(user_mediacloud_key(), topics_id, snapshots_id, foci_id)
+    timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id, snapshots_id, foci_id)
     return jsonify({'list': timespans})
 
 
@@ -286,7 +296,7 @@ def topic_search():
 
 # Helper function for pooling word2vec timespans process
 def grab_timespan_embeddings(api_key, topics_id, args, overall_words, overall_embeddings, ts):
-    ts_word_counts = cached_topic_word_counts(api_key, topics_id, num_words=250,
+    ts_word_counts = apicache.cached_topic_word_counts(api_key, topics_id, num_words=250,
                                               timespans_id=int(ts['timespans_id']), **args)
 
     # Remove any words not in top words overall
@@ -311,12 +321,12 @@ def topic_w2v_timespan_embeddings(topics_id):
     }
 
     # Retrieve embeddings for overall topic
-    overall_word_counts = topic_word_counts(user_mediacloud_key(), topics_id, num_words=50, **args)
+    overall_word_counts = apicache.topic_word_counts(user_mediacloud_key(), topics_id, num_words=50, **args)
     overall_words = [x['term'] for x in overall_word_counts]
     overall_embeddings = {x['term']: (x['google_w2v_x'], x['google_w2v_y']) for x in overall_word_counts}
 
     # Retrieve top words for each timespan
-    timespans = cached_topic_timespan_list(user_mediacloud_key(), topics_id, args['snapshots_id'], args['foci_id'])
+    timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id, args['snapshots_id'], args['foci_id'])
 
     # Retrieve embeddings for each timespan
     p = Pool(processes=WORD2VEC_TIMESPAN_POOL_PROCESSES)

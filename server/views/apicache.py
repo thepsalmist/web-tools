@@ -37,3 +37,14 @@ def _cached_tag(api_key, tags_id):
     # api_key passed in just to make this a user-level cache
     local_client = mc_client()
     return local_client.tag(tags_id)
+
+
+def story_count(api_key, q, fq):
+    return _cached_story_count(api_key, q, fq)
+
+
+@cache.cache_on_arguments()
+def _cached_story_count(api_key, q, fq):
+    # api_key passed in just to make this a user-level cache
+    local_client = mc_client()
+    return local_client.storyCount(solr_query=q, solr_filter=fq)

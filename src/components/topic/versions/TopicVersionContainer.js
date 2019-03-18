@@ -11,6 +11,7 @@ import { snapshotIsUsable, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_
 import { LEVEL_INFO, LEVEL_WARNING, LEVEL_ERROR } from '../../common/Notice';
 import TopicVersionStatusContainer from './TopicVersionStatusContainer';
 import TopicVersionErrorStatusContainer from './TopicVersionErrorStatusContainer';
+import TopicVersionRunningStatusContainer from './TopicVersionRunningStatusContainer';
 // import PageTitle from '../../common/PageTitle';
 import { filterBySnapshot } from '../../../actions/topicActions';
 import * as fetchConstants from '../../../lib/fetchConstants';
@@ -69,9 +70,16 @@ class TopicVersionContainer extends React.Component {
     let contentToShow = children; // has a filters renderer in it - show if a completed topic
     const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent }));
     contentToShow = childrenWithExtraProp;
-    if (this.determineVersionStatus(topicInfo) === VERSION_CREATING
-        || this.determineVersionStatus(topicInfo) === VERSION_QUEUED
-        || this.determineVersionStatus(topicInfo) === VERSION_RUNNING) {
+    if (this.determineVersionStatus(topicInfo) === VERSION_RUNNING) {
+      contentToShow = (
+        <TopicVersionRunningStatusContainer
+          topicInfo={topicInfo}
+          currentVersion={currentVersionNum}
+          job={topicInfo.spiderJobs[0]}
+        />
+      );
+    } else if (this.determineVersionStatus(topicInfo) === VERSION_CREATING
+        || this.determineVersionStatus(topicInfo) === VERSION_QUEUED) {
       // if the topic is running the initial spider and then show under construction message
       contentToShow = (
         <div>

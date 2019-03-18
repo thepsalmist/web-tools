@@ -1,10 +1,7 @@
 import { LOCATION_CHANGE } from 'react-router-redux';
 import { TOPIC_FILTER_BY_SNAPSHOT, TOPIC_FILTER_BY_TIMESPAN, TOPIC_FILTER_BY_FOCUS, TOPIC_FILTER_BY_QUERY } from '../../../actions/topicActions';
 import { createReducer } from '../../../lib/reduxHelpers';
-
-function parseId(potentialId) {
-  return (Number.isNaN(potentialId) || potentialId === null) ? null : parseInt(potentialId, 10);
-}
+import { parseId } from '../../../lib/numberUtil';
 
 const info = createReducer({
   initialState: {

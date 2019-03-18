@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
+import Link from 'react-router/lib/Link';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../common/AppButton';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
@@ -10,7 +10,6 @@ import messages from '../../../resources/messages';
 import BackLinkingControlBar from '../BackLinkingControlBar';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
-import { urlWithFilters, filteredLinkTo } from '../../util/location';
 import { fetchSnapshotStoryCounts } from '../../../actions/topicActions';
 import TopicVersionListItem from './TopicVersionListItem';
 
@@ -36,7 +35,7 @@ const localMessages = {
 };
 
 const TopicVersionListContainer = (props) => {
-  const { topicId, topicInfo, storyCounts, versions, filters, handleCreateSnapshot } = props;
+  const { topicId, topicInfo, storyCounts, versions } = props;
   const { formatMessage } = props.intl;
   let versionListContent;
   if (versions.length > 0) {
@@ -48,7 +47,7 @@ const TopicVersionListContainer = (props) => {
     }).map((v, idx) => (
       <TopicVersionListItem
         key={idx}
-        url={urlWithFilters(`/topics/${topicId}/summary`, { snapshotId: v.snapshots_id })}
+        topicId={topicId}
         number={versions.length - idx}
         version={v}
         storyCounts={storyCounts[v.snapshots_id]}
@@ -59,7 +58,7 @@ const TopicVersionListContainer = (props) => {
     versionListContent = (
       <TopicVersionListItem
         number={1}
-        url={urlWithFilters(`/topics/${topicId}/summary`, { })}
+        topicId={topicId}
         version={{
           state: topicInfo.state,
           snapshots_id: -1,
@@ -83,14 +82,15 @@ const TopicVersionListContainer = (props) => {
         </Row>
         <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
           {versionListContent}
-          <AppButton
-            style={{ marginTop: 30 }}
-            type="submit"
-            disabled={cannotCreate}
-            label={formatMessage(localMessages.createButton)}
-            onClick={() => handleCreateSnapshot(topicId, filters)}
-            primary
-          />
+          <Link to={`/topics/${topicId}/new-version`}>
+            <AppButton
+              style={{ marginTop: 30 }}
+              type="submit"
+              disabled={cannotCreate}
+              label={formatMessage(localMessages.createButton)}
+              primary
+            />
+          </Link>
         </Permissioned>
       </Grid>
 
@@ -103,29 +103,17 @@ TopicVersionListContainer.propTypes = {
   versions: PropTypes.array.isRequired,
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
-  filters: PropTypes.object.isRequired,
   storyCounts: PropTypes.object,
   // from compositional chain
   intl: PropTypes.object.isRequired,
-  handleCreateSnapshot: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  filters: state.topics.selected.filters,
   topicId: state.topics.selected.id,
   topicInfo: state.topics.selected.info,
   versions: state.topics.selected.snapshots.list,
   storyCounts: state.topics.selected.snapshotStoryCounts,
   fetchStatus: state.topics.selected.snapshotStoryCounts.fetchStatus,
-});
-
-const mapDispatchToProps = dispatch => ({
-  handleCreateSnapshot: (topicId, filters) => {
-    // TODO: should we just dispatch to the next screen, or also create the snapshot?
-    // dispatch(createSnapshot(info));
-    const url = `/topics/${topicId}/new-version`;
-    dispatch(push(filteredLinkTo(url, filters)));
-  },
 });
 
 const fetchAsyncData = (dispatch, { topicId }) => {
@@ -134,7 +122,7 @@ const fetchAsyncData = (dispatch, { topicId }) => {
 
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps)(
     withAsyncData(fetchAsyncData)(
       TopicVersionListContainer
     )

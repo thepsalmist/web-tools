@@ -4,6 +4,7 @@ import { injectIntl, FormattedHTMLMessage, FormattedDate } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../common/AppButton';
 import { TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
+import LinkWithFilters from '../LinkWithFilters';
 
 const localMessages = {
   versionNumber: { id: 'topic.versionNumber', defaultMessage: 'Version {number}' },
@@ -76,14 +77,14 @@ const detailsForVersionState = (version, storyCounts, formatMessage, formatNumbe
   }
 };
 
-const TopicVersionListItem = ({ version, intl, number, url, storyCounts }) => (
+const TopicVersionListItem = ({ version, intl, number, topicId, storyCounts }) => (
   <div className="topic-version-list-item">
     <Row>
       <Col lg={2}>
         <div className="topic-version-list-title">
-          <a href={url}>
+          <LinkWithFilters to={`/topics/${topicId}/summary`} filters={{ snapshotId: version.snapshots_id }}>
             <h2><FormattedHTMLMessage {...localMessages.versionNumber} values={{ number, status: version.state }} /></h2>
-          </a>
+          </LinkWithFilters>
           <small>
             <FormattedDate value={version.snapshotDate} month="short" year="numeric" day="numeric" />
           </small>
@@ -94,12 +95,12 @@ const TopicVersionListItem = ({ version, intl, number, url, storyCounts }) => (
           <h2><FormattedHTMLMessage {...messageForVersionState(version.state)} /></h2>
           {detailsForVersionState(version, storyCounts, intl.formatMessage, intl.formatNumber)}
           <br />
-          <a href={url}>
+          <LinkWithFilters to={`/topics/${topicId}/summary`} filters={{ snapshotId: version.snapshots_id }}>
             <AppButton
               type="submit"
               label={versionSelectText(version.state, number, intl.formatMessage)}
             />
-          </a>
+          </LinkWithFilters>
         </div>
       </Col>
     </Row>
@@ -110,7 +111,7 @@ TopicVersionListItem.propTypes = {
   // from parent
   number: PropTypes.number.isRequired,
   version: PropTypes.object.isRequired,
-  url: PropTypes.string.isRequired,
+  topicId: PropTypes.number.isRequired,
   storyCounts: PropTypes.object.isRequired,
   // from compositional chain
   intl: PropTypes.object.isRequired,

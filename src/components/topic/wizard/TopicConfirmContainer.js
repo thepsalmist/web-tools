@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import { reduxForm, Field } from 'redux-form';
+import { reduxForm } from 'redux-form';
 import { push } from 'react-router-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
@@ -29,31 +29,17 @@ const localMessages = {
   notEnoughStories: { id: 'topic.create.notenough', defaultMessage: "Sorry, we can't save this topic because you need a minimum of 500 seed stories." },
   tooManyStories: { id: 'topic.create.toomany', defaultMessage: "Sorry, we can't save this topic because you need to select less than 100,000 seed stories." },
   warningLimitStories: { id: 'topic.create.warningLimit', defaultMessage: 'Approaching story limit. Proceed with caution.' },
-  startSpidering: { id: 'topic.create.feedback', defaultMessage: 'Start Spidering?' },
 };
 
 const TopicConfirmContainer = (props) => {
-  const { formValues, finishStep, handlePreviousStep, handleSubmit, pristine, submitting, currentStepText, mode, topicInfo, renderCheckbox } = props;
+  const { formValues, finishStep, handlePreviousStep, handleSubmit, pristine, submitting, currentStepText, mode, topicInfo } = props;
   const { formatMessage } = props.intl;
   let sourcesAndCollections = [];
   sourcesAndCollections = formValues.sourcesAndCollections.filter(s => s.media_id).map(s => s.media_id);
   sourcesAndCollections.concat(formValues.sourcesAndCollections.filter(s => s.tags_id).map(s => s.tags_id));
   let previousVersion = null;
-  let startSpideringOption = null;
   if (mode === TOPIC_FORM_MODE_EDIT) {
     previousVersion = <TopicVersionInfo topicInfo={topicInfo} />;
-    if (hasPermissions(getUserRoles(props.user), PERMISSION_ADMIN)) {
-      startSpideringOption = (
-        <Field
-          name="start_spidering"
-          component={renderCheckbox}
-          fullWidth
-          label={formatMessage(localMessages.startSpidering)}
-          type="inline"
-          initialValues="checked"
-        />
-      );
-    }
   }
   const topicNewVersionContent = (
     <TopicVersionInfo topicInfo={formValues} />
@@ -96,7 +82,6 @@ const TopicConfirmContainer = (props) => {
         </Row>
         <Row>
           <Col lg={6}>
-            {startSpideringOption}
             <AppButton label={formatMessage(messages.previous)} onClick={() => handlePreviousStep(mode)} />
             &nbsp; &nbsp;
             <AppButton
@@ -131,7 +116,6 @@ TopicConfirmContainer.propTypes = {
   finishStep: PropTypes.func.isRequired,
   handlePreviousStep: PropTypes.func.isRequired,
   storyCount: PropTypes.number,
-  renderCheckbox: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
@@ -164,7 +148,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         is_public: values.is_public ? 1 : 0,
         is_logogram: values.is_logogram ? 1 : 0,
         max_stories: values.max_stories,
-        start_spidering: values.start_spidering,
       };
       queryInfo.is_public = queryInfo.is_public ? 1 : 0;
       if ('sourcesAndCollections' in values) {
@@ -216,7 +199,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         is_public: values.is_public ? 1 : 0,
         is_logogram: values.is_logogram ? 1 : 0,
         max_stories: values.max_stories,
-        start_spidering: values.start_spidering,
       };
       queryInfo.is_public = queryInfo.is_public ? 1 : 0;
       if ('sourcesAndCollections' in values) {

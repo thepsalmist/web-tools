@@ -240,7 +240,7 @@ export function updateAndCreateNewTopicVersion(topicId, params) {
 }
 
 export function updateTopicVersionSubtopics(topicId, currentVersion) {
-  return createPostingApiPromise(`/api/topics/${topicId}/update`, { current_version: (currentVersion) ? currentVersion : 0 }, 'put');
+  return createPostingApiPromise(`/api/topics/${topicId}/update`, { current_version: currentVersion }, 'put');
 }
 
 export function topicMapFiles(topicId, params) {

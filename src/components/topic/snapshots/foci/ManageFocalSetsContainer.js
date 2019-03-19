@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { reduxForm, Field } from 'redux-form';
 import { connect } from 'react-redux';
 import { FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
@@ -10,7 +9,7 @@ import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
 import ConfirmationDialog from '../../../common/ConfirmationDialog';
-import { fetchFocalSetDefinitions, deleteFocalSetDefinition, deleteFocusDefinition, setTopicNeedsNewSnapshot, updateAndCreateNewTopicVersion }
+import { fetchFocalSetDefinitions, deleteFocalSetDefinition, deleteFocusDefinition, setTopicNeedsNewSnapshot, updateAndCreateNewTopicVersion, updateTopicVersionSubtopics }
   from '../../../../actions/topicActions';
 import { updateFeedback } from '../../../../actions/appActions';
 import FocalSetDefinitionSummary from './FocalSetDefinitionSummary';
@@ -31,7 +30,7 @@ const localMessages = {
   removeFocusFailed: { id: 'focus.remove.failed', defaultMessage: 'Sorry, but removing the Subtopic failed :-(' },
   backToTopic: { id: 'backToTopic', defaultMessage: 'back to the topic' },
   createVersionAndStartSpider: { id: 'focalSets.manage.about', defaultMessage: 'Generate New Version' },
-  startSpidering: { id: 'focalSets.manage.about', defaultMessage: 'Spider after generating new version.' },
+  updateTopicVersionSubtopics: { id: 'focalSets.manage.about', defaultMessage: 'Generate Into Current Version' },
 };
 
 class ManageFocalSetsContainer extends React.Component {
@@ -60,29 +59,29 @@ class ManageFocalSetsContainer extends React.Component {
   }
 
   render() {
-    const { topicId, topicInfo, focalSetDefinitions, focalSetAll, renderCheckbox, user, formValues, handleCreateVersionAndStartSpider } = this.props;
+    const { topicId, topicInfo, currentVersion, focalSetDefinitions, focalSetAll, user, handleCreateVersionAndStartSpider, handleGenerateIntoSameVersion } = this.props;
     const { formatMessage } = this.props.intl;
     let startSpideringOption = null;
 
-    // TODO: waiting on more info
-    if (hasPermissions(getUserRoles(user), PERMISSION_ADMIN)
-      && (focalSetDefinitions.length !== focalSetAll.length)) {
+    if (focalSetDefinitions.length !== focalSetAll.length) {
       startSpideringOption = (
         <div>
-          <h3>Placeholder: Your topic has new subtopics - we suggest you (generate a new version, generate into same version, spider again?)</h3>
-          <Field
-            name="start_spidering"
-            component={renderCheckbox}
-            label={formatMessage(localMessages.startSpidering)}
-            type="inline"
-            initialValues="checked"
-          />
+          <h3>Placeholder: Your topic has new subtopics - as an admin, you can either generate a brand new version, or generate these subtopics into the same version)</h3>
           <Link to={`/topics/${topicId}/summary/`}>
             <AppButton
               type="submit"
               label={formatMessage(localMessages.createVersionAndStartSpider)}
-              onClick={() => handleCreateVersionAndStartSpider(topicId, formValues)}
+              onClick={() => handleCreateVersionAndStartSpider(topicId)}
+              primary
             />
+            {hasPermissions(getUserRoles(user), PERMISSION_ADMIN)
+              && (
+                <AppButton
+                  label={formatMessage(localMessages.updateTopicVersionSubtopics)}
+                  onClick={() => handleGenerateIntoSameVersion(topicId, currentVersion)}
+                />
+              )
+            }
           </Link>
         </div>
       );
@@ -163,17 +162,17 @@ ManageFocalSetsContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
-  renderCheckbox: PropTypes.func,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   focalSetDefinitions: PropTypes.array.isRequired,
   focalSetAll: PropTypes.array.isRequired,
-  formValues: PropTypes.object,
+  currentVersion: PropTypes.number,
   user: PropTypes.object.isRequired,
   // from dispatch
   handleDeleteFocalSetDefinition: PropTypes.func.isRequired,
   handleDeleteFocusDefinition: PropTypes.func.isRequired,
   handleCreateVersionAndStartSpider: PropTypes.func.isRequired,
+  handleGenerateIntoSameVersion: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -182,8 +181,8 @@ const mapStateToProps = (state, ownProps) => ({
   focalSetDefinitions: state.topics.selected.focalSets.definitions.list,
   focalSetAll: state.topics.selected.focalSets.all.list,
   fetchStatus: state.topics.selected.focalSets.definitions.fetchStatus,
+  currentVersion: state.topics.selected.snapshots.selected,
   user: state.user,
-  formValues: state.form.topicVersionSpiderOrNotForm ? state.form.topicVersionSpiderOrNotForm.values : null,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -211,8 +210,11 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         }
       });
   },
-  handleCreateVersionAndStartSpider: (topicId, formValues) => {
-    dispatch(updateAndCreateNewTopicVersion(topicId, { start_spidering: formValues.start_spidering }));
+  handleCreateVersionAndStartSpider: (topicId) => {
+    dispatch(updateAndCreateNewTopicVersion(topicId));
+  },
+  handleGenerateIntoSameVersion: (topicId, currentVersion) => {
+    dispatch(updateTopicVersionSubtopics(topicId, currentVersion));
   },
 });
 
@@ -222,11 +224,9 @@ const fetchAsyncData = (dispatch, { topicId }) => {
 
 export default
 withIntlForm(
-  reduxForm({ form: 'topicVersionSpiderOrNotForm' })(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncData(fetchAsyncData)(
-        ManageFocalSetsContainer
-      )
+  connect(mapStateToProps, mapDispatchToProps)(
+    withAsyncData(fetchAsyncData)(
+      ManageFocalSetsContainer
     )
   )
 );

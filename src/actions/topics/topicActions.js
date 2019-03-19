@@ -18,6 +18,7 @@ export const SET_TIMESPAN_VISIBLE_PERIOD = 'SET_TIMESPAN_VISIBLE_PERIOD';
 export const SELECT_TOPIC = 'SELECT_TOPIC';
 export const SET_TOPIC_FAVORITE = 'SET_TOPIC_FAVORITE';
 export const UPDATE_TOPIC = 'UPDATE_TOPIC';
+export const UPDATE_TOPIC_USING_SAME_VERSION = 'UPDATE_TOPIC_USING_SAME_VERSION';
 export const TOPIC_START_SPIDER = 'TOPIC_START_SPIDER';
 export const SET_TOPIC_NEEDS_NEW_SNAPSHOT = 'SET_TOPIC_NEEDS_NEW_SNAPSHOT';
 export const TOPIC_GENERATE_SNAPSHOT = 'TOPIC_GENERATE_SNAPSHOT';
@@ -70,6 +71,8 @@ export const toggleFilterControls = createAction(TOGGLE_FILTER_CONTROLS, isVisib
 export const setTopicFavorite = createAsyncAction(SET_TOPIC_FAVORITE, api.topicSetFavorite);
 
 export const updateAndCreateNewTopicVersion = createAsyncAction(UPDATE_TOPIC, api.updateAndCreateNewTopicVersion);
+
+export const updateTopicVersionSubtopics = createAsyncAction(UPDATE_TOPIC_USING_SAME_VERSION, api.updateTopicVersionSubtopics);
 
 export const topicStartSpider = createAsyncAction(TOPIC_START_SPIDER, api.topicSpider, id => id);
 

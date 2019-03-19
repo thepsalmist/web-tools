@@ -235,9 +235,12 @@ export function fetchWordsByQuery(params) {
 
 export function updateAndCreateNewTopicVersion(topicId, params) {
   const acceptedParams = acceptParams(params, ['name', 'description', 'solr_seed_query', 'is_public', 'max_stories', 'max_iterations',
-    'ch_monitor_id', 'start_date', 'end_date', 'spidered', 'sources[]', 'collections[]', 'is_logogram',
-    'start_spidering']);
+    'ch_monitor_id', 'start_date', 'end_date', 'spidered', 'sources[]', 'collections[]', 'is_logogram']);
   return createPostingApiPromise(`/api/topics/${topicId}/update`, acceptedParams, 'put');
+}
+
+export function updateTopicVersionSubtopics(topicId, currentVersion) {
+  return createPostingApiPromise(`/api/topics/${topicId}/update`, { current_version: (currentVersion) ? currentVersion : 0 }, 'put');
 }
 
 export function topicMapFiles(topicId, params) {

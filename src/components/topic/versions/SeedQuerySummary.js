@@ -12,7 +12,7 @@ const localMessages = {
 };
 
 const SeedQuerySummary = (props) => {
-  const { topic, currentVersion, intl } = props;
+  const { topic, snapshot, currentVersion, intl } = props;
   let sourcesAndCollections = topic.media ? [...topic.media] : [];
   sourcesAndCollections = topic.media_tags ? [...sourcesAndCollections, ...topic.media_tags] : sourcesAndCollections;
   return (
@@ -43,7 +43,7 @@ const SeedQuerySummary = (props) => {
 
 SeedQuerySummary.propTypes = {
   topic: PropTypes.object.isRequired,
-  currentVersion: PropTypes.number.isRequired,
+  snapshot: PropTypes.object,
   intl: PropTypes.object.isRequired,
 };
 

@@ -95,7 +95,7 @@ const TopicVersionListItem = ({ version, intl, number, topicId, storyCounts }) =
           <h2><FormattedHTMLMessage {...messageForVersionState(version.state)} /></h2>
           {detailsForVersionState(version, storyCounts, intl.formatMessage, intl.formatNumber)}
           <br />
-          <LinkWithFilters to={`/topics/${topicId}/summary`} filters={{ snapshotId: version.snapshots_id }}>
+          <LinkWithFilters to={`/topics/${topicId}/summary`} filters={{ snapshotId: version.snapshots_id, timespanId: null, focusId: null }}>
             <AppButton
               type="submit"
               label={versionSelectText(version.state, number, intl.formatMessage)}

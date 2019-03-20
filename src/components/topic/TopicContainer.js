@@ -6,10 +6,13 @@ import { connect } from 'react-redux';
 import withAsyncData from '../common/hocs/AsyncDataContainer';
 import TopicHeaderContainer from './TopicHeaderContainer';
 import { addNotice } from '../../actions/appActions';
-import { selectTopic, fetchTopicSummary } from '../../actions/topicActions';
+import { selectTopic, fetchTopicSummary, fetchTopicTimespansList,
+  filterBySnapshot, filterByFocus, filterByTimespan, filterByQuery } from '../../actions/topicActions';
+import { emptyString } from '../../lib/formValidators';
 import PageTitle from '../common/PageTitle';
 import TopicControlBar from './controlbar/TopicControlBar';
 import { getCurrentVersionFromSnapshot } from '../../lib/topicVersionUtil';
+import { latestUsableSnapshot } from '../../reducers/topics/selected/snapshots';
 
 class TopicContainer extends React.Component {
   constructor() {
@@ -84,9 +87,59 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-const fetchAsyncData = (dispatch, { params }) => {
+const pickDefaultTimespan = (dispatch, timespanList) => {
+  // pick the first timespan as the default (this is the overall one)
+  let defaultTimespanId;
+  if (timespanList.length > 0) {
+    defaultTimespanId = timespanList[0].timespans_id;
+  }
+  dispatch(filterByTimespan(defaultTimespanId));
+};
+
+const pickDefaultFilters = (dispatch, topicId, snapshotsList, location) => {
+  // if no snapshot specified, default to the latest snapshot or the first snapshot if none is usable
+  let currentSnapshotId;
+  const currentFocusId = location.query.focusId;
+  if (emptyString(location.query.snapshotId)) {
+    let defaultSnapshotId = null;
+    if (snapshotsList.length > 0) {
+      const firstSnapshot = snapshotsList[0];
+      const latestUsable = latestUsableSnapshot(snapshotsList);
+      defaultSnapshotId = latestUsable ? latestUsable.snapshots_id : firstSnapshot.snapshots_id;
+    }
+    dispatch(filterBySnapshot(defaultSnapshotId)); // save that to state
+    currentSnapshotId = defaultSnapshotId;
+  }
+  // now load up timespans for the snapshot we are using (default or not)
+  if (currentSnapshotId) {
+    dispatch(fetchTopicTimespansList(topicId, currentSnapshotId, { focusId: currentFocusId }))
+      .then((response) => {
+        // if no timespan specified, default to overall
+        if (emptyString(location.query.timespanId)) {
+          pickDefaultTimespan(dispatch, response.list);
+        }
+      });
+  }
+};
+
+const fetchAsyncData = (dispatch, { params, location }) => {
+  // first set all the default values based on the URL
   dispatch(selectTopic(params.topicId));
-  dispatch(fetchTopicSummary(params.topicId));
+  if (location.query.snapshotId) {
+    dispatch(filterBySnapshot(location.query.snapshotId));
+  }
+  if (location.query.focusId) {
+    dispatch(filterByFocus(location.query.focusId));
+  }
+  if (location.query.timespanId) {
+    dispatch(filterByTimespan(location.query.timespanId));
+  }
+  if (location.query.q) {
+    dispatch(filterByQuery(location.query.q));
+  }
+  // now get the topic info, and once you have it set the default filters
+  dispatch(fetchTopicSummary(params.topicId))
+    .then(results => pickDefaultFilters(dispatch, params.topicId, results.snapshots.list, location));
 };
 
 export default

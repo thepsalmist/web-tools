@@ -6,6 +6,7 @@ import AppButton from '../../common/AppButton';
 import { WarningNotice } from '../../common/Notice';
 import SeedQuerySummary from './SeedQuerySummary';
 import { postgresDateToMoment } from '../../../lib/dateUtil';
+import LinkWithFilters from '../LinkWithFilters';
 
 const localMessages = {
   title: { id: 'version.running.title', defaultMessage: 'Version {number} - Still Generating' },
@@ -18,13 +19,13 @@ const localMessages = {
   jobDate: { id: 'version.running.jobDate', defaultMessage: 'Last updated {date}' },
 };
 
-const TopicVersionRunningStatusContainer = ({ currentVersion, topicInfo, intl, job }) => (
+const TopicVersionRunningStatusContainer = ({ topic, snapshot, job, intl }) => (
   <Grid>
-    {currentVersion !== topicInfo.latestVersion && <WarningNotice><FormattedMessage {...localMessages.versionError} /></WarningNotice>}
+    {snapshot.note !== topic.latestVersion && <WarningNotice><FormattedMessage {...localMessages.versionError} /></WarningNotice>}
     <div className="topic-version-status-container">
       <Row>
         <Col lg={6}>
-          <h1><FormattedMessage {...localMessages.title} values={{ number: currentVersion }} /></h1>
+          <h1><FormattedMessage {...localMessages.title} values={{ number: snapshot.note }} /></h1>
           {job && (
             <p>
               <FormattedMessage
@@ -34,9 +35,12 @@ const TopicVersionRunningStatusContainer = ({ currentVersion, topicInfo, intl, j
             </p>
           )}
           <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
-          <p><FormattedMessage {...localMessages.explanationText} values={{ seedStoryCount: 124 }} /></p>
+          <p><FormattedMessage {...localMessages.explanationText} values={{ seedStoryCount: intl.formatNumber(topic.seed_query_story_count) }} /></p>
 
-          <AppButton label={intl.formatMessage(localMessages.seeOtherVersions)} primary />
+          <LinkWithFilters to={`/topics/${topic.topics_id}/versions`}>
+            <AppButton label={intl.formatMessage(localMessages.seeOtherVersions)} primary />
+          </LinkWithFilters>
+
           <p><FormattedMessage {...localMessages.seeOtherVersionsDetails} /></p>
 
           <AppButton label={intl.formatMessage(localMessages.cancelTopic)} />
@@ -45,7 +49,7 @@ const TopicVersionRunningStatusContainer = ({ currentVersion, topicInfo, intl, j
         </Col>
         <Col lg={1} />
         <Col lg={5}>
-          <SeedQuerySummary topic={topicInfo} currentVersion={currentVersion} />
+          <SeedQuerySummary topic={topic} snapshot={snapshot} />
         </Col>
       </Row>
     </div>
@@ -54,8 +58,8 @@ const TopicVersionRunningStatusContainer = ({ currentVersion, topicInfo, intl, j
 
 TopicVersionRunningStatusContainer.propTypes = {
   // from state
-  currentVersion: PropTypes.number.isRequired,
-  topicInfo: PropTypes.object.isRequired,
+  topic: PropTypes.object.isRequired,
+  snapshot: PropTypes.object,
   job: PropTypes.object,
   // from context
   intl: PropTypes.object.isRequired,

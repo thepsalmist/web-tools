@@ -64,7 +64,7 @@ class TopicVersionContainer extends React.Component {
   }
 
   render() {
-    const { children, topicInfo, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo, setSideBarContent, user, currentVersionId, filters } = this.props;
+    const { children, topicInfo, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo, setSideBarContent, user, currentVersionId, filters, selectedSnapshot } = this.props;
     // show a big error if there is one to show
     const currentVersionNum = getCurrentVersionFromSnapshot(topicInfo, currentVersionId);
     let contentToShow = children; // has a filters renderer in it - show if a completed topic
@@ -73,8 +73,8 @@ class TopicVersionContainer extends React.Component {
     if (this.determineVersionStatus(topicInfo) === VERSION_RUNNING) {
       contentToShow = (
         <TopicVersionRunningStatusContainer
-          topicInfo={topicInfo}
-          currentVersion={currentVersionNum}
+          topic={topicInfo}
+          snapshot={selectedSnapshot || { note: currentVersionNum }}
           job={topicInfo.spiderJobs[0]}
         />
       );
@@ -119,6 +119,7 @@ TopicVersionContainer.propTypes = {
   fetchStatusInfo: PropTypes.string,
   fetchStatusSnapshot: PropTypes.string,
   topicInfo: PropTypes.object,
+  selectedSnapshot: PropTypes.object,
   needsNewSnapshot: PropTypes.bool.isRequired,
   snapshotCount: PropTypes.number.isRequired,
   goToCreateNewVersion: PropTypes.func,
@@ -133,7 +134,7 @@ const mapStateToProps = (state, ownProps) => ({
   fetchStatusInfo: state.topics.selected.info.fetchStatus,
   topicInfo: state.topics.selected.info,
   topicId: parseInt(ownProps.params.topicId, 10),
-
+  selectedSnapshot: state.topics.selected.snapshots.selected,
   currentVersionId: parseInt(ownProps.location.query.snapshotId, 10),
   needsNewSnapshot: state.topics.selected.needsNewSnapshot,
   snapshotCount: state.topics.selected.snapshots.list.length,

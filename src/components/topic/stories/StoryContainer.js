@@ -151,7 +151,7 @@ class StoryContainer extends React.Component {
                   { message: messages.outlinks, data: formatNumber(topicStoryInfo.outlink_count) },
                   { message: messages.facebookShares, data: formatNumber(topicStoryInfo.facebook_share_count) },
                   { message: messages.language, data: storyInfo.language || formatMessage(localMessages.unknownLanguage) },
-                  { message: messages.storyDate, data: formatDate(storyPubDateToTimestamp(storyInfo.publish_date)) },
+                  { message: messages.storyDate, data: formatDate(storyPubDateToTimestamp(storyInfo.publish_date), { month: '2-digit', day: '2-digit', year: '2-digit' }) },
                 ]}
                 columnWidth={2}
               />

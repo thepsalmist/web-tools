@@ -61,10 +61,18 @@ class ManageFocalSetsContainer extends React.Component {
   render() {
     const { topicId, topicInfo, currentVersion, focalSetDefinitions, focalSetAll, user, handleCreateVersionAndStartSpider, handleGenerateIntoSameVersion } = this.props;
     const { formatMessage } = this.props.intl;
-    let startSpideringOption = null;
-
+    let kickOffVersionCreation = null;
+    let adminOptionToGenIntoCurrentVersion = null;
+    if (currentVersion && hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {
+      adminOptionToGenIntoCurrentVersion = (
+        <AppButton
+          label={formatMessage(localMessages.updateTopicVersionSubtopics)}
+          onClick={() => handleGenerateIntoSameVersion(topicId, currentVersion)}
+        />
+      );
+    }
     if (focalSetDefinitions.length !== focalSetAll.length) {
-      startSpideringOption = (
+      kickOffVersionCreation = (
         <div>
           <h3>Placeholder: Your topic has new subtopics - as an admin, you can either generate a brand new version, or generate these subtopics into the same version)</h3>
           <Link to={`/topics/${topicId}/summary/`}>
@@ -74,14 +82,7 @@ class ManageFocalSetsContainer extends React.Component {
               onClick={() => handleCreateVersionAndStartSpider(topicId)}
               primary
             />
-            {hasPermissions(getUserRoles(user), PERMISSION_ADMIN)
-              && (
-                <AppButton
-                  label={formatMessage(localMessages.updateTopicVersionSubtopics)}
-                  onClick={() => handleGenerateIntoSameVersion(topicId, currentVersion)}
-                />
-              )
-            }
+            { adminOptionToGenIntoCurrentVersion }
           </Link>
         </div>
       );
@@ -117,7 +118,7 @@ class ManageFocalSetsContainer extends React.Component {
           <Row>
             <Col lg={6}>
               <form className="topic-version-subtopic-start-spider" name="topicVersionSpiderOrNotForm">
-                {startSpideringOption}
+                {kickOffVersionCreation}
               </form>
             </Col>
           </Row>

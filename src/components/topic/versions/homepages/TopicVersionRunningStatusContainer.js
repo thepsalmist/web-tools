@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import AppButton from '../../common/AppButton';
-import { WarningNotice } from '../../common/Notice';
-import SeedQuerySummary from './SeedQuerySummary';
-import LinkWithFilters from '../LinkWithFilters';
-import JobDate from './JobDate';
+import AppButton from '../../../common/AppButton';
+import { WarningNotice } from '../../../common/Notice';
+import SeedQuerySummary from '../SeedQuerySummary';
+import LinkWithFilters from '../../LinkWithFilters';
+import JobDate from '../JobDate';
 
 const localMessages = {
   title: { id: 'version.running.title', defaultMessage: 'Version {number} - Still Generating' },

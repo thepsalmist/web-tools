@@ -2,13 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import AppButton from '../../common/AppButton';
-import PageTitle from '../../common/PageTitle';
-import Permissioned from '../../common/Permissioned';
-import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
-import SeedQuerySummary from './SeedQuerySummary';
-import messages from '../../../resources/messages';
-import JobDate from './JobDate';
+import AppButton from '../../../common/AppButton';
+import PageTitle from '../../../common/PageTitle';
+import Permissioned from '../../../common/Permissioned';
+import { PERMISSION_TOPIC_WRITE } from '../../../../lib/auth';
+import SeedQuerySummary from '../SeedQuerySummary';
+import messages from '../../../../resources/messages';
+import JobDate from '../JobDate';
 
 const localMessages = {
   title: { id: 'version.error.title', defaultMessage: 'Version {number} - Error' },

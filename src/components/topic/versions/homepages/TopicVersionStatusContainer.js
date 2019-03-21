@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import PageTitle from '../../common/PageTitle';
-import AppButton from '../../common/AppButton';
-import { WarningNotice } from '../../common/Notice';
-import TopicInfo from '../controlbar/TopicInfo';
-import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/auth';
+import PageTitle from '../../../common/PageTitle';
+import AppButton from '../../../common/AppButton';
+import { WarningNotice } from '../../../common/Notice';
+import TopicInfo from '../../controlbar/TopicInfo';
+import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../../lib/auth';
 
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Admin: Topic Status Dashboard' },

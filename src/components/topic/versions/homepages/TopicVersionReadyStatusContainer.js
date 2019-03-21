@@ -2,14 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import TopicFilterBar from '../controlbar/TopicFilterBar';
-import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import { ExploreButton } from '../../common/IconButton';
-import { LEVEL_WARNING } from '../../common/Notice';
-import { fetchFocalSetDefinitions, setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
-import { addNotice } from '../../../actions/appActions';
-import { urlToExplorerQuery } from '../../../lib/urlUtil';
-import { nullOrUndefined } from '../../../lib/formValidators';
+import TopicFilterBar from '../../controlbar/TopicFilterBar';
+import withAsyncData from '../../../common/hocs/AsyncDataContainer';
+import { ExploreButton } from '../../../common/IconButton';
+import { LEVEL_WARNING } from '../../../common/Notice';
+import { fetchFocalSetDefinitions, setTopicNeedsNewSnapshot } from '../../../../actions/topicActions';
+import { addNotice } from '../../../../actions/appActions';
+import { urlToExplorerQuery } from '../../../../lib/urlUtil';
+import { nullOrUndefined } from '../../../../lib/formValidators';
 
 const localMessages = {
   topicRunning: { id: 'topic.topicRunning', defaultMessage: 'We are scraping the web for all the stories in include in your topic.' },

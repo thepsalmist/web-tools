@@ -5,6 +5,7 @@ import { Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../common/AppButton';
 import { TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
 import LinkWithFilters from '../LinkWithFilters';
+import { trimToMaxLength } from '../../../lib/stringUtil';
 
 const localMessages = {
   versionNumber: { id: 'topic.versionNumber', defaultMessage: 'Version {number}' },
@@ -65,11 +66,11 @@ const detailsForVersionState = (version, storyCounts, formatMessage, formatNumbe
         total: formatNumber(storyCounts.total),
         discoveredPct: storyCounts.total === 0 ? '0%' : formatNumber(storyCounts.spidered / storyCounts.total, { style: 'percent', maximumFractionDigits: 0 }),
       });
-      // TODO
     case TOPIC_SNAPSHOT_STATE_RUNNING:
       return formatMessage(localMessages.runningDetails);
     case TOPIC_SNAPSHOT_STATE_ERROR:
-      return version.message;
+      // TODO: show generic error for regular users, and detailed message for admin users
+      return trimToMaxLength(version.message, 400);
     case TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED:
       return formatMessage(localMessages.createdNotQueuedDetails);
     default:

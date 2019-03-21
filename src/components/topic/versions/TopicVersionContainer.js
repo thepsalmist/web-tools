@@ -6,10 +6,10 @@ import { push } from 'react-router-redux';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
   TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
-import TopicVersionStatusContainer from './TopicVersionStatusContainer';
-import TopicVersionErrorStatusContainer from './TopicVersionErrorStatusContainer';
-import TopicVersionRunningStatusContainer from './TopicVersionRunningStatusContainer';
-import TopicVersionTooBigStatusContainer from './TopicVersionTooBigStatusContainer';
+import TopicVersionStatusContainer from './homepages/TopicVersionStatusContainer';
+import TopicVersionErrorStatusContainer from './homepages/TopicVersionErrorStatusContainer';
+import TopicVersionRunningStatusContainer from './homepages/TopicVersionRunningStatusContainer';
+import TopicVersionTooBigStatusContainer from './homepages/TopicVersionTooBigStatusContainer';
 import * as fetchConstants from '../../../lib/fetchConstants';
 import { filteredLinkTo } from '../../util/location';
 import { VERSION_ERROR, VERSION_ERROR_EXCEEDED, VERSION_CREATING, VERSION_BUILDING, VERSION_QUEUED, VERSION_RUNNING, VERSION_READY } from '../../../lib/topicFilterUtil';
@@ -60,9 +60,27 @@ class TopicVersionContainer extends React.Component {
           job={topicInfo.spiderJobs[0]}
         />
       );
-    } else if (this.determineVersionStatus(topicInfo) === VERSION_CREATING
-        || this.determineVersionStatus(topicInfo) === VERSION_QUEUED) {
-      // if the topic is running the initial spider and then show under construction message
+    } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
+      contentToShow = (
+        <TopicVersionTooBigStatusContainer
+          topic={topicInfo}
+          snapshot={selectedSnapshot || { note: currentVersionNum }}
+          job={topicInfo.spiderJobs[0]}
+          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
+        />
+      );
+    } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR) {
+      contentToShow = (
+        <TopicVersionErrorStatusContainer
+          topic={topicInfo}
+          snapshot={selectedSnapshot || { note: currentVersionNum }}
+          job={topicInfo.spiderJobs[0]}
+          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
+        />
+      );
+    } else if (this.determineVersionStatus(topicInfo) === VERSION_CREATING) {
+
+    } else if (this.determineVersionStatus(topicInfo) === VERSION_QUEUED) {
       contentToShow = (
         <div>
           <TopicVersionStatusContainer
@@ -73,26 +91,6 @@ class TopicVersionContainer extends React.Component {
             filters={filters}
           />
         </div>
-      );
-    } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
-      contentToShow = (
-        <TopicVersionTooBigStatusContainer
-          topic={topicInfo}
-          snapshot={selectedSnapshot || { note: currentVersionNum }}
-          job={topicInfo.spiderJobs[0]}
-          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
-          error={VERSION_ERROR}
-        />
-      );
-    } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR) {
-      contentToShow = (
-        <TopicVersionErrorStatusContainer
-          topic={topicInfo}
-          snapshot={selectedSnapshot || { note: currentVersionNum }}
-          job={topicInfo.spiderJobs[0]}
-          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
-          error={VERSION_ERROR}
-        />
       );
     } else if (fetchStatusInfo !== fetchConstants.FETCH_SUCCEEDED
       && fetchStatusSnapshot !== fetchConstants.FETCH_SUCCEEDED) {

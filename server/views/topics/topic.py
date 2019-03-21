@@ -4,6 +4,7 @@ import flask_login
 from multiprocessing import Pool
 from functools import partial
 from deco import concurrent, synchronized
+import mediacloud.error
 
 from server import app, user_db, mc
 from server.views.topics import concatenate_query_for_solr, concatenate_solr_dates
@@ -89,13 +90,17 @@ def sorted_public_topic_list():
 @api_error_handler
 def topic_summary(topics_id):
     topic = _topic_summary(topics_id)
-    topic['seed_query_story_count'] = shared_apicache.story_count(
-        user_mediacloud_key(),
-        q=concatenate_query_for_solr(solr_seed_query=topic['solr_seed_query'],
-                                     media_ids=[m['media_id'] for m in topic['media']],
-                                     tags_ids=[t['tags_id'] for t in topic['media_tags']]),
-        fq=concatenate_solr_dates(start_date=topic['start_date'], end_date=topic['end_date'])
-    )['count']
+    try:
+        topic['seed_query_story_count'] = shared_apicache.story_count(
+            user_mediacloud_key(),
+            q=concatenate_query_for_solr(solr_seed_query=topic['solr_seed_query'],
+                                         media_ids=[m['media_id'] for m in topic['media']],
+                                         tags_ids=[t['tags_id'] for t in topic['media_tags']]),
+            fq=concatenate_solr_dates(start_date=topic['start_date'], end_date=topic['end_date'])
+        )['count']
+    except mediacloud.error.MCException:
+        # the query syntax is wrong (perhaps pre-story-level search
+        topic['seed_query_story_count'] = 'unknown'
     return jsonify(topic)
 
 

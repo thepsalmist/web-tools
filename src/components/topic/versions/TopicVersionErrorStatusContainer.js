@@ -5,111 +5,62 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../common/AppButton';
 import PageTitle from '../../common/PageTitle';
 import Permissioned from '../../common/Permissioned';
-import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../../lib/auth';
-import { VERSION_ERROR_EXCEEDED } from '../../../lib/topicFilterUtil';
-import TopicInfo from '../controlbar/TopicInfo';
-import { WarningNotice } from '../../common/Notice';
+import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
+import SeedQuerySummary from './SeedQuerySummary';
 import messages from '../../../resources/messages';
+import JobDate from './JobDate';
 
 const localMessages = {
-  title: { id: 'topics.adminList.title', defaultMessage: 'Version status' },
-  hasAnError: { id: 'topic.hasError', defaultMessage: 'Sorry, this topic has an error!' },
-  topicTooBig: { id: 'topic.state.error.topicTooBig', defaultMessage: 'Error, your topic version is too big' },
-  topicTooBigDesc: { id: 'topic.state.error.topicTooBigDesc', defaultMessage: 'We limit the size of topics to make sure that our system doesn\'t get overrun with gathering content from the entire web.' },
-  topicTooBigInstructions: { id: 'topic.state.error.topicTooBigInstructions', defaultMessage: 'Try making a new version with a more specific query or a smaller date range. Email us at support@mediacloud.org if you have questions' },
-  otherError: { id: 'topic.state.error.otherError', defaultMessage: 'Sorry, this version has an error.  It says it is "{state}".' },
-  otherErrorInstructions: { id: 'topic.state.error.otherErrorInstructions', defaultMessage: 'Email us at support@mediacloud.org if you have questions' },
-  versionError: { id: 'topics.status.versionError', defaultMessage: 'You are not viewing the latest version for this topic.' },
+  title: { id: 'version.error.title', defaultMessage: 'Version {number} - Error' },
+  explanationTitle: { id: 'version.error.explanation.title', defaultMessage: 'What\'s the Problem?' },
+  explanationText: { id: 'version.error.explanation.text', defaultMessage: 'Something went wrong while your topic was running.' },
+  whatNowTitle: { id: 'version.error.explanation2.title', defaultMessage: 'What Should I Do Now?' },
+  whatNowText: { id: 'version.error.explanation2.text', defaultMessage: 'Nothing! We\'ve been notified, and will take a look at it.  If you don\'t hear from us soon, do drop us a line at support@mediacloud.org.' },
 };
 
-class TopicVersionErrorStatusContainer extends React.Component {
-  render() {
-    const { topicInfo, error, goToCreateNewVersion, currentVersion } = this.props;
-    const { formatMessage } = this.props.intl;
-    let content = null;
-    if (error === VERSION_ERROR_EXCEEDED) {
-      content = (
-        <Grid>
-          <Row>
-            <Col lg={12}>
+const TopicVersionErrorStatusContainer = ({ topic, goToCreateNewVersion, snapshot, job, intl }) => (
+  <React.Fragment>
+    <PageTitle value={intl.formatMessage(localMessages.title, { number: snapshot.note })} />
+    <div className="topic-version-status-container">
+      <Grid>
+        <Row>
+          <Col lg={6}>
+            <h1><FormattedMessage {...localMessages.title} values={{ number: snapshot.note }} /></h1>
+            <JobDate snapshot={snapshot} job={job} />
+
+            <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
+            <p><FormattedMessage {...localMessages.explanationText} /></p>
+            <h2><FormattedMessage {...localMessages.whatNowTitle} /></h2>
+            <p><FormattedMessage {...localMessages.whatNowText} /></p>
+
+            <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
               <div className="topic-stuck-created-or-error">
-                <PageTitle value={localMessages.title} />
-                {currentVersion !== topicInfo.latestVersion && <WarningNotice><FormattedMessage {...localMessages.versionError} /></WarningNotice>}
-                <h1><FormattedMessage {...localMessages.topicTooBig} /></h1>
-                <p><FormattedMessage {...localMessages.topicTooBigDesc} /></p>
-              </div>
-            </Col>
-          </Row>
-          <Permissioned onlyTopic={PERMISSION_ADMIN}>
-            <Row>
-              <Col lg={4}>
                 <AppButton
-                  label={formatMessage(messages.createNewVersion)}
-                  onClick={() => goToCreateNewVersion(topicInfo)}
+                  label={intl.formatMessage(messages.createNewVersion)}
+                  onClick={() => goToCreateNewVersion(topic.topics_id)}
                   type="submit"
                   primary
                 />
-              </Col>
-              <Col lg={4}>
-                <TopicInfo topic={topicInfo} currentVersion={currentVersion} />
-              </Col>
-            </Row>
-          </Permissioned>
-          <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-            <Row>
-              <Col lg={12}>
-                <div className="topic-stuck-created-or-error">
-                  <p><FormattedMessage {...localMessages.topicTooBigInstructions} /></p>
-                </div>
-              </Col>
-            </Row>
-          </Permissioned>
-        </Grid>
-      );
-    } else {
-      content = (
-        <Grid>
-          <Permissioned onlyTopic={PERMISSION_ADMIN}>
-            <Row>
-              <Col lg={6}>
-                <div className="topic-stuck-created-or-error">
-                  <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
-                  <AppButton
-                    label={formatMessage(messages.createNewVersion)}
-                    onClick={() => goToCreateNewVersion(topicInfo.topics_id)}
-                    type="submit"
-                    color="primary"
-                  />
-                </div>
-              </Col>
-              <Col lg={4}>
-                <TopicInfo topic={topicInfo} currentVersion={currentVersion} />
-              </Col>
-            </Row>
-          </Permissioned>
-          <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-            <Row>
-              <Col lg={12}>
-                <div className="topic-stuck-created-or-error">
-                  <p><FormattedMessage {...localMessages.otherErrorInstructions} /></p>
-                </div>
-              </Col>
-            </Row>
-          </Permissioned>
-        </Grid>
-      );
-    }
-    return (content);
-  }
-}
+              </div>
+            </Permissioned>
+          </Col>
+          <Col lg={1} />
+          <Col lg={5}>
+            <SeedQuerySummary topic={topic} snapshot={snapshot} />
+          </Col>
+        </Row>
+      </Grid>
+    </div>
+  </React.Fragment>
+);
 
 TopicVersionErrorStatusContainer.propTypes = {
   // from state
-  topicInfo: PropTypes.object,
+  topic: PropTypes.object,
   filters: PropTypes.object,
-  error: PropTypes.string,
+  snapshot: PropTypes.object,
+  job: PropTypes.object,
   goToCreateNewVersion: PropTypes.func,
-  currentVersion: PropTypes.number.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
 };

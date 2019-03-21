@@ -9,7 +9,7 @@ import { TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAP
 import TopicVersionStatusContainer from './TopicVersionStatusContainer';
 import TopicVersionErrorStatusContainer from './TopicVersionErrorStatusContainer';
 import TopicVersionRunningStatusContainer from './TopicVersionRunningStatusContainer';
-// import PageTitle from '../../common/PageTitle';
+import TopicVersionTooBigStatusContainer from './TopicVersionTooBigStatusContainer';
 import * as fetchConstants from '../../../lib/fetchConstants';
 import { filteredLinkTo } from '../../util/location';
 import { VERSION_ERROR, VERSION_ERROR_EXCEEDED, VERSION_CREATING, VERSION_BUILDING, VERSION_QUEUED, VERSION_RUNNING, VERSION_READY } from '../../../lib/topicFilterUtil';
@@ -75,9 +75,25 @@ class TopicVersionContainer extends React.Component {
         </div>
       );
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
-      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR_EXCEEDED} goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)} currentVersion={currentVersionNum} />;
+      contentToShow = (
+        <TopicVersionTooBigStatusContainer
+          topic={topicInfo}
+          snapshot={selectedSnapshot || { note: currentVersionNum }}
+          job={topicInfo.spiderJobs[0]}
+          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
+          error={VERSION_ERROR}
+        />
+      );
     } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR) {
-      contentToShow = <TopicVersionErrorStatusContainer topicInfo={topicInfo} error={VERSION_ERROR} goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)} currentVersion={currentVersionNum} />;
+      contentToShow = (
+        <TopicVersionErrorStatusContainer
+          topic={topicInfo}
+          snapshot={selectedSnapshot || { note: currentVersionNum }}
+          job={topicInfo.spiderJobs[0]}
+          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
+          error={VERSION_ERROR}
+        />
+      );
     } else if (fetchStatusInfo !== fetchConstants.FETCH_SUCCEEDED
       && fetchStatusSnapshot !== fetchConstants.FETCH_SUCCEEDED) {
       // complete

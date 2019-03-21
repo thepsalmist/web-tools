@@ -10,7 +10,6 @@ import { selectTopic, fetchTopicSummary, fetchTopicTimespansList, fetchTopicFoca
   filterBySnapshot, filterByFocus, filterByTimespan, filterByQuery, updateTopicFilterParsingStatus,
 } from '../../actions/topicActions';
 import { FILTER_PARSING_ONGOING, FILTER_PARSING_DONE } from '../../reducers/topics/selected/filters';
-import { emptyString } from '../../lib/formValidators';
 import PageTitle from '../common/PageTitle';
 import { filteredLocation } from '../util/location';
 import TopicControlBar from './controlbar/TopicControlBar';
@@ -125,8 +124,8 @@ const pickDefaultFilters = (dispatch, topicId, snapshotsList, location) => {
   // async handler after snapshot data arrives - if no snapshot specified, default to the
   // latest snapshot or the first snapshot if none is usable
   let urlNeedsUpdate = false;
-  let currentSnapshotId = location.query.snapshotId;
-  if (emptyString(currentSnapshotId)) {
+  let currentSnapshotId = parseId(location.query.snapshotId);
+  if (currentSnapshotId === null) {
     let defaultSnapshotId = null;
     if (snapshotsList.length > 0) {
       const firstSnapshot = snapshotsList[0];
@@ -139,7 +138,7 @@ const pickDefaultFilters = (dispatch, topicId, snapshotsList, location) => {
   }
   dispatch(filterBySnapshot(currentSnapshotId));
   // fire off a request to load the focal sets and foci
-  const currentFocusId = location.query.focusId;
+  const currentFocusId = parseId(location.query.focusId);
   if (currentSnapshotId) {
     dispatch(fetchTopicFocalSetsList(topicId, { snapshotId: currentSnapshotId }))
       .then(() => {
@@ -148,8 +147,8 @@ const pickDefaultFilters = (dispatch, topicId, snapshotsList, location) => {
         dispatch(fetchTopicTimespansList(topicId, currentSnapshotId, { focusId: currentFocusId }))
           .then((response) => {
             // if no timespan specified, default to overall
-            let currentTimespanId = location.query.timespanId;
-            if (emptyString(location.query.timespanId)) {
+            let currentTimespanId = parseId(location.query.timespanId);
+            if (currentTimespanId === null) {
               currentTimespanId = pickDefaultTimespan(dispatch, response.list);
               urlNeedsUpdate = true; // we updaed the timespanId, so we have to update the URL
             }

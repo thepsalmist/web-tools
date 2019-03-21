@@ -131,10 +131,13 @@ const pickDefaultFilters = (dispatch, topicId, snapshotsList, location) => {
       const firstSnapshot = snapshotsList[0];
       const latestUsable = latestUsableSnapshot(snapshotsList);
       defaultSnapshotId = latestUsable ? latestUsable.snapshots_id : firstSnapshot.snapshots_id;
+      dispatch(filterBySnapshot(defaultSnapshotId)); // save that to state
+      currentSnapshotId = defaultSnapshotId;
+      urlNeedsUpdate = true; // we updaed the snapshotId, so we have to update the URL
+    } else {
+      // there aren't any valid snapshots, so just say we are done (this happens with older topics)
+      dispatch(updateTopicFilterParsingStatus(FILTER_PARSING_DONE));
     }
-    dispatch(filterBySnapshot(defaultSnapshotId)); // save that to state
-    currentSnapshotId = defaultSnapshotId;
-    urlNeedsUpdate = true; // we updaed the snapshotId, so we have to update the URL
   }
   dispatch(filterBySnapshot(currentSnapshotId));
   // fire off a request to load the focal sets and foci

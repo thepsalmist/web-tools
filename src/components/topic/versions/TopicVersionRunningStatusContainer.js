@@ -7,6 +7,7 @@ import { WarningNotice } from '../../common/Notice';
 import SeedQuerySummary from './SeedQuerySummary';
 import { postgresDateToMoment } from '../../../lib/dateUtil';
 import LinkWithFilters from '../LinkWithFilters';
+import messages from '../../../resources/messages';
 
 const localMessages = {
   title: { id: 'version.running.title', defaultMessage: 'Version {number} - Still Generating' },
@@ -19,42 +20,64 @@ const localMessages = {
   jobDate: { id: 'version.running.jobDate', defaultMessage: 'Last updated {date}' },
 };
 
-const TopicVersionRunningStatusContainer = ({ topic, snapshot, job, intl }) => (
-  <Grid>
-    {snapshot.note !== topic.latestVersion && <WarningNotice><FormattedMessage {...localMessages.versionError} /></WarningNotice>}
-    <div className="topic-version-status-container">
-      <Row>
-        <Col lg={6}>
-          <h1><FormattedMessage {...localMessages.title} values={{ number: snapshot.note }} /></h1>
-          {job && (
-            <p>
-              <FormattedMessage
-                {...localMessages.jobDate}
-                values={{ date: postgresDateToMoment(job.last_updated).fromNow() }}
-              />
-            </p>
-          )}
-          <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
-          <p><FormattedMessage {...localMessages.explanationText} values={{ seedStoryCount: intl.formatNumber(topic.seed_query_story_count) }} /></p>
+class TopicVersionRunningStatusContainer extends React.Component {
+  state = {
+    showDetails: false,
+  }
 
-          <LinkWithFilters to={`/topics/${topic.topics_id}/versions`}>
-            <AppButton label={intl.formatMessage(localMessages.seeOtherVersions)} primary />
-          </LinkWithFilters>
+  render() {
+    const { topic, snapshot, job, intl } = this.props;
+    return (
+      <Grid>
+        {snapshot.note !== topic.latestVersion && <WarningNotice><FormattedMessage {...localMessages.versionError} /></WarningNotice>}
+        <div className="topic-version-status-container">
+          <Row>
+            <Col lg={6}>
+              <h1><FormattedMessage {...localMessages.title} values={{ number: snapshot.note }} /></h1>
+              {job && (
+                <p>
+                  <FormattedMessage
+                    {...localMessages.jobDate}
+                    values={{ date: postgresDateToMoment(job.last_updated).fromNow() }}
+                  />.
+                  &nbsp;
+                  <a
+                    href="#toggle-details"
+                    onClick={(evt) => {
+                      evt.preventDefault();
+                      this.setState(prevState => ({ showDetails: !prevState.showDetails }));
+                    }}
+                  >
+                    <FormattedMessage {...messages.details} />
+                  </a>
+                </p>
+              )}
+              { this.state.showDetails && (<p>{snapshot.message || job.message}</p>) }
+              <h2>
+                <FormattedMessage {...localMessages.explanationTitle} />
+              </h2>
+              <p><FormattedMessage {...localMessages.explanationText} values={{ seedStoryCount: intl.formatNumber(topic.seed_query_story_count) }} /></p>
 
-          <p><FormattedMessage {...localMessages.seeOtherVersionsDetails} /></p>
+              <LinkWithFilters to={`/topics/${topic.topics_id}/versions`}>
+                <AppButton label={intl.formatMessage(localMessages.seeOtherVersions)} primary />
+              </LinkWithFilters>
 
-          <AppButton label={intl.formatMessage(localMessages.cancelTopic)} />
-          <p><FormattedMessage {...localMessages.cancelDetails} /></p>
-
-        </Col>
-        <Col lg={1} />
-        <Col lg={5}>
-          <SeedQuerySummary topic={topic} snapshot={snapshot} />
-        </Col>
-      </Row>
-    </div>
-  </Grid>
-);
+              <p><FormattedMessage {...localMessages.seeOtherVersionsDetails} /></p>
+              { /*
+              <AppButton label={intl.formatMessage(localMessages.cancelTopic)} />
+              <p><FormattedMessage {...localMessages.cancelDetails} /></p>
+              */ }
+            </Col>
+            <Col lg={1} />
+            <Col lg={5}>
+              <SeedQuerySummary topic={topic} snapshot={snapshot} />
+            </Col>
+          </Row>
+        </div>
+      </Grid>
+    );
+  }
+}
 
 TopicVersionRunningStatusContainer.propTypes = {
   // from state

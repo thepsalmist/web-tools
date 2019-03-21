@@ -15,7 +15,6 @@ import { filteredLinkTo } from '../../util/location';
 import { VERSION_ERROR, VERSION_ERROR_EXCEEDED, VERSION_CREATING, VERSION_BUILDING, VERSION_QUEUED, VERSION_RUNNING, VERSION_READY } from '../../../lib/topicFilterUtil';
 import { getCurrentVersionFromSnapshot } from '../../../lib/topicVersionUtil';
 
-
 /**
  * This decides which topic version homepage to show, based on the version and topic state
  */

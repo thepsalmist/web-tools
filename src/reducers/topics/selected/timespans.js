@@ -24,9 +24,9 @@ function getTimespanFromListById(list, id) {
 const initialState = {
   list: [],
   isVisible: true,
-  selectedPeriod: 'overall',
   selectedId: null, // annoying that I have to keep this here too... topic.filters should be the one true source of this info :-(
   selected: null,
+  selectedPeriod: 'overall',
 };
 
 const timespans = createAsyncReducer({
@@ -36,6 +36,7 @@ const timespans = createAsyncReducer({
   handleSuccess: (payload, state) => ({
     list: addJsDates(payload.list),
     selected: getTimespanFromListById(addJsDates(payload.list), state.selectedId),
+    selectedPeriod: (state.selectedId) ? getTimespanFromListById(addJsDates(payload.list), state.selectedId).period : null,
   }),
   [TOPIC_FILTER_BY_SNAPSHOT]: () => initialState, // when snapshot changes reset these
   [TOPIC_FILTER_BY_FOCUS]: () => initialState, // when focus changes reset these
@@ -44,6 +45,7 @@ const timespans = createAsyncReducer({
   [TOPIC_FILTER_BY_TIMESPAN]: (payload, state) => ({
     selectedId: parseId(payload),
     selected: getTimespanFromListById(state.list, parseId(payload)),
+    selectedPeriod: getTimespanFromListById(state.list, parseId(payload)).period,
   }),
 /*
   [LOCATION_CHANGE]: (payload, state) => {

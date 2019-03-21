@@ -6,15 +6,19 @@ from functools import partial
 from deco import concurrent, synchronized
 
 from server import app, user_db, mc
+from server.views.topics import concatenate_query_for_solr, concatenate_solr_dates
 from server.util.stringutil import ids_from_comma_separated_str
 from server.util.request import form_fields_required, arguments_required, api_error_handler
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client, user_name, is_user_logged_in
-from server.views.topics.apicache import cached_topic_timespan_list, topic_word_counts, cached_topic_word_counts
+import server.views.apicache as shared_apicache
+import server.views.topics.apicache as apicache
 from server.views.topics import access_public_topic
 
 logger = logging.getLogger(__name__)
 
 WORD2VEC_TIMESPAN_POOL_PROCESSES = 10
+
+ARRAY_BASE_ONE = 1
 
 
 @app.route('/api/topics/queued-and-running', methods=['GET'])
@@ -85,6 +89,13 @@ def sorted_public_topic_list():
 @api_error_handler
 def topic_summary(topics_id):
     topic = _topic_summary(topics_id)
+    topic['seed_query_story_count'] = shared_apicache.story_count(
+        user_mediacloud_key(),
+        q=concatenate_query_for_solr(solr_seed_query=topic['solr_seed_query'],
+                                     media_ids=[m['media_id'] for m in topic['media']],
+                                     tags_ids=[t['tags_id'] for t in topic['media_tags']]),
+        fq=concatenate_solr_dates(start_date=topic['start_date'], end_date=topic['end_date'])
+    )['count']
     return jsonify(topic)
 
 
@@ -97,12 +108,23 @@ def _topic_summary(topics_id):
         return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
     topic = local_mc.topic(topics_id)
     # add in snapshot and latest snapshot job status
+    snapshots = local_mc.topicSnapshotList(topics_id)
+
+    # snapshots = sorted(snapshots, key=snapshots.snapshot_date)
+    snapshots = sorted(snapshots, key=lambda d:d['snapshot_date'])
+    for idx in range(0, len(snapshots)):
+        if snapshots[idx]['note'] in [None,'']:
+            snapshots[idx]['note'] = idx + ARRAY_BASE_ONE;
+    jobStatuses = mc.topicSnapshotGenerateStatus(topics_id)['job_states']
+    most_recent_usable_snapshot = get_most_recent_snapshot_version(topics_id)
     topic['snapshots'] = {
-        'list': local_mc.topicSnapshotList(topics_id),
-        'jobStatus': mc.topicSnapshotGenerateStatus(topics_id)['job_states']    # need to know if one is running
+        'list': snapshots,
+        'jobStatus': jobStatuses,    # need to know if one is running
     }
     # add in spider job status
     topic['spiderJobs'] = local_mc.topicSpiderStatus(topics_id)['job_states']
+    topic['latestVersion'] = len(snapshots) + ARRAY_BASE_ONE
+    topic['latestUsableVersion'] = 'note' in most_recent_usable_snapshot if most_recent_usable_snapshot else -1
     if is_user_logged_in():
         _add_user_favorite_flag_to_topics([topic])
 
@@ -125,7 +147,7 @@ def _add_user_favorite_flag_to_topics(topics):
     return topics
 
 
-def get_topic_info_per_snapshot_timespan(topic_id):
+def get_most_recent_snapshot_version(topic_id):
     if not is_user_logged_in():
         local_mc = mc
     else:
@@ -133,18 +155,19 @@ def get_topic_info_per_snapshot_timespan(topic_id):
     snapshots = {
         'list': local_mc.topicSnapshotList(topic_id),
     }
-    most_recent_running_snapshot = {}
+    most_recent_completed_snapshot = {}
     overall_timespan = {}
     for snp in snapshots['list']:
         if snp['searchable'] == 1 and snp['state'] == "completed":
-            most_recent_running_snapshot = snp
-            timespans = cached_topic_timespan_list(user_mediacloud_key(), topic_id,
-                                                   most_recent_running_snapshot['snapshots_id'])
+            most_recent_completed_snapshot = snp
+            most_recent_completed_snapshot['versions'] = len(snapshots['list'])
+            timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topic_id,
+                                                   most_recent_completed_snapshot['snapshots_id'])
             for ts in timespans:
                 if ts['period'] == "overall":
                     overall_timespan = ts
 
-    return {'snapshot': most_recent_running_snapshot, 'timespan': overall_timespan}
+    return most_recent_completed_snapshot
 
 
 @app.route('/api/topics/<topics_id>/snapshots/list', methods=['GET'])
@@ -153,8 +176,14 @@ def get_topic_info_per_snapshot_timespan(topic_id):
 def topic_snapshots_list(topics_id):
     user_mc = user_admin_mediacloud_client()
     snapshots = user_mc.topicSnapshotList(topics_id)
+    snapshots = sorted(snapshots)
+    # if note is missing
+    for idx in range(0, len(snapshots)):
+        if snapshots[idx]['note'] in [None,'']:
+            snapshots[idx]['note'] = idx
     snapshot_status = mc.topicSnapshotGenerateStatus(topics_id)['job_states']    # need to know if one is running
-    return jsonify({'list': snapshots, 'jobStatus': snapshot_status})
+    latest = len(snapshots) + 1
+    return jsonify({'list': snapshots, 'jobStatus': snapshot_status, 'latestVersion': latest['note']})
 
 
 @app.route('/api/topics/<topics_id>/snapshots/generate', methods=['POST'])
@@ -171,7 +200,7 @@ def topic_snapshot_generate(topics_id):
 @api_error_handler
 def topic_timespan_list(topics_id, snapshots_id):
     foci_id = request.args.get('focusId')
-    timespans = cached_topic_timespan_list(user_mediacloud_key(), topics_id, snapshots_id, foci_id)
+    timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id, snapshots_id, foci_id)
     return jsonify({'list': timespans})
 
 
@@ -221,7 +250,18 @@ def topic_update(topics_id):
         media_ids_to_add = None
         tag_ids_to_add = None
 
+
+
     result = user_mc.topicUpdate(topics_id,  media_ids=media_ids_to_add, media_tags_ids=tag_ids_to_add, **args)
+    topic = result['topics'][0]
+    snapshots = user_mc.topicSnapshotList(topics_id)
+    snapshots = sorted(snapshots, key=lambda d: d['snapshot_date'])
+
+    # create snapshot and then spider
+    topic_version = len(snapshots) + 1
+    new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=topic_version)['snapshot']
+    # TODO: to be determined if the admin wants to change the seed query - we may change vs create new version
+    user_mc.topicSpider(topics_id, new_snapshot['snapshots_id'])  # kick off a spider, which will also fill/generate snapshot data
 
     return topic_summary(result['topics'][0]['topics_id'])  # give them back new data, so they can update the client
 
@@ -254,7 +294,7 @@ def topic_search():
 
 # Helper function for pooling word2vec timespans process
 def grab_timespan_embeddings(api_key, topics_id, args, overall_words, overall_embeddings, ts):
-    ts_word_counts = cached_topic_word_counts(api_key, topics_id, num_words=250,
+    ts_word_counts = apicache.cached_topic_word_counts(api_key, topics_id, num_words=250,
                                               timespans_id=int(ts['timespans_id']), **args)
 
     # Remove any words not in top words overall
@@ -279,12 +319,12 @@ def topic_w2v_timespan_embeddings(topics_id):
     }
 
     # Retrieve embeddings for overall topic
-    overall_word_counts = topic_word_counts(user_mediacloud_key(), topics_id, num_words=50, **args)
+    overall_word_counts = apicache.topic_word_counts(user_mediacloud_key(), topics_id, num_words=50, **args)
     overall_words = [x['term'] for x in overall_word_counts]
     overall_embeddings = {x['term']: (x['google_w2v_x'], x['google_w2v_y']) for x in overall_word_counts}
 
     # Retrieve top words for each timespan
-    timespans = cached_topic_timespan_list(user_mediacloud_key(), topics_id, args['snapshots_id'], args['foci_id'])
+    timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id, args['snapshots_id'], args['foci_id'])
 
     # Retrieve embeddings for each timespan
     p = Pool(processes=WORD2VEC_TIMESPAN_POOL_PROCESSES)

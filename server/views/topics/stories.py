@@ -1,8 +1,8 @@
 import logging
 from multiprocessing import Pool
-
 import flask_login
 from flask import jsonify, request, Response
+import mediacloud
 
 import server.util.csv as csv
 import server.util.tags as tag_util
@@ -107,12 +107,17 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
     merged_args = {
         'snapshots_id': request.args['snapshotId'],
         'timespans_id': request.args['timespanId'],
-        'foci_id': request.args['focusId'] if 'foci_id' in request.args else None,
+        'foci_id': request.args['focusId'] if 'focusId' in request.args else None,
         'q': request.args['q'] if 'q' in request.args else None,
         'sort': request.args['sort'] if 'sort' in request.args else None,
     }
     params.update(merged_args)
-    #
+
+    story_count = apicache.topic_story_count(user_mediacloud_key(), topics_id,
+                                             snapshots_id=params['snapshots_id'], timespans_id=params['timespans_id'],
+                                             foci_id = params['foci_id'], q=params['q'])
+    logger.info("Total stories to download: {}".format(story_count))
+
     if 'as_attachment' in params:
         del params['as_attachment']
     if 'fb_data' in params:
@@ -309,3 +314,28 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
                         s['themes'] = ", ".join(story_tag_ids)
 
     return story_page  # need links too
+
+
+@app.route('/api/topics/<topics_id>/stories/counts-by-snapshot', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def story_counts_by_snapshot(topics_id):
+    user_mc = user_mediacloud_client(user_mediacloud_key())
+    snapshots = user_mc.topicSnapshotList(topics_id)
+    counts = {}
+    for s in snapshots:
+        try:
+            total = apicache.topic_story_count(user_mediacloud_key(), topics_id, snapshots_id=s['snapshots_id'])['count']
+        except mediacloud.error.MCException:
+            total = 0
+        try:
+            spidered = apicache.topic_story_count(user_mediacloud_key(), topics_id, snapshots_id=s['snapshots_id'],
+                                                  q="* AND NOT tags_id_stories:{}".format(8875452))['count']
+        except mediacloud.error.MCException:
+            spidered = 0
+        try:
+            seeded = total - spidered
+        except mediacloud.error.MCException:
+            seeded = 0
+        counts[s['snapshots_id']] = {'total': total, 'spidered': spidered, 'seeded': seeded}
+    return jsonify(counts)

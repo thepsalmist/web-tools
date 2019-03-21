@@ -29,7 +29,7 @@ const withAsyncData = (fetchAsyncData, propsToRefetchOn, loadingSpinnerSize) => 
       componentWillReceiveProps(nextProps) {
         if (propsToRefetchOn) {
           const oneOfPropsChanged = propsToRefetchOn
-            .map(propName => this.props[propName] !== nextProps[propName])
+            .map(propName => ((!isNaN(this.props[propName]) && !isNaN(nextProps[propName])) && this.props[propName] !== nextProps[propName]))
             .reduce((combined, item) => combined || item);
           if (oneOfPropsChanged) {
             fetchAsyncData(this.props.dispatch, nextProps);

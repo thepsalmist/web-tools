@@ -18,6 +18,7 @@ export const SET_TIMESPAN_VISIBLE_PERIOD = 'SET_TIMESPAN_VISIBLE_PERIOD';
 export const SELECT_TOPIC = 'SELECT_TOPIC';
 export const SET_TOPIC_FAVORITE = 'SET_TOPIC_FAVORITE';
 export const UPDATE_TOPIC = 'UPDATE_TOPIC';
+export const UPDATE_TOPIC_USING_SAME_VERSION = 'UPDATE_TOPIC_USING_SAME_VERSION';
 export const TOPIC_START_SPIDER = 'TOPIC_START_SPIDER';
 export const SET_TOPIC_NEEDS_NEW_SNAPSHOT = 'SET_TOPIC_NEEDS_NEW_SNAPSHOT';
 export const TOPIC_GENERATE_SNAPSHOT = 'TOPIC_GENERATE_SNAPSHOT';
@@ -69,7 +70,9 @@ export const toggleFilterControls = createAction(TOGGLE_FILTER_CONTROLS, isVisib
 // pass in topicId and favorite bool
 export const setTopicFavorite = createAsyncAction(SET_TOPIC_FAVORITE, api.topicSetFavorite);
 
-export const updateTopic = createAsyncAction(UPDATE_TOPIC, api.updateTopic);
+export const updateAndCreateNewTopicVersion = createAsyncAction(UPDATE_TOPIC, api.updateAndCreateNewTopicVersion);
+
+export const updateTopicVersionSubtopics = createAsyncAction(UPDATE_TOPIC_USING_SAME_VERSION, api.updateTopicVersionSubtopics);
 
 export const topicStartSpider = createAsyncAction(TOPIC_START_SPIDER, api.topicSpider, id => id);
 
@@ -91,3 +94,6 @@ export const fetchTopicWord2Vec = createAsyncAction(FETCH_TOPIC_WORD2VEC, api.to
 
 // pass in topicId, snapshotId, focusId, q
 export const fetchTopicWord2VecTimespans = createAsyncAction(FETCH_TOPIC_WORD2VEC_TIMESPANS, api.topicWord2VecTimespans);
+
+export const FETCH_TOPIC_SNAPSHOT_STORY_COUNTS = 'FETCH_TOPIC_SNAPSHOT_STORY_COUNTS';
+export const fetchSnapshotStoryCounts = createAsyncAction(FETCH_TOPIC_SNAPSHOT_STORY_COUNTS, api.topicSnapshotStoryCounts, id => id);

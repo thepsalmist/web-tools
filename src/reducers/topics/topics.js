@@ -5,7 +5,7 @@ import adminList from './adminList';
 import publicList from './publicList';
 import selected from './selected/selected';
 import search from './search';
-import create from './create/create';
+import modify from './modify/modify';
 
 const rootReducer = combineReducers({
   selected,
@@ -14,7 +14,7 @@ const rootReducer = combineReducers({
   publicList,
   adminList,
   search,
-  create,
+  modify,
 });
 
 export default rootReducer;

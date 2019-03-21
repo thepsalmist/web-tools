@@ -36,8 +36,6 @@ KeywordStoryPreviewContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   keywords: PropTypes.string.isRequired,
-  // from dispatch
-  fetchData: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   stories: PropTypes.array,

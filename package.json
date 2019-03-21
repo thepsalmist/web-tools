@@ -24,8 +24,8 @@
     ]
   },
   "dependencies": {
-    "@material-ui/core": "^3.9.0",
-    "@material-ui/icons": "^3.0.1",
+    "@material-ui/core": "^3.9.2",
+    "@material-ui/icons": "^3.0.2",
     "acorn": "^6.1.0",
     "airbnb-js-shims": "^1.0.1",
     "babel-polyfill": "6.23.0",
@@ -36,6 +36,7 @@
     "d3-scale-chromatic": "^1.1.1",
     "dc": "^2.0.0-beta.33",
     "dogpile": "^0.1.2",
+    "donottrack": "^1.1.2",
     "flexboxgrid": "6.3.1",
     "highcharts": "^6.1.4",
     "highcharts-treemap": "^0.1.7",
@@ -74,6 +75,7 @@
     "redux-thunk": "2.2.0",
     "simple-assign": "^0.1.0",
     "slugify": "^1.2.9",
+    "swagger-ui": "^3.20.4",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

@@ -19,8 +19,8 @@ import { downloadSvg } from '../util/svg';
 import ActionMenu from './ActionMenu';
 import { WarningNotice } from './Notice';
 
-const VIEW_1K = 1000;
-const VIEW_10K = 10000;
+export const VIEW_1K = 1000;
+export const VIEW_10K = 10000;
 
 const VIEW_CLOUD = 'VIEW_CLOUD';
 const VIEW_ORDERED = 'VIEW_ORDERED';
@@ -447,7 +447,7 @@ EditableWordCloudDataCard.propTypes = {
   hideGoogleWord2Vec: PropTypes.bool, // show an option to draw a word2vec map basde on w2v_x / w2v_y from GoogleNews model
   onViewModeClick: PropTypes.func.isRequired,
   onViewSampleSizeClick: PropTypes.func,
-  initSampleSize: PropTypes.string,
+  initSampleSize: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   actionsAsLinksUnderneath: PropTypes.bool, // show the actions as links under the viz (ie. in a SummarizedVisualization card)
   domId: PropTypes.string.isRequired, // unique dom id needed to support CSV downloading
   // from compositional chain

@@ -11,6 +11,7 @@ import nytThemeStoryCounts from './nytThemeStoryCounts';
 import mediaTypeCoverage from './mediaTypeCoverage';
 import mediaTypeStoryCounts from './mediaTypeStoryCounts';
 import workflow from './workflow';
+import mediaTypes from './mediaTypes';
 
 const createFocusReducer = combineReducers({
   matchingStories,
@@ -25,6 +26,7 @@ const createFocusReducer = combineReducers({
   mediaTypeCoverage,
   mediaTypeStoryCounts,
   workflow,
+  mediaTypes,
 });
 
 export default createFocusReducer;

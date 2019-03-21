@@ -38,6 +38,9 @@ class UserDatabase(AppDatabase):
             'searches': [],
         })
 
+    def delete_user(self, username):
+        return self.delete_one({'username': username})
+
     def find_by_username(self, username):
         return self._find_user_by_prop('username', username)
 

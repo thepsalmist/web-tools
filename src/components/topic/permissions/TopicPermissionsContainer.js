@@ -35,7 +35,7 @@ const localMessages = {
 // render a list of permissions and the option to add one more
 const PermissionsList = ({ renderTextField, renderSelect, intl: { formatMessage }, fields, meta: { error, submitFailed } }) => (
   <div className="topic-permissions-list">
-    <AppButton onClick={() => fields.push({ permission: PERMISSION_TOPIC_READ })}>
+    <AppButton label="add" onClick={() => fields.push({ permission: PERMISSION_TOPIC_READ })}>
       <FormattedMessage {...localMessages.addTitle} />
     </AppButton>
     {submitFailed && error && <span>{error}</span>}

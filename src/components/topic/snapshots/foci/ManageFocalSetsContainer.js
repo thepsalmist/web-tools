@@ -1,31 +1,37 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
+import { FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import Link from 'react-router/lib/Link';
+import withIntlForm from '../../../common/hocs/IntlForm';
 import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AppButton from '../../../common/AppButton';
+import messages from '../../../../resources/messages';
 import ConfirmationDialog from '../../../common/ConfirmationDialog';
-import { fetchFocalSetDefinitions, deleteFocalSetDefinition, deleteFocusDefinition, setTopicNeedsNewSnapshot }
+import { fetchFocalSetDefinitions, deleteFocalSetDefinition, deleteFocusDefinition, setTopicNeedsNewSnapshot, updateAndCreateNewTopicVersion, updateTopicVersionSubtopics }
   from '../../../../actions/topicActions';
 import { updateFeedback } from '../../../../actions/appActions';
 import FocalSetDefinitionSummary from './FocalSetDefinitionSummary';
 import BackLinkingControlBar from '../../BackLinkingControlBar';
 import FocusIcon from '../../../common/icons/FocusIcon';
-import messages from '../../../../resources/messages';
+import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../../lib/auth';
+import TopicVersionInfo from '../../TopicVersionInfo';
 
 const localMessages = {
   focalSetsManageAbout: { id: 'focalSets.manage.about',
     defaultMessage: 'Every Subtopic is part of a Set. All the Subtopics within a Set share the same Technique. Our tools lets you compare Subtopics with a Set, but they don\'t let you easily compare Subtopics in different Sets.' },
   removeFocalSetTitle: { id: 'focalSets.manage.remove.title', defaultMessage: 'Really Remove this Set?' },
-  removeFocalSetAbout: { id: 'focalSets.manage.remove.about', defaultMessage: '<p>Removing a Set means that the next Snapshot you make will NOT include it.  This will NOT remove the Set from this Snapshot.</p><p>Are you sure you want to remove this Set? All the Subtopic that are part of it will be removed from the next Snapshot as well.</p>' },
+  removeFocalSetAbout: { id: 'focalSets.manage.remove.about', defaultMessage: '<p>Removing a Set means that the next Version you make will NOT include it.  This will NOT remove the Set from this Version.</p><p>Are you sure you want to remove this Set? All the Subtopic that are part of it will be removed from the next Snapshot as well.</p>' },
   removeOk: { id: 'focalSets.manage.remove.ok', defaultMessage: 'Remove It' },
   removeFocalSetSucceeded: { id: 'focalSets.manage.remove.succeeded', defaultMessage: 'Removed the Set' },
   removeFocalSetFailed: { id: 'focalSets.manage.remove.failed', defaultMessage: 'Sorry, but removing the Set failed :-(' },
   removeFocusSucceeded: { id: 'focus.remove.succeeded', defaultMessage: 'Removed the Subtopic' },
   removeFocusFailed: { id: 'focus.remove.failed', defaultMessage: 'Sorry, but removing the Subtopic failed :-(' },
   backToTopic: { id: 'backToTopic', defaultMessage: 'back to the topic' },
+  createVersionAndStartSpider: { id: 'focalSets.manage.about', defaultMessage: 'Generate New Version' },
+  updateTopicVersionSubtopics: { id: 'focalSets.manage.about', defaultMessage: 'Generate Into Current Version' },
+  adminOption: { id: 'backToTopic', defaultMessage: 'As an admin, you can choose whether to generate a new Topic version (and respider) or to generate into your current Topic version (and keep the topic as is).' },
 };
 
 class ManageFocalSetsContainer extends React.Component {
@@ -54,8 +60,37 @@ class ManageFocalSetsContainer extends React.Component {
   }
 
   render() {
-    const { topicId, focalSetDefinitions } = this.props;
+    const { topicId, topicInfo, currentVersion, focalSetDefinitions, focalSetAll, user, handleCreateVersionAndStartSpider, handleGenerateIntoSameVersion } = this.props;
     const { formatMessage } = this.props.intl;
+    let kickOffVersionCreation = null;
+    let adminOptionToGenIntoCurrentVersion = null;
+    if (currentVersion && hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {
+      adminOptionToGenIntoCurrentVersion = (
+        <div>
+          <h3><FormattedMessage {...localMessages.adminOption} /></h3>
+          <AppButton
+            label={formatMessage(localMessages.updateTopicVersionSubtopics)}
+            onClick={() => handleGenerateIntoSameVersion(topicId, currentVersion)}
+          />
+        </div>
+      );
+    }
+    if (focalSetDefinitions.length !== focalSetAll.length) {
+      kickOffVersionCreation = (
+        <div>
+          <Link to={`/topics/${topicId}/summary/`}>
+            <AppButton
+              type="submit"
+              label={formatMessage(localMessages.createVersionAndStartSpider)}
+              onClick={() => handleCreateVersionAndStartSpider(topicId)}
+              primary
+            />
+            { adminOptionToGenIntoCurrentVersion }
+          </Link>
+        </div>
+      );
+    }
+
     const removeConfirmationDialog = (
       <ConfirmationDialog
         open={this.state.removeDialogOpen}
@@ -84,6 +119,18 @@ class ManageFocalSetsContainer extends React.Component {
             </Col>
           </Row>
           <Row>
+            <Col lg={6}>
+              <form className="topic-version-subtopic-start-spider" name="topicVersionSpiderOrNotForm">
+                {kickOffVersionCreation}
+              </form>
+            </Col>
+          </Row>
+          <Row>
+            <div className="topic-container">
+              <TopicVersionInfo topicInfo={topicInfo} />
+            </div>
+          </Row>
+          <Row>
             <Col lg={10} xs={12}>
               <div className="focal-set-definition-list">
                 {focalSetDefinitions.map(focalSetDef => (
@@ -99,7 +146,7 @@ class ManageFocalSetsContainer extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col lg={12}>
+            <Col lg={6}>
               <div id="create-foci-button">
                 <Link to={`/topics/${topicId}/snapshot/foci/create`}>
                   <AppButton primary label={formatMessage(messages.addFocus)}>{formatMessage(messages.addFocus)}</AppButton>
@@ -117,19 +164,29 @@ class ManageFocalSetsContainer extends React.Component {
 ManageFocalSetsContainer.propTypes = {
   // from composition
   topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   focalSetDefinitions: PropTypes.array.isRequired,
+  focalSetAll: PropTypes.array.isRequired,
+  currentVersion: PropTypes.number,
+  user: PropTypes.object.isRequired,
   // from dispatch
   handleDeleteFocalSetDefinition: PropTypes.func.isRequired,
   handleDeleteFocusDefinition: PropTypes.func.isRequired,
+  handleCreateVersionAndStartSpider: PropTypes.func.isRequired,
+  handleGenerateIntoSameVersion: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
+  topicInfo: state.topics.selected.info,
   focalSetDefinitions: state.topics.selected.focalSets.definitions.list,
+  focalSetAll: state.topics.selected.focalSets.all.list,
   fetchStatus: state.topics.selected.focalSets.definitions.fetchStatus,
+  currentVersion: state.topics.selected.snapshots.selected,
+  user: state.user,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -157,6 +214,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         }
       });
   },
+  handleCreateVersionAndStartSpider: (topicId) => {
+    dispatch(updateAndCreateNewTopicVersion(topicId));
+  },
+  handleGenerateIntoSameVersion: (topicId, currentVersion) => {
+    dispatch(updateTopicVersionSubtopics(topicId, currentVersion));
+  },
 });
 
 const fetchAsyncData = (dispatch, { topicId }) => {
@@ -164,7 +227,7 @@ const fetchAsyncData = (dispatch, { topicId }) => {
 };
 
 export default
-injectIntl(
+withIntlForm(
   connect(mapStateToProps, mapDispatchToProps)(
     withAsyncData(fetchAsyncData)(
       ManageFocalSetsContainer

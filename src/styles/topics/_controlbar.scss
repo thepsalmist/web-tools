@@ -9,7 +9,13 @@
   &.controlbar-topic {
     background-color: $white !important;
 
+    .controlbar-item {
+      margin-right: 5px;
+      display: inline-block;
+    }
+
     .about-topic {
+      display: inline-block;
       .app-icon-help {
         background-color: $topics-primary;
         path, circle {
@@ -23,9 +29,9 @@
       margin-left: 15px;
     }
 
-    .about-topic {
+    .control-bar-settings b span {
       display: inline-block;
-      margin-left: 15px;
+      margin-right: 15px;
     }
 
     .active-filters{
@@ -55,6 +61,14 @@
         }
       }
     }
+
+    .icon-button-filter-this-topic {
+      button {
+        border-radius: 0px;
+      }
+      float: right;
+    }
+
 
     .filter {
       background-color: $material-grey800;;

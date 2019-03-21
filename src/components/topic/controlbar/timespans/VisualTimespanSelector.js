@@ -48,7 +48,7 @@ function drawViz(wrapperElement, {
           .attr('class', 'timespan')
           .attr('x', t => xScale(t.startDateMoment.toDate()))
           .attr('y', 0)
-          .attr('data-id', t => t.timespan_id)
+          .attr('data-id', t => t.timespans_id)
           .attr('data-start', t => xScale(t.startDateMoment.toDate()))
           .attr('data-end', t => xScale(t.endDateMoment.toDate()))
           .attr('width', t => (xScale(t.endDateMoment.toDate()) - xScale(t.startDateMoment.toDate())))
@@ -65,14 +65,14 @@ function drawViz(wrapperElement, {
           .attr('class', `timespan timespan-${period}`)
           .attr('x', xScale(selectedTimespan.startDateMoment.toDate()))
           .attr('y', 0)
-          .attr('data-id', selectedTimespan.timespan_id)
+          .attr('data-id', selectedTimespan.timespans_id)
           .attr('data-start', xScale(selectedTimespan.startDateMoment.toDate()))
           .attr('data-end', xScale(selectedTimespan.endDateMoment.toDate()))
           .attr('width', xScale(selectedTimespan.endDateMoment.toDate()) - xScale(selectedTimespan.startDateMoment.toDate()))
           .attr('height', 20)
           // custom timespans can overlap, so make them more see-through as a hack for now
           .attr('style', `fill:${getBrandDarkColor()};fill-opacity:${period === 'custom' ? 0.3 : 0.9}`)
-          .on('click', onTimespanSelected)
+          .on('click', () => onTimespanSelected(selectedTimespan))
           .append('svg:title')
             .text(`${formattedDate(selectedTimespan.startDateMoment.toDate())}-${formattedDate(selectedTimespan.endDateMoment.toDate())}`);
   }

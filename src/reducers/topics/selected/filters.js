@@ -1,10 +1,7 @@
 import { LOCATION_CHANGE } from 'react-router-redux';
 import { TOPIC_FILTER_BY_SNAPSHOT, TOPIC_FILTER_BY_TIMESPAN, TOPIC_FILTER_BY_FOCUS, TOPIC_FILTER_BY_QUERY } from '../../../actions/topicActions';
 import { createReducer } from '../../../lib/reduxHelpers';
-
-function parseId(potentialId) {
-  return (Number.isNaN(potentialId) || potentialId === null) ? null : parseInt(potentialId, 10);
-}
+import { parseId } from '../../../lib/numberUtil';
 
 const info = createReducer({
   initialState: {
@@ -30,14 +27,14 @@ const info = createReducer({
   [LOCATION_CHANGE]: (payload, state) => {
     // for some reason when the user hits the back button we need to manually re-render
     // if the timespan has changed
-    const updates = {};
     if (payload.query.timespanId !== undefined) {
       const newTimespanId = parseInt(payload.query.timespanId, 10); // gotta intify it, since it comes from url as string
       if (newTimespanId !== state.timespanId) {
-        updates.timespanId = newTimespanId;
+        return { timespanId: newTimespanId };
       }
     }
-    return updates;
+    // no changes to make to the state
+    return undefined;
   },
 });
 

@@ -4,7 +4,6 @@ import flask_login
 import time
 from flask import request, jsonify, render_template
 from mediacloud.tags import MediaTag, TAG_ACTION_ADD, TAG_ACTION_REMOVE
-from server.util.mail import send_html_email
 from werkzeug.utils import secure_filename
 import csv as pycsv
 from multiprocessing import Pool
@@ -12,8 +11,9 @@ from collections import defaultdict
 from deco import concurrent, synchronized
 
 from server import app, config, TOOL_API_KEY
-from server.util.config import ConfigException
 from server.auth import user_admin_mediacloud_client, user_mediacloud_key, user_name
+from server.util.config import ConfigException
+from server.util.mail import send_html_email
 from server.util.request import json_error_response, form_fields_required, api_error_handler
 from server.views.sources.collection import allowed_file
 from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS
@@ -333,7 +333,7 @@ def _create_or_update_sources(source_list_from_csv, create_new):
 
 
 def _email_batch_source_update_results(audit_feedback):
-    email_title = "Source Batch Updates "
+    email_title = "Source Batch Updates"
     content_title = "You just uploaded {} sources to a collection.".format(len(audit_feedback))
     updated_sources = []
     for updated in audit_feedback:

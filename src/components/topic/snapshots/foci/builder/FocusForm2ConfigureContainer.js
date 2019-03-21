@@ -15,7 +15,7 @@ import messages from '../../../../../resources/messages';
 const formSelector = formValueSelector('snapshotFocus');
 
 const FocusForm2ConfigureContainer = (props) => {
-  const { topicId, initialValues, handleNextStep, currentFocalTechnique, handlePreviousStep } = props;
+  const { topicId, initialValues, handleNextStep, currentFocalTechnique, handlePreviousStep, location } = props;
   let content = null;
   switch (currentFocalTechnique) {
     case FOCAL_TECHNIQUE_BOOLEAN_QUERY:
@@ -25,6 +25,7 @@ const FocusForm2ConfigureContainer = (props) => {
           initialValues={initialValues}
           onPreviousStep={handlePreviousStep}
           onNextStep={handleNextStep}
+          location={location}
         />
       );
       break;
@@ -35,6 +36,7 @@ const FocusForm2ConfigureContainer = (props) => {
           initialValues={initialValues}
           onPreviousStep={handlePreviousStep}
           onNextStep={handleNextStep}
+          location={location}
         />
       );
       break;
@@ -45,6 +47,7 @@ const FocusForm2ConfigureContainer = (props) => {
           initialValues={initialValues}
           onPreviousStep={handlePreviousStep}
           onNextStep={handleNextStep}
+          location={location}
         />
       );
       break;
@@ -55,6 +58,7 @@ const FocusForm2ConfigureContainer = (props) => {
           initialValues={initialValues}
           onPreviousStep={handlePreviousStep}
           onNextStep={handleNextStep}
+          location={location}
         />
       );
       break;
@@ -65,6 +69,7 @@ const FocusForm2ConfigureContainer = (props) => {
           initialValues={initialValues}
           onPreviousStep={handlePreviousStep}
           onNextStep={handleNextStep}
+          location={location}
         />
       );
       break;
@@ -89,6 +94,7 @@ FocusForm2ConfigureContainer.propTypes = {
   handleNextStep: PropTypes.func.isRequired,
   // from state:
   currentFocalTechnique: PropTypes.string.isRequired,
+  location: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({

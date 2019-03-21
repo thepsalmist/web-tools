@@ -10,17 +10,22 @@ const SourceOrCollectionWidget = (props) => {
   const typeClass = isCollection ? 'collection' : 'source';
   const objectId = object.id || (isCollection ? object.tags_id : object.media_id);
   const name = isCollection ? (object.name || object.label || object.tag) : (object.name || object.label || object.url);
+  // link the text if there is a click handler defined
+  let text = name;
+  if (onClick) {
+    text = (<a href="#" onClick={onClick}>{name}</a>);
+  }
   return (
     <div
       className={`media-widget ${typeClass}`}
       key={`media-widget${objectId}`}
     >
       <Col>
-        <a href="#" onClick={onClick}>{name}</a>
+        {text}
         {children}
       </Col>
       <Col>
-        <DeleteButton onClick={onDelete} />
+        {onDelete && <DeleteButton onClick={onDelete} />}
       </Col>
     </div>
   );

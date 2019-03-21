@@ -100,12 +100,12 @@ class SignupContainer extends React.Component {
             <Col lg={6}>
               <Field
                 name="notes"
-                multiLine
+                multiline
                 fullWidth
                 rows={2}
                 rowsMax={4}
                 component={renderTextField}
-                hintText={formatMessage(localMessages.notesHint)}
+                placeholder={formatMessage(localMessages.notesHint)}
                 label={messages.userNotes}
               />
             </Col>

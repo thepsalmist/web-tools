@@ -45,7 +45,7 @@ class EditKeywordSearchContainer extends React.Component {
   }
 
   render() {
-    const { topicId, renderTextField, currentFocalTechnique, handleSubmit, onPreviousStep, finishStep } = this.props;
+    const { topicId, renderTextField, currentFocalTechnique, handleSubmit, onPreviousStep, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
@@ -53,7 +53,7 @@ class EditKeywordSearchContainer extends React.Component {
       nextButtonDisabled = false;
       previewContent = (
         <div>
-          <KeywordSearchPreview topicId={topicId} keywords={this.state.keywords} />
+          <KeywordSearchPreview topicId={topicId} keywords={this.state.keywords} location={location} />
         </div>
       );
     }
@@ -74,7 +74,6 @@ class EditKeywordSearchContainer extends React.Component {
                 name="keywords"
                 component={renderTextField}
                 label={messages.searchByKeywords}
-                helpertext={localMessages.errorNoKeywords}
                 fullWidth
                 onKeyDown={this.handleKeyDown}
               />
@@ -116,6 +115,7 @@ EditKeywordSearchContainer.propTypes = {
   // from dispatch
   finishStep: PropTypes.func.isRequired,
   // from compositional helper
+  location: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,

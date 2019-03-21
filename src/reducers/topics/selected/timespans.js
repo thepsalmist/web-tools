@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { LOCATION_CHANGE } from 'react-router-redux';
+// import { LOCATION_CHANGE } from 'react-router-redux';
 import { FETCH_TOPIC_TIMESPANS_LIST, TOGGLE_TIMESPAN_CONTROLS, TOPIC_FILTER_BY_FOCUS,
   SET_TIMESPAN_VISIBLE_PERIOD, TOPIC_FILTER_BY_TIMESPAN, TOPIC_FILTER_BY_SNAPSHOT }
   from '../../../actions/topicActions';
@@ -45,6 +45,7 @@ const timespans = createAsyncReducer({
     selectedId: parseId(payload),
     selected: getTimespanFromListById(state.list, parseId(payload)),
   }),
+/*
   [LOCATION_CHANGE]: (payload, state) => {
     // for some reason when the user hits the back button we need to manually re-render
     // if the timespan has changed
@@ -62,7 +63,9 @@ const timespans = createAsyncReducer({
       }
     }
     return updates;
+
   },
+*/
 });
 
 export default timespans;

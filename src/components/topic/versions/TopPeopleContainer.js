@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedHTMLMessage, FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { push } from 'react-router-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -13,7 +12,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import EntitiesTable from '../../common/EntitiesTable';
-import { filtersAsUrlParams, filteredLocation } from '../../util/location';
+import { filtersAsUrlParams } from '../../util/location';
 import { DownloadButton } from '../../common/IconButton';
 import messages from '../../../resources/messages';
 
@@ -105,14 +104,8 @@ const mapStateToProps = state => ({
   entities: state.topics.selected.summary.topEntitiesPeople.entities,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   updateQueryFilter: (newQueryFilter) => {
-    const newFilters = {
-      ...ownProps.filters,
-      q: newQueryFilter,
-    };
-    const newLocation = filteredLocation(ownProps.location, newFilters);
-    dispatch(push(newLocation));
     dispatch(filterByQuery(newQueryFilter));
   },
 });

@@ -2,14 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { push } from 'react-router-redux';
 import { fetchMediaStories, sortMediaStories, filterByFocus } from '../../../actions/topicActions';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
 import TopicStoryTable from '../TopicStoryTable';
-import { filteredLocation, filtersAsUrlParams } from '../../util/location';
+import { filtersAsUrlParams } from '../../util/location';
 import DataCard from '../../common/DataCard';
 import { DownloadButton } from '../../common/IconButton';
 import { HELP_STORIES_CSV_COLUMNS } from '../../../lib/helpConstants';
@@ -82,10 +81,8 @@ const mapStateToProps = state => ({
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   handleFocusSelected: (focusId) => {
-    const newLocation = filteredLocation(ownProps.location, { focusId, timespanId: null });
-    dispatch(push(newLocation));
     dispatch(filterByFocus(focusId));
   },
   handleChangeSort: (sort) => {

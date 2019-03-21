@@ -1,15 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
-import { filteredLinkTo } from '../../util/location';
 import TopicFilterBar from '../controlbar/TopicFilterBar';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import LoadingSpinner from '../../common/LoadingSpinner';
 import { ExploreButton } from '../../common/IconButton';
 import { LEVEL_WARNING } from '../../common/Notice';
-import { filterByFocus, filterByQuery, filterByTimespan, fetchTopicFocalSetsList, fetchFocalSetDefinitions, setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
+import { fetchFocalSetDefinitions, setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
 import { addNotice } from '../../../actions/appActions';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 import { nullOrUndefined } from '../../../lib/formValidators';
@@ -52,36 +49,13 @@ class TopicVersionReadyStatusContainer extends React.Component {
     return null;
   }
 
-  hasUsableSnapshot() {
-    const { snapshots } = this.props;
-    const hasUsableSnapshot = snapshots.filter(d => d.isUsable);
-    return (hasUsableSnapshot.length > 0);
-  }
-
-  filtersAreSet() { // use this or
-    const { topicId, filters } = this.props;
-    return ((topicId !== null) && (filters.snapshotId !== null) && (filters.timespanId !== null));
-  }
-
   render() {
-    const { children, topicId, filters, setSideBarContent, location } = this.props;
-    let childContent = null;
-    // let timespanContent = null;
-    // if ready, load subtopic filtering capability and timespan info
-    // const timespanControls = <TimespanSelectorContainer topicId={topicId} location={location} filters={filters} />;
-    if (this.filtersAreSet()) {
-      // show spinner until there is a valid timespan
-      if (filters.timespanId) {
-        childContent = children; // summary info
-      } else {
-        childContent = <LoadingSpinner />;
-      }
-    }
+    const { children, topicId, setSideBarContent, location } = this.props;
     return (
       <div>
         <div className="sub">
           <TopicFilterBar topicId={topicId} setSideBarContent={setSideBarContent} location={location} />
-          {childContent}
+          {children}
         </div>
       </div>
     );
@@ -96,6 +70,7 @@ TopicVersionReadyStatusContainer.propTypes = {
   params: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string.isRequired,
   fetchStatusInfo: PropTypes.string,
+  dispatch: PropTypes.func.isRequired,
   // from state
   filters: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
@@ -108,7 +83,6 @@ TopicVersionReadyStatusContainer.propTypes = {
   // from dispatch
   onFetchAyncData: PropTypes.func.isRequired,
   // from merge
-  goToUrl: PropTypes.func.isRequired,
   setSideBarContent: PropTypes.func,
 };
 
@@ -122,6 +96,7 @@ const mapStateToProps = (state, ownProps) => ({
   snapshotId: state.topics.selected.filters.snapshotId,
   snapshots: state.topics.selected.snapshots.list,
   selectedTimespan: state.topics.selected.timespans.selected,
+  focalSets: state.topics.selected.focalSets.all.list,
 });
 
 /**
@@ -154,53 +129,27 @@ function latestSnapshotIsRunning(snapshots) {
   return (latestSnapshot.state === 'running') || ((latestSnapshot.state === 'completed') && (latestSnapshot.searchable === 0));
 }
 
-const mapDispatchToProps = dispatch => ({
-  redirectToUrl: (url, filters) => dispatch(push(filteredLinkTo(url, filters))),
-});
-
-const fetchAsyncData = (dispatch, { topicId, snapshotId, snapshots, location, intl }) => {
-  const { query } = location;
-  if (location.query.focusId) {
-    dispatch(filterByFocus(query.focusId));
-  }
-  if (location.query.timespanId) {
-    dispatch(filterByTimespan(query.timespanId));
-  }
-  if (location.query.q) {
-    dispatch(filterByQuery(query.q));
-  }
+const fetchAsyncData = (dispatch, { topicId, snapshotId, snapshots, intl, focalSets }) => {
   if (!nullOrUndefined(topicId) && !nullOrUndefined(snapshotId)) {
     // here we want to determine if the topic needs a new snapshot and let everything know
-    dispatch(fetchTopicFocalSetsList(topicId, { snapshotId }))
-      .then((focalSets) => {
-        dispatch(fetchFocalSetDefinitions(topicId))
-          .then((focalSetDefinitions) => {
-            if (pendingFocalSetDefinitions(focalSetDefinitions, focalSets) && !latestSnapshotIsRunning(snapshots)) {
-              dispatch(setTopicNeedsNewSnapshot(true));
-              dispatch(addNotice({
-                level: LEVEL_WARNING,
-                htmlMessage: intl.formatHTMLMessage(localMessages.summaryMessage, {
-                  url: `#/topics/${topicId}/snapshot/generate`,
-                }),
-              }));
-            }
-          });
+    dispatch(fetchFocalSetDefinitions(topicId))
+      .then((focalSetDefinitions) => {
+        if (pendingFocalSetDefinitions(focalSetDefinitions, focalSets) && !latestSnapshotIsRunning(snapshots)) {
+          dispatch(setTopicNeedsNewSnapshot(true));
+          dispatch(addNotice({
+            level: LEVEL_WARNING,
+            htmlMessage: intl.formatHTMLMessage(localMessages.summaryMessage, {
+              url: `#/topics/${topicId}/snapshot/generate`,
+            }),
+          }));
+        }
       });
   }
 };
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    goToUrl: url => dispatchProps.redirectToUrl(url, ownProps.filters),
-    asyncFetch: () => {
-      dispatchProps.fetchData(ownProps.topicId, ownProps.filters.snapshotId, stateProps.snapshots);
-    },
-  });
-}
-
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  connect(mapStateToProps)(
     withAsyncData(fetchAsyncData, ['snapshotId', 'timespanId'])(
       TopicVersionReadyStatusContainer
     )

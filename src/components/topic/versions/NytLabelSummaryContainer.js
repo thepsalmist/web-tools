@@ -3,7 +3,6 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { schemeCategory10 } from 'd3';
-import { push } from 'react-router-redux';
 import { fetchTopicNytLabelCounts, filterByQuery } from '../../../actions/topicActions';
 import ActionMenu from '../../common/ActionMenu';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
@@ -14,7 +13,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import messages from '../../../resources/messages';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
-import { filtersAsUrlParams, filteredLocation } from '../../util/location';
+import { filtersAsUrlParams } from '../../util/location';
 import { WarningNotice } from '../../common/Notice';
 
 const BUBBLE_CHART_DOM_ID = 'nyt-tag-representation-bubble-chart';
@@ -148,14 +147,8 @@ const mapStateToProps = state => ({
   coverage: state.topics.selected.nytlabels.coverage,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   updateQueryFilter: (newQueryFilter) => {
-    const newFilters = {
-      ...ownProps.filters,
-      q: newQueryFilter,
-    };
-    const newLocation = filteredLocation(ownProps.location, newFilters);
-    dispatch(push(newLocation));
     dispatch(filterByQuery(newQueryFilter));
   },
 });

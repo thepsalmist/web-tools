@@ -324,12 +324,15 @@ def story_counts_by_snapshot(topics_id):
     snapshots = user_mc.topicSnapshotList(topics_id)
     counts = {}
     for s in snapshots:
+        timespans = user_mc.topicTimespanList(topics_id, snapshots_id=s['snapshots_id'])
         try:
-            total = apicache.topic_story_count(user_mediacloud_key(), topics_id, snapshots_id=s['snapshots_id'])['count']
+            total = timespans[0]['story_count']
         except mediacloud.error.MCException:
             total = 0
         try:
-            spidered = apicache.topic_story_count(user_mediacloud_key(), topics_id, snapshots_id=s['snapshots_id'],
+            spidered = apicache.topic_story_count(user_mediacloud_key(), topics_id,
+                                                  snapshots_id=s['snapshots_id'], foci_id=None,
+                                                  timespans_id=timespans[0]['timespans_id'],
                                                   q="* AND NOT tags_id_stories:{}".format(8875452))['count']
         except mediacloud.error.MCException:
             spidered = 0

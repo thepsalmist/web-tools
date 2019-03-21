@@ -31,6 +31,7 @@ const localMessages = {
   backToTopic: { id: 'backToTopic', defaultMessage: 'back to the topic' },
   createVersionAndStartSpider: { id: 'focalSets.manage.about', defaultMessage: 'Generate New Version' },
   updateTopicVersionSubtopics: { id: 'focalSets.manage.about', defaultMessage: 'Generate Into Current Version' },
+  adminOption: { id: 'backToTopic', defaultMessage: 'As an admin, you can choose whether to generate a new Topic version (and respider) or to generate into your current Topic version (and keep the topic as is).' },
 };
 
 class ManageFocalSetsContainer extends React.Component {
@@ -65,16 +66,18 @@ class ManageFocalSetsContainer extends React.Component {
     let adminOptionToGenIntoCurrentVersion = null;
     if (currentVersion && hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {
       adminOptionToGenIntoCurrentVersion = (
-        <AppButton
-          label={formatMessage(localMessages.updateTopicVersionSubtopics)}
-          onClick={() => handleGenerateIntoSameVersion(topicId, currentVersion)}
-        />
+        <div>
+          <h3><FormattedMessage {...localMessages.adminOption} /></h3>
+          <AppButton
+            label={formatMessage(localMessages.updateTopicVersionSubtopics)}
+            onClick={() => handleGenerateIntoSameVersion(topicId, currentVersion)}
+          />
+        </div>
       );
     }
     if (focalSetDefinitions.length !== focalSetAll.length) {
       kickOffVersionCreation = (
         <div>
-          <h3>Placeholder: Your topic has new subtopics - as an admin, you can either generate a brand new version, or generate these subtopics into the same version)</h3>
           <Link to={`/topics/${topicId}/summary/`}>
             <AppButton
               type="submit"

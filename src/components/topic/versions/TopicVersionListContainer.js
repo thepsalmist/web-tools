@@ -14,7 +14,7 @@ import { fetchSnapshotStoryCounts } from '../../../actions/topicActions';
 import TopicVersionListItem from './TopicVersionListItem';
 
 const localMessages = {
-  title: { id: 'topic.versionList.title', defaultMessage: 'Your Topic has {count} Versions' },
+  title: { id: 'topic.versionList.title', defaultMessage: 'Your Topic Has {count} Versions' },
   versionNumber: { id: 'topic.versionNumber', defaultMessage: 'Version {number}' },
   versionState: { id: 'topic.versionState', defaultMessage: '{state}' },
   versionDate: { id: 'topic.versionDate', defaultMessage: '{date}' },
@@ -78,7 +78,7 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
       <Grid>
         <Row>
           <Col lg={12}>
-            <h1><FormattedMessage {...localMessages.title} values={{ count: versions.length }} /></h1>
+            <h1><FormattedMessage {...localMessages.title} values={{ count: Math.max(1, versions.length) }} /></h1>
           </Col>
         </Row>
         <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>

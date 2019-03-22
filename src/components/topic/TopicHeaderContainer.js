@@ -51,7 +51,7 @@ TopicHeaderContainer.propTypes = {
   topicId: PropTypes.number,
   topicInfo: PropTypes.object,
   filters: PropTypes.object,
-  currentVersion: PropTypes.number,
+  currentVersion: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   // from context
   intl: PropTypes.object.isRequired,
   // from dispatch

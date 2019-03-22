@@ -21,11 +21,12 @@ import { getCurrentVersionFromSnapshot } from '../../../lib/topicVersionUtil';
  * This decides which topic version homepage to show, based on the version and topic state
  */
 class TopicVersionContainer extends React.Component {
-  determineVersionStatus(topicInfo) {
+  determineVersionStatus(snapshot, topic) {
+    const stateToUse = snapshot ? snapshot.state : topic.state;
     const { snapshotCount } = this.props;
-    switch (topicInfo.state) {
+    switch (stateToUse) {
       case TOPIC_SNAPSHOT_STATE_ERROR:
-        if (topicInfo.message && topicInfo.message.indexOf('exceeds topic max') > -1) {
+        if (topic.message && topic.message.indexOf('exceeds topic max') > -1) {
           return VERSION_ERROR_EXCEEDED;
         }
         return VERSION_ERROR;
@@ -55,47 +56,49 @@ class TopicVersionContainer extends React.Component {
     let contentToShow = children; // has a filters renderer in it - show if a completed topic
     const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent }));
     contentToShow = childrenWithExtraProp;
-    if (this.determineVersionStatus(topicInfo) === VERSION_RUNNING) {
-      contentToShow = (
-        <TopicVersionRunningStatusContainer
-          topic={topicInfo}
-          snapshot={selectedSnapshot || { note: currentVersionNum }}
-          job={topicInfo.spiderJobs[0]}
-        />
-      );
-    } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
-      contentToShow = (
-        <TopicVersionTooBigStatusContainer
-          topic={topicInfo}
-          snapshot={selectedSnapshot || { note: currentVersionNum }}
-          job={topicInfo.spiderJobs[0]}
-          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
-        />
-      );
-    } else if (this.determineVersionStatus(topicInfo) === VERSION_ERROR) {
-      contentToShow = (
-        <TopicVersionErrorStatusContainer
-          topic={topicInfo}
-          snapshot={selectedSnapshot || { note: currentVersionNum }}
-          job={topicInfo.spiderJobs[0]}
-          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
-        />
-      );
-    } else if (this.determineVersionStatus(topicInfo) === VERSION_CREATING) {
+    const versionStatus = this.determineVersionStatus(selectedSnapshot, topicInfo);
+    const latestJob = selectedSnapshot ? selectedSnapshot.snapshotJobs[0] : topicInfo.spiderJobs[0];
+    if (versionStatus === VERSION_CREATING) {
       contentToShow = (
         <TopicVersionCreatedStatusContainer
           topic={topicInfo}
           snapshot={selectedSnapshot || { note: currentVersionNum }}
-          job={topicInfo.spiderJobs[0]}
+          job={latestJob}
           goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
         />
       );
-    } else if (this.determineVersionStatus(topicInfo) === VERSION_QUEUED) {
+    } else if (versionStatus === VERSION_QUEUED) {
       contentToShow = (
         <TopicVersionQueuedStatusContainer
           topic={topicInfo}
           snapshot={selectedSnapshot || { note: currentVersionNum }}
-          job={topicInfo.spiderJobs[0]}
+          job={latestJob}
+          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
+        />
+      );
+    } if (versionStatus === VERSION_RUNNING) {
+      contentToShow = (
+        <TopicVersionRunningStatusContainer
+          topic={topicInfo}
+          snapshot={selectedSnapshot || { note: currentVersionNum }}
+          job={latestJob}
+        />
+      );
+    } else if (versionStatus === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
+      contentToShow = (
+        <TopicVersionTooBigStatusContainer
+          topic={topicInfo}
+          snapshot={selectedSnapshot || { note: currentVersionNum }}
+          job={latestJob}
+          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
+        />
+      );
+    } else if (versionStatus === VERSION_ERROR) {
+      contentToShow = (
+        <TopicVersionErrorStatusContainer
+          topic={topicInfo}
+          snapshot={selectedSnapshot || { note: currentVersionNum }}
+          job={latestJob}
           goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
         />
       );

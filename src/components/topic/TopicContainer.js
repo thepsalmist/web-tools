@@ -13,103 +13,11 @@ import { FILTER_PARSING_ONGOING, FILTER_PARSING_DONE } from '../../reducers/topi
 import PageTitle from '../common/PageTitle';
 import { filteredLocation } from '../util/location';
 import TopicControlBar from './controlbar/TopicControlBar';
-import { getCurrentVersionFromSnapshot } from '../../lib/topicVersionUtil';
 import { latestUsableSnapshot } from '../../reducers/topics/selected/snapshots';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { parseId } from '../../lib/numberUtil';
 import withFilteredUrlMaintenance from './versions/FilteredUrlMaintainer';
 
-/*
-// when you switch snapshots we need to find the matching timespan in the new snapshot
-function findMatchingTimespan(timespan, timespanList) {
-  if (timespanList && timespanList.list) {
-    return timespanList.list.find(ts => (
-      ((ts.period === timespan.period) && (ts.start_date === timespan.start_date) && (ts.end_date === timespan.end_date))
-    ));
-  }
-  return [];
-}
-*/
-
-/**
- * This is the parent of any topic-specific content. It handles the initial load of the topic info and
- * picks default filters for you (as needed).  Anything further down the react component hierarchy can
- * assume that the filters and topic have been fully loaded.
- */
-class TopicContainer extends React.Component {
-  constructor() {
-    super();
-    this.setSideBarContent = this.setSideBarContent.bind(this);
-  }
-
-  state = {
-    sideBarContent: null,
-  };
-
-  setSideBarContent(sideBarContent) {
-    this.setState({ sideBarContent });
-  }
-
-  render() {
-    const { children, topicInfo, topicId, filters, currentVersionId } = this.props;
-    const currentVersionNum = parseId(getCurrentVersionFromSnapshot(topicInfo, currentVersionId));
-    let content = (<LoadingSpinner />);
-    if (filters.parsingStatus === FILTER_PARSING_DONE) {
-      // pass a handler to all the children so the can set the control bar side content if they need to
-      const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent: this.setSideBarContent }));
-      content = (
-        <React.Fragment>
-          <TopicControlBar
-            {...this.props}
-            topicId={topicId}
-            topic={topicInfo}
-            sideBarContent={this.state.sideBarContent}
-            // implements handleRenderFilters and evaluates showFilters
-            // setupJumpToExplorer={setupJumpToExplorer} // defined in child Component VersionReady
-          />
-          {childrenWithExtraProp}
-        </React.Fragment>
-      );
-    }
-    return (
-      <div className="topic-container">
-        <PageTitle value={topicInfo.name} />
-        <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} currentVersion={currentVersionNum} filters={filters} />
-        {content}
-      </div>
-    );
-  }
-}
-
-TopicContainer.propTypes = {
-  // from context
-  intl: PropTypes.object.isRequired,
-  children: PropTypes.node,
-  location: PropTypes.object.isRequired,
-  topicId: PropTypes.number.isRequired,
-  currentVersionId: PropTypes.number,
-  dispatch: PropTypes.func.isRequired,
-  // from dispatch
-  addAppNotice: PropTypes.func.isRequired,
-  // from state
-  filters: PropTypes.object.isRequired,
-  fetchStatus: PropTypes.string.isRequired,
-  topicInfo: PropTypes.object,
-};
-
-const mapStateToProps = (state, ownProps) => ({
-  filters: state.topics.selected.filters,
-  fetchStatus: state.topics.selected.info.fetchStatus,
-  topicInfo: state.topics.selected.info,
-  topicId: parseId(ownProps.params.topicId),
-  currentVersionId: parseId(ownProps.location.query.snapshotId),
-});
-
-const mapDispatchToProps = dispatch => ({
-  addAppNotice: (info) => {
-    dispatch(addNotice(info));
-  },
-});
 
 const pickDefaultTimespan = (dispatch, timespanList) => {
   // async handler after promise returns - pick the first timespan as the default (this is the overall one)
@@ -184,6 +92,106 @@ const fetchAsyncData = (dispatch, { params, location }) => {
   dispatch(fetchTopicSummary(params.topicId))
     .then(results => pickDefaultFilters(dispatch, params.topicId, results.snapshots.list, location));
 };
+
+/*
+// when you switch snapshots we need to find the matching timespan in the new snapshot
+function findMatchingTimespan(timespan, timespanList) {
+  if (timespanList && timespanList.list) {
+    return timespanList.list.find(ts => (
+      ((ts.period === timespan.period) && (ts.start_date === timespan.start_date) && (ts.end_date === timespan.end_date))
+    ));
+  }
+  return [];
+}
+*/
+
+/**
+ * This is the parent of any topic-specific content. It handles the initial load of the topic info and
+ * picks default filters for you (as needed).  Anything further down the react component hierarchy can
+ * assume that the filters and topic have been fully loaded.
+ */
+class TopicContainer extends React.Component {
+  constructor() {
+    super();
+    this.setSideBarContent = this.setSideBarContent.bind(this);
+  }
+
+  state = {
+    sideBarContent: null,
+  };
+
+  componentDidUpdate(prevProps) {
+    const { dispatch } = this.props;
+    const currentSnapshotId = this.props.location.query.snapshotId;
+    const previousSnapshotId = prevProps.location.query.snapshotId;
+    if (currentSnapshotId !== previousSnapshotId) {
+      fetchAsyncData(dispatch, this.props);
+    }
+  }
+
+  setSideBarContent(sideBarContent) {
+    this.setState({ sideBarContent });
+  }
+
+  render() {
+    const { children, topicInfo, topicId, filters, snapshot } = this.props;
+    let content = (<LoadingSpinner />);
+    if (filters.parsingStatus === FILTER_PARSING_DONE) {
+      // pass a handler to all the children so the can set the control bar side content if they need to
+      const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent: this.setSideBarContent }));
+      content = (
+        <React.Fragment>
+          <TopicControlBar
+            {...this.props}
+            topicId={topicId}
+            topic={topicInfo}
+            sideBarContent={this.state.sideBarContent}
+            // implements handleRenderFilters and evaluates showFilters
+            // setupJumpToExplorer={setupJumpToExplorer} // defined in child Component VersionReady
+          />
+          {childrenWithExtraProp}
+        </React.Fragment>
+      );
+    }
+    return (
+      <div className="topic-container">
+        <PageTitle value={topicInfo.name} />
+        <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} currentVersion={snapshot ? snapshot.note : 1} filters={filters} />
+        {content}
+      </div>
+    );
+  }
+}
+
+TopicContainer.propTypes = {
+  // from context
+  intl: PropTypes.object.isRequired,
+  children: PropTypes.node,
+  location: PropTypes.object.isRequired,
+  topicId: PropTypes.number.isRequired,
+  snapshot: PropTypes.object,
+  dispatch: PropTypes.func.isRequired,
+  // from dispatch
+  addAppNotice: PropTypes.func.isRequired,
+  // from state
+  filters: PropTypes.object.isRequired,
+  fetchStatus: PropTypes.string.isRequired,
+  topicInfo: PropTypes.object,
+};
+
+const mapStateToProps = (state, ownProps) => ({
+  filters: state.topics.selected.filters,
+  fetchStatus: state.topics.selected.info.fetchStatus,
+  topicInfo: state.topics.selected.info,
+  topicId: parseId(ownProps.params.topicId),
+  snapshot: state.topics.selected.snapshots.selected,
+});
+
+const mapDispatchToProps = dispatch => ({
+  addAppNotice: (info) => {
+    dispatch(addNotice(info));
+  },
+});
 
 export default
 injectIntl(

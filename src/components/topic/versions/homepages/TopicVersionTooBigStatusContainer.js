@@ -18,6 +18,7 @@ const localMessages = {
   whatNowText: { id: 'version.error.explanation2.text', defaultMessage: 'You need to create a new version with fewer seed stories. You can do this in a few ways:<ul><li>make your query more specific</li><li>focus on a shorter timespan</li><li>start with fewer media sources and collections</li></ul>.' },
 };
 
+// BRITTLE: parses out the number of stories from the error msg saying the topic had too many stories
 const storyCountFromJobMessage = jobMessage => /topic has ([^ ]*) stories/.exec(jobMessage)[1];
 
 const TopicVersionTooBigStatusContainer = ({ topic, goToCreateNewVersion, snapshot, job, intl }) => (

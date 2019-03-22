@@ -42,11 +42,14 @@ const timespans = createAsyncReducer({
   [TOPIC_FILTER_BY_FOCUS]: () => initialState, // when focus changes reset these
   [TOGGLE_TIMESPAN_CONTROLS]: payload => ({ isVisible: payload }),
   [SET_TIMESPAN_VISIBLE_PERIOD]: payload => ({ selectedPeriod: payload }),
-  [TOPIC_FILTER_BY_TIMESPAN]: (payload, state) => ({
-    selectedId: parseId(payload),
-    selected: getTimespanFromListById(state.list, parseId(payload)),
-    selectedPeriod: getTimespanFromListById(state.list, parseId(payload)).period,
-  }),
+  [TOPIC_FILTER_BY_TIMESPAN]: (payload, state) => {
+    const selected = getTimespanFromListById(state.list, parseId(payload));
+    return {
+      selectedId: parseId(payload),
+      selected,
+      selectedPeriod: selected ? selected.period : 'custom',
+    };
+  },
 /*
   [LOCATION_CHANGE]: (payload, state) => {
     // for some reason when the user hits the back button we need to manually re-render

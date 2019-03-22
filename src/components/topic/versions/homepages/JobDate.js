@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl, FormattedMessage, FormattedDate, FormattedTime } from 'react-intl';
 import { postgresDateToMoment } from '../../../../lib/dateUtil';
 import messages from '../../../../resources/messages';
 import { trimToMaxLength } from '../../../../lib/stringUtil';
@@ -35,7 +35,18 @@ class JobDate extends React.Component {
               <FormattedMessage {...messages.details} />
             </a>
           </p>
-          { this.state.showDetails && (<p>{trimToMaxLength(snapshot.message || job.message, 600)}</p>) }
+          { this.state.showDetails && (
+            <React.Fragment>
+              {snapshot.snapshotDate && (
+                <p>
+                  <FormattedTime value={snapshot.snapshotDate} />
+                  &nbsp;
+                  <FormattedDate value={snapshot.snapshotDate} />
+                </p>
+              )}
+              <code>{trimToMaxLength(snapshot.message || job.message, 600)}</code>
+            </React.Fragment>
+          ) }
         </React.Fragment>
       );
     }

@@ -8,7 +8,7 @@ import Permissioned from '../../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../../lib/auth';
 import SeedQuerySummary from '../SeedQuerySummary';
 import messages from '../../../../resources/messages';
-import JobDate from '../JobDate';
+import JobDate from './JobDate';
 
 const localMessages = {
   title: { id: 'version.error.title', defaultMessage: 'Version {number} - Too Big ({storyCount} stories)' },
@@ -49,10 +49,10 @@ const TopicVersionTooBigStatusContainer = ({ topic, goToCreateNewVersion, snapsh
                 }}
               />
             </p>
-            <h2><FormattedMessage {...localMessages.whatNowTitle} /></h2>
-            <p><FormattedHTMLMessage {...localMessages.whatNowText} /></p>
 
             <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
+              <h2><FormattedMessage {...localMessages.whatNowTitle} /></h2>
+              <p><FormattedHTMLMessage {...localMessages.whatNowText} /></p>
               <div className="topic-stuck-created-or-error">
                 <AppButton
                   label={intl.formatMessage(messages.createNewVersion)}

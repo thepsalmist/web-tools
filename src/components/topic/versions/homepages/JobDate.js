@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { postgresDateToMoment } from '../../../lib/dateUtil';
-import messages from '../../../resources/messages';
-import { trimToMaxLength } from '../../../lib/stringUtil';
+import { postgresDateToMoment } from '../../../../lib/dateUtil';
+import messages from '../../../../resources/messages';
+import { trimToMaxLength } from '../../../../lib/stringUtil';
 
 const localMessages = {
   jobDate: { id: 'version.running.jobDate', defaultMessage: 'Last updated {date}' },

@@ -30,9 +30,10 @@ function getSnapshotFromListById(list, id) {
   return (result === undefined) ? null : result;
 }
 
-function cleanUpSnapshotList(rawList) {
+function cleanUpSnapshotList(rawList, jobList) {
   return rawList.map(s => ({
     ...s,
+    snapshotJobs: jobList.filter(job => s.snapshots_id === job.snapshots_id),
     snapshotDate: snapshotDateToMoment(s.snapshot_date),
     isUsable: snapshotIsUsable(s),
   }));
@@ -48,21 +49,20 @@ const snapshots = createAsyncReducer({
     selected: null,
   },
   action: FETCH_TOPIC_SNAPSHOTS_LIST,
-  handleSuccess: (payload, state) => ({
-    // add in an isUsable property to centralize that logic to one place (ie. here!)
-    list: cleanUpSnapshotList(payload.list),
-    jobStatus: payload.jobStatus,
-    latestVersion: payload.snapshots.latestVersion,
-    latestUsableSnapshot: latestUsableSnapshot(payload.snapshots.list),
-    selected: getSnapshotFromListById(cleanUpSnapshotList(payload.list), state.selectedId),
-  }),
+  handleSuccess: (payload, state) => {
+    const snapshotList = cleanUpSnapshotList(payload.snapshots.list, payload.snapshots.jobStatus);
+    return {
+      // add in an isUsable property to centralize that logic to one place (ie. here!)
+      list: snapshotList,
+      jobStatus: payload.jobStatus, // DEPRECATED
+      latestVersion: payload.snapshots.latestVersion,
+      latestUsableSnapshot: latestUsableSnapshot(snapshotList),
+      selected: getSnapshotFromListById(snapshotList, state.selectedId),
+    };
+  },
   FETCH_TOPIC_SUMMARY_RESOLVED: payload => ({ // topic summary includes list of snapshots
-    list: payload.snapshots.list.map(s => ({
-      ...s,
-      snapshotDate: snapshotDateToMoment(s.snapshot_date),
-      isUsable: snapshotIsUsable(s),
-    })),
-    jobStatus: payload.snapshots.jobStatus,
+    list: cleanUpSnapshotList(payload.snapshots.list, payload.snapshots.jobStatus),
+    jobStatus: payload.snapshots.jobStatus, // DEPRECATED
     latestVersion: payload.snapshots.latestVersion,
     latestUsableSnapshot: latestUsableSnapshot(payload.snapshots.list),
   }),

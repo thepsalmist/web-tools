@@ -8,7 +8,7 @@ import Permissioned from '../../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../../lib/auth';
 import SeedQuerySummary from '../SeedQuerySummary';
 import messages from '../../../../resources/messages';
-import JobDate from '../JobDate';
+import JobDate from './JobDate';
 
 const localMessages = {
   title: { id: 'version.error.title', defaultMessage: 'Version {number} - Error' },

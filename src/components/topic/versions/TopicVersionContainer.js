@@ -6,13 +6,15 @@ import { push } from 'react-router-redux';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
   TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
-import TopicVersionStatusContainer from './homepages/TopicVersionStatusContainer';
+import TopicVersionQueuedStatusContainer from './homepages/TopicVersionQueuedStatusContainer';
 import TopicVersionErrorStatusContainer from './homepages/TopicVersionErrorStatusContainer';
 import TopicVersionRunningStatusContainer from './homepages/TopicVersionRunningStatusContainer';
 import TopicVersionTooBigStatusContainer from './homepages/TopicVersionTooBigStatusContainer';
+import TopicVersionCreatedStatusContainer from './homepages/TopicVersionCreatedStatusContainer';
 import * as fetchConstants from '../../../lib/fetchConstants';
 import { filteredLinkTo } from '../../util/location';
-import { VERSION_ERROR, VERSION_ERROR_EXCEEDED, VERSION_CREATING, VERSION_BUILDING, VERSION_QUEUED, VERSION_RUNNING, VERSION_READY } from '../../../lib/topicFilterUtil';
+import { VERSION_ERROR, VERSION_ERROR_EXCEEDED, VERSION_CREATING, VERSION_QUEUED, VERSION_RUNNING,
+  VERSION_READY } from '../../../lib/topicFilterUtil';
 import { getCurrentVersionFromSnapshot } from '../../../lib/topicVersionUtil';
 
 /**
@@ -46,7 +48,8 @@ class TopicVersionContainer extends React.Component {
   }
 
   render() {
-    const { children, topicInfo, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo, setSideBarContent, user, currentVersionId, filters, selectedSnapshot } = this.props;
+    const { children, topicInfo, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo,
+      setSideBarContent, currentVersionId, filters, selectedSnapshot } = this.props;
     // show a big error if there is one to show
     const currentVersionNum = getCurrentVersionFromSnapshot(topicInfo, currentVersionId);
     let contentToShow = children; // has a filters renderer in it - show if a completed topic
@@ -79,18 +82,22 @@ class TopicVersionContainer extends React.Component {
         />
       );
     } else if (this.determineVersionStatus(topicInfo) === VERSION_CREATING) {
-
+      contentToShow = (
+        <TopicVersionCreatedStatusContainer
+          topic={topicInfo}
+          snapshot={selectedSnapshot || { note: currentVersionNum }}
+          job={topicInfo.spiderJobs[0]}
+          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
+        />
+      );
     } else if (this.determineVersionStatus(topicInfo) === VERSION_QUEUED) {
       contentToShow = (
-        <div>
-          <TopicVersionStatusContainer
-            topicInfo={topicInfo}
-            displayState={VERSION_BUILDING}
-            user={user}
-            currentVersion={currentVersionNum}
-            filters={filters}
-          />
-        </div>
+        <TopicVersionQueuedStatusContainer
+          topic={topicInfo}
+          snapshot={selectedSnapshot || { note: currentVersionNum }}
+          job={topicInfo.spiderJobs[0]}
+          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
+        />
       );
     } else if (fetchStatusInfo !== fetchConstants.FETCH_SUCCEEDED
       && fetchStatusSnapshot !== fetchConstants.FETCH_SUCCEEDED) {
@@ -119,7 +126,6 @@ TopicVersionContainer.propTypes = {
   snapshotCount: PropTypes.number.isRequired,
   goToCreateNewVersion: PropTypes.func,
   setSideBarContent: PropTypes.func,
-  user: PropTypes.object,
   currentVersionId: PropTypes.number,
 };
 
@@ -133,7 +139,6 @@ const mapStateToProps = (state, ownProps) => ({
   currentVersionId: parseInt(ownProps.location.query.snapshotId, 10),
   needsNewSnapshot: state.topics.selected.needsNewSnapshot,
   snapshotCount: state.topics.selected.snapshots.list.length,
-  user: state.user,
 });
 
 const mapDispatchToProps = dispatch => ({

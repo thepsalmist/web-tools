@@ -6,7 +6,7 @@ import AppButton from '../../../common/AppButton';
 import { WarningNotice } from '../../../common/Notice';
 import SeedQuerySummary from '../SeedQuerySummary';
 import LinkWithFilters from '../../LinkWithFilters';
-import JobDate from '../JobDate';
+import JobDate from './JobDate';
 
 const localMessages = {
   title: { id: 'version.running.title', defaultMessage: 'Version {number} - Still Generating' },

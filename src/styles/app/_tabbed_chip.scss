@@ -38,12 +38,12 @@
     margin-top: 0px;
     strong {
       background-color: $warning-color;
-    }
-    &.left-tab {
-      background-color: $warning-color;
-    }
-    &.left-tab:after {
-      border-color: transparent $warning-color;
+      &.left-tab {
+        background-color: $warning-color;
+      }
+      &.left-tab:after {
+        border-color: transparent $warning-color;
+      }
     }
   }
 
@@ -53,8 +53,6 @@
     margin-top: 0px;
     strong {
       background-color: $error-color;
-      color: white;
-      margin-top: 0px;
       &.left-tab {
         background-color: $error-color;
       }

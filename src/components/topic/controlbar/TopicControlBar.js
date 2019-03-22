@@ -10,7 +10,6 @@ import { HomeButton, EditButton } from '../../common/IconButton';
 import TabbedChip from '../../common/TabbedChip';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
-import AboutTopicDialog from './AboutTopicDialog';
 import { TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
   TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
 
@@ -29,14 +28,14 @@ const localMessages = {
 
   latestNeedsAttention: { id: 'topic.version.latestNeedsAttention', defaultMessage: 'needs attention' },
   latestRunning: { id: 'topic.version.latestNeedsAttention', defaultMessage: 'running' },
-  newerData: { id: 'topic.version.latestNeedsAttention', defaultMessage: 'new data' },
+  newerData: { id: 'topic.version.latestNeedsAttention', defaultMessage: 'newer data' },
 };
 
 const mostRecentSnapshotIs = (snapshots, topic, states) => {
   if (snapshots.length === 0) {
     return states.includes(topic.state);
   }
-  return states.includes(snapshots[0].state);
+  return states.includes(snapshots[snapshots.length - 1].state);
 };
 
 const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, goToUrl, snapshots, intl }) => (
@@ -50,9 +49,6 @@ const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, 
                 <HomeButton />
                 <b><FormattedMessage {...localMessages.topicHomepage} /></b>
               </LinkWithFilters>
-            </div>
-            <div className="controlbar-item">
-              <AboutTopicDialog />
             </div>
             <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
               <div className="controlbar-item">

@@ -9,7 +9,7 @@ const TimespanSelectorContainer = (props) => {
   const { timespans, selectedTimespan, setExpanded, handleTimespanSelected, handlePeriodSelected,
     isVisible, selectedPeriod } = props;
   let content = null;
-  if ((timespans.length > 0) && (selectedTimespan !== null) && (selectedTimespan !== undefined)) {
+  if ((timespans.length > 0) && selectedTimespan && selectedPeriod) {
     content = (
       <TimespanSelector
         timespans={timespans}
@@ -42,7 +42,7 @@ TimespanSelectorContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   timespans: PropTypes.array.isRequired,
   isVisible: PropTypes.bool.isRequired,
-  selectedPeriod: PropTypes.string.isRequired,
+  selectedPeriod: PropTypes.string,
   snapshotId: PropTypes.number.isRequired,
   timespanId: PropTypes.number,
   selectedTimespan: PropTypes.object,

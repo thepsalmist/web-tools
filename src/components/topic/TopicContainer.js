@@ -28,6 +28,36 @@ const pickDefaultTimespan = (dispatch, timespanList) => {
   return defaultTimespanId;
 };
 
+const pickDefaultFocusId = (dispatch, topicId, snapshotId, focusId, timespanId, location, urlNeedsUpdate) => {
+  let needToUpdateUrl = urlNeedsUpdate;
+  dispatch(filterByFocus(focusId));
+  // now load up timespans for the snapshot we are using (default or not)
+  dispatch(fetchTopicTimespansList(topicId, snapshotId, { focusId }))
+    .then((response) => {
+      // if no timespan specified, default to overall
+      let currentTimespanId = timespanId;
+      if (currentTimespanId === null) {
+        currentTimespanId = pickDefaultTimespan(dispatch, response.list);
+        needToUpdateUrl = true; // we updaed the timespanId, so we have to update the URL
+      }
+      dispatch(filterByTimespan(currentTimespanId));
+      // and save the q filter if there is one
+      dispatch(filterByQuery(location.query.q));
+      // now that all the filtres have been deaulted correctly, update the URL
+      if (needToUpdateUrl) { // only i we need to so we don't get extra PUSH commands
+        const newLocation = filteredLocation(location, {
+          snapshotId,
+          focusId,
+          timespanId: currentTimespanId,
+          q: location.query.q,
+        });
+        dispatch(replace(newLocation)); // do a replace, not a push here so the non-snapshot url isn't in the history
+      }
+      // and mark that we are done parsing filters so we can render
+      dispatch(updateTopicFilterParsingStatus(FILTER_PARSING_DONE));
+    });
+};
+
 const pickDefaultFilters = (dispatch, topicId, snapshotsList, location) => {
   // async handler after snapshot data arrives - if no snapshot specified, default to the
   // latest snapshot or the first snapshot if none is usable
@@ -53,32 +83,8 @@ const pickDefaultFilters = (dispatch, topicId, snapshotsList, location) => {
   if (currentSnapshotId) {
     dispatch(fetchTopicFocalSetsList(topicId, { snapshotId: currentSnapshotId }))
       .then(() => {
-        dispatch(filterByFocus(currentFocusId));
-        // now load up timespans for the snapshot we are using (default or not)
-        dispatch(fetchTopicTimespansList(topicId, currentSnapshotId, { focusId: currentFocusId }))
-          .then((response) => {
-            // if no timespan specified, default to overall
-            let currentTimespanId = parseId(location.query.timespanId);
-            if (currentTimespanId === null) {
-              currentTimespanId = pickDefaultTimespan(dispatch, response.list);
-              urlNeedsUpdate = true; // we updaed the timespanId, so we have to update the URL
-            }
-            dispatch(filterByTimespan(currentTimespanId));
-            // and save the q filter if there is one
-            dispatch(filterByQuery(location.query.q));
-            // now that all the filtres have been deaulted correctly, update the URL
-            if (urlNeedsUpdate) { // only i we need to so we don't get extra PUSH commands
-              const newLocation = filteredLocation(location, {
-                snapshotId: currentSnapshotId,
-                timespanId: currentTimespanId,
-                focusId: null,
-                q: location.query.q,
-              });
-              dispatch(replace(newLocation)); // do a replace, not a push here so the non-snapshot url isn't in the history
-            }
-            // and mark that we are done parsing filters so we can render
-            dispatch(updateTopicFilterParsingStatus(FILTER_PARSING_DONE));
-          });
+        pickDefaultFocusId(dispatch, topicId, currentSnapshotId, currentFocusId,
+          parseId(location.query.timespanId), location, urlNeedsUpdate);
       });
   }
 };
@@ -121,11 +127,17 @@ class TopicContainer extends React.Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { dispatch } = this.props;
-    const currentSnapshotId = this.props.location.query.snapshotId;
-    const previousSnapshotId = prevProps.location.query.snapshotId;
-    if (currentSnapshotId !== previousSnapshotId) {
+    const { dispatch, location, topicId, filters } = this.props;
+    const snapshotIdChanged = location.query.snapshotId !== prevProps.location.query.snapshotId;
+    if (snapshotIdChanged) {
       fetchAsyncData(dispatch, this.props);
+      return;
+    }
+    const focusIdChanged = location.query.focusId !== prevProps.location.query.focusId;
+    if (focusIdChanged) {
+      // mark that we are startin the complicated async-driven parsing of filter vaules
+      dispatch(updateTopicFilterParsingStatus(FILTER_PARSING_ONGOING));
+      pickDefaultFocusId(dispatch, topicId, filters.snapshotId, location.query.focusId, null, location, true);
     }
   }
 

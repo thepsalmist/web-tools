@@ -38,7 +38,7 @@ const mostRecentSnapshotIs = (snapshots, topic, states) => {
   return states.includes(snapshots[snapshots.length - 1].state);
 };
 
-const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, goToUrl, snapshots, intl }) => (
+const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, goToUrl, snapshots, intl, selectedSnapshot }) => (
   <div className="controlbar controlbar-topic">
     <div className="main">
       <Grid>
@@ -83,14 +83,13 @@ const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, 
                     id="modify-topic-permissions"
                   />
                   <b><FormattedMessage {...localMessages.versionList} /></b>
-
                   {mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED]) && (
                     <TabbedChip error message={localMessages.latestNeedsAttention} />
                   )}
                   {mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING]) && (
                     <TabbedChip message={localMessages.latestRunning} />
                   )}
-                  {mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_COMPLETED]) && (
+                  {(selectedSnapshot.snapshots_id !== snapshots[snapshots.length - 1].snapshots_id) && mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_COMPLETED]) && (
                     <TabbedChip warning message={localMessages.newerData} />
                   )}
                 </LinkWithFilters>
@@ -119,12 +118,14 @@ TopicControlBar.propTypes = {
   topic: PropTypes.object,
   filters: PropTypes.object.isRequired,
   snapshots: PropTypes.array,
+  selectedSnapshot: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
   topic: state.topics.selected.info,
   snapshots: state.topics.selected.snapshots.list,
+  selectedSnapshot: state.topics.selected.snapshots.selected,
 });
 
 const mapDispatchToProps = dispatch => ({

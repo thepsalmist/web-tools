@@ -73,6 +73,14 @@ const usingLatestSnapshot = (list, selectedId) => {
   return false;
 };
 
+const latestSnaphostIsUsable = (list) => {
+  const latest = latestByDate(list);
+  if (latest) {
+    return snapshotIsUsable(latest);
+  }
+  return false;
+};
+
 const snapshots = createAsyncReducer({
   initialState: {
     list: [],
@@ -93,6 +101,7 @@ const snapshots = createAsyncReducer({
       jobStatus: payload.jobStatus, // DEPRECATED
       latest: latestByDate(payload.snapshots.list),
       usingLatest: usingLatestSnapshot(payload.snapshots.list, state.selectedId),
+      latestIsUsable: latestSnaphostIsUsable(payload.snapshots.list),
       latestUsableSnapshot: latestUsableSnapshot(snapshotList),
       latestVersionRunning: isLatestVersionRunning(payload.snapshots.list),
       selected: getSnapshotFromListById(snapshotList, state.selectedId),
@@ -103,6 +112,7 @@ const snapshots = createAsyncReducer({
     jobStatus: payload.snapshots.jobStatus, // DEPRECATED
     latest: latestByDate(payload.snapshots.list),
     usingLatest: usingLatestSnapshot(payload.snapshots.list, state.selectedId),
+    latestIsUsable: latestSnaphostIsUsable(payload.snapshots.list),
     latestUsableSnapshot: latestUsableSnapshot(payload.snapshots.list),
     latestVersionRunning: isLatestVersionRunning(payload.snapshots.list),
   }),

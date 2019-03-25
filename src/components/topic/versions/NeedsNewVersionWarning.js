@@ -7,13 +7,14 @@ import AppButton from '../../common/AppButton';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
 import { WarningNotice } from '../../common/Notice';
+import LinkWithFilters from '../LinkWithFilters';
 
 const localMessages = {
   needsNewSnapshot: { id: 'topic.needsNewSnapshot.subtopics', defaultMessage: 'You\'ve changed some subtopics and need to generate a new version!' },
   needsNewSnapshotAction: { id: 'topic.needsNewSnapshot.subtopics.action', defaultMessage: 'Finish up and generate' },
 };
 
-const NeedsNewVersion = ({ newDefinitions, latestVersionRunning, usingLatest }) => (
+const NeedsNewVersionWarning = ({ topicId, newDefinitions, latestVersionRunning, usingLatest }) => (
   <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
     {usingLatest && newDefinitions && !latestVersionRunning && (
       <div className="warning-background">
@@ -22,7 +23,9 @@ const NeedsNewVersion = ({ newDefinitions, latestVersionRunning, usingLatest }) 
             <Col lg={12}>
               <WarningNotice>
                 <FormattedMessage {...localMessages.needsNewSnapshot} />
-                <AppButton label={localMessages.needsNewSnapshotAction} />
+                <LinkWithFilters to={`/topics/${topicId}/snapshot/foci`}>
+                  <AppButton label={localMessages.needsNewSnapshotAction} />
+                </LinkWithFilters>
               </WarningNotice>
             </Col>
           </Row>
@@ -32,16 +35,18 @@ const NeedsNewVersion = ({ newDefinitions, latestVersionRunning, usingLatest }) 
   </Permissioned>
 );
 
-NeedsNewVersion.propTypes = {
+NeedsNewVersionWarning.propTypes = {
   // from state
   usingLatest: PropTypes.bool.isRequired,
   newDefinitions: PropTypes.bool.isRequired,
   latestVersionRunning: PropTypes.bool.isRequired,
+  topicId: PropTypes.number.isRequired,
   // from compositional chain
   intl: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
+  topicId: state.topics.selected.id,
   newDefinitions: state.topics.selected.focalSets.all.newDefinitions,
   latestVersionRunning: state.topics.selected.snapshots.latestVersionRunning,
   usingLatest: state.topics.selected.snapshots.usingLatest,
@@ -50,6 +55,6 @@ const mapStateToProps = state => ({
 export default
 injectIntl(
   connect(mapStateToProps)(
-    NeedsNewVersion
+    NeedsNewVersionWarning
   )
 );

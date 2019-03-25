@@ -12,7 +12,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
 import { fetchSnapshotStoryCounts } from '../../../actions/topicActions';
 import TopicVersionListItem from './TopicVersionListItem';
-import NeedsNewVersion from './NeedsNewVersion';
+import NeedsNewVersionWarning from './NeedsNewVersionWarning';
 
 const localMessages = {
   title: { id: 'topic.versionList.title', defaultMessage: 'Your Topic Has {count} Versions' },
@@ -75,7 +75,7 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
   return (
     <div className="topic-version-list">
       <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
-      <NeedsNewVersion />
+      <NeedsNewVersionWarning />
       <Grid>
         <Row>
           <Col lg={12}>

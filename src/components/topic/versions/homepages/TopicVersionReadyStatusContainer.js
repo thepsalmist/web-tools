@@ -6,7 +6,8 @@ import TopicFilterBar from '../../controlbar/TopicFilterBar';
 import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import { ExploreButton } from '../../../common/IconButton';
 import { urlToExplorerQuery } from '../../../../lib/urlUtil';
-import NeedsNewVersion from '../NeedsNewVersion';
+import NeedsNewVersionWarning from '../NeedsNewVersionWarning';
+import NotUsingLatestWarning from '../NotUsingLatestWarning';
 
 const localMessages = {
   topicRunning: { id: 'topic.topicRunning', defaultMessage: 'We are scraping the web for all the stories in include in your topic.' },
@@ -51,7 +52,8 @@ class TopicVersionReadyStatusContainer extends React.Component {
       <div>
         <div className="sub">
           <TopicFilterBar topicId={topicId} setSideBarContent={setSideBarContent} location={location} />
-          <NeedsNewVersion />
+          <NeedsNewVersionWarning />
+          <NotUsingLatestWarning />
           {children}
         </div>
       </div>

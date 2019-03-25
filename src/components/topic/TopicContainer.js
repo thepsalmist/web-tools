@@ -8,6 +8,7 @@ import TopicHeaderContainer from './TopicHeaderContainer';
 import { addNotice } from '../../actions/appActions';
 import { selectTopic, fetchTopicSummary, fetchTopicTimespansList, fetchTopicFocalSetsList,
   filterBySnapshot, filterByFocus, filterByTimespan, filterByQuery, updateTopicFilterParsingStatus,
+  fetchFocalSetDefinitions,
 } from '../../actions/topicActions';
 import { FILTER_PARSING_ONGOING, FILTER_PARSING_DONE } from '../../reducers/topics/selected/filters';
 import PageTitle from '../common/PageTitle';
@@ -31,6 +32,10 @@ const pickDefaultTimespan = (dispatch, timespanList) => {
 const pickDefaultFocusId = (dispatch, topicId, snapshotId, focusId, timespanId, location, urlNeedsUpdate) => {
   let needToUpdateUrl = urlNeedsUpdate;
   dispatch(filterByFocus(focusId));
+  // foci have been loaded, so fire off an async to load the focalDefs so we can check for a pending version
+  // that needs to be updated (but we can render before that returns, so no need to wait for it to finish before
+  // updating the filter parsing status)
+  dispatch(fetchFocalSetDefinitions(topicId));
   // now load up timespans for the snapshot we are using (default or not)
   dispatch(fetchTopicTimespansList(topicId, snapshotId, { focusId }))
     .then((response) => {

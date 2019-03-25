@@ -3,10 +3,10 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../../common/AppButton';
-import { WarningNotice } from '../../../common/Notice';
 import SeedQuerySummary from '../SeedQuerySummary';
 import LinkWithFilters from '../../LinkWithFilters';
 import JobDate from './JobDate';
+import VersionGenerationProcess from './VersionGenerationProcess';
 
 const localMessages = {
   title: { id: 'version.running.title', defaultMessage: 'Version {number} - Still Generating' },
@@ -21,11 +21,19 @@ const localMessages = {
 
 const TopicVersionRunningStatusContainer = ({ topic, snapshot, job, intl }) => (
   <Grid>
-    {snapshot.note !== topic.latestVersion && <WarningNotice><FormattedMessage {...localMessages.versionError} /></WarningNotice>}
     <div className="topic-version-status-container">
       <Row>
-        <Col lg={6}>
+        <Col lg={12}>
           <h1><FormattedMessage {...localMessages.title} values={{ number: snapshot.note }} /></h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col lg={12}>
+          <VersionGenerationProcess snapshot={snapshot} topic={topic} />
+        </Col>
+      </Row>
+      <Row>
+        <Col lg={6}>
           <JobDate snapshot={snapshot} job={job} />
           <h2>
             <FormattedMessage {...localMessages.explanationTitle} />

@@ -1,4 +1,6 @@
-import { FETCH_TOPIC_SNAPSHOTS_LIST, TOPIC_FILTER_BY_SNAPSHOT } from '../../../actions/topicActions';
+import { resolve } from 'redux-simple-promise';
+import { FETCH_TOPIC_SNAPSHOTS_LIST, TOPIC_FILTER_BY_SNAPSHOT, FETCH_TOPIC_SUMMARY }
+  from '../../../actions/topicActions';
 import { createAsyncReducer } from '../../../lib/reduxHelpers';
 import { snapshotDateToMoment } from '../../../lib/dateUtil';
 import { parseId } from '../../../lib/numberUtil';
@@ -39,12 +41,46 @@ function cleanUpSnapshotList(rawList, jobList) {
   }));
 }
 
+function isLatestVersionRunning(rawList) {
+  if (rawList.length === 0) {
+    return false;
+  }
+  const latestSnapshot = rawList[0];
+  return (latestSnapshot.state === 'running')
+    || ((latestSnapshot.state === 'completed') && (latestSnapshot.searchable === 0));
+}
+
+const snapshotsByDateDesc = list => list.sort((f1, f2) => {
+  if (f1.snapshot_date < f2.snapshot_date) {
+    return 1;
+  }
+  return -1;
+});
+
+const latestByDate = (list) => {
+  const orderedList = snapshotsByDateDesc(list);
+  if (orderedList && orderedList.length > 0) {
+    return orderedList[0];
+  }
+  return null;
+};
+
+const usingLatestSnapshot = (list, selectedId) => {
+  const latest = latestByDate(list);
+  if (latest) {
+    return selectedId === latest.snapshots_id;
+  }
+  return false;
+};
+
 const snapshots = createAsyncReducer({
   initialState: {
     list: [],
     jobStatus: [],
-    latestVersion: null, // the number of the latest version
+    latest: null,
+    usingLatest: false,
     latestUsableSnapshot: null,
+    latestVersionRunning: false,
     selectedId: null,
     selected: null,
   },
@@ -55,19 +91,24 @@ const snapshots = createAsyncReducer({
       // add in an isUsable property to centralize that logic to one place (ie. here!)
       list: snapshotList,
       jobStatus: payload.jobStatus, // DEPRECATED
-      latestVersion: payload.snapshots.latestVersion,
+      latest: latestByDate(payload.snapshots.list),
+      usingLatest: usingLatestSnapshot(payload.snapshots.list, state.selectedId),
       latestUsableSnapshot: latestUsableSnapshot(snapshotList),
+      latestVersionRunning: isLatestVersionRunning(payload.snapshots.list),
       selected: getSnapshotFromListById(snapshotList, state.selectedId),
     };
   },
-  FETCH_TOPIC_SUMMARY_RESOLVED: payload => ({ // topic summary includes list of snapshots
+  [resolve(FETCH_TOPIC_SUMMARY)]: (payload, state) => ({ // topic summary includes list of snapshots
     list: cleanUpSnapshotList(payload.snapshots.list, payload.snapshots.jobStatus),
     jobStatus: payload.snapshots.jobStatus, // DEPRECATED
-    latestVersion: payload.snapshots.latestVersion,
+    latest: latestByDate(payload.snapshots.list),
+    usingLatest: usingLatestSnapshot(payload.snapshots.list, state.selectedId),
     latestUsableSnapshot: latestUsableSnapshot(payload.snapshots.list),
+    latestVersionRunning: isLatestVersionRunning(payload.snapshots.list),
   }),
   [TOPIC_FILTER_BY_SNAPSHOT]: (payload, state) => ({
     selectedId: parseId(payload),
+    usingLatest: usingLatestSnapshot(state.list, parseId(payload)),
     selected: getSnapshotFromListById(state.list, parseId(payload)),
   }),
 });

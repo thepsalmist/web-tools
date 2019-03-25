@@ -12,6 +12,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
 import { fetchSnapshotStoryCounts } from '../../../actions/topicActions';
 import TopicVersionListItem from './TopicVersionListItem';
+import NeedsNewVersion from './NeedsNewVersion';
 
 const localMessages = {
   title: { id: 'topic.versionList.title', defaultMessage: 'Your Topic Has {count} Versions' },
@@ -71,10 +72,10 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
     );
   }
   const cannotCreate = false; // TODO: if any snapshot is building
-
   return (
     <div className="topic-version-list">
       <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
+      <NeedsNewVersion />
       <Grid>
         <Row>
           <Col lg={12}>
@@ -100,7 +101,7 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
 };
 
 TopicVersionListContainer.propTypes = {
-  // from parent
+  // from state
   versions: PropTypes.array.isRequired,
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../../common/AppButton';
 import PageTitle from '../../../common/PageTitle';
@@ -9,9 +9,10 @@ import { PERMISSION_TOPIC_WRITE } from '../../../../lib/auth';
 import SeedQuerySummary from '../SeedQuerySummary';
 import messages from '../../../../resources/messages';
 import JobDate from './JobDate';
+import VersionGenerationProcess from './VersionGenerationProcess';
 
 const localMessages = {
-  title: { id: 'version.error.title', defaultMessage: 'Version {number} - Error' },
+  title: { id: 'version.error.title', defaultMessage: 'Version {number} - <span class="error-background">Error</span>' },
   explanationTitle: { id: 'version.error.explanation.title', defaultMessage: 'What\'s the Problem?' },
   explanationText: { id: 'version.error.explanation.text', defaultMessage: 'Something went wrong while your topic was running.' },
   whatNowTitle: { id: 'version.error.explanation2.title', defaultMessage: 'What Should I Do Now?' },
@@ -24,10 +25,18 @@ const TopicVersionErrorStatusContainer = ({ topic, goToCreateNewVersion, snapsho
     <div className="topic-version-status-container">
       <Grid>
         <Row>
+          <Col lg={12}>
+            <h1><FormattedHTMLMessage {...localMessages.title} values={{ number: snapshot.note }} /></h1>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={12}>
+            <VersionGenerationProcess snapshot={snapshot} topic={topic} />
+          </Col>
+        </Row>
+        <Row>
           <Col lg={6}>
-            <h1><FormattedMessage {...localMessages.title} values={{ number: snapshot.note }} /></h1>
             <JobDate snapshot={snapshot} job={job} />
-
             <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
             <p><FormattedMessage {...localMessages.explanationText} /></p>
             <h2><FormattedMessage {...localMessages.whatNowTitle} /></h2>

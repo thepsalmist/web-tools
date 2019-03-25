@@ -20,20 +20,22 @@ class JobDate extends React.Component {
       return (
         <React.Fragment>
           <p>
-            <FormattedMessage
-              {...localMessages.jobDate}
-              values={{ date: postgresDateToMoment(job.last_updated).fromNow() }}
-            />.
-            &nbsp;
-            <a
-              href="#toggle-details"
-              onClick={(evt) => {
-                evt.preventDefault();
-                this.setState(prevState => ({ showDetails: !prevState.showDetails }));
-              }}
-            >
-              <FormattedMessage {...messages.details} />
-            </a>
+            <i>
+              <FormattedMessage
+                {...localMessages.jobDate}
+                values={{ date: postgresDateToMoment(job.last_updated).fromNow() }}
+              />.
+              &nbsp;
+              <a
+                href="#toggle-details"
+                onClick={(evt) => {
+                  evt.preventDefault();
+                  this.setState(prevState => ({ showDetails: !prevState.showDetails }));
+                }}
+              >
+                <FormattedMessage {...messages.details} />
+              </a>
+            </i>
           </p>
           { this.state.showDetails && (
             <React.Fragment>

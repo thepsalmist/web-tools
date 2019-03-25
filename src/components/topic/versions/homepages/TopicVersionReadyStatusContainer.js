@@ -5,16 +5,12 @@ import { connect } from 'react-redux';
 import TopicFilterBar from '../../controlbar/TopicFilterBar';
 import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import { ExploreButton } from '../../../common/IconButton';
-import { LEVEL_WARNING } from '../../../common/Notice';
-import { fetchFocalSetDefinitions, setTopicNeedsNewSnapshot } from '../../../../actions/topicActions';
-import { addNotice } from '../../../../actions/appActions';
 import { urlToExplorerQuery } from '../../../../lib/urlUtil';
-import { nullOrUndefined } from '../../../../lib/formValidators';
+import NeedsNewVersion from '../NeedsNewVersion';
 
 const localMessages = {
   topicRunning: { id: 'topic.topicRunning', defaultMessage: 'We are scraping the web for all the stories in include in your topic.' },
   filterTopic: { id: 'topic.filter', defaultMessage: 'Filter this Topic' },
-  summaryMessage: { id: 'topic.summary', defaultMessage: 'You need to generate a new version {url}' },
 };
 
 class TopicVersionReadyStatusContainer extends React.Component {
@@ -55,6 +51,7 @@ class TopicVersionReadyStatusContainer extends React.Component {
       <div>
         <div className="sub">
           <TopicFilterBar topicId={topicId} setSideBarContent={setSideBarContent} location={location} />
+          <NeedsNewVersion />
           {children}
         </div>
       </div>
@@ -99,53 +96,7 @@ const mapStateToProps = (state, ownProps) => ({
   focalSets: state.topics.selected.focalSets.all.list,
 });
 
-/**
- * Return true if there are focal set changes that require a new snapshot
- */
-function pendingFocalSetDefinitions(definitions, focalSets) {
-  // has match?
-  const eachHasMatch = definitions.map((setDef) => {
-    // for each focal set definition make sure a set exists
-    const matchingSet = focalSets.find(set => setDef.name === set.name && setDef.description === set.description);
-    if (matchingSet) {
-      // make sure length is same (ie. no deleted defs)
-      if (matchingSet.foci.length !== setDef.focus_definitions.length) {
-        return false;
-      }
-      // for each focus definined make sure a focus exists in that set
-      const macthingFoci = setDef.focus_definitions.map((def) => {
-        const matchingFocus = matchingSet.foci.find(focus => def.name === focus.name && def.query === focus.query && def.description === focus.description);
-        return matchingFocus !== undefined;
-      });
-      return !macthingFoci.includes(false);
-    }
-    return false;
-  });
-  return eachHasMatch.includes(false);
-}
-
-function latestSnapshotIsRunning(snapshots) {
-  const latestSnapshot = snapshots[0];
-  return (latestSnapshot.state === 'running') || ((latestSnapshot.state === 'completed') && (latestSnapshot.searchable === 0));
-}
-
-const fetchAsyncData = (dispatch, { topicId, snapshotId, snapshots, intl, focalSets }) => {
-  if (!nullOrUndefined(topicId) && !nullOrUndefined(snapshotId)) {
-    // here we want to determine if the topic needs a new snapshot and let everything know
-    dispatch(fetchFocalSetDefinitions(topicId))
-      .then((focalSetDefinitions) => {
-        if (pendingFocalSetDefinitions(focalSetDefinitions, focalSets) && !latestSnapshotIsRunning(snapshots)) {
-          dispatch(setTopicNeedsNewSnapshot(true));
-          dispatch(addNotice({
-            level: LEVEL_WARNING,
-            htmlMessage: intl.formatHTMLMessage(localMessages.summaryMessage, {
-              url: `#/topics/${topicId}/snapshot/generate`,
-            }),
-          }));
-        }
-      });
-  }
-};
+const fetchAsyncData = () => false;
 
 export default
 injectIntl(

@@ -11,7 +11,7 @@ import messages from '../../../../resources/messages';
 import JobDate from './JobDate';
 
 const localMessages = {
-  title: { id: 'version.error.title', defaultMessage: 'Version {number} - Too Big ({storyCount} stories)' },
+  title: { id: 'version.error.title', defaultMessage: 'Version {number} - <span class="error-background">Too Big ({storyCount} stories)</span>' },
   explanationTitle: { id: 'version.error.explanation.title', defaultMessage: 'What\'s the Problem?' },
   explanationText: { id: 'version.error.explanation.text', defaultMessage: 'Due to limitations in our infrastructure, you are limited to created topics that have a total of {maxTopicStories} stories (after spidering).  Your topic started with {seedStoryCount} stories in its seed query (see the box to the right).  Spidering added so many that it has now surpassed the {maxTopicStories} story maximum, reaching {totalCount} stories so far.  Unfortunatley we don’t have enough computational resources to support users creating topics that big, so we\'ve stopped your topic from generating completely.' },
   whatNowTitle: { id: 'version.error.explanation2.title', defaultMessage: 'What Should I Do Now?' },

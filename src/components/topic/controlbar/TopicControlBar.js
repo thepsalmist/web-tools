@@ -38,7 +38,7 @@ const mostRecentSnapshotIs = (snapshots, topic, states) => {
   return states.includes(snapshots[snapshots.length - 1].state);
 };
 
-const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, goToUrl, snapshots, intl, selectedSnapshot }) => (
+const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, goToUrl, snapshots, intl, selectedSnapshot, latestSnapshot }) => (
   <div className="controlbar controlbar-topic">
     <div className="main">
       <Grid>
@@ -90,7 +90,7 @@ const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, 
                     <TabbedChip message={localMessages.latestRunning} />
                   )}
                   {(selectedSnapshot)
-                    && (selectedSnapshot.snapshots_id !== snapshots[snapshots.length - 1].snapshots_id)
+                    && (selectedSnapshot.snapshots_id !== latestSnapshot.snapshots_id)
                     && mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_COMPLETED])
                     && (<TabbedChip warning message={localMessages.newerData} />)
                   }
@@ -121,12 +121,14 @@ TopicControlBar.propTypes = {
   filters: PropTypes.object.isRequired,
   snapshots: PropTypes.array,
   selectedSnapshot: PropTypes.object,
+  latestSnapshot: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
   topic: state.topics.selected.info,
   snapshots: state.topics.selected.snapshots.list,
+  latestSnapshot: state.topics.selected.snapshots.latest,
   selectedSnapshot: state.topics.selected.snapshots.selected,
 });
 

@@ -89,9 +89,11 @@ const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, 
                   {mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING]) && (
                     <TabbedChip message={localMessages.latestRunning} />
                   )}
-                  {(selectedSnapshot.snapshots_id !== snapshots[snapshots.length - 1].snapshots_id) && mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_COMPLETED]) && (
-                    <TabbedChip warning message={localMessages.newerData} />
-                  )}
+                  {(selectedSnapshot)
+                    && (selectedSnapshot.snapshots_id !== snapshots[snapshots.length - 1].snapshots_id)
+                    && mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_COMPLETED])
+                    && (<TabbedChip warning message={localMessages.newerData} />)
+                  }
                 </LinkWithFilters>
               </div>
             </Permissioned>

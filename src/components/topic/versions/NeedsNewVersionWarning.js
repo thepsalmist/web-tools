@@ -14,9 +14,14 @@ const localMessages = {
   needsNewSnapshotAction: { id: 'topic.needsNewSnapshot.subtopics.action', defaultMessage: 'Finish up and generate' },
 };
 
+// TODO: move this into a reducer
+export function needsNewVersion(usingLatest, newDefinitions, latestVersionRunning) {
+  return usingLatest && newDefinitions && !latestVersionRunning;
+}
+
 const NeedsNewVersionWarning = ({ topicId, newDefinitions, latestVersionRunning, usingLatest }) => (
   <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-    {usingLatest && newDefinitions && !latestVersionRunning && (
+    {needsNewVersion(usingLatest, newDefinitions, latestVersionRunning) && (
       <div className="warning-background">
         <Grid>
           <Row>
@@ -47,9 +52,9 @@ NeedsNewVersionWarning.propTypes = {
 
 const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
+  usingLatest: state.topics.selected.snapshots.usingLatest,
   newDefinitions: state.topics.selected.focalSets.all.newDefinitions,
   latestVersionRunning: state.topics.selected.snapshots.latestVersionRunning,
-  usingLatest: state.topics.selected.snapshots.usingLatest,
 });
 
 export default

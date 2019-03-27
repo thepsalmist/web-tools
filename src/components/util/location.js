@@ -29,8 +29,8 @@ export function filteredLocation(location, filters) {
   });
 }
 
-export function filteredLinkTo(to, filters) {
-  let query;
+export function filteredLinkTo(to, filters, baseQuery) {
+  let query = baseQuery || {};
   // don't add filters if there are none
   if (filters.snapshotId || parseId(filters.timespanId) || parseId(filters.focusId) || filters.q) {
     query = {
@@ -38,6 +38,7 @@ export function filteredLinkTo(to, filters) {
       timespanId: parseId(filters.timespanId),
       focusId: parseId(filters.focusId),
       q: filters.q,
+      ...query,
     };
   }
   return { pathname: to, query };

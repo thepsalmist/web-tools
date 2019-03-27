@@ -17,7 +17,7 @@ const SeedQuerySummary = (props) => {
   sourcesAndCollections = topic.media_tags ? [...sourcesAndCollections, ...topic.media_tags] : sourcesAndCollections;
   return (
     <div className="topic-info-sidebar">
-      <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: snapshot.note }} /></h2>
+      <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: snapshot ? snapshot.note : '' }} /></h2>
       <p><FormattedMessage {...localMessages.seedQueryCount} values={{ storyCount: intl.formatNumber(topic.seed_query_story_count) }} /></p>
       <p>
         <b><FormattedHTMLMessage {...messages.topicQueryProp} /></b>

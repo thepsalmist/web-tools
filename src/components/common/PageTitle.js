@@ -39,13 +39,7 @@ const PageTitle = (props) => {
     passedInTitle += TITLE_SEPARATOR;
   }
   const titleString = `${passedInTitle}${formatMessage(nameForApp())}${TITLE_SEPARATOR}${formatMessage(messages.suiteName)}`;
-  return (
-    <Helmet>
-      <title>
-        {titleString}
-      </title>
-    </Helmet>
-  );
+  return <Helmet title={titleString} />;
 };
 
 PageTitle.propTypes = {

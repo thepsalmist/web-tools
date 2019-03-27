@@ -1,19 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedHTMLMessage } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import { fetchUserQueuedAndRunningTopics } from '../../../actions/topicActions';
-import { WarningNotice } from '../../common/Notice';
 import TopicBuilderWizard from './TopicBuilderWizard';
-import { getUserRoles, hasPermissions, PERMISSION_TOPIC_ADMIN } from '../../../lib/auth';
 import PageTitle from '../../common/PageTitle';
 import { TOPIC_FORM_MODE_EDIT } from './TopicForm';
 
 const localMessages = {
   introTitle: { id: 'topic.modify.pageTitle', defaultMessage: 'Change Topic Seed Query: Configure' },
   introDesc: { id: 'topic.modify.pageDesc', defaultMessage: 'Updating these fields will create a new version of your topic.' },
-  cannotUpdateTopic: { id: 'topic.modify.cannotUpdate', defaultMessage: 'You don\'t have the privileges to update this topic.' },
   previewTitle: { id: 'topic.modify.preview.title', defaultMessage: 'Change Topic Seed Query: Preview' },
   previewDesc: { id: 'topic.modify.preview.about',
     defaultMessage: '<b>Make sure your topic looks right before you create a new version</b>. We start your version by finding all the stories in our database that match your query. From there we follow all the links and download them. We check if they match your keywords, and if they do then we add them to your topic (this is called "spidering"). Check the result below and make sure your topic is finding you the stories you want before creating it.' },
@@ -30,15 +25,8 @@ const localMessages = {
   newVersion: { id: 'topic.modify.newVersion', defaultMessage: 'New Version' },
 };
 
-const EditWizardTopicContainer = (props) => {
-  const { user, topicInfo } = props;
-  const { formatMessage } = props.intl;
-  // users can only have one running topic at once
-  if (!hasPermissions(getUserRoles(user), PERMISSION_TOPIC_ADMIN)) {
-    return (
-      <WarningNotice><FormattedHTMLMessage {...localMessages.cannotUpdateTopic} /></WarningNotice>
-    );
-  }
+const EditWizardTopicContainer = ({ topic, location, intl }) => {
+  const { formatMessage } = intl;
   const stepTexts = [
     {
       title: formatMessage(localMessages.introTitle),
@@ -65,10 +53,10 @@ const EditWizardTopicContainer = (props) => {
       <PageTitle value={localMessages.pageTitle} />
       <TopicBuilderWizard
         startStep={0}
-        location={window.location}
+        location={location}
         mode={TOPIC_FORM_MODE_EDIT}
         currentStepTexts={stepTexts}
-        topicInfo={topicInfo}
+        topic={topic}
       />
     </React.Fragment>
   );
@@ -81,28 +69,16 @@ EditWizardTopicContainer.propTypes = {
   // from store
   canCreateTopic: PropTypes.bool,
   runningTopics: PropTypes.array,
-  user: PropTypes.object,
-  topicId: PropTypes.number,
-  topicInfo: PropTypes.object,
+  topic: PropTypes.object,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  fetchStatus: state.topics.modify.userRunningTopicStatus.fetchStatus,
-  canCreateTopic: state.topics.modify.userRunningTopicStatus.allowed,
-  runningTopics: state.topics.modify.userRunningTopicStatus.runningTopics,
-  user: state.user,
-  formData: state.form.topicForm,
-  topicId: parseInt(ownProps.params.topicId, 10),
-  topicInfo: state.topics.selected.info,
+const mapStateToProps = state => ({
+  topic: state.topics.selected.info,
 });
-
-const fetchAsyncData = dispatch => dispatch(fetchUserQueuedAndRunningTopics());
 
 export default
 injectIntl(
   connect(mapStateToProps)(
-    withAsyncData(fetchAsyncData)(
-      EditWizardTopicContainer
-    )
+    EditWizardTopicContainer
   )
 );

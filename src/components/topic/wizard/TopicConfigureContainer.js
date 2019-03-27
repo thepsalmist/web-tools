@@ -1,14 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { push } from 'react-router-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
 import { injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import withIntlForm from '../../common/hocs/IntlForm';
 import TopicForm, { TOPIC_FORM_MODE_EDIT } from './TopicForm';
-import { goToTopicStep } from '../../../actions/topicActions';
 import { fetchSystemUser } from '../../../actions/systemActions';
 import messages from '../../../resources/messages';
 import { getCurrentDate, getMomentDateSubtraction } from '../../../lib/dateUtil';
@@ -23,7 +21,7 @@ const localMessages = {
 const formSelector = formValueSelector('topicForm');
 
 const TopicConfigureContainer = (props) => {
-  const { finishStep, handleMediaChange, handleMediaDelete, formData, maxStories, currentStepText, mode, topicInfo } = props;
+  const { onStepChange, handleMediaChange, handleMediaDelete, formData, maxStories, currentStepText, mode, topicInfo } = props;
   const { formatMessage } = props.intl;
   const endDate = getCurrentDate();
   const startDate = getMomentDateSubtraction(endDate, 3, 'months');
@@ -51,7 +49,7 @@ const TopicConfigureContainer = (props) => {
       </Row>
       <TopicForm
         initialValues={initialValues}
-        onSubmit={() => finishStep(1, mode)}
+        onSubmit={() => onStepChange(mode, 1)}
         title={formatMessage(localMessages.addCollectionsTitle)}
         intro={formatMessage(localMessages.addCollectionsIntro)}
         mode={mode}
@@ -70,6 +68,7 @@ TopicConfigureContainer.propTypes = {
   currentStepText: PropTypes.object,
   mode: PropTypes.string.isRequired,
   topicInfo: PropTypes.object,
+  onStepChange: PropTypes.func.isRequired,
   // form composition
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
@@ -81,7 +80,6 @@ TopicConfigureContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   maxStories: PropTypes.number,
   // from dispatch
-  finishStep: PropTypes.func.isRequired,
   handleMediaChange: PropTypes.func.isRequired,
   handleMediaDelete: PropTypes.func.isRequired,
 };
@@ -94,14 +92,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  finishStep: (step, mode) => {
-    let topicPhrase = '';
-    if (mode === TOPIC_FORM_MODE_EDIT) {
-      topicPhrase = `/${ownProps.topicInfo.topics_id}`;
-    }
-    dispatch(push(`/topics${topicPhrase}/${mode}/${step}`));
-    dispatch(goToTopicStep(step));
-  },
   handleMediaChange: (sourceAndCollections) => {
     // take selections from mediaPicker and push them back into topicForm
     const updatedSources = sourceAndCollections.filter(m => m.type === 'source' || m.media_id);

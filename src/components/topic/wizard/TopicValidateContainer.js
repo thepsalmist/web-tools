@@ -3,7 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import { push } from 'react-router-redux';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -13,7 +12,6 @@ import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import AppButton from '../../common/AppButton';
 import StoryFeedbackRow from './StoryFeedbackRow';
 import { goToTopicStep, fetchStorySampleByQuery } from '../../../actions/topicActions';
-import { TOPIC_FORM_MODE_EDIT } from './TopicForm';
 
 const NUM_TO_SHOW = 30;
 const VALIDATION_CUTOFF = 0.9;
@@ -43,8 +41,8 @@ class TopicValidateContainer extends React.Component {
   }
 
   handleWarningIgnore = () => {
-    const { handleNextStep, mode } = this.props;
-    handleNextStep(mode);
+    const { onStepChange, mode } = this.props;
+    onStepChange(mode, 3);
   }
 
   handleYesClick = (options, prevSelection) => {
@@ -62,16 +60,16 @@ class TopicValidateContainer extends React.Component {
   }
 
   handleConfirm = () => {
-    const { handleNextStep, total } = this.props;
+    const { onStepChange, total, mode } = this.props;
     if (this.state.matchCount >= (VALIDATION_CUTOFF * total)) {
-      handleNextStep();
+      onStepChange(mode, 3);
     } else {
       this.setState({ warningOpen: true });
     }
   }
 
   render = () => {
-    const { handlePreviousStep, stories, mode, currentStepText } = this.props;
+    const { onStepChange, stories, mode, currentStepText } = this.props;
     const { formatMessage } = this.props.intl;
 
     return (
@@ -109,7 +107,7 @@ class TopicValidateContainer extends React.Component {
         <br />
         <Row>
           <Col lg={12} md={12} sm={12}>
-            <AppButton label={formatMessage(localMessages.prev)} onClick={() => handlePreviousStep(mode)} />
+            <AppButton label={formatMessage(localMessages.prev)} onClick={() => onStepChange(mode, 1)} />
             &nbsp; &nbsp;
             <AppButton
               type="submit"
@@ -135,7 +133,7 @@ class TopicValidateContainer extends React.Component {
             </p>
           </DialogContent>
           <DialogActions>
-            <AppButton label={formatMessage(localMessages.warningIgnore)} onClick={this.handleWarningIgnore}>
+            <AppButton label={formatMessage(localMessages.warningIgnore, { mode })} onClick={this.handleWarningIgnore}>
               <FormattedMessage {...localMessages.warningIgnore} values={{ mode }} />
             </AppButton>
             <AppButton label={formatMessage(localMessages.warningOk)} onClick={this.handleWarningOk} primary>
@@ -153,6 +151,7 @@ TopicValidateContainer.propTypes = {
   location: PropTypes.object.isRequired,
   currentStepText: PropTypes.object,
   mode: PropTypes.string.isRequired,
+  onStepChange: PropTypes.func.isRequired,
   // form composition
   intl: PropTypes.object.isRequired,
   // from state
@@ -160,8 +159,6 @@ TopicValidateContainer.propTypes = {
   total: PropTypes.number.isRequired,
   stories: PropTypes.array.isRequired,
   // from dispatch
-  handlePreviousStep: PropTypes.func.isRequired,
-  handleNextStep: PropTypes.func.isRequired,
   handleEditSeedQueryRequest: PropTypes.func.isRequired,
   // from form
   formData: PropTypes.object,
@@ -175,26 +172,9 @@ const mapStateToProps = state => ({
   stories: state.topics.modify.preview.matchingStories.list,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   handleEditSeedQueryRequest: () => {
     dispatch(goToTopicStep(0));
-  },
-  handlePreviousStep: (mode) => {
-    let topicPhrase = '';
-    if (mode === TOPIC_FORM_MODE_EDIT) {
-      topicPhrase = `/${ownProps.topicInfo.topics_id}`;
-    }
-    dispatch(push(`/topics${topicPhrase}/${mode}/1`));
-
-    dispatch(goToTopicStep(1));
-  },
-  handleNextStep: (mode) => {
-    let topicPhrase = '';
-    if (mode === TOPIC_FORM_MODE_EDIT) {
-      topicPhrase = `/${ownProps.topicInfo.topics_id}`;
-    }
-    dispatch(push(`/topics${topicPhrase}/${mode}/3`));
-    dispatch(goToTopicStep(3));
   },
 });
 

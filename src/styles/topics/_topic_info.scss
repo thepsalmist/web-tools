@@ -20,6 +20,21 @@
   padding: 30px;
   margin-top: 40px;
 
+  p {
+    b {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    &:last-child {
+      margin-bottom: 0px;
+    }
+  }
+
+  code {
+    display: block;
+  }
+
   h2 {
     margin-top: 0px;
   }

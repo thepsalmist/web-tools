@@ -47,8 +47,6 @@ const TopicVersionErrorStatusContainer = ({ topic, goToCreateNewVersion, snapsho
                 <AppButton
                   label={intl.formatMessage(messages.createNewVersion)}
                   onClick={() => goToCreateNewVersion(topic.topics_id)}
-                  type="submit"
-                  primary
                 />
               </div>
             </Permissioned>

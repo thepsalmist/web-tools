@@ -10,7 +10,7 @@ const FocalSetDefinitionSummary = ({ focalSetDefs, snapshot }) => (
   <div className="topic-info-sidebar">
     <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: snapshot.note }} /></h2>
     {focalSetDefs.sort((a, b) => a.name.localeCompare(b.name)).map(fs => (
-      <p key={fs.focal_set_definitions_id}><b>{fs.name}</b>: {fs.focus_definitions.map(f => f.name).join(', ')}</p>
+      <p key={fs.focal_set_definitions_id}><b>{fs.name}</b> {fs.focus_definitions.map(f => f.name).join(', ')}</p>
     ))}
   </div>
 );

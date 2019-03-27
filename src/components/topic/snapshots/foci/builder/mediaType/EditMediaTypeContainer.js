@@ -19,19 +19,16 @@ const localMessages = {
 };
 
 const EditMediaTypeContainer = (props) => {
-  const { topicId, onPreviousStep, handleSubmit, finishStep, formData, initialValues, location } = props;
+  const { topicId, onPreviousStep, handleSubmit, finishStep, formData, initialValues } = props;
   const { formatMessage } = props.intl;
-  let content = null;
   let mediaTypeSelected = initialValues.mediaType;
   if (formData && formData.values.mediaType) {
     mediaTypeSelected = formData.values.mediaType;
   }
 
-  if (!location.query.timespan_id) {
-    content = <FormattedMessage {...messages.topicNotCompleteNoPreview} />;
-  } else {
-    content = (
-      <div>
+  return (
+    <Grid>
+      <form className="focus-create-media-type" name="focusCreateEditMediaTypeForm" onSubmit={handleSubmit(finishStep.bind(this))}>
         <Row>
           <Col lg={8} md={12}>
             <h1><FormattedMessage {...localMessages.title} /></h1>
@@ -48,14 +45,6 @@ const EditMediaTypeContainer = (props) => {
             <MediaTypeStoryCountsPreviewContainer topicId={topicId} mediaTypeSelected={mediaTypeSelected} />
           </Col>
         </Row>
-      </div>
-    );
-  }
-
-  return (
-    <Grid>
-      <form className="focus-create-media-type" name="focusCreateEditMediaTypeForm" onSubmit={handleSubmit(finishStep.bind(this))}>
-        {content}
         <Row>
           <Col lg={8} xs={12}>
             <br />
@@ -84,7 +73,6 @@ EditMediaTypeContainer.propTypes = {
   finishStep: PropTypes.func.isRequired,
   // from compositional helper
   intl: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,
   renderSelect: PropTypes.func.isRequired,

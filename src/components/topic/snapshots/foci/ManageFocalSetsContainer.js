@@ -15,6 +15,7 @@ import FocalSetDefinitionDetails from './FocalSetDefinitionDetails';
 import BackLinkingControlBar from '../../BackLinkingControlBar';
 import FocusIcon from '../../../common/icons/FocusIcon';
 import NewVersionFociComparisonContainer from './NewVersionFociComparisonContainer';
+import NeedsNewVersionWarning from '../../versions/NeedsNewVersionWarning';
 
 const localMessages = {
   listTitle: { id: 'focalSets.list.title', defaultMessage: 'Subtopics' },
@@ -61,6 +62,7 @@ class ManageFocalSetsContainer extends React.Component {
     return (
       <div className="manage-focal-sets">
         <BackLinkingControlBar message={localMessages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
+        <NeedsNewVersionWarning />
         <Grid>
           <Row>
             <Col lg={12}>

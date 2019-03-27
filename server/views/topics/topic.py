@@ -216,44 +216,48 @@ def topic_set_favorited(topics_id):
 @flask_login.login_required
 @api_error_handler
 def topic_update(topics_id):
-
     user_mc = user_admin_mediacloud_client()
-    # top five cannot be empty fyi
-    args = {
-        'name': request.form['name'] if 'name' in request.form else None,
-        'description': request.form['description'] if 'description' in request.form else None,
-        'solr_seed_query': request.form['solr_seed_query'] if 'solr_seed_query' in request.form else None,
-        'start_date': request.form['start_date'] if 'start_date' in request.form else None,
-        'end_date': request.form['end_date'] if 'end_date' in request.form else None,
-        'is_public': request.form['is_public'] if 'is_public' in request.form else None,
-        'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
-        'ch_monitor_id': request.form['ch_monitor_id'] if 'ch_monitor_id' in request.form
-                                                          and request.form['ch_monitor_id'] != 'null'
-                                                          and len(request.form['ch_monitor_id']) > 0 else None,
-        'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
-        'max_stories': request.form['max_stories'] if 'max_stories' in request.form else None,
-        'twitter_topics_id': request.form['twitter_topics_id'] if 'twitter_topics_id' in request.form else None
-    }
 
-    # parse out any sources and collections to add
-    media_ids_to_add = ids_from_comma_separated_str(request.form['sources[]'] if 'sources[]' in request.form else '')
-    tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]']
-                                                  if 'collections[]' in request.form else '')
-    # hack to support twitter-only topics
-    if (len(media_ids_to_add) is 0) and (len(tag_ids_to_add) is 0):
-        media_ids_to_add = None
-        tag_ids_to_add = None
-
-    result = user_mc.topicUpdate(topics_id,  media_ids=media_ids_to_add, media_tags_ids=tag_ids_to_add, **args)
-    snapshots = user_mc.topicSnapshotList(topics_id)
-    snapshots = sorted(snapshots, key=lambda d: d['snapshot_date'])
-
-    # create snapshot and then spider
-    topic_version = len(snapshots) + 1
-    new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=topic_version)['snapshot']
-    # TODO: to be determined if the admin wants to change the seed query - we may change vs create new version
-    user_mc.topicSpider(topics_id, new_snapshot['snapshots_id'])  # kick off a spider, which will also fill/generate snapshot data
-
+    # start it ether as a new version, or start regenerating the existig version
+    if ('snapshotId' in request.form) and len(request.form['snapshotId']) > 0:
+        # add the subtopics to the current version (do NOT change the seed query)
+        # TODO: figure out how to call this correctly
+        result = user_mc.topicGenerateSnapshot(topics_id, snapshots_id=request.form['snapshotId'])
+    else:
+        # update the seed query (first 5 MUST be filled in)
+        args = {
+            'name': request.form['name'] if 'name' in request.form else None,
+            'description': request.form['description'] if 'description' in request.form else None,
+            'solr_seed_query': request.form['solr_seed_query'] if 'solr_seed_query' in request.form else None,
+            'start_date': request.form['start_date'] if 'start_date' in request.form else None,
+            'end_date': request.form['end_date'] if 'end_date' in request.form else None,
+            'is_public': request.form['is_public'] if 'is_public' in request.form else None,
+            'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
+            'ch_monitor_id': request.form['ch_monitor_id'] if 'ch_monitor_id' in request.form
+                                                              and request.form['ch_monitor_id'] != 'null'
+                                                              and len(request.form['ch_monitor_id']) > 0 else None,
+            'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
+            'max_stories': request.form['max_stories'] if 'max_stories' in request.form else None,
+            'twitter_topics_id': request.form['twitter_topics_id'] if 'twitter_topics_id' in request.form else None
+        }
+        # parse out any sources and collections to add
+        media_ids_to_add = ids_from_comma_separated_str(
+            request.form['sources[]'] if 'sources[]' in request.form else '')
+        tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]']
+                                                      if 'collections[]' in request.form else '')
+        # hack to support twitter-only topics
+        if (len(media_ids_to_add) is 0) and (len(tag_ids_to_add) is 0):
+            media_ids_to_add = None
+            tag_ids_to_add = None
+        result = user_mc.topicUpdate(topics_id, media_ids=media_ids_to_add, media_tags_ids=tag_ids_to_add, **args)
+        # figure out new snapshot version number
+        snapshots = user_mc.topicSnapshotList(topics_id)
+        snapshots = sorted(snapshots, key=lambda d: d['snapshot_date'])
+        topic_version = len(snapshots) + 1
+        # make the new snapshot (empty)
+        new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=topic_version)['snapshot']
+        # and start the spidering process
+        user_mc.topicSpider(topics_id, new_snapshot['snapshots_id'])
     return topic_summary(result['topics'][0]['topics_id'])  # give them back new data, so they can update the client
 
 

@@ -7,6 +7,10 @@ import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 
 // Return true if there are focal set changes that require a new snapshot
 function pendingFocalSetDefinitions(definitions, focalSets) {
+  // differet total number
+  if (definitions.length !== focalSets.length) {
+    return true;
+  }
   // has match?
   const eachHasMatch = definitions.map((setDef) => {
     // for each focal set definition make sure a set exists

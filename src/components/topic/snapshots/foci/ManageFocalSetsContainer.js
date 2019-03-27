@@ -60,59 +60,61 @@ class ManageFocalSetsContainer extends React.Component {
     const { topicId, focalSetDefinitions } = this.props;
     const { formatMessage } = this.props.intl;
     return (
-      <div className="manage-focal-sets">
+      <React.Fragment>
         <BackLinkingControlBar message={localMessages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
         <NeedsNewVersionWarning />
-        <Grid>
-          <Row>
-            <Col lg={12}>
-              <h1><FocusIcon /><FormattedMessage {...messages.manageFoci} /></h1>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={10} xs={12}>
-              <p>
-                <FormattedMessage {...localMessages.focalSetsManageAbout} />
-              </p>
-            </Col>
-          </Row>
-          <NewVersionFociComparisonContainer />
-          <Row>
-            <Col lg={10} xs={12}>
-              <div className="focal-set-definition-list">
-                <h2><FormattedMessage {...localMessages.listTitle} /></h2>
-                {focalSetDefinitions.map((focalSetDef, idx) => (
-                  <FocalSetDefinitionDetails
-                    key={idx}
-                    focalSetDefinition={focalSetDef}
-                    onDelete={this.handleDelete}
-                    onFocusDefinitionDelete={this.onFocusDefinitionDelete}
-                    topicId={topicId}
-                  />
-                ))}
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={6}>
-              <div id="create-foci-button">
-                <Link to={`/topics/${topicId}/snapshot/foci/create`}>
-                  <AppButton primary label={formatMessage(messages.addFocus)}>{formatMessage(messages.addFocus)}</AppButton>
-                </Link>
-              </div>
-            </Col>
-          </Row>
-        </Grid>
-        <ConfirmationDialog
-          open={this.state.removeDialogOpen}
-          title={formatMessage(localMessages.removeFocalSetTitle)}
-          okText={formatMessage(localMessages.removeOk)}
-          onCancel={this.onCancelDeleteFocalSetDefinition}
-          onOk={this.onDeleteFocalSetDefinition}
-        >
-          <FormattedHTMLMessage {...localMessages.removeFocalSetAbout} />
-        </ConfirmationDialog>
-      </div>
+        <div className="manage-focal-sets">
+          <Grid>
+            <Row>
+              <Col lg={12}>
+                <h1><FocusIcon /><FormattedMessage {...messages.manageFoci} /></h1>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={10} xs={12}>
+                <p>
+                  <FormattedMessage {...localMessages.focalSetsManageAbout} />
+                </p>
+              </Col>
+            </Row>
+            <NewVersionFociComparisonContainer />
+            <Row>
+              <Col lg={10} xs={12}>
+                <div className="focal-set-definition-list">
+                  <h2><FormattedMessage {...localMessages.listTitle} /></h2>
+                  {focalSetDefinitions.map((focalSetDef, idx) => (
+                    <FocalSetDefinitionDetails
+                      key={idx}
+                      focalSetDefinition={focalSetDef}
+                      onDelete={this.handleDelete}
+                      onFocusDefinitionDelete={this.onFocusDefinitionDelete}
+                      topicId={topicId}
+                    />
+                  ))}
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={6}>
+                <div id="create-foci-button">
+                  <Link to={`/topics/${topicId}/snapshot/foci/create`}>
+                    <AppButton primary label={formatMessage(messages.addFocus)}>{formatMessage(messages.addFocus)}</AppButton>
+                  </Link>
+                </div>
+              </Col>
+            </Row>
+          </Grid>
+          <ConfirmationDialog
+            open={this.state.removeDialogOpen}
+            title={formatMessage(localMessages.removeFocalSetTitle)}
+            okText={formatMessage(localMessages.removeOk)}
+            onCancel={this.onCancelDeleteFocalSetDefinition}
+            onOk={this.onDeleteFocalSetDefinition}
+          >
+            <FormattedHTMLMessage {...localMessages.removeFocalSetAbout} />
+          </ConfirmationDialog>
+        </div>
+      </React.Fragment>
     );
   }
 }

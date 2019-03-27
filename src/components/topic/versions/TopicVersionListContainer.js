@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import Link from 'react-router/lib/Link';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import LinkWithFilters from '../LinkWithFilters';
 import AppButton from '../../common/AppButton';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import messages from '../../../resources/messages';
@@ -84,7 +84,7 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
         </Row>
         <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
           {versionListContent}
-          <Link to={`/topics/${topicId}/new-version`}>
+          <LinkWithFilters to={`/topics/${topicId}/new-version`}>
             <AppButton
               style={{ marginTop: 30 }}
               type="submit"
@@ -92,7 +92,7 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
               label={formatMessage(localMessages.createButton)}
               primary
             />
-          </Link>
+          </LinkWithFilters>
         </Permissioned>
       </Grid>
 

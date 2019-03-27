@@ -48,12 +48,13 @@ const TopicNewVersionContainer = props => (
         <Col lg={5}>
           <h2><FormattedMessage {...localMessages.addNewSubtopics} /></h2>
           <p><FormattedMessage {...localMessages.addNewSubtopicsDesc} /></p>
-          <AppButton
-            label={props.intl.formatMessage(localMessages.addNewSubtopics)}
-            onClick={() => props.goToUrl(`/topics/${props.topicId}/snapshot/foci`, props.filters)}
-            primary
-            disabled={!props.allowedToRun}
-          />
+          <LinkWithFilters to={`/topics/${props.topicId}/snapshot/foci`}>
+            <AppButton
+              label={props.intl.formatMessage(localMessages.addNewSubtopics)}
+              primary
+              disabled={!props.allowedToRun}
+            />
+          </LinkWithFilters>
         </Col>
       </Row>
     </Grid>

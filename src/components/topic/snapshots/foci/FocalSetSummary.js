@@ -12,7 +12,7 @@ const FocalSetSummary = ({ focalSets, snapshot }) => (
     <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: snapshot.note }} /></h2>
     {(focalSets.length === 0) && <FormattedMessage {...localMessages.none} />}
     {focalSets.sort((a, b) => a.name.localeCompare(b.name)).map(fs => (
-      <p key={fs.focal_sets_id}><b>{fs.name}</b>: {fs.foci.map(f => f.name).join(', ')}</p>
+      <p key={fs.focal_sets_id}><b>{fs.name}</b> {fs.foci.map(f => f.name).join(', ')}</p>
     ))}
   </div>
 );

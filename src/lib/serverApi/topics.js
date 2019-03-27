@@ -239,8 +239,8 @@ export function updateAndCreateNewTopicVersion(topicId, params) {
   return createPostingApiPromise(`/api/topics/${topicId}/update`, acceptedParams, 'put');
 }
 
-export function updateTopicVersionSubtopics(topicId, currentVersion) {
-  return createPostingApiPromise(`/api/topics/${topicId}/update`, { current_version: currentVersion }, 'put');
+export function updateTopicVersionSubtopics(topicId, snapshotId) {
+  return createPostingApiPromise(`/api/topics/${topicId}/update`, { snapshotId }, 'put');
 }
 
 export function topicMapFiles(topicId, params) {

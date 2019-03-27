@@ -22,6 +22,7 @@ import FociStoryCountComparisonContainer from './FociStoryCountComparisonContain
 import TopicWordSpaceContainer from './TopicWordSpaceContainer';
 import TabSelector from '../../common/TabSelector';
 import messages from '../../../resources/messages';
+import SeedQuerySummary from '../versions/SeedQuerySummary';
 
 const localMessages = {
   title: { id: 'topic.summary.summary.title', defaultMessage: 'Topic: {name}' },
@@ -36,17 +37,17 @@ class TopicSummaryContainer extends React.Component {
   };
 
   filtersAreSet() {
-    const { filters, topicId } = this.props;
-    return (topicId && filters.snapshotId && filters.timespanId);
+    const { filters, topic } = this.props;
+    return (topic.topics_id && filters.snapshotId && filters.timespanId);
   }
 
   render() {
-    const { filters, topicId, topicInfo, selectedTimespan, user, location } = this.props;
+    const { filters, topic, selectedTimespan, user, location, selectedSnapshot } = this.props;
     const { formatMessage } = this.props.intl;
     let content = <div />;
     let intro = null;
     if (!user.isLoggedIn) {
-      intro = (<p><FormattedMessage {...localMessages.previewIntro} values={{ name: topicInfo.name }} /></p>);
+      intro = (<p><FormattedMessage {...localMessages.previewIntro} values={{ name: topic.name }} /></p>);
     }
     // only show filtered story counts if you have a filter in place
     let filteredStoryCountContent = null;
@@ -54,7 +55,7 @@ class TopicSummaryContainer extends React.Component {
       filteredStoryCountContent = (
         <Row>
           <Col lg={12}>
-            <StoryTotalsSummaryContainer topicId={topicId} topicName={topicInfo.name} filters={filters} />
+            <StoryTotalsSummaryContainer topicId={topic.topics_id} topicName={topic.name} filters={filters} />
           </Col>
         </Row>
       );
@@ -68,18 +69,18 @@ class TopicSummaryContainer extends React.Component {
             <React.Fragment>
               <Row>
                 <Col lg={12}>
-                  <StoriesSummaryContainer topicId={topicId} filters={filters} location={location} />
+                  <StoriesSummaryContainer topicId={topic.topics_id} filters={filters} location={location} />
                 </Col>
               </Row>
               <Row>
                 <Col lg={12}>
-                  <MediaSummaryContainer topicId={topicId} filters={filters} location={location} />
+                  <MediaSummaryContainer topicId={topic.topics_id} filters={filters} location={location} />
                 </Col>
               </Row>
               <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
                 <Row>
                   <Col lg={12}>
-                    <DownloadMapContainer topicId={topicId} filters={filters} />
+                    <DownloadMapContainer topicId={topic.topics_id} filters={filters} />
                   </Col>
                 </Row>
               </Permissioned>
@@ -92,7 +93,7 @@ class TopicSummaryContainer extends React.Component {
             <React.Fragment>
               <Row>
                 <Col lg={12}>
-                  <SplitStoryCountSummaryContainer topicId={topicId} filters={filters} />
+                  <SplitStoryCountSummaryContainer topicId={topic.topics_id} filters={filters} />
                 </Col>
               </Row>
             </React.Fragment>
@@ -104,17 +105,17 @@ class TopicSummaryContainer extends React.Component {
             <React.Fragment>
               <Row>
                 <Col lg={12}>
-                  <WordsSummaryContainer topicId={topicId} topicName={topicInfo.name} filters={filters} width={720} />
+                  <WordsSummaryContainer topicId={topic.topics_id} topicName={topic.name} filters={filters} width={720} />
                 </Col>
                 <Col lg={12}>
-                  <TopicWordSpaceContainer topicId={topicId} topicName={topicInfo.name} filters={filters} />
+                  <TopicWordSpaceContainer topicId={topic.topics_id} topicName={topic.name} filters={filters} />
                 </Col>
               </Row>
               <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
                 {filteredStoryCountContent}
                 <Row>
                   <Col lg={12}>
-                    <NytLabelSummaryContainer topicId={topicId} filters={filters} topicName={topicInfo.name} location={location} />
+                    <NytLabelSummaryContainer topicId={topic.topics_id} filters={filters} topicName={topic.name} location={location} />
                   </Col>
                 </Row>
               </Permissioned>
@@ -127,18 +128,18 @@ class TopicSummaryContainer extends React.Component {
             <React.Fragment>
               <Row>
                 <Col lg={12}>
-                  <TopPeopleContainer topicId={topicId} filters={filters} location={location} />
+                  <TopPeopleContainer topicId={topic.topics_id} filters={filters} location={location} />
                 </Col>
               </Row>
               <Row>
                 <Col lg={12}>
-                  <TopOrgsContainer topicId={topicId} filters={filters} location={location} />
+                  <TopOrgsContainer topicId={topic.topics_id} filters={filters} location={location} />
                 </Col>
               </Row>
               <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
                 <Row>
                   <Col lg={12}>
-                    <GeoTagSummaryContainer topicId={topicId} filters={filters} />
+                    <GeoTagSummaryContainer topicId={topic.topics_id} filters={filters} />
                   </Col>
                 </Row>
               </Permissioned>
@@ -152,12 +153,17 @@ class TopicSummaryContainer extends React.Component {
               <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
                 <Row>
                   <Col lg={12}>
-                    <TopicStoryMetadataStatsContainer topicId={topicId} filters={filters} timespan={selectedTimespan} />
+                    <TopicStoryMetadataStatsContainer topicId={topic.topics_id} filters={filters} timespan={selectedTimespan} />
                   </Col>
                 </Row>
                 <Row>
                   <Col lg={12}>
-                    <FociStoryCountComparisonContainer topicId={topicId} filters={filters} />
+                    <FociStoryCountComparisonContainer topicId={topic.topics_id} filters={filters} />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col lg={6}>
+                    <SeedQuerySummary topic={topic} snapshot={selectedSnapshot} />
                   </Col>
                 </Row>
               </Permissioned>
@@ -177,7 +183,7 @@ class TopicSummaryContainer extends React.Component {
             </Row>
             <Row>
               <Col lg={12}>
-                <TopicStoryStatsContainer topicId={topicId} filters={filters} timespan={selectedTimespan} />
+                <TopicStoryStatsContainer topicId={topic.topics_id} filters={filters} timespan={selectedTimespan} />
               </Col>
             </Row>
             <Row>
@@ -217,18 +223,18 @@ TopicSummaryContainer.propTypes = {
   params: PropTypes.object,
   location: PropTypes.object,
   // from state
-  selectedTimespan: PropTypes.object,
   filters: PropTypes.object.isRequired,
-  topicId: PropTypes.number,
-  topicInfo: PropTypes.object,
+  topic: PropTypes.object,
+  selectedTimespan: PropTypes.object,
+  selectedSnapshot: PropTypes.object,
   user: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
-  topicId: state.topics.selected.id,
-  topicInfo: state.topics.selected.info,
+  topic: state.topics.selected.info,
   selectedTimespan: state.topics.selected.timespans.selected,
+  selectedSnapshot: state.topics.selected.snapshots.selected,
   user: state.user,
 });
 

@@ -1,0 +1,65 @@
+@import '../_constants';
+
+.tabbed-chip {
+  display: inline-block;
+  font-size: 12px !important;
+
+  strong {
+    color: white;
+    display: inline-block;
+    padding: 5px 10px 5px 3px;
+    background-color: $topics-primary;
+    border-radius: 0px 15px 15px 0px;
+    margin-top: 0px;
+    font-weight: normal;
+    position: relative;
+
+    &.left-tab {
+      margin-left: 15px;
+      background-color: $topics-primary;
+    }
+    &.left-tab:after {
+      content: "";
+      position: absolute;
+      border-style: solid;
+      display: block;
+      width: 0;
+      top: 0px;
+      left: -12px;
+      bottom: auto;
+      border-width: 12px 12px 12px 0;
+      border-color: transparent $topics-primary;
+    }
+  }
+
+  &.warning {
+    padding: 0;
+    line-height: 15px !important;
+    margin-top: 0px;
+    strong {
+      background-color: $warning-color;
+      &.left-tab {
+        background-color: $warning-color;
+      }
+      &.left-tab:after {
+        border-color: transparent $warning-color;
+      }
+    }
+  }
+
+  &.error {
+    padding: 0;
+    line-height: 15px !important;
+    margin-top: 0px;
+    strong {
+      background-color: $error-color;
+      &.left-tab {
+        background-color: $error-color;
+      }
+      &.left-tab:after {
+        border-color: transparent $error-color;
+      }
+    }
+  }
+
+}

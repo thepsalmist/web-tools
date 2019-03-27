@@ -12,12 +12,12 @@ const localMessages = {
 };
 
 const SeedQuerySummary = (props) => {
-  const { topic, currentVersion, intl } = props;
+  const { topic, snapshot, intl } = props;
   let sourcesAndCollections = topic.media ? [...topic.media] : [];
   sourcesAndCollections = topic.media_tags ? [...sourcesAndCollections, ...topic.media_tags] : sourcesAndCollections;
   return (
     <div className="topic-info-sidebar">
-      <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: currentVersion }} /></h2>
+      <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: snapshot ? snapshot.note : '' }} /></h2>
       <p><FormattedMessage {...localMessages.seedQueryCount} values={{ storyCount: intl.formatNumber(topic.seed_query_story_count) }} /></p>
       <p>
         <b><FormattedHTMLMessage {...messages.topicQueryProp} /></b>
@@ -43,7 +43,7 @@ const SeedQuerySummary = (props) => {
 
 SeedQuerySummary.propTypes = {
   topic: PropTypes.object.isRequired,
-  currentVersion: PropTypes.number.isRequired,
+  snapshot: PropTypes.object,
   intl: PropTypes.object.isRequired,
 };
 

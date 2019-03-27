@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import { push } from 'react-router-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -16,7 +15,7 @@ import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import TopicStoryTable from '../TopicStoryTable';
 import messages from '../../../resources/messages';
-import { urlWithFilters, filteredLocation, filtersAsUrlParams } from '../../util/location';
+import { urlWithFilters, filtersAsUrlParams } from '../../util/location';
 import { HELP_STORIES_CSV_COLUMNS } from '../../../lib/helpConstants';
 
 const localMessages = {
@@ -140,13 +139,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleFocusSelected: (focusId) => {
-    const params = {
-      ...ownProps.filters,
-      focusId,
-      timespanId: null,
-    };
-    const newLocation = filteredLocation(ownProps.location, params);
-    dispatch(push(newLocation));
     dispatch(filterByFocus(focusId));
   },
   sortData: (sort) => {

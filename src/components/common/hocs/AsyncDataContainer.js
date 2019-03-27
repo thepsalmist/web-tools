@@ -26,16 +26,18 @@ const withAsyncData = (fetchAsyncData, propsToRefetchOn, loadingSpinnerSize) => 
         this.handleRefetch();
       }
 
-      componentWillReceiveProps(nextProps) {
+      componentDidUpdate(prevProps) {
         if (propsToRefetchOn) {
           const oneOfPropsChanged = propsToRefetchOn
-            .map(propName => ((!isNaN(this.props[propName]) && !isNaN(nextProps[propName])) && this.props[propName] !== nextProps[propName]))
+            .map(propName => (this.props[propName] !== prevProps[propName]))
             .reduce((combined, item) => combined || item);
           if (oneOfPropsChanged) {
-            fetchAsyncData(this.props.dispatch, nextProps);
+            fetchAsyncData(this.props.dispatch, this.props);
           }
         }
-        if (nextProps.fetchStatus === fetchConstants.FETCH_SUCCEEDED) {
+        if ((this.props.fetchStatus !== prevProps.fetchStatus)
+          && (this.props.fetchStatus === fetchConstants.FETCH_SUCCEEDED)) {
+          // eslint-disable-next-line react/no-did-update-set-state
           this.setState({ hasShowResults: true });
         }
       }

@@ -23,8 +23,8 @@ class Word2VecTimespanPlayer extends React.Component {
     const initialTimespanId = initialTimespan.timespans_id;
 
     const currentPeriodList = props.timespanEmbeddings.filter(x => x.timespan.period === selectedPeriod);
-    const filterByTimespanId = element => (element.timespan.timespans_id === initialTimespanId);
-    const initialIndex = currentPeriodList.findIndex(filterByTimespanId);
+    const timespanFilter = element => (element.timespan.timespans_id === initialTimespanId);
+    const initialIndex = currentPeriodList.findIndex(timespanFilter);
 
     const isPlaying = false;
 
@@ -38,8 +38,8 @@ class Word2VecTimespanPlayer extends React.Component {
     // Reset timespan to selected timespan of parent component
     const selectedPeriod = nextProps.initialTimespan.period;
     const currentPeriodList = timespanEmbeddings.filter(x => x.timespan.period === selectedPeriod);
-    const filterByTimespanId = element => (element.timespan.timespans_id === initialTimespan.timespans_id);
-    const initialIndex = currentPeriodList.findIndex(filterByTimespanId);
+    const timespanFilter = element => (element.timespan.timespans_id === initialTimespan.timespans_id);
+    const initialIndex = currentPeriodList.findIndex(timespanFilter);
     this.setState(() => ({ selectedPeriod, currentPeriodList, currentTimespanIndex: (initialIndex !== -1) ? initialIndex : 0 }));
   }
 

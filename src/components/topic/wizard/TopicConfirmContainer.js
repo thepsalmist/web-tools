@@ -2,20 +2,20 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import { reduxForm, Field } from 'redux-form';
+import { reduxForm } from 'redux-form';
 import { push } from 'react-router-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import messages from '../../../resources/messages';
-import { createTopic, goToTopicStep, updateAndCreateNewTopicVersion } from '../../../actions/topicActions';
+import { createTopic, updateAndCreateNewTopicVersion } from '../../../actions/topicActions';
 import { updateFeedback, addNotice } from '../../../actions/appActions';
 import AppButton from '../../common/AppButton';
 import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/auth';
 import { LEVEL_ERROR, LEVEL_WARNING, WarningNotice } from '../../common/Notice';
 import { MAX_RECOMMENDED_STORIES, MIN_RECOMMENDED_STORIES, WARNING_LIMIT_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 import { TOPIC_FORM_MODE_CREATE, TOPIC_FORM_MODE_EDIT } from './TopicForm';
-import TopicVersionInfo from '../TopicVersionInfo';
+import SeedQuerySummary from '../versions/SeedQuerySummary';
 
 const localMessages = {
   name: { id: 'topic.create.confirm.name', defaultMessage: 'Name' },
@@ -33,18 +33,26 @@ const localMessages = {
 };
 
 const TopicConfirmContainer = (props) => {
-  const { formValues, finishStep, handlePreviousStep, handleSubmit, pristine, submitting, currentStepText, mode, topicInfo } = props;
+  const { formValues, finishStep, onStepChange, handleSubmit, pristine, selectedSnapshot, submitting, currentStepText, mode, topicInfo } = props;
   const { formatMessage } = props.intl;
   let sourcesAndCollections = [];
   sourcesAndCollections = formValues.sourcesAndCollections.filter(s => s.media_id).map(s => s.media_id);
   sourcesAndCollections.concat(formValues.sourcesAndCollections.filter(s => s.tags_id).map(s => s.tags_id));
   let previousVersion = null;
-  let startSpideringOption = null;
   if (mode === TOPIC_FORM_MODE_EDIT) {
-    previousVersion = <Col lg={6}><TopicVersionInfo topicInfo={topicInfo} /></Col>;
+    previousVersion = (
+      <React.Fragment>
+        <Col lg={5}>
+          <SeedQuerySummary topic={topicInfo} snapshot={selectedSnapshot} />
+        </Col>
+        <Col lg={2}>
+          <span style={{ display: 'block', fontSize: '56px', marginTop: '120px', textAlign: 'center' }}>➡</span>
+        </Col>
+      </React.Fragment>
+    );
   }
   const topicNewVersionContent = (
-    <TopicVersionInfo topicInfo={formValues} />
+    <SeedQuerySummary topic={formValues} />
   );
   if (submitting) {
     return (
@@ -73,14 +81,13 @@ const TopicConfirmContainer = (props) => {
         </Row>
         <Row>
           {previousVersion}
-          <Col lg={6}>
-            <h2>{currentStepText.newVersion}</h2>
+          <Col lg={5}>
             {topicNewVersionContent}
           </Col>
         </Row>
         <Row>
           <Col lg={6}>
-            <AppButton label={formatMessage(messages.previous)} onClick={() => handlePreviousStep(mode)} />
+            <AppButton label={formatMessage(messages.previous)} onClick={() => onStepChange(mode, 2)} />
             &nbsp; &nbsp;
             <AppButton
               type="submit"
@@ -101,6 +108,7 @@ TopicConfirmContainer.propTypes = {
   currentStepText: PropTypes.object,
   mode: PropTypes.string.isRequired,
   topicInfo: PropTypes.object,
+  onStepChange: PropTypes.func.isRequired,
   // form context
   intl: PropTypes.object.isRequired,
   handleCreateTopic: PropTypes.func.isRequired,
@@ -110,9 +118,9 @@ TopicConfirmContainer.propTypes = {
   // from state
   user: PropTypes.object.isRequired,
   formValues: PropTypes.object.isRequired,
+  selectedSnapshot: PropTypes.object.isRequired,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
-  handlePreviousStep: PropTypes.func.isRequired,
   storyCount: PropTypes.number,
 };
 
@@ -120,17 +128,10 @@ const mapStateToProps = state => ({
   formValues: state.form.topicForm.values,
   storyCount: state.topics.modify.preview.matchingStoryCounts.count,
   user: state.user,
+  selectedSnapshot: state.topics.selected ? state.topics.selected.snapshots.selected : null,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handlePreviousStep: (mode) => {
-    let topicPhrase = '';
-    if (mode === TOPIC_FORM_MODE_EDIT) {
-      topicPhrase = `/${ownProps.topicInfo.topics_id}`;
-    }
-    dispatch(push(`/topics${topicPhrase}/${mode}/2`));
-    dispatch(goToTopicStep(2));
-  },
   handleCreateTopic: (storyCount, user, values) => {
     if (((storyCount > MIN_RECOMMENDED_STORIES) && (storyCount < MAX_RECOMMENDED_STORIES))
       || hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) { // min/max limits dont apply to admin users

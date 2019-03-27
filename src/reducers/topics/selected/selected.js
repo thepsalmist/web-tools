@@ -16,11 +16,19 @@ import word from './word/word';
 import nytlabels from './nytlabels';
 import geotags from './geotags';
 import snapshotStoryCounts from './snapshotStoryCounts';
+import { parseId } from '../../../lib/numberUtil';
 
 function id(state = null, action) {
   switch (action.type) {
     case SELECT_TOPIC:
-      return action.payload ? parseInt(action.payload, 10) : null;
+      if (action.payload) {
+        if (action.payload !== state) {
+          // only update the topic id if it has changed
+          return parseId(action.payload);
+        }
+        return state;
+      }
+      return null;
     default:
       return state;
   }
@@ -68,7 +76,7 @@ const selected = combineReducers({
 
 const rootReducer = (state, action) => {
   let modifiedState = state;
-  if ((action.type === SELECT_TOPIC) && (state.id !== action.payload)) {
+  if ((action.type === SELECT_TOPIC) && (state.id !== parseId(action.payload))) {
     // when the switch topics re-initialize the whole state tree, to make sure
     // we don't get any weird artifacts from the previuos topic
     // @see: http://stackoverflow.com/questions/35622588/how-to-reset-the-state-of-a-redux-store

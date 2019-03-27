@@ -1,6 +1,7 @@
 import { FETCH_MEDIA, SELECT_MEDIA } from '../../../../actions/topicActions';
 import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 import { mediaSourceMetadataProps } from '../../../../lib/tagUtil';
+import { parseId } from '../../../../lib/numberUtil';
 
 const info = createAsyncReducer({
   initialState: {
@@ -10,7 +11,7 @@ const info = createAsyncReducer({
   [SELECT_MEDIA]: payload => ({ id: payload }),
   handleSuccess: payload => ({
     ...payload,
-    media_id: parseInt(payload.media_id, 10), // make sure it is an int
+    media_id: parseId(payload.media_id),
     ...mediaSourceMetadataProps(payload),
   }),
 });

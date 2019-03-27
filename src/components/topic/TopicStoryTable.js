@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import Link from 'react-router/lib/Link';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import messages from '../../resources/messages';
 import withHelp from '../common/hocs/HelpfulContainer';
@@ -93,12 +92,13 @@ class TopicStoryTable extends React.Component {
                   story.foci.map((foci, i) => (
                     <span key={foci.foci_id}>
                       {!!i && ', '}
-                      <Link
-                        to={`/topics/${topicId}/summary?focusId=${foci.foci_id}`}
+                      <LinkWithFilters
+                        to={`/topics/${topicId}/summary`}
+                        filters={{ focusId: foci.foci_id, timespanId: null }}
                         onClick={() => onChangeFocusSelection(foci.foci_id)}
                       >
                         { foci.name }
-                      </Link>
+                      </LinkWithFilters>
                     </span>
                   )));
                 // listOfFoci = intersperse(listOfFoci, ', ');

@@ -1,11 +1,13 @@
 .topic-version-status-container {
 
-  h2 {
-    padding-bottom: 0px;
+  h1 {
+    .error-background {
+      padding: 10px;
+    }
   }
 
-  .topic-info-sidebar {
-    margin-top: 40px;
+  h2 {
+    padding-bottom: 0px;
   }
 
   .app-button {

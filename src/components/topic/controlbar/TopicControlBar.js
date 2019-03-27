@@ -4,16 +4,14 @@ import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { FormattedMessage, injectIntl } from 'react-intl';
-// import ActiveFiltersContainer from './ActiveFiltersContainer';
-// import FilterSelectorContainer from './FilterSelectorContainer';
 import LinkWithFilters from '../LinkWithFilters';
 import { filteredLinkTo } from '../../util/location';
-import { HomeButton, EditButton /* FilterButton */ } from '../../common/IconButton';
+import { HomeButton, EditButton } from '../../common/IconButton';
+import TabbedChip from '../../common/TabbedChip';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
-// import TimespanSelectorContainer from './timespans/TimespanSelectorContainer';
-// import { REMOVE_FOCUS } from './FocusSelector';
-import AboutTopicDialog from './AboutTopicDialog';
+import { TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
+  TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
 
 const localMessages = {
   permissions: { id: 'topic.changePermissions', defaultMessage: 'Permissions' },
@@ -27,94 +25,111 @@ const localMessages = {
   summaryMessage: { id: 'snapshot.required', defaultMessage: 'You have made some changes that you can only see if you generate a new Snapshot. <a href="{url}">Generate one now</a>.' },
   topicHomepage: { id: 'topic.homepage', defaultMessage: 'Summary' },
   jumpToExplorer: { id: 'topic.controlBar.jumpToExplorer', defaultMessage: 'Query on Explorer' },
+
+  latestNeedsAttention: { id: 'topic.version.latestNeedsAttention', defaultMessage: 'needs attention' },
+  latestRunning: { id: 'topic.version.latestNeedsAttention', defaultMessage: 'running' },
+  newerData: { id: 'topic.version.latestNeedsAttention', defaultMessage: 'newer data' },
 };
 
-const TopicControlBar = (props) => {
-  const { topicId, filters, sideBarContent, setupJumpToExplorer, goToUrl } = props;
-  const { formatMessage } = props.intl;
+const mostRecentSnapshotIs = (snapshots, topic, states) => {
+  if (snapshots.length === 0) {
+    return states.includes(topic.state);
+  }
+  return states.includes(snapshots[snapshots.length - 1].state);
+};
 
-  return (
-    <div className="controlbar controlbar-topic">
-      <div className="main">
-        <Grid>
-          <Row>
-            <Col lg={8} className="control-bar-settings left">
+const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, goToUrl, snapshots, intl, selectedSnapshot, latestSnapshot }) => (
+  <div className="controlbar controlbar-topic">
+    <div className="main">
+      <Grid>
+        <Row>
+          <Col lg={8} className="control-bar-settings left">
+            <div className="controlbar-item">
+              <LinkWithFilters to={`/topics/${topic.topics_id}/summary`}>
+                <HomeButton />
+                <b><FormattedMessage {...localMessages.topicHomepage} /></b>
+              </LinkWithFilters>
+            </div>
+            <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
               <div className="controlbar-item">
-                <LinkWithFilters to={`/topics/${topicId}/summary`}>
-                  <HomeButton />
-                  <b><FormattedMessage {...localMessages.topicHomepage} /></b>
+                <LinkWithFilters to={`/topics/${topic.topics_id}/settings`}>
+                  <EditButton
+                    label={intl.formatMessage(localMessages.settings)}
+                    description={intl.formatMessage(localMessages.changeSettingsDetails)}
+                    onClick={() => goToUrl(`/topics/${topic.topics_id}/settings`, filters)}
+                    id="modify-topic-settings"
+                  />
+                  <b><FormattedMessage {...localMessages.settings} /></b>
                 </LinkWithFilters>
               </div>
               <div className="controlbar-item">
-                <AboutTopicDialog />
+                <LinkWithFilters to={`/topics/${topic.topics_id}/permissions`} className="permissions">
+                  <EditButton
+                    label={intl.formatMessage(localMessages.permissions)}
+                    description={intl.formatMessage(localMessages.changePermissionsDetails)}
+                    onClick={() => goToUrl(`/topics/${topic.topics_id}/permissions`)}
+                    id="modify-topic-permissions"
+                  />
+                  <b><FormattedMessage {...localMessages.permissions} /></b>
+                </LinkWithFilters>
               </div>
-              <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-                <div className="controlbar-item">
-                  <LinkWithFilters to={`/topics/${topicId}/settings`}>
-                    <EditButton
-                      label={formatMessage(localMessages.settings)}
-                      description={formatMessage(localMessages.changeSettingsDetails)}
-                      onClick={() => goToUrl(`/topics/${topicId}/settings`, filters)}
-                      id="modify-topic-settings"
-                    />
-                    <b><FormattedMessage {...localMessages.settings} /></b>
-                  </LinkWithFilters>
-                </div>
-                <div className="controlbar-item">
-                  <LinkWithFilters to={`/topics/${topicId}/permissions`} className="permissions">
-                    <EditButton
-                      label={formatMessage(localMessages.permissions)}
-                      description={formatMessage(localMessages.changePermissionsDetails)}
-                      onClick={() => goToUrl(`/topics/${topicId}/permissions`)}
-                      id="modify-topic-permissions"
-                    />
-                    <b><FormattedMessage {...localMessages.permissions} /></b>
-                  </LinkWithFilters>
-                </div>
-                <div className="controlbar-item">
-                  <LinkWithFilters to={`/topics/${topicId}/versions`}>
-                    <EditButton
-                      label={formatMessage(localMessages.versionList)}
-                      description={formatMessage(localMessages.viewVersionLists)}
-                      onClick={() => goToUrl(`/topics/${topicId}/versions`)}
-                      id="modify-topic-permissions"
-                    />
-                    <b><FormattedMessage {...localMessages.versionList} /></b>
-                  </LinkWithFilters>
-                </div>
-              </Permissioned>
+              { setupJumpToExplorer && <div className="controlbar-item">{setupJumpToExplorer}</div> }
               <div className="controlbar-item">
-                {setupJumpToExplorer}
+                <LinkWithFilters to={`/topics/${topic.topics_id}/versions`}>
+                  <EditButton
+                    label={intl.formatMessage(localMessages.versionList)}
+                    description={intl.formatMessage(localMessages.viewVersionLists)}
+                    onClick={() => goToUrl(`/topics/${topic.topics_id}/versions`)}
+                    id="modify-topic-permissions"
+                  />
+                  <b><FormattedMessage {...localMessages.versionList} /></b>
+                  {mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED]) && (
+                    <TabbedChip error message={localMessages.latestNeedsAttention} />
+                  )}
+                  {mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING]) && (
+                    <TabbedChip message={localMessages.latestRunning} />
+                  )}
+                  {(selectedSnapshot)
+                    && (selectedSnapshot.snapshots_id !== latestSnapshot.snapshots_id)
+                    && mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_COMPLETED])
+                    && (<TabbedChip warning message={localMessages.newerData} />)
+                  }
+                </LinkWithFilters>
               </div>
-            </Col>
-            <Col lg={4}>
-              {sideBarContent}
-            </Col>
-          </Row>
-        </Grid>
-      </div>
+            </Permissioned>
+          </Col>
+          <Col lg={4}>
+            {sideBarContent}
+          </Col>
+        </Row>
+      </Grid>
     </div>
-  );
-};
+  </div>
+);
 
 TopicControlBar.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
-  // from parent
-  topicId: PropTypes.number,
-  topic: PropTypes.object,
   location: PropTypes.object,
-  filters: PropTypes.object.isRequired,
+  // from parent
   sideBarContent: PropTypes.node,
   setupJumpToExplorer: PropTypes.func,
+  // from dispatch
   goToUrl: PropTypes.func,
+  // from state
+  topic: PropTypes.object,
+  filters: PropTypes.object.isRequired,
+  snapshots: PropTypes.array,
+  selectedSnapshot: PropTypes.object,
+  latestSnapshot: PropTypes.object,
 };
 
-
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
-  topicInfo: state.topics.selected.info,
-  topicId: parseInt(ownProps.topicId, 10),
+  topic: state.topics.selected.info,
+  snapshots: state.topics.selected.snapshots.list,
+  latestSnapshot: state.topics.selected.snapshots.latest,
+  selectedSnapshot: state.topics.selected.snapshots.selected,
 });
 
 const mapDispatchToProps = dispatch => ({

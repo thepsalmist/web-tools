@@ -12,9 +12,10 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
 import { fetchSnapshotStoryCounts } from '../../../actions/topicActions';
 import TopicVersionListItem from './TopicVersionListItem';
+import NeedsNewVersionWarning from './NeedsNewVersionWarning';
 
 const localMessages = {
-  title: { id: 'topic.versionList.title', defaultMessage: 'Your Topic has {count} Versions' },
+  title: { id: 'topic.versionList.title', defaultMessage: 'Your Topic Has {count} Versions' },
   versionNumber: { id: 'topic.versionNumber', defaultMessage: 'Version {number}' },
   versionState: { id: 'topic.versionState', defaultMessage: '{state}' },
   versionDate: { id: 'topic.versionDate', defaultMessage: '{date}' },
@@ -34,9 +35,8 @@ const localMessages = {
   notUsingLatestSnapshot: { id: 'topic.notUsingLatestSnapshot', defaultMessage: 'You are not using the latest snapshot!  If you are not doing this on purpose, <a href="{url}">switch to the latest snapshot</a> to get the best data.' },
 };
 
-const TopicVersionListContainer = (props) => {
-  const { topicId, topicInfo, storyCounts, versions } = props;
-  const { formatMessage } = props.intl;
+const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, selectedSnapshot, intl }) => {
+  const { formatMessage } = intl;
   let versionListContent;
   if (versions.length > 0) {
     versionListContent = versions.sort((v1, v2) => {
@@ -44,19 +44,21 @@ const TopicVersionListContainer = (props) => {
         return 1;
       }
       return -1;
-    }).map((v, idx) => (
+    }).map((snapshot, idx) => (
       <TopicVersionListItem
+        selected={selectedSnapshot.snapshots_id === snapshot.snapshots_id}
         key={idx}
         topicId={topicId}
         number={versions.length - idx}
-        version={v}
-        storyCounts={storyCounts[v.snapshots_id]}
+        version={snapshot}
+        storyCounts={storyCounts[snapshot.snapshots_id]}
       />
     ));
   } else {
     // handle older topics that error'd out without any snapshots being created
     versionListContent = (
       <TopicVersionListItem
+        seleceted
         number={1}
         topicId={topicId}
         version={{
@@ -70,14 +72,14 @@ const TopicVersionListContainer = (props) => {
     );
   }
   const cannotCreate = false; // TODO: if any snapshot is building
-
   return (
     <div className="topic-version-list">
       <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
+      <NeedsNewVersionWarning />
       <Grid>
         <Row>
           <Col lg={12}>
-            <h1><FormattedMessage {...localMessages.title} values={{ count: versions.length }} /></h1>
+            <h1><FormattedMessage {...localMessages.title} values={{ count: Math.max(1, versions.length) }} /></h1>
           </Col>
         </Row>
         <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
@@ -99,11 +101,12 @@ const TopicVersionListContainer = (props) => {
 };
 
 TopicVersionListContainer.propTypes = {
-  // from parent
+  // from state
   versions: PropTypes.array.isRequired,
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
   storyCounts: PropTypes.object,
+  selectedSnapshot: PropTypes.object,
   // from compositional chain
   intl: PropTypes.object.isRequired,
 };
@@ -114,6 +117,7 @@ const mapStateToProps = state => ({
   versions: state.topics.selected.snapshots.list,
   storyCounts: state.topics.selected.snapshotStoryCounts,
   fetchStatus: state.topics.selected.snapshotStoryCounts.fetchStatus,
+  selectedSnapshot: state.topics.selected.snapshots.selected,
 });
 
 const fetchAsyncData = (dispatch, { topicId }) => {

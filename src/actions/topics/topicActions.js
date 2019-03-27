@@ -6,6 +6,7 @@ export const FETCH_PERSONAL_TOPIC_LIST = 'FETCH_PERSONAL_TOPIC_LIST';
 export const FETCH_PUBLIC_TOPICS_LIST = 'FETCH_PUBLIC_TOPICS_LIST';
 export const FETCH_FAVORITE_TOPICS_LIST = 'FETCH_FAVORITE_TOPICS_LIST';
 export const TOPIC_FILTER_BY_SNAPSHOT = 'TOPIC_FILTER_BY_SNAPSHOT';
+export const UPDATE_TOPIC_FILTER_PARSING_STATUS = 'UPDATE_TOPIC_FILTER_PARSING_STATUS';
 export const TOPIC_FILTER_BY_TIMESPAN = 'TOPIC_FILTER_BY_TIMESPAN';
 export const TOPIC_FILTER_BY_QUERY = 'TOPIC_FILTER_BY_QUERY';
 export const FETCH_TOPIC_SUMMARY = 'FETCH_TOPIC_SUMMARY';
@@ -36,6 +37,8 @@ export const fetchPublicTopicsList = createAsyncAction(FETCH_PUBLIC_TOPICS_LIST,
 export const fetchFavoriteTopicsList = createAsyncAction(FETCH_FAVORITE_TOPICS_LIST, api.topicsFavoriteList);
 
 export const fetchAdminTopicList = createAsyncAction(FETCH_ADMIN_TOPIC_LIST, api.topicsAdminList);
+
+export const updateTopicFilterParsingStatus = createAction(UPDATE_TOPIC_FILTER_PARSING_STATUS, status => status);
 
 // pass in topicId
 export const selectTopic = createAction(SELECT_TOPIC, id => parseInt(id, 10));

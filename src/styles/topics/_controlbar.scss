@@ -12,6 +12,12 @@
     .controlbar-item {
       margin-right: 5px;
       display: inline-block;
+      margin-right: 15px;
+
+      &:last-child {
+        margin-right: 0px;
+      }
+
     }
 
     .about-topic {
@@ -31,7 +37,6 @@
 
     .control-bar-settings b span {
       display: inline-block;
-      margin-right: 15px;
     }
 
     .active-filters{

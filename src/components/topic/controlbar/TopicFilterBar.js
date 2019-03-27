@@ -6,7 +6,6 @@ import { injectIntl } from 'react-intl';
 import ActiveFiltersContainer from './ActiveFiltersContainer';
 import FilterSelectorContainer from './FilterSelectorContainer';
 import { FilterButton } from '../../common/IconButton';
-import { filteredLocation } from '../../util/location';
 import { toggleFilterControls, filterByFocus, filterByQuery } from '../../../actions/topicActions';
 import TimespanSelectorContainer from './timespans/TimespanSelectorContainer';
 import { REMOVE_FOCUS } from './FocusSelector';
@@ -89,7 +88,7 @@ const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.topicId, 10),
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   goToUrl: (url) => {
     dispatch(push(url));
   },
@@ -98,14 +97,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   handleFocusSelected: (focus) => {
     const selectedFocusId = (focus.foci_id === REMOVE_FOCUS) ? null : focus.foci_id;
-    const newLocation = filteredLocation(ownProps.location, { focusId: selectedFocusId, timespanId: null });
-    dispatch(push(newLocation));
     dispatch(filterByFocus(selectedFocusId));
   },
   handleQuerySelected: (query) => {
     const queryToApply = ((query === null) || (query.length === 0)) ? null : query; // treat empty query as removal of query string, using null because '' != *
-    const newLocation = filteredLocation(ownProps.location, { q: queryToApply });
-    dispatch(push(newLocation));
     dispatch(filterByQuery(queryToApply));
   },
 });

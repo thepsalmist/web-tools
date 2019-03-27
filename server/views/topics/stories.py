@@ -324,18 +324,26 @@ def story_counts_by_snapshot(topics_id):
     snapshots = user_mc.topicSnapshotList(topics_id)
     counts = {}
     for s in snapshots:
+        # get the count of stories in the overally timespan for this snapshot
+        timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id,
+                                                        snapshots_id=s['snapshots_id'], foci_id=None)
         try:
-            total = apicache.topic_story_count(user_mediacloud_key(), topics_id, snapshots_id=s['snapshots_id'])['count']
+            total = timespans[0]['story_count']
         except mediacloud.error.MCException:
             total = 0
+        except IndexError:  # this doesn't have any snapshots (ie. it failed to generate correctly)
+            total = 0
+        # search by tag to find out how many stories were spidered
+        spidered = 0
         try:
-            spidered = apicache.topic_story_count(user_mediacloud_key(), topics_id, snapshots_id=s['snapshots_id'],
+            spidered = apicache.topic_story_count(user_mediacloud_key(), topics_id,
+                                                  snapshots_id=s['snapshots_id'], foci_id=None,
+                                                  timespans_id=timespans[0]['timespans_id'],
                                                   q="* AND NOT tags_id_stories:{}".format(8875452))['count']
         except mediacloud.error.MCException:
             spidered = 0
-        try:
-            seeded = total - spidered
-        except mediacloud.error.MCException:
-            seeded = 0
+        except IndexError:  # this doesn't have any snapshots (ie. it failed to generate correctly)
+            total = 0
+        seeded = total - spidered
         counts[s['snapshots_id']] = {'total': total, 'spidered': spidered, 'seeded': seeded}
     return jsonify(counts)

@@ -5,6 +5,8 @@ import { Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../common/AppButton';
 import { TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
 import LinkWithFilters from '../LinkWithFilters';
+import { trimToMaxLength } from '../../../lib/stringUtil';
+import TabbedChip from '../../common/TabbedChip';
 
 const localMessages = {
   versionNumber: { id: 'topic.versionNumber', defaultMessage: 'Version {number}' },
@@ -22,6 +24,7 @@ const localMessages = {
   createdNotQueued: { id: 'topic.state.createdNotQueued', defaultMessage: 'Created' },
   createdNotQueuedDetails: { id: 'topic.state.createdNotQueuedDetails', defaultMessage: 'This version hasn\'t been generated yet.' },
   createdNotQueuedAction: { id: 'topic.state.finishGenerating', defaultMessage: 'Finish up and generate' },
+  selected: { id: 'topic.version.selected', defaultMessage: 'Selected' },
 };
 
 const versionSelectText = (state, number, formatMessage) => {
@@ -65,11 +68,11 @@ const detailsForVersionState = (version, storyCounts, formatMessage, formatNumbe
         total: formatNumber(storyCounts.total),
         discoveredPct: storyCounts.total === 0 ? '0%' : formatNumber(storyCounts.spidered / storyCounts.total, { style: 'percent', maximumFractionDigits: 0 }),
       });
-      // TODO
     case TOPIC_SNAPSHOT_STATE_RUNNING:
       return formatMessage(localMessages.runningDetails);
     case TOPIC_SNAPSHOT_STATE_ERROR:
-      return version.message;
+      // TODO: show generic error for regular users, and detailed message for admin users
+      return trimToMaxLength(version.message, 400);
     case TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED:
       return formatMessage(localMessages.createdNotQueuedDetails);
     default:
@@ -77,25 +80,32 @@ const detailsForVersionState = (version, storyCounts, formatMessage, formatNumbe
   }
 };
 
-const TopicVersionListItem = ({ version, intl, number, topicId, storyCounts }) => (
+const TopicVersionListItem = ({ version, intl, number, topicId, storyCounts, selected }) => (
   <div className="topic-version-list-item">
     <Row>
       <Col lg={2}>
         <div className="topic-version-list-title">
           <LinkWithFilters to={`/topics/${topicId}/summary`} filters={{ snapshotId: version.snapshots_id }}>
-            <h2><FormattedHTMLMessage {...localMessages.versionNumber} values={{ number, status: version.state }} /></h2>
+            <h2>
+              <FormattedHTMLMessage {...localMessages.versionNumber} values={{ number, status: version.state }} />
+            </h2>
           </LinkWithFilters>
-          <small>
-            <FormattedDate value={version.snapshotDate} month="short" year="numeric" day="numeric" />
-          </small>
+          {version.snapshotDate && (
+            <small>
+              <FormattedDate value={version.snapshotDate} month="short" year="numeric" day="numeric" />
+            </small>
+          )}
         </div>
       </Col>
       <Col lg={6}>
         <div className="topic-version-list-info">
-          <h2><FormattedHTMLMessage {...messageForVersionState(version.state)} /></h2>
+          <h2>
+            <FormattedHTMLMessage {...messageForVersionState(version.state)} />
+            {selected && <TabbedChip message={localMessages.selected} />}
+          </h2>
           {detailsForVersionState(version, storyCounts, intl.formatMessage, intl.formatNumber)}
           <br />
-          <LinkWithFilters to={`/topics/${topicId}/summary`} filters={{ snapshotId: version.snapshots_id }}>
+          <LinkWithFilters to={`/topics/${topicId}/summary`} filters={{ snapshotId: version.snapshots_id, timespanId: null, focusId: null }}>
             <AppButton
               type="submit"
               label={versionSelectText(version.state, number, intl.formatMessage)}
@@ -113,6 +123,7 @@ TopicVersionListItem.propTypes = {
   version: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   storyCounts: PropTypes.object.isRequired,
+  selected: PropTypes.bool,
   // from compositional chain
   intl: PropTypes.object.isRequired,
 };

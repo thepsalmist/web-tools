@@ -15,6 +15,7 @@ import TopicValidateContainer from './TopicValidateContainer';
 import TopicConfirmContainer from './TopicConfirmContainer';
 import { goToTopicStep } from '../../../actions/topicActions';
 import { TOPIC_FORM_MODE_EDIT } from './TopicForm';
+import { filteredLinkTo } from '../../util/location';
 
 const localMessages = {
   backToTopicManager: { id: 'backToTopicManager', defaultMessage: 'back to Home' },
@@ -25,19 +26,10 @@ const localMessages = {
 };
 
 class TopicBuilderWizard extends React.Component {
-  componentWillMount = () => {
-    const { startStep, goToStep, mode } = this.props;
-    goToStep(startStep || 0, mode);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { location, goToStep, mode } = this.props;
-    if (nextProps.location.pathname !== location.pathname) {
-      const url = nextProps.location.pathname;
-      const lastPathPart = url.slice(url.lastIndexOf('/') + 1, url.length);
-      const stepNumber = parseInt(lastPathPart, 10);
-      goToStep(stepNumber, mode);
-    }
+  componentDidMount = () => {
+    const { startStep, updateStepOnUrl, mode, filters, updateCurrentStep } = this.props;
+    updateStepOnUrl(startStep || 0, mode, filters);
+    updateCurrentStep(startStep || 0);
   }
 
   componentWillUnmount = () => {
@@ -46,7 +38,7 @@ class TopicBuilderWizard extends React.Component {
   }
 
   render() {
-    const { currentStep, location, initialValues, currentStepTexts, mode, topicInfo } = this.props;
+    const { currentStep, location, initialValues, currentStepTexts, mode, topic, handleStepChange } = this.props;
     const steps = [
       TopicConfigureContainer,
       TopicPreviewContainer,
@@ -74,7 +66,14 @@ class TopicBuilderWizard extends React.Component {
             </Step>
           </Stepper>
         </BackLinkingControlBar>
-        <CurrentStepComponent location={location} initialValues={initialValues} currentStepText={stepTexts} mode={mode} topicInfo={topicInfo} />
+        <CurrentStepComponent
+          location={location}
+          initialValues={initialValues}
+          currentStepText={stepTexts}
+          mode={mode}
+          topicInfo={topic}
+          onStepChange={handleStepChange}
+        />
       </div>
     );
   }
@@ -90,30 +89,52 @@ TopicBuilderWizard.propTypes = {
   currentStepTexts: PropTypes.array,
   // from state
   currentStep: PropTypes.number.isRequired,
-  topicInfo: PropTypes.object,
+  topic: PropTypes.object,
+  filters: PropTypes.object,
   // from dispatch
-  goToStep: PropTypes.func.isRequired,
+  updateStepOnUrl: PropTypes.func.isRequired,
   handleUnmount: PropTypes.func.isRequired,
+  updateCurrentStep: PropTypes.func.isRequired,
+  handleStepChange: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   currentStep: state.topics.modify.preview.workflow.currentStep,
-  topicInfo: state.topics.selected.info,
+  topic: state.topics.selected.info,
+  filters: state.topics.selected.filters,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  goToStep: (step, mode) => {
+  updateStepOnUrl: (step, mode, filters) => {
     let topicPhrase = '';
     if (mode === TOPIC_FORM_MODE_EDIT) {
       topicPhrase = `/${ownProps.params.topicId}`;
     }
-    dispatch(push(`/topics${topicPhrase}/${mode}/${step}`));
-    dispatch(goToTopicStep(step));
+    dispatch(push(filteredLinkTo(`/topics${topicPhrase}/${mode}`, filters, { step })));
+  },
+  updateCurrentStep: (step) => {
+    dispatch(goToTopicStep(parseInt(step, 10)));
+  },
+  goToUrl: (url) => {
+    dispatch(push(url));
   },
   handleUnmount: () => {
     dispatch(goToTopicStep(0));
   },
 });
+
+function mergeProps(stateProps, dispatchProps, ownProps) {
+  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+    handleStepChange: (mode, step) => {
+      let topicPhrase = '';
+      if (mode === TOPIC_FORM_MODE_EDIT) {
+        topicPhrase = `/${stateProps.topic.topics_id}`;
+      }
+      dispatchProps.goToUrl(filteredLinkTo(`/topics${topicPhrase}/${mode}`, stateProps.filters, { step }));
+      dispatchProps.updateCurrentStep(step);
+    },
+  });
+}
 
 const reduxFormConfig = {
   form: 'topicForm',
@@ -125,7 +146,7 @@ export default
 injectIntl(
   reduxForm(reduxFormConfig)(
     withRouter(
-      connect(mapStateToProps, mapDispatchToProps)(
+      connect(mapStateToProps, mapDispatchToProps, mergeProps)(
         TopicBuilderWizard
       )
     )

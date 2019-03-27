@@ -16,7 +16,7 @@ class JobDate extends React.Component {
 
   render() {
     const { snapshot, job } = this.props;
-    if (job) {
+    if (job && snapshot && snapshot.snapshotDate) {
       return (
         <React.Fragment>
           <p>

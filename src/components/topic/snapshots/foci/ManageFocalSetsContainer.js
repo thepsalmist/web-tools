@@ -18,7 +18,7 @@ import NewVersionFociComparisonContainer from './NewVersionFociComparisonContain
 import NeedsNewVersionWarning from '../../versions/NeedsNewVersionWarning';
 
 const localMessages = {
-  listTitle: { id: 'focalSets.list.title', defaultMessage: 'Subtopics' },
+  listTitle: { id: 'focalSets.list.title', defaultMessage: 'Subtopic Details' },
   focalSetsManageAbout: { id: 'focalSets.manage.about',
     defaultMessage: 'Every Subtopic is part of a Set. All the Subtopics within a Set share the same Technique. Our tools lets you compare Subtopics with a Set, but they don\'t let you easily compare Subtopics in different Sets.' },
   removeFocalSetTitle: { id: 'focalSets.manage.remove.title', defaultMessage: 'Really Remove this Set?' },

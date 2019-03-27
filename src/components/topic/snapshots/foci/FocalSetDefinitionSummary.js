@@ -3,7 +3,7 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 const localMessages = {
-  title: { id: 'topic.info.title', defaultMessage: 'Next Version: Subtopics' },
+  title: { id: 'topic.info.title', defaultMessage: 'Next Version: Subtopic Summary' },
 };
 
 const FocalSetDefinitionSummary = ({ focalSetDefs, snapshot }) => (

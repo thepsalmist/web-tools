@@ -3,7 +3,7 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 const localMessages = {
-  title: { id: 'topic.focalSets.summary.title', defaultMessage: 'Version {versionNumber}: Subtopics' },
+  title: { id: 'topic.focalSets.summary.title', defaultMessage: 'Version {versionNumber}: Subtopic Summary' },
   none: { id: 'topic.focalSets.summary.none', defaultMessage: 'This version doesn\'t have any subtopics.' },
 };
 

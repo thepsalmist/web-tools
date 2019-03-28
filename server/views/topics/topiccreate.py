@@ -122,7 +122,7 @@ def topic_create():
             create_retweet_partisanship_focal_set(topic_result['topics_id'])
         # create snapshot and then spider (for admins)
         new_snapshot = user_mc.topicCreateSnapshot(topic_id, note=VERSION_1)
-        spider_job = user_mc.topicSpider(topic_id, new_snapshot.snapshots_id)
+        spider_job = user_mc.topicSpider(topic_id, new_snapshot['snapshots_id'])
         logger.info("  spider result = {}".format(json.dumps(spider_job)))
         results = user_mc.topic(topic_id)
         results['spider_job_state'] = spider_job

@@ -16,6 +16,14 @@ import { filteredLinkTo } from '../../util/location';
 import { VERSION_ERROR, VERSION_ERROR_EXCEEDED, VERSION_CREATING, VERSION_QUEUED, VERSION_RUNNING,
   VERSION_READY } from '../../../lib/topicFilterUtil';
 import { getCurrentVersionFromSnapshot } from '../../../lib/topicVersionUtil';
+import { topicStartSpider } from '../../../actions/topicActions';
+import { LEVEL_ERROR } from '../../common/Notice';
+import { addNotice, updateFeedback } from '../../../actions/appActions';
+
+const localMessages = {
+  startedGenerating: { id: 'topic.created.startedGenerating', defaultMessage: 'We started generating this version' },
+  generationFailed: { id: 'topic.created.generationFailed', defaultMessage: 'Sorry, but we weren\'t able to start generating this version.' },
+};
 
 /**
  * This decides which topic version homepage to show, based on the version and topic state
@@ -50,7 +58,7 @@ class TopicVersionContainer extends React.Component {
 
   render() {
     const { children, topicInfo, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo,
-      setSideBarContent, currentVersionId, filters, selectedSnapshot } = this.props;
+      setSideBarContent, currentVersionId, filters, selectedSnapshot, handleSnapshotGenerate } = this.props;
     // show a big error if there is one to show
     const currentVersionNum = getCurrentVersionFromSnapshot(topicInfo, currentVersionId);
     let contentToShow = children; // has a filters renderer in it - show if a completed topic
@@ -64,6 +72,7 @@ class TopicVersionContainer extends React.Component {
           topic={topicInfo}
           snapshot={selectedSnapshot || { note: currentVersionNum }}
           job={latestJob}
+          onSnapshotGenerate={handleSnapshotGenerate}
           goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
         />
       );
@@ -118,6 +127,8 @@ TopicVersionContainer.propTypes = {
   location: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   // from dispatch
+  handleSnapshotGenerate: PropTypes.func.isRequired,
+  goToCreateNewVersion: PropTypes.func,
   // from state
   filters: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string.isRequired,
@@ -127,7 +138,6 @@ TopicVersionContainer.propTypes = {
   selectedSnapshot: PropTypes.object,
   needsNewSnapshot: PropTypes.bool.isRequired,
   snapshotCount: PropTypes.number.isRequired,
-  goToCreateNewVersion: PropTypes.func,
   setSideBarContent: PropTypes.func,
   currentVersionId: PropTypes.number,
 };
@@ -144,10 +154,20 @@ const mapStateToProps = (state, ownProps) => ({
   snapshotCount: state.topics.selected.snapshots.list.length,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   goToCreateNewVersion: (topicInfo, filters) => {
     const url = `/topics/${topicInfo.topics_id}/update`;
     dispatch(push(filteredLinkTo(url, filters)));
+  },
+  handleSnapshotGenerate: (topicId, snapshotId) => {
+    dispatch(topicStartSpider(topicId, { snapshotId }))
+      .then((results) => {
+        if ((results.statusCode && results.statusCode !== 200) || results.error) {
+          dispatch(addNotice({ message: localMessages.generationFailed, details: results.message || results.error, level: LEVEL_ERROR }));
+        } else {
+          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.startedGenerating) }));
+        }
+      });
   },
 });
 

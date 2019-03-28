@@ -80,7 +80,7 @@ export const updateAndCreateNewTopicVersion = createAsyncAction(UPDATE_TOPIC, ap
 
 export const updateTopicVersionSubtopics = createAsyncAction(UPDATE_TOPIC_USING_SAME_VERSION, api.updateTopicVersionSubtopics);
 
-export const topicStartSpider = createAsyncAction(TOPIC_START_SPIDER, api.topicSpider, id => id);
+export const topicStartSpider = createAsyncAction(TOPIC_START_SPIDER, api.topicSpider);
 
 // pass in search string
 export const fetchTopicSearchResults = createAsyncAction(FETCH_TOPIC_SEARCH_RESULTS, api.fetchTopicSearchResults, searchStr => searchStr);

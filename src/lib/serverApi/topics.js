@@ -287,8 +287,9 @@ export function topicGeocodedStoryCounts(topicId, params) {
   return createApiPromise(`/api/topics/${topicId}/geo-tags/counts`, acceptedParams);
 }
 
-export function topicSpider(topicId) {
-  return createPostingApiPromise(`/api/topics/${topicId}/spider`);
+export function topicSpider(topicId, params) {
+  const acceptedParams = acceptParams(params, ['snapshotId']);
+  return createPostingApiPromise(`/api/topics/${topicId}/spider`, acceptedParams);
 }
 
 export function userQueuedAndRunningTopics() {

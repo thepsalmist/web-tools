@@ -16,7 +16,7 @@ const localMessages = {
   whatNowText: { id: 'version.error.explanation2.text', defaultMessage: 'This is the right time to start adding any subtopics that you already know that you\'ll need. Once you\'re ready, click the "generate" button below to start filling up your topic with matching stories.' },
 };
 
-const TopicVersionCreatedStatusContainer = ({ topic, goToCreateNewVersion, snapshot, job, intl }) => (
+const TopicVersionCreatedStatusContainer = ({ topic, onSnapshotGenerate, snapshot, job, intl }) => (
   <React.Fragment>
     <TopicVersionStatus
       subtitle={localMessages.title}
@@ -39,7 +39,7 @@ const TopicVersionCreatedStatusContainer = ({ topic, goToCreateNewVersion, snaps
         <br />
         <AppButton
           label={intl.formatMessage(messages.runThisVersion)}
-          onClick={goToCreateNewVersion}
+          onClick={() => onSnapshotGenerate(topic.topics_id, snapshot.snapshots_id)}
           type="submit"
           primary
         />
@@ -54,7 +54,7 @@ TopicVersionCreatedStatusContainer.propTypes = {
   filters: PropTypes.object,
   snapshot: PropTypes.object,
   job: PropTypes.object,
-  goToCreateNewVersion: PropTypes.func,
+  onSnapshotGenerate: PropTypes.func,
   // from context
   intl: PropTypes.object.isRequired,
 };

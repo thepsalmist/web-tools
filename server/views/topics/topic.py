@@ -281,7 +281,9 @@ def topic_update(topics_id):
 @api_error_handler
 def topic_spider(topics_id):
     user_mc = user_admin_mediacloud_client()
-    spider_job = user_mc.topicSpider(topics_id)  # kick off a spider, which will also generate a snapshot
+    # kick off a spider, which will also generate a snapshot
+    snapshots_id = request.form['snapshotId'] if 'snapshotId' in request.form else None
+    spider_job = user_mc.topicSpider(topics_id, snapshots_id=snapshots_id)
     return jsonify(spider_job)
 
 

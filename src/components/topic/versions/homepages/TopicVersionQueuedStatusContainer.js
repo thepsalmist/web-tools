@@ -11,7 +11,7 @@ const localMessages = {
   whatNowText: { id: 'version.queued.explanation2.text', defaultMessage: 'Does that query on the right look wrong? Did you not need this version of the topic anymore?  You can cancel it.' },
 };
 
-const TopicVersionCreatedStatusContainer = ({ topic, snapshot, job }) => (
+const TopicVersionQueuedStatusContainer = ({ topic, snapshot, job }) => (
   <React.Fragment>
     <TopicVersionStatus
       subtitle={localMessages.title}
@@ -36,7 +36,7 @@ const TopicVersionCreatedStatusContainer = ({ topic, snapshot, job }) => (
   </React.Fragment>
 );
 
-TopicVersionCreatedStatusContainer.propTypes = {
+TopicVersionQueuedStatusContainer.propTypes = {
   // from state
   topic: PropTypes.object,
   filters: PropTypes.object,
@@ -49,5 +49,5 @@ TopicVersionCreatedStatusContainer.propTypes = {
 
 export default
 injectIntl(
-  TopicVersionCreatedStatusContainer
+  TopicVersionQueuedStatusContainer
 );

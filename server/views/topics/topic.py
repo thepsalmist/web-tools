@@ -212,6 +212,21 @@ def topic_set_favorited(topics_id):
     return jsonify({'isFavorite': favorite == 1})
 
 
+@app.route('/api/topics/<topics_id>/update-settings', methods=['PUT'])
+@flask_login.login_required
+@api_error_handler
+def topic_update_settings(topics_id):
+    user_mc = user_admin_mediacloud_client()
+    args = {
+        'name': request.form['name'] if 'name' in request.form else None,
+        'description': request.form['description'] if 'description' in request.form else None,
+        'is_public': request.form['is_public'] if 'is_public' in request.form else None,
+        'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
+    }
+    result = user_mc.topicUpdate(topics_id, **args)
+    return topic_summary(result['topics'][0]['topics_id'])  # give them back new data, so they can update the client
+
+
 @app.route('/api/topics/<topics_id>/update', methods=['PUT'])
 @flask_login.login_required
 @api_error_handler

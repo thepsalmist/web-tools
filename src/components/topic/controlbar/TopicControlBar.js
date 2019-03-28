@@ -9,7 +9,7 @@ import { filteredLinkTo } from '../../util/location';
 import { HomeButton, EditButton } from '../../common/IconButton';
 import TabbedChip from '../../common/TabbedChip';
 import Permissioned from '../../common/Permissioned';
-import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
+import { PERMISSION_TOPIC_WRITE, PERMISSION_TOPIC_ADMIN } from '../../../lib/auth';
 import { TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
   TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
 
@@ -62,6 +62,8 @@ const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, 
                   <b><FormattedMessage {...localMessages.settings} /></b>
                 </LinkWithFilters>
               </div>
+            </Permissioned>
+            <Permissioned onlyTopic={PERMISSION_TOPIC_ADMIN}>
               <div className="controlbar-item">
                 <LinkWithFilters to={`/topics/${topic.topics_id}/permissions`} className="permissions">
                   <EditButton
@@ -73,7 +75,8 @@ const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, 
                   <b><FormattedMessage {...localMessages.permissions} /></b>
                 </LinkWithFilters>
               </div>
-              { setupJumpToExplorer && <div className="controlbar-item">{setupJumpToExplorer}</div> }
+            </Permissioned>
+            <Permissioned onlyTopic={PERMISSION_TOPIC_ADMIN}>
               <div className="controlbar-item">
                 <LinkWithFilters to={`/topics/${topic.topics_id}/versions`}>
                   <EditButton
@@ -97,6 +100,7 @@ const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, 
                 </LinkWithFilters>
               </div>
             </Permissioned>
+            { setupJumpToExplorer && <div className="controlbar-item">{setupJumpToExplorer}</div> }
           </Col>
           <Col lg={4}>
             {sideBarContent}

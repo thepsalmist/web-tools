@@ -15,6 +15,7 @@ import messages from '../../../resources/messages';
 import AppButton from '../../common/AppButton';
 import { DeleteButton } from '../../common/IconButton';
 import { invalidEmail } from '../../../lib/formValidators';
+import Permissioned from '../../common/Permissioned';
 
 const localMessages = {
   title: { id: 'topic.permissions.title', defaultMessage: 'Topic Permissions' },
@@ -35,9 +36,6 @@ const localMessages = {
 // render a list of permissions and the option to add one more
 const PermissionsList = ({ renderTextField, renderSelect, intl: { formatMessage }, fields, meta: { error, submitFailed } }) => (
   <div className="topic-permissions-list">
-    <AppButton label="add" onClick={() => fields.push({ permission: PERMISSION_TOPIC_READ })}>
-      <FormattedMessage {...localMessages.addTitle} />
-    </AppButton>
     {submitFailed && error && <span>{error}</span>}
     {fields.map((permission, index) => (
       <div className="topic-permission-item" key={`permission${index}`}>
@@ -61,6 +59,9 @@ const PermissionsList = ({ renderTextField, renderSelect, intl: { formatMessage 
         </Row>
       </div>
     ))}
+    <AppButton label="add" onClick={() => fields.push({ permission: PERMISSION_TOPIC_READ })}>
+      <FormattedMessage {...localMessages.addTitle} />
+    </AppButton>
   </div>
 );
 PermissionsList.propTypes = {
@@ -86,26 +87,28 @@ const TopicPermissionsContainer = (props) => {
             <p><FormattedMessage {...localMessages.intro} /></p>
           </Col>
         </Row>
-        <form
-          name="updateTopicPermissions"
-          onSubmit={handleSubmit(values => handleUpdate(topicId, values.permissions))}
-        >
-          <Row>
-            <Col lg={12} md={12} sm={12}>
-              <FieldArray name="permissions" component={HocPermissionsList} />
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={2}>
-              <AppButton
-                type="submit"
-                disabled={pristine || submitting}
-                label={messages.save}
-                primary
-              />
-            </Col>
-          </Row>
-        </form>
+        <Permissioned onlyTopic={PERMISSION_TOPIC_ADMIN}>
+          <form
+            name="updateTopicPermissions"
+            onSubmit={handleSubmit(values => handleUpdate(topicId, values.permissions))}
+          >
+            <Row>
+              <Col lg={12} md={12} sm={12}>
+                <FieldArray name="permissions" component={HocPermissionsList} />
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={2}>
+                <AppButton
+                  type="submit"
+                  disabled={pristine || submitting}
+                  label={messages.save}
+                  primary
+                />
+              </Col>
+            </Row>
+          </form>
+        </Permissioned>
       </Grid>
     </React.Fragment>
   );

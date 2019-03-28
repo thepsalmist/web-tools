@@ -26,7 +26,7 @@ const messages = {
   topicSnapshot: { id: 'topic.snapshot', defaultMessage: 'Snapshot' },
   topicTimespan: { id: 'topic.timespan', defaultMessage: 'Timespan' },
   createNewTopic: { id: 'topics.create', defaultMessage: 'Create a New Topic' },
-  createNewVersion: { id: 'topics.version.update', defaultMessage: 'Generate a New Version' },
+  createNewVersion: { id: 'topics.version.update', defaultMessage: 'Create a New Version' },
   runThisVersion: { id: 'topics.version.runThisVersion', defaultMessage: 'Generate This Version' },
 
   topicNameProp: { id: 'topic.prop.name', defaultMessage: 'Name' },
@@ -39,7 +39,6 @@ const messages = {
   topicIterationsProp: { id: 'topic.prop.iteration', defaultMessage: 'Iterations' },
   toicSkipSolrQueryProp: { id: 'topic.prop.public', defaultMessage: 'Skip SOLR Query' },
   topicPublicProp: { id: 'topic.prop.public', defaultMessage: 'Public' },
-  topicNotCompleteNoPreview: { id: 'topic.prop.nopreview', defaultMessage: 'Sorry, no preview available until your topic is complete.' },
 
   entityName: { id: 'entity.title.default', defaultMessage: 'Entity' },
   entityPerson: { id: 'entity.title.person', defaultMessage: 'Person' },

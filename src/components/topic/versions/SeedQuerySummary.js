@@ -3,6 +3,7 @@ import React from 'react';
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import messages from '../../../resources/messages';
 import SourceOrCollectionWidget from '../../common/SourceOrCollectionWidget';
+import { urlToCollection, urlToSource } from '../../../lib/urlUtil';
 
 const localMessages = {
   title: { id: 'topic.info.title', defaultMessage: 'Version {versionNumber}: Seed Query' },
@@ -25,18 +26,18 @@ const SeedQuerySummary = (props) => {
       </p>
       <p>
         <b><FormattedMessage {...localMessages.dates} /></b>
-        <br />
         <FormattedMessage {...localMessages.datesData} values={{ startDate: topic.start_date, endDate: topic.end_date }} />
       </p>
       <p>
         <b><FormattedHTMLMessage {...messages.topicSourceCollectionsProp} /></b>
+        {sourcesAndCollections.map(o => (
+          <SourceOrCollectionWidget
+            key={o.id || o.tags_id || o.media_id}
+            object={o}
+            link={o.tags_id ? urlToCollection(o.tags_id) : urlToSource(o.media_id)}
+          />
+        ))}
       </p>
-      {sourcesAndCollections.map(o => (
-        <SourceOrCollectionWidget
-          key={o.id || o.tags_id || o.media_id}
-          object={o}
-        />
-      ))}
     </div>
   );
 };

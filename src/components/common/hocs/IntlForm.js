@@ -34,7 +34,7 @@ function withIntlForm(Component) {
     renderTextField = ({ input, meta: { touched, error, asyncValidating }, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
       if (intlCustom && intlCustom.helpertext !== undefined) {
-        intlCustom.helperText = intlCustom.helpertext;
+        intlCustom.helpertext = intlCustom.helpertext;
       }
       return (
         <TextField
@@ -42,7 +42,7 @@ function withIntlForm(Component) {
           {...input}
           {...intlCustom}
           error={Boolean(touched && error)}
-          helperText={touched ? this.intlIfObject(error) : ''}
+          helpertext={touched ? this.intlIfObject(error) : ''}
           margin="normal"
         />
       );
@@ -51,7 +51,7 @@ function withIntlForm(Component) {
     renderTextFieldWithFocus = ({ input, saveRef, meta: { touched, error, warning }, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
       if (intlCustom.helpertext !== undefined) {
-        intlCustom.helperText = intlCustom.helpertext;
+        intlCustom.helpertext = intlCustom.helpertext;
       }
       return (
         <React.Fragment>
@@ -61,7 +61,7 @@ function withIntlForm(Component) {
             ref={saveRef}
             {...input}
             {...intlCustom}
-            helperText={touched ? this.intlIfObject(error) : ''}
+            helpertext={touched ? this.intlIfObject(error) : ''}
           />
           {warning && (<div className="textfield-warning">{warning}</div>)}
         </React.Fragment>
@@ -87,7 +87,7 @@ function withIntlForm(Component) {
     renderSelect = ({ input, meta: { touched, error }, children, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
       if (intlCustom && intlCustom.helpertext !== undefined) {
-        intlCustom.helperText = intlCustom.helpertext;
+        intlCustom.helpertext = intlCustom.helpertext;
       }
       return (
         <Select

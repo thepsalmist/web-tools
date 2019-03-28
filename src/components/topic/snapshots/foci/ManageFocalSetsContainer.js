@@ -15,9 +15,10 @@ import FocalSetDefinitionDetails from './FocalSetDefinitionDetails';
 import BackLinkingControlBar from '../../BackLinkingControlBar';
 import FocusIcon from '../../../common/icons/FocusIcon';
 import NewVersionFociComparisonContainer from './NewVersionFociComparisonContainer';
+import NeedsNewVersionWarning from '../../versions/NeedsNewVersionWarning';
 
 const localMessages = {
-  listTitle: { id: 'focalSets.list.title', defaultMessage: 'Subtopics' },
+  listTitle: { id: 'focalSets.list.title', defaultMessage: 'Subtopic Details' },
   focalSetsManageAbout: { id: 'focalSets.manage.about',
     defaultMessage: 'Every Subtopic is part of a Set. All the Subtopics within a Set share the same Technique. Our tools lets you compare Subtopics with a Set, but they don\'t let you easily compare Subtopics in different Sets.' },
   removeFocalSetTitle: { id: 'focalSets.manage.remove.title', defaultMessage: 'Really Remove this Set?' },
@@ -59,58 +60,61 @@ class ManageFocalSetsContainer extends React.Component {
     const { topicId, focalSetDefinitions } = this.props;
     const { formatMessage } = this.props.intl;
     return (
-      <div className="manage-focal-sets">
+      <React.Fragment>
         <BackLinkingControlBar message={localMessages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
-        <Grid>
-          <Row>
-            <Col lg={12}>
-              <h1><FocusIcon /><FormattedMessage {...messages.manageFoci} /></h1>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={10} xs={12}>
-              <p>
-                <FormattedMessage {...localMessages.focalSetsManageAbout} />
-              </p>
-            </Col>
-          </Row>
-          <NewVersionFociComparisonContainer />
-          <Row>
-            <Col lg={10} xs={12}>
-              <div className="focal-set-definition-list">
-                <h2><FormattedMessage {...localMessages.listTitle} /></h2>
-                {focalSetDefinitions.map((focalSetDef, idx) => (
-                  <FocalSetDefinitionDetails
-                    key={idx}
-                    focalSetDefinition={focalSetDef}
-                    onDelete={this.handleDelete}
-                    onFocusDefinitionDelete={this.onFocusDefinitionDelete}
-                    topicId={topicId}
-                  />
-                ))}
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={6}>
-              <div id="create-foci-button">
-                <Link to={`/topics/${topicId}/snapshot/foci/create`}>
-                  <AppButton primary label={formatMessage(messages.addFocus)}>{formatMessage(messages.addFocus)}</AppButton>
-                </Link>
-              </div>
-            </Col>
-          </Row>
-        </Grid>
-        <ConfirmationDialog
-          open={this.state.removeDialogOpen}
-          title={formatMessage(localMessages.removeFocalSetTitle)}
-          okText={formatMessage(localMessages.removeOk)}
-          onCancel={this.onCancelDeleteFocalSetDefinition}
-          onOk={this.onDeleteFocalSetDefinition}
-        >
-          <FormattedHTMLMessage {...localMessages.removeFocalSetAbout} />
-        </ConfirmationDialog>
-      </div>
+        <NeedsNewVersionWarning />
+        <div className="manage-focal-sets">
+          <Grid>
+            <Row>
+              <Col lg={12}>
+                <h1><FocusIcon /><FormattedMessage {...messages.manageFoci} /></h1>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={10} xs={12}>
+                <p>
+                  <FormattedMessage {...localMessages.focalSetsManageAbout} />
+                </p>
+              </Col>
+            </Row>
+            <NewVersionFociComparisonContainer />
+            <Row>
+              <Col lg={10} xs={12}>
+                <div className="focal-set-definition-list">
+                  <h2><FormattedMessage {...localMessages.listTitle} /></h2>
+                  {focalSetDefinitions.map((focalSetDef, idx) => (
+                    <FocalSetDefinitionDetails
+                      key={idx}
+                      focalSetDefinition={focalSetDef}
+                      onDelete={this.handleDelete}
+                      onFocusDefinitionDelete={this.onFocusDefinitionDelete}
+                      topicId={topicId}
+                    />
+                  ))}
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={6}>
+                <div id="create-foci-button">
+                  <Link to={`/topics/${topicId}/snapshot/foci/create`}>
+                    <AppButton primary label={formatMessage(messages.addFocus)}>{formatMessage(messages.addFocus)}</AppButton>
+                  </Link>
+                </div>
+              </Col>
+            </Row>
+          </Grid>
+          <ConfirmationDialog
+            open={this.state.removeDialogOpen}
+            title={formatMessage(localMessages.removeFocalSetTitle)}
+            okText={formatMessage(localMessages.removeOk)}
+            onCancel={this.onCancelDeleteFocalSetDefinition}
+            onOk={this.onDeleteFocalSetDefinition}
+          >
+            <FormattedHTMLMessage {...localMessages.removeFocalSetAbout} />
+          </ConfirmationDialog>
+        </div>
+      </React.Fragment>
     );
   }
 }

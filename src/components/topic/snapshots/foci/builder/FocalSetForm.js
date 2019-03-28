@@ -13,7 +13,7 @@ const localMessages = {
   errorNoName: { id: 'focalSet.name.error', defaultMessage: 'You need to name this.' },
   errorNoDescription: { id: 'focalSet.description.error', defaultMessage: 'You need a description.' },
   defaultSetName: { id: 'focalSet.default.setName', defaultMessage: 'Conversations' },
-  defaultSetDescription: { id: 'focalSet.default.setDescription', defaultMessage: 'A set of difference conversations within this topic.' },
+  defaultSetDescription: { id: 'focalSet.default.setDescription', defaultMessage: 'A set of different conversations within this topic.' },
   defaultSetNameRetweet: { id: 'focalSet.default.setName.retweet', defaultMessage: 'Retweet Partisanship' },
   defaultSetDescriptionRetweet: { id: 'focalSet.default.setDescription.retweet', defaultMessage: 'Subtopics driven by our analysis of Twitter followers of Trump and Clinton during the 2016 election season.  Each media soure is scored based on the ratio of retweets of their stories in those two groups.' },
   defaultSetNameTopCountries: { id: 'focalSet.default.setName.retweet', defaultMessage: 'Top Countries' },

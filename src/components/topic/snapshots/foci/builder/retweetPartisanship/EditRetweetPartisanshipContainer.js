@@ -19,36 +19,27 @@ const localMessages = {
 };
 
 const EditRetweetPartisanshipContainer = (props) => {
-  const { topicId, onPreviousStep, handleSubmit, finishStep, location } = props;
+  const { topicId, onPreviousStep, handleSubmit, finishStep } = props;
   const { formatMessage } = props.intl;
-  let content = (
-    <div>
-      <Row>
-        <Col lg={8} md={12}>
-          <h1><FormattedMessage {...localMessages.title} /></h1>
-          <p><FormattedMessage {...localMessages.about} /></p>
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={8} md={12}>
-          <RetweetCoveragePreviewContainer topicId={topicId} />
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={8} md={12}>
-          <RetweetStoryCountsPreviewContainer topicId={topicId} />
-        </Col>
-      </Row>
-    </div>
-  );
-
-  if (!location.query.timespan_id) {
-    content = <FormattedMessage {...messages.topicNotCompleteNoPreview} />;
-  }
   return (
     <Grid>
       <form className="focus-create-edit-retweet" name="focusCreateEditRetweetForm" onSubmit={handleSubmit(finishStep.bind(this))}>
-        {content}
+        <Row>
+          <Col lg={8} md={12}>
+            <h1><FormattedMessage {...localMessages.title} /></h1>
+            <p><FormattedMessage {...localMessages.about} /></p>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={8} md={12}>
+            <RetweetCoveragePreviewContainer topicId={topicId} />
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={8} md={12}>
+            <RetweetStoryCountsPreviewContainer topicId={topicId} />
+          </Col>
+        </Row>
         <Row>
           <Col lg={8} xs={12}>
             <br />

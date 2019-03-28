@@ -5,6 +5,7 @@ div [data-reactroot] {
 }
 
 .media-widget {
+  display: block;
   padding: 10px;
   font-size: 16px;
   border: 1px solid $material-grey200;

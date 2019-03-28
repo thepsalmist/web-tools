@@ -58,14 +58,15 @@ table {
 }
 
 table th {
-    font-weight: bold;
+  font-weight: bold;
   text-align: left;
   white-space: nowrap;
   text-overflow: ellipsis;
   color: $material-grey900;
-    position: relative;
-    background-color: inherit;
+  position: relative;
+  background-color: inherit;
   padding: 5px 13px;
+  border-bottom: 1px solid $material-grey100;
 
   &.numeric {
     text-align: right;

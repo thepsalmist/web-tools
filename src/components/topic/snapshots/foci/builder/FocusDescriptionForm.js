@@ -55,7 +55,7 @@ class FocusDescriptionForm extends React.Component {
           <Field
             name="focalSetDefinitionId"
             component={renderSelect}
-            helpertext={localMessages.pickFocalSet}
+            label={localMessages.pickFocalSet}
           >
             {focalSetDefinitions.map(focalSetDef => (
               <MenuItem
@@ -89,7 +89,7 @@ class FocusDescriptionForm extends React.Component {
             <Field
               name="focusName"
               component={renderTextField}
-              helpertext={localMessages.focusName}
+              label={localMessages.focusName}
             />
           </Col>
           <Col lg={3} xs={12}>
@@ -97,7 +97,7 @@ class FocusDescriptionForm extends React.Component {
               name="focusDescription"
               component={renderTextField}
               multiline
-              helpertext={localMessages.focusDescription}
+              label={localMessages.focusDescription}
             />
           </Col>
           <Col lg={3} xs={12}>

@@ -9,18 +9,22 @@ import messages from '../../resources/messages';
 import { filteredLinkTo } from '../util/location';
 
 const localMessages = {
-  topicFavorited: { id: 'source.favorited', defaultMessage: 'Starred this topic' },
-  topicUnfavorited: { id: 'source.unfavorited', defaultMessage: 'Un-starred this topic' },
+  topicFavorited: { id: 'topic.favorited', defaultMessage: 'Starred this topic' },
+  topicUnfavorited: { id: 'topic.unfavorited', defaultMessage: 'Un-starred this topic' },
+  topicVersion: { id: 'topic.version', defaultMessage: 'Version {version} ' },
 };
 
 const TopicHeaderContainer = (props) => {
-  const { topicId, filters, topicInfo, handleSetFavorited } = props;
+  const { topicId, filters, topicInfo, handleSetFavorited, currentVersion } = props;
   const { formatMessage } = props.intl;
   let title = '';
   if (topicInfo.is_public === 1) {
     title += `${formatMessage(messages.topicPublicProp)} `;
   }
   title += `${formatMessage(messages.topicName)}: ${topicInfo.name}`;
+  const version = `${formatMessage(localMessages.topicVersion, { version: currentVersion })}`;
+
+  title = `${title}-${version}`;
   let content = null;
   if (topicInfo !== null) {
     content = (
@@ -47,6 +51,7 @@ TopicHeaderContainer.propTypes = {
   topicId: PropTypes.number,
   topicInfo: PropTypes.object,
   filters: PropTypes.object,
+  currentVersion: PropTypes.number,
   // from context
   intl: PropTypes.object.isRequired,
   // from dispatch

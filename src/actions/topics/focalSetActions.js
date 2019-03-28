@@ -43,3 +43,6 @@ export const fetchCreateFocusMediaTypeStoryCounts = createAsyncAction(FETCH_CREA
 
 export const FETCH_CREATE_FOCUS_MEDIA_TYPE_COVERAGE = 'FETCH_CREATE_FOCUS_MEDIA_TYPE_COVERAGE';
 export const fetchCreateFocusMediaTypeCoverage = createAsyncAction(FETCH_CREATE_FOCUS_MEDIA_TYPE_COVERAGE, api.topicPreviewMediaTypeCoverage);
+
+export const FETCH_MEDIA_TYPES = 'FETCH_MEDIA_TYPES';
+export const fetchMediaTypes = createAsyncAction(FETCH_MEDIA_TYPES, api.getMediaTypes);

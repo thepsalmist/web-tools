@@ -4,9 +4,13 @@ import Redirect from 'react-router/lib/Redirect';
 import IndexRedirect from 'react-router/lib/IndexRedirect';
 import TopicsHomepage from '../components/topic/homepage/TopicsHomepage';
 import TopicContainer from '../components/topic/TopicContainer';
-import FilteredTopicContainer from '../components/topic/FilteredTopicContainer';
-import TopicSummaryContainer from '../components/topic/summary/TopicSummaryContainer';
-import PublicTopicSummaryContainer from '../components/topic/summary/PublicTopicSummaryContainer';
+// import TopicVersionErrorStatusContainer from '../components/topic/versions/TopicVersionErrorStatusContainer';
+import TopicVersionReadyStatusContainer from '../components/topic/versions/TopicVersionReadyStatusContainer';
+import TopicVersionListContainer from '../components/topic/versions/TopicVersionListContainer';
+import TopicNewVersionContainer from '../components/topic/versions/TopicNewVersionContainer';
+import TopicSummaryContainer from '../components/topic/versions/TopicSummaryContainer';
+import TopicVersionContainer from '../components/topic/versions/TopicVersionContainer';
+import PublicTopicSummaryContainer from '../components/topic/versions/PublicTopicSummaryContainer';
 import InfluentialMediaContainer from '../components/topic/media/InfluentialMediaContainer';
 import InfluentialStoriesContainer from '../components/topic/stories/InfluentialStoriesContainer';
 import InfluentialStoryExplorerContainer from '../components/topic/stories/InfluentialStoryExplorerContainer';
@@ -22,8 +26,9 @@ import { requireAuth } from './routes';
 import systemRoutes from './systemRoutes';
 import TopicsApp from '../components/topic/TopicsApp';
 import About from '../components/topic/About';
-import CreateTopicContainer from '../components/topic/create/CreateTopicContainer';
-import EditTopicContainer from '../components/topic/create/EditTopicContainer';
+import CreateTopicContainer from '../components/topic/wizard/CreateTopicContainer';
+import EditWizardTopicContainer from '../components/topic/wizard/EditWizardTopicContainer';
+import EditTopicSettingsContainer from '../components/topic/wizard/EditTopicSettingsContainer';
 import AttentionContainer from '../components/topic/attention/AttentionContainer';
 import WordContainer from '../components/topic/words/WordContainer';
 import TopicPermissionsContainer from '../components/topic/permissions/TopicPermissionsContainer';
@@ -53,24 +58,28 @@ const topicRoutes = (
     <Route path="/topics/status" component={TopicStatusDashboardContainer} onEnter={requireAuth} />
 
     <Route path="/topics/:topicId" component={TopicContainer} onEnter={requireAuth}>
-
-      <Route path="edit" component={EditTopicContainer} onEnter={requireAuth} />
-
+      <Route path="/topics/:topicId/update" component={EditWizardTopicContainer} onEnter={requireAuth}>
+        <Route path="/topics/:topicId/update/:step" component={EditWizardTopicContainer} onEnter={requireAuth} />
+      </Route>
+      <Route path="versions" component={TopicVersionListContainer} onEnter={requireAuth} />
       <Route path="permissions" component={TopicPermissionsContainer} onEnter={requireAuth} />
-
-      <Route path="/topics/:topicId/filtered" component={FilteredTopicContainer} onEnter={requireAuth}>
-        <Route path="/topics/:topicId/summary" component={TopicSummaryContainer} onEnter={requireAuth} />
-        <Route path="/topics/:topicId/media" component={InfluentialMediaContainer} onEnter={requireAuth} />
-        <Route path="/topics/:topicId/media/:mediaId" component={MediaContainer} onEnter={requireAuth} />
-        <Route path="/topics/:topicId/stories" component={InfluentialStoriesContainer} onEnter={requireAuth} />
-        <Route path="/topics/:topicId/stories/explore" component={InfluentialStoryExplorerContainer} onEnter={requireAuth} />
-        <Route path="/topics/:topicId/stories/:storiesId/update" component={StoryUpdateContainer} onEnter={requireAuth} />
-        <Route path="/topics/:topicId/stories/:id/cached" component={StoryCachedContainer} onEnter={requireAuth} />
-        <Route path="/topics/:topicId/stories/:storiesId" component={StoryContainer} onEnter={requireAuth} />
-        <Route path="/topics/:topicId/attention" component={AttentionContainer} onEnter={requireAuth} />
-        <Route path="/topics/:topicId/words" component={InfluentialWordsContainer} onEnter={requireAuth} />
-        <Route path="/topics/:topicId/words/:word" component={WordContainer} onEnter={requireAuth} />
-        <Route path="/topics/:topicId/link-map" component={LinkMapContainer} onEnter={requireAuth} />
+      <Route path="settings" component={EditTopicSettingsContainer} onEnter={requireAuth} />
+      <Route path="new-version" component={TopicNewVersionContainer} onEnter={requireAuth} />
+      <Route path="/topics/:topicId/versions" component={TopicVersionContainer} onEnter={requireAuth}>
+        <Route component={TopicVersionReadyStatusContainer} onEnter={requireAuth}>
+          <Route path="/topics/:topicId/summary" component={TopicSummaryContainer} onEnter={requireAuth} />
+          <Route path="/topics/:topicId/media" component={InfluentialMediaContainer} onEnter={requireAuth} />
+          <Route path="/topics/:topicId/media/:mediaId" component={MediaContainer} onEnter={requireAuth} />
+          <Route path="/topics/:topicId/stories" component={InfluentialStoriesContainer} onEnter={requireAuth} />
+          <Route path="/topics/:topicId/stories/explore" component={InfluentialStoryExplorerContainer} onEnter={requireAuth} />
+          <Route path="/topics/:topicId/stories/:storiesId/update" component={StoryUpdateContainer} onEnter={requireAuth} />
+          <Route path="/topics/:topicId/stories/:storiesId/cached" component={StoryCachedContainer} onEnter={requireAuth} />
+          <Route path="/topics/:topicId/stories/:storiesId" component={StoryContainer} onEnter={requireAuth} />
+          <Route path="/topics/:topicId/attention" component={AttentionContainer} onEnter={requireAuth} />
+          <Route path="/topics/:topicId/words" component={InfluentialWordsContainer} onEnter={requireAuth} />
+          <Route path="/topics/:topicId/words/:word" component={WordContainer} onEnter={requireAuth} />
+          <Route path="/topics/:topicId/link-map" component={LinkMapContainer} onEnter={requireAuth} />
+        </Route>
       </Route>
 
       <Route path="/topics/:topicId/snapshot" component={SnapshotBuilder}>

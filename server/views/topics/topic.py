@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 WORD2VEC_TIMESPAN_POOL_PROCESSES = 10
 
+ARRAY_BASE_ONE = 1
 
 @app.route('/api/topics/queued-and-running', methods=['GET'])
 @flask_login.login_required
@@ -97,12 +98,23 @@ def _topic_summary(topics_id):
         return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
     topic = local_mc.topic(topics_id)
     # add in snapshot and latest snapshot job status
+    snapshots = local_mc.topicSnapshotList(topics_id)
+
+    # snapshots = sorted(snapshots, key=snapshots.snapshot_date)
+    snapshots = sorted(snapshots, key=lambda d:d['snapshot_date'])
+    for idx in range(0, len(snapshots)):
+        if snapshots[idx]['note'] in [None,'']:
+            snapshots[idx]['note'] = idx + ARRAY_BASE_ONE;
+    jobStatuses = mc.topicSnapshotGenerateStatus(topics_id)['job_states']
+    most_recent_usable_snapshot = get_most_recent_snapshot_version(topics_id)
     topic['snapshots'] = {
-        'list': local_mc.topicSnapshotList(topics_id),
-        'jobStatus': mc.topicSnapshotGenerateStatus(topics_id)['job_states']    # need to know if one is running
+        'list': snapshots,
+        'jobStatus': jobStatuses,    # need to know if one is running
     }
     # add in spider job status
     topic['spiderJobs'] = local_mc.topicSpiderStatus(topics_id)['job_states']
+    topic['latestVersion'] = len(snapshots) + ARRAY_BASE_ONE
+    topic['latestUsableVersion'] = 'note' in most_recent_usable_snapshot if most_recent_usable_snapshot else -1
     if is_user_logged_in():
         _add_user_favorite_flag_to_topics([topic])
 
@@ -125,7 +137,7 @@ def _add_user_favorite_flag_to_topics(topics):
     return topics
 
 
-def get_topic_info_per_snapshot_timespan(topic_id):
+def get_most_recent_snapshot_version(topic_id):
     if not is_user_logged_in():
         local_mc = mc
     else:
@@ -133,18 +145,19 @@ def get_topic_info_per_snapshot_timespan(topic_id):
     snapshots = {
         'list': local_mc.topicSnapshotList(topic_id),
     }
-    most_recent_running_snapshot = {}
+    most_recent_completed_snapshot = {}
     overall_timespan = {}
     for snp in snapshots['list']:
         if snp['searchable'] == 1 and snp['state'] == "completed":
-            most_recent_running_snapshot = snp
+            most_recent_completed_snapshot = snp
+            most_recent_completed_snapshot['versions'] = len(snapshots['list'])
             timespans = cached_topic_timespan_list(user_mediacloud_key(), topic_id,
-                                                   most_recent_running_snapshot['snapshots_id'])
+                                                   most_recent_completed_snapshot['snapshots_id'])
             for ts in timespans:
                 if ts['period'] == "overall":
                     overall_timespan = ts
 
-    return {'snapshot': most_recent_running_snapshot, 'timespan': overall_timespan}
+    return most_recent_completed_snapshot
 
 
 @app.route('/api/topics/<topics_id>/snapshots/list', methods=['GET'])
@@ -153,8 +166,14 @@ def get_topic_info_per_snapshot_timespan(topic_id):
 def topic_snapshots_list(topics_id):
     user_mc = user_admin_mediacloud_client()
     snapshots = user_mc.topicSnapshotList(topics_id)
+    snapshots = sorted(snapshots)
+    # if note is missing
+    for idx in range(0, len(snapshots)):
+        if snapshots[idx]['note'] in [None,'']:
+            snapshots[idx]['note'] = idx
     snapshot_status = mc.topicSnapshotGenerateStatus(topics_id)['job_states']    # need to know if one is running
-    return jsonify({'list': snapshots, 'jobStatus': snapshot_status})
+    latest = len(snapshots) + 1
+    return jsonify({'list': snapshots, 'jobStatus': snapshot_status, 'latestVersion': latest['note']})
 
 
 @app.route('/api/topics/<topics_id>/snapshots/generate', methods=['POST'])
@@ -221,7 +240,20 @@ def topic_update(topics_id):
         media_ids_to_add = None
         tag_ids_to_add = None
 
+
+
     result = user_mc.topicUpdate(topics_id,  media_ids=media_ids_to_add, media_tags_ids=tag_ids_to_add, **args)
+    topic = result['topics'][0]
+    snapshots = user_mc.topicSnapshotList(topics_id)
+    snapshots = sorted(snapshots, key=lambda d: d['snapshot_date'])
+
+    # create snapshot and then conditionally spider (for admins)
+    topic_version = len(snapshots) + 1
+    start_spider = request.form['start_spidering'] if 'start_spidering' in request.form else False
+    new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=topic_version)['snapshot'] # vs. generate into...
+    if start_spider:  # or not admin
+        spider_job = user_mc.topicSpider(topics_id,
+                                         new_snapshot['snapshots_id'])  # kick off a spider, which will also fill/generate snapshot data
 
     return topic_summary(result['topics'][0]['topics_id'])  # give them back new data, so they can update the client
 

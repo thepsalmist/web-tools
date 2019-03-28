@@ -69,7 +69,7 @@ export const toggleFilterControls = createAction(TOGGLE_FILTER_CONTROLS, isVisib
 // pass in topicId and favorite bool
 export const setTopicFavorite = createAsyncAction(SET_TOPIC_FAVORITE, api.topicSetFavorite);
 
-export const updateTopic = createAsyncAction(UPDATE_TOPIC, api.updateTopic);
+export const updateAndCreateNewTopicVersion = createAsyncAction(UPDATE_TOPIC, api.updateAndCreateNewTopicVersion);
 
 export const topicStartSpider = createAsyncAction(TOPIC_START_SPIDER, api.topicSpider, id => id);
 

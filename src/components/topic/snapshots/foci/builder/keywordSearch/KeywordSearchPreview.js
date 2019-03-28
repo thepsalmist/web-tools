@@ -4,6 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import KeywordStoryCountPreviewContainer from './KeywordStoryCountPreviewContainer';
 import KeywordStoryPreviewContainer from './KeywordStoryPreviewContainer';
+import messages from '../../../../../../resources/messages';
 
 const localMessages = {
   about: { id: 'focus.create.keyword.results.about',
@@ -11,7 +12,11 @@ const localMessages = {
 };
 
 const KeywordSearchPreview = (props) => {
-  const { topicId, keywords } = props;
+  const { topicId, keywords, location } = props;
+  // if no timespan, no data
+  if (!location.query.timespan_id) {
+    return <FormattedMessage {...messages.topicNotCompleteNoPreview} />;
+  }
   return (
     <div className="focal-create-boolean-keyword-preview">
       <Row>
@@ -34,6 +39,7 @@ const KeywordSearchPreview = (props) => {
 KeywordSearchPreview.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
   // from parent
   keywords: PropTypes.string.isRequired,
   topicId: PropTypes.number.isRequired,

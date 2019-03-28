@@ -32,6 +32,24 @@ function withSummary(titleMessage, introMessage, detailedMessage, wide) {
         const { formatMessage } = this.props.intl;
         let detailsContent;
         let showDetailsButton;
+        let detailsExploreContent = null;
+
+        if (handleExplore && typeof handleExplore === 'string') {
+          detailsExploreContent = (
+            <a href={handleExplore}>
+              <AppButton
+                label={formatMessage(messages.details)}
+              />
+            </a>
+          );
+        } else if (handleExplore && typeof handleExplore === 'function') {
+          detailsExploreContent = (
+            <AppButton
+              label={formatMessage(messages.details)}
+              onClick={handleExplore}
+            />
+          );
+        }
 
         if (detailedMessage) { // only toggle extra text if there is any
           if (this.state.showingDetails) {
@@ -65,12 +83,7 @@ function withSummary(titleMessage, introMessage, detailedMessage, wide) {
               <Col lg={wide ? 3 : 4}>
                 <div className="summary">
                   { titleMessage && <h2><FormattedHTMLMessage {...titleMessage} /></h2> }
-                  { handleExplore && (
-                    <AppButton
-                      label={formatMessage(messages.details)}
-                      onClick={handleExplore}
-                    />
-                  )}
+                  { detailsExploreContent }
                   <div className="summary-intro">
                     <FormattedHTMLMessage {...introMessage} />
                     {showDetailsButton}
@@ -94,7 +107,10 @@ function withSummary(titleMessage, introMessage, detailedMessage, wide) {
     SummarizedVisualization.propTypes = {
       intl: PropTypes.object.isRequired,
       // from child:
-      handleExplore: PropTypes.func,
+      handleExplore: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.string,
+      ]),
     };
 
     return injectIntl(SummarizedVisualization);

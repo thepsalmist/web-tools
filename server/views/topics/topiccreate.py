@@ -13,7 +13,7 @@ from server.views.topics.foci.retweetpartisanship import create_retweet_partisan
 # load the shared settings file
 
 logger = logging.getLogger(__name__)
-
+VERSION_1 = 1
 
 @app.route('/api/topics/create/preview/split-story/count', methods=['POST'])
 @flask_login.login_required
@@ -98,6 +98,7 @@ def topic_create():
     solr_seed_query = request.form['solr_seed_query']
     start_date = request.form['start_date']
     end_date = request.form['end_date']
+    start_spider = request.form['start_spider'] if 'start_spider' in request.form else False
 
     optional_args = {
         'is_public': request.form['is_public'] if 'is_public' in request.form else None,
@@ -121,8 +122,10 @@ def topic_create():
 
         if set(tag_ids_to_add).intersection(US_COLLECTIONS):
             create_retweet_partisanship_focal_set(topic_result['topics_id'])
-
-        spider_job = user_mc.topicSpider(topic_id)  # kick off a spider, which will also generate a snapshot
+        #create snapshot and then conditionally spider (for admins)
+        new_snapshot = user_mc.topicCreateSnapshot(topic_id, note=VERSION_1)
+        if start_spider: # or not admin
+            spider_job = user_mc.topicSpider(topic_id, new_snapshot.snapshots_id)  # kick off a spider, which will also fill/generate snapshot data
         logger.info("  spider result = {}".format(json.dumps(spider_job)))
         results = user_mc.topic(topic_id)
         results['spider_job_state'] = spider_job

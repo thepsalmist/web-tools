@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { selectMediaPickerQueryArgs, fetchMediaPickerCollections } from '../../../../actions/systemActions';
-import CollectionSearchResultsContainer from './CollectionSearchResultsContainer';
+import TabSandCSearchResultsContainer from './TabSandCSearchResultsContainer';
 import { notEmptyString } from '../../../../lib/formValidators';
 
 const localMessages = {
@@ -21,15 +21,18 @@ class AllCollectionSearchResultsContainer extends React.Component {
   }
 
   render() {
-    const { selectedMediaQueryType, selectedMediaQueryKeyword, collectionResults, onToggleSelected, fetchStatus } = this.props;
+    const { selectedMediaQueryType, selectedMediaQueryKeyword, collectionResults, sourceResults, onToggleSelected, fetchStatus } = this.props;
+    const queryResults = {
+      collections: collectionResults.list,
+      sources: sourceResults.list,
+    };
     return (
       <div>
-        <CollectionSearchResultsContainer
+        <TabSandCSearchResultsContainer
           fetchStatus={fetchStatus}
           onToggleSelected={onToggleSelected}
           selectedMediaQueryType={selectedMediaQueryType}
-          selectedMediaQueryKeyword={selectedMediaQueryKeyword}
-          collectionResults={collectionResults}
+          queryResults={queryResults}
           initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
           onSearch={val => this.updateMediaQuery(val)}
           hintTextMsg={localMessages.hintText}
@@ -51,6 +54,7 @@ AllCollectionSearchResultsContainer.propTypes = {
   selectedMediaQueryKeyword: PropTypes.string,
   selectedMediaQueryType: PropTypes.number,
   collectionResults: PropTypes.object,
+  sourceResults: PropTypes.object,
   fetchStatus: PropTypes.string,
 };
 
@@ -59,6 +63,7 @@ const mapStateToProps = state => ({
   selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : 0,
   selectedMediaQueryKeyword: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.mediaKeyword : null,
   collectionResults: state.system.mediaPicker.collectionQueryResults,
+  sourceResults: state.system.mediaPicker.sourceQueryResults,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

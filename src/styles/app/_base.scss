@@ -55,6 +55,9 @@ table {
   padding: 0px;
   border-spacing: 0;
   border-collapse: collapse;
+  /* make sure wider columns don't overlow and make the table blowout the Col */
+  table-layout:fixed;
+  width:100%;
 }
 
 table th {
@@ -87,6 +90,9 @@ table td {
   padding: 13px;
   font-size: 13px;
   vertical-align: top;
+
+  /* make sure wider columns don't overlow and make the table blowout the Col */
+  overflow-x: scroll;
 
   &.numeric {
     text-align: right;

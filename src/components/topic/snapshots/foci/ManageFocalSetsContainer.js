@@ -18,6 +18,7 @@ import NewVersionFociComparisonContainer from './NewVersionFociComparisonContain
 import NeedsNewVersionWarning from '../../versions/NeedsNewVersionWarning';
 
 const localMessages = {
+  versionDiffTitle: { id: 'focalSets.list.versionDiffTitle', defaultMessage: 'You\'ve Made Changes' },
   listTitle: { id: 'focalSets.list.title', defaultMessage: 'Subtopic Details' },
   focalSetsManageAbout: { id: 'focalSets.manage.about',
     defaultMessage: 'Every Subtopic is part of a Set. All the Subtopics within a Set share the same Technique. Our tools lets you compare Subtopics with a Set, but they don\'t let you easily compare Subtopics in different Sets.' },
@@ -75,6 +76,11 @@ class ManageFocalSetsContainer extends React.Component {
                 <p>
                   <FormattedMessage {...localMessages.focalSetsManageAbout} />
                 </p>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={12}>
+                <h2><FormattedMessage {...localMessages.versionDiffTitle} /></h2>
               </Col>
             </Row>
             <NewVersionFociComparisonContainer />

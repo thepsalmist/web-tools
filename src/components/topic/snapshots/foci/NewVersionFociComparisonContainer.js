@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../../common/AppButton';
 import { needsNewVersion } from '../../versions/NeedsNewVersionWarning';
@@ -10,10 +10,13 @@ import FocalSetDefinitionSummary from './FocalSetDefinitionSummary';
 import { updateAndCreateNewTopicVersion, updateTopicVersionSubtopics } from '../../../../actions/topicActions';
 import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import Permissioned from '../../../common/Permissioned';
+import TabbedChip from '../../../common/TabbedChip';
 
 const localMessages = {
   createVersionAndStartSpider: { id: 'focalSets.manage.about', defaultMessage: 'Generate New Version' },
   updateTopicVersionSubtopics: { id: 'focalSets.manage.about', defaultMessage: 'Generate Into Current Version' },
+  versionDiffTitle: { id: 'focalSets.list.versionDiffTitle', defaultMessage: 'You\'ve Made Changes' },
+  applyChanges: { id: 'focalSets.list.applyChanges', defaultMessage: 'apply your changes' },
 };
 
 const NewVersionFociComparisonContainer = ({ topicId, usingLatest, newDefinitions, latestVersionRunning, currentFocalSets, selectedSnapshot, focalSetDefinitions, handleGenerateIntoSameVersion, handleCreateVersionAndStartSpider }) => {
@@ -21,8 +24,13 @@ const NewVersionFociComparisonContainer = ({ topicId, usingLatest, newDefinition
     return (
       <React.Fragment>
         <Row>
+          <Col lg={12}>
+            <h2><FormattedMessage {...localMessages.versionDiffTitle} /></h2>
+          </Col>
+        </Row>
+        <Row>
           <Col lg={5}>
-            <FocalSetSummary focalSets={currentFocalSets} snapshot={selectedSnapshot} />
+            <FocalSetSummary focalSets={currentFocalSets} snapshot={selectedSnapshot} faded />
           </Col>
           <Col lg={2}>
             <span style={{ display: 'block', fontSize: '56px', marginTop: '120px', textAlign: 'center' }}>➡</span>
@@ -34,6 +42,7 @@ const NewVersionFociComparisonContainer = ({ topicId, usingLatest, newDefinition
               onClick={() => handleCreateVersionAndStartSpider(topicId)}
               primary
             />
+            <TabbedChip warning message={localMessages.applyChanges} />
             <Permissioned onlyRole={PERMISSION_ADMIN}>
               <AppButton
                 label={localMessages.updateTopicVersionSubtopics}

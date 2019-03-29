@@ -43,7 +43,7 @@ const TopicConfirmContainer = (props) => {
     previousVersion = (
       <React.Fragment>
         <Col lg={5}>
-          <SeedQuerySummary topic={topicInfo} snapshot={selectedSnapshot} />
+          <SeedQuerySummary topic={topicInfo} snapshot={selectedSnapshot} faded />
         </Col>
         <Col lg={2}>
           <span style={{ display: 'block', fontSize: '56px', marginTop: '120px', textAlign: 'center' }}>➡</span>

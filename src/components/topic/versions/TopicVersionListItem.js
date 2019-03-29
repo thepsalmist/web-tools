@@ -23,7 +23,7 @@ const localMessages = {
   error: { id: 'topic.state.running', defaultMessage: 'Failed' },
   createdNotQueued: { id: 'topic.state.createdNotQueued', defaultMessage: 'Created' },
   createdNotQueuedDetails: { id: 'topic.state.createdNotQueuedDetails', defaultMessage: 'This version hasn\'t been generated yet.' },
-  createdNotQueuedAction: { id: 'topic.state.finishGenerating', defaultMessage: 'Finish up and generate' },
+  createdNotQueuedAction: { id: 'topic.state.finishGenerating', defaultMessage: 'Review Changes' },
   selected: { id: 'topic.version.selected', defaultMessage: 'Selected' },
 };
 

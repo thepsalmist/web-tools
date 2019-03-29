@@ -12,11 +12,11 @@ const localMessages = {
   datesData: { id: 'topic.info.datesData', defaultMessage: '{startDate} to {endDate}' },
 };
 
-const SeedQuerySummary = ({ seedQueryCount, topic, snapshot, intl }) => {
+const SeedQuerySummary = ({ seedQueryCount, topic, snapshot, intl, faded }) => {
   let sourcesAndCollections = topic.media ? [...topic.media] : [];
   sourcesAndCollections = topic.media_tags ? [...sourcesAndCollections, ...topic.media_tags] : sourcesAndCollections;
   return (
-    <div className="topic-info-sidebar">
+    <div className={`topic-info-sidebar ${faded ? 'faded' : ''}`}>
       <h2>
         <FormattedMessage
           {...localMessages.title}
@@ -58,6 +58,7 @@ SeedQuerySummary.propTypes = {
   topic: PropTypes.object.isRequired,
   snapshot: PropTypes.object,
   seedQueryCount: PropTypes.number,
+  faded: PropTypes.bool,
   intl: PropTypes.object.isRequired,
 };
 

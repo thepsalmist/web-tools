@@ -7,19 +7,19 @@ const localMessages = {
   intro: { id: 'focus.create.confirm.nytTheme.intro', defaultMessage: 'We will create 5 subtopics:' },
 };
 
-const TopCountriesSummary = (props) => {
+const NytThemeSummary = (props) => {
   const { counts } = props;
   return (
-    <div className="focus-create-cofirm-retweet-partisanship">
+    <React.Fragment>
       <p><FormattedMessage {...localMessages.intro} /></p>
       <ul>
         {counts.map(ctry => <li>{ctry.label}</li>)}
       </ul>
-    </div>
+    </React.Fragment>
   );
 };
 
-TopCountriesSummary.propTypes = {
+NytThemeSummary.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   formValues: PropTypes.object.isRequired,
@@ -27,6 +27,7 @@ TopCountriesSummary.propTypes = {
   // form context
   intl: PropTypes.object.isRequired,
 };
+
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.focalSets.create.nytThemeStoryCounts.fetchStatus,
   counts: state.topics.selected.focalSets.create.nytThemeStoryCounts.story_counts,
@@ -35,6 +36,6 @@ const mapStateToProps = state => ({
 export default
 injectIntl(
   connect(mapStateToProps)(
-    TopCountriesSummary
+    NytThemeSummary
   )
 );

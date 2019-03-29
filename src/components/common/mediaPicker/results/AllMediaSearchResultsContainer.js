@@ -2,9 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { selectMediaPickerQueryArgs, fetchMediaPickerCollections } from '../../../../actions/systemActions';
 import TabSandCSearchResultsContainer from './TabSandCSearchResultsContainer';
-import { notEmptyString } from '../../../../lib/formValidators';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.collections.title', defaultMessage: 'Collections matching "{name}"' },
@@ -13,7 +11,7 @@ const localMessages = {
 };
 
 
-class AllCollectionSearchResultsContainer extends React.Component {
+class AllMediaSearchResultsContainer extends React.Component {
   updateMediaQuery(values) {
     const { updateMediaQuerySelection, selectedMediaQueryType } = this.props;
     const updatedQueryObj = Object.assign({}, values, { type: selectedMediaQueryType });
@@ -21,7 +19,7 @@ class AllCollectionSearchResultsContainer extends React.Component {
   }
 
   render() {
-    const { selectedMediaQueryType, selectedMediaQueryKeyword, collectionResults, sourceResults, onToggleSelected, fetchStatus } = this.props;
+    const { selectedMediaQueryType, selectedMediaQueryKeyword, whichTagSet, collectionResults, sourceResults, onToggleSelected, fetchStatus } = this.props;
     const queryResults = {
       collections: collectionResults.list,
       sources: sourceResults.list,
@@ -33,6 +31,7 @@ class AllCollectionSearchResultsContainer extends React.Component {
           onToggleSelected={onToggleSelected}
           selectedMediaQueryType={selectedMediaQueryType}
           queryResults={queryResults}
+          whichTagSet={whichTagSet}
           initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
           onSearch={val => this.updateMediaQuery(val)}
           hintTextMsg={localMessages.hintText}
@@ -42,14 +41,12 @@ class AllCollectionSearchResultsContainer extends React.Component {
   }
 }
 
-AllCollectionSearchResultsContainer.propTypes = {
+AllMediaSearchResultsContainer.propTypes = {
   // form compositional chain
   intl: PropTypes.object.isRequired,
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
   whichTagSet: PropTypes.array,
-  // from dispatch
-  updateMediaQuerySelection: PropTypes.func.isRequired,
   // from state
   selectedMediaQueryKeyword: PropTypes.string,
   selectedMediaQueryType: PropTypes.number,
@@ -66,18 +63,9 @@ const mapStateToProps = state => ({
   sourceResults: state.system.mediaPicker.sourceQueryResults,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  updateMediaQuerySelection: (values) => {
-    if (values && notEmptyString(values.mediaKeyword)) {
-      dispatch(selectMediaPickerQueryArgs(values));
-      dispatch(fetchMediaPickerCollections({ media_keyword: values.mediaKeyword, which_set: ownProps.whichTagSet }));
-    }
-  },
-});
-
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    AllCollectionSearchResultsContainer
+  connect(mapStateToProps)(
+    AllMediaSearchResultsContainer
   )
 );

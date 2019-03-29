@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { selectMedia, toggleMedia, selectMediaPickerQueryArgs, resetMediaPickerQueryArgs, resetMediaPickerSources, resetMediaPickerCollections } from '../../../actions/systemActions';
 import { PICK_SOURCE_AND_COLLECTION, PICK_FEATURED } from '../../../lib/explorerUtil';
 import * as fetchConstants from '../../../lib/fetchConstants';
-import AllCollectionSearchResultsContainer from './results/AllCollectionSearchResultsContainer';
+import AllMediaSearchResultsContainer from './results/AllMediaSearchResultsContainer';
 import FeaturedFavoriteGeoSearchResultsContainer from './results/FeaturedFavoriteGeoSearchResultsContainer';
 import { VALID_COLLECTION_IDS } from '../../../lib/tagUtil';
 
@@ -83,7 +83,7 @@ class MediaPickerResultsContainer extends React.Component {
         break; */
       case PICK_SOURCE_AND_COLLECTION:
         content = (
-          <AllCollectionSearchResultsContainer
+          <AllMediaSearchResultsContainer
             whichTagSet={VALID_COLLECTION_IDS}
             onToggleSelected={handleToggleSelected}
           />

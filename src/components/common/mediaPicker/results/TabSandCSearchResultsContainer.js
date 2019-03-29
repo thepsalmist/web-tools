@@ -23,7 +23,7 @@ class TabSandCSearchResultsContainer extends React.Component {
   };
 
   render() {
-    const { queryResults, onToggleSelected, fetchStatus, selectedMediaQueryKeyword } = this.props;
+    const { queryResults, onToggleSelected, fetchStatus, whichTagSet, selectedMediaQueryKeyword } = this.props;
     const { formatMessage } = this.props.intl;
     const tabs = (
       <div className="media-picker-results-container">
@@ -51,9 +51,9 @@ class TabSandCSearchResultsContainer extends React.Component {
           <CollectionSearchResultsContainer
             fetchStatus={fetchStatus}
             onToggleSelected={onToggleSelected}
-            collectionResults={queryResults.collections}
+            whichTagSet={whichTagSet}
+            selectedMediaQueryKeyword={selectedMediaQueryKeyword}
             initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
-            onSearch={val => this.updateMediaQuery(val)}
             hintTextMsg={localMessages.hintText}
           />
         </div>
@@ -63,7 +63,6 @@ class TabSandCSearchResultsContainer extends React.Component {
         <div className="media-picker-tabbed-content-wrapper">
           <SourceSearchResultsContainer
             initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
-            sourceResults={queryResults.sources}
             onToggleSelected={onToggleSelected}
           />
         </div>
@@ -86,7 +85,7 @@ TabSandCSearchResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
-  whichTagSet: PropTypes.number,
+  whichTagSet: PropTypes.array,
   hintTextMsg: PropTypes.object,
   onSearch: PropTypes.func.isRequired,
   // from state

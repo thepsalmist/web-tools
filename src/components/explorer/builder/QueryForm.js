@@ -154,12 +154,14 @@ class QueryForm extends React.Component {
                     intro="intro"
                   />
                   <div>
-                    {isEditable &&
-                    <MediaPickerDialog
-                      initMedia={selected.media ? selected.media : cleanedInitialValues.media}
-                      onConfirmSelection={selections => onMediaChange(selections)}
-                      setQueryFormChildDialogOpen={this.setQueryFormChildDialogOpen}
-                    />}
+                    {isEditable
+                    && (
+                      <MediaPickerDialog
+                        initMedia={selected.media ? selected.media : cleanedInitialValues.media}
+                        onConfirmSelection={selections => onMediaChange(selections)}
+                        setQueryFormChildDialogOpen={this.setQueryFormChildDialogOpen}
+                      />
+                    )}
                   </div>
                   <div className="query-field-desc">
                     <FormattedMessage {...localMessages.selectSandCDesc} />

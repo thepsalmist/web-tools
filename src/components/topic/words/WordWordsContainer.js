@@ -40,7 +40,7 @@ const WordWordsContainer = (props) => {
       onViewSampleSizeClick={onViewSampleSizeClick}
       title={formatMessage(messages.topWords)}
       domId={WORD_CLOUD_DOM_ID}
-      svgDownloadPrefix={`${topicDownloadFilename(topicInfo.name, filters)}-word-${slugify(term)}--words`}
+      svgDownloadPrefix={`${topicDownloadFilename(topicInfo.name, filters)}-word-${slugify(term)}-words`}
       includeTopicWord2Vec
     />
   );

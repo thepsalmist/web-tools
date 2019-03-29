@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import LinkWithFilters from '../LinkWithFilters';
-import { filteredLinkTo } from '../../util/location';
 import { HomeButton, EditButton } from '../../common/IconButton';
 import TabbedChip from '../../common/TabbedChip';
 import Permissioned from '../../common/Permissioned';
@@ -38,7 +36,7 @@ const mostRecentSnapshotIs = (snapshots, topic, states) => {
   return states.includes(snapshots[snapshots.length - 1].state);
 };
 
-const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, goToUrl, snapshots, intl, selectedSnapshot, latestSnapshot }) => (
+const TopicControlBar = ({ sideBarContent, topic, setupJumpToExplorer, snapshots, intl, selectedSnapshot, latestSnapshot }) => (
   <div className="controlbar controlbar-topic">
     <div className="main">
       <Grid>
@@ -56,7 +54,6 @@ const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, 
                   <EditButton
                     label={intl.formatMessage(localMessages.settings)}
                     description={intl.formatMessage(localMessages.changeSettingsDetails)}
-                    onClick={() => goToUrl(`/topics/${topic.topics_id}/settings`, filters)}
                     id="modify-topic-settings"
                   />
                   <b><FormattedMessage {...localMessages.settings} /></b>
@@ -69,7 +66,6 @@ const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, 
                   <EditButton
                     label={intl.formatMessage(localMessages.permissions)}
                     description={intl.formatMessage(localMessages.changePermissionsDetails)}
-                    onClick={() => goToUrl(`/topics/${topic.topics_id}/permissions`)}
                     id="modify-topic-permissions"
                   />
                   <b><FormattedMessage {...localMessages.permissions} /></b>
@@ -82,7 +78,6 @@ const TopicControlBar = ({ filters, sideBarContent, topic, setupJumpToExplorer, 
                   <EditButton
                     label={intl.formatMessage(localMessages.versionList)}
                     description={intl.formatMessage(localMessages.viewVersionLists)}
-                    onClick={() => goToUrl(`/topics/${topic.topics_id}/versions`)}
                     id="modify-topic-permissions"
                   />
                   <b><FormattedMessage {...localMessages.versionList} /></b>
@@ -118,8 +113,6 @@ TopicControlBar.propTypes = {
   // from parent
   sideBarContent: PropTypes.node,
   setupJumpToExplorer: PropTypes.func,
-  // from dispatch
-  goToUrl: PropTypes.func,
   // from state
   topic: PropTypes.object,
   filters: PropTypes.object.isRequired,
@@ -136,15 +129,9 @@ const mapStateToProps = state => ({
   selectedSnapshot: state.topics.selected.snapshots.selected,
 });
 
-const mapDispatchToProps = dispatch => ({
-  goToUrl: (url, filters) => {
-    dispatch(push(filteredLinkTo(url, filters)));
-  },
-});
-
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps)(
     TopicControlBar
   )
 );

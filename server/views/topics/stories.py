@@ -115,8 +115,8 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
 
     story_count = apicache.topic_story_count(user_mediacloud_key(), topics_id,
                                              snapshots_id=params['snapshots_id'], timespans_id=params['timespans_id'],
-                                             foci_id = params['foci_id'], q=params['q'])
-    logger.info("Total stories to download: {}".format(story_count))
+                                             foci_id=params['foci_id'], q=params['q'])
+    logger.info("Total stories to download: {}".format(story_count['count']))
 
     if 'as_attachment' in params:
         del params['as_attachment']
@@ -126,7 +126,7 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
         params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
     params['limit'] = 1000  # an arbitrary value to let us page through with big topics
 
-    # determine which props the user actaully wants to download
+    # determine which props the user actually wants to download
     props = [
         'stories_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',
         'themes', 'subtopics',

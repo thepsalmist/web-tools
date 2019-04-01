@@ -15,6 +15,7 @@ import messages from '../../../resources/messages';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 import { filtersAsUrlParams } from '../../util/location';
 import { WarningNotice } from '../../common/Notice';
+import { topicDownloadFilename } from '../../util/topicUtil';
 
 const BUBBLE_CHART_DOM_ID = 'nyt-tag-representation-bubble-chart';
 const COLORS = schemeCategory10;
@@ -36,7 +37,7 @@ const localMessages = {
 class NytLabelSummaryContainer extends React.Component {
   downloadCsv = (evt) => {
     const { topicId, filters } = this.props;
-    if (evt) {
+    if (evt.preventDefault) {
       evt.preventDefault();
     }
     const url = `/api/topics/${topicId}/nyt-tags/counts.csv?${filtersAsUrlParams(filters)}`;
@@ -54,7 +55,7 @@ class NytLabelSummaryContainer extends React.Component {
   }
 
   render() {
-    const { data, coverage } = this.props;
+    const { data, coverage, topicName, filters } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
     const coverageRatio = coverage.total !== undefined && coverage.total > 0 ? coverage.count / coverage.total : 0;
     let content;
@@ -100,8 +101,11 @@ class NytLabelSummaryContainer extends React.Component {
             <div className="actions">
               <ActionMenu actionTextMsg={messages.downloadOptions}>
                 <SVGAndCSVMenu
-                  downloadCsv={() => this.downloadCsv}
-                  downloadSvg={() => downloadSvg(BUBBLE_CHART_DOM_ID)}
+                  downloadCsv={this.downloadCsv}
+                  downloadSvg={() => downloadSvg(
+                    `${topicDownloadFilename(topicName, filters)}-top-NYT-themes`,
+                    BUBBLE_CHART_DOM_ID
+                  )}
                   label={formatMessage(localMessages.title)}
                 />
               </ActionMenu>
@@ -145,6 +149,8 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.nytlabels.fetchStatus,
   data: state.topics.selected.nytlabels.entities,
   coverage: state.topics.selected.nytlabels.coverage,
+  filters: state.topics.selected.filters,
+  topicName: state.topics.selected.info.name,
 });
 
 const mapDispatchToProps = dispatch => ({

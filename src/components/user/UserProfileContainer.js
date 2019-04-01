@@ -110,15 +110,6 @@ class UserProfileContainer extends React.Component {
           <Row>
             <Col lg={12}>
               <AppButton
-                label={formatMessage(localMessages.resetKey)}
-                onClick={handleResetApiKey}
-              />
-              <FormattedMessage {...localMessages.resetKeyAbout} />
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={12}>
-              <AppButton
                 label={formatMessage(localMessages.requestData)}
                 onClick={handleRequestData}
               />
@@ -129,6 +120,15 @@ class UserProfileContainer extends React.Component {
           <Row>
             <Col lg={10}>
               <h2 className="error-background"><FormattedMessage {...localMessages.dangerZone} /></h2>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={12}>
+              <AppButton
+                label={formatMessage(localMessages.resetKey)}
+                onClick={handleResetApiKey}
+              />
+              <FormattedMessage {...localMessages.resetKeyAbout} />
             </Col>
           </Row>
           <Row>

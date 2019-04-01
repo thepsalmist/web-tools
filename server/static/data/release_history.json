@@ -39,7 +39,7 @@
         {
           "apps": [ "topics" ],
           "type": "Fixed",
-          "note": "Downlading Topic top themes CSV/SVG works again"
+          "note": "Downloading Topic top themes CSV/SVG works again"
         }
       ]
     },

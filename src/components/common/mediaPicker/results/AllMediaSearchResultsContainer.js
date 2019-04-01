@@ -48,6 +48,7 @@ AllMediaSearchResultsContainer.propTypes = {
   onToggleSelected: PropTypes.func.isRequired,
   whichTagSet: PropTypes.array,
   // from state
+  updateMediaQuerySelection: PropTypes.func,
   selectedMediaQueryKeyword: PropTypes.string,
   selectedMediaQueryType: PropTypes.number,
   collectionResults: PropTypes.object,

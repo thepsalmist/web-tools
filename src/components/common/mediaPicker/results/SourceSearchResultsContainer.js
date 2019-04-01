@@ -25,12 +25,7 @@ const formSelector = formValueSelector('advanced-media-picker-search');
 
 class SourceSearchResultsContainer extends React.Component {
   state = {
-    showAdvancedOptions: false,
-  }
-
-  toggleAdvancedOptions = (evt) => {
-    evt.preventDefault();
-    this.setState(prevState => ({ showAdvancedOptions: !prevState.showAdvancedOptions }));
+    showAdvancedOptions: true,
   }
 
   updateMediaQuery(values) {
@@ -69,7 +64,6 @@ class SourceSearchResultsContainer extends React.Component {
             onAdvancedSelection={val => this.updateMediaQuery(val)}
             hintText={formatMessage(localMessages.hintText)}
           />
-          <a href="#toggle" onClick={this.toggleAdvancedOptions} className="media-picker-search-advanced"><FormattedMessage {...localMessages.hideAdvancedOptions} /></a>
         </div>
       );
     } else {

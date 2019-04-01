@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import AppButton from '../../../common/AppButton';
 import Permissioned from '../../../common/Permissioned';
-import { PERMISSION_TOPIC_WRITE } from '../../../../lib/auth';
+import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import messages from '../../../../resources/messages';
 import TopicVersionStatus from './TopicVersionStatus';
 
@@ -28,7 +28,7 @@ const TopicVersionErrorStatusContainer = ({ topic, goToCreateNewVersion, snapsho
       <h2><FormattedMessage {...localMessages.whatNowTitle} /></h2>
       <p><FormattedMessage {...localMessages.whatNowText} /></p>
 
-      <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
+      <Permissioned onlyTopic={PERMISSION_ADMIN}>
         <div className="topic-stuck-created-or-error">
           <AppButton
             label={intl.formatMessage(messages.createNewVersion)}

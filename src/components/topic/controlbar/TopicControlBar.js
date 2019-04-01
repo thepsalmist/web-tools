@@ -29,14 +29,14 @@ const localMessages = {
   newerData: { id: 'topic.version.latestNeedsAttention', defaultMessage: 'newer data' },
 };
 
-const mostRecentSnapshotIs = (snapshots, topic, states) => {
-  if (snapshots.length === 0) {
-    return states.includes(topic.state);
+const snapshotStateIs = (latestSnapshot, topic, states) => {
+  if (latestSnapshot) {
+    return states.includes(latestSnapshot.state);
   }
-  return states.includes(snapshots[snapshots.length - 1].state);
+  return states.includes(topic.state);
 };
 
-const TopicControlBar = ({ sideBarContent, topic, setupJumpToExplorer, snapshots, intl, selectedSnapshot, latestSnapshot }) => (
+const TopicControlBar = ({ sideBarContent, topic, setupJumpToExplorer, intl, selectedSnapshot, latestSnapshot }) => (
   <div className="controlbar controlbar-topic">
     <div className="main">
       <Grid>
@@ -81,15 +81,15 @@ const TopicControlBar = ({ sideBarContent, topic, setupJumpToExplorer, snapshots
                     id="modify-topic-permissions"
                   />
                   <b><FormattedMessage {...localMessages.versionList} /></b>
-                  {mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED]) && (
+                  {snapshotStateIs(latestSnapshot, topic, [TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED]) && (
                     <TabbedChip error message={localMessages.latestNeedsAttention} />
                   )}
-                  {mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING]) && (
+                  {snapshotStateIs(latestSnapshot, topic, [TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING]) && (
                     <TabbedChip message={localMessages.latestRunning} />
                   )}
                   {(selectedSnapshot)
                     && (selectedSnapshot.snapshots_id !== latestSnapshot.snapshots_id)
-                    && mostRecentSnapshotIs(snapshots, topic, [TOPIC_SNAPSHOT_STATE_COMPLETED])
+                    && snapshotStateIs(latestSnapshot, topic, [TOPIC_SNAPSHOT_STATE_COMPLETED])
                     && (<TabbedChip warning message={localMessages.newerData} />)
                   }
                 </LinkWithFilters>
@@ -116,7 +116,6 @@ TopicControlBar.propTypes = {
   // from state
   topic: PropTypes.object,
   filters: PropTypes.object.isRequired,
-  snapshots: PropTypes.array,
   selectedSnapshot: PropTypes.object,
   latestSnapshot: PropTypes.object,
 };
@@ -124,7 +123,6 @@ TopicControlBar.propTypes = {
 const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
   topic: state.topics.selected.info,
-  snapshots: state.topics.selected.snapshots.list,
   latestSnapshot: state.topics.selected.snapshots.latest,
   selectedSnapshot: state.topics.selected.snapshots.selected,
 });

@@ -29,30 +29,26 @@ class SourceSearchResultsContainer extends React.Component {
   }
 
   updateMediaQuery(values) {
-    const { formQuery, updateMediaQuerySelection, updateAdvancedMediaQuerySelection, selectedMediaQueryType } = this.props;
+    const { formQuery, updateMediaQuerySelection, selectedMediaQueryType } = this.props;
     const updatedQueryObj = Object.assign({}, values, { type: selectedMediaQueryType });
 
-    if (this.state.showAdvancedOptions) {
-      const formValues = formQuery['advanced-media-picker-search'];
-      updatedQueryObj.tags = [];
-      const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType'];
-      metadataQueryFields.forEach((key) => {
-        if (formValues && key in formValues) {
-          updatedQueryObj.tags.push(formValues[key]);
-        }
-      });
-      if ('allMedia' in values) {
-        updatedQueryObj.tags.push(values.allMedia);
+    const formValues = formQuery['advanced-media-picker-search'];
+    updatedQueryObj.tags = [];
+    const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType'];
+    metadataQueryFields.forEach((key) => {
+      if (formValues && key in formValues) {
+        updatedQueryObj.tags.push(formValues[key]);
       }
-      this.setState(updatedQueryObj);
-      updateAdvancedMediaQuerySelection(updatedQueryObj);
-    } else {
-      updateMediaQuerySelection(updatedQueryObj);
+    });
+    if ('allMedia' in values) {
+      updatedQueryObj.tags.push(values.allMedia);
     }
+    this.setState(updatedQueryObj);
+    updateMediaQuerySelection(updatedQueryObj);
   }
 
   render() {
-    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected } = this.props;
+    const { fetchStatus, selectedMediaQueryKeyword, hanldeUpdateAndSearchWithSelection, sourceResults, onToggleSelected } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     let resultContent = null;
@@ -61,7 +57,8 @@ class SourceSearchResultsContainer extends React.Component {
         <div>
           <AdvancedMediaPickerSearchForm
             initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
-            onAdvancedSelection={val => this.updateMediaQuery(val)}
+            onMetadataSelection={val => this.updateMediaQuery(val)}
+            onSearch={hanldeUpdateAndSearchWithSelection}
             hintText={formatMessage(localMessages.hintText)}
           />
         </div>
@@ -112,7 +109,8 @@ SourceSearchResultsContainer.propTypes = {
   formQuery: PropTypes.object,
   // from dispatch
   updateMediaQuerySelection: PropTypes.func.isRequired,
-  updateAdvancedMediaQuerySelection: PropTypes.func.isRequired,
+  // updateAdvancedMediaQuerySelection: PropTypes.func.isRequired,
+  hanldeUpdateAndSearchWithSelection: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -132,13 +130,22 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  updateMediaQuerySelection: (values) => {
+  /* updateMediaQuerySelection: (values) => {
     if (values && notEmptyString(values.mediaKeyword)) {
       dispatch(selectMediaPickerQueryArgs(values));
       dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword }));
     }
+  }, */
+  updateMediaQuerySelection: (values) => {
+    if (values && (notEmptyString(values.mediaKeyword) || (values.tags && values.tags.length > 0))) {
+      if (values.allMedia) { // handle the "all media" placeholder selection
+        ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
+      } else {
+        dispatch(selectMediaPickerQueryArgs(values));
+      }
+    }
   },
-  updateAdvancedMediaQuerySelection: (values) => {
+  hanldeUpdateAndSearchWithSelection: (values) => {
     if (values.mediaKeyword || (values.tags && values.tags.length > 0)) {
       if (values.allMedia) { // handle the "all media" placeholder selection
         ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });

@@ -91,7 +91,8 @@ def topic_stories(topics_id):
 def topic_stories_csv(topics_id):
     user_mc = user_admin_mediacloud_client()
     topic = user_mc.topic(topics_id)
-    return stream_story_list_csv(user_mediacloud_key(), topic['name']+'-stories', topics_id)
+    story_limit = request.args['story_limit'] if 'story_limit' in request.args else None
+    return stream_story_list_csv(user_mediacloud_key(), topic['name']+'-stories', topics_id, story_limit=story_limit)
 
 
 def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
@@ -213,6 +214,7 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
         # 'media_pub_country', 'media_pub_state', 'media_language', 'media_about_country', 'media_media_type'
     ]
     yield ','.join(spec_props) + '\n'  # first send the column names
+    story_count = 0
     link_id = 0
     more_pages = True
     while more_pages:
@@ -245,9 +247,10 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
 # generator you can use to handle a long list of stories row by row (one row per story)
 def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
     yield ','.join(props) + '\n'  # first send the column names
+    story_count = 0
     link_id = 0
     more_pages = True
-    while more_pages:
+    while more_pages and (('story_limit' in kwargs) and (story_count < int(kwargs['story_limit']))):
         page = _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs)
         if 'next' in page['link_ids']:
             link_id = page['link_ids']['next']
@@ -259,6 +262,7 @@ def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
             cleaned_row = csv.dict2row(props, s)
             row_string = ','.join(cleaned_row) + '\n'
             yield row_string
+        story_count += len(page['stories'])
 
 
 def _media_info_worker(info):
@@ -270,12 +274,15 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
     add_media_fields = False  # switch for including all the media metadata in each row (ie. story)
     media_lookup = {}
 
-    story_page = apicache.topic_story_list_by_page(user_key, topics_id, link_id=link_id, **kwargs)
+    args = kwargs.copy()   # need to make sure invalid params don't make it to API call
+    if 'story_limit' in args:
+        del args['story_limit']
+    story_page = apicache.topic_story_list_by_page(user_key, topics_id, link_id=link_id, **args)
 
     if len(story_page['stories']) > 0:  # be careful to not construct malformed query if no story ids
 
         story_ids = [str(s['stories_id']) for s in story_page['stories']]
-        stories_with_tags = apicache.story_list(user_key, 'stories_id:(' + " ".join(story_ids) + ")", kwargs['limit'])
+        stories_with_tags = apicache.story_list(user_key, 'stories_id:(' + " ".join(story_ids) + ")", args['limit'])
 
         # build a media lookup table in parallel so it is faster
         if add_media_fields:

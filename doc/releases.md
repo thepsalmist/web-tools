@@ -28,10 +28,11 @@ Building and Purshing a Release
 5. Build the release version of the JS and CSS: `npm run topics-release`, or `npm run sources-release`, etc.
 6. Commit those built files 
 <br/><br/>
-7. Tag the new build with the appropriate release label (ie. "git tag sources-v2.7.3" or "git tag topics-v2.4.3") - 
+7. Push the tagged release to the appropriate production Dokku server with git (ie. 
+`git push prod-explorer explorer-v3.1.x:master`)
+8. Make sure it works on the server
+9. Tag the new build with the appropriate release label (ie. "git tag sources-v2.7.3" or "git tag topics-v2.4.3") - 
 see `version-control.md` for more details
-8. Push the tagged release to the appropriate production Dokku server with git (ie. 
-`git push prod-explorer explorer-v3.1.2:master`)
-9. Push the tag(s) "git push origin --tags"
+10. Push the tag(s) "git push origin --tags"
 <br/><br/>
-10. Create a PR on GitHub from your banch back to master (so the changes get merged in)
+11. Create a PR on GitHub from your banch back to master (so the changes get merged in)

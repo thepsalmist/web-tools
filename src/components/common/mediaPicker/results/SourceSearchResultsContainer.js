@@ -47,10 +47,10 @@ class SourceSearchResultsContainer extends React.Component {
     const updatedQueryObj = Object.assign({}, values, { type: selectedMediaQueryType });
 
     const formValues = formQuery['advanced-media-picker-search'];
-    const mediaValues = mediaQuery;
+    const mediaValues = mediaQuery !== null && mediaQuery !== undefined ? mediaQuery : [];
     updatedQueryObj.tags = [];
     const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus'];
-    
+
     metadataQueryFields.forEach((key) => {
       updatedQueryObj.tags[key] = [];
       if (formValues && key in formValues) {
@@ -170,7 +170,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
       } else {
         dispatch(selectMediaPickerQueryArgs(values));
-        const tags = Object.values(values.tags).filter(t => t.length > 0).reduce((a, b) => a.concat(b), []).map(i => i['tags_id']).join(",");
+        const tags = Object.values(values.tags).filter(t => t.length > 0).reduce((a, b) => a.concat(b), []).map(i => i.tags_id)
+          .join(',');
         dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags }));
       }
     }

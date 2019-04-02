@@ -11,22 +11,17 @@ import { TAG_SET_MEDIA_TYPE } from '../../lib/tagUtil';
 const MediaTypesFieldArray = (props) => {
   const { types, renderCheckbox } = props;
   return (
-    <div className="media-type">
-      <ul>
-        {types.map((t, idx) => (
-          <li>
-            <Field
-              key={idx}
-              component={renderCheckbox}
-              name={t.label}
-              label={t.label}
-            >
-              {t.label}
-            </Field>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul>
+      {types.map((t, idx) => (
+        <li key={idx}>
+          <Field
+            component={renderCheckbox}
+            name={`mediaType.${t.tags_id}`} // prefacing the name with the type for form
+            label={t.label}
+          />
+        </li>
+      ))}
+    </ul>
   );
 };
 
@@ -39,7 +34,7 @@ MediaTypesFieldArray.propTypes = {
 
 const mapStateToProps = state => ({
   fetchStatus: state.system.metadata.mediaType.fetchStatus,
-  types: state.system.metadata.mediaType.tags,
+  types: state.system.metadata.mediaType.tags.length ? state.system.metadata.mediaType.tags : null,
 });
 
 const fetchAsyncData = dispatch => dispatch(fetchMetadataValuesForMediaType(TAG_SET_MEDIA_TYPE));

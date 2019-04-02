@@ -147,7 +147,6 @@ class AdvancedMediaPickerSearchForm extends React.Component {
               ref={(input) => { this.textInputRef = input; }}
               component={renderTextField}
               label={formatMessage(localMessages.searchSuggestion)}
-              fullWidth
             />
           </Col>
         </Row>

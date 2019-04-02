@@ -170,7 +170,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
       } else {
         dispatch(selectMediaPickerQueryArgs(values));
-        const tags = Object.values(values.tags).filter(t => t.length > 0)[0].map(i => Object.values(i)).join(",");
+        const tags = Object.values(values.tags).filter(t => t.length > 0).reduce((a, b) => a.concat(b), []).map(i => i['tags_id']).join(",");
         dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags }));
       }
     }

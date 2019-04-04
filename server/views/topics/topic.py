@@ -50,7 +50,6 @@ def topic_favorites():
     favorited_topics = [user_mc.topic(tid) for tid in favorite_topic_ids]
     for t in favorited_topics:
         t['isFavorite'] = True
-        # t['detailInfo'] = get_topic_info_per_snapshot_timespan(t['topics_id'])
     return jsonify({'topics': favorited_topics})
 
 
@@ -60,8 +59,6 @@ def public_topics_list():
     public_topics = sorted_public_topic_list()
     if is_user_logged_in():
         public_topics = _add_user_favorite_flag_to_topics(public_topics)
-    # for t in public_topics_list:
-        # t['detailInfo'] = get_topic_info_per_snapshot_timespan(t['topics_id'])
     return jsonify({"topics": public_topics})
 
 
@@ -120,28 +117,15 @@ def _topic_summary(topics_id):
     for idx in range(0, len(snapshots)):
         if snapshots[idx]['note'] in [None, '']:
             snapshots[idx]['note'] = idx + ARRAY_BASE_ONE
-    job_status_list = mc.topicSnapshotGenerateStatus(topics_id)['job_states']
     most_recent_usable_snapshot = get_most_recent_snapshot_version(snapshots)
     topic['snapshots'] = {
         'list': snapshots,
-        'jobStatus': job_status_list,    # need to know if one is running
     }
     # add in spider job status
-    topic['spiderJobs'] = local_mc.topicSpiderStatus(topics_id)['job_states']
     topic['latestVersion'] = len(snapshots) + ARRAY_BASE_ONE
     topic['latestUsableVersion'] = 'note' in most_recent_usable_snapshot if most_recent_usable_snapshot else -1
     if is_user_logged_in():
         _add_user_favorite_flag_to_topics([topic])
-
-    '''
-    # add in story counts, overall seed and spidered
-    feedTotal = topic_story_count(local_mc, topics_id) # with q - but not passed in for summary
-    total = topic_story_count(local_mc, topics_id, timespans_id=None, q=None)  # spidered count.. how?
-    spidered = total - seedTotal
-    topic['seedStories'] = seedTotal
-    topic['spideredStories'] = spidered
-    topic['totaltories'] = total
-    '''
     return topic
 
 

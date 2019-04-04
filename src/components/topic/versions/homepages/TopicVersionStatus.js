@@ -11,7 +11,7 @@ const localMessages = {
   title: { id: 'version.running.title', defaultMessage: 'Version {number} - ' },
 };
 
-const TopicVerionStatus = ({ topic, snapshot, job, subtitle, children }) => (
+const TopicVersionStatus = ({ topic, snapshot, job, subtitle, children }) => (
   <Grid>
     <div className="topic-version-status">
       <Row>
@@ -31,7 +31,7 @@ const TopicVerionStatus = ({ topic, snapshot, job, subtitle, children }) => (
         <Col lg={6}>
           <JobDate snapshot={snapshot} job={job} />
           {children}
-          <JobList jobs={[...topic.spiderJobs, ...((snapshot.jobs) ? snapshot.jobs : [])]} />
+          { <JobList jobs={[...topic.job_states]} /> }
         </Col>
         <Col lg={1} />
         <Col lg={5}>
@@ -42,7 +42,7 @@ const TopicVerionStatus = ({ topic, snapshot, job, subtitle, children }) => (
   </Grid>
 );
 
-TopicVerionStatus.propTypes = {
+TopicVersionStatus.propTypes = {
   // from state
   subtitle: PropTypes.object.isRequired,
   children: PropTypes.node.isRequired,
@@ -55,5 +55,5 @@ TopicVerionStatus.propTypes = {
 
 export default
 injectIntl(
-  TopicVerionStatus
+  TopicVersionStatus
 );

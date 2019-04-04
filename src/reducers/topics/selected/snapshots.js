@@ -35,7 +35,7 @@ function getSnapshotFromListById(list, id) {
 function cleanUpSnapshotList(rawList, jobList) {
   return rawList.map(s => ({
     ...s,
-    snapshotJobs: jobList.filter(job => s.snapshots_id === job.snapshots_id),
+    job_states: jobList.filter(job => s.snapshots_id === job.snapshots_id),
     snapshotDate: snapshotDateToMoment(s.snapshot_date),
     isUsable: snapshotIsUsable(s),
   }));
@@ -84,7 +84,6 @@ const latestSnaphostIsUsable = (list) => {
 const snapshots = createAsyncReducer({
   initialState: {
     list: [],
-    jobStatus: [],
     latest: null,
     usingLatest: false,
     latestUsableSnapshot: null,
@@ -94,11 +93,10 @@ const snapshots = createAsyncReducer({
   },
   action: FETCH_TOPIC_SNAPSHOTS_LIST,
   handleSuccess: (payload, state) => {
-    const snapshotList = cleanUpSnapshotList(payload.snapshots.list, payload.snapshots.jobStatus);
+    const snapshotList = cleanUpSnapshotList(payload.snapshots.list, payload.job_states);
     return {
       // add in an isUsable property to centralize that logic to one place (ie. here!)
       list: snapshotList,
-      jobStatus: payload.jobStatus, // DEPRECATED
       latest: latestByDate(payload.snapshots.list),
       usingLatest: usingLatestSnapshot(payload.snapshots.list, state.selectedId),
       latestIsUsable: latestSnaphostIsUsable(payload.snapshots.list),
@@ -108,8 +106,7 @@ const snapshots = createAsyncReducer({
     };
   },
   [resolve(FETCH_TOPIC_SUMMARY)]: (payload, state) => ({ // topic summary includes list of snapshots
-    list: cleanUpSnapshotList(payload.snapshots.list, payload.snapshots.jobStatus),
-    jobStatus: payload.snapshots.jobStatus, // DEPRECATED
+    list: cleanUpSnapshotList(payload.snapshots.list, payload.job_states),
     latest: latestByDate(payload.snapshots.list),
     usingLatest: usingLatestSnapshot(payload.snapshots.list, state.selectedId),
     latestIsUsable: latestSnaphostIsUsable(payload.snapshots.list),

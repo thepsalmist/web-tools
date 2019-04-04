@@ -43,8 +43,8 @@ const getCurrentStep = (snapshot, topic) => {
   }
   if (stateToUse === TOPIC_SNAPSHOT_STATE_ERROR) {
     error = true;
-    const spiderJobs = snapshot.spiderJobs || topic.spiderJobs;
-    if ((spiderJobs.length > 0) && (spiderJobs[0].state === TOPIC_SNAPSHOT_STATE_ERROR)) {
+    const jobs = snapshot.job_states || topic.job_states;
+    if ((jobs.length > 0) && (jobs[0].state === TOPIC_SNAPSHOT_STATE_ERROR)) {
       step = 2;
     }
   } else {

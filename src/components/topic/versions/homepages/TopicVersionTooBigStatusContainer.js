@@ -16,7 +16,13 @@ const localMessages = {
 };
 
 // BRITTLE: parses out the number of stories from the error msg saying the topic had too many stories
-const storyCountFromJobMessage = jobMessage => /topic has ([^ ]*) stories/.exec(jobMessage)[1];
+export const storyCountFromJobMessage = (jobMessage) => {
+  const check1 = /topic has ([^ ]*) stories/.exec(jobMessage);
+  const check2 = /solr_seed_query returned more than ([^ ]*) stories/.exec(jobMessage);
+  if (check1) return check1[1];
+  if (check2) return check2[1];
+  return null;
+};
 
 const TopicVersionTooBigStatusContainer = ({ topic, goToCreateNewVersion, snapshot, job, intl }) => (
   <React.Fragment>

@@ -17,6 +17,7 @@ import { getCurrentVersionFromSnapshot } from '../../../lib/topicVersionUtil';
 import { topicStartSpider } from '../../../actions/topicActions';
 import { LEVEL_ERROR } from '../../common/Notice';
 import { addNotice, updateFeedback } from '../../../actions/appActions';
+import { topicMessageSaysTooBig } from '../../../reducers/topics/adminList';
 
 const localMessages = {
   startedGenerating: { id: 'topic.created.startedGenerating', defaultMessage: 'We started generating this version' },
@@ -34,8 +35,8 @@ const TopicVersionContainer = (props) => {
   let contentToShow = children; // has a filters renderer in it - show if a completed topic
   const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent }));
   contentToShow = childrenWithExtraProp;
-  const versionStatus = selectedSnapshot ? selectedSnapshot.state : topic.state;
-  const latestJob = selectedSnapshot ? selectedSnapshot.snapshotJobs[0] : topic.spiderJobs[0];
+  const latestJob = selectedSnapshot ? selectedSnapshot.job_states[0] : topic.job_states[0];
+  const versionStatus = topic.latestState.state;
   if (versionStatus === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
     contentToShow = (
       <TopicVersionCreatedStatusContainer
@@ -63,7 +64,7 @@ const TopicVersionContainer = (props) => {
         job={latestJob}
       />
     );
-  } else if ((versionStatus === TOPIC_SNAPSHOT_STATE_ERROR) && ((topic.message && topic.message.indexOf('exceeds topic max') > -1))) {
+  } else if ((versionStatus === TOPIC_SNAPSHOT_STATE_ERROR) && topicMessageSaysTooBig(topic.message)) {
     contentToShow = (
       <TopicVersionTooBigStatusContainer
         topic={topic}

@@ -79,7 +79,7 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
       <Grid>
         <Row>
           <Col lg={12}>
-            <h1><FormattedMessage {...localMessages.title} values={{ count: Math.max(1, versions.length) }} /></h1>
+            <h1><FormattedMessage {...localMessages.title} values={{ count: Math.max(1, versions ? versions.length : 0) }} /></h1>
           </Col>
         </Row>
         <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>

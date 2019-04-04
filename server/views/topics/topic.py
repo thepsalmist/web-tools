@@ -71,8 +71,8 @@ def public_topics_list():
 def topic_personal():
     user_mc = user_admin_mediacloud_client()
     link_id = request.args.get('linkId')
-    results = user_mc.topicList(link_id=link_id, limit=500)
-    results['topcs'] = _add_user_favorite_flag_to_topics(results['topics'])
+    results = user_mc.topicList(link_id=link_id, limit=200)
+    results['topics'] = _add_user_favorite_flag_to_topics(results['topics'])
     return jsonify(results)
 
 

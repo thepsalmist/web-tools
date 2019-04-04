@@ -7,23 +7,33 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
 import { emptyString } from '../../../lib/formValidators';
 import messages from '../../../resources/messages';
+import { humanReadableNumber } from '../../../lib/stringUtil';
 
 const localMessages = {
   mainTitle: { id: 'explorer.search.title', defaultMessage: 'Enter Keyword' },
   addButton: { id: 'explorer.search', defaultMessage: 'Search' },
   searchHint: { id: 'explorer.intro.searchHint', defaultMessage: 'Try searching for the names of people, places, or events' },
-  search: { id: 'explorer.intro.search', defaultMessage: 'Search the Media Cloud database of over 500 million stories.' },
+  search: { id: 'explorer.intro.search', defaultMessage: 'Search the Media Cloud database of over {storyCount} stories.' },
 };
 
 const SearchForm = (props) => {
-  const { handleSubmit, onSearch, renderTextField } = props;
+  const { handleSubmit, onSearch, renderTextField, storyCount } = props;
   // need to init initialValues a bit on the way in to make lower-level logic work right
   return (
     <form className="app-form search-form" name="searchForm" onSubmit={handleSubmit(onSearch.bind(this))}>
       <Row>
         <Col lg={3} />
         <Col lg={6}>
-          <h2><FormattedMessage {...localMessages.search} /></h2>
+          {storyCount && (
+            <h2>
+              <FormattedMessage
+                {...localMessages.search}
+                values={{
+                  storyCount: humanReadableNumber(props.storyCount, 2, props.intl.formatNumber),
+                }}
+              />
+            </h2>
+          )}
         </Col>
       </Row>
       <Row>
@@ -46,6 +56,7 @@ SearchForm.propTypes = {
   // from parent
   onSearch: PropTypes.func.isRequired,
   initialValues: PropTypes.object,
+  storyCount: PropTypes.number,
   // from context
   intl: PropTypes.object.isRequired,
   renderTextField: PropTypes.func.isRequired,

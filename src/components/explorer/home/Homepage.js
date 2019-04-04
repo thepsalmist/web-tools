@@ -25,29 +25,9 @@ const localMessages = {
   loginTitle: { id: 'explorer.intro.login.title', defaultMessage: 'Have an Account? Login Now' },
 };
 
-const Homepage = (props) => {
-  const { user, onKeywordSearch } = props;
+const Homepage = ({ isLoggedIn, onKeywordSearch, storyCount }) => {
   let sideBarContent;
-  if (!user.isLoggedIn) {
-    sideBarContent = (
-      <Grid>
-        <Row>
-          <Col lg={1} />
-          <Col lg={5}>
-            <h1><FormattedMessage {...localMessages.subtitle} /></h1>
-            <p><FormattedMessage {...localMessages.description} /></p>
-          </Col>
-          <Col lg={1} />
-          <Col lg={4}>
-            <DataCard leftBorder>
-              <h2><FormattedMessage {...localMessages.loginTitle} /></h2>
-              <LoginForm />
-            </DataCard>
-          </Col>
-        </Row>
-      </Grid>
-    );
-  }
+
   return (
     <div className="homepage">
       <Masthead
@@ -59,13 +39,30 @@ const Homepage = (props) => {
         <Grid>
           <Row>
             <Col lg={12}>
-              <SearchForm onSearch={val => onKeywordSearch(val, user)} user={user} />
+              <SearchForm onSearch={val => onKeywordSearch(val, isLoggedIn)} storyCount={storyCount} />
             </Col>
           </Row>
         </Grid>
       </div>
       <SampleSearchContainer />
-      {sideBarContent}
+      { isLoggedIn && (
+        <Grid>
+          <Row>
+            <Col lg={1} />
+            <Col lg={5}>
+              <h1><FormattedMessage {...localMessages.subtitle} /></h1>
+              <p><FormattedMessage {...localMessages.description} /></p>
+            </Col>
+            <Col lg={1} />
+            <Col lg={4}>
+              <DataCard leftBorder>
+                <h2><FormattedMessage {...localMessages.loginTitle} /></h2>
+                <LoginForm />
+              </DataCard>
+            </Col>
+          </Row>
+        </Grid>
+      )}
       <ExplorerMarketingFeatureList />
       <Grid>
         <SystemStatsContainer />
@@ -81,18 +78,20 @@ Homepage.propTypes = {
   params: PropTypes.object.isRequired, // params from router
   onKeywordSearch: PropTypes.func.isRequired,
   // from state
-  user: PropTypes.object.isRequired,
+  isLoggedIn: PropTypes.bool.isRequired,
+  storyCount: PropTypes.number,
 };
 
 const mapStateToProps = state => ({
-  user: state.user,
+  isLoggedIn: state.user.isLoggedIn,
+  storyCount: state.system.stats.stats.total_stories,
 });
 
 const mapDispatchToProps = dispatch => ({
-  onKeywordSearch: (values, user) => {
+  onKeywordSearch: (values, isLoggedIn) => {
     let urlParamString;
     const keyword = emptyString(values.keyword) ? '' : values.keyword;
-    if (hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN)) {
+    if (isLoggedIn) {
       const defaultDates = getDateRange(PAST_MONTH);
       const queries = [{
         q: keyword,

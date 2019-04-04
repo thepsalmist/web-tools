@@ -3,6 +3,7 @@ import { injectIntl } from 'react-intl';
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import { intlMessageShape } from '../../lib/reactUtil';
+import { intlIfObject } from '../../lib/stringUtil';
 
 /**
  * Simple wrapper so we can style all the button the same.  Use this instead of
@@ -37,9 +38,7 @@ class AppButton extends React.Component {
     };
     delete buttonProps.intl;
     // automatically localize the label if it is a message object
-    if ((buttonProps.label) && (typeof buttonProps.label === 'object')) {
-      buttonProps.label = formatMessage(buttonProps.label);
-    }
+    buttonProps.label = intlIfObject(formatMessage, buttonProps.label);
     let textLabel = children;
     if (children === undefined) {
       textLabel = buttonProps.label;

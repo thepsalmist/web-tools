@@ -220,7 +220,6 @@ def topic_update(topics_id):
     # start it ether as a new version, or start regenerating the existig version
     if ('snapshotId' in request.form) and len(request.form['snapshotId']) > 0:
         # add the subtopics to the current version (do NOT change the seed query)
-        # TODO: figure out how to call this correctly
         result = user_mc.topicGenerateSnapshot(topics_id, snapshots_id=request.form['snapshotId'])
     else:
         # update the seed query (first 5 MUST be filled in)
@@ -257,7 +256,7 @@ def topic_update(topics_id):
         new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=topic_version)['snapshot']
         # and start the spidering process
         user_mc.topicSpider(topics_id, new_snapshot['snapshots_id'])
-    return topic_summary(result['topics'][0]['topics_id'])  # give them back new data, so they can update the client
+    return topic_summary(topics_id)  # give them back new data, so they can update the client
 
 
 @app.route("/api/topics/<topics_id>/spider", methods=['POST'])

@@ -5,7 +5,7 @@ import { postgresDateToMoment } from '../../../../lib/dateUtil';
 import { trimToMaxLength } from '../../../../lib/stringUtil';
 
 const localMessages = {
-  title: { id: 'topic.jobs.list', defaultMessage: 'Detailed Jobs List' },
+  title: { id: 'topic.jobs.list', defaultMessage: 'Detailed Job List (Admin only)' },
   id: { id: 'topic.jobs.id', defaultMessage: 'Id' },
   status: { id: 'topic.jobs.status', defaultMessage: 'State' },
   noJobs: { id: 'topic.jobs.none', defaultMessage: 'No jobs yet.' },
@@ -13,7 +13,7 @@ const localMessages = {
   message: { id: 'topic.jobs.message', defaultMessage: 'Message' },
 };
 
-const JobList = ({ jobs }) => (
+const JobList = ({ jobs, highlightSnapshotId }) => (
   <React.Fragment>
     <h2><FormattedMessage {...localMessages.title} /></h2>
     { jobs.length === 0 && (<p><FormattedMessage {...localMessages.noJobs} /></p>)}
@@ -27,11 +27,14 @@ const JobList = ({ jobs }) => (
             <th><FormattedMessage {...localMessages.message} /></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="job-list">
           {jobs
             .sort((a, b) => postgresDateToMoment(b.last_updated) - postgresDateToMoment(a.last_updated))
             .map(job => (
-              <tr key={job.job_states_id}>
+              <tr
+                key={job.job_states_id}
+                className={(highlightSnapshotId === job.snapshots_id) ? 'highlight' : ''}
+              >
                 <td>{job.job_states_id}</td>
                 <td><span className={(job.state === 'error') ? 'warning' : ''}>{job.state}</span></td>
                 <td>
@@ -51,6 +54,7 @@ const JobList = ({ jobs }) => (
 JobList.propTypes = {
   // from state
   jobs: PropTypes.array.isRequired,
+  highlightSnapshotId: PropTypes.number,
   // from context
   intl: PropTypes.object.isRequired,
 };

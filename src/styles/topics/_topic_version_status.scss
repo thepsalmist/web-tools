@@ -23,6 +23,10 @@
 
   table {
     margin-top: 15px;
+
+    tr.highlight {
+      background-color: $topics-primary;
+    }
   }
 
 }

@@ -35,7 +35,7 @@ const localMessages = {
   notUsingLatestSnapshot: { id: 'topic.notUsingLatestSnapshot', defaultMessage: 'You are not using the latest snapshot!  If you are not doing this on purpose, <a href="{url}">switch to the latest snapshot</a> to get the best data.' },
 };
 
-const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, selectedSnapshot, intl }) => {
+const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, selectedSnapshot, intl, isAdmin }) => {
   const { formatMessage } = intl;
   let versionListContent;
   if (versions.length > 0) {
@@ -52,6 +52,7 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
         number={versions.length - idx}
         version={snapshot}
         storyCounts={storyCounts[snapshot.snapshots_id]}
+        isAdmin={isAdmin}
       />
     ));
   } else {
@@ -68,6 +69,7 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
           status: '?',
         }}
         storyCounts={{}}
+        isAdmin={isAdmin}
       />
     );
   }
@@ -105,6 +107,7 @@ TopicVersionListContainer.propTypes = {
   versions: PropTypes.array.isRequired,
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   storyCounts: PropTypes.object,
   selectedSnapshot: PropTypes.object,
   // from compositional chain
@@ -118,6 +121,7 @@ const mapStateToProps = state => ({
   storyCounts: state.topics.selected.snapshotStoryCounts,
   fetchStatus: state.topics.selected.snapshotStoryCounts.fetchStatus,
   selectedSnapshot: state.topics.selected.snapshots.selected,
+  isAdmin: state.user.isAdmin,
 });
 
 const fetchAsyncData = (dispatch, { topicId }) => {

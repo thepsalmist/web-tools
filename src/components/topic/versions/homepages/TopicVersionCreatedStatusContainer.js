@@ -16,13 +16,12 @@ const localMessages = {
   whatNowText: { id: 'version.error.explanation2.text', defaultMessage: 'This is the right time to start adding any subtopics that you already know that you\'ll need. Once you\'re ready, click the "generate" button below to start filling up your topic with matching stories.' },
 };
 
-const TopicVersionCreatedStatusContainer = ({ topic, onSnapshotGenerate, snapshot, job, intl }) => (
+const TopicVersionCreatedStatusContainer = ({ topic, onSnapshotGenerate, snapshot, intl }) => (
   <React.Fragment>
     <TopicVersionStatus
       subtitle={localMessages.title}
       topic={topic}
       snapshot={snapshot}
-      job={job}
     >
       <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
       <p><FormattedMessage {...localMessages.explanationText} /></p>
@@ -53,7 +52,6 @@ TopicVersionCreatedStatusContainer.propTypes = {
   topic: PropTypes.object,
   filters: PropTypes.object,
   snapshot: PropTypes.object,
-  job: PropTypes.object,
   onSnapshotGenerate: PropTypes.func,
   // from context
   intl: PropTypes.object.isRequired,

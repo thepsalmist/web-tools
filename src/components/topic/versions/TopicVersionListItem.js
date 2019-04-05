@@ -20,6 +20,7 @@ const localMessages = {
   completed: { id: 'topic.state.running', defaultMessage: 'Ready to use' },
   completedAction: { id: 'topic.state.useVersion', defaultMessage: 'Use Version {number}' },
   completedDetails: { id: 'topic.state.completedDetails', defaultMessage: 'Includes {total} stories ({discoveredPct} discovered),' },
+  adminDetails: { id: 'topic.state.adminDetails', defaultMessage: '<br />Admin info: {jobCount} associated jobs' },
   error: { id: 'topic.state.running', defaultMessage: 'Failed' },
   createdNotQueued: { id: 'topic.state.createdNotQueued', defaultMessage: 'Created' },
   createdNotQueuedDetails: { id: 'topic.state.createdNotQueuedDetails', defaultMessage: 'This version hasn\'t been generated yet.' },
@@ -80,7 +81,7 @@ const detailsForVersionState = (version, storyCounts, formatMessage, formatNumbe
   }
 };
 
-const TopicVersionListItem = ({ version, intl, number, topicId, storyCounts, selected }) => (
+const TopicVersionListItem = ({ version, intl, number, topicId, storyCounts, selected, isAdmin }) => (
   <div className="topic-version-list-item">
     <Row>
       <Col lg={2}>
@@ -104,6 +105,7 @@ const TopicVersionListItem = ({ version, intl, number, topicId, storyCounts, sel
             {selected && <TabbedChip message={localMessages.selected} />}
           </h2>
           {detailsForVersionState(version, storyCounts, intl.formatMessage, intl.formatNumber)}
+          {isAdmin && <FormattedHTMLMessage {...localMessages.adminDetails} values={{ jobCount: version.job_states.length }} />}
           <br />
           <LinkWithFilters to={`/topics/${topicId}/summary`} filters={{ snapshotId: version.snapshots_id, timespanId: null, focusId: null }}>
             <AppButton
@@ -123,6 +125,7 @@ TopicVersionListItem.propTypes = {
   version: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   storyCounts: PropTypes.object.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   selected: PropTypes.bool,
   // from compositional chain
   intl: PropTypes.object.isRequired,

@@ -6,12 +6,14 @@ import SeedQuerySummary from '../SeedQuerySummary';
 import JobDate from './JobDate';
 import JobList from './JobList';
 import VersionGenerationProcess from './VersionGenerationProcess';
+import { PERMISSION_ADMIN } from '../../../../lib/auth';
+import Permissioned from '../../../common/Permissioned';
 
 const localMessages = {
   title: { id: 'version.running.title', defaultMessage: 'Version {number} - ' },
 };
 
-const TopicVersionStatus = ({ topic, snapshot, job, subtitle, children }) => (
+const TopicVersionStatus = ({ topic, snapshot, subtitle, children }) => (
   <Grid>
     <div className="topic-version-status">
       <Row>
@@ -24,14 +26,16 @@ const TopicVersionStatus = ({ topic, snapshot, job, subtitle, children }) => (
       </Row>
       <Row>
         <Col lg={12}>
-          <VersionGenerationProcess snapshot={snapshot} topic={topic} />
+          <VersionGenerationProcess snapshot={snapshot} />
         </Col>
       </Row>
       <Row>
         <Col lg={6}>
-          <JobDate snapshot={snapshot} job={job} />
+          <JobDate snapshot={snapshot} job={snapshot.job_states[0]} />
           {children}
-          { <JobList jobs={[...topic.job_states]} /> }
+          <Permissioned onlyRole={PERMISSION_ADMIN}>
+            <JobList jobs={[...topic.job_states]} highlightSnapshotId={snapshot.snapshots_id} />
+          </Permissioned>
         </Col>
         <Col lg={1} />
         <Col lg={5}>
@@ -48,7 +52,6 @@ TopicVersionStatus.propTypes = {
   children: PropTypes.node.isRequired,
   topic: PropTypes.object.isRequired,
   snapshot: PropTypes.object,
-  job: PropTypes.object,
   // from context
   intl: PropTypes.object.isRequired,
 };

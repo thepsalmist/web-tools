@@ -15,13 +15,12 @@ const localMessages = {
   whatNowText: { id: 'version.error.explanation2.text', defaultMessage: 'Nothing! We\'ve been notified, and will take a look at it.  If you don\'t hear from us soon, do drop us a line at support@mediacloud.org.' },
 };
 
-const TopicVersionErrorStatusContainer = ({ topic, goToCreateNewVersion, snapshot, job, intl }) => (
+const TopicVersionErrorStatusContainer = ({ topic, goToCreateNewVersion, snapshot, intl }) => (
   <React.Fragment>
     <TopicVersionStatus
       subtitle={localMessages.title}
       topic={topic}
       snapshot={snapshot}
-      job={job}
     >
       <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
       <p><FormattedMessage {...localMessages.explanationText} /></p>
@@ -45,7 +44,6 @@ TopicVersionErrorStatusContainer.propTypes = {
   topic: PropTypes.object,
   filters: PropTypes.object,
   snapshot: PropTypes.object,
-  job: PropTypes.object,
   goToCreateNewVersion: PropTypes.func,
   // from context
   intl: PropTypes.object.isRequired,

@@ -30,63 +30,71 @@ const localMessages = {
 const TopicVersionContainer = (props) => {
   const { children, topic, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo,
     setSideBarContent, snapshotId, filters, selectedSnapshot, handleSnapshotGenerate } = props;
-  // show a big error if there is one to show
   const currentVersionNum = getCurrentVersionFromSnapshot(topic, snapshotId);
-  let contentToShow = children; // has a filters renderer in it - show if a completed topic
-  const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent }));
-  contentToShow = childrenWithExtraProp;
-  const latestJob = selectedSnapshot ? selectedSnapshot.job_states[0] : topic.job_states[0];
-  const versionStatus = topic.latestState.state;
-  if (versionStatus === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
+  // carefully figure out what the latest state for this version is
+  let snapshotToUse;
+  if (selectedSnapshot) {
+    snapshotToUse = selectedSnapshot;
+  } else {
+    // legacy - there might be jobs but isn't a snapshot yet, so make one that looks right-ish
+    snapshotToUse = {
+      note: currentVersionNum,
+      job_states: topic.job_states,
+      state: topic.job_states.length > 0 ? topic.job_states[0].state : topic.state,
+    };
+  }
+  let contentToShow;
+  // handle case where there isn't a snapshot object yet (legacy)
+  if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
     contentToShow = (
       <TopicVersionCreatedStatusContainer
         topic={topic}
-        snapshot={selectedSnapshot || { note: currentVersionNum }}
-        job={latestJob}
+        snapshot={snapshotToUse}
         onSnapshotGenerate={handleSnapshotGenerate}
         goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
       />
     );
-  } else if (versionStatus === TOPIC_SNAPSHOT_STATE_QUEUED) {
+  } else if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_QUEUED) {
     contentToShow = (
       <TopicVersionQueuedStatusContainer
         topic={topic}
-        snapshot={selectedSnapshot || { note: currentVersionNum }}
-        job={latestJob}
+        snapshot={snapshotToUse}
         goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
       />
     );
-  } else if (versionStatus === TOPIC_SNAPSHOT_STATE_RUNNING) {
+  } else if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_RUNNING) {
     contentToShow = (
       <TopicVersionRunningStatusContainer
         topic={topic}
-        snapshot={selectedSnapshot || { note: currentVersionNum }}
-        job={latestJob}
+        snapshot={snapshotToUse}
       />
     );
-  } else if ((versionStatus === TOPIC_SNAPSHOT_STATE_ERROR) && topicMessageSaysTooBig(topic.message)) {
+  } else if ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_ERROR) && topicMessageSaysTooBig(topic.message)) {
     contentToShow = (
       <TopicVersionTooBigStatusContainer
         topic={topic}
-        snapshot={selectedSnapshot || { note: currentVersionNum }}
-        job={latestJob}
+        snapshot={snapshotToUse}
         goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
       />
     );
-  } else if (versionStatus === TOPIC_SNAPSHOT_STATE_ERROR) {
+  } else if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_ERROR) {
     contentToShow = (
       <TopicVersionErrorStatusContainer
         topic={topic}
-        snapshot={selectedSnapshot || { note: currentVersionNum }}
-        job={latestJob}
+        snapshot={snapshotToUse}
         goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
       />
     );
-  } else if ((versionStatus === TOPIC_SNAPSHOT_STATE_COMPLETED)
+  } else if ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_COMPLETED)
     && (fetchStatusInfo !== fetchConstants.FETCH_SUCCEEDED
     && fetchStatusSnapshot !== fetchConstants.FETCH_SUCCEEDED)) {
     // complete
     contentToShow = <LoadingSpinner />;
+  } else {
+    // has a filters renderer in it - show if a completed topic
+    contentToShow = children;
+    const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent }));
+    contentToShow = childrenWithExtraProp;
   }
   return contentToShow;
 };

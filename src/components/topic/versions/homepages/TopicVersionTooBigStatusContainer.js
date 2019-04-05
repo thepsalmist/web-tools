@@ -24,13 +24,12 @@ export const storyCountFromJobMessage = (jobMessage) => {
   return null;
 };
 
-const TopicVersionTooBigStatusContainer = ({ topic, goToCreateNewVersion, snapshot, job, intl }) => (
+const TopicVersionTooBigStatusContainer = ({ topic, goToCreateNewVersion, snapshot, intl }) => (
   <React.Fragment>
     <TopicVersionStatus
       subtitle={localMessages.title}
       topic={topic}
       snapshot={snapshot}
-      job={job}
     >
       <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
       <p>
@@ -39,7 +38,7 @@ const TopicVersionTooBigStatusContainer = ({ topic, goToCreateNewVersion, snapsh
           values={{
             maxTopicStories: intl.formatNumber(topic.max_stories),
             seedStoryCount: intl.formatNumber(topic.seed_query_story_count),
-            totalCount: intl.formatNumber(storyCountFromJobMessage(job.message)),
+            totalCount: intl.formatNumber(storyCountFromJobMessage(snapshot.job_states[0].message)),
           }}
         />
       </p>
@@ -65,7 +64,6 @@ TopicVersionTooBigStatusContainer.propTypes = {
   topic: PropTypes.object,
   filters: PropTypes.object,
   snapshot: PropTypes.object,
-  job: PropTypes.object,
   goToCreateNewVersion: PropTypes.func,
   // from context
   intl: PropTypes.object.isRequired,

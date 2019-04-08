@@ -73,11 +73,14 @@ export const toggleFilterControls = createAction(TOGGLE_FILTER_CONTROLS, isVisib
 // pass in topicId and favorite bool
 export const setTopicFavorite = createAsyncAction(SET_TOPIC_FAVORITE, api.topicSetFavorite);
 
+export const UPDATE_TOPIC_SETTINGS = 'UPDATE_TOPIC_SETTINGS';
+export const updateTopicSettings = createAsyncAction(UPDATE_TOPIC_SETTINGS, api.updateTopicSettings);
+
 export const updateAndCreateNewTopicVersion = createAsyncAction(UPDATE_TOPIC, api.updateAndCreateNewTopicVersion);
 
 export const updateTopicVersionSubtopics = createAsyncAction(UPDATE_TOPIC_USING_SAME_VERSION, api.updateTopicVersionSubtopics);
 
-export const topicStartSpider = createAsyncAction(TOPIC_START_SPIDER, api.topicSpider, id => id);
+export const topicStartSpider = createAsyncAction(TOPIC_START_SPIDER, api.topicSpider);
 
 // pass in search string
 export const fetchTopicSearchResults = createAsyncAction(FETCH_TOPIC_SEARCH_RESULTS, api.fetchTopicSearchResults, searchStr => searchStr);

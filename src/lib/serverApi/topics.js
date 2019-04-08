@@ -233,6 +233,11 @@ export function fetchWordsByQuery(params) {
   return createPostingApiPromise('/api/topics/create/preview/words/count', acceptedParams);
 }
 
+export function updateTopicSettings(topicId, params) {
+  const acceptedParams = acceptParams(params, ['name', 'description', 'is_public', 'is_logogram']);
+  return createPostingApiPromise(`/api/topics/${topicId}/update-settings`, acceptedParams, 'put');
+}
+
 export function updateAndCreateNewTopicVersion(topicId, params) {
   const acceptedParams = acceptParams(params, ['name', 'description', 'solr_seed_query', 'is_public', 'max_stories', 'max_iterations',
     'ch_monitor_id', 'start_date', 'end_date', 'spidered', 'sources[]', 'collections[]', 'is_logogram']);
@@ -282,8 +287,9 @@ export function topicGeocodedStoryCounts(topicId, params) {
   return createApiPromise(`/api/topics/${topicId}/geo-tags/counts`, acceptedParams);
 }
 
-export function topicSpider(topicId) {
-  return createPostingApiPromise(`/api/topics/${topicId}/spider`);
+export function topicSpider(topicId, params) {
+  const acceptedParams = acceptParams(params, ['snapshotId']);
+  return createPostingApiPromise(`/api/topics/${topicId}/spider`, acceptedParams);
 }
 
 export function userQueuedAndRunningTopics() {

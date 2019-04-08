@@ -18,15 +18,17 @@ import messages from '../../../resources/messages';
 import { urlWithFilters, filtersAsUrlParams } from '../../util/location';
 import { HELP_STORIES_CSV_COLUMNS } from '../../../lib/helpConstants';
 
+const NUM_TO_SHOW = 10;
+const TOP_N_DOWNLOAD = 2000;
+
 const localMessages = {
   title: { id: 'topic.summary.stories.title', defaultMessage: 'Top Stories' },
   descriptionIntro: { id: 'topic.summary.stories.help.title', defaultMessage: '<p>The top stories within this topic can suggest the main ways it is talked about.  Sort by different measures to get a better picture of a story\'s influence.</p>' },
   downloadNoFBData: { id: 'topic.summary.stories.download.noFB', defaultMessage: 'Download CSV with all stories' },
+  downloadTopN: { id: 'topic.summary.stories.download.1k', defaultMessage: `Download CSV with top ${TOP_N_DOWNLOAD} stories (fast!)` },
   downloadWithFBData: { id: 'topic.summary.stories.download.withFB', defaultMessage: 'Download CSV with all stories & Facebook collection date (takes longer)' },
   downloadLinkCsv: { id: 'topic.summary.stories.download.downloadLinkCsv', defaultMessage: 'Download CSV of all story links' },
 };
-
-const NUM_TO_SHOW = 10;
 
 class StoriesSummaryContainer extends React.Component {
   onChangeSort = (newSort) => {
@@ -37,6 +39,13 @@ class StoriesSummaryContainer extends React.Component {
   downloadCsvNoFBData = () => {
     const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
     const url = `/api/topics/${topicId}/stories.csv?${filtersAsUrlParams(filters)}&sort=${sort}`;
+    window.location = url;
+    notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
+  }
+
+  downloadCsvTopN = () => {
+    const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
+    const url = `/api/topics/${topicId}/stories.csv?${filtersAsUrlParams(filters)}&sort=${sort}&story_limit=${TOP_N_DOWNLOAD}`;
     window.location = url;
     notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
   }
@@ -71,6 +80,16 @@ class StoriesSummaryContainer extends React.Component {
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
           <div className="actions">
             <ActionMenu actionTextMsg={messages.downloadOptions}>
+              <MenuItem
+                className="action-icon-menu-item"
+                id="topic-summary-top-N-stories-download"
+                onClick={this.downloadCsvTopN}
+              >
+                <ListItemText><FormattedMessage {...localMessages.downloadTopN} /></ListItemText>
+                <ListItemIcon>
+                  <DownloadButton />
+                </ListItemIcon>
+              </MenuItem>
               <MenuItem
                 className="action-icon-menu-item"
                 id="topic-summary-top-stories-download"

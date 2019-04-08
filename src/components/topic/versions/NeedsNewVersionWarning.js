@@ -11,7 +11,7 @@ import LinkWithFilters from '../LinkWithFilters';
 
 const localMessages = {
   needsNewSnapshot: { id: 'topic.needsNewSnapshot.subtopics', defaultMessage: 'You\'ve changed some subtopics and need to generate a new version!' },
-  needsNewSnapshotAction: { id: 'topic.needsNewSnapshot.subtopics.action', defaultMessage: 'Finish up and generate' },
+  needsNewSnapshotAction: { id: 'topic.needsNewSnapshot.subtopics.action', defaultMessage: 'Review Changes' },
 };
 
 // TODO: move this into a reducer

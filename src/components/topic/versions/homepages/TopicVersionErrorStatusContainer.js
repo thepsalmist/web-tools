@@ -1,18 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
-import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import AppButton from '../../../common/AppButton';
-import PageTitle from '../../../common/PageTitle';
 import Permissioned from '../../../common/Permissioned';
-import { PERMISSION_TOPIC_WRITE } from '../../../../lib/auth';
-import SeedQuerySummary from '../SeedQuerySummary';
+import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import messages from '../../../../resources/messages';
-import JobDate from './JobDate';
-import VersionGenerationProcess from './VersionGenerationProcess';
+import TopicVersionStatus from './TopicVersionStatus';
 
 const localMessages = {
-  title: { id: 'version.error.title', defaultMessage: 'Version {number} - <span class="error-background">Error</span>' },
+  title: { id: 'version.error.title', defaultMessage: '<span class="error-background">Error</span>' },
   explanationTitle: { id: 'version.error.explanation.title', defaultMessage: 'What\'s the Problem?' },
   explanationText: { id: 'version.error.explanation.text', defaultMessage: 'Something went wrong while your topic was running.' },
   whatNowTitle: { id: 'version.error.explanation2.title', defaultMessage: 'What Should I Do Now?' },
@@ -21,43 +17,26 @@ const localMessages = {
 
 const TopicVersionErrorStatusContainer = ({ topic, goToCreateNewVersion, snapshot, job, intl }) => (
   <React.Fragment>
-    <PageTitle value={intl.formatMessage(localMessages.title, { number: snapshot.note })} />
-    <div className="topic-version-status-container">
-      <Grid>
-        <Row>
-          <Col lg={12}>
-            <h1><FormattedHTMLMessage {...localMessages.title} values={{ number: snapshot.note }} /></h1>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={12}>
-            <VersionGenerationProcess snapshot={snapshot} topic={topic} />
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={6}>
-            <JobDate snapshot={snapshot} job={job} />
-            <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
-            <p><FormattedMessage {...localMessages.explanationText} /></p>
-            <h2><FormattedMessage {...localMessages.whatNowTitle} /></h2>
-            <p><FormattedMessage {...localMessages.whatNowText} /></p>
+    <TopicVersionStatus
+      subtitle={localMessages.title}
+      topic={topic}
+      snapshot={snapshot}
+      job={job}
+    >
+      <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
+      <p><FormattedMessage {...localMessages.explanationText} /></p>
+      <h2><FormattedMessage {...localMessages.whatNowTitle} /></h2>
+      <p><FormattedMessage {...localMessages.whatNowText} /></p>
 
-            <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-              <div className="topic-stuck-created-or-error">
-                <AppButton
-                  label={intl.formatMessage(messages.createNewVersion)}
-                  onClick={() => goToCreateNewVersion(topic.topics_id)}
-                />
-              </div>
-            </Permissioned>
-          </Col>
-          <Col lg={1} />
-          <Col lg={5}>
-            <SeedQuerySummary topic={topic} snapshot={snapshot} />
-          </Col>
-        </Row>
-      </Grid>
-    </div>
+      <Permissioned onlyTopic={PERMISSION_ADMIN}>
+        <div className="topic-stuck-created-or-error">
+          <AppButton
+            label={intl.formatMessage(messages.createNewVersion)}
+            onClick={() => goToCreateNewVersion(topic.topics_id)}
+          />
+        </div>
+      </Permissioned>
+    </TopicVersionStatus>
   </React.Fragment>
 );
 

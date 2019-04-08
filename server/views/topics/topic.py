@@ -50,7 +50,6 @@ def topic_favorites():
     favorited_topics = [user_mc.topic(tid) for tid in favorite_topic_ids]
     for t in favorited_topics:
         t['isFavorite'] = True
-        # t['detailInfo'] = get_topic_info_per_snapshot_timespan(t['topics_id'])
     return jsonify({'topics': favorited_topics})
 
 
@@ -60,8 +59,6 @@ def public_topics_list():
     public_topics = sorted_public_topic_list()
     if is_user_logged_in():
         public_topics = _add_user_favorite_flag_to_topics(public_topics)
-    # for t in public_topics_list:
-        # t['detailInfo'] = get_topic_info_per_snapshot_timespan(t['topics_id'])
     return jsonify({"topics": public_topics})
 
 
@@ -71,8 +68,8 @@ def public_topics_list():
 def topic_personal():
     user_mc = user_admin_mediacloud_client()
     link_id = request.args.get('linkId')
-    results = user_mc.topicList(link_id=link_id, limit=500)
-    results['topcs'] = _add_user_favorite_flag_to_topics(results['topics'])
+    results = user_mc.topicList(link_id=link_id, limit=200)
+    results['topics'] = _add_user_favorite_flag_to_topics(results['topics'])
     return jsonify(results)
 
 
@@ -120,28 +117,15 @@ def _topic_summary(topics_id):
     for idx in range(0, len(snapshots)):
         if snapshots[idx]['note'] in [None, '']:
             snapshots[idx]['note'] = idx + ARRAY_BASE_ONE
-    job_status_list = mc.topicSnapshotGenerateStatus(topics_id)['job_states']
     most_recent_usable_snapshot = get_most_recent_snapshot_version(snapshots)
     topic['snapshots'] = {
         'list': snapshots,
-        'jobStatus': job_status_list,    # need to know if one is running
     }
     # add in spider job status
-    topic['spiderJobs'] = local_mc.topicSpiderStatus(topics_id)['job_states']
     topic['latestVersion'] = len(snapshots) + ARRAY_BASE_ONE
     topic['latestUsableVersion'] = 'note' in most_recent_usable_snapshot if most_recent_usable_snapshot else -1
     if is_user_logged_in():
         _add_user_favorite_flag_to_topics([topic])
-
-    '''
-    # add in story counts, overall seed and spidered
-    feedTotal = topic_story_count(local_mc, topics_id) # with q - but not passed in for summary
-    total = topic_story_count(local_mc, topics_id, timespans_id=None, q=None)  # spidered count.. how?
-    spidered = total - seedTotal
-    topic['seedStories'] = seedTotal
-    topic['spideredStories'] = spidered
-    topic['totaltories'] = total
-    '''
     return topic
 
 
@@ -212,6 +196,21 @@ def topic_set_favorited(topics_id):
     return jsonify({'isFavorite': favorite == 1})
 
 
+@app.route('/api/topics/<topics_id>/update-settings', methods=['PUT'])
+@flask_login.login_required
+@api_error_handler
+def topic_update_settings(topics_id):
+    user_mc = user_admin_mediacloud_client()
+    args = {
+        'name': request.form['name'] if 'name' in request.form else None,
+        'description': request.form['description'] if 'description' in request.form else None,
+        'is_public': request.form['is_public'] if 'is_public' in request.form else None,
+        'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
+    }
+    result = user_mc.topicUpdate(topics_id, **args)
+    return topic_summary(result['topics'][0]['topics_id'])  # give them back new data, so they can update the client
+
+
 @app.route('/api/topics/<topics_id>/update', methods=['PUT'])
 @flask_login.login_required
 @api_error_handler
@@ -266,7 +265,9 @@ def topic_update(topics_id):
 @api_error_handler
 def topic_spider(topics_id):
     user_mc = user_admin_mediacloud_client()
-    spider_job = user_mc.topicSpider(topics_id)  # kick off a spider, which will also generate a snapshot
+    # kick off a spider, which will also generate a snapshot
+    snapshots_id = request.form['snapshotId'] if 'snapshotId' in request.form else None
+    spider_job = user_mc.topicSpider(topics_id, snapshots_id=snapshots_id)
     return jsonify(spider_job)
 
 

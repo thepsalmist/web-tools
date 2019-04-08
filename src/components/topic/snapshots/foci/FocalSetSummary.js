@@ -7,8 +7,8 @@ const localMessages = {
   none: { id: 'topic.focalSets.summary.none', defaultMessage: 'This version doesn\'t have any subtopics.' },
 };
 
-const FocalSetSummary = ({ focalSets, snapshot }) => (
-  <div className="topic-info-sidebar">
+const FocalSetSummary = ({ focalSets, snapshot, faded }) => (
+  <div className={`topic-info-sidebar ${faded ? 'faded' : ''}`}>
     <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: snapshot.note }} /></h2>
     {(focalSets.length === 0) && <FormattedMessage {...localMessages.none} />}
     {focalSets.sort((a, b) => a.name.localeCompare(b.name)).map(fs => (
@@ -21,6 +21,7 @@ FocalSetSummary.propTypes = {
   // from parent
   focalSets: PropTypes.array.isRequired,
   snapshot: PropTypes.object.isRequired,
+  faded: PropTypes.bool,
   // from compositional chain
   intl: PropTypes.object.isRequired,
 };

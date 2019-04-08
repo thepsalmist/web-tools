@@ -12,21 +12,33 @@ const localMessages = {
   datesData: { id: 'topic.info.datesData', defaultMessage: '{startDate} to {endDate}' },
 };
 
-const SeedQuerySummary = (props) => {
-  const { topic, snapshot, intl } = props;
+const SeedQuerySummary = ({ seedQueryCount, topic, snapshot, intl, faded }) => {
   let sourcesAndCollections = topic.media ? [...topic.media] : [];
   sourcesAndCollections = topic.media_tags ? [...sourcesAndCollections, ...topic.media_tags] : sourcesAndCollections;
   return (
-    <div className="topic-info-sidebar">
-      <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: snapshot ? snapshot.note : '' }} /></h2>
-      <p><FormattedMessage {...localMessages.seedQueryCount} values={{ storyCount: intl.formatNumber(topic.seed_query_story_count) }} /></p>
+    <div className={`topic-info-sidebar ${faded ? 'faded' : ''}`}>
+      <h2>
+        <FormattedMessage
+          {...localMessages.title}
+          values={{ versionNumber: snapshot ? snapshot.note : '' }}
+        />
+      </h2>
+      <p>
+        <FormattedMessage
+          {...localMessages.seedQueryCount}
+          values={{ storyCount: intl.formatNumber(seedQueryCount || topic.seed_query_story_count) }}
+        />
+      </p>
       <p>
         <b><FormattedHTMLMessage {...messages.topicQueryProp} /></b>
         <code>{topic.solr_seed_query}</code>
       </p>
       <p>
         <b><FormattedMessage {...localMessages.dates} /></b>
-        <FormattedMessage {...localMessages.datesData} values={{ startDate: topic.start_date, endDate: topic.end_date }} />
+        <FormattedMessage
+          {...localMessages.datesData}
+          values={{ startDate: topic.start_date, endDate: topic.end_date }}
+        />
       </p>
       <p>
         <b><FormattedHTMLMessage {...messages.topicSourceCollectionsProp} /></b>
@@ -45,6 +57,8 @@ const SeedQuerySummary = (props) => {
 SeedQuerySummary.propTypes = {
   topic: PropTypes.object.isRequired,
   snapshot: PropTypes.object,
+  seedQueryCount: PropTypes.number,
+  faded: PropTypes.bool,
   intl: PropTypes.object.isRequired,
 };
 

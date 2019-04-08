@@ -1,5 +1,9 @@
 @import '../_constants';
 
+.chip-button-wrapper {
+  display: inline-block;
+}
+
 .tabbed-chip {
   display: inline-block;
   font-size: 12px !important;

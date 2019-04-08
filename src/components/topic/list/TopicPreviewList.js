@@ -14,6 +14,8 @@ import { TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT
 import { ErrorNotice, DetailNotice, InfoNotice } from '../../common/Notice';
 import { trimToMaxLength } from '../../../lib/stringUtil';
 import TopicOwnerList from '../TopicOwnerList';
+import { topicMessageSaysTooBig } from '../../../reducers/topics/adminList';
+import { storyCountFromJobMessage } from '../versions/homepages/TopicVersionTooBigStatusContainer';
 
 const MAX_TOPIC_STATUS_DETAILS_LEN = 120;
 
@@ -21,7 +23,9 @@ const localMessages = {
   range: { id: 'topitopic.list.range', defaultMessage: '{start} - {end}' },
   topicStatusNote: { id: 'topitopic.list.state', defaultMessage: 'This topic is {state}' },
   topicErrorNote: { id: 'topitopic.list.error', defaultMessage: 'This topic has an error' },
-  topicReadyNote: { id: 'topitopic.list.completed', defaultMessage: 'This topic is ready to use!' },
+  topicTooBigNote: { id: 'topitopic.list.error.tooBig', defaultMessage: 'This topic is too big' },
+  tooBigDetails: { id: 'topitopic.list.error.tooBigDetails', defaultMessage: 'Your topic has {storyCount} stories, which is more than you are allowed to have.' },
+  topicReadyNote: { id: 'topitopic.list.completed', defaultMessage: 'This topic is ready to use' },
 };
 
 const TopicPreviewList = (props) => {
@@ -31,21 +35,34 @@ const TopicPreviewList = (props) => {
     content = (
       topics.map((topic, idx) => {
         let topicStateNotice;
-        if (topic.state === TOPIC_SNAPSHOT_STATE_ERROR) {
+        if (topic.latestState.state === TOPIC_SNAPSHOT_STATE_ERROR) {
+          if (topicMessageSaysTooBig(topic.latestState.message)) {
+            topicStateNotice = (
+              <ErrorNotice
+                details={props.intl.formatMessage(
+                  localMessages.tooBigDetails,
+                  { storyCount: props.intl.formatNumber(storyCountFromJobMessage(topic.latestState.message)) }
+                )}
+              >
+                <FormattedMessage {...localMessages.topicTooBigNote} />
+              </ErrorNotice>
+            );
+          } else {
+            topicStateNotice = (
+              <ErrorNotice details={trimToMaxLength(topic.latestState.message, MAX_TOPIC_STATUS_DETAILS_LEN)}>
+                <FormattedMessage {...localMessages.topicErrorNote} />
+              </ErrorNotice>
+            );
+          }
+        } else if (topic.latestState.state === TOPIC_SNAPSHOT_STATE_QUEUED
+          || topic.latestState.state === TOPIC_SNAPSHOT_STATE_RUNNING
+          || topic.latestState.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
           topicStateNotice = (
-            <ErrorNotice details={trimToMaxLength(topic.message, MAX_TOPIC_STATUS_DETAILS_LEN)}>
-              <FormattedMessage {...localMessages.topicErrorNote} />
-            </ErrorNotice>
-          );
-        } else if (topic.state === TOPIC_SNAPSHOT_STATE_QUEUED
-          || topic.state === TOPIC_SNAPSHOT_STATE_RUNNING
-          || topic.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
-          topicStateNotice = (
-            <DetailNotice details={trimToMaxLength(topic.message, MAX_TOPIC_STATUS_DETAILS_LEN)}>
-              <FormattedMessage {...localMessages.topicStatusNote} values={{ state: topic.state }} />
+            <DetailNotice details={trimToMaxLength(topic.latestState.message, MAX_TOPIC_STATUS_DETAILS_LEN)}>
+              <FormattedMessage {...localMessages.topicStatusNote} values={{ state: topic.latestState.state }} />
             </DetailNotice>
           );
-        } else if (topic.state === TOPIC_SNAPSHOT_STATE_COMPLETED) {
+        } else if (topic.latestState.state === TOPIC_SNAPSHOT_STATE_COMPLETED) {
           topicStateNotice = (
             <InfoNotice>
               <FormattedMessage {...localMessages.topicReadyNote} />

@@ -33,7 +33,7 @@ const localMessages = {
 };
 
 const TopicConfirmContainer = (props) => {
-  const { formValues, finishStep, onStepChange, handleSubmit, pristine, selectedSnapshot, submitting, currentStepText, mode, topicInfo } = props;
+  const { formValues, finishStep, onStepChange, handleSubmit, pristine, selectedSnapshot, storyCount, submitting, currentStepText, mode, topicInfo } = props;
   const { formatMessage } = props.intl;
   let sourcesAndCollections = [];
   sourcesAndCollections = formValues.sourcesAndCollections.filter(s => s.media_id).map(s => s.media_id);
@@ -43,7 +43,7 @@ const TopicConfirmContainer = (props) => {
     previousVersion = (
       <React.Fragment>
         <Col lg={5}>
-          <SeedQuerySummary topic={topicInfo} snapshot={selectedSnapshot} />
+          <SeedQuerySummary topic={topicInfo} snapshot={selectedSnapshot} faded />
         </Col>
         <Col lg={2}>
           <span style={{ display: 'block', fontSize: '56px', marginTop: '120px', textAlign: 'center' }}>➡</span>
@@ -52,7 +52,7 @@ const TopicConfirmContainer = (props) => {
     );
   }
   const topicNewVersionContent = (
-    <SeedQuerySummary topic={formValues} />
+    <SeedQuerySummary topic={formValues} seedQueryCount={storyCount} />
   );
   if (submitting) {
     return (
@@ -69,7 +69,7 @@ const TopicConfirmContainer = (props) => {
       </Grid>
     );
   }
-  // havne't submitted yet
+  // haven't submitted yet
   return (
     <form className="create-topic" name="topicForm" onSubmit={handleSubmit(finishStep.bind(this, mode))}>
       <Grid className="topic-container">
@@ -118,7 +118,7 @@ TopicConfirmContainer.propTypes = {
   // from state
   user: PropTypes.object.isRequired,
   formValues: PropTypes.object.isRequired,
-  selectedSnapshot: PropTypes.object.isRequired,
+  selectedSnapshot: PropTypes.object,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
   storyCount: PropTypes.number,

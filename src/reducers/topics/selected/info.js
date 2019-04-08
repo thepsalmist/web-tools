@@ -1,4 +1,5 @@
-import { FETCH_TOPIC_SUMMARY } from '../../../actions/topicActions';
+import { resolve } from 'redux-simple-promise';
+import { FETCH_TOPIC_SUMMARY, UPDATE_TOPIC_SEED_QUERY, UPDATE_TOPIC_SETTINGS, SET_TOPIC_FAVORITE } from '../../../actions/topicActions';
 import { createAsyncReducer } from '../../../lib/reduxHelpers';
 
 // this is important to handle the fact that some older topics don't have any snapshots
@@ -30,11 +31,10 @@ export const addLatestStateToTopic = (t) => {
 const info = createAsyncReducer({
   action: FETCH_TOPIC_SUMMARY,
   handleSuccess: payload => ({ ...addLatestStateToTopic(payload) }),
-  UPDATE_TOPIC_RESOLVED: payload => ({ ...payload }),
-  SET_TOPIC_FAVORITE_RESOLVED: payload => ({
-    // changing fav status returns full topic info, so update it here
-    ...payload,
-  }),
+  [resolve(UPDATE_TOPIC_SEED_QUERY)]: payload => ({ ...addLatestStateToTopic(payload) }),
+  [resolve(UPDATE_TOPIC_SETTINGS)]: payload => ({ ...addLatestStateToTopic(payload) }),
+  // changing fav status returns full topic info, so update it here
+  [resolve(SET_TOPIC_FAVORITE)]: payload => ({ ...payload })({ ...addLatestStateToTopic(payload) }),
 });
 
 export default info;

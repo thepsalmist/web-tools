@@ -7,6 +7,7 @@ import TopicVersionStatus from './TopicVersionStatus';
 
 const localMessages = {
   title: { id: 'version.running.title', defaultMessage: 'Still Generating' },
+  titleAlmostDone: { id: 'version.running.title', defaultMessage: 'Almost Done Generating' },
   cancelTopic: { id: 'version.cancel', defaultMessage: 'Cancel This Version' },
   explanationTitle: { id: 'version.running.explanation.title', defaultMessage: 'What\'s Happening?' },
   explanationText: { id: 'version.running.explanation.text', defaultMessage: 'Your topic started off with {seedStoryCount} stories from our existing database that matching its seed query. We are following the links in those stories to discover more.  Each of these new stories will be checked to see if it matches your search terms.  If it does, we will include it in your topic.  If it doesn\'t then we will ignore it. We generally find that just 10% to 15% of the links we follow from your seed stories get included in the final topic.' },
@@ -18,7 +19,7 @@ const localMessages = {
 const TopicVersionRunningStatusContainer = ({ topic, snapshot, intl }) => (
   <React.Fragment>
     <TopicVersionStatus
-      subtitle={localMessages.title}
+      subtitle={!snapshot.isUsable ? localMessages.titleAlmostDone : localMessages.title}
       topic={topic}
       snapshot={snapshot}
     >

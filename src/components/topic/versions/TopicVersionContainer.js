@@ -14,7 +14,7 @@ import TopicVersionCreatedStatusContainer from './homepages/TopicVersionCreatedS
 import * as fetchConstants from '../../../lib/fetchConstants';
 import { filteredLinkTo } from '../../util/location';
 import { getCurrentVersionFromSnapshot } from '../../../lib/topicVersionUtil';
-import { topicStartSpider } from '../../../actions/topicActions';
+import { topicSnapshotSpider } from '../../../actions/topicActions';
 import { LEVEL_ERROR } from '../../common/Notice';
 import { addNotice, updateFeedback } from '../../../actions/appActions';
 import { topicMessageSaysTooBig } from '../../../reducers/topics/adminList';
@@ -62,7 +62,8 @@ const TopicVersionContainer = (props) => {
         goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
       />
     );
-  } else if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_RUNNING) {
+  } else if ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_RUNNING)
+    || ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_COMPLETED) && !snapshotToUse.isUsable)) {
     contentToShow = (
       <TopicVersionRunningStatusContainer
         topic={topic}
@@ -139,12 +140,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(push(filteredLinkTo(url, filters)));
   },
   handleSnapshotGenerate: (topicId, snapshotId) => {
-    dispatch(topicStartSpider(topicId, { snapshotId }))
+    dispatch(topicSnapshotSpider(topicId, { snapshotId }))
       .then((results) => {
         if ((results.statusCode && results.statusCode !== 200) || results.error) {
           dispatch(addNotice({ message: localMessages.generationFailed, details: results.message || results.error, level: LEVEL_ERROR }));
         } else {
           dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.startedGenerating) }));
+          window.location.reload(); // to get new version status (ie. running hopefully)
         }
       });
   },

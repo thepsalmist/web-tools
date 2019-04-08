@@ -17,6 +17,7 @@ const localMessages = {
   running: { id: 'topic.state.running', defaultMessage: '<i>Generating</i>' },
   runningDetails: { id: 'topic.state.runningDetails', defaultMessage: 'We are still collecting stories for this version.' },
   runningAction: { id: 'topic.state.runningAction', defaultMessage: 'See Details' },
+  runningDetailsAmostDone: { id: 'topic.state.runningDetailsAmostDone', defaultMessage: 'We are almost done generating this version.' },
   completed: { id: 'topic.state.running', defaultMessage: 'Ready to use' },
   completedAction: { id: 'topic.state.useVersion', defaultMessage: 'Use Version {number}' },
   completedDetails: { id: 'topic.state.completedDetails', defaultMessage: 'Includes {total} stories ({discoveredPct} discovered),' },
@@ -41,30 +42,36 @@ const versionSelectText = (state, number, formatMessage) => {
   }
 };
 
-const messageForVersionState = (state) => {
-  switch (state) {
+const messageForVersionState = (snapshot) => {
+  switch (snapshot.state) {
     case TOPIC_SNAPSHOT_STATE_QUEUED:
       return localMessages.queued;
     case TOPIC_SNAPSHOT_STATE_RUNNING:
       return localMessages.running;
     case TOPIC_SNAPSHOT_STATE_COMPLETED:
+      if (!snapshot.isUsable) {
+        return localMessages.running; // ie. still being imported
+      }
       return localMessages.completed;
     case TOPIC_SNAPSHOT_STATE_ERROR:
       return localMessages.error;
     case TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED:
       return localMessages.createdNotQueued;
     default:
-      return state;
+      return snapshot.state;
   }
 };
 
-const detailsForVersionState = (version, storyCounts, formatMessage, formatNumber) => {
-  switch (version.state) {
+const detailsForVersionState = (snapshot, storyCounts, formatMessage, formatNumber) => {
+  switch (snapshot.state) {
     case TOPIC_SNAPSHOT_STATE_QUEUED:
       return formatMessage(localMessages.queuedDetails, {
-        age: version.snapshotDate.fromNow(), // this is a moment object so we can call this relative date helper
+        age: snapshot.snapshotDate.fromNow(), // this is a moment object so we can call this relative date helper
       });
     case TOPIC_SNAPSHOT_STATE_COMPLETED:
+      if (!snapshot.isUsable) {
+        return formatMessage(localMessages.runningDetailsAmostDone);
+      }
       return formatMessage(localMessages.completedDetails, {
         total: formatNumber(storyCounts.total),
         discoveredPct: storyCounts.total === 0 ? '0%' : formatNumber(storyCounts.spidered / storyCounts.total, { style: 'percent', maximumFractionDigits: 0 }),
@@ -73,11 +80,11 @@ const detailsForVersionState = (version, storyCounts, formatMessage, formatNumbe
       return formatMessage(localMessages.runningDetails);
     case TOPIC_SNAPSHOT_STATE_ERROR:
       // TODO: show generic error for regular users, and detailed message for admin users
-      return trimToMaxLength(version.message, 400);
+      return trimToMaxLength(snapshot.message, 400);
     case TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED:
       return formatMessage(localMessages.createdNotQueuedDetails);
     default:
-      return version.state;
+      return snapshot.state;
   }
 };
 
@@ -101,7 +108,7 @@ const TopicVersionListItem = ({ version, intl, number, topicId, storyCounts, sel
       <Col lg={6}>
         <div className="topic-version-list-info">
           <h2>
-            <FormattedHTMLMessage {...messageForVersionState(version.state)} />
+            <FormattedHTMLMessage {...messageForVersionState(version)} />
             {selected && <TabbedChip message={localMessages.selected} />}
           </h2>
           {detailsForVersionState(version, storyCounts, intl.formatMessage, intl.formatNumber)}

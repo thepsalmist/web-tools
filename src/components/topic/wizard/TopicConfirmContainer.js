@@ -8,14 +8,15 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import messages from '../../../resources/messages';
-import { createTopic, updateAndCreateNewTopicVersion } from '../../../actions/topicActions';
+import { createTopic, updateTopicSeedQuery, topicSnapshotSpider } from '../../../actions/topicActions';
 import { updateFeedback, addNotice } from '../../../actions/appActions';
 import AppButton from '../../common/AppButton';
-import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/auth';
 import { LEVEL_ERROR, LEVEL_WARNING, WarningNotice } from '../../common/Notice';
 import { MAX_RECOMMENDED_STORIES, MIN_RECOMMENDED_STORIES, WARNING_LIMIT_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 import { TOPIC_FORM_MODE_CREATE, TOPIC_FORM_MODE_EDIT } from './TopicForm';
 import SeedQuerySummary from '../versions/SeedQuerySummary';
+import Permissioned from '../../common/Permissioned';
+import { PERMISSION_ADMIN } from '../../../lib/auth';
 
 const localMessages = {
   name: { id: 'topic.create.confirm.name', defaultMessage: 'Name' },
@@ -29,11 +30,11 @@ const localMessages = {
   notEnoughStories: { id: 'topic.create.notenough', defaultMessage: "Sorry, we can't save this topic because you need a minimum of 500 seed stories." },
   tooManyStories: { id: 'topic.create.toomany', defaultMessage: "Sorry, we can't save this topic because you need to select less than 100,000 seed stories." },
   warningLimitStories: { id: 'topic.create.warningLimit', defaultMessage: 'Approaching story limit. Proceed with caution.' },
-  startSpidering: { id: 'topic.create.feedback', defaultMessage: 'Start Spidering?' },
+  createWithoutGenerating: { id: 'topic.create.withoutGenerating', defaultMessage: 'Create Without Generating' },
 };
 
 const TopicConfirmContainer = (props) => {
-  const { formValues, finishStep, onStepChange, handleSubmit, pristine, selectedSnapshot, storyCount, submitting, currentStepText, mode, topicInfo } = props;
+  const { formValues, onStepChange, handleSubmit, pristine, selectedSnapshot, storyCount, submitting, currentStepText, mode, topicInfo, user, handleUpdateTopic, handleCreateTopic } = props;
   const { formatMessage } = props.intl;
   let sourcesAndCollections = [];
   sourcesAndCollections = formValues.sourcesAndCollections.filter(s => s.media_id).map(s => s.media_id);
@@ -54,6 +55,14 @@ const TopicConfirmContainer = (props) => {
   const topicNewVersionContent = (
     <SeedQuerySummary topic={formValues} seedQueryCount={storyCount} />
   );
+  const finishStep = (formMode, startSpidering, values) => {
+    const updatedValues = { ...values, startSpidering };
+    if (formMode === TOPIC_FORM_MODE_EDIT) {
+      handleUpdateTopic(storyCount, user, updatedValues);
+    } else {
+      handleCreateTopic(storyCount, user, updatedValues);
+    }
+  };
   if (submitting) {
     return (
       <Grid className="topic-container">
@@ -71,7 +80,7 @@ const TopicConfirmContainer = (props) => {
   }
   // haven't submitted yet
   return (
-    <form className="create-topic" name="topicForm" onSubmit={handleSubmit(finishStep.bind(this, mode))}>
+    <form className="create-topic" name="topicForm">
       <Grid className="topic-container">
         <Row>
           <Col lg={12}>
@@ -86,13 +95,22 @@ const TopicConfirmContainer = (props) => {
           </Col>
         </Row>
         <Row>
-          <Col lg={6}>
+          <Col lg={12}>
             <AppButton label={formatMessage(messages.previous)} onClick={() => onStepChange(mode, 2)} />
             &nbsp; &nbsp;
+            <Permissioned onlyRole={PERMISSION_ADMIN}>
+              <AppButton
+                type="submit"
+                disabled={pristine || submitting}
+                label={localMessages.createWithoutGenerating}
+                onClick={handleSubmit(values => finishStep(mode, false, values))}
+              />
+              &nbsp; &nbsp;
+            </Permissioned>
             <AppButton
-              type="submit"
               disabled={pristine || submitting}
               label={currentStepText.saveTopic}
+              onClick={handleSubmit(values => finishStep(mode, true, values))}
               primary
             />
           </Col>
@@ -112,6 +130,7 @@ TopicConfirmContainer.propTypes = {
   // form context
   intl: PropTypes.object.isRequired,
   handleCreateTopic: PropTypes.func.isRequired,
+  handleUpdateTopic: PropTypes.func.isRequired,
   submitting: PropTypes.bool,
   handleSubmit: PropTypes.func.isRequired,
   pristine: PropTypes.bool.isRequired,
@@ -134,7 +153,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleCreateTopic: (storyCount, user, values) => {
     if (((storyCount > MIN_RECOMMENDED_STORIES) && (storyCount < MAX_RECOMMENDED_STORIES))
-      || hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) { // min/max limits dont apply to admin users
+      || user.isAdmin) { // min/max limits dont apply to admin users
       // all good, so submit!
       const queryInfo = {
         name: values.name,
@@ -147,7 +166,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         is_public: values.is_public ? 1 : 0,
         is_logogram: values.is_logogram ? 1 : 0,
         max_stories: values.max_stories,
-        start_spidering: values.start_spidering,
+        startSpidering: values.startSpidering,
       };
       queryInfo.is_public = queryInfo.is_public ? 1 : 0;
       if ('sourcesAndCollections' in values) {
@@ -166,7 +185,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
       });
     }
-    if (!hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {
+    if (!user.isAdmin) {
       // min/max don't apply to admins
       if (storyCount > WARNING_LIMIT_RECOMMENDED_STORIES && storyCount < MAX_RECOMMENDED_STORIES) {
         dispatch(updateFeedback({ classes: 'warning-notice', open: true, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
@@ -185,8 +204,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   handleUpdateTopic: (storyCount, user, values) => {
     if (((storyCount > MIN_RECOMMENDED_STORIES) && (storyCount < MAX_RECOMMENDED_STORIES))
-      || hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) { // min/max limits dont apply to admin users
-      // all good, so submit!
+      || user.isAdmin) { // min/max limits dont apply to admin users
+      // figure out the new seed query values
       const queryInfo = {
         topics_id: values.topics_id,
         name: values.name,
@@ -199,7 +218,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         is_public: values.is_public ? 1 : 0,
         is_logogram: values.is_logogram ? 1 : 0,
         max_stories: values.max_stories,
-        start_spidering: values.start_spidering,
+        startSpidering: values.startSpidering,
       };
       queryInfo.is_public = queryInfo.is_public ? 1 : 0;
       if ('sourcesAndCollections' in values) {
@@ -209,17 +228,23 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         queryInfo['sources[]'] = '';
         queryInfo['collections[]'] = '';
       }
-      return dispatch(updateAndCreateNewTopicVersion(queryInfo.topics_id, { ...queryInfo })).then((results) => {
-        // We start a new spider for new version
-        if (results.topics_id) {
-          // let them know it worked
-          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
-          return dispatch(push(`/topics/${results.topics_id}/summary`));
-        }
-        return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
-      });
+      return dispatch(updateTopicSeedQuery(queryInfo.topics_id, { ...queryInfo }))
+        .then((results) => {
+          // We start a new spider for new version
+          if (results.topics_id && queryInfo.startSpidering) {
+            dispatch(topicSnapshotSpider(queryInfo.topics_id))
+              .then((spiderResults) => {
+                if (spiderResults.job_states_id) {
+                  // let them know it worked
+                  dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
+                  return dispatch(push(`/topics/${results.topics_id}/summary`));
+                }
+                return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
+              });
+          }
+        });
     }
-    if (!hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) {
+    if (!user.isAdmin) {
       // min/max don't apply to admins
       if (storyCount > WARNING_LIMIT_RECOMMENDED_STORIES && storyCount < MAX_RECOMMENDED_STORIES) {
         dispatch(updateFeedback({ classes: 'warning-notice', open: true, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
@@ -238,18 +263,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    finishStep: (mode) => {
-      if (mode === TOPIC_FORM_MODE_EDIT) {
-        dispatchProps.handleUpdateTopic(stateProps.storyCount, stateProps.user, stateProps.formValues);
-      } else {
-        dispatchProps.handleCreateTopic(stateProps.storyCount, stateProps.user, stateProps.formValues);
-      }
-    },
-  });
-}
-
 const reduxFormConfig = {
   form: 'topicForm',
   destroyOnUnmount: false, // so the wizard works
@@ -259,7 +272,7 @@ const reduxFormConfig = {
 export default
 withIntlForm(
   reduxForm(reduxFormConfig)(
-    connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+    connect(mapStateToProps, mapDispatchToProps)(
       TopicConfirmContainer
     )
   )

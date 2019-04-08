@@ -1,13 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
+import { FormattedHTMLMessage, injectIntl } from 'react-intl';
 import messages from '../../../resources/messages';
 import SourceOrCollectionWidget from '../../common/SourceOrCollectionWidget';
 import { urlToCollection, urlToSource } from '../../../lib/urlUtil';
 
 const localMessages = {
   title: { id: 'topic.info.title', defaultMessage: 'Version {versionNumber}: Seed Query' },
+  newTitle: { id: 'topic.info.newTitle', defaultMessage: 'New Version: Seed Query' },
   seedQueryCount: { id: 'topic.info.seedQueryCount', defaultMessage: 'Your seed query matches {storyCount} stories already in our database.' },
+  willSpider: { id: 'topic.info.willSpider', defaultMessage: 'Links will be followed to find more stories.' },
+  willNotSpider: { id: 'topic.info.willNotSpider', defaultMessage: 'Links will <em>not</em> be followed to find more stories.' },
   dates: { id: 'topic.info.dates', defaultMessage: 'Dates:' },
   datesData: { id: 'topic.info.datesData', defaultMessage: '{startDate} to {endDate}' },
 };
@@ -18,24 +21,25 @@ const SeedQuerySummary = ({ seedQueryCount, topic, snapshot, intl, faded }) => {
   return (
     <div className={`topic-info-sidebar ${faded ? 'faded' : ''}`}>
       <h2>
-        <FormattedMessage
-          {...localMessages.title}
-          values={{ versionNumber: snapshot ? snapshot.note : '' }}
-        />
+        {snapshot && <FormattedHTMLMessage {...localMessages.title} values={{ versionNumber: snapshot.note }} />}
+        {((snapshot === null) || (snapshot === undefined)) && <FormattedHTMLMessage {...localMessages.newTitle} />}
       </h2>
       <p>
-        <FormattedMessage
+        <FormattedHTMLMessage
           {...localMessages.seedQueryCount}
           values={{ storyCount: intl.formatNumber(seedQueryCount || topic.seed_query_story_count) }}
         />
+        &nbsp;
+        {(topic.max_iterations === 0) && <FormattedHTMLMessage {...localMessages.willNotSpider} />}
+        {(topic.max_iterations > 0) && <FormattedHTMLMessage {...localMessages.willSpider} />}
       </p>
       <p>
         <b><FormattedHTMLMessage {...messages.topicQueryProp} /></b>
         <code>{topic.solr_seed_query}</code>
       </p>
       <p>
-        <b><FormattedMessage {...localMessages.dates} /></b>
-        <FormattedMessage
+        <b><FormattedHTMLMessage {...localMessages.dates} /></b>
+        <FormattedHTMLMessage
           {...localMessages.datesData}
           values={{ startDate: topic.start_date, endDate: topic.end_date }}
         />

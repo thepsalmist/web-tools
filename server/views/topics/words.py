@@ -1,6 +1,8 @@
 import logging
 from flask import request, jsonify
 import flask_login
+from functools import partial
+from multiprocessing import Pool
 
 from server import app, TOOL_API_KEY
 from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_DOWNLOAD_SAMPLE_SIZE, \
@@ -16,6 +18,7 @@ from server.views.topics import access_public_topic
 logger = logging.getLogger(__name__)
 
 WORD_CONTEXT_SIZE = 5   # for sentence fragments, this is the amount of words before & after that we return
+WORD2VEC_TIMESPAN_POOL_PROCESSES = 10
 
 
 @app.route('/api/topics/<topics_id>/words/subtopic-comparison.csv', methods=['GET'])
@@ -223,3 +226,46 @@ def topic_word_media(topics_id, word):
 def topic_similar_words(topics_id, word):
     results = apicache.topic_similar_words(topics_id, word)
     return jsonify(results)
+
+
+# Helper function for pooling word2vec timespans process
+def _grab_timespan_embeddings(api_key, topics_id, args, overall_words, overall_embeddings, ts):
+    ts_word_counts = apicache.cached_topic_word_counts(api_key, topics_id, num_words=250,
+                                                       timespans_id=int(ts['timespans_id']), **args)
+
+    # Remove any words not in top words overall
+    ts_word_counts = [x for x in ts_word_counts if x['term'] in overall_words]
+
+    # Replace specific timespan embeddings with overall so coordinates are consistent
+    for word in ts_word_counts:
+        word['w2v_x'] = overall_embeddings[word['term']][0]
+        word['w2v_y'] = overall_embeddings[word['term']][1]
+
+    return {'timespan': ts, 'words': ts_word_counts}
+
+
+@app.route('/api/topics/<topics_id>/word2vec-timespans', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def topic_w2v_timespan_embeddings(topics_id):
+    args = {
+        'snapshots_id': request.args.get('snapshotId'),
+        'foci_id': request.args.get('focusId'),
+        'q': request.args.get('q'),
+    }
+
+    # Retrieve embeddings for overall topic
+    overall_word_counts = apicache.topic_word_counts(user_mediacloud_key(), topics_id, num_words=50, **args)
+    overall_words = [x['term'] for x in overall_word_counts]
+    overall_embeddings = {x['term']: (x['google_w2v_x'], x['google_w2v_y']) for x in overall_word_counts}
+
+    # Retrieve top words for each timespan
+    timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id, args['snapshots_id'],
+                                                    args['foci_id'])
+
+    # Retrieve embeddings for each timespan
+    p = Pool(processes=WORD2VEC_TIMESPAN_POOL_PROCESSES)
+    func = partial(_grab_timespan_embeddings, user_mediacloud_key(), topics_id, args, overall_words, overall_embeddings)
+    ts_embeddings = p.map(func, timespans)
+
+    return jsonify({'list': ts_embeddings})

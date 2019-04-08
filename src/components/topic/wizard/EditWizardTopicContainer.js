@@ -19,7 +19,7 @@ const localMessages = {
   name: { id: 'topic.modify.confirm.name', defaultMessage: 'Name' },
   confirmDesc: { id: 'topic.modify.confirm.description', defaultMessage: 'Description' },
   confirmFeedback: { id: 'topic.modify.failed', defaultMessage: 'Successfully created a new version of your new topic!' },
-  saveTopic: { id: 'topic.modify', defaultMessage: 'Build New Version' },
+  saveTopic: { id: 'topic.modify', defaultMessage: 'Generate The New Version' },
   updatingTitle: { id: 'topic.modify.title', defaultMessage: 'Please wait - we\'re creating a new version of your Topic now' },
   updatingDesc: { id: 'topic.modify.detail', defaultMessage: 'We are creating a new version of your topic now.  This can take a minute or so, just to make sure everyting is in order.  Once the new version is created, you\'ll be shown a page telling you we are gathering the stories.' },
   newVersion: { id: 'topic.modify.newVersion', defaultMessage: 'New Version' },

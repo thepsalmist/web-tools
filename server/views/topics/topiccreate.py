@@ -4,7 +4,7 @@ from flask import jsonify, request
 import flask_login
 from server import app
 from server.auth import user_admin_mediacloud_client, user_mediacloud_client
-from server.util.request import form_fields_required, api_error_handler, json_error_response
+from server.util.request import form_fields_required, api_error_handler, json_error_response, arguments_required
 from server.util.stringutil import ids_from_comma_separated_str
 from server.util.tags import US_COLLECTIONS
 from server.views.topics import concatenate_query_for_solr, concatenate_solr_dates
@@ -131,3 +131,24 @@ def topic_create():
         logging.error("Topic creation failed {}".format(name))
         logging.exception(e)
         return json_error_response(e.message, e.status_code)
+
+
+@app.route('/api/topics/name-exists', methods=['GET'])
+@flask_login.login_required
+@arguments_required('searchStr')
+@api_error_handler
+def topic_name_exists():
+    # Check if topic with name exists already
+    # Have to do this in a unique method, instead of in topic_search because we need to use an admin connection
+    # to media cloud to list all topics, but we don't want to return topics a user can't see to them.
+    # :return: boolean indicating if topic with this name exists for not (case insensive check)
+    search_str = request.args['searchStr']
+    topics_id = int(request.args['topicId']) if 'topicId' in request.args else None
+    matching_topics = mc.topicList(name=search_str, limit=15)
+    if topics_id:
+        matching_topic_names = [t['name'].lower().strip() for t in matching_topics['topics']
+                                if t['topics_id'] != topics_id]
+    else:
+        matching_topic_names = [t['name'].lower().strip() for t in matching_topics['topics']]
+    name_in_use = search_str.lower() in matching_topic_names
+    return jsonify({'nameInUse': name_in_use})

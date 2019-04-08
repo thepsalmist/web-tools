@@ -14,13 +14,15 @@ export const TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED = 'created but not queued';
 
 export const snapshotIsUsable = s => (s.state === TOPIC_SNAPSHOT_STATE_COMPLETED) && (s.searchable === true);
 
+const snapshotsByDateDesc = list => list.sort((f1, f2) => {
+  if (f1.snapshot_date < f2.snapshot_date) {
+    return 1;
+  }
+  return -1;
+});
+
 export function latestUsableSnapshot(snapshots) {
-  const usableSnapshots = snapshots.filter(s => snapshotIsUsable(s)).sort((f1, f2) => {
-    if (f1.snapshot_date < f2.snapshot_date) {
-      return 1;
-    }
-    return -1;
-  });
+  const usableSnapshots = snapshotsByDateDesc(snapshots).filter(s => snapshotIsUsable(s));
   if (usableSnapshots.length > 0) {
     return usableSnapshots[0];
   }
@@ -33,11 +35,12 @@ function getSnapshotFromListById(list, id) {
 }
 
 function cleanUpSnapshotList(rawList, jobList) {
-  return rawList.map(s => ({
+  return snapshotsByDateDesc(rawList).map((s, idx) => ({
     ...s,
     job_states: jobList.filter(job => s.snapshots_id === job.snapshots_id),
     snapshotDate: snapshotDateToMoment(s.snapshot_date),
     isUsable: snapshotIsUsable(s),
+    isLatest: idx === 0,
   }));
 }
 
@@ -49,13 +52,6 @@ function isLatestVersionRunning(rawList) {
   return (latestSnapshot.state === 'running')
     || ((latestSnapshot.state === 'completed') && (latestSnapshot.searchable === 0));
 }
-
-const snapshotsByDateDesc = list => list.sort((f1, f2) => {
-  if (f1.snapshot_date < f2.snapshot_date) {
-    return 1;
-  }
-  return -1;
-});
 
 const latestByDate = (list) => {
   const orderedList = snapshotsByDateDesc(list);

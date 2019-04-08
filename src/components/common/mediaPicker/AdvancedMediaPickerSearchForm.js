@@ -134,6 +134,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         name="mediaType"
         form="advanced-media-picker-search"
         label={formatMessage(messages.mediaType)}
+        onChange={val => this.selectMetaData(TAG_SET_MEDIA_TYPE, val)}
       />
     ) : null;
 
@@ -206,7 +207,7 @@ AdvancedMediaPickerSearchForm.propTypes = {
   hintText: PropTypes.string,
   // from parent
   onSearch: PropTypes.func,
-  onMetadataSelection: PropTypes.func.isRequired,
+  onMetadataSelection: PropTypes.func,
   searchString: PropTypes.string,
 };
 

@@ -380,5 +380,5 @@ export function topicSnapshotSpider(topicId, params) {
 
 export function topicUpdateSeedQuery(topicId, params) {
   const acceptedParams = acceptParams(params, topicCreateOrUpdateParams);
-  return createPostingApiPromise(`/api/topics/${topicId}/update-seed-query`, acceptedParams, 'put');
+  return createPostingApiPromise(`/api/topics/${topicId}/snapshots/update-seed-query`, acceptedParams, 'put');
 }

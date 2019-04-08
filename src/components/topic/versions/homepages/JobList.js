@@ -6,6 +6,7 @@ import { trimToMaxLength } from '../../../../lib/stringUtil';
 
 const localMessages = {
   title: { id: 'topic.jobs.list', defaultMessage: 'Detailed Job List (Admin only)' },
+  versionNumber: { id: 'topic.jobs.versionNumber', defaultMessage: 'Version' },
   id: { id: 'topic.jobs.id', defaultMessage: 'Id' },
   status: { id: 'topic.jobs.status', defaultMessage: 'State' },
   noJobs: { id: 'topic.jobs.none', defaultMessage: 'No jobs yet.' },
@@ -21,6 +22,7 @@ const JobList = ({ jobs, highlightSnapshotId }) => (
       <table>
         <thead>
           <tr>
+            <th><FormattedMessage {...localMessages.versionNumber} /></th>
             <th><FormattedMessage {...localMessages.id} /></th>
             <th><FormattedMessage {...localMessages.status} /></th>
             <th><FormattedMessage {...localMessages.lastUpdated} /></th>
@@ -35,6 +37,7 @@ const JobList = ({ jobs, highlightSnapshotId }) => (
                 key={job.job_states_id}
                 className={(highlightSnapshotId === job.snapshots_id) ? 'highlight' : ''}
               >
+                <td>{job.versionNumber}</td>
                 <td>{job.job_states_id}</td>
                 <td><span className={(job.state === 'error') ? 'warning' : ''}>{job.state}</span></td>
                 <td>

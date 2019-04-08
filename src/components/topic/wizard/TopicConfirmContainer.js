@@ -139,7 +139,6 @@ TopicConfirmContainer.propTypes = {
   formValues: PropTypes.object.isRequired,
   selectedSnapshot: PropTypes.object,
   // from dispatch
-  finishStep: PropTypes.func.isRequired,
   storyCount: PropTypes.number,
 };
 
@@ -241,7 +240,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
                 }
                 return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
               });
+          } else {
+            return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
           }
+          return null;
         });
     }
     if (!user.isAdmin) {

@@ -2,7 +2,7 @@ import logging
 import json
 from flask import jsonify, request
 import flask_login
-from server import app
+from server import app, mc
 from server.auth import user_admin_mediacloud_client, user_mediacloud_client
 from server.util.request import form_fields_required, api_error_handler, json_error_response, arguments_required
 from server.util.stringutil import ids_from_comma_separated_str

@@ -29,6 +29,13 @@ const localMessages = {
   selected: { id: 'topic.version.selected', defaultMessage: 'Selected' },
 };
 
+const snapshotOrJobState = (snapshot) => {
+  if (snapshot.job_states.length > 0) {
+    return snapshot.job_states[0].state;
+  }
+  return snapshot.state;
+};
+
 const versionSelectText = (state, number, formatMessage) => {
   switch (state) {
     case TOPIC_SNAPSHOT_STATE_COMPLETED:
@@ -43,7 +50,7 @@ const versionSelectText = (state, number, formatMessage) => {
 };
 
 const messageForVersionState = (snapshot) => {
-  switch (snapshot.state) {
+  switch (snapshotOrJobState(snapshot)) {
     case TOPIC_SNAPSHOT_STATE_QUEUED:
       return localMessages.queued;
     case TOPIC_SNAPSHOT_STATE_RUNNING:
@@ -58,12 +65,12 @@ const messageForVersionState = (snapshot) => {
     case TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED:
       return localMessages.createdNotQueued;
     default:
-      return snapshot.state;
+      return snapshotOrJobState(snapshot);
   }
 };
 
 const detailsForVersionState = (snapshot, storyCounts, formatMessage, formatNumber) => {
-  switch (snapshot.state) {
+  switch (snapshotOrJobState(snapshot)) {
     case TOPIC_SNAPSHOT_STATE_QUEUED:
       return formatMessage(localMessages.queuedDetails, {
         age: snapshot.snapshotDate.fromNow(), // this is a moment object so we can call this relative date helper
@@ -84,7 +91,7 @@ const detailsForVersionState = (snapshot, storyCounts, formatMessage, formatNumb
     case TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED:
       return formatMessage(localMessages.createdNotQueuedDetails);
     default:
-      return snapshot.state;
+      return snapshotOrJobState(snapshot);
   }
 };
 
@@ -95,7 +102,7 @@ const TopicVersionListItem = ({ version, intl, number, topicId, storyCounts, sel
         <div className="topic-version-list-title">
           <LinkWithFilters to={`/topics/${topicId}/summary`} filters={{ snapshotId: version.snapshots_id }}>
             <h2>
-              <FormattedHTMLMessage {...localMessages.versionNumber} values={{ number, status: version.state }} />
+              <FormattedHTMLMessage {...localMessages.versionNumber} values={{ number, status: snapshotOrJobState(version) }} />
             </h2>
           </LinkWithFilters>
           {version.snapshotDate && (
@@ -117,7 +124,7 @@ const TopicVersionListItem = ({ version, intl, number, topicId, storyCounts, sel
           <LinkWithFilters to={`/topics/${topicId}/summary`} filters={{ snapshotId: version.snapshots_id, timespanId: null, focusId: null }}>
             <AppButton
               type="submit"
-              label={versionSelectText(version.state, number, intl.formatMessage)}
+              label={versionSelectText(snapshotOrJobState(version), number, intl.formatMessage)}
             />
           </LinkWithFilters>
         </div>

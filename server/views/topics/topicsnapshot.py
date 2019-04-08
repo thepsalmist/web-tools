@@ -12,45 +12,39 @@ from server.views.topics.topic import topic_summary
 logger = logging.getLogger(__name__)
 
 
-@app.route('/api/topics/<topics_id>/snapshot/update-seed-query', methods=['PUT'])
+@app.route('/api/topics/<topics_id>/snapshots/update-seed-query', methods=['PUT'])
 @flask_login.login_required
 @api_error_handler
 def topic_update(topics_id):
+    # update the seed query first 5 MUST be filled in)
+    args = {
+        'name': request.form['name'] if 'name' in request.form else None,
+        'description': request.form['description'] if 'description' in request.form else None,
+        'solr_seed_query': request.form['solr_seed_query'] if 'solr_seed_query' in request.form else None,
+        'start_date': request.form['start_date'] if 'start_date' in request.form else None,
+        'end_date': request.form['end_date'] if 'end_date' in request.form else None,
+        'is_public': request.form['is_public'] if 'is_public' in request.form else None,
+        'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
+        'ch_monitor_id': request.form['ch_monitor_id'] if 'ch_monitor_id' in request.form
+                                                          and request.form['ch_monitor_id'] is not None
+                                                          and request.form['ch_monitor_id'] != 'null'
+                                                          and len(request.form['ch_monitor_id']) > 0 else None,
+        'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
+        'max_stories': request.form['max_stories'] if 'max_stories' in request.form else None,
+        'twitter_topics_id': request.form['twitter_topics_id'] if 'twitter_topics_id' in request.form else None
+    }
+    # parse out any sources and collections to add
+    media_ids_to_add = ids_from_comma_separated_str(
+        request.form['sources[]'] if 'sources[]' in request.form else '')
+    tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]']
+                                                  if 'collections[]' in request.form else '')
+    # hack to support twitter-only topics
+    if (len(media_ids_to_add) is 0) and (len(tag_ids_to_add) is 0):
+        media_ids_to_add = None
+        tag_ids_to_add = None
+    # update the seed query (the client will start the spider themselves
     user_mc = user_admin_mediacloud_client()
-
-    # start it ether as a new version, or start regenerating the existig version
-    if ('snapshotId' in request.form) and len(request.form['snapshotId']) > 0:
-        # add the subtopics to the current version (do NOT change the seed query)
-        result = user_mc.topicGenerateSnapshot(topics_id, snapshots_id=request.form['snapshotId'])
-    else:
-        # update the seed query if the params are passed in (first 5 MUST be filled in)
-        # if this is from a subtopic update, they might not have been passed in
-        args = {
-            'name': request.form['name'] if 'name' in request.form else None,
-            'description': request.form['description'] if 'description' in request.form else None,
-            'solr_seed_query': request.form['solr_seed_query'] if 'solr_seed_query' in request.form else None,
-            'start_date': request.form['start_date'] if 'start_date' in request.form else None,
-            'end_date': request.form['end_date'] if 'end_date' in request.form else None,
-            'is_public': request.form['is_public'] if 'is_public' in request.form else None,
-            'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
-            'ch_monitor_id': request.form['ch_monitor_id'] if 'ch_monitor_id' in request.form
-                                                              and request.form['ch_monitor_id'] is not None
-                                                              and request.form['ch_monitor_id'] != 'null'
-                                                              and len(request.form['ch_monitor_id']) > 0 else None,
-            'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
-            'max_stories': request.form['max_stories'] if 'max_stories' in request.form else None,
-            'twitter_topics_id': request.form['twitter_topics_id'] if 'twitter_topics_id' in request.form else None
-        }
-        # parse out any sources and collections to add
-        media_ids_to_add = ids_from_comma_separated_str(
-            request.form['sources[]'] if 'sources[]' in request.form else '')
-        tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]']
-                                                      if 'collections[]' in request.form else '')
-        # hack to support twitter-only topics
-        if (len(media_ids_to_add) is 0) and (len(tag_ids_to_add) is 0):
-            media_ids_to_add = None
-            tag_ids_to_add = None
-        result = user_mc.topicUpdate(topics_id, media_ids=media_ids_to_add, media_tags_ids=tag_ids_to_add, **args)
+    result = user_mc.topicUpdate(topics_id, media_ids=media_ids_to_add, media_tags_ids=tag_ids_to_add, **args)
     return topic_summary(topics_id)  # give them back new data, so they can update the client
 
 
@@ -73,7 +67,7 @@ def topic_snapshot_generate(topics_id):
         # make a new snapshot
         new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=_next_snapshot_number(topics_id))['snapshot']
         snapshots_id = new_snapshot['snapshots_id']
-    # and now generate into the existinng or the new snapshot
+    # and now generate into the existing or the new snapshot
     job = user_mc.topicGenerateSnapshot(topics_id, snapshots_id=snapshots_id)
     return jsonify(job)
 
@@ -92,5 +86,5 @@ def topic_snapshot_spider(topics_id):
         new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=_next_snapshot_number(topics_id))['snapshot']
         snapshots_id = new_snapshot['snapshots_id']
     # and now spider into the existinng or the new snapshot
-    job = user_mc.topicSpider(topics_id, snapshots_id=snapshots_id)
-    return jsonify(job)
+    job_list = user_mc.topicSpider(topics_id, snapshots_id=snapshots_id)
+    return jsonify(job_list[0])

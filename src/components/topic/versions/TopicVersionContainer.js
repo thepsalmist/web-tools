@@ -22,6 +22,8 @@ import { topicMessageSaysTooBig } from '../../../reducers/topics/adminList';
 const localMessages = {
   startedGenerating: { id: 'topic.created.startedGenerating', defaultMessage: 'We started generating this version' },
   generationFailed: { id: 'topic.created.generationFailed', defaultMessage: 'Sorry, but we weren\'t able to start generating this version.' },
+  runningSubtitle: { id: 'version.running.title', defaultMessage: 'Still Generating' },
+  almostDoneSubtitle: { id: 'version.cancel', defaultMessage: 'Cancel This Version' },
 };
 
 /**
@@ -35,6 +37,12 @@ const TopicVersionContainer = (props) => {
   let snapshotToUse;
   if (selectedSnapshot) {
     snapshotToUse = selectedSnapshot;
+    if (snapshotToUse.job_states.length > 0) {
+      snapshotToUse = {
+        ...selectedSnapshot,
+        state: snapshotToUse.job_states[0].state, // override the state because the job state is the most up-to-date
+      };
+    }
   } else {
     // legacy - there might be jobs but isn't a snapshot yet, so make one that looks right-ish
     snapshotToUse = {
@@ -68,6 +76,7 @@ const TopicVersionContainer = (props) => {
       <TopicVersionRunningStatusContainer
         topic={topic}
         snapshot={snapshotToUse}
+        title={(snapshotToUse.state === TOPIC_SNAPSHOT_STATE_RUNNING) ? localMessages.runningSubtitle : localMessages.almostDoneSubtitle}
       />
     );
   } else if ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_ERROR) && topicMessageSaysTooBig(topic.message)) {
@@ -93,7 +102,6 @@ const TopicVersionContainer = (props) => {
     contentToShow = <LoadingSpinner />;
   } else {
     // has a filters renderer in it - show if a completed topic
-    contentToShow = children;
     const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent }));
     contentToShow = childrenWithExtraProp;
   }

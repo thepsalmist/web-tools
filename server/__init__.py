@@ -211,6 +211,7 @@ if (server_app == SERVER_APP_TOPICS) or is_dev_mode():
     import server.views.topics.topic
     import server.views.topics.topiclist
     import server.views.topics.topiccreate
+    import server.views.topics.topicsnapshot
     import server.views.topics.words
     import server.views.topics.foci.focalsets
     import server.views.topics.foci.focaldefs

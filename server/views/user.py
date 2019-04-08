@@ -171,7 +171,7 @@ def logout():
 def request_data():
     content_title = "Your Data Download Request"
     content_body = "We received your data download request. You can expect to hear from us in a few days with" \
-                   "more information."
+                   " more information."
     action_text = "Read our privacy policy"
     action_url = "https://mediacloud.org/privacy-policy"
     send_html_email(content_title,

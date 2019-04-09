@@ -38,7 +38,7 @@ const localMessages = {
 class NytLabelSummaryContainer extends React.Component {
   downloadCsv = (evt) => {
     const { topicId, filters } = this.props;
-    if (evt) {
+    if (evt.preventDefault) {
       evt.preventDefault();
     }
     const url = `/api/topics/${topicId}/nyt-tags/counts.csv?${filtersAsUrlParams(filters)}`;
@@ -102,9 +102,12 @@ class NytLabelSummaryContainer extends React.Component {
             <div className="actions">
               <ActionMenu actionTextMsg={messages.downloadOptions}>
                 <SVGAndCSVMenu
-                  downloadCsv={() => this.downloadCsv()}
-                  downloadSvg={() => downloadSvg(`${topicDownloadFilename(topicName, filters)}-top-themes`, BUBBLE_CHART_DOM_ID)}
-                  label={formatMessage(localMessages.all)}
+                  downloadCsv={this.downloadCsv}
+                  downloadSvg={() => downloadSvg(
+                    `${topicDownloadFilename(topicName, filters)}-top-NYT-themes`,
+                    BUBBLE_CHART_DOM_ID
+                  )}
+                  label={formatMessage(localMessages.title)}
                 />
               </ActionMenu>
             </div>
@@ -147,6 +150,8 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.nytlabels.fetchStatus,
   data: state.topics.selected.nytlabels.entities,
   coverage: state.topics.selected.nytlabels.coverage,
+  filters: state.topics.selected.filters,
+  topicName: state.topics.selected.info.name,
 });
 
 const mapDispatchToProps = dispatch => ({

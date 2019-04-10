@@ -312,7 +312,6 @@ def topic_focal_set(user_mc_key, topics_id, snapshots_id, focal_sets_id):
     raise ValueError("Unknown subtopic set id of {}".format(focal_sets_id))
 
 
-@cache.cache_on_arguments()
 def cached_topic_timespan_list(user_mc_key, topics_id, snapshots_id=None, foci_id=None):
     # this includes the user_mc_key as a first param so the cache works right
     user_mc = user_mediacloud_client()

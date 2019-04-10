@@ -55,6 +55,16 @@ def _next_snapshot_number(topics_id):
     return len(snapshots) + 1
 
 
+@app.route("/api/topics/<topics_id>/snapshots/create", methods=['POST'])
+@flask_login.login_required
+@api_error_handler
+def topic_snapshot_create(topics_id):
+    user_mc = user_admin_mediacloud_client()
+    # make a new snapshot
+    new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=_next_snapshot_number(topics_id))['snapshot']
+    return jsonify(new_snapshot)
+
+
 @app.route("/api/topics/<topics_id>/snapshots/generate", methods=['POST'])
 @flask_login.login_required
 @api_error_handler
@@ -78,7 +88,7 @@ def topic_snapshot_generate(topics_id):
 def topic_snapshot_spider(topics_id):
     user_mc = user_admin_mediacloud_client()
     # kick off a spider, which will also generate a snapshot
-    if 'snapshot_id' in request.form:
+    if 'snapshotId' in request.form:
         # generate into the one passed in
         snapshots_id = request.form['snapshotId'] if 'snapshotId' in request.form else None
     else:
@@ -86,5 +96,5 @@ def topic_snapshot_spider(topics_id):
         new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=_next_snapshot_number(topics_id))['snapshot']
         snapshots_id = new_snapshot['snapshots_id']
     # and now spider into the existinng or the new snapshot
-    job_list = user_mc.topicSpider(topics_id, snapshots_id=snapshots_id)
-    return jsonify(job_list[0])
+    job = user_mc.topicSpider(topics_id, snapshots_id=snapshots_id)
+    return jsonify(job)

@@ -8,7 +8,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import messages from '../../../resources/messages';
-import { createTopic, updateTopicSeedQuery, topicSnapshotSpider } from '../../../actions/topicActions';
+import { createTopic, updateTopicSeedQuery, topicSnapshotSpider, topicSnapshotCreate } from '../../../actions/topicActions';
 import { updateFeedback, addNotice } from '../../../actions/appActions';
 import AppButton from '../../common/AppButton';
 import { LEVEL_ERROR, LEVEL_WARNING, WarningNotice } from '../../common/Notice';
@@ -237,6 +237,16 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
                   // let them know it worked
                   dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
                   return dispatch(push(`/topics/${results.topics_id}/summary`));
+                }
+                return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
+              });
+          } else if (results.topics_id) {
+            // they selected the option to leave it empty so they can add more subtopics to it
+            dispatch(topicSnapshotCreate(queryInfo.topics_id))
+              .then((createResults) => {
+                if (createResults.snapshots_id) {
+                  dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
+                  return dispatch(push(`/topics/${results.topics_id}/summary?snapshotId=${createResults.snapshots_id}`));
                 }
                 return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
               });

@@ -98,3 +98,6 @@ export const topicSnapshotSpider = createAsyncAction(TOPIC_START_SPIDER, api.top
 
 export const TOPIC_GENERATE_SNAPSHOT = 'TOPIC_GENERATE_SNAPSHOT';
 export const topicSnapshotGenerate = createAsyncAction(TOPIC_GENERATE_SNAPSHOT, api.topicSnapshotGenerate);
+
+export const TOPIC_CREATE_SNAPSHOT = 'TOPIC_CREATE_SNAPSHOT';
+export const topicSnapshotCreate = createAsyncAction(TOPIC_GENERATE_SNAPSHOT, api.topicSnapshotCreate);

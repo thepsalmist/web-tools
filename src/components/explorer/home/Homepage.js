@@ -10,7 +10,6 @@ import LoginForm from '../../user/LoginForm';
 import SearchForm from './SearchForm';
 import SampleSearchContainer from './SampleSearchContainer';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
-import { getUserRoles, hasPermissions, PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { DEFAULT_COLLECTION, autoMagicQueryLabel, serializeQueriesForUrl } from '../../../lib/explorerUtil';
 import { emptyString } from '../../../lib/formValidators';
 import ExplorerMarketingFeatureList from './ExplorerMarketingFeatureList';
@@ -25,11 +24,24 @@ const localMessages = {
   loginTitle: { id: 'explorer.intro.login.title', defaultMessage: 'Have an Account? Login Now' },
 };
 
-const Homepage = (props) => {
-  const { user, onKeywordSearch } = props;
-  let sideBarContent;
-  if (!user.isLoggedIn) {
-    sideBarContent = (
+const Homepage = ({ isLoggedIn, onKeywordSearch, storyCount }) => (
+  <div className="homepage">
+    <Masthead
+      nameMsg={messages.explorerToolName}
+      descriptionMsg={messages.explorerToolDescription}
+      link="https://mediacloud.org/tools/"
+    />
+    <div className="search-section">
+      <Grid>
+        <Row>
+          <Col lg={12}>
+            <SearchForm onSearch={val => onKeywordSearch(val, isLoggedIn)} storyCount={storyCount} />
+          </Col>
+        </Row>
+      </Grid>
+    </div>
+    <SampleSearchContainer />
+    { isLoggedIn && (
       <Grid>
         <Row>
           <Col lg={1} />
@@ -46,33 +58,13 @@ const Homepage = (props) => {
           </Col>
         </Row>
       </Grid>
-    );
-  }
-  return (
-    <div className="homepage">
-      <Masthead
-        nameMsg={messages.explorerToolName}
-        descriptionMsg={messages.explorerToolDescription}
-        link="https://mediacloud.org/tools/"
-      />
-      <div className="search-section">
-        <Grid>
-          <Row>
-            <Col lg={12}>
-              <SearchForm onSearch={val => onKeywordSearch(val, user)} user={user} />
-            </Col>
-          </Row>
-        </Grid>
-      </div>
-      <SampleSearchContainer />
-      {sideBarContent}
-      <ExplorerMarketingFeatureList />
-      <Grid>
-        <SystemStatsContainer />
-      </Grid>
-    </div>
-  );
-};
+    )}
+    <ExplorerMarketingFeatureList />
+    <Grid>
+      <SystemStatsContainer />
+    </Grid>
+  </div>
+);
 
 Homepage.propTypes = {
   intl: PropTypes.object.isRequired,
@@ -81,18 +73,20 @@ Homepage.propTypes = {
   params: PropTypes.object.isRequired, // params from router
   onKeywordSearch: PropTypes.func.isRequired,
   // from state
-  user: PropTypes.object.isRequired,
+  isLoggedIn: PropTypes.bool.isRequired,
+  storyCount: PropTypes.number,
 };
 
 const mapStateToProps = state => ({
-  user: state.user,
+  isLoggedIn: state.user.isLoggedIn,
+  storyCount: state.system.stats.stats.total_stories,
 });
 
 const mapDispatchToProps = dispatch => ({
-  onKeywordSearch: (values, user) => {
+  onKeywordSearch: (values, isLoggedIn) => {
     let urlParamString;
     const keyword = emptyString(values.keyword) ? '' : values.keyword;
-    if (hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN)) {
+    if (isLoggedIn) {
       const defaultDates = getDateRange(PAST_MONTH);
       const queries = [{
         q: keyword,

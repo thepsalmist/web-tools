@@ -100,7 +100,7 @@ class ManageFocalSetsContainer extends React.Component {
               <Col lg={6}>
                 <div id="create-foci-button">
                   <LinkWithFilters to={`/topics/${topicId}/snapshot/foci/create`}>
-                    <AppButton primary><FormattedMessage {...messages.addFocus} /></AppButton>
+                    <AppButton primary label={messages.addFocus} />
                   </LinkWithFilters>
                 </div>
               </Col>

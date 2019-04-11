@@ -39,7 +39,7 @@ export const addLatestStateToTopic = (t) => {
   return {
     ...t,
     latestState,
-    job_states: addVersionNumberToJobs(t.snapshots.list, t.job_states),
+    job_states: t.snapshots ? addVersionNumberToJobs(t.snapshots.list, t.job_states) : [],
   };
 };
 

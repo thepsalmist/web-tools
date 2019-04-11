@@ -66,35 +66,35 @@ VALID_METADATA_IDS = [
 
 
 def processed_for_themes_query_clause():
-    '''
+    """
     :return: A solr query clause you can use to filter for stories that have been tagged by any version
      of our CLIFF geotagging engine (ie. tagged with people, places, and organizations)
-    '''
+    """
     return "(tags_id_stories:{})".format(NYT_LABELER_1_0_0_TAG_ID)
 
 
 def processed_for_entities_query_clause():
-    '''
+    """
     :return: A solr query clause you can use to filter for stories that have been tagged by any version
      of our CLIFF geotagging engine (ie. tagged with people, places, and organizations)
-    '''
+    """
     return "(tags_id_stories:({} {}))".format(CLIFF_CLAVIN_2_4_1_TAG_ID, CLIFF_CLAVIN_2_3_0_TAG_ID)
 
 
 def processed_for_entities_tag_ids():
-    '''
+    """
     :return: A list of the tags that mean a story has been processed by some version of CLIFF (ie. the story
      has been tagged with people, places, and organizations)
-    '''
+    """
     return [CLIFF_CLAVIN_2_3_0_TAG_ID, CLIFF_CLAVIN_2_4_1_TAG_ID]
 
 
 def is_metadata_tag_set(tag_sets_id):
-    '''
+    """
     Find out if a tag set is one used to hold metadata on a Source.
     :param tag_sets_id: the id of tag set 
     :return: True if it is a valid metadata tag set, False if it is not
-    '''
+    """
     for name_to_tags_sets_id in VALID_METADATA_IDS:
         if int(tag_sets_id) in list(name_to_tags_sets_id.values()):
             return True
@@ -102,12 +102,11 @@ def is_metadata_tag_set(tag_sets_id):
 
 
 def is_bad_theme(tag_id):
-    '''
+    """
     Find out if a tag set is one used to hold metadata on a Source.
-    :param tag_sets_id: the id of tag set
+    :param tag_id: the id of tag set
     :return: True if it is a valid metadata tag set, False if it is not
-    '''
-
+    """
     if int(tag_id) in BAD_THEMES:
             return True
     return False
@@ -162,11 +161,14 @@ def tag_set_with_tags(mc_api_key, tag_sets_id, only_public_tags=False, use_file_
     # double check the show_on_media because that controls public or not
     tag_list = [t for t in all_tags if (only_public_tags is False) or
                 (t['show_on_media'] is 1 or t['show_on_media'] is True)]
+    # sort by label (or tag if no label exists)
     for t in tag_list:
-        t['sort_key'] = t['label'] if t['label'] else t['tag']
+        t['sort_key'] = t['label'].lower() if t['label'] else t['tag'].lower()
     tag_list = sorted(tag_list, key=itemgetter('sort_key'))
+    for t in tag_list:
+        del t['sort_key']
     tag_set['tags'] = tag_list
-    tag_set['name'] = tag_set['label']  # for backwards compatibility
+    tag_set['name'] = tag_set['label']
     return tag_set
 
 
@@ -205,11 +207,11 @@ def media_with_tag(user_mc_key, tags_id, cached=False):
 
 @cache.cache_on_arguments()
 def cached_media_with_tag_page(tags_id, max_media_id):
-    '''
+    """
     We have to do this on the page, not the full list because memcache has a 1MB cache upper limit,
     and some of the collections have TONS of sources
     Ok to be a cross-user cache here
-    '''
+    """
     return _media_with_tag_page(tags_id, max_media_id)
 
 

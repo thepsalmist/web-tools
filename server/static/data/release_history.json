@@ -1,14 +1,95 @@
 {
   "releases": [
     {
-      "date": "2019-2-19",
-      "version": "v3.8.5",
+      "date": "2019-4-9",
+      "version": "v3.9.1",
       "notes": [
         {
           "apps": [ "sources" ],
           "type": "Fixed",
+          "note": "Users can now upload a spreadsheet of sources",
+          "details": "Spreadsheet uploaded enables collection curators to upload new sources into a collection or update ones in place."
+        }
+      ]
+    },
+    {
+      "date": "2019-4-1",
+      "version": "v3.9.0",
+      "notes": [
+        {
+          "apps": [ "topics", "explorer", "sources", "tools" ],
+          "type": "New",
+          "note": "You can change your profile or delete your account",
+          "details": "We've also made a number of other changed to let you control your data better (thanks GDPR!). You can request a download of all your data, we respect the browser do-not-track setting, and we have a privacy policy."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "The detailed word cloud for Topics correctly respects your subtopic now"
+        },
+        {
+          "apps": [ "topics", "explorer", "sources", "tools" ],
+          "type": "New",
+          "note": "You can try out some API methods within our web app",
+          "details": "Click the user icon in the top right and pick 'API Console'"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Sorting Topic stories by Facebook shares works again"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Word clouds in Hindi work again"
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "All our emails now say [Media Cloud] in the subject line"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Downloading Topic top themes CSV/SVG works again"
+        }
+      ]
+    },
+    {
+      "date": "2019-3-1",
+      "version": "v3.8.6",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Raw story now displays",
+          "details": "Story id now properly locating raw story html"
+        }
+      ]
+    },
+    {
+      "date": "2019-2-19",
+      "version": "v3.8.5",
+      "notes": [
+        {
           "note": "Collection spreadsheet upload works",
           "details": "Removed older string handling, removed pooling for now"
+        }
+      ]
+    },
+    {
+      "date": "2019-1-31",
+      "version": "v3.8.4",
+      "notes": [    
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Viewing lists of collections in Source Mgr works more consistently"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "The story details page (in a topic) shows the media source more prominently"
         }
       ]
     },

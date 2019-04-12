@@ -1,0 +1,31 @@
+@import '../_constants';
+
+.story-table {
+  display:block;
+  max-width: 100%;
+  overflow: scroll;
+
+  table {
+    table-layout: fixed;
+    max-width: 100%;
+
+    td {
+
+      .google-icon {
+        vertical-align: bottom;
+        margin-right: 6px;
+      }
+
+    }
+  }
+
+  .story-date {
+    &.story-date-unreliable {
+       color: $material-grey600;
+    }
+    &.story-date-undateable {
+       font-style: italic;
+    }
+  }
+
+}

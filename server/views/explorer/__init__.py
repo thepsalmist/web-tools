@@ -127,7 +127,7 @@ def _parse_collection_ids(args):
     return tags_ids
 
 
-REDDIT_SOURCE = 5816
+REDDIT_SOURCE = 1254159  # a placeholder source to mark searching Reddit's biggest news-related subs
 
 
 def only_queries_reddit(args):

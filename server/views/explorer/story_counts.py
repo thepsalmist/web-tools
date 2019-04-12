@@ -112,7 +112,7 @@ def api_explorer_story_split_count_csv():
         solr_q, solr_fq = parse_query_with_keywords(q)
         solr_open_query = concatenate_query_for_solr(solr_seed_query='*', media_ids=q['sources'],
                                                      tags_ids=q['collections'])
-        story_counts = apicache.normalized_and_story_count(solr_q, solr_fq, solr_open_query)
+        story_counts = apicache.normalized_and_story_split_count(solr_q, solr_fq, solr_open_query)
     props = ['date', 'count', 'total_count', 'ratio']
     return csv.stream_response(story_counts['counts'], props, filename)
 

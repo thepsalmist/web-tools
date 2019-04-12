@@ -10,6 +10,10 @@ ps_api = PushshiftAPI()
 
 DB_TIME_STRING = "%Y-%m-%d %H:%M:%S"
 
+NEWS_SUBREDDITS = ['politics', 'worldnews', 'news', 'conspiracy', 'Libertarian', 'TrueReddit', 'Conservative',
+                   'offbeat' ]
+
+
 def _sanitize_url_for_reddit(url):
     return url.split('?')[0]
 
@@ -77,10 +81,10 @@ def reddit_submissions_split_count(query: str, start_date: dt.datetime, end_date
     return results
 
 
-def reddit_submission_normalized_and_split_story_count(query, start_date, end_date):
-    split_count = reddit_submissions_split_count(query, start_date, end_date)
+def reddit_submission_normalized_and_split_story_count(query, start_date, end_date, subreddits=None):
+    split_count = reddit_submissions_split_count(query, start_date, end_date, subreddits=subreddits)
     matching_total = sum([d['count'] for d in split_count])
-    split_count_without_query = reddit_submissions_split_count('', start_date, end_date)
+    split_count_without_query = reddit_submissions_split_count('', start_date, end_date, subreddits=subreddits)
     no_query_total = sum([d['count'] for d in split_count_without_query])
     return {
         'counts': combined_split_and_normalized_counts(split_count, split_count_without_query),

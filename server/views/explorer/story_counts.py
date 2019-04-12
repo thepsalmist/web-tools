@@ -33,7 +33,8 @@ def explorer_story_count_csv():
             start_date, end_date = parse_query_dates(q)
             story_counts = pushshift.reddit_submission_normalized_and_split_story_count(query=q['q'],
                                                                                         start_date=start_date,
-                                                                                        end_date=end_date)
+                                                                                        end_date=end_date,
+                                                                                        subreddits=pushshift.NEWS_SUBREDDITS)
         else:
             solr_q, solr_fq = parse_query_with_keywords(q)
             solr_open_query = concatenate_query_for_solr(solr_seed_query='*', media_ids=q['sources'],
@@ -57,7 +58,8 @@ def api_explorer_story_split_count():
     if only_queries_reddit(request.args):
         start_date, end_date = parse_query_dates(request.args)
         results = pushshift.reddit_submission_normalized_and_split_story_count(query=request.args['q'],
-                                                                               start_date=start_date, end_date=end_date)
+                                                                               start_date=start_date, end_date=end_date,
+                                                                               subreddits=pushshift.NEWS_SUBREDDITS)
     else:
         # get specific stories by keyword
         if isinstance(search_id, int) and search_id not in [None, -1]:
@@ -107,7 +109,8 @@ def api_explorer_story_split_count_csv():
         start_date, end_date = parse_query_dates(q)
         story_counts = pushshift.reddit_submission_normalized_and_split_story_count(query=q['q'],
                                                                                     start_date=start_date,
-                                                                                    end_date=end_date)
+                                                                                    end_date=end_date,
+                                                                                    subreddits=pushshift.NEWS_SUBREDDITS)
     else:
         solr_q, solr_fq = parse_query_with_keywords(q)
         solr_open_query = concatenate_query_for_solr(solr_seed_query='*', media_ids=q['sources'],
@@ -136,7 +139,8 @@ def api_explorer_combined_story_split_count_csv():
             start_date, end_date = parse_query_dates(q)
             story_counts = pushshift.reddit_submission_normalized_and_split_story_count(query=q['q'],
                                                                                         start_date=start_date,
-                                                                                        end_date=end_date)
+                                                                                        end_date=end_date,
+                                                                                        subreddits=pushshift.NEWS_SUBREDDITS)
         else:
             solr_q, solr_fq = parse_query_with_keywords(q)
             solr_open_query = concatenate_query_for_solr(solr_seed_query='*', media_ids=q['sources'],

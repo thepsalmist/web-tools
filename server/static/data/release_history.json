@@ -1,6 +1,18 @@
 {
   "releases": [
     {
+      "date": "2019-4-12",
+      "version": "v3.9.3",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Prototype support for querying Reddis news subs",
+          "details": "Select the 'Reddit News Subs' source as your only one and the Attention tab results work."
+        }
+      ]
+    },
+    {
       "date": "2019-4-9",
       "version": "v3.9.1",
       "notes": [

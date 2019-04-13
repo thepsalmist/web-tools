@@ -79,7 +79,8 @@ const TopicVersionContainer = (props) => {
         title={(snapshotToUse.state === TOPIC_SNAPSHOT_STATE_RUNNING) ? localMessages.runningSubtitle : localMessages.almostDoneSubtitle}
       />
     );
-  } else if ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_ERROR) && topicMessageSaysTooBig(topic.message)) {
+  } else if ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_ERROR)
+    && topicMessageSaysTooBig(topic.latestState.message)) {
     contentToShow = (
       <TopicVersionTooBigStatusContainer
         topic={topic}

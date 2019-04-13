@@ -8,8 +8,8 @@ import { urlToCollection, urlToSource } from '../../../lib/urlUtil';
 const localMessages = {
   title: { id: 'topic.info.title', defaultMessage: 'Version {versionNumber}: Seed Query' },
   newTitle: { id: 'topic.info.newTitle', defaultMessage: 'New Version: Seed Query' },
-  seedQueryCount: { id: 'topic.info.seedQueryCount', defaultMessage: 'Your seed query matches {storyCount} stories already in our database.' },
-  willSpider: { id: 'topic.info.willSpider', defaultMessage: 'Links will be followed to find more stories.' },
+  seedQueryCount: { id: 'topic.info.seedQueryCount', defaultMessage: 'Matches {storyCount} stories already in our database.' },
+  willSpider: { id: 'topic.info.willSpider', defaultMessage: 'Links will be followed to find more stories ({rounds} rounds).' },
   willNotSpider: { id: 'topic.info.willNotSpider', defaultMessage: 'Links will <em>not</em> be followed to find more stories.' },
   dates: { id: 'topic.info.dates', defaultMessage: 'Dates:' },
   datesData: { id: 'topic.info.datesData', defaultMessage: '{startDate} to {endDate}' },
@@ -29,9 +29,9 @@ const SeedQuerySummary = ({ seedQueryCount, topic, snapshot, intl, faded }) => {
           {...localMessages.seedQueryCount}
           values={{ storyCount: intl.formatNumber(seedQueryCount || topic.seed_query_story_count) }}
         />
-        &nbsp;
+        <br />
         {(topic.max_iterations === 0) && <FormattedHTMLMessage {...localMessages.willNotSpider} />}
-        {(topic.max_iterations > 0) && <FormattedHTMLMessage {...localMessages.willSpider} />}
+        {(topic.max_iterations > 0) && <FormattedHTMLMessage {...localMessages.willSpider} values={{ rounds: topic.max_iterations }} />}
       </p>
       <p>
         <b><FormattedHTMLMessage {...messages.topicQueryProp} /></b>

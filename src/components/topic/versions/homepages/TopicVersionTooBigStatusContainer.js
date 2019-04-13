@@ -25,38 +25,36 @@ export const storyCountFromJobMessage = (jobMessage) => {
 };
 
 const TopicVersionTooBigStatusContainer = ({ topic, goToCreateNewVersion, snapshot, intl }) => (
-  <React.Fragment>
-    <TopicVersionStatus
-      subtitle={localMessages.title}
-      topic={topic}
-      snapshot={snapshot}
-    >
-      <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
-      <p>
-        <FormattedMessage
-          {...localMessages.explanationText}
-          values={{
-            maxTopicStories: intl.formatNumber(topic.max_stories),
-            seedStoryCount: intl.formatNumber(topic.seed_query_story_count),
-            totalCount: intl.formatNumber(storyCountFromJobMessage(snapshot.job_states[0].message)),
-          }}
-        />
-      </p>
+  <TopicVersionStatus
+    subtitle={localMessages.title}
+    topic={topic}
+    snapshot={snapshot}
+  >
+    <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
+    <p>
+      <FormattedMessage
+        {...localMessages.explanationText}
+        values={{
+          maxTopicStories: intl.formatNumber(topic.max_stories),
+          seedStoryCount: intl.formatNumber(topic.seed_query_story_count),
+          totalCount: intl.formatNumber(storyCountFromJobMessage(snapshot.job_states[0].message)),
+        }}
+      />
+    </p>
 
-      <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-        <h2><FormattedMessage {...localMessages.whatNowTitle} /></h2>
-        <p><FormattedHTMLMessage {...localMessages.whatNowText} /></p>
-        <div className="topic-stuck-created-or-error">
-          <AppButton
-            label={intl.formatMessage(localMessages.makeASmallerVersion)}
-            onClick={() => goToCreateNewVersion(topic.topics_id)}
-            type="submit"
-            primary
-          />
-        </div>
-      </Permissioned>
-    </TopicVersionStatus>
-  </React.Fragment>
+    <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
+      <h2><FormattedMessage {...localMessages.whatNowTitle} /></h2>
+      <p><FormattedHTMLMessage {...localMessages.whatNowText} /></p>
+      <div className="topic-stuck-created-or-error">
+        <AppButton
+          label={intl.formatMessage(localMessages.makeASmallerVersion)}
+          onClick={() => goToCreateNewVersion(topic.topics_id)}
+          type="submit"
+          primary
+        />
+      </div>
+    </Permissioned>
+  </TopicVersionStatus>
 );
 
 TopicVersionTooBigStatusContainer.propTypes = {

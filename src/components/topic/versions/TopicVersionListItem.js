@@ -121,12 +121,16 @@ const TopicVersionListItem = ({ version, intl, number, topicId, storyCounts, sel
           {detailsForVersionState(version, storyCounts, intl.formatMessage, intl.formatNumber)}
           {isAdmin && <FormattedHTMLMessage {...localMessages.adminDetails} values={{ jobCount: version.job_states.length }} />}
           <br />
-          <LinkWithFilters to={`/topics/${topicId}/summary`} filters={{ snapshotId: version.snapshots_id, timespanId: null, focusId: null }}>
-            <AppButton
-              type="submit"
-              label={versionSelectText(snapshotOrJobState(version), number, intl.formatMessage)}
-            />
-          </LinkWithFilters>
+          { // don't show a button if this is the version that is currently selected
+            !selected && (
+            <LinkWithFilters to={`/topics/${topicId}/summary`} filters={{ snapshotId: version.snapshots_id, timespanId: null, focusId: null }}>
+              <AppButton
+                type="submit"
+                label={versionSelectText(snapshotOrJobState(version), number, intl.formatMessage)}
+              />
+            </LinkWithFilters>
+            )
+          }
         </div>
       </Col>
     </Row>

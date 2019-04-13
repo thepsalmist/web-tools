@@ -21,7 +21,8 @@ const localMessages = {
   versionDate: { id: 'topic.versionDate', defaultMessage: '{date}' },
   versionStatus: { id: 'topic.versionStatus', defaultMessage: 'Job status: {status}' },
   createdBy: { id: 'topic.createdBy', defaultMessage: 'Created by: ' },
-  createButton: { id: 'topic.create', defaultMessage: 'Create A New Version ' },
+  createButton: { id: 'topic.create', defaultMessage: 'Create A New Version' },
+  createButtonWhy: { id: 'topic.create.why', defaultMessage: 'Change your seed query or manage subtopics by creating a new version.' },
   viewButton: { id: 'topic.viewBy', defaultMessage: 'Find Out More ' },
   hasAnError: { id: 'topic.hasError', defaultMessage: 'Sorry, this topic has an error!' },
   otherError: { id: 'topic.otherError', defaultMessage: 'Sorry, this topic has an error!' },
@@ -75,7 +76,7 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
   }
   const cannotCreate = false; // TODO: if any snapshot is building
   return (
-    <div className="topic-version-list">
+    <React.Fragment>
       <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
       <NeedsNewVersionWarning />
       <Grid>
@@ -85,20 +86,26 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
           </Col>
         </Row>
         <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-          {versionListContent}
-          <LinkWithFilters to={`/topics/${topicId}/new-version`}>
-            <AppButton
-              style={{ marginTop: 30 }}
-              type="submit"
-              disabled={cannotCreate}
-              label={formatMessage(localMessages.createButton)}
-              primary
-            />
-          </LinkWithFilters>
+          <Row>
+            <Col lg={12}>
+              <LinkWithFilters to={`/topics/${topicId}/new-version`}>
+                <AppButton
+                  style={{ marginRight: 15 }}
+                  type="submit"
+                  disabled={cannotCreate}
+                  label={formatMessage(localMessages.createButton)}
+                  primary
+                />
+              </LinkWithFilters>
+              <FormattedMessage {...localMessages.createButtonWhy} />
+            </Col>
+          </Row>
+          <div className="topic-version-list">
+            {versionListContent}
+          </div>
         </Permissioned>
       </Grid>
-
-    </div>
+    </React.Fragment>
   );
 };
 

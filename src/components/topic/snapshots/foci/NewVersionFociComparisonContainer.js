@@ -97,7 +97,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         }
         // let them know it worked
         dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.worked) }));
-        return dispatch(push(`/topics/${results.topics_id}/versions`));
+        return dispatch(push(`/topics/${topicId}/versions`));
       });
   },
 });

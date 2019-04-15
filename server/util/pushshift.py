@@ -113,10 +113,14 @@ def _reddit_submission_to_row(item):
 def _cached_reddit_submissions(**kwargs):
     data = _reddit_submission_search(**kwargs)
     cleaned_data = []
-    for row in range(0, kwargs['limit']):
-        item = next(data)
-        item_data = _reddit_submission_to_row(item)
-        cleaned_data.append(item_data)
+    try:
+        for row in range(0, kwargs['limit']):
+            item = next(data)
+            item_data = _reddit_submission_to_row(item)
+            cleaned_data.append(item_data)
+    except StopIteration:
+        # not really a problem, just an indication that we have less than kwargs['limit'] results
+        pass
     return cleaned_data
 
 

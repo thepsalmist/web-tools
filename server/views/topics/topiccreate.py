@@ -1,14 +1,15 @@
 import logging
-import json
 from flask import jsonify, request
 import flask_login
+
 from server import app, mc
-from server.auth import user_admin_mediacloud_client, user_mediacloud_client
+from server.auth import user_mediacloud_client
 from server.util.request import form_fields_required, api_error_handler, json_error_response, arguments_required
 from server.util.stringutil import ids_from_comma_separated_str
 from server.util.tags import US_COLLECTIONS
 from server.views.topics import concatenate_query_for_solr, concatenate_solr_dates
-from server.views.topics.foci.retweetpartisanship import create_retweet_partisanship_focal_set
+from server.views.topics.foci.retweetpartisanship import add_retweet_partisanship_to_topic
+from server.views.topics.topic import topic_summary
 
 logger = logging.getLogger(__name__)
 VERSION_1 = 1
@@ -19,7 +20,7 @@ VERSION_1 = 1
 @form_fields_required('q')
 @api_error_handler
 def api_topics_preview_split_story_count():
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
 
     solr_query = concatenate_query_for_solr(solr_seed_query=request.form['q'],
                                             media_ids=ids_from_comma_separated_str(request.form['sources[]']) if 'sources[]' in request.form else None,
@@ -39,7 +40,7 @@ def api_topics_preview_split_story_count():
 @form_fields_required('q')
 @api_error_handler
 def api_topics_preview_story_count():
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
 
     solr_query = concatenate_query_for_solr(solr_seed_query=request.form['q'],
                                             media_ids=ids_from_comma_separated_str(request.form['sources[]']) if 'sources[]' in request.form else None,
@@ -74,7 +75,7 @@ def api_topics_preview_story_sample():
 @form_fields_required('q')
 @api_error_handler
 def api_topics_preview_word_count():
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
 
     solr_query = concatenate_query_for_solr(solr_seed_query=request.form['q'],
                                             media_ids=ids_from_comma_separated_str(request.form['sources[]']) if 'sources[]' in request.form else None,
@@ -91,7 +92,7 @@ def api_topics_preview_word_count():
 @form_fields_required('name', 'description', 'solr_seed_query', 'start_date', 'end_date')
 @api_error_handler
 def topic_create():
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
     name = request.form['name']
     description = request.form['description']
     solr_seed_query = request.form['solr_seed_query']
@@ -103,7 +104,7 @@ def topic_create():
         'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
         'ch_monitor_id': request.form['ch_monitor_id'] if len(request.form['ch_monitor_id']) > 0 and request.form['ch_monitor_id'] != 'null' else None,
         'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
-        'max_stories': request.form['max_stories'] if 'max_stories' in request.form and request.form['max_stories'] != 'null' else None,
+        'max_stories': request.form['max_stories'] if 'max_stories' in request.form and request.form['max_stories'] != 'null' else flask_login.current_user.profile['max_topic_stories'],
     }
 
     # parse out any sources and collections to add
@@ -115,18 +116,15 @@ def topic_create():
                                            start_date=start_date, end_date=end_date, media_ids=media_ids_to_add,
                                            media_tags_ids=tag_ids_to_add, **optional_args)['topics'][0]
 
-        topic_id = topic_result['topics_id']
-        logger.info("Created new topic \"{}\" as {}".format(name, topic_id))
-
+        topics_id = topic_result['topics_id']
+        logger.info("Created new topic \"{}\" as {}".format(name, topics_id))
+        # if this includes any of the US-centric collections, add the retweet partisanship subtopic by default
         if set(tag_ids_to_add).intersection(US_COLLECTIONS):
-            create_retweet_partisanship_focal_set(topic_result['topics_id'])
-        # create snapshot and then spider (for admins)
-        new_snapshot = user_mc.topicCreateSnapshot(topic_id, note=VERSION_1)
-        spider_job = user_mc.topicSpider(topic_id, new_snapshot['snapshots_id'])
-        logger.info("  spider result = {}".format(json.dumps(spider_job)))
-        results = user_mc.topic(topic_id)
-        results['spider_job_state'] = spider_job
-        return jsonify(results)  # give them back new data, so they can update the client
+            add_retweet_partisanship_to_topic(topic_result['topics_id'],
+                                              'Retweet Partisanship',
+                                              'Subtopics driven by our analysis of Twitter followers of Trump and Clinton during the 2016 election season.  Each media soure is scored based on the ratio of retweets of their stories in those two groups.')
+        # client will either make a empty snapshot, or a spidering one
+        return topic_summary(topics_id)
     except Exception as e:
         logging.error("Topic creation failed {}".format(name))
         logging.exception(e)

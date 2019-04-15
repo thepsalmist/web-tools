@@ -33,7 +33,7 @@ const localMessages = {
 const CreateTopicContainer = ({ allowedToRun, intl }) => {
   const stepTexts = [
     {
-      title: intl.formatMessage(localMessages.pageTitle),
+      title: intl.formatHTMLMessage(localMessages.pageTitle),
       description: intl.formatHTMLMessage(localMessages.pageDesc),
     },
     {
@@ -41,15 +41,15 @@ const CreateTopicContainer = ({ allowedToRun, intl }) => {
       description: intl.formatHTMLMessage(localMessages.previewDesc),
     },
     {
-      title: intl.formatMessage(localMessages.validateTitle),
+      title: intl.formatHTMLMessage(localMessages.validateTitle),
       description: intl.formatHTMLMessage(localMessages.validateDesc),
     },
     {
-      title: intl.formatMessage(localMessages.confirmTitle),
+      title: intl.formatHTMLMessage(localMessages.confirmTitle),
       description: 'not used',
-      saveTopic: intl.formatMessage(localMessages.createTopic),
-      savingTitle: intl.formatMessage(localMessages.creatingTitle),
-      savingDesc: intl.formatMessage(localMessages.creatingDesc),
+      saveTopic: intl.formatHTMLMessage(localMessages.createTopic),
+      savingTitle: intl.formatHTMLMessage(localMessages.creatingTitle),
+      savingDesc: intl.formatHTMLMessage(localMessages.creatingDesc),
     },
   ];
   return (

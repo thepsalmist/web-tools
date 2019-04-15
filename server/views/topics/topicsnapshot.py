@@ -1,10 +1,10 @@
 import logging
-
 import flask_login
-from flask import jsonify, request
+from flask import request
+from flask_login import current_user
 
 from server import app
-from server.auth import user_admin_mediacloud_client
+from server.auth import user_mediacloud_client
 from server.util.request import api_error_handler
 from server.util.stringutil import ids_from_comma_separated_str
 from server.views.topics.topic import topic_summary
@@ -30,7 +30,7 @@ def topic_update(topics_id):
                                                           and request.form['ch_monitor_id'] != 'null'
                                                           and len(request.form['ch_monitor_id']) > 0 else None,
         'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
-        'max_stories': request.form['max_stories'] if 'max_stories' in request.form else None,
+        'max_stories': request.form['max_stories'] if 'max_stories' in request.form and request.form['max_stories'] != 'null' else current_user.profile['max_topic_stories'],
         'twitter_topics_id': request.form['twitter_topics_id'] if 'twitter_topics_id' in request.form else None
     }
     # parse out any sources and collections to add
@@ -43,14 +43,14 @@ def topic_update(topics_id):
         media_ids_to_add = None
         tag_ids_to_add = None
     # update the seed query (the client will start the spider themselves
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
     result = user_mc.topicUpdate(topics_id, media_ids=media_ids_to_add, media_tags_ids=tag_ids_to_add, **args)
     return topic_summary(topics_id)  # give them back new data, so they can update the client
 
 
 def _next_snapshot_number(topics_id):
     # figure out new snapshot version number
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
     snapshots = user_mc.topicSnapshotList(topics_id)
     return len(snapshots) + 1
 
@@ -59,7 +59,7 @@ def _next_snapshot_number(topics_id):
 @flask_login.login_required
 @api_error_handler
 def topic_snapshot_create(topics_id):
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
     # make a new snapshot
     new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=_next_snapshot_number(topics_id))['snapshot']
     return topic_summary(topics_id)
@@ -69,7 +69,7 @@ def topic_snapshot_create(topics_id):
 @flask_login.login_required
 @api_error_handler
 def topic_snapshot_generate(topics_id):
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
     if 'snapshot_id' in request.form:
         # generate into the one passed in
         snapshots_id = request.form['snapshotId'] if 'snapshotId' in request.form else None
@@ -86,7 +86,7 @@ def topic_snapshot_generate(topics_id):
 @flask_login.login_required
 @api_error_handler
 def topic_snapshot_spider(topics_id):
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
     # kick off a spider, which will also generate a snapshot
     if 'snapshotId' in request.form:
         # generate into the one passed in

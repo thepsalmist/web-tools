@@ -98,15 +98,18 @@ const TopicConfirmContainer = (props) => {
           <Col lg={12}>
             <AppButton label={formatMessage(messages.previous)} onClick={() => onStepChange(mode, 2)} />
             &nbsp; &nbsp;
-            <Permissioned onlyRole={PERMISSION_ADMIN}>
-              <AppButton
-                type="submit"
-                disabled={pristine || submitting}
-                label={localMessages.createWithoutGenerating}
-                onClick={handleSubmit(values => finishStep(mode, false, values))}
-              />
-              &nbsp; &nbsp;
-            </Permissioned>
+            { // if creating and a admin, they can create an empty one to let them work on subtopics before generating
+              (mode === TOPIC_FORM_MODE_CREATE) && (
+              <Permissioned onlyRole={PERMISSION_ADMIN}>
+                <AppButton
+                  type="submit"
+                  disabled={pristine || submitting}
+                  label={localMessages.createWithoutGenerating}
+                  onClick={handleSubmit(values => finishStep(mode, false, values))}
+                />
+                &nbsp; &nbsp;
+              </Permissioned>
+              )}
             <AppButton
               disabled={pristine || submitting}
               label={currentStepText.saveTopic}
@@ -149,6 +152,51 @@ const mapStateToProps = state => ({
   selectedSnapshot: state.topics.selected ? state.topics.selected.snapshots.selected : null,
 });
 
+const finishTopic = (results, dispatch, intl, startSpidering) => {
+  // We start a new spider for new version
+  if (results.topics_id && startSpidering) {
+    dispatch(topicSnapshotSpider(results.topics_id))
+      .then((spiderResults) => {
+        if (spiderResults && spiderResults.topics_id) {
+          // let them know it worked
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
+          return dispatch(push(`/topics/${spiderResults.topics_id}/versions`));
+        }
+        return dispatch(updateFeedback({ open: true, message: intl.formatMessage(localMessages.failed) }));
+      });
+  } else if (results.topics_id) {
+    // they selected the option to leave it empty so they can add more subtopics to it
+    dispatch(topicSnapshotCreate(results.topics_id))
+      .then((createResults) => {
+        if (createResults && createResults.topics_id) {
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
+          return dispatch(push(`/topics/${results.topics_id}/versions`));
+        }
+        return dispatch(updateFeedback({ open: true, message: intl.formatMessage(localMessages.failed) }));
+      });
+  } else {
+    return dispatch(updateFeedback({ open: true, message: intl.formatMessage(localMessages.failed) }));
+  }
+  return null;
+};
+
+const fireNotices = (dispatch, storyCount, intl) => {
+  // min/max don't apply to admins
+  if (storyCount > WARNING_LIMIT_RECOMMENDED_STORIES && storyCount < MAX_RECOMMENDED_STORIES) {
+    dispatch(updateFeedback({ classes: 'warning-notice', open: true, message: intl.formatMessage(localMessages.warningLimitStories) }));
+    return dispatch(addNotice({ level: LEVEL_WARNING, message: intl.formatMessage(localMessages.warningLimitStories) }));
+  }
+  if (storyCount > MAX_RECOMMENDED_STORIES) {
+    dispatch(updateFeedback({ classes: 'error-notice', open: true, message: intl.formatMessage(localMessages.tooManyStories) }));
+    return dispatch(addNotice({ level: LEVEL_ERROR, message: intl.formatMessage(localMessages.tooManyStories) }));
+  }
+  if (storyCount < MIN_RECOMMENDED_STORIES) {
+    dispatch(updateFeedback({ classes: 'error-notice', open: true, message: intl.formatMessage(localMessages.notEnoughStories) }));
+    return dispatch(addNotice({ level: LEVEL_ERROR, message: intl.formatMessage(localMessages.notEnoughStories) }));
+  }
+  return null;
+};
+
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleCreateTopic: (storyCount, user, values) => {
     if (((storyCount > MIN_RECOMMENDED_STORIES) && (storyCount < MAX_RECOMMENDED_STORIES))
@@ -164,8 +212,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         ch_monitor_id: values.ch_monitor_id === undefined ? '' : values.ch_monitor_id,
         is_public: values.is_public ? 1 : 0,
         is_logogram: values.is_logogram ? 1 : 0,
-        max_stories: values.max_stories,
-        startSpidering: values.startSpidering,
+        max_stories: values.max_topic_stories,
       };
       queryInfo.is_public = queryInfo.is_public ? 1 : 0;
       if ('sourcesAndCollections' in values) {
@@ -175,29 +222,11 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         queryInfo['sources[]'] = '';
         queryInfo['collections[]'] = '';
       }
-      return dispatch(createTopic(queryInfo)).then((results) => {
-        if (results.topics_id) {
-          // let them know it worked
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_CREATE }) }));
-          return dispatch(push(`/topics/${results.topics_id}/summary`));
-        }
-        return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
-      });
+      return dispatch(createTopic(queryInfo))
+        .then(results => finishTopic(results, dispatch, ownProps.intl, values.startSpidering));
     }
     if (!user.isAdmin) {
-      // min/max don't apply to admins
-      if (storyCount > WARNING_LIMIT_RECOMMENDED_STORIES && storyCount < MAX_RECOMMENDED_STORIES) {
-        dispatch(updateFeedback({ classes: 'warning-notice', open: true, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
-        return dispatch(addNotice({ level: LEVEL_WARNING, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
-      }
-      if (storyCount > MAX_RECOMMENDED_STORIES) {
-        dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
-        return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
-      }
-      if (storyCount < MIN_RECOMMENDED_STORIES) {
-        dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.notEnoughStories) }));
-        return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.notEnoughStories) }));
-      }
+      return fireNotices(dispatch, storyCount, ownProps.intl);
     }
     return null;
   },
@@ -216,8 +245,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         ch_monitor_id: values.ch_monitor_id === undefined ? '' : values.ch_monitor_id,
         is_public: values.is_public ? 1 : 0,
         is_logogram: values.is_logogram ? 1 : 0,
-        max_stories: values.max_stories,
-        startSpidering: values.startSpidering,
+        max_stories: values.max_topic_stories,
       };
       queryInfo.is_public = queryInfo.is_public ? 1 : 0;
       if ('sourcesAndCollections' in values) {
@@ -228,48 +256,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         queryInfo['collections[]'] = '';
       }
       return dispatch(updateTopicSeedQuery(queryInfo.topics_id, { ...queryInfo }))
-        .then((results) => {
-          // We start a new spider for new version
-          if (results.topics_id && queryInfo.startSpidering) {
-            dispatch(topicSnapshotSpider(queryInfo.topics_id))
-              .then((spiderResults) => {
-                if (spiderResults && spiderResults.topics_id) {
-                  // let them know it worked
-                  dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
-                  return dispatch(push(`/topics/${spiderResults.topics_id}/versions`));
-                }
-                return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
-              });
-          } else if (results.topics_id) {
-            // they selected the option to leave it empty so they can add more subtopics to it
-            dispatch(topicSnapshotCreate(queryInfo.topics_id))
-              .then((createResults) => {
-                if (createResults && createResults.topics_id) {
-                  dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
-                  return dispatch(push(`/topics/${results.topics_id}/versions`));
-                }
-                return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
-              });
-          } else {
-            return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
-          }
-          return null;
-        });
+        .then(results => finishTopic(results, dispatch, ownProps.intl, values.startSpidering));
     }
     if (!user.isAdmin) {
-      // min/max don't apply to admins
-      if (storyCount > WARNING_LIMIT_RECOMMENDED_STORIES && storyCount < MAX_RECOMMENDED_STORIES) {
-        dispatch(updateFeedback({ classes: 'warning-notice', open: true, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
-        return dispatch(addNotice({ level: LEVEL_WARNING, message: ownProps.intl.formatMessage(localMessages.warningLimitStories) }));
-      }
-      if (storyCount > MAX_RECOMMENDED_STORIES) {
-        dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
-        return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.tooManyStories) }));
-      }
-      if (storyCount < MIN_RECOMMENDED_STORIES) {
-        dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.notEnoughStories) }));
-        return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.notEnoughStories) }));
-      }
+      return fireNotices(dispatch, storyCount, ownProps.intl);
     }
     return null;
   },

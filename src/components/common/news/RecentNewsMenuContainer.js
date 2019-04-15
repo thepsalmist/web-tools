@@ -8,18 +8,16 @@ import RecentNewsMenu from './RecentNewsMenu';
 
 const MAX_ITEMS = 8;
 
-const RecentNewsMenuContainer = (props) => {
-  const { recentNews } = props;
-  const latestRelease = recentNews[0];
-  const newsItems = latestRelease.notes;
-  const changeDate = moment(latestRelease.date, 'YYYY-MM-DD').fromNow();
-  return (
-    <RecentNewsMenu
-      newsItems={newsItems.slice(0, MAX_ITEMS)}
-      subTitle={changeDate}
-    />
-  );
-};
+const RecentNewsMenuContainer = ({ recentNews }) => (
+  <React.Fragment>
+    {recentNews && (
+      <RecentNewsMenu
+        newsItems={recentNews[0].notes.slice(0, MAX_ITEMS)}
+        subTitle={moment(recentNews[0].notes.date, 'YYYY-MM-DD').fromNow()}
+      />
+    )}
+  </React.Fragment>
+);
 
 RecentNewsMenuContainer.propTypes = {
   // from parent

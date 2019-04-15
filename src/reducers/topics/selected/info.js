@@ -1,5 +1,5 @@
 import { resolve } from 'redux-simple-promise';
-import { FETCH_TOPIC_SUMMARY, UPDATE_TOPIC_SEED_QUERY, UPDATE_TOPIC_SETTINGS, SET_TOPIC_FAVORITE } from '../../../actions/topicActions';
+import { FETCH_TOPIC_SUMMARY, UPDATE_TOPIC_SEED_QUERY, UPDATE_TOPIC_SETTINGS, SET_TOPIC_FAVORITE, TOPIC_START_SPIDER } from '../../../actions/topicActions';
 import { createAsyncReducer } from '../../../lib/reduxHelpers';
 
 const addVersionNumberToJobs = (snapshots, jobStates) => {
@@ -48,6 +48,7 @@ const info = createAsyncReducer({
   handleSuccess: payload => ({ ...addLatestStateToTopic(payload) }),
   [resolve(UPDATE_TOPIC_SEED_QUERY)]: payload => ({ ...addLatestStateToTopic(payload) }),
   [resolve(UPDATE_TOPIC_SETTINGS)]: payload => ({ ...addLatestStateToTopic(payload) }),
+  [resolve(TOPIC_START_SPIDER)]: payload => ({ ...addLatestStateToTopic(payload) }),
   // changing fav status returns full topic info, so update it here
   [resolve(SET_TOPIC_FAVORITE)]: payload => ({ ...payload })({ ...addLatestStateToTopic(payload) }),
 });

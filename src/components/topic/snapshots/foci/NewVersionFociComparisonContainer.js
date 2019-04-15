@@ -9,8 +9,8 @@ import { needsNewVersion } from '../../versions/NeedsNewVersionWarning';
 import FocalSetSummary from './FocalSetSummary';
 import FocalSetDefinitionSummary from './FocalSetDefinitionSummary';
 import { topicSnapshotSpider } from '../../../../actions/topicActions';
-import { PERMISSION_ADMIN } from '../../../../lib/auth';
-import Permissioned from '../../../common/Permissioned';
+// import { PERMISSION_ADMIN } from '../../../../lib/auth';
+// import Permissioned from '../../../common/Permissioned';
 import TabbedChip from '../../../common/TabbedChip';
 import { updateFeedback } from '../../../../actions/appActions';
 
@@ -47,6 +47,8 @@ const NewVersionFociComparisonContainer = ({ topicId, usingLatest, newDefinition
               primary
             />
             <TabbedChip warning message={localMessages.applyChanges} />
+            {
+            /* turned off for now until it works right
             <Permissioned onlyRole={PERMISSION_ADMIN}>
               <AppButton
                 label={localMessages.updateTopicVersionSubtopics}
@@ -54,6 +56,8 @@ const NewVersionFociComparisonContainer = ({ topicId, usingLatest, newDefinition
               />
               (admin only)
             </Permissioned>
+            */
+            }
           </Col>
         </Row>
       </React.Fragment>

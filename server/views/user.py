@@ -1,7 +1,13 @@
 import logging
-from flask import jsonify, request, redirect, render_template
+from flask import jsonify, request, redirect, render_template, send_file
 import flask_login
 from mediacloud.error import MCException
+import tempfile
+import json
+import os
+import csv
+import io
+import zipfile
 
 from server import app, auth, mc, user_db
 from server.auth import user_mediacloud_client, user_name
@@ -46,14 +52,6 @@ def login_with_cookie():
         logger.debug("  login failed (%s)", user.is_anonymous)
         return json_error_response("Login failed", 401)
     return jsonify(user.get_properties())
-
-
-@app.route('/api/permissions/user/list', methods=['GET'])
-@flask_login.login_required
-@api_error_handler 
-def permissions_for_user():
-    user_mc = auth.user_mediacloud_client()
-    return user_mc.userPermissionsList()
 
 
 @app.route('/api/user/signup', methods=['POST'])
@@ -224,3 +222,76 @@ def api_user_update():
     user_mc = user_mediacloud_client()
     results['profile'] = user_mc.userProfile()
     return jsonify(results)
+
+
+@app.route('/api/user/download-data')
+@api_error_handler
+@flask_login.login_required
+def api_user_data_download():
+    user_mc = user_mediacloud_client()
+    temp_user_data_dir = _save_user_data_dir(flask_login.current_user, user_mc)
+    data = _zip_in_memory(temp_user_data_dir)
+    return send_file(data, mimetype='application/zip', as_attachment=True, attachment_filename='mediacloud-data.zip')
+
+
+def _zip_in_memory(dir_to_zip):
+    # remember our home dir
+    old_path = os.getcwd()
+    os.chdir(dir_to_zip)
+    # send
+    data = io.BytesIO()
+    with zipfile.ZipFile(data, mode='w') as z:
+        for f_name in os.listdir("."):  # doing the whole path switch to make sure the zip folder structure is right
+            z.write(f_name)
+            os.unlink(f_name)
+    data.seek(0)  # to make sure the file starts at teh begging again, *not* where the zip commands left it
+    # put us back in the home dir
+    os.chdir(old_path)
+    os.rmdir(dir_to_zip)
+    return data
+
+
+def _save_user_data_dir(u, user_mc):
+    # make a dir first
+    temp_dir = tempfile.mkdtemp(prefix='user')
+    # saved searches
+    with open(os.path.join(temp_dir, 'saved-searches.json'), 'w') as outfile:
+        search_list = user_db.get_users_lists(u.name, 'searches')
+        json.dump(search_list, outfile)
+    # starred sources
+    with open(os.path.join(temp_dir, 'starred-sources.csv'), 'w') as outfile:
+        user_favorited = user_db.get_users_lists(user_name(), 'favoriteSources')
+        media_sources = [user_mc.media(media_id) for media_id in user_favorited]
+        media_sources = [{
+            'media_id': m['media_id'],
+            'name': m['name'],
+            'url': m['url']
+        } for m in media_sources]
+        writer = csv.DictWriter(outfile, ['media_id', 'name', 'url'])
+        writer.writeheader()
+        writer.writerows(media_sources)
+    # starred collections
+    with open(os.path.join(temp_dir, 'starred-collections.csv'), 'w') as outfile:
+        user_favorited = user_db.get_users_lists(user_name(), 'favoriteCollections')
+        collections = [user_mc.tag(tags_id) for tags_id in user_favorited]
+        collections = [{
+            'tags_id': c['tags_id'],
+            'label': c['label'],
+            'description': c['description']
+        } for c in collections]
+        writer = csv.DictWriter(outfile, ['tags_id', 'label', 'description'])
+        writer.writeheader()
+        writer.writerows(collections)
+    # starred topics
+    with open(os.path.join(temp_dir, 'starred-topics.csv'), 'w') as outfile:
+        user_favorited = user_db.get_users_lists(user_name(), 'favoriteTopics')
+        topics = [user_mc.topic(topics_id) for topics_id in user_favorited]
+        topics = [{
+            'topics_id': t['topics_id'],
+            'name': t['name'],
+            'description': t['description']
+        } for t in topics]
+        writer = csv.DictWriter(outfile, ['topics_id', 'name', 'description'])
+        writer.writeheader()
+        writer.writerows(topics)
+    return temp_dir

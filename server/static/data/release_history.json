@@ -1,6 +1,18 @@
 {
   "releases": [
     {
+      "date": "2019-4-9",
+      "version": "v3.9.1",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Users can now upload a spreadsheet of sources",
+          "details": "Spreadsheet uploaded enables collection curators to upload new sources into a collection or update ones in place."
+        }
+      ]
+    },
+    {
       "date": "2019-4-1",
       "version": "v3.9.0",
       "notes": [

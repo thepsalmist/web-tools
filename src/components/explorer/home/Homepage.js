@@ -10,7 +10,6 @@ import LoginForm from '../../user/LoginForm';
 import SearchForm from './SearchForm';
 import SampleSearchContainer from './SampleSearchContainer';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
-import { getUserRoles, hasPermissions, PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { DEFAULT_COLLECTION, autoMagicQueryLabel, serializeQueriesForUrl } from '../../../lib/explorerUtil';
 import { emptyString } from '../../../lib/formValidators';
 import ExplorerMarketingFeatureList from './ExplorerMarketingFeatureList';
@@ -25,51 +24,47 @@ const localMessages = {
   loginTitle: { id: 'explorer.intro.login.title', defaultMessage: 'Have an Account? Login Now' },
 };
 
-const Homepage = ({ isLoggedIn, onKeywordSearch, storyCount }) => {
-  let sideBarContent;
-
-  return (
-    <div className="homepage">
-      <Masthead
-        nameMsg={messages.explorerToolName}
-        descriptionMsg={messages.explorerToolDescription}
-        link="https://mediacloud.org/tools/"
-      />
-      <div className="search-section">
-        <Grid>
-          <Row>
-            <Col lg={12}>
-              <SearchForm onSearch={val => onKeywordSearch(val, isLoggedIn)} storyCount={storyCount} />
-            </Col>
-          </Row>
-        </Grid>
-      </div>
-      <SampleSearchContainer />
-      { isLoggedIn && (
-        <Grid>
-          <Row>
-            <Col lg={1} />
-            <Col lg={5}>
-              <h1><FormattedMessage {...localMessages.subtitle} /></h1>
-              <p><FormattedMessage {...localMessages.description} /></p>
-            </Col>
-            <Col lg={1} />
-            <Col lg={4}>
-              <DataCard leftBorder>
-                <h2><FormattedMessage {...localMessages.loginTitle} /></h2>
-                <LoginForm />
-              </DataCard>
-            </Col>
-          </Row>
-        </Grid>
-      )}
-      <ExplorerMarketingFeatureList />
+const Homepage = ({ isLoggedIn, onKeywordSearch, storyCount }) => (
+  <div className="homepage">
+    <Masthead
+      nameMsg={messages.explorerToolName}
+      descriptionMsg={messages.explorerToolDescription}
+      link="https://mediacloud.org/tools/"
+    />
+    <div className="search-section">
       <Grid>
-        <SystemStatsContainer />
+        <Row>
+          <Col lg={12}>
+            <SearchForm onSearch={val => onKeywordSearch(val, isLoggedIn)} storyCount={storyCount} />
+          </Col>
+        </Row>
       </Grid>
     </div>
-  );
-};
+    <SampleSearchContainer />
+    { isLoggedIn && (
+      <Grid>
+        <Row>
+          <Col lg={1} />
+          <Col lg={5}>
+            <h1><FormattedMessage {...localMessages.subtitle} /></h1>
+            <p><FormattedMessage {...localMessages.description} /></p>
+          </Col>
+          <Col lg={1} />
+          <Col lg={4}>
+            <DataCard leftBorder>
+              <h2><FormattedMessage {...localMessages.loginTitle} /></h2>
+              <LoginForm />
+            </DataCard>
+          </Col>
+        </Row>
+      </Grid>
+    )}
+    <ExplorerMarketingFeatureList />
+    <Grid>
+      <SystemStatsContainer />
+    </Grid>
+  </div>
+);
 
 Homepage.propTypes = {
   intl: PropTypes.object.isRequired,

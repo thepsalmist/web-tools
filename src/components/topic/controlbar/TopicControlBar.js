@@ -15,9 +15,9 @@ const localMessages = {
   permissions: { id: 'topic.changePermissions', defaultMessage: 'Permissions' },
   changePermissionsDetails: { id: 'topic.changePermissions.details', defaultMessage: 'Control who else can see and/or change this topic' },
   settings: { id: 'topic.changeSettings', defaultMessage: 'Settings' },
-  changeSettingsDetails: { id: 'topic.changeSettings.details', defaultMessage: 'Edit this topic\'s configuration and visibility' },
+  changeSettingsDetails: { id: 'topic.changeSettings.details', defaultMessage: 'Rename or make your topic public' },
   versionList: { id: 'topic.changeSettings', defaultMessage: 'Versions' },
-  viewVersionLists: { id: 'topic.changeSettings', defaultMessage: 'View Versions' },
+  viewVersionLists: { id: 'topic.changeSettings', defaultMessage: 'Manage subtopics or change your seed query' },
   filterTopic: { id: 'topic.filter', defaultMessage: 'Filter this Topic' },
   startedSpider: { id: 'topic.startedSpider', defaultMessage: 'Started a new spidering job for this topic' },
   summaryMessage: { id: 'snapshot.required', defaultMessage: 'You have made some changes that you can only see if you generate a new Snapshot. <a href="{url}">Generate one now</a>.' },
@@ -43,10 +43,12 @@ const TopicControlBar = ({ sideBarContent, topic, setupJumpToExplorer, intl, sel
             </div>
             <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
               <div className="controlbar-item">
-                <LinkWithFilters to={`/topics/${topic.topics_id}/settings`}>
+                <LinkWithFilters
+                  to={`/topics/${topic.topics_id}/settings`}
+                  title={intl.formatMessage(localMessages.changeSettingsDetails)}
+                >
                   <EditButton
                     label={intl.formatMessage(localMessages.settings)}
-                    description={intl.formatMessage(localMessages.changeSettingsDetails)}
                     id="modify-topic-settings"
                   />
                   <b><FormattedMessage {...localMessages.settings} /></b>
@@ -55,10 +57,13 @@ const TopicControlBar = ({ sideBarContent, topic, setupJumpToExplorer, intl, sel
             </Permissioned>
             <Permissioned onlyTopic={PERMISSION_TOPIC_ADMIN}>
               <div className="controlbar-item">
-                <LinkWithFilters to={`/topics/${topic.topics_id}/permissions`} className="permissions">
+                <LinkWithFilters
+                  to={`/topics/${topic.topics_id}/permissions`}
+                  className="permissions"
+                  title={intl.formatMessage(localMessages.changePermissionsDetails)}
+                >
                   <EditButton
                     label={intl.formatMessage(localMessages.permissions)}
-                    description={intl.formatMessage(localMessages.changePermissionsDetails)}
                     id="modify-topic-permissions"
                   />
                   <b><FormattedMessage {...localMessages.permissions} /></b>
@@ -67,10 +72,12 @@ const TopicControlBar = ({ sideBarContent, topic, setupJumpToExplorer, intl, sel
             </Permissioned>
             <Permissioned onlyTopic={PERMISSION_TOPIC_ADMIN}>
               <div className="controlbar-item">
-                <LinkWithFilters to={`/topics/${topic.topics_id}/versions`}>
+                <LinkWithFilters
+                  to={`/topics/${topic.topics_id}/versions`}
+                  title={intl.formatMessage(localMessages.viewVersionLists)}
+                >
                   <EditButton
                     label={intl.formatMessage(localMessages.versionList)}
-                    description={intl.formatMessage(localMessages.viewVersionLists)}
                     id="modify-topic-permissions"
                   />
                   <b><FormattedMessage {...localMessages.versionList} /></b>

@@ -15,7 +15,9 @@ import TopicVersionListItem from './TopicVersionListItem';
 import NeedsNewVersionWarning from './NeedsNewVersionWarning';
 
 const localMessages = {
-  title: { id: 'topic.versionList.title', defaultMessage: 'Your Topic Has {count} Versions' },
+  title: { id: 'topic.versionList.title', defaultMessage: 'Topic Versions' },
+  subtitle: { id: 'topic.versionList.subtitle', defaultMessage: 'Refine your query and manage subtopics.' },
+  description: { id: 'topic.versionList.description', defaultMessage: 'Media Cloud topics contain one or more versions. If you want to change your seed query parameters or add/remove subtopics, you have to make a new version. Each version is a non-changing corpus of stories; older versions cannot be changed (this is intended to support our academic research mission).' },
   versionNumber: { id: 'topic.versionNumber', defaultMessage: 'Version {number}' },
   versionState: { id: 'topic.versionState', defaultMessage: '{state}' },
   versionDate: { id: 'topic.versionDate', defaultMessage: '{date}' },
@@ -82,7 +84,9 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
       <Grid>
         <Row>
           <Col lg={12}>
-            <h1><FormattedMessage {...localMessages.title} values={{ count: Math.max(1, versions ? versions.length : 0) }} /></h1>
+            <h1><FormattedMessage {...localMessages.title} /></h1>
+            <h2><FormattedMessage {...localMessages.subtitle} /></h2>
+            <p><FormattedMessage {...localMessages.description} /></p>
           </Col>
         </Row>
         <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>

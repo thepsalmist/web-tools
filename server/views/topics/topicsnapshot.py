@@ -62,7 +62,7 @@ def topic_snapshot_create(topics_id):
     user_mc = user_admin_mediacloud_client()
     # make a new snapshot
     new_snapshot = user_mc.topicCreateSnapshot(topics_id, note=_next_snapshot_number(topics_id))['snapshot']
-    return jsonify(new_snapshot)
+    return topic_summary(topics_id)
 
 
 @app.route("/api/topics/<topics_id>/snapshots/generate", methods=['POST'])
@@ -79,7 +79,7 @@ def topic_snapshot_generate(topics_id):
         snapshots_id = new_snapshot['snapshots_id']
     # and now generate into the existing or the new snapshot
     job = user_mc.topicGenerateSnapshot(topics_id, snapshots_id=snapshots_id)
-    return jsonify(job)
+    return topic_summary(topics_id)
 
 
 @app.route("/api/topics/<topics_id>/snapshots/spider", methods=['POST'])
@@ -97,4 +97,4 @@ def topic_snapshot_spider(topics_id):
         snapshots_id = new_snapshot['snapshots_id']
     # and now spider into the existinng or the new snapshot
     job = user_mc.topicSpider(topics_id, snapshots_id=snapshots_id)
-    return jsonify(job)
+    return topic_summary(topics_id)

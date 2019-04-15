@@ -96,12 +96,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     // if currentVersion is null this will make a new versionn
     dispatch(topicSnapshotSpider(topicId, existingSnapshotId))
       .then((results) => {
-        if (results.error) {
-          return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
+        if (results && results.topics_id) {
+          // let them know it worked
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.worked) }));
+          return dispatch(push(`/topics/${topicId}/versions`));
         }
-        // let them know it worked
-        dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.worked) }));
-        return dispatch(push(`/topics/${topicId}/versions`));
+        return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
       });
   },
 });

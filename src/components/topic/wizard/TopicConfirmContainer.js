@@ -233,10 +233,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           if (results.topics_id && queryInfo.startSpidering) {
             dispatch(topicSnapshotSpider(queryInfo.topics_id))
               .then((spiderResults) => {
-                if (spiderResults.job_states_id) {
+                if (spiderResults && spiderResults.topics_id) {
                   // let them know it worked
                   dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
-                  return dispatch(push(`/topics/${results.topics_id}/summary`));
+                  return dispatch(push(`/topics/${spiderResults.topics_id}/versions`));
                 }
                 return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
               });
@@ -244,9 +244,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
             // they selected the option to leave it empty so they can add more subtopics to it
             dispatch(topicSnapshotCreate(queryInfo.topics_id))
               .then((createResults) => {
-                if (createResults.snapshots_id) {
+                if (createResults && createResults.topics_id) {
                   dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
-                  return dispatch(push(`/topics/${results.topics_id}/summary?snapshotId=${createResults.snapshots_id}`));
+                  return dispatch(push(`/topics/${results.topics_id}/versions`));
                 }
                 return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
               });

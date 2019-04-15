@@ -29,7 +29,7 @@ const localMessages = {
   newerData: { id: 'topic.version.latestNeedsAttention', defaultMessage: 'newer data' },
 };
 
-const TopicControlBar = ({ sideBarContent, topic, setupJumpToExplorer, intl, selectedSnapshot, latestState, latestUsableSnapshot }) => (
+const TopicControlBar = ({ sideBarContent, topic, setupJumpToExplorer, intl, selectedSnapshot, latestState, latestUsableSnapshot, latestSnapshot }) => (
   <div className="controlbar controlbar-topic">
     <div className="main">
       <Grid>
@@ -87,7 +87,7 @@ const TopicControlBar = ({ sideBarContent, topic, setupJumpToExplorer, intl, sel
                   {[TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING].includes(latestState.state) && (
                     <TabbedChip message={localMessages.latestRunning} />
                   )}
-                  {(selectedSnapshot) && (selectedSnapshot.snapshots_id !== latestUsableSnapshot.snapshots_id)
+                  {(selectedSnapshot) && (selectedSnapshot.snapshots_id !== latestSnapshot.snapshots_id) && (selectedSnapshot.snapshots_id !== latestUsableSnapshot.snapshots_id)
                     && (<TabbedChip warning message={localMessages.newerData} />)
                   }
                 </LinkWithFilters>
@@ -115,6 +115,7 @@ TopicControlBar.propTypes = {
   topic: PropTypes.object,
   filters: PropTypes.object.isRequired,
   selectedSnapshot: PropTypes.object,
+  latestSnapshot: PropTypes.object,
   latestState: PropTypes.object,
   latestUsableSnapshot: PropTypes.object,
 };
@@ -123,6 +124,7 @@ const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
   topic: state.topics.selected.info,
   latestState: state.topics.selected.info.latestState,
+  latestSnapshot: state.topics.selected.snapshots.latest,
   selectedSnapshot: state.topics.selected.snapshots.selected,
   latestUsableSnapshot: state.topics.selected.snapshots.latestUsableSnapshot,
 });

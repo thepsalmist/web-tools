@@ -41,8 +41,6 @@ def api_explorer_story_sample():
 def api_explorer_demo_story_sample():
     search_id = int(request.args['search_id']) if 'search_id' in request.args else None
     if search_id not in [None, -1]:
-        sample_searches = load_sample_searches()
-        current_search = sample_searches[search_id]['queries']
         solr_q, solr_fq = parse_as_sample(search_id, request.args['index'])
     else:
         solr_q, solr_fq = parse_query_with_keywords(request.args)

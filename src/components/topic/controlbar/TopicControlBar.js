@@ -4,12 +4,14 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import LinkWithFilters from '../LinkWithFilters';
-import { HomeButton, EditButton } from '../../common/IconButton';
+import { HomeButton, EditButton, ExploreButton } from '../../common/IconButton';
 import TabbedChip from '../../common/TabbedChip';
 import Permissioned from '../../common/Permissioned';
+import { urlToExplorerQuery } from '../../../lib/urlUtil';
 import { PERMISSION_TOPIC_WRITE, PERMISSION_TOPIC_ADMIN } from '../../../lib/auth';
 import { TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
   TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
+import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
 const localMessages = {
   permissions: { id: 'topic.changePermissions', defaultMessage: 'Permissions' },
@@ -29,7 +31,23 @@ const localMessages = {
   newerData: { id: 'topic.version.latestNeedsAttention', defaultMessage: 'newer data' },
 };
 
-const TopicControlBar = ({ sideBarContent, topic, setupJumpToExplorer, intl, selectedSnapshot, latestState, latestUsableSnapshot, latestSnapshot }) => (
+const explorerUrl = (topic, filters, selectedTimespan) => {
+  const queryName = topic.name;
+  let queryKeywords = `timespans_id:${filters.timespanId} `;
+  if (filters.q && filters.q.length > 0) {
+    queryKeywords += ` AND ${filters.q}`;
+  }
+  return urlToExplorerQuery(
+    queryName,
+    queryKeywords,
+    [ALL_MEDIA],
+    [],
+    selectedTimespan.start_date.substr(0, 10),
+    selectedTimespan.end_date.substr(0, 10),
+  );
+};
+
+const TopicControlBar = ({ sideBarContent, topic, intl, selectedSnapshot, latestState, latestUsableSnapshot, latestSnapshot, filters, selectedTimespan }) => (
   <div className="controlbar controlbar-topic">
     <div className="main">
       <Grid>
@@ -93,7 +111,14 @@ const TopicControlBar = ({ sideBarContent, topic, setupJumpToExplorer, intl, sel
                 </LinkWithFilters>
               </div>
             </Permissioned>
-            { setupJumpToExplorer && <div className="controlbar-item">{setupJumpToExplorer}</div> }
+            { filters.timespanId && (
+              <div className="controlbar-item">
+                <a target="top" href={explorerUrl(topic, filters, selectedTimespan)}>
+                  <ExploreButton />
+                  <FormattedMessage {...localMessages.jumpToExplorer} />
+                </a>
+              </div>
+            )}
           </Col>
           <Col lg={4}>
             {sideBarContent}
@@ -110,7 +135,6 @@ TopicControlBar.propTypes = {
   location: PropTypes.object,
   // from parent
   sideBarContent: PropTypes.node,
-  setupJumpToExplorer: PropTypes.func,
   // from state
   topic: PropTypes.object,
   filters: PropTypes.object.isRequired,
@@ -118,6 +142,7 @@ TopicControlBar.propTypes = {
   latestSnapshot: PropTypes.object,
   latestState: PropTypes.object,
   latestUsableSnapshot: PropTypes.object,
+  selectedTimespan: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
@@ -127,6 +152,7 @@ const mapStateToProps = state => ({
   latestSnapshot: state.topics.selected.snapshots.latest,
   selectedSnapshot: state.topics.selected.snapshots.selected,
   latestUsableSnapshot: state.topics.selected.snapshots.latestUsableSnapshot,
+  selectedTimespan: state.topics.selected.timespans.selected,
 });
 
 export default

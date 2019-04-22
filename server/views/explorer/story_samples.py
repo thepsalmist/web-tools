@@ -11,7 +11,7 @@ import server.util.tags as tag_util
 import server.util.pushshift as pushshift
 from server.util.request import api_error_handler
 from server.views.explorer import parse_as_sample, only_queries_reddit, parse_query_dates, \
-    parse_query_with_keywords, load_sample_searches, file_name_for_download
+    parse_query_with_keywords, file_name_for_download
 import server.views.explorer.apicache as apicache
 
 logger = logging.getLogger(__name__)
@@ -25,9 +25,9 @@ SAMPLE_STORY_COUNT = 10
 def api_explorer_story_sample():
     if only_queries_reddit(request.args):
         start_date, end_date = parse_query_dates(request.args)
-        results = pushshift.reddit_latest_submissions(query=request.args['q'],
-                                                      start_date=start_date, end_date=end_date,
-                                                      subreddits=pushshift.NEWS_SUBREDDITS)
+        results = pushshift.reddit_top_submissions(query=request.args['q'],
+                                                   start_date=start_date, end_date=end_date,
+                                                   subreddits=pushshift.NEWS_SUBREDDITS)
     else:
         solr_q, solr_fq = parse_query_with_keywords(request.args)
         results = apicache.random_story_list(solr_q, solr_fq, SAMPLE_STORY_COUNT)
@@ -66,9 +66,9 @@ def explorer_stories_csv():
         # now compute total attention for all results
         if (len(q['collections']) == 0) and only_queries_reddit(q['sources']):
             start_date, end_date = parse_query_dates(q)
-            stories = pushshift.reddit_latest_submissions(query=q['q'], limit=2000,
-                                                          start_date=start_date, end_date=end_date,
-                                                          subreddits=pushshift.NEWS_SUBREDDITS)
+            stories = pushshift.reddit_top_submissions(query=q['q'], limit=2000,
+                                                       start_date=start_date, end_date=end_date,
+                                                       subreddits=pushshift.NEWS_SUBREDDITS)
             props = ['stories_id', 'subreddit', 'publish_date', 'score', 'last_updated', 'title', 'url', 'full_link',
                      'author']
             return csv.stream_response(stories, props, filename)

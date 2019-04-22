@@ -11,7 +11,7 @@ ps_api = PushshiftAPI()
 DB_TIME_STRING = "%Y-%m-%d %H:%M:%S"
 
 NEWS_SUBREDDITS = ['politics', 'worldnews', 'news', 'conspiracy', 'Libertarian', 'TrueReddit', 'Conservative',
-                   'offbeat' ]
+                   'offbeat']
 
 
 def _sanitize_url_for_reddit(url):
@@ -109,7 +109,7 @@ def _reddit_submission_to_row(item):
     }
 
 
-@cache.cache_on_arguments()
+#@cache.cache_on_arguments()
 def _cached_reddit_submissions(**kwargs):
     data = _reddit_submission_search(**kwargs)
     cleaned_data = []
@@ -124,7 +124,7 @@ def _cached_reddit_submissions(**kwargs):
     return cleaned_data
 
 
-def reddit_latest_submissions(query, start_date, end_date, subreddits=None, limit=20):
+def reddit_top_submissions(query, start_date, end_date, subreddits=None, limit=20):
     data = _cached_reddit_submissions(q=query, subreddit=subreddits,
                                       after=int(start_date.timestamp()), before=int(end_date.timestamp()),
                                       limit=limit, sort='desc', sort_type='score')

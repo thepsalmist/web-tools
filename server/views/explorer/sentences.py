@@ -4,7 +4,8 @@ import flask_login
 from server import app
 from server.util.request import api_error_handler
 import server.views.explorer.apicache as apicache
-from server.views.explorer import parse_query_with_keywords
+import server.util.pushshift as pushshift
+from server.views.explorer import parse_query_with_keywords, only_queries_reddit, parse_query_dates
 
 logger = logging.getLogger(__name__)
 
@@ -15,10 +16,22 @@ WORD_CONTEXT_SIZE = 5   # for sentence fragments, this is the amount of words be
 @flask_login.login_required
 @api_error_handler
 def api_explorer_sentences_list():
-    solr_q, solr_fq = parse_query_with_keywords(request.args)
-    rows = int(request.args['rows']) if 'rows' in request.args else 10   # so we can support large samples or just a few to show
     around_word = 'word' in request.args
-    results = apicache.sentence_list(solr_q, solr_fq, rows=rows, include_stories=(not around_word))
+    if only_queries_reddit(request.args):
+        start_date, end_date = parse_query_dates(request.args)
+        results = pushshift.reddit_top_submissions(query=request.args['q'],
+                                                   start_date=start_date, end_date=end_date,
+                                                   subreddits=pushshift.NEWS_SUBREDDITS)
+        results = [{
+            'sentence': r['title'],
+            'publish_date': r['publish_date'],
+            'story': r,
+        } for r in results]
+    else:
+        solr_q, solr_fq = parse_query_with_keywords(request.args)
+        # so we can support large samples or just a few to show
+        rows = int(request.args['rows']) if 'rows' in request.args else 10
+        results = apicache.sentence_list(solr_q, solr_fq, rows=rows, include_stories=(not around_word))
     if around_word:
         word = request.args['word']
         results = [_sentence_fragment_around(word, s['sentence']) for s in results if s['sentence'] is not None]

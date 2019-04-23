@@ -6,6 +6,7 @@ import messages from '../../resources/messages';
 import LinkWithFilters from './LinkWithFilters';
 import { googleFavIconUrl } from '../../lib/urlUtil';
 import StorySearchFilterMediaWarning from './StorySearchFilterMediaWarning';
+import SafelyFormattedNumber from '../common/SafelyFormattedNumber';
 
 const ICON_STYLE = { margin: 0, padding: 0, width: 12, height: 12 };
 
@@ -43,7 +44,8 @@ class MediaTable extends React.Component {
   }
 
   render() {
-    const { media, topicId } = this.props;
+    const { media, topicId, showTweetCounts } = this.props;
+    const tweetHeader = showTweetCounts ? <th className="numeric">{this.sortableHeader('twitter', messages.tweetCounts)}</th> : null;
     return (
       <div className="media-table">
         <StorySearchFilterMediaWarning />
@@ -55,6 +57,7 @@ class MediaTable extends React.Component {
               <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
               <th className="numeric"><FormattedMessage {...messages.outlinks} /></th>
               <th className="numeric">{this.sortableHeader('facebook', messages.facebookShares)}</th>
+              {tweetHeader}
               <th><FormattedMessage {...messages.mediaType} /></th>
               <th><FormattedMessage {...messages.primaryLanguage} /></th>
               <th><FormattedMessage {...messages.pubCountry} /></th>
@@ -75,6 +78,9 @@ class MediaTable extends React.Component {
                 <td className="numeric"><FormattedNumber value={m.media_inlink_count !== undefined ? m.media_inlink_count : '?'} /></td>
                 <td className="numeric"><FormattedNumber value={m.outlink_count !== undefined ? m.outlink_count : '?'} /></td>
                 <td className="numeric"><FormattedNumber value={m.facebook_share_count !== undefined ? m.facebook_share_count : '?'} /></td>
+                { showTweetCounts && (
+                  <td className="numeric"><SafelyFormattedNumber value={m.simple_tweet_count} /></td>
+                )}
                 <td>{m.metadata.media_type ? m.metadata.media_type.label : '?'}</td>
                 <td>{m.metadata.language ? m.metadata.language.label : '?'}</td>
                 <td>{m.metadata.pub_country ? m.metadata.pub_country.label : '?'}</td>
@@ -91,6 +97,7 @@ class MediaTable extends React.Component {
 
 MediaTable.propTypes = {
   media: PropTypes.array.isRequired,
+  showTweetCounts: PropTypes.bool,
   intl: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   onChangeSort: PropTypes.func,

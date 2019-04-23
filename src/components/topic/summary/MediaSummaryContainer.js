@@ -51,7 +51,7 @@ class MediaSummaryContainer extends React.Component {
   }
 
   render() {
-    const { media, sort, topicId, user } = this.props;
+    const { media, sort, topicId, user, showTweetCounts } = this.props;
     const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
     return (
       <React.Fragment>
@@ -61,6 +61,7 @@ class MediaSummaryContainer extends React.Component {
           sortedBy={sort}
           topicId={topicId}
           showMetadata
+          showTweetCounts={showTweetCounts}
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
           <ActionMenu actionTextMsg={messages.downloadOptions}>
@@ -100,6 +101,7 @@ MediaSummaryContainer.propTypes = {
   sort: PropTypes.string.isRequired,
   media: PropTypes.array,
   user: PropTypes.object,
+  showTweetCounts: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -107,6 +109,7 @@ const mapStateToProps = state => ({
   sort: state.topics.selected.summary.topMedia.sort,
   media: state.topics.selected.summary.topMedia.media,
   user: state.user,
+  showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

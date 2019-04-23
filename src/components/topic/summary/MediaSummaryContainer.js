@@ -51,7 +51,7 @@ class MediaSummaryContainer extends React.Component {
   }
 
   render() {
-    const { media, sort, topicId, user } = this.props;
+    const { media, sort, topicId, user, showTweetCounts } = this.props;
     const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
     return (
       <React.Fragment>
@@ -61,7 +61,7 @@ class MediaSummaryContainer extends React.Component {
           sortedBy={sort}
           topicId={topicId}
           showMetadata
-          showTweetCounts
+          showTweetCounts={showTweetCounts}
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
           <ActionMenu actionTextMsg={messages.downloadOptions}>

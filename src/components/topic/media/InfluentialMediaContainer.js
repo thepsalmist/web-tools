@@ -21,7 +21,7 @@ const localMessages = {
 };
 
 const InfluentialMediaContainer = (props) => {
-  const { media, sort, handleChangeSort, topicId, previousButton, nextButton, filters } = props;
+  const { media, sort, handleChangeSort, topicId, previousButton, nextButton, showTweetCounts, filters } = props;
   const { formatMessage } = props.intl;
   return (
     <Grid>
@@ -48,7 +48,7 @@ const InfluentialMediaContainer = (props) => {
               topicId={topicId}
               onChangeSort={newSort => handleChangeSort(newSort)}
               sortedBy={sort}
-              showTweetCounts
+              showTweetCounts={showTweetCounts}
             />
             { previousButton }
             { nextButton }

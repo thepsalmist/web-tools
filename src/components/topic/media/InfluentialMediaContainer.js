@@ -21,7 +21,7 @@ const localMessages = {
 };
 
 const InfluentialMediaContainer = (props) => {
-  const { media, sort, handleChangeSort, topicId, previousButton, nextButton, filters } = props;
+  const { media, sort, handleChangeSort, topicId, previousButton, nextButton, showTweetCounts, filters } = props;
   const { formatMessage } = props.intl;
   return (
     <Grid>
@@ -48,6 +48,7 @@ const InfluentialMediaContainer = (props) => {
               topicId={topicId}
               onChangeSort={newSort => handleChangeSort(newSort)}
               sortedBy={sort}
+              showTweetCounts={showTweetCounts}
             />
             { previousButton }
             { nextButton }
@@ -68,6 +69,7 @@ InfluentialMediaContainer.propTypes = {
   links: PropTypes.object,
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
+  showTweetCounts: PropTypes.bool.isRequired,
   // from dispatch
   handleChangeSort: PropTypes.func.isRequired,
   // from compositional chain
@@ -84,6 +86,7 @@ const mapStateToProps = state => ({
   links: state.topics.selected.media.link_ids,
   topicId: state.topics.selected.id,
   topicInfo: state.topics.selected.info,
+  showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

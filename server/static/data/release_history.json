@@ -1,13 +1,18 @@
 {
   "releases": [
     {
-      "date": "2019-4-12",
-      "version": "v3.9.3",
+      "date": "2019-4-22",
+      "version": "v3.9.2",
       "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Show media-level tweet counts for Topics"
+        },
         {
           "apps": [ "explorer" ],
           "type": "New",
-          "note": "Prototype support for querying Reddis news subs",
+          "note": "Prototype support for querying Reddis News Subs",
           "details": "Select the 'Reddit News Subs' source as your only one and the Attention tab results work."
         }
       ]

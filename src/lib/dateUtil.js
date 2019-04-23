@@ -239,7 +239,7 @@ export function getDateRange(timePeriod) {
     throw error;
   }
   let targetPeriodStart = null;
-  const today = moment()
+  const today = moment().subtract(1, 'day') // start one day before today, because we don't have good realtime data
     .hours(0)
     .minutes(0)
     .seconds(0)

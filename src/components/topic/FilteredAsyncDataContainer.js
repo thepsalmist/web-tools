@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import withAsyncData from '../common/hocs/AsyncDataContainer';
+import TopicPropTypes from './TopicPropTypes';
 
 /**
  * propsToRefetchOn: optional array of property names that should be watched; if any of them change then
@@ -13,12 +14,7 @@ const withFilteredAsyncData = (fetchAsyncData, propsToRefetchOn) => {
 
     FilteredAsyncDataContainer.propTypes = {
       // from store
-      filters: PropTypes.shape({
-        snapshotId: PropTypes.number,
-        focusId: PropTypes.number,
-        timespanId: PropTypes.number,
-        q: PropTypes.string,
-      }),
+      filters: TopicPropTypes.filters,
       // from compositional chain
       dispatch: PropTypes.func.isRequired,
     };

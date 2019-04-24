@@ -7,14 +7,13 @@ from flask import jsonify, request
 import server.views.apicache as shared_apicache
 import server.views.topics.apicache as apicache
 from server import app, mc
-from server.auth import user_mediacloud_key, user_admin_mediacloud_client, is_user_logged_in
-from server.util.request import api_error_handler
+from server.auth import user_mediacloud_key, user_mediacloud_client, is_user_logged_in, user_name
+from server.util.request import api_error_handler, arguments_required
 from server.views.topics import access_public_topic
 from server.views.topics import concatenate_query_for_solr, concatenate_solr_dates
 from server.views.topics.topiclist import add_user_favorite_flag_to_topics
 
 logger = logging.getLogger(__name__)
-
 
 ARRAY_BASE_ONE = 1
 
@@ -41,7 +40,7 @@ def _topic_summary(topics_id):
     if access_public_topic(topics_id):
         local_mc = mc
     elif is_user_logged_in():
-        local_mc = user_admin_mediacloud_client()
+        local_mc = user_mediacloud_client()
     else:
         return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
     topic = local_mc.topic(topics_id)
@@ -63,7 +62,7 @@ def _topic_summary(topics_id):
 @flask_login.login_required
 @api_error_handler
 def topic_snapshots_list(topics_id):
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
     snapshots = user_mc.topicSnapshotList(topics_id)
     # if note is missing
     for idx in range(0, len(snapshots)):
@@ -87,7 +86,7 @@ def topic_timespan_list(topics_id, snapshots_id):
 @flask_login.login_required
 @api_error_handler
 def topic_update_settings(topics_id):
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
     args = {
         'name': request.form['name'] if 'name' in request.form else None,
         'description': request.form['description'] if 'description' in request.form else None,

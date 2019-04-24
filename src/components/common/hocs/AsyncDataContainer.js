@@ -40,7 +40,7 @@ const withAsyncData = (fetchAsyncData, propsToRefetchOn, loadingSpinnerSize) => 
         }
       }
 
-      handleRefetch() {
+      handleRefetch = () => {
         const { dispatch } = this.props;
         fetchAsyncData(dispatch, this.props);
       }

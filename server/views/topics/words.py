@@ -1,6 +1,7 @@
 import logging
 from flask import request, jsonify
 import flask_login
+from deco import concurrent, synchronized
 
 from server import app, TOOL_API_KEY
 from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_DOWNLOAD_SAMPLE_SIZE, \
@@ -223,3 +224,60 @@ def topic_word_media(topics_id, word):
 def topic_similar_words(topics_id, word):
     results = apicache.topic_similar_words(topics_id, word)
     return jsonify(results)
+
+
+# Helper function for pooling word2vec timespans process
+@concurrent
+def _grab_timespan_embeddings(job):
+    ts_word_counts = apicache.cached_topic_word_counts(job['api_key'], job['topics_id'], num_words=250,
+                                              timespans_id=int(job['timespan']['timespans_id']),
+                                              snapshots_id=job['snapshots_id'],
+                                              foci_id=job['foci_id'],
+                                              q=job['q'])
+
+    # Remove any words not in top words overall
+    ts_word_counts = [x for x in ts_word_counts if x['term'] in job['overall_words']]
+
+    # Replace specific timespan embeddings with overall so coordinates are consistent
+    for word in ts_word_counts:
+        word['w2v_x'] = job['overall_embeddings'][word['term']][0]
+        word['w2v_y'] = job['overall_embeddings'][word['term']][1]
+
+    return {'timespan': job['timespan'], 'words': ts_word_counts}
+
+
+@synchronized
+def _get_all_timespan_embeddings(jobs):
+    results = []
+    for j in jobs:
+        results.append(_grab_timespan_embeddings(j))
+    return results
+
+
+@app.route('/api/topics/<topics_id>/word2vec-timespans', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def topic_w2v_timespan_embeddings(topics_id):
+    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    # Retrieve embeddings for overall topic
+    overall_word_counts = apicache.topic_word_counts(user_mediacloud_key(), topics_id, num_words=50,
+                                                     snapshots_id=snapshots_id, timespans_id=None, foci_id=foci_id, q=q)
+    overall_words = [x['term'] for x in overall_word_counts]
+    overall_embeddings = {x['term']: (x['google_w2v_x'], x['google_w2v_y']) for x in overall_word_counts}
+
+    # Retrieve top words for each timespan
+    timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id, snapshots_id, foci_id)
+
+    # Retrieve embeddings for each timespan
+    jobs = [{
+        'api_key': user_mediacloud_key(),
+        'topics_id': topics_id,
+        'snapshots_id': snapshots_id,
+        'foci_id': foci_id,
+        'overall_words': overall_words,
+        'overall_embeddings': overall_embeddings,
+        'q': q,
+        'timespan': t,
+    } for t in timespans]
+    embeddings_by_timespan = _get_all_timespan_embeddings(jobs)
+    return jsonify({'list': embeddings_by_timespan})

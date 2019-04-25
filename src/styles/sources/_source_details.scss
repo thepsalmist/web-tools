@@ -13,8 +13,12 @@
 
 }
 
-.icon-button.icon-button-help{
-  margin-left: 0 !important;
+.datacard {
+  &.stat {
+    .icon-button.icon-button-help{
+      margin-left: 0 !important;
+    }  
+  }
 }
 
 .search-section {

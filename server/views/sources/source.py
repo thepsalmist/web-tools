@@ -165,11 +165,12 @@ def api_media_source_split_stories(media_id):
 
     health = _cached_media_source_health(user_mediacloud_key(), media_id)
 
-    all_results = apicache.last_year_split_story_count(user_mediacloud_key(), media_query)
-    non_spidered_results = apicache.last_year_split_story_count(user_mediacloud_key(), exclude_spidered_stories) #same if request.args doesn't ask to exclude_spidered
+    all_results = apicache.split_story_count(user_mediacloud_key(), media_query, None)
+    # returns same results if request.args doesn't ask to exclude_spidered
+    non_spidered_results = apicache.split_story_count(user_mediacloud_key(), exclude_spidered_stories, None)
 
     all_stories = {
-        'total_story_count' : all_results['total_story_count'],
+        'total_story_count': all_results['total_story_count'],
         'health': health,
         'list': all_results['counts'],
     }
@@ -178,7 +179,7 @@ def api_media_source_split_stories(media_id):
         'health': health,
         'list': non_spidered_results['counts'],
     }
-    return jsonify({'results': {'all_stories':all_stories, 'partial_stories': partial_stories}})
+    return jsonify({'results': {'all_stories': all_stories, 'partial_stories': partial_stories}})
 
 
 @app.route('/api/sources/<media_id>/geography')

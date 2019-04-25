@@ -70,7 +70,7 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
     return query
 
 
-def concatenate_query_and_dates(start_date, end_date):
+def dates_as_filter_query(start_date, end_date):
     date_query = ""
     if start_date:
         testa = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
@@ -153,7 +153,7 @@ def parse_query_with_keywords(args):
         solr_q = concatenate_query_for_solr(solr_seed_query=current_query,
                                             media_ids=media_ids,
                                             tags_ids=collections)
-        solr_fq = concatenate_query_and_dates(start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
+        solr_fq = dates_as_filter_query(start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
     # otherwise, default
     except Exception as e:
         logger.warning("user custom query failed, there's a problem with the arguments " + str(e))
@@ -166,7 +166,7 @@ def _parse_query_for_sample_search(sample_search_id, query_id):
     solr_q = concatenate_query_for_solr(solr_seed_query=current_query_info['q'],
                                         media_ids=current_query_info['sources'],
                                         tags_ids=current_query_info['collections'])
-    solr_fq = concatenate_query_and_dates(current_query_info['startDate'], current_query_info['endDate'])
+    solr_fq = dates_as_filter_query(current_query_info['startDate'], current_query_info['endDate'])
     return solr_q, solr_fq
 
 

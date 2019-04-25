@@ -55,8 +55,8 @@ def explorer_story_count_csv():
 @api_error_handler
 def api_explorer_story_split_count():
     search_id = int(request.args['search_id']) if 'search_id' in request.args else None
+    start_date, end_date = parse_query_dates(request.args)
     if only_queries_reddit(request.args):
-        start_date, end_date = parse_query_dates(request.args)
         results = pushshift.reddit_submission_normalized_and_split_story_count(query=request.args['q'],
                                                                                start_date=start_date, end_date=end_date,
                                                                                subreddits=pushshift.NEWS_SUBREDDITS)
@@ -70,7 +70,7 @@ def api_explorer_story_split_count():
         solr_open_query = concatenate_query_for_solr(solr_seed_query='*',
                                                      media_ids=request.args['sources'],
                                                      tags_ids=request.args['collections'])
-        results = apicache.normalized_and_story_split_count(solr_q, solr_fq, solr_open_query)
+        results = apicache.normalized_and_story_split_count(solr_q, solr_open_query, start_date, end_date)
     return jsonify({'results': results})
 
 
@@ -83,12 +83,13 @@ def api_explorer_demo_story_split_count():
     if isinstance(search_id, int) and search_id not in [None, -1]:
         solr_q, solr_fq = parse_as_sample(search_id, request.args['index'])
     else:
+        start_date, end_date = parse_query_dates(request.args)
         solr_q, solr_fq = parse_query_with_keywords(request.args)
     # why is this call fundamentally different than the cache call???
     solr_open_query = concatenate_query_for_solr(solr_seed_query='*',
                                                  media_ids=[],
                                                  tags_ids=DEFAULT_COLLECTION_IDS)
-    results = apicache.normalized_and_story_split_count(solr_q, solr_fq, solr_open_query)
+    results = apicache.normalized_and_story_split_count(solr_q, solr_open_query, start_date, end_date)
 
     return jsonify({'results': results})
 
@@ -105,8 +106,8 @@ def api_explorer_story_split_count_csv():
         q = json.loads(data['q'])
     filename = file_name_for_download(q['label'], filename)
     # now compute total attention for all results
+    start_date, end_date = parse_query_dates(q)
     if (len(q['collections']) == 0) and only_queries_reddit(q['sources']):
-        start_date, end_date = parse_query_dates(q)
         story_counts = pushshift.reddit_submission_normalized_and_split_story_count(query=q['q'],
                                                                                     start_date=start_date,
                                                                                     end_date=end_date,
@@ -115,7 +116,7 @@ def api_explorer_story_split_count_csv():
         solr_q, solr_fq = parse_query_with_keywords(q)
         solr_open_query = concatenate_query_for_solr(solr_seed_query='*', media_ids=q['sources'],
                                                      tags_ids=q['collections'])
-        story_counts = apicache.normalized_and_story_split_count(solr_q, solr_fq, solr_open_query)
+        story_counts = apicache.normalized_and_story_split_count(solr_q, solr_open_query, start_date, end_date)
     props = ['date', 'count', 'total_count', 'ratio']
     return csv.stream_response(story_counts['counts'], props, filename)
 
@@ -135,8 +136,8 @@ def api_explorer_combined_story_split_count_csv():
     # now compute total attention for all results
     story_count_results = []
     for q in queries:
+        start_date, end_date = parse_query_dates(q)
         if (len(q['collections']) == 0) and only_queries_reddit(q['sources']):
-            start_date, end_date = parse_query_dates(q)
             story_counts = pushshift.reddit_submission_normalized_and_split_story_count(query=q['q'],
                                                                                         start_date=start_date,
                                                                                         end_date=end_date,
@@ -145,7 +146,7 @@ def api_explorer_combined_story_split_count_csv():
             solr_q, solr_fq = parse_query_with_keywords(q)
             solr_open_query = concatenate_query_for_solr(solr_seed_query='*', media_ids=q['sources'],
                                                          tags_ids=q['collections'])
-            story_counts = apicache.normalized_and_story_split_count(solr_q, solr_fq, solr_open_query)
+            story_counts = apicache.normalized_and_story_split_count(solr_q, solr_open_query, start_date, end_date)
         story_count_results.append({
             'label': q['label'],
             'by_date': story_counts['counts'],

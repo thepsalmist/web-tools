@@ -80,7 +80,13 @@ MC_START_DATE = datetime.datetime(2010, 1, 1, 0, 0, 0)  # kind of when media clo
 
 # you can specify last_n_days to be 365 if you only want the last year of results
 def split_story_count(user_mc_key, q='*', last_n_days=None):
-    results = _cached_split_story_counts(q, last_n_days)
+    if last_n_days is not None:
+        start_date = datetime.date.today()-datetime.timedelta(last_n_days)
+        end_date = YESTERDAY
+        fq = mc.publish_date_query(start_date, end_date)
+    else:
+        fq = None
+    results = _cached_split_story_counts(q, fq)
     if last_n_days is None:
         # if we are getting ALL stories, make sure bad dates don't give us super old / future ones
         start_date = max(MC_START_DATE, datetime.datetime.strptime(results['counts'][0]['date'],
@@ -93,16 +99,10 @@ def split_story_count(user_mc_key, q='*', last_n_days=None):
 
 
 @cache.cache_on_arguments()
-def _cached_split_story_counts(q='*', last_n_days=None):
+def _cached_split_story_counts(q='*', fq=''):
     # sources are open to everyone, so no need for user-specific cache
     # Helper to fetch split story counts over a timeframe for an arbitrary query
     user_mc = user_mediacloud_client()
-    if last_n_days is not None:
-        start_date = datetime.date.today()-datetime.timedelta(last_n_days)
-        end_date = YESTERDAY
-        fq = user_mc.publish_date_query(start_date, end_date)
-    else:
-        fq = None
     results = user_mc.storyCount(solr_query=q, solr_filter=fq, split=True, split_period='day')
     return results
 

@@ -13,7 +13,8 @@ SORT_INLINK = 'inlink'
 
 TOPIC_MEDIA_INFO_PROPS = ['media_id', 'name', 'url']
 
-TOPIC_MEDIA_PROPS = ['story_count', 'media_inlink_count', 'inlink_count', 'outlink_count', 'facebook_share_count']
+TOPIC_MEDIA_PROPS = ['story_count', 'media_inlink_count', 'inlink_count', 'outlink_count',
+                     'facebook_share_count', 'simple_tweet_count']
 
 TOPIC_MEDIA_CSV_PROPS = TOPIC_MEDIA_INFO_PROPS + TOPIC_MEDIA_PROPS + SOURCE_LIST_CSV_METADATA_PROPS
 

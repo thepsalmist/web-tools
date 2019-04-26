@@ -254,14 +254,22 @@ export function createIndexedAsyncReducer(handlers) {
     handleSuccess: (payload, state, args) => {
       const { uid } = args[0];
       // const { uid } = meta;
-      const updatedResults = [...state.results];
       const updatedFetchStatuses = { ...state.fetchStatuses };
       updatedFetchStatuses[uid] = fetchConstants.FETCH_SUCCEEDED;
+      // if results already exist (by uid), we need to replace them, otherwise add them as new results
+      const updatedResults = [...state.results];
+      let resultsToSave;
       if ('handleSuccess' in handlers) {
         const results = handlers.handleSuccess(payload, state, args, uid);
-        updatedResults.push({ uid, results });
+        resultsToSave = { uid, results };
       } else {
-        updatedResults.push({ uid, ...payload });
+        resultsToSave = { uid, ...payload };
+      }
+      const itemIndex = updatedResults.findIndex(item => item.uid === uid); // does this UID exist?
+      if (itemIndex === -1) {
+        updatedResults.push(resultsToSave);
+      } else {
+        updatedResults[itemIndex] = resultsToSave;
       }
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),

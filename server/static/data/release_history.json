@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2019-4-22",
+      "version": "v3.9.2",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Show media-level tweet counts for Topics"
+        }
+      ]
+    },
+    {
       "date": "2019-4-9",
       "version": "v3.9.1",
       "notes": [

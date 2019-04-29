@@ -102,9 +102,8 @@ class QueryPickerLoadUserSearchesDialog extends React.Component {
             <AppButton
               primary
               onClick={this.handleDialogClose}
-            >
-              <FormattedMessage {...messages.close} />
-            </AppButton>,
+              label={messages.close}
+            />
           </DialogActions>
         </Dialog>
         <AppButton

@@ -56,14 +56,25 @@ def public_topics_list():
     return jsonify({"topics": public_topics})
 
 
+def topics_user_owns(topics, user_email):
+    # pull out just the topics this user has permissions for (ie. remove public ones)
+    user_topics = []
+    for t in topics:
+        topic_users = [o['email'] for o in t['owners']]
+        if user_email in topic_users:
+            user_topics.append(t)
+    return user_topics
+
+
 @app.route('/api/topics/personal', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
 def topic_personal():
     user_mc = user_admin_mediacloud_client()
     link_id = request.args.get('linkId')
-    results = user_mc.topicList(link_id=link_id, limit=500)
-    results['topcs'] = _add_user_favorite_flag_to_topics(results['topics'])
+    results = user_mc.topicList(link_id=link_id, limit=1000)
+    user_owned_topics = topics_user_owns(results['topics'], flask_login.current_user.profile['email'])
+    results['topics'] = _add_user_favorite_flag_to_topics(user_owned_topics)
     return jsonify(results)
 
 

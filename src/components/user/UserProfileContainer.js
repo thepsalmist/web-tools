@@ -6,7 +6,7 @@ import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import { Link } from 'react-router';
 import messages from '../../resources/messages';
 import AppButton from '../common/AppButton';
-import { resetApiKey, requestData, deleteAccount } from '../../actions/userActions';
+import { resetApiKey, deleteAccount } from '../../actions/userActions';
 import { addNotice, updateFeedback } from '../../actions/appActions';
 import { LEVEL_ERROR } from '../common/Notice';
 import PageTitle from '../common/PageTitle';
@@ -33,9 +33,8 @@ const localMessages = {
   resetWorked: { id: 'user.profile.apiKey.resetWorked', defaultMessage: 'We reset your API key successfully' },
 
   otherActions: { id: 'user.profile.otherActions', defaultMessage: 'Other Things to Do' },
-  requestData: { id: 'user.profile.requestData', defaultMessage: 'Request Data' },
-  requestDataAbout: { id: 'user.profile.requestDataAbout', defaultMessage: 'You have the right to request a dump of all the data we have associated with your account.' },
-  requestDataWorked: { id: 'user.profile.requestDataWorked', defaultMessage: 'Your request to get all your data has been received. We will respond via email in the next few days.' },
+  requestData: { id: 'user.profile.requestData', defaultMessage: 'Download Personal Data' },
+  requestDataAbout: { id: 'user.profile.requestDataAbout', defaultMessage: 'You have the right to download a dump of all the personal data we have associated with your account.' },
 
   dangerZone: { id: 'user.profile.deleteAccount', defaultMessage: 'Danger Zone' },
   deleteAccount: { id: 'user.profile.deleteAccount', defaultMessage: 'Delete Account' },
@@ -49,7 +48,7 @@ class UserProfileContainer extends React.Component {
   }
 
   render() {
-    const { profile, handleResetApiKey, handleRequestData, handleDeleteAccount } = this.props;
+    const { profile, handleResetApiKey, handleDeleteAccount } = this.props;
     const { formatMessage } = this.props.intl;
     const adminContent = (profile.auth_roles.includes('admin')) ? <FormattedHTMLMessage {...localMessages.admin} /> : null;
     return (
@@ -109,10 +108,11 @@ class UserProfileContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={12}>
-              <AppButton
-                label={formatMessage(localMessages.requestData)}
-                onClick={handleRequestData}
-              />
+              <a href="/api/user/download-data">
+                <AppButton
+                  label={formatMessage(localMessages.requestData)}
+                />
+              </a>
               <FormattedMessage {...localMessages.requestDataAbout} />
             </Col>
           </Row>
@@ -159,7 +159,6 @@ UserProfileContainer.propTypes = {
   profile: PropTypes.object.isRequired,
   // from dispatch
   handleResetApiKey: PropTypes.func.isRequired,
-  handleRequestData: PropTypes.func.isRequired,
   handleDeleteAccount: PropTypes.func.isRequired,
   // from compositional chain
   intl: PropTypes.object.isRequired,
@@ -177,16 +176,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           dispatch(addNotice({ message: results.error, level: LEVEL_ERROR }));
         } else {
           dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.resetWorked) }));
-        }
-      });
-  },
-  handleRequestData: () => {
-    dispatch(requestData())
-      .then((results) => {
-        if (results.error) {
-          dispatch(addNotice({ message: results.error, level: LEVEL_ERROR }));
-        } else {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.requestDataWorked) }));
         }
       });
   },

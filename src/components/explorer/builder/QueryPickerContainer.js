@@ -313,11 +313,11 @@ class QueryPickerContainer extends React.Component {
             onMediaChange={this.handleMediaChange}
             onMediaDelete={this.handleMediaDelete}
             onDateChange={(dateObject, newValue) => this.updateQueryProperty(selected, dateObject.currentTarget.name, newValue)}
-            handleLoadSearches={handleLoadUserSearches}
-            handleLoadSelectedSearch={handleLoadSelectedSearch}
-            handleSaveSearch={l => this.saveThisSearch(l)}
-            handleDeleteSearch={l => handleDeleteUserSearch(l)}
-            handleCopyAll={property => handleCopyAll(property, selected.uid, queries, formQuery)}
+            onLoadSearches={handleLoadUserSearches}
+            onLoadSelectedSearch={handleLoadSelectedSearch}
+            onSaveSearch={l => this.saveThisSearch(l)}
+            onDeleteSearch={l => handleDeleteUserSearch(l)}
+            onCopyAll={property => handleCopyAll(property, selected.uid, queries, formQuery)}
             isEditable={canSelectMedia}
             focusRequested={field => field.focus()}
             // TODO change to on

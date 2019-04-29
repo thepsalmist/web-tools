@@ -28,22 +28,22 @@ class QueryPickerLoadUserSearchesDialog extends React.Component {
     loadSearchDialogOpen: false,
   };
 
-  onLoadRequest = () => {
-    const { handleLoadSearches } = this.props;
+  handleLoadRequest = () => {
+    const { onLoadSearches } = this.props;
     this.setState({ loadSearchDialogOpen: true });
-    handleLoadSearches();
+    onLoadSearches();
   }
 
-  onDeleteRequest = (selectedSearch) => {
-    const { handleDeleteSearch } = this.props;
-    handleDeleteSearch(selectedSearch);
-  }
-
-  onLoadConfirm = (search) => {
-    const { handleLoadSelectedSearch } = this.props;
-    handleLoadSelectedSearch(search);
+  handleLoadConfirm = (search) => {
+    const { onLoadSelectedSearch } = this.props;
+    onLoadSelectedSearch(search);
     this.setState({ loadSearchDialogOpen: false });
   };
+
+  handleDeleteRequest = (selectedSearch) => {
+    const { onDeleteSearch } = this.props;
+    onDeleteSearch(selectedSearch);
+  }
 
   handleDialogClose = () => {
     this.setState({ loadSearchDialogOpen: false });
@@ -51,7 +51,7 @@ class QueryPickerLoadUserSearchesDialog extends React.Component {
 
   handleLabelChangeAndClose = () => {
     this.setState({ loadSearchDialogOpen: false });
-    this.onLoadConfirm();
+    this.handleLoadConfirm();
   };
 
   render() {
@@ -68,7 +68,7 @@ class QueryPickerLoadUserSearchesDialog extends React.Component {
               <Row key={idx}>
                 <Col lg={12}>
                   <div key={idx} className="query-picker-save-search-item">
-                    <DeleteButton className="delete-search" onClick={() => this.onDeleteRequest(search)} />
+                    <DeleteButton className="delete-search" onClick={() => this.handleDeleteRequest(search)} />
                     <h3><Link to={`queries/search?q=${search.queryParams}`}>{search.queryName}</Link></h3>
                     <p><FormattedDate value={searchDate} /></p>
                     {needsUpdating && (
@@ -109,7 +109,7 @@ class QueryPickerLoadUserSearchesDialog extends React.Component {
         <AppButton
           variant="outlined"
           style={{ marginTop: 30 }}
-          onClick={this.onLoadRequest}
+          onClick={this.handleLoadRequest}
           label={formatMessage(localMessages.loadSavedSearches)}
           disabled={submitting}
         />
@@ -122,11 +122,9 @@ QueryPickerLoadUserSearchesDialog.propTypes = {
   // from parent
   submitting: PropTypes.bool.isRequired,
   searches: PropTypes.array.isRequired,
-  onDelete: PropTypes.func,
-  handleLoadSearches: PropTypes.func.isRequired,
-  handleLoadSelectedSearch: PropTypes.func.isRequired,
-  handleDeleteSearch: PropTypes.func.isRequired,
-  onLoad: PropTypes.func,
+  onLoadSearches: PropTypes.func.isRequired,
+  onLoadSelectedSearch: PropTypes.func.isRequired,
+  onDeleteSearch: PropTypes.func.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
 };

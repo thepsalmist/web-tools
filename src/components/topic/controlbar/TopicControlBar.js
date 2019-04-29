@@ -40,8 +40,8 @@ const explorerUrl = (topic, filters, selectedTimespan) => {
   return urlToExplorerQuery(
     queryName,
     queryKeywords,
-    [ALL_MEDIA],
     [],
+    [ALL_MEDIA],
     selectedTimespan.start_date.substr(0, 10),
     selectedTimespan.end_date.substr(0, 10),
   );

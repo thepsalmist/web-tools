@@ -69,7 +69,7 @@ class QueryForm extends React.Component {
   }
 
   render() {
-    const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, onLoadSearches, onDeleteSearch, onLoadSelectedSearch, savedSearches, searchNickname, onSaveSearch,
+    const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, onLoadSearches, onDeleteSearch, savedSearches, searchNickname, onSaveSearch,
       submitting, handleSubmit, onSave, onMediaChange, renderTextField, renderTextFieldWithFocus, onCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
     const cleanedInitialValues = initialValues ? { ...initialValues } : {};
@@ -217,7 +217,6 @@ class QueryForm extends React.Component {
                     searchNickname={searchNickname}
                     savedSearches={savedSearches}
                     onLoadSearches={onLoadSearches}
-                    onLoadSelectedSearch={onLoadSelectedSearch}
                     onSaveSearch={l => onSaveSearch(l)}
                     onDeleteSearch={onDeleteSearch}
                     submitting={submitting}
@@ -258,7 +257,6 @@ QueryForm.propTypes = {
   initialValues: PropTypes.object,
   onWillSearch: PropTypes.func,
   onLoadSearches: PropTypes.func.isRequired,
-  onLoadSelectedSearch: PropTypes.func.isRequired,
   onSaveSearch: PropTypes.func.isRequired,
   onDeleteSearch: PropTypes.func.isRequired,
   onCopyAll: PropTypes.func.isRequired,

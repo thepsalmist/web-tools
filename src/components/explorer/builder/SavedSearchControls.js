@@ -6,14 +6,13 @@ import QueryPickerSaveUserSearchesDialog from './QueryPickerSaveUserSearchesDial
 
 
 const SavedSearchControls = (props) => {
-  const { onLoadSearches, onLoadSelectedSearch, onSaveSearch, onDeleteSearch, savedSearches,
+  const { onLoadSearches, onSaveSearch, onDeleteSearch, savedSearches,
     searchNickname, submitting, setQueryFormChildDialogOpen } = props;
   return (
     <div className="saved-search-controls-wrapper">
       <QueryPickerLoadUserSearchesDialog
         onLoadSearches={onLoadSearches}
         onDeleteSearch={onDeleteSearch}
-        onLoadSelectedSearch={onLoadSelectedSearch}
         searches={savedSearches}
         submitting={submitting}
         setQueryFormChildDialogOpen={setQueryFormChildDialogOpen}
@@ -39,7 +38,6 @@ SavedSearchControls.propTypes = {
   savedSearches: PropTypes.array,
   onSaveSearch: PropTypes.func.isRequired,
   onLoadSearches: PropTypes.func.isRequired,
-  onLoadSelectedSearch: PropTypes.func.isRequired,
   onDeleteSearch: PropTypes.func.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,

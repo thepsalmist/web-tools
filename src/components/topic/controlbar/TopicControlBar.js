@@ -111,11 +111,11 @@ const TopicControlBar = ({ sideBarContent, topic, intl, selectedSnapshot, latest
                 </LinkWithFilters>
               </div>
             </Permissioned>
-            { filters.timespanId && (
+            { filters.timespanId && selectedTimespan && (
               <div className="controlbar-item">
                 <a target="top" href={explorerUrl(topic, filters, selectedTimespan)}>
                   <ExploreButton />
-                  <FormattedMessage {...localMessages.jumpToExplorer} />
+                  <b><FormattedMessage {...localMessages.jumpToExplorer} /></b>
                 </a>
               </div>
             )}

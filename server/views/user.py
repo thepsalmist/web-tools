@@ -1,5 +1,5 @@
 import logging
-from flask import jsonify, request, redirect, render_template, send_file
+from flask import jsonify, request, redirect, send_file
 import flask_login
 from mediacloud.error import MCException
 import tempfile
@@ -11,8 +11,8 @@ import zipfile
 
 from server import app, auth, mc, user_db
 from server.auth import user_mediacloud_client, user_name
-from server.util.mail import send_html_email
 from server.util.request import api_error_handler, form_fields_required, arguments_required, json_error_response
+from server.views.topics.topic import topics_user_owns
 
 logger = logging.getLogger(__name__)
 
@@ -163,27 +163,6 @@ def logout():
     return redirect("/")
 
 
-@app.route('/api/user/request-data', methods=['POST'])
-@flask_login.login_required
-@api_error_handler
-def request_data():
-    content_title = "Your Data Download Request"
-    content_body = "We received your data download request. You can expect to hear from us in a few days with" \
-                   "more information."
-    action_text = "Read our privacy policy"
-    action_url = "https://mediacloud.org/privacy-policy"
-    send_html_email(content_title,
-                    [user_name(), 'support@mediacloud.org'],
-                    render_template("emails/generic.txt",
-                                    content_title=content_title, content_body=content_body, action_text=action_text,
-                                    action_url=action_url),
-                    render_template("emails/generic.html",
-                                    email_title=content_title, content_title=content_title, content_body=content_body,
-                                    action_text=action_text, action_url=action_url)
-                    )
-    return jsonify({'status': 'ok'})
-
-
 @app.route('/api/user/delete', methods=['POST'])
 @form_fields_required('email')
 @api_error_handler
@@ -230,7 +209,7 @@ def api_user_update():
 def api_user_data_download():
     user_mc = user_mediacloud_client()
     temp_user_data_dir = _save_user_data_dir(flask_login.current_user, user_mc)
-    data = _zip_in_memory(temp_user_data_dir)
+    data = _zip_in_memory(temp_user_data_dir)  # do this in memory to be extra safe on security
     return send_file(data, mimetype='application/zip', as_attachment=True, attachment_filename='mediacloud-data.zip')
 
 
@@ -252,8 +231,24 @@ def _zip_in_memory(dir_to_zip):
 
 
 def _save_user_data_dir(u, user_mc):
-    # make a dir first
-    temp_dir = tempfile.mkdtemp(prefix='user')
+    # make a dir first (prefix with user_id for extra security)
+    temp_dir = tempfile.mkdtemp(prefix='user{}'.format(u.profile['auth_users_id']))
+    # user profile
+    with open(os.path.join(temp_dir, 'profile.json'), 'w') as outfile:
+        profile = u.profile
+        json.dump(profile, outfile)
+    # topic-level permissions
+    with open(os.path.join(temp_dir, 'topic-permissions.csv'), 'w') as outfile:
+        topics = user_mc.topicList(limit=1000)['topics']
+        user_owned_topics = topics_user_owns(topics, u.profile['email'])
+        topic_permission_list = [{
+            'topics_id': t['topics_id'],
+            'topic_name': t['name'],
+            'permission': t['user_permission'],
+        } for t in user_owned_topics]
+        writer = csv.DictWriter(outfile, ['topics_id', 'topic_name', 'permission'])
+        writer.writeheader()
+        writer.writerows(topic_permission_list)
     # saved searches
     with open(os.path.join(temp_dir, 'saved-searches.json'), 'w') as outfile:
         search_list = user_db.get_users_lists(u.name, 'searches')

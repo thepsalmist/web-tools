@@ -22,6 +22,7 @@ const localMessages = {
   selectMediaTitle: { id: 'system.mediaPicker.selectMediaTitle', defaultMessage: 'Select Media' },
   searchByName: { id: 'system.mediaPicker.select.searchby.name', defaultMessage: 'Search by Name/URL' },
   addMedia: { id: 'system.mediaPicker.select.addMedia', defaultMessage: 'Change/add media sources and collections' },
+  pickMedia: { id: 'system.mediaPicker.select.pickMedia', defaultMessage: 'Pick Media' },
 };
 
 class MediaPickerDialog extends React.Component {

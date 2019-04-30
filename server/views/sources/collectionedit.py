@@ -164,8 +164,8 @@ def _parse_sources_from_csv_upload(filepath):
                 updated_src = line['media_id'] not in ['', None]
                 # decode all keys as long as there is a key  re Unicode vs ascii
                 newline = {k.lower(): v for k, v in list(line.items()) if k not in ['', None]}
-                newline_decoded = {k: v for k, v in list(newline.items()) if v not in ['', None]}
-                # empties = {k: v for k, v in list(newline.items()) if v in ['', None]}
+                newline_no_empties = {k: v for k, v in list(newline.items()) if v not in ['', None]}
+                empties = {k: v for k, v in list(newline.items()) if v in ['', None]}
 
                 # source urls have to start with the http, so add it if the user didn't
                 if newline_no_empties['url'][:7] not in ['http://', 'http://'] and \
@@ -180,7 +180,7 @@ def _parse_sources_from_csv_upload(filepath):
                         newline_no_empties.update(empties)
                     sources_to_update.append(newline_no_empties)
                 else:
-                    sources_to_create.append(newline_decoded)
+                    sources_to_create.append(newline_no_empties)
             except Exception as e:
                     logger.error("Couldn't process a CSV row: " + str(e))
                     raise Exception("Couldn't process a CSV row: " + str(e))

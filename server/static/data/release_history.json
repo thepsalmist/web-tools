@@ -1,6 +1,29 @@
 {
   "releases": [
     {
+      "date": "2019-4-22",
+      "version": "v3.9.2",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Show media-level tweet counts for Topics"
+        }
+      ]
+    },
+    {
+      "date": "2019-4-9",
+      "version": "v3.9.1",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Users can now upload a spreadsheet of sources",
+          "details": "Spreadsheet uploaded enables collection curators to upload new sources into a collection or update ones in place."
+        }
+      ]
+    },
+    {
       "date": "2019-4-1",
       "version": "v3.9.0",
       "notes": [

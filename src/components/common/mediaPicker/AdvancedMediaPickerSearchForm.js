@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Field, reduxForm, FormSection } from 'redux-form';
+import { Field, reduxForm, FormSection, keepDirtyOnReinitialize, enableReinitialize } from 'redux-form';
 import { injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../hocs/IntlForm';
@@ -135,6 +135,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         form="advanced-media-picker-search"
         label={formatMessage(messages.mediaType)}
         onChange={val => this.selectMetaData(TAG_SET_MEDIA_TYPE, val)}
+        onSelect={this.setSelectedMediaTypes}
       />
     ) : null;
 
@@ -213,6 +214,8 @@ AdvancedMediaPickerSearchForm.propTypes = {
 
 const reduxFormConfig = {
   form: 'advanced-media-picker-search',
+  enableReinitialize,
+  keepDirtyOnReinitialize,
 };
 
 export default

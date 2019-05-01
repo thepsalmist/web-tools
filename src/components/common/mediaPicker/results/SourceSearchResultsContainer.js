@@ -40,9 +40,9 @@ class SourceSearchResultsContainer extends React.Component {
     });
     // prepare media values with id so we treat all the data similarly
     updatedQueryObj.tags.mediaType = [];
-    Object.keys(mediaValues).forEach((key) => {
-      if (mediaValues[key] === true) {
-        updatedQueryObj.tags.mediaType.push({ tags_id: key });
+    Object.values(mediaValues).forEach((obj) => {
+      if (obj.selected === true) {
+        updatedQueryObj.tags.mediaType.push({ tags_id: obj });
       }
     });
 
@@ -121,16 +121,16 @@ const mapStateToProps = state => ({
   sourceResults: state.system.mediaPicker.sourceQueryResults,
   formQuery: formSelector(
     state,
-    'advanced-media-picker-search.publicationCountry',
-    'advanced-media-picker-search.publicationState',
-    'advanced-media-picker-search.primaryLanguage',
-    'advanced-media-picker-search.countryOfFocus',
-    'advanced-media-picker-search.mediaType',
-    'advanced-media-picker-search.allMedia',
+    'publicationCountry',
+    'publicationState',
+    'primaryLanguage',
+    'countryOfFocus',
+    'mediaType',
+    'allMedia',
   ),
   mediaQuery: formSelector(
     state,
-    'advanced-media-picker-search.mediaType',
+    'mediaType',
   ),
   selectedMetadata: state.system.metadata.selected,
 });

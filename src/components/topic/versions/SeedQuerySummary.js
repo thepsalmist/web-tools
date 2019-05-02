@@ -16,7 +16,8 @@ const localMessages = {
 };
 
 const SeedQuerySummary = ({ seedQueryCount, topic, snapshot, intl, faded }) => {
-  let sourcesAndCollections = topic.media ? [...topic.media] : [];
+  // the form has them grouped together, but the topic object has them separate
+  let sourcesAndCollections = topic.media ? topic.media : topic.sourcesAndCollections;
   sourcesAndCollections = topic.media_tags ? [...sourcesAndCollections, ...topic.media_tags] : sourcesAndCollections;
   return (
     <div className={`topic-info-sidebar ${faded ? 'faded' : ''}`}>

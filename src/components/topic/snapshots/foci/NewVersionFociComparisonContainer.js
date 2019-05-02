@@ -89,8 +89,12 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleNewVersionAndSpider: (topicId, snapshotId) => {
-    // if currentVersion is null this will make a new versionn
-    dispatch(topicSnapshotSpider(topicId, { snapshotId }))
+    // if currentVersion is null this will make a new version
+    const params = {};
+    if (snapshotId) {
+      params.snapshotId = snapshotId;
+    }
+    dispatch(topicSnapshotSpider(topicId, params))
       .then((results) => {
         if (results && results.topics_id) {
           // let them know it worked

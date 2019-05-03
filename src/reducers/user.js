@@ -6,6 +6,7 @@ import * as fetchConstants from '../lib/fetchConstants';
 const INITIAL_STATE = {
   fetchStatus: fetchConstants.FETCH_INVALID,
   isLoggedIn: false,
+  isAdmin: false,
   key: null,
 };
 
@@ -33,6 +34,7 @@ export default function user(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.FETCH_SUCCEEDED,
         isLoggedIn: passwordLoginWorked,
+        isAdmin: action.payload.profile.roles.filter(r => r.role === 'admin').length > 0,
         ...action.payload,
       });
     case reject(LOGIN_WITH_PASSWORD):
@@ -54,6 +56,7 @@ export default function user(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         fetchStatus: fetchConstants.FETCH_SUCCEEDED,
         isLoggedIn: keyLoginWorked,
+        isAdmin: keyLoginWorked ? action.payload.profile.roles.filter(r => r.role === 'admin').length > 0 : false,
         ...action.payload,
       });
     case reject(LOGIN_WITH_COOKIE):

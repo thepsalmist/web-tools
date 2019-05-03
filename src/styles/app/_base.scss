@@ -55,17 +55,21 @@ table {
   padding: 0px;
   border-spacing: 0;
   border-collapse: collapse;
+  /* make sure wider columns don't overlow and make the table blowout the Col */
+  table-layout:fixed;
+  width:100%;
 }
 
 table th {
-    font-weight: bold;
+  font-weight: bold;
   text-align: left;
   white-space: nowrap;
   text-overflow: ellipsis;
   color: $material-grey900;
-    position: relative;
-    background-color: inherit;
+  position: relative;
+  background-color: inherit;
   padding: 5px 13px;
+  border-bottom: 1px solid $material-grey100;
 
   &.numeric {
     text-align: right;
@@ -86,6 +90,9 @@ table td {
   padding: 13px;
   font-size: 13px;
   vertical-align: top;
+
+  /* make sure wider columns don't overlow and make the table blowout the Col */
+  overflow-x: scroll;
 
   &.numeric {
     text-align: right;

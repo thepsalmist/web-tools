@@ -1,6 +1,7 @@
 import logging
 from flask import jsonify, request
 import flask_login
+import mediacloud.error
 
 from server import app, TOOL_API_KEY
 from server.util.request import api_error_handler, json_error_response, form_fields_required
@@ -20,13 +21,20 @@ def retweet_partisanship_story_counts(topics_id):
     tag_story_counts = []
     partisanship_tags = _cached_media_tags(TAG_SETS_ID_RETWEET_PARTISANSHIP_2016)
     # grab the total stories
-    total_stories = topic_story_count(user_mediacloud_key(), topics_id)['count']
+    try:
+        total_stories = topic_story_count(user_mediacloud_key(), topics_id)['count']
+    except mediacloud.error.MCException:
+        total_stories = 0
     # make a count for each tag
     for tag in partisanship_tags:
-        tagged_story_count = topic_story_count(user_mediacloud_key(), topics_id, q=tag['query'])['count']
         try:
+            tagged_story_count = topic_story_count(user_mediacloud_key(), topics_id, q=tag['query'])['count']
             pct = float(tagged_story_count)/float(total_stories)
         except ZeroDivisionError:
+            tagged_story_count = 0
+            pct = 0
+        except mediacloud.error.MCException:
+            tagged_story_count = 0
             pct = 0
         tag_story_counts.append({
             'label': tag['label'],
@@ -50,11 +58,17 @@ def retweet_partisanship_story_counts(topics_id):
 def retweet_partisanship_coverage(topics_id):
     partisanship_tags = _cached_media_tags(TAG_SETS_ID_RETWEET_PARTISANSHIP_2016)
     # grab the total stories
-    total_stories = topic_story_count(user_mediacloud_key(), topics_id)['count']
+    try:
+        total_stories = topic_story_count(user_mediacloud_key(), topics_id)['count']
+    except mediacloud.error.MCException:
+        total_stories = 0
     # count the stories in any media in tagged as partisan
     tags_ids = " ".join([str(t['tags_id']) for t in partisanship_tags])
     tags_ids_query_clause = "tags_id_media:({})".format(tags_ids)
-    tagged_story_count = topic_story_count(user_mediacloud_key(), topics_id, q=tags_ids_query_clause)['count']
+    try:
+        tagged_story_count = topic_story_count(user_mediacloud_key(), topics_id, q=tags_ids_query_clause)['count']
+    except mediacloud.error.MCException:
+        tagged_story_count = 0
     return jsonify({'counts': {'count': tagged_story_count, 'total': total_stories}})
 
 
@@ -69,10 +83,14 @@ def _cached_media_tags(tag_sets_id):
 @form_fields_required('focalSetName', 'focalSetDescription')
 @flask_login.login_required
 def create_retweet_partisanship_focal_set(topics_id):
-    user_mc = user_mediacloud_client()
     # grab the focalSetName and focalSetDescription and then make one
     focal_set_name = request.form['focalSetName']
     focal_set_description = request.form['focalSetDescription']
+    return add_retweet_partisanship_to_topic(topics_id, focal_set_name, focal_set_description)
+
+
+def add_retweet_partisanship_to_topic(topics_id, focal_set_name, focal_set_description):
+    user_mc = user_mediacloud_client()
     focal_technique = FOCAL_TECHNIQUE_BOOLEAN_QUERY
     new_focal_set = user_mc.topicFocalSetDefinitionCreate(topics_id, focal_set_name, focal_set_description,
                                                           focal_technique)

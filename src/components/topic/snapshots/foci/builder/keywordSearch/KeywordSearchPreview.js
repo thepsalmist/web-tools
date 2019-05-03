@@ -7,7 +7,7 @@ import KeywordStoryPreviewContainer from './KeywordStoryPreviewContainer';
 
 const localMessages = {
   about: { id: 'focus.create.keyword.results.about',
-    defaultMessage: 'Here is a preview of the top stores in the Timespan of the Topic you are investigating.  Look over these results to make sure they are the types of stories you are hoping this Subtopic will narrow in on.' },
+    defaultMessage: 'Here is a preview of total number of stories we have found that match your query within the overall topic.' },
 };
 
 const KeywordSearchPreview = (props) => {
@@ -15,10 +15,10 @@ const KeywordSearchPreview = (props) => {
   return (
     <div className="focal-create-boolean-keyword-preview">
       <Row>
-        <Col lg={4} xs={12}>
+        <Col lg={10}>
           <KeywordStoryCountPreviewContainer topicId={topicId} keywords={keywords} />
         </Col>
-        <Col lg={2} md={2} xs={12}>
+        <Col lg={2}>
           <p className="light"><i><FormattedMessage {...localMessages.about} /></i></p>
         </Col>
       </Row>

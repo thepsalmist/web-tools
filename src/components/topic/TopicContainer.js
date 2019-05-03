@@ -1,193 +1,179 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { push, replace } from 'react-router-redux';
-import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { replace } from 'react-router-redux';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { filteredLocation, urlWithFilters } from '../util/location';
 import withAsyncData from '../common/hocs/AsyncDataContainer';
-import AppButton from '../common/AppButton';
-import { updateTopic, selectTopic, filterBySnapshot, filterByTimespan, filterByFocus, fetchTopicSummary, filterByQuery,
-  topicStartSpider } from '../../actions/topicActions';
-import { addNotice } from '../../actions/appActions';
-import { snapshotIsUsable, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
-  TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../reducers/topics/selected/snapshots';
-import { LEVEL_INFO, LEVEL_WARNING, LEVEL_ERROR } from '../common/Notice';
-import ModifyTopicDialog from './controlbar/ModifyTopicDialog';
-import TopicUnderConstruction from './TopicUnderConstruction';
 import TopicHeaderContainer from './TopicHeaderContainer';
-import Permissioned from '../common/Permissioned';
-import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../lib/auth';
-import { ADMIN_MAX_RECOMMENDED_STORIES, MAX_RECOMMENDED_STORIES } from '../../lib/formValidators';
+import { addNotice } from '../../actions/appActions';
+import { selectTopic, fetchTopicSummary, fetchTopicTimespansList, fetchTopicFocalSetsList,
+  filterBySnapshot, filterByFocus, filterByTimespan, filterByQuery, updateTopicFilterParsingStatus,
+  fetchFocalSetDefinitions,
+} from '../../actions/topicActions';
+import { FILTER_PARSING_ONGOING, FILTER_PARSING_DONE } from '../../reducers/topics/selected/filters';
 import PageTitle from '../common/PageTitle';
+import { filteredLocation } from '../util/location';
+import TopicControlBar from './controlbar/TopicControlBar';
+import { latestUsableSnapshot } from '../../reducers/topics/selected/snapshots';
+import LoadingSpinner from '../common/LoadingSpinner';
+import { parseId } from '../../lib/numberUtil';
+import withFilteredUrlMaintenance from './versions/FilteredUrlMaintainer';
 
-const localMessages = {
-  needsSnapshotWarning: { id: 'needSnapshot.warning', defaultMessage: 'You\'ve made changes to your Topic that require a new snapshot to be generated!' },
-  snapshotBuilderLink: { id: 'needSnapshot.snapshotBuilderLink', defaultMessage: 'Visit the Snapshot Builder for details.' },
-  hasAnError: { id: 'topic.hasError', defaultMessage: 'Sorry, this topic has an error!' },
-  spiderQueued: { id: 'topic.spiderQueued', defaultMessage: 'This topic is in the queue for spidering stories.  Please reload after a bit to see if it has started spidering.' },
-  queueAge: { id: 'topic.spiderQueuedAge', defaultMessage: 'In the {queueName} queue since {lastUpdated}' },
-  snapshotQueued: { id: 'snapshotGenerating.warning.queued', defaultMessage: 'We will start creating the new snapshot soon. Please reload this page in a few hours to check if your data is ready.' },
-  snapshotRunning: { id: 'snapshotGenerating.warning.running', defaultMessage: 'We are creating a new snapshot right now. Please reload this page in a few hours to check if your data is ready.' },
-  snapshotImporting: { id: 'snapshotGenerating.warning.importing', defaultMessage: 'We are importing the new snapshot now. Please reload this page in a few hours to check if your data is ready.' },
-  snapshotFailed: { id: 'snapshotFailed.warning', defaultMessage: 'We tried to generate a new snapshot, but it failed.' },
-  topicRunning: { id: 'topic.topicRunning', defaultMessage: 'We are scraping the web for all the stories in include in your topic.' },
-  notUsingLatestSnapshot: { id: 'topic.notUsingLatestSnapshot', defaultMessage: 'You are not using the latest snapshot!  If you are not doing this on purpose, <a href="{url}">switch to the latest snapshot</a> to get the best data.' },
-  otherError: { id: 'topic.state.error.otherError', defaultMessage: 'Sorry, this topic has an error.  It says it is "{state}".' },
-  topicTooBig: { id: 'topic.state.error.topicTooBig', defaultMessage: 'Error, your topic is too big' },
-  topicTooBigDesc: { id: 'topic.state.error.topicTooBigDesc', defaultMessage: 'We limit the size of topics to make sure that our system doesn\'t get overrun with gathering content from the entire web.' },
-  topicTooBigInstructions: { id: 'topic.state.error.topicTooBigInstructions', defaultMessage: 'Try making a new topic with a more specific query or a smaller date range. Email us at support@mediacloud.org if you have questions' },
-  trySpidering: { id: 'topic.state.trySpidering', defaultMessage: 'Manually run this topic' },
-  updateMaxStories: { id: 'topic.state.updateMaxStories', defaultMessage: 'Increase Max Stories and Respider' },
-  maxStories: { id: 'topic.state.maxStories', defaultMessage: 'Max Stories' },
-  otherErrorInstructions: { id: 'topic.state.error.otherErrorInstructions', defaultMessage: 'Email us at support@mediacloud.org if you have questions' },
+
+const pickDefaultTimespan = (dispatch, timespanList) => {
+  // async handler after promise returns - pick the first timespan as the default (this is the overall one)
+  let defaultTimespanId;
+  if (timespanList.length > 0) {
+    defaultTimespanId = timespanList[0].timespans_id;
+  }
+  return defaultTimespanId;
 };
 
-class TopicContainer extends React.Component {
-  componentWillMount() {
-    const { needsNewSnapshot, addAppNotice } = this.props;
-    const { formatMessage } = this.props.intl;
-    // warn user if they made changes that require a new snapshot
-    if (needsNewSnapshot) {
-      addAppNotice({ level: LEVEL_WARNING, message: formatMessage(localMessages.needsSnapshotWarning) });
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { topicId, topicInfo, asyncFetch, needsNewSnapshot, addAppNotice } = this.props;
-    const { formatMessage } = this.props.intl;
-    // if they edited the topic, or the topic changed then reload (unless it is just a isFav change)
-    let topicInfoHasChanged = false;
-    Object.keys(topicInfo).forEach((key) => {
-      if ((key !== 'isFavorite') && (topicInfo[key] !== nextProps.topicInfo[key])) {
-        topicInfoHasChanged = true;
+const pickDefaultFocusId = (dispatch, topicId, snapshotId, focusId, timespanId, location, urlNeedsUpdate) => {
+  let needToUpdateUrl = urlNeedsUpdate;
+  dispatch(filterByFocus(focusId));
+  // foci have been loaded, so fire off an async to load the focalDefs so we can check for a pending version
+  // that needs to be updated (but we can render before that returns, so no need to wait for it to finish before
+  // updating the filter parsing status)
+  dispatch(fetchFocalSetDefinitions(topicId));
+  // now load up timespans for the snapshot we are using (default or not)
+  dispatch(fetchTopicTimespansList(topicId, snapshotId, { focusId }))
+    .then((response) => {
+      // if no timespan specified, default to overall
+      let currentTimespanId = timespanId;
+      if (currentTimespanId === null) {
+        currentTimespanId = pickDefaultTimespan(dispatch, response.list);
+        needToUpdateUrl = true; // we updaed the timespanId, so we have to update the URL
       }
+      dispatch(filterByTimespan(currentTimespanId));
+      // and save the q filter if there is one
+      dispatch(filterByQuery(location.query.q));
+      // now that all the filtres have been deaulted correctly, update the URL
+      if (needToUpdateUrl) { // only i we need to so we don't get extra PUSH commands
+        const newLocation = filteredLocation(location, {
+          snapshotId,
+          focusId,
+          timespanId: currentTimespanId,
+          q: location.query.q,
+        });
+        dispatch(replace(newLocation)); // do a replace, not a push here so the non-snapshot url isn't in the history
+      }
+      // and mark that we are done parsing filters so we can render
+      dispatch(updateTopicFilterParsingStatus(FILTER_PARSING_DONE));
     });
-    if (topicInfoHasChanged || (nextProps.topicId !== topicId)) {
-      asyncFetch();
-      // warn user if they made changes that require a new snapshot
-      if (needsNewSnapshot) {
-        addAppNotice({ level: LEVEL_WARNING, message: formatMessage(localMessages.needsSnapshotWarning) });
-      }
+};
+
+const pickDefaultFilters = (dispatch, topicId, snapshotsList, location) => {
+  // async handler after snapshot data arrives - if no snapshot specified, default to the
+  // latest snapshot or the first snapshot if none is usable
+  let urlNeedsUpdate = false;
+  let currentSnapshotId = parseId(location.query.snapshotId);
+  if (currentSnapshotId === null) {
+    let defaultSnapshotId = null;
+    if (snapshotsList.length > 0) {
+      const firstSnapshot = snapshotsList[0];
+      const latestUsable = latestUsableSnapshot(snapshotsList);
+      defaultSnapshotId = latestUsable ? latestUsable.snapshots_id : firstSnapshot.snapshots_id;
+      dispatch(filterBySnapshot(defaultSnapshotId)); // save that to state
+      currentSnapshotId = defaultSnapshotId;
+      urlNeedsUpdate = true; // we updaed the snapshotId, so we have to update the URL
+    } else {
+      // there aren't any valid snapshots, so just say we are done (this happens with older topics)
+      dispatch(updateTopicFilterParsingStatus(FILTER_PARSING_DONE));
+    }
+  }
+  dispatch(filterBySnapshot(currentSnapshotId));
+  // fire off a request to load the focal sets and foci
+  const currentFocusId = parseId(location.query.focusId);
+  if (currentSnapshotId) {
+    dispatch(fetchTopicFocalSetsList(topicId, { snapshotId: currentSnapshotId }))
+      .then(() => {
+        pickDefaultFocusId(dispatch, topicId, currentSnapshotId, currentFocusId,
+          parseId(location.query.timespanId), location, urlNeedsUpdate);
+      });
+  }
+};
+
+const fetchAsyncData = (dispatch, { params, location }) => {
+  // pick this topic id
+  dispatch(selectTopic(params.topicId));
+  // mark that we are startin the complicated async-driven parsing of filter vaules
+  dispatch(updateTopicFilterParsingStatus(FILTER_PARSING_ONGOING));
+  // now get the topic info, and once you have it set the default filters
+  dispatch(fetchTopicSummary(params.topicId))
+    .then(results => pickDefaultFilters(dispatch, params.topicId, results.snapshots.list, location));
+};
+
+/*
+// when you switch snapshots we need to find the matching timespan in the new snapshot
+function findMatchingTimespan(timespan, timespanList) {
+  if (timespanList && timespanList.list) {
+    return timespanList.list.find(ts => (
+      ((ts.period === timespan.period) && (ts.start_date === timespan.start_date) && (ts.end_date === timespan.end_date))
+    ));
+  }
+  return [];
+}
+*/
+
+/**
+ * This is the parent of any topic-specific content. It handles the initial load of the topic info and
+ * picks default filters for you (as needed).  Anything further down the react component hierarchy can
+ * assume that the filters and topic have been fully loaded.
+ */
+class TopicContainer extends React.Component {
+  constructor() {
+    super();
+    this.setSideBarContent = this.setSideBarContent.bind(this);
+  }
+
+  state = {
+    sideBarContent: null,
+  };
+
+  componentDidUpdate(prevProps) {
+    const { dispatch, location, topicId, filters } = this.props;
+    const snapshotIdChanged = location.query.snapshotId !== prevProps.location.query.snapshotId;
+    if (snapshotIdChanged) {
+      fetchAsyncData(dispatch, this.props);
+      return;
+    }
+    const focusIdChanged = location.query.focusId !== prevProps.location.query.focusId;
+    if (focusIdChanged) {
+      // mark that we are startin the complicated async-driven parsing of filter vaules
+      dispatch(updateTopicFilterParsingStatus(FILTER_PARSING_ONGOING));
+      pickDefaultFocusId(dispatch, topicId, filters.snapshotId, location.query.focusId, null, location, true);
     }
   }
 
-  filtersAreSet() {
-    const { filters, topicId } = this.props;
-    return ((topicId !== null) && (filters.snapshotId !== null) && (filters.timespanId !== null));
+  setSideBarContent(sideBarContent) {
+    this.setState({ sideBarContent });
   }
 
   render() {
-    const { children, goToUrl, topicInfo, topicId, snapshotCount, handleSpiderRequest, handleUpdateMaxStoriesAndSpiderRequest, filters, needsNewSnapshot } = this.props;
-    const { formatMessage } = this.props.intl;
-    // show a big error if there is one to show
-    let contentToShow = children;
-    if ((topicInfo.state === TOPIC_SNAPSHOT_STATE_RUNNING) && (snapshotCount === 0)) {
-      // if the topic is running the initial spider and then show under construction message
-      contentToShow = (
-        <div>
-          {children}
-          <TopicUnderConstruction />
-        </div>
-      );
-    } else if ((topicInfo.state === TOPIC_SNAPSHOT_STATE_ERROR) || (topicInfo.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED)) {
-      if (topicInfo.message.indexOf('exceeds topic max') > -1) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
-        contentToShow = (
-          <Grid>
-            <Row>
-              <Col lg={12}>
-                <div className="topic-stuck-created-or-error">
-                  <h1><FormattedMessage {...localMessages.topicTooBig} /></h1>
-                  <p><FormattedMessage {...localMessages.topicTooBigDesc} /></p>
-                </div>
-              </Col>
-            </Row>
-            <Permissioned onlyTopic={PERMISSION_ADMIN}>
-              <Row>
-                <Col lg={2}>
-                  <input
-                    id="maxStories"
-                    ref={(input) => { this.textInputRef = input; }}
-                    label={formatMessage(localMessages.maxStories)}
-                    rows={1}
-                    placeholder={ADMIN_MAX_RECOMMENDED_STORIES}
-                  />
-                </Col>
-                <Col lg={6}>
-                  <AppButton
-                    label={formatMessage(localMessages.updateMaxStories)}
-                    onClick={() => handleUpdateMaxStoriesAndSpiderRequest(topicInfo, this.textInputRef)}
-                    type="submit"
-                    primary
-                  />
-                </Col>
-              </Row>
-            </Permissioned>
-            <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-              <Row>
-                <Col lg={12}>
-                  <div className="topic-stuck-created-or-error">
-                    <p><FormattedMessage {...localMessages.topicTooBigInstructions} /></p>
-                  </div>
-                </Col>
-              </Row>
-            </Permissioned>
-          </Grid>
-        );
-      } else {
-        contentToShow = (
-          <Grid>
-            <Permissioned onlyTopic={PERMISSION_ADMIN}>
-              <Row>
-                <Col lg={12}>
-                  <div className="topic-stuck-created-or-error">
-                    <h1><FormattedMessage {...localMessages.hasAnError} /></h1>
-                    <AppButton
-                      label={formatMessage(localMessages.trySpidering)}
-                      onClick={() => handleSpiderRequest(topicInfo.topics_id)}
-                      type="submit"
-                      color="primary"
-                    />
-                  </div>
-                </Col>
-              </Row>
-            </Permissioned>
-            <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-              <Row>
-                <Col lg={12}>
-                  <div className="topic-stuck-created-or-error">
-                    <p><FormattedMessage {...localMessages.otherErrorInstructions} /></p>
-                  </div>
-                </Col>
-              </Row>
-            </Permissioned>
-          </Grid>
-        );
-      }
-    } else if (topicInfo.state === TOPIC_SNAPSHOT_STATE_QUEUED) {
-      contentToShow = (
-        <div>
-          <div className="controlbar controlbar-topic">
-            <div className="main">
-              <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-                <ModifyTopicDialog
-                  topicId={topicId}
-                  onUrlChange={goToUrl}
-                  needsNewSnapshot={needsNewSnapshot}
-                  onSpiderRequest={handleSpiderRequest}
-                />
-              </Permissioned>
-            </div>
-          </div>
-          <TopicUnderConstruction />
-        </div>
+    const { children, topicInfo, topicId, filters, snapshot } = this.props;
+    let content = (<LoadingSpinner />);
+    if (filters.parsingStatus === FILTER_PARSING_DONE) {
+      // pass a handler to all the children so the can set the control bar side content if they need to
+      const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent: this.setSideBarContent }));
+      content = (
+        <React.Fragment>
+          <TopicControlBar
+            {...this.props}
+            topicId={topicId}
+            topic={topicInfo}
+            sideBarContent={this.state.sideBarContent}
+            // implements handleRenderFilters and evaluates showFilters
+          />
+          {childrenWithExtraProp}
+        </React.Fragment>
       );
     }
     return (
       <div className="topic-container">
         <PageTitle value={topicInfo.name} />
-        <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} filters={filters} />
-        {contentToShow}
+        <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} currentVersion={snapshot ? snapshot.note : 1} filters={filters} />
+        {content}
       </div>
     );
   }
@@ -199,199 +185,37 @@ TopicContainer.propTypes = {
   children: PropTypes.node,
   location: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
+  snapshot: PropTypes.object,
+  dispatch: PropTypes.func.isRequired,
   // from dispatch
-  asyncFetch: PropTypes.func.isRequired,
   addAppNotice: PropTypes.func.isRequired,
-  handleSpiderRequest: PropTypes.func.isRequired,
-  handleUpdateMaxStoriesAndSpiderRequest: PropTypes.func.isRequired,
   // from state
   filters: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string.isRequired,
   topicInfo: PropTypes.object,
-  needsNewSnapshot: PropTypes.bool.isRequired,
-  snapshotCount: PropTypes.number.isRequired,
-  goToUrl: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   filters: state.topics.selected.filters,
   fetchStatus: state.topics.selected.info.fetchStatus,
   topicInfo: state.topics.selected.info,
-  topicId: parseInt(ownProps.params.topicId, 10),
-  needsNewSnapshot: state.topics.selected.needsNewSnapshot,
-  snapshotCount: state.topics.selected.snapshots.list.length,
+  topicId: parseId(ownProps.params.topicId),
+  snapshot: state.topics.selected.snapshots.selected,
 });
 
 const mapDispatchToProps = dispatch => ({
   addAppNotice: (info) => {
     dispatch(addNotice(info));
   },
-  goToUrl: (url) => {
-    dispatch(push(url));
-  },
-  asyncFetch: () => {
-  },
-  handleUpdateMaxStoriesAndSpiderRequest: (topicInfo, textInput) => {
-    const maxStories = parseInt(textInput.value, 10) > MAX_RECOMMENDED_STORIES ? parseInt(textInput.value, 10) : ADMIN_MAX_RECOMMENDED_STORIES;
-
-    return dispatch(updateTopic(topicInfo.topics_id, { max_stories: maxStories }))
-      .then(dispatch(topicStartSpider(topicInfo.topics_id)))
-      .then(() => window.location.reload());
-  },
-  handleSpiderRequest: topicId => dispatch(topicStartSpider(topicId)).then(() => window.location.reload()),
 });
-
-const fetchAsyncData = (dispatch, { params, location, intl }) => {
-  dispatch(selectTopic(params.topicId));
-  // select any filters that are serialized on the url
-  const { query } = location;
-  const { snapshotId } = query;
-  if (snapshotId) {
-    dispatch(filterBySnapshot(query.snapshotId));
-  }
-  if (location.query.focusId) {
-    dispatch(filterByFocus(query.focusId));
-  }
-  if (location.query.timespanId) {
-    dispatch(filterByTimespan(query.timespanId));
-  }
-  if (location.query.q) {
-    dispatch(filterByQuery(query.q));
-  }
-  // now that filters are set, fetch the topic summary info
-  return dispatch(fetchTopicSummary(params.topicId))
-    .then((response) => {
-      // show the subheader info
-      // show any warnings based on the topic state
-      switch (response.state) {
-        case TOPIC_SNAPSHOT_STATE_QUEUED:
-          dispatch(addNotice({
-            level: LEVEL_INFO,
-            message: intl.formatMessage(localMessages.spiderQueued),
-            details: intl.formatMessage(localMessages.queueAge, {
-              queueName: response.job_queue,
-              lastUpdated: response.spiderJobs[0].last_updated,
-            }),
-          }));
-          break;
-        case TOPIC_SNAPSHOT_STATE_RUNNING:
-          dispatch(addNotice({
-            level: LEVEL_INFO,
-            message: intl.formatMessage(localMessages.topicRunning),
-            details: response.message,
-          }));
-          break;
-        case TOPIC_SNAPSHOT_STATE_ERROR:
-          dispatch(addNotice({
-            level: LEVEL_ERROR,
-            message: intl.formatMessage(localMessages.hasAnError),
-            details: response.message,
-          }));
-          break;
-        case TOPIC_SNAPSHOT_STATE_COMPLETED:
-          // everything is ok
-          break;
-        default:
-          // got some unknown bad state
-          dispatch(addNotice({
-            level: LEVEL_ERROR,
-            message: intl.formatMessage(localMessages.otherError, { state: response.state }),
-          }));
-          break;
-      }
-      // show any warnings based on the snapshot state
-      const snapshots = response.snapshots.list;
-      const snapshotJobStatus = response.snapshots.jobStatus;
-      const firstReadySnapshot = snapshots.find(s => snapshotIsUsable(s));
-      // if no snapshot specified, pick the first usable snapshot
-      if ((snapshotId === null) || (snapshotId === undefined)) {
-        // default to the latest ready snapshot if none is specified on url
-        if (firstReadySnapshot) {
-          const newSnapshotId = firstReadySnapshot.snapshots_id;
-          const newLocation = filteredLocation(location, {
-            snapshotId: newSnapshotId,
-            timespanId: null,
-            focusId: null,
-            q: null,
-          });
-          dispatch(replace(newLocation)); // do a replace, not a push here so the non-snapshot url isn't in the history
-          dispatch(filterBySnapshot(newSnapshotId));
-        } else if (snapshots.length > 0) {
-          // first snapshot doesn't show up as a job, so we gotta check for status here and alert if it is importing :-(
-          const firstSnapshot = snapshots[0];
-          if (!snapshotIsUsable(firstSnapshot)) {
-            dispatch(addNotice({
-              level: LEVEL_INFO,
-              message: intl.formatMessage(localMessages.snapshotImporting),
-            }));
-          }
-        }
-      } else if (firstReadySnapshot.snapshots_id !== parseInt(snapshotId, 10)) {
-        // if snaphot is specific in URL, but it is not the latest then show a warning
-        dispatch(addNotice({
-          level: LEVEL_WARNING,
-          htmlMessage: intl.formatHTMLMessage(localMessages.notUsingLatestSnapshot, {
-            url: urlWithFilters(location.pathname, {
-              snapshotId: firstReadySnapshot.snapshots_id,
-            }),
-          }),
-        }));
-      }
-      // if a snapshot is in progress then show the user a note about its state
-      if (snapshotJobStatus && snapshotJobStatus.length > 0) {
-        const latestSnapshotJobStatus = response.snapshots.jobStatus[0];
-        switch (latestSnapshotJobStatus.state) {
-          case TOPIC_SNAPSHOT_STATE_QUEUED:
-            dispatch(addNotice({
-              level: LEVEL_INFO,
-              message: intl.formatMessage(localMessages.snapshotQueued),
-              details: latestSnapshotJobStatus.message,
-            }));
-            break;
-          case TOPIC_SNAPSHOT_STATE_RUNNING:
-            dispatch(addNotice({
-              level: LEVEL_INFO,
-              message: intl.formatMessage(localMessages.snapshotRunning),
-              details: latestSnapshotJobStatus.message,
-            }));
-            break;
-          case TOPIC_SNAPSHOT_STATE_ERROR:
-            dispatch(addNotice({
-              level: LEVEL_ERROR,
-              message: intl.formatMessage(localMessages.snapshotFailed),
-              details: latestSnapshotJobStatus.message,
-            }));
-            break;
-          case TOPIC_SNAPSHOT_STATE_COMPLETED:
-            const latestSnapshot = snapshots[0];
-            if (!snapshotIsUsable(latestSnapshot)) {
-              dispatch(addNotice({
-                level: LEVEL_INFO,
-                message: intl.formatMessage(localMessages.snapshotImporting),
-              }));
-            }
-            break;
-          default:
-            // don't alert user about anything
-        }
-      } else if (snapshots.length > 1) {
-        // for some reason the second snapshot isn't showing up in the jobs list
-        const latestSnapshot = snapshots[0];
-        if (!snapshotIsUsable(latestSnapshot)) {
-          dispatch(addNotice({
-            level: LEVEL_INFO,
-            message: intl.formatMessage(localMessages.snapshotImporting),
-          }));
-        }
-      }
-    });
-};
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
     withAsyncData(fetchAsyncData)(
-      TopicContainer
+      withFilteredUrlMaintenance(
+        TopicContainer
+      )
     )
   )
 );

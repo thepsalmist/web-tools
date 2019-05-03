@@ -29,7 +29,7 @@ def media_type_story_counts(topics_id):
             'label': tag['label'],
             'tags_id': tag['tags_id'],
             'count': tagged_story_count,
-            'pct': float(tagged_story_count)/float(total_stories)
+            'pct': float(tagged_story_count)/float(total_stories) if total_stories > 0 else 0, # protect against div by zero
         })
 
     return jsonify({'story_counts': tag_story_counts})
@@ -74,3 +74,9 @@ def create_media_type_focal_set(topics_id):
         result = user_mc.topicFocusDefinitionCreate(topics_id, **params)
         focus_def_results.append(result)
     return {'success': True}
+
+@app.route('/api/media-types/list', methods=['GET'])
+@flask_login.login_required
+def get_media_types():
+    media_type_tags = tags_in_tag_set(TOOL_API_KEY, TAG_SETS_ID_MEDIA_TYPE)
+    return jsonify({'list': media_type_tags})

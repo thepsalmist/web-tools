@@ -12,7 +12,7 @@ import zipfile
 from server import app, auth, mc, user_db
 from server.auth import user_mediacloud_client, user_name
 from server.util.request import api_error_handler, form_fields_required, arguments_required, json_error_response
-from server.views.topics.topic import topics_user_owns
+from server.views.topics.topiclist import topics_user_owns
 
 logger = logging.getLogger(__name__)
 

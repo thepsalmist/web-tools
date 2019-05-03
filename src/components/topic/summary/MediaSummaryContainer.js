@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import { push } from 'react-router-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -16,7 +15,7 @@ import { fetchTopicTopMedia, sortTopicTopMedia } from '../../../actions/topicAct
 import Permissioned from '../../common/Permissioned';
 import { getUserRoles, hasPermissions, PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { DownloadButton } from '../../common/IconButton';
-import { filteredLinkTo, filtersAsUrlParams } from '../../util/location';
+import { urlWithFilters, filtersAsUrlParams } from '../../util/location';
 import { HELP_SOURCES_CSV_COLUMNS } from '../../../lib/helpConstants';
 
 const localMessages = {
@@ -60,7 +59,7 @@ class MediaSummaryContainer extends React.Component {
           onChangeSort={isLoggedIn ? this.onChangeSort : null}
           sortedBy={sort}
           topicId={topicId}
-          showMetadata
+          includeMetadata={false}
           showTweetCounts={showTweetCounts}
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
@@ -95,7 +94,7 @@ MediaSummaryContainer.propTypes = {
   filters: PropTypes.object.isRequired,
   // from dispatch
   sortData: PropTypes.func.isRequired,
-  handleExplore: PropTypes.func.isRequired,
+  handleExplore: PropTypes.string.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   sort: PropTypes.string.isRequired,
@@ -116,10 +115,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   sortData: (sort) => {
     dispatch(sortTopicTopMedia(sort));
   },
-  handleExplore: () => {
-    const exploreUrl = filteredLinkTo(`/topics/${ownProps.topicId}/media`, ownProps.filters);
-    dispatch(push(exploreUrl));
-  },
+  handleExplore: urlWithFilters(`/topics/${ownProps.topicId}/media`, ownProps.filters),
 });
 
 const fetchAsyncData = (dispatch, props) => {

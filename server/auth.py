@@ -93,6 +93,10 @@ def user_has_auth_role(role):
     return current_user.has_auth_role(role)
 
 
+def user_is_admin():
+    return user_has_auth_role('admin')
+
+
 def create_and_cache_user(profile):
     user = User(profile)
     user.create_in_db_if_needed()

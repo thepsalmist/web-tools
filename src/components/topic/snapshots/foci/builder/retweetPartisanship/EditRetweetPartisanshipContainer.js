@@ -67,6 +67,7 @@ EditRetweetPartisanshipContainer.propTypes = {
   finishStep: PropTypes.func.isRequired,
   // from compositional helper
   intl: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,
 };

@@ -1,9 +1,10 @@
 import moment from 'moment';
-import { LOCATION_CHANGE } from 'react-router-redux';
+// import { LOCATION_CHANGE } from 'react-router-redux';
 import { FETCH_TOPIC_TIMESPANS_LIST, TOGGLE_TIMESPAN_CONTROLS, TOPIC_FILTER_BY_FOCUS,
   SET_TIMESPAN_VISIBLE_PERIOD, TOPIC_FILTER_BY_TIMESPAN, TOPIC_FILTER_BY_SNAPSHOT }
   from '../../../actions/topicActions';
 import { createAsyncReducer } from '../../../lib/reduxHelpers';
+import { parseId } from '../../../lib/numberUtil';
 
 function addJsDates(list) {
   return list.map(timespan => ({
@@ -23,30 +24,33 @@ function getTimespanFromListById(list, id) {
 const initialState = {
   list: [],
   isVisible: true,
-  selectedPeriod: 'overall',
   selectedId: null, // annoying that I have to keep this here too... topic.filters should be the one true source of this info :-(
   selected: null,
+  selectedPeriod: 'overall',
 };
 
 const timespans = createAsyncReducer({
   initialState,
   action: FETCH_TOPIC_TIMESPANS_LIST,
-  handleSuccess: (payload, state) => {
-    // this needs to update the selected info, in case the seleceted id came from the url
-    const list = addJsDates(payload.list);
-    const selected = getTimespanFromListById(list, state.selectedId);
-    return { list, selected };
-  },
+  // this needs to update the selected info, in case the seleceted id came from the url
+  handleSuccess: (payload, state) => ({
+    list: addJsDates(payload.list),
+    selected: getTimespanFromListById(addJsDates(payload.list), state.selectedId),
+    selectedPeriod: (state.selectedId) ? getTimespanFromListById(addJsDates(payload.list), state.selectedId).period : null,
+  }),
   [TOPIC_FILTER_BY_SNAPSHOT]: () => initialState, // when snapshot changes reset these
   [TOPIC_FILTER_BY_FOCUS]: () => initialState, // when focus changes reset these
   [TOGGLE_TIMESPAN_CONTROLS]: payload => ({ isVisible: payload }),
   [SET_TIMESPAN_VISIBLE_PERIOD]: payload => ({ selectedPeriod: payload }),
   [TOPIC_FILTER_BY_TIMESPAN]: (payload, state) => {
-    const selectedId = parseInt(payload, 10);
-    // this might fail, in the case where the id comes from the url, before we have fetched the list
-    const selected = getTimespanFromListById(state.list, selectedId);
-    return { selectedId, selected };
+    const selected = getTimespanFromListById(state.list, parseId(payload));
+    return {
+      selectedId: parseId(payload),
+      selected,
+      selectedPeriod: selected ? selected.period : 'custom',
+    };
   },
+/*
   [LOCATION_CHANGE]: (payload, state) => {
     // for some reason when the user hits the back button we need to manually re-render
     // if the timespan has changed
@@ -64,7 +68,9 @@ const timespans = createAsyncReducer({
       }
     }
     return updates;
+
   },
+*/
 });
 
 export default timespans;

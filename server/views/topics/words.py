@@ -17,6 +17,7 @@ from server.views.topics import access_public_topic
 logger = logging.getLogger(__name__)
 
 WORD_CONTEXT_SIZE = 5   # for sentence fragments, this is the amount of words before & after that we return
+WORD2VEC_TIMESPAN_POOL_PROCESSES = 10
 
 
 @app.route('/api/topics/<topics_id>/words/subtopic-comparison.csv', methods=['GET'])
@@ -230,10 +231,10 @@ def topic_similar_words(topics_id, word):
 @concurrent
 def _grab_timespan_embeddings(job):
     ts_word_counts = apicache.cached_topic_word_counts(job['api_key'], job['topics_id'], num_words=250,
-                                              timespans_id=int(job['timespan']['timespans_id']),
-                                              snapshots_id=job['snapshots_id'],
-                                              foci_id=job['foci_id'],
-                                              q=job['q'])
+                                                       timespans_id=int(job['timespan']['timespans_id']),
+                                                       snapshots_id=job['snapshots_id'],
+                                                       foci_id=job['foci_id'],
+                                                       q=job['q'])
 
     # Remove any words not in top words overall
     ts_word_counts = [x for x in ts_word_counts if x['term'] in job['overall_words']]

@@ -1,5 +1,6 @@
 import { FETCH_TOPIC_FOCAL_SETS_LIST, TOPIC_FILTER_BY_FOCUS } from '../../../../actions/topicActions';
 import { createAsyncReducer } from '../../../../lib/reduxHelpers';
+import { parseId } from '../../../../lib/numberUtil';
 
 function getFocusFromListById(list, id) {
   const result = list.find(element => element.foci_id === id);
@@ -28,7 +29,7 @@ const list = createAsyncReducer({
     return { list: foci, selected };
   },
   [TOPIC_FILTER_BY_FOCUS]: (payload, state) => {
-    const selectedId = parseInt(payload, 10);
+    const selectedId = parseId(payload);
     // this might fail, in the case where the id comes from the url, before we have fetched the list
     const selected = getFocusFromListById(state.list, selectedId);
     return { selectedId, selected };

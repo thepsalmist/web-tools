@@ -1,8 +1,8 @@
 import logging
 from multiprocessing import Pool
-
 import flask_login
 from flask import jsonify, request, Response
+import mediacloud
 
 import server.util.csv as csv
 import server.util.tags as tag_util
@@ -91,7 +91,8 @@ def topic_stories(topics_id):
 def topic_stories_csv(topics_id):
     user_mc = user_admin_mediacloud_client()
     topic = user_mc.topic(topics_id)
-    return stream_story_list_csv(user_mediacloud_key(), topic['name']+'-stories', topics_id)
+    story_limit = request.args['story_limit'] if 'story_limit' in request.args else None
+    return stream_story_list_csv(user_mediacloud_key(), topic['name']+'-stories', topics_id, story_limit=story_limit)
 
 
 def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
@@ -115,8 +116,8 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
 
     story_count = apicache.topic_story_count(user_mediacloud_key(), topics_id,
                                              snapshots_id=params['snapshots_id'], timespans_id=params['timespans_id'],
-                                             foci_id = params['foci_id'], q=params['q'])
-    logger.info("Total stories to download: {}".format(story_count))
+                                             foci_id=params['foci_id'], q=params['q'])
+    logger.info("Total stories to download: {}".format(story_count['count']))
 
     if 'as_attachment' in params:
         del params['as_attachment']
@@ -126,7 +127,7 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
         params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
     params['limit'] = 1000  # an arbitrary value to let us page through with big topics
 
-    # determine which props the user actaully wants to download
+    # determine which props the user actually wants to download
     props = [
         'stories_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',
         'themes', 'subtopics',
@@ -213,6 +214,7 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
         # 'media_pub_country', 'media_pub_state', 'media_language', 'media_about_country', 'media_media_type'
     ]
     yield ','.join(spec_props) + '\n'  # first send the column names
+    story_count = 0
     link_id = 0
     more_pages = True
     while more_pages:
@@ -245,9 +247,10 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
 # generator you can use to handle a long list of stories row by row (one row per story)
 def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
     yield ','.join(props) + '\n'  # first send the column names
+    story_count = 0
     link_id = 0
     more_pages = True
-    while more_pages:
+    while more_pages and (('story_limit' in kwargs) and (story_count < int(kwargs['story_limit']))):
         page = _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs)
         if 'next' in page['link_ids']:
             link_id = page['link_ids']['next']
@@ -259,6 +262,7 @@ def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
             cleaned_row = csv.dict2row(props, s)
             row_string = ','.join(cleaned_row) + '\n'
             yield row_string
+        story_count += len(page['stories'])
 
 
 def _media_info_worker(info):
@@ -270,12 +274,15 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
     add_media_fields = False  # switch for including all the media metadata in each row (ie. story)
     media_lookup = {}
 
-    story_page = apicache.topic_story_list_by_page(user_key, topics_id, link_id=link_id, **kwargs)
+    args = kwargs.copy()   # need to make sure invalid params don't make it to API call
+    if 'story_limit' in args:
+        del args['story_limit']
+    story_page = apicache.topic_story_list_by_page(user_key, topics_id, link_id=link_id, **args)
 
     if len(story_page['stories']) > 0:  # be careful to not construct malformed query if no story ids
 
         story_ids = [str(s['stories_id']) for s in story_page['stories']]
-        stories_with_tags = apicache.story_list(user_key, 'stories_id:(' + " ".join(story_ids) + ")", kwargs['limit'])
+        stories_with_tags = apicache.story_list(user_key, 'stories_id:(' + " ".join(story_ids) + ")", args['limit'])
 
         # build a media lookup table in parallel so it is faster
         if add_media_fields:
@@ -314,3 +321,36 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
                         s['themes'] = ", ".join(story_tag_ids)
 
     return story_page  # need links too
+
+
+@app.route('/api/topics/<topics_id>/stories/counts-by-snapshot', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def story_counts_by_snapshot(topics_id):
+    user_mc = user_mediacloud_client(user_mediacloud_key())
+    snapshots = user_mc.topicSnapshotList(topics_id)
+    counts = {}
+    for s in snapshots:
+        # get the count of stories in the overally timespan for this snapshot
+        timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id,
+                                                        snapshots_id=s['snapshots_id'], foci_id=None)
+        try:
+            total = timespans[0]['story_count']
+        except mediacloud.error.MCException:
+            total = 0
+        except IndexError:  # this doesn't have any snapshots (ie. it failed to generate correctly)
+            total = 0
+        # search by tag to find out how many stories were spidered
+        spidered = 0
+        try:
+            spidered = apicache.topic_story_count(user_mediacloud_key(), topics_id,
+                                                  snapshots_id=s['snapshots_id'], foci_id=None,
+                                                  timespans_id=timespans[0]['timespans_id'],
+                                                  q="* AND NOT tags_id_stories:{}".format(8875452))['count']
+        except mediacloud.error.MCException:
+            spidered = 0
+        except IndexError:  # this doesn't have any snapshots (ie. it failed to generate correctly)
+            total = 0
+        seeded = total - spidered
+        counts[s['snapshots_id']] = {'total': total, 'spidered': spidered, 'seeded': seeded}
+    return jsonify(counts)

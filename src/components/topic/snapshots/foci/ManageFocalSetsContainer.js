@@ -1,25 +1,28 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import Link from 'react-router/lib/Link';
 import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AppButton from '../../../common/AppButton';
+import messages from '../../../../resources/messages';
 import ConfirmationDialog from '../../../common/ConfirmationDialog';
 import { fetchFocalSetDefinitions, deleteFocalSetDefinition, deleteFocusDefinition, setTopicNeedsNewSnapshot }
   from '../../../../actions/topicActions';
 import { updateFeedback } from '../../../../actions/appActions';
-import FocalSetDefinitionSummary from './FocalSetDefinitionSummary';
+import FocalSetDefinitionDetails from './FocalSetDefinitionDetails';
 import BackLinkingControlBar from '../../BackLinkingControlBar';
 import FocusIcon from '../../../common/icons/FocusIcon';
-import messages from '../../../../resources/messages';
+import NewVersionFociComparisonContainer from './NewVersionFociComparisonContainer';
+import NeedsNewVersionWarning from '../../versions/NeedsNewVersionWarning';
+import LinkWithFilters from '../../LinkWithFilters';
 
 const localMessages = {
+  listTitle: { id: 'focalSets.list.title', defaultMessage: 'Subtopic Details' },
   focalSetsManageAbout: { id: 'focalSets.manage.about',
     defaultMessage: 'Every Subtopic is part of a Set. All the Subtopics within a Set share the same Technique. Our tools lets you compare Subtopics with a Set, but they don\'t let you easily compare Subtopics in different Sets.' },
   removeFocalSetTitle: { id: 'focalSets.manage.remove.title', defaultMessage: 'Really Remove this Set?' },
-  removeFocalSetAbout: { id: 'focalSets.manage.remove.about', defaultMessage: '<p>Removing a Set means that the next Snapshot you make will NOT include it.  This will NOT remove the Set from this Snapshot.</p><p>Are you sure you want to remove this Set? All the Subtopic that are part of it will be removed from the next Snapshot as well.</p>' },
+  removeFocalSetAbout: { id: 'focalSets.manage.remove.about', defaultMessage: '<p>Removing a Set means that the next Version you make will NOT include it.  This will NOT remove the Set from this Version.</p><p>Are you sure you want to remove this Set? All the Subtopic that are part of it will be removed from the next Snapshot as well.</p>' },
   removeOk: { id: 'focalSets.manage.remove.ok', defaultMessage: 'Remove It' },
   removeFocalSetSucceeded: { id: 'focalSets.manage.remove.succeeded', defaultMessage: 'Removed the Set' },
   removeFocalSetFailed: { id: 'focalSets.manage.remove.failed', defaultMessage: 'Sorry, but removing the Set failed :-(' },
@@ -56,60 +59,64 @@ class ManageFocalSetsContainer extends React.Component {
   render() {
     const { topicId, focalSetDefinitions } = this.props;
     const { formatMessage } = this.props.intl;
-    const removeConfirmationDialog = (
-      <ConfirmationDialog
-        open={this.state.removeDialogOpen}
-        title={formatMessage(localMessages.removeFocalSetTitle)}
-        okText={formatMessage(localMessages.removeOk)}
-        onCancel={this.onCancelDeleteFocalSetDefinition}
-        onOk={this.onDeleteFocalSetDefinition}
-      >
-        <FormattedHTMLMessage {...localMessages.removeFocalSetAbout} />
-      </ConfirmationDialog>
-    );
     return (
-      <div className="manage-focal-sets">
+      <React.Fragment>
         <BackLinkingControlBar message={localMessages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
-        <Grid>
-          <Row>
-            <Col lg={12}>
-              <h1><FocusIcon /><FormattedMessage {...messages.manageFoci} /></h1>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={10} xs={12}>
-              <p>
-                <FormattedMessage {...localMessages.focalSetsManageAbout} />
-              </p>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={10} xs={12}>
-              <div className="focal-set-definition-list">
-                {focalSetDefinitions.map(focalSetDef => (
-                  <FocalSetDefinitionSummary
-                    key={focalSetDef.focal_set_definitions_id}
-                    focalSetDefinition={focalSetDef}
-                    onDelete={this.handleDelete}
-                    onFocusDefinitionDelete={this.onFocusDefinitionDelete}
-                    topicId={topicId}
-                  />
-                ))}
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={12}>
-              <div id="create-foci-button">
-                <Link to={`/topics/${topicId}/snapshot/foci/create`}>
-                  <AppButton primary label={formatMessage(messages.addFocus)}>{formatMessage(messages.addFocus)}</AppButton>
-                </Link>
-              </div>
-            </Col>
-          </Row>
-        </Grid>
-        {removeConfirmationDialog}
-      </div>
+        <NeedsNewVersionWarning />
+        <div className="manage-focal-sets">
+          <Grid>
+            <Row>
+              <Col lg={12}>
+                <h1><FocusIcon /><FormattedMessage {...messages.manageFoci} /></h1>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={10} xs={12}>
+                <p>
+                  <FormattedMessage {...localMessages.focalSetsManageAbout} />
+                </p>
+              </Col>
+            </Row>
+            <NewVersionFociComparisonContainer />
+            {(focalSetDefinitions.length > 0) && (
+              <Row>
+                <Col lg={10} xs={12}>
+                  <div className="focal-set-definition-list">
+                    <h2><FormattedMessage {...localMessages.listTitle} /></h2>
+                    {focalSetDefinitions.map((focalSetDef, idx) => (
+                      <FocalSetDefinitionDetails
+                        key={idx}
+                        focalSetDefinition={focalSetDef}
+                        onDelete={this.handleDelete}
+                        onFocusDefinitionDelete={this.onFocusDefinitionDelete}
+                        topicId={topicId}
+                      />
+                    ))}
+                  </div>
+                </Col>
+              </Row>
+            )}
+            <Row>
+              <Col lg={6}>
+                <div id="create-foci-button">
+                  <LinkWithFilters to={`/topics/${topicId}/snapshot/foci/create`}>
+                    <AppButton primary label={messages.addFocus} />
+                  </LinkWithFilters>
+                </div>
+              </Col>
+            </Row>
+          </Grid>
+          <ConfirmationDialog
+            open={this.state.removeDialogOpen}
+            title={formatMessage(localMessages.removeFocalSetTitle)}
+            okText={formatMessage(localMessages.removeOk)}
+            onCancel={this.onCancelDeleteFocalSetDefinition}
+            onOk={this.onDeleteFocalSetDefinition}
+          >
+            <FormattedHTMLMessage {...localMessages.removeFocalSetAbout} />
+          </ConfirmationDialog>
+        </div>
+      </React.Fragment>
     );
   }
 }
@@ -126,8 +133,9 @@ ManageFocalSetsContainer.propTypes = {
   handleDeleteFocusDefinition: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  topicId: parseInt(ownProps.params.topicId, 10),
+const mapStateToProps = state => ({
+  topicId: state.topics.selected.id,
+  topicInfo: state.topics.selected.info,
   focalSetDefinitions: state.topics.selected.focalSets.definitions.list,
   fetchStatus: state.topics.selected.focalSets.definitions.fetchStatus,
 });

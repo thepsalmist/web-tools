@@ -144,12 +144,14 @@ export function fetchQueryGeo(params) {
 export function fetchQuerySourcesByIds(params) {
   const acceptedParams = acceptParams(params, ['uid', 'sources']);
   acceptedParams['sources[]'] = params.sources;
+  delete acceptedParams.sources;
   return createApiPromise('api/explorer/sources/list', acceptedParams);
 }
 
 export function fetchQueryCollectionsByIds(params) {
   const acceptedParams = acceptParams(params, ['uid', 'collections']);
   acceptedParams['collections[]'] = params.collections;
+  delete acceptedParams.collections;
   return createApiPromise('api/explorer/collections/list', acceptedParams);
 }
 

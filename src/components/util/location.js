@@ -1,3 +1,4 @@
+import { parseId } from '../../lib/numberUtil';
 
 export function pagedAndSortedLocation(location, linkId, sort, newFilters) {
   return Object.assign({}, location, {
@@ -28,20 +29,19 @@ export function filteredLocation(location, filters) {
   });
 }
 
-function numberIfNotIsNan(potentialNumber) {
-  return !Number.isNaN(parseInt(potentialNumber, 10)) ? potentialNumber : '';
-}
-
-export function filteredLinkTo(to, filters) {
-  return {
-    pathname: to,
-    query: {
-      snapshotId: numberIfNotIsNan(filters.snapshotId),
-      timespanId: numberIfNotIsNan(filters.timespanId),
-      focusId: numberIfNotIsNan(filters.focusId),
+export function filteredLinkTo(to, filters, baseQuery) {
+  let query = baseQuery || {};
+  // don't add filters if there are none
+  if (filters.snapshotId || parseId(filters.timespanId) || parseId(filters.focusId) || filters.q) {
+    query = {
+      snapshotId: parseId(filters.snapshotId),
+      timespanId: parseId(filters.timespanId),
+      focusId: parseId(filters.focusId),
       q: filters.q,
-    },
-  };
+      ...query,
+    };
+  }
+  return { pathname: to, query };
 }
 
 export function combineQueryParams(filterQ, query) {

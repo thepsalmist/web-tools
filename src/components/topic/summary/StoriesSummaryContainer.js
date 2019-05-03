@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import { push } from 'react-router-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -16,18 +15,20 @@ import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import TopicStoryTable from '../TopicStoryTable';
 import messages from '../../../resources/messages';
-import { filteredLinkTo, filteredLocation, filtersAsUrlParams } from '../../util/location';
+import { urlWithFilters, filtersAsUrlParams } from '../../util/location';
 import { HELP_STORIES_CSV_COLUMNS } from '../../../lib/helpConstants';
+
+const NUM_TO_SHOW = 10;
+const TOP_N_DOWNLOAD = 2000;
 
 const localMessages = {
   title: { id: 'topic.summary.stories.title', defaultMessage: 'Top Stories' },
   descriptionIntro: { id: 'topic.summary.stories.help.title', defaultMessage: '<p>The top stories within this topic can suggest the main ways it is talked about.  Sort by different measures to get a better picture of a story\'s influence.</p>' },
   downloadNoFBData: { id: 'topic.summary.stories.download.noFB', defaultMessage: 'Download CSV with all stories' },
+  downloadTopN: { id: 'topic.summary.stories.download.1k', defaultMessage: `Download CSV with top ${TOP_N_DOWNLOAD} stories (fast!)` },
   downloadWithFBData: { id: 'topic.summary.stories.download.withFB', defaultMessage: 'Download CSV with all stories & Facebook collection date (takes longer)' },
   downloadLinkCsv: { id: 'topic.summary.stories.download.downloadLinkCsv', defaultMessage: 'Download CSV of all story links' },
 };
-
-const NUM_TO_SHOW = 10;
 
 class StoriesSummaryContainer extends React.Component {
   onChangeSort = (newSort) => {
@@ -38,6 +39,13 @@ class StoriesSummaryContainer extends React.Component {
   downloadCsvNoFBData = () => {
     const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
     const url = `/api/topics/${topicId}/stories.csv?${filtersAsUrlParams(filters)}&sort=${sort}`;
+    window.location = url;
+    notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
+  }
+
+  downloadCsvTopN = () => {
+    const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
+    const url = `/api/topics/${topicId}/stories.csv?${filtersAsUrlParams(filters)}&sort=${sort}&story_limit=${TOP_N_DOWNLOAD}`;
     window.location = url;
     notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
   }
@@ -72,6 +80,16 @@ class StoriesSummaryContainer extends React.Component {
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
           <div className="actions">
             <ActionMenu actionTextMsg={messages.downloadOptions}>
+              <MenuItem
+                className="action-icon-menu-item"
+                id="topic-summary-top-N-stories-download"
+                onClick={this.downloadCsvTopN}
+              >
+                <ListItemText><FormattedMessage {...localMessages.downloadTopN} /></ListItemText>
+                <ListItemIcon>
+                  <DownloadButton />
+                </ListItemIcon>
+              </MenuItem>
               <MenuItem
                 className="action-icon-menu-item"
                 id="topic-summary-top-stories-download"
@@ -121,7 +139,7 @@ StoriesSummaryContainer.propTypes = {
   // from dispatch
   handleFocusSelected: PropTypes.func.isRequired,
   sortData: PropTypes.func.isRequired,
-  handleExplore: PropTypes.func.isRequired,
+  handleExplore: PropTypes.string.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   sort: PropTypes.string.isRequired,
@@ -140,22 +158,12 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleFocusSelected: (focusId) => {
-    const params = {
-      ...ownProps.filters,
-      focusId,
-      timespanId: null,
-    };
-    const newLocation = filteredLocation(ownProps.location, params);
-    dispatch(push(newLocation));
     dispatch(filterByFocus(focusId));
   },
   sortData: (sort) => {
     dispatch(sortTopicTopStories(sort));
   },
-  handleExplore: () => {
-    const exploreUrl = filteredLinkTo(`/topics/${ownProps.topicId}/stories`, ownProps.filters);
-    dispatch(push(exploreUrl));
-  },
+  handleExplore: urlWithFilters(`/topics/${ownProps.topicId}/stories`, ownProps.filters),
 });
 
 const fetchAsyncData = (dispatch, props) => {

@@ -5,7 +5,7 @@ import server.views.apicache as base_cache
 from server import mc, TOOL_API_KEY
 from server.auth import user_mediacloud_client, user_admin_mediacloud_client
 from server.cache import cache
-from server.util.stringutil import trimSolrDate
+from server.util.stringutil import trim_solr_date
 from server.util.tags import processed_for_entities_query_clause, processed_for_themes_query_clause, is_bad_theme, \
     NYT_LABELS_TAG_SET_ID, CLIFF_ORGS, CLIFF_PEOPLE, GEO_TAG_SET
 from server.views import TAG_SAMPLE_SIZE
@@ -27,7 +27,7 @@ def normalized_and_story_split_count(q, fq, open_q):
     all_stories = cached_story_split_count(mc_api_key, open_q, fq)
     for day in all_stories['counts']:
         day_info = {
-            'date': trimSolrDate(day['date']),
+            'date': trim_solr_date(day['date']),
             'total_count': day['count']
         }
         matching = [d for d in data['counts'] if d['date'] == day['date']]

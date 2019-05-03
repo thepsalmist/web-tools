@@ -29,10 +29,10 @@ def topic_focus_definition_update_or_create(topics_id):
     else:
         # if new focal set, then create that first
         if int(request.form['focalSetDefinitionId']) is NEW_FOCAL_SET_PLACEHOLDER_ID:
-            name = request.form['focalSetName']
-            description = request.form['focalSetDescription']
+            fs_name = request.form['focalSetName']
+            fs_description = request.form['focalSetDescription']
             focal_technique = request.form['focalTechnique']
-            new_focal_set = user_mc.topicFocalSetDefinitionCreate(topics_id, name, description, focal_technique)
+            new_focal_set = user_mc.topicFocalSetDefinitionCreate(topics_id, fs_name, fs_description, focal_technique)
             focal_set_definitions_id = new_focal_set['focal_set_definitions_id']
         else:
             focal_set_definitions_id = request.form['focalSetDefinitionId']
@@ -40,7 +40,6 @@ def topic_focus_definition_update_or_create(topics_id):
         focus = user_mc.topicFocusDefinitionCreate(topics_id, name=name, description=description,
                                                    query=query, focal_set_definitions_id=focal_set_definitions_id)
     return jsonify(focus)
-
 
 
 @app.route('/api/topics/<topics_id>/focus-definitions/<foci_definition_id>/delete', methods=['DELETE'])

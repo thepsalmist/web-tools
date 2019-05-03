@@ -25,6 +25,7 @@ const EditMediaTypeContainer = (props) => {
   if (formData && formData.values.mediaType) {
     mediaTypeSelected = formData.values.mediaType;
   }
+
   return (
     <Grid>
       <form className="focus-create-media-type" name="focusCreateEditMediaTypeForm" onSubmit={handleSubmit(finishStep.bind(this))}>

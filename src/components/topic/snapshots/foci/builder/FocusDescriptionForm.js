@@ -48,14 +48,20 @@ class FocusDescriptionForm extends React.Component {
       // if they pick "make a new focal set" then let them enter name and description
       let focalSetDetailedContent = null;
       if (currentFocalSetDefinitionId === NEW_FOCAL_SET_PLACEHOLDER_ID) {
-        focalSetDetailedContent = <FocalSetForm initialValues={initialValues} focalTechnique={focalTechnique} />;
+        focalSetDetailedContent = (
+          <FocalSetForm
+            initialValues={initialValues}
+            focalTechnique={focalTechnique}
+            fullWidth
+          />
+        );
       }
       focalSetContent = (
         <div className="focal-set-details">
           <Field
             name="focalSetDefinitionId"
             component={renderSelect}
-            helpertext={localMessages.pickFocalSet}
+            label={localMessages.pickFocalSet}
           >
             {focalSetDefinitions.map(focalSetDef => (
               <MenuItem
@@ -89,7 +95,8 @@ class FocusDescriptionForm extends React.Component {
             <Field
               name="focusName"
               component={renderTextField}
-              helpertext={localMessages.focusName}
+              label={localMessages.focusName}
+              fullWidth
             />
           </Col>
           <Col lg={3} xs={12}>
@@ -97,7 +104,8 @@ class FocusDescriptionForm extends React.Component {
               name="focusDescription"
               component={renderTextField}
               multiline
-              helpertext={localMessages.focusDescription}
+              label={localMessages.focusDescription}
+              fullWidth
             />
           </Col>
           <Col lg={3} xs={12}>

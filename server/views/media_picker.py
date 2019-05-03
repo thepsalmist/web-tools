@@ -23,7 +23,6 @@ STORY_COUNT_POOL_SIZE = 20  # number of parallel processes to use while fetching
 
 @app.route('/api/mediapicker/sources/search', methods=['GET'])
 @flask_login.login_required
-@arguments_required('media_keyword')
 @api_error_handler
 def api_mediapicker_source_search():
     search_str = request.args['media_keyword']

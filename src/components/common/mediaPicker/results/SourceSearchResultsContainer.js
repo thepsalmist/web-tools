@@ -8,7 +8,6 @@ import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
 import SourceResultsTable from './SourceResultsTable';
 import AdvancedMediaPickerSearchForm from '../AdvancedMediaPickerSearchForm';
 import LoadingSpinner from '../../LoadingSpinner';
-import { notEmptyString } from '../../../../lib/formValidators';
 import { ALL_MEDIA } from '../../../../lib/mediaUtil';
 
 const localMessages = {
@@ -23,12 +22,12 @@ const localMessages = {
 const formSelector = formValueSelector('advanced-media-picker-search');
 
 class SourceSearchResultsContainer extends React.Component {
-  updateAndSearchWithSelection(values, search) {
-    const { formQuery, mediaQuery, updateMediaQuerySelection, handleUpdateAndSearchWithSelection, selectedMediaQueryType } = this.props;
+  processQuery = (values) => {
+    const { formQuery, selectedMediaQueryType } = this.props;
     const updatedQueryObj = Object.assign({}, values, { type: selectedMediaQueryType });
 
-    const formValues = formQuery['advanced-media-picker-search'];
-    const mediaValues = mediaQuery !== null && mediaQuery !== undefined ? mediaQuery : [];
+    const formValues = formQuery !== null && formQuery !== undefined ? formQuery : [];
+    // this may not work if we have not updated the form via submit...
     updatedQueryObj.tags = [];
     const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus'];
 
@@ -38,37 +37,53 @@ class SourceSearchResultsContainer extends React.Component {
         updatedQueryObj.tags[key].push(formValues[key]);
       }
     });
-    // prepare media values with id so we treat all the data similarly
+
+    if (typeof values === 'object' && 'allMedia' in values) {
+      updatedQueryObj.tags.push(values.allMedia);
+    }
+    return updatedQueryObj;
+  }
+
+  updateQuerySelection = (metadataType, values) => {
+    const { updateMediaQuerySelection } = this.props;
+    const updatedQueryObj = this.processQuery(values);
+
+
+    if (updatedQueryObj.tags === undefined) {
+      updatedQueryObj.tags = [];
+    }
     updatedQueryObj.tags.mediaType = [];
-    Object.values(mediaValues).forEach((obj) => {
-      if (obj.selected === true) {
-        updatedQueryObj.tags.mediaType.push({ tags_id: obj });
+
+    Object.values(values).forEach((obj) => {
+      if (obj !== undefined && (obj.selected === true || obj.value === true)) {
+        updatedQueryObj.tags.mediaType.push({ tags_id: obj.tags_id });
       }
     });
 
     if (typeof values === 'object' && 'allMedia' in values) {
       updatedQueryObj.tags.push(values.allMedia);
     }
-    this.setState(updatedQueryObj);
 
-    if (search) {
-      handleUpdateAndSearchWithSelection(updatedQueryObj);
-    } else {
-      updateMediaQuerySelection(updatedQueryObj);
-    }
+    updateMediaQuerySelection(updatedQueryObj);
+  }
+
+  updateAndSearchWithSelection = (values) => {
+    const { handleUpdateAndSearchWithSelection } = this.props;
+    const updatedQueryObj = this.processQuery(values);
+    handleUpdateAndSearchWithSelection(updatedQueryObj);
   }
 
   render() {
-    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected } = this.props;
+    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryArgs } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     let resultContent = null;
     content = (
       <div>
         <AdvancedMediaPickerSearchForm
-          initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
-          onMetadataSelection={val => this.updateAndSearchWithSelection(val)}
-          onSearch={val => this.updateAndSearchWithSelection(val, true)}
+          initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword }, ...selectedMediaQueryArgs }}
+          onMetadataSelection={(metadataType, values) => this.updateQuerySelection(metadataType, values)}
+          onSearch={val => this.updateAndSearchWithSelection(val)}
           hintText={formatMessage(localMessages.hintText)}
         />
       </div>
@@ -104,6 +119,7 @@ SourceSearchResultsContainer.propTypes = {
   fetchStatus: PropTypes.string,
   selectedMediaQueryType: PropTypes.number,
   selectedMediaQueryKeyword: PropTypes.string,
+  selectedMediaQueryArgs: PropTypes.object,
   sourceResults: PropTypes.object,
   formQuery: PropTypes.object,
   mediaQuery: PropTypes.array,
@@ -118,6 +134,7 @@ const mapStateToProps = state => ({
   fetchStatus: state.system.mediaPicker.sourceQueryResults.fetchStatus,
   selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : 0,
   selectedMediaQueryKeyword: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.mediaKeyword : null,
+  selectedMediaQueryArgs: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args : null,
   sourceResults: state.system.mediaPicker.sourceQueryResults,
   formQuery: formSelector(
     state,
@@ -143,11 +160,14 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
   }, */
   updateMediaQuerySelection: (values) => {
-    if (values && (notEmptyString(values.mediaKeyword) || (values.tags && values.tags.length > 0))) {
+    if (values && values.tags && Object.values(values.tags).length > 0) {
       if (values.allMedia) { // handle the "all media" placeholder selection
         ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
       } else {
-        dispatch(selectMediaPickerQueryArgs(values));
+        // const type = Object.values(values.tags).filter(t => t.length > 0);
+        // const tags = Object.values(values.tags).filter(t => t.length > 0).reduce((a, b) => a.concat(b), []).map(i => i.tags_id)
+        //  .join(',');
+        dispatch(selectMediaPickerQueryArgs({ type: values.type, ...values.tags }));
         // dispatch(selectMetadata(values));
       }
     }

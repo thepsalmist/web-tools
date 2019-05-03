@@ -31,6 +31,12 @@ class AdvancedMediaPickerSearchForm extends React.Component {
     this.setState({ mode });
   }
 
+  setSelectedMediaTypes = (mode, input) => {
+    const { onSelectMediaType } = this.props;
+    // get the value from the metadata item and store
+    onSelectMediaType(mode, input);
+  }
+
   handleSearchButtonClick = (evt, inputRef) => {
     const { onSearch } = this.props;
     evt.preventDefault();
@@ -41,8 +47,9 @@ class AdvancedMediaPickerSearchForm extends React.Component {
   selectMetaData = (mode, input) => {
     const { onMetadataSelection } = this.props;
     // get the value from the metadata item and store
-    onMetadataSelection(mode, input);
+    onMetadataSelection(mode, { ...input, selected: input.value });
   }
+
 
   handleSearchAll = (evt) => {
     const { onSearch } = this.props;
@@ -134,8 +141,9 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         name="mediaType"
         form="advanced-media-picker-search"
         label={formatMessage(messages.mediaType)}
-        onChange={val => this.selectMetaData(TAG_SET_MEDIA_TYPE, val)}
+        onChange={(...args) => this.selectMetaData(TAG_SET_MEDIA_TYPE, args)}
         onSelect={this.setSelectedMediaTypes}
+        initialValues={initValues}
       />
     ) : null;
 
@@ -209,6 +217,7 @@ AdvancedMediaPickerSearchForm.propTypes = {
   // from parent
   onSearch: PropTypes.func,
   onMetadataSelection: PropTypes.func,
+  onSelectMediaType: PropTypes.func,
   searchString: PropTypes.string,
 };
 

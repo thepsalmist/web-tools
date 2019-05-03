@@ -76,7 +76,12 @@ def _cached_topic_story_count(user_mc_key, topics_id, **kwargs):
         local_mc = mc
     else:
         local_mc = user_mediacloud_client()
-    return local_mc.topicStoryCount(topics_id, **kwargs)
+    try:
+        results = local_mc.topicStoryCount(topics_id, **kwargs)
+    except mediacloud.error.MCException as mce:
+        # when there is nno timespan (ie. an ungenerated version you are adding subtopics to)
+        return {'count': 0}
+    return results
 
 
 def story_list(user_mc_key, q, rows):

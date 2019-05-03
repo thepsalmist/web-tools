@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedHTMLMessage, FormattedDate } from 'react-intl';
+import { injectIntl, FormattedHTMLMessage, FormattedMessage, FormattedDate } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../common/AppButton';
 import { TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
@@ -20,7 +20,7 @@ const localMessages = {
   runningDetailsAmostDone: { id: 'topic.state.runningDetailsAmostDone', defaultMessage: 'We are almost done generating this version.' },
   completed: { id: 'topic.state.running', defaultMessage: 'Ready to use' },
   completedAction: { id: 'topic.state.useVersion', defaultMessage: 'Use Version {number}' },
-  completedDetails: { id: 'topic.state.completedDetails', defaultMessage: 'Includes {total} stories ({discoveredPct} discovered),' },
+  completedDetails: { id: 'topic.state.completedDetails', defaultMessage: 'Includes {total} stories ({discoveredPct} discovered) and {fociCount, plural,\n =0 {no subtopics}\n =1 {one subtopic}\n other {# subtopics}}.' },
   adminDetails: { id: 'topic.state.adminDetails', defaultMessage: '<br />Admin info: {jobCount} associated jobs' },
   error: { id: 'topic.state.running', defaultMessage: 'Failed' },
   createdNotQueued: { id: 'topic.state.createdNotQueued', defaultMessage: 'Created' },
@@ -30,7 +30,7 @@ const localMessages = {
 };
 
 const snapshotOrJobState = (snapshot) => {
-  if (snapshot.job_states.length > 0) {
+  if (snapshot.job_states && (snapshot.job_states.length > 0)) {
     return snapshot.job_states[0].state;
   }
   return snapshot.state;
@@ -72,24 +72,36 @@ const messageForVersionState = (snapshot) => {
 const detailsForVersionState = (snapshot, storyCounts, formatMessage, formatNumber) => {
   switch (snapshotOrJobState(snapshot)) {
     case TOPIC_SNAPSHOT_STATE_QUEUED:
-      return formatMessage(localMessages.queuedDetails, {
-        age: snapshot.snapshotDate.fromNow(), // this is a moment object so we can call this relative date helper
-      });
+      // this is a moment object so we can call this relative date helper
+      return (
+        <FormattedMessage
+          {...localMessages.runningDetailsAmostDone}
+          values={{ age: snapshot.snapshotDate.fromNow() }}
+        />
+      );
     case TOPIC_SNAPSHOT_STATE_COMPLETED:
       if (!snapshot.isUsable) {
-        return formatMessage(localMessages.runningDetailsAmostDone);
+        return <FormattedMessage {...localMessages.runningDetailsAmostDone} />;
       }
-      return formatMessage(localMessages.completedDetails, {
-        total: formatNumber(storyCounts.total),
-        discoveredPct: storyCounts.total === 0 ? '0%' : formatNumber(storyCounts.spidered / storyCounts.total, { style: 'percent', maximumFractionDigits: 0 }),
-      });
+      return (
+        <React.Fragment>
+          <FormattedMessage
+            {...localMessages.completedDetails}
+            values={{
+              total: formatNumber(storyCounts.total),
+              discoveredPct: storyCounts.total === 0 ? '0%' : formatNumber(storyCounts.spidered / storyCounts.total, { style: 'percent', maximumFractionDigits: 0 }),
+              fociCount: snapshot.foci_count,
+            }}
+          />
+        </React.Fragment>
+      );
     case TOPIC_SNAPSHOT_STATE_RUNNING:
-      return formatMessage(localMessages.runningDetails);
+      return <FormattedMessage {...localMessages.runningDetails} />;
     case TOPIC_SNAPSHOT_STATE_ERROR:
       // TODO: show generic error for regular users, and detailed message for admin users
       return trimToMaxLength(snapshot.message, 400);
     case TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED:
-      return formatMessage(localMessages.createdNotQueuedDetails);
+      return <FormattedMessage {...localMessages.createdNotQueuedDetails} />;
     default:
       return snapshotOrJobState(snapshot);
   }
@@ -119,7 +131,12 @@ const TopicVersionListItem = ({ version, intl, number, topicId, storyCounts, sel
             {selected && <TabbedChip message={localMessages.selected} />}
           </h2>
           {detailsForVersionState(version, storyCounts, intl.formatMessage, intl.formatNumber)}
-          {isAdmin && <FormattedHTMLMessage {...localMessages.adminDetails} values={{ jobCount: version.job_states.length }} />}
+          {isAdmin && (
+            <FormattedHTMLMessage
+              {...localMessages.adminDetails}
+              values={{ jobCount: version.job_states ? version.job_states.length : 0 }}
+            />
+          )}
           <br />
           { // don't show a button if this is the version that is currently selected
             !selected && (

@@ -1,14 +1,14 @@
 import logging
-
 import flask_login
 import mediacloud.error
 from flask import jsonify, request
+from deco import synchronized, concurrent
 
 import server.views.apicache as shared_apicache
 import server.views.topics.apicache as apicache
 from server import app, mc
-from server.auth import user_mediacloud_key, user_mediacloud_client, is_user_logged_in, user_name
-from server.util.request import api_error_handler, arguments_required
+from server.auth import user_mediacloud_key, user_mediacloud_client, is_user_logged_in
+from server.util.request import api_error_handler
 from server.views.topics import access_public_topic
 from server.views.topics import concatenate_query_for_solr, concatenate_solr_dates
 from server.views.topics.topiclist import add_user_favorite_flag_to_topics
@@ -36,6 +36,60 @@ def topic_summary(topics_id):
     return jsonify(topic)
 
 
+@concurrent
+def _snapshot_foci_count(snapshot):
+    details = {}
+    # add in the number of focal sets
+    focal_sets = apicache.topic_focal_sets_list(user_mediacloud_key(), snapshot['topics_id'], snapshot['snapshots_id'])
+    foci_count = sum([len(fs['foci']) for fs in focal_sets])
+    return foci_count
+
+
+@synchronized
+def _add_snapshot_foci_count(snapshots):
+    for s in snapshots:
+        s['foci_count'] = _snapshot_foci_count(s)
+    return snapshots
+
+
+def _topic_snapshot_list(topic):
+    if access_public_topic(topic['topics_id']):
+        local_mc = mc
+    elif is_user_logged_in():
+        local_mc = user_mediacloud_client()
+    snapshots = local_mc.topicSnapshotList(topic['topics_id'])
+    # add in any missing version numbers
+    for idx in range(0, len(snapshots)):
+        if snapshots[idx]['note'] in [None, '']:
+            snapshots[idx]['note'] = idx + ARRAY_BASE_ONE
+    # seed_query story count
+    try:
+        seed_query_story_count = shared_apicache.story_count(
+            user_mediacloud_key(),
+            q=concatenate_query_for_solr(solr_seed_query=topic['solr_seed_query'],
+                                        media_ids=[m['media_id'] for m in topic['media']],
+                                        tags_ids=[t['tags_id'] for t in topic['media_tags']]),
+            fq=concatenate_solr_dates(start_date=topic['start_date'], end_date=topic['end_date']),
+        )['count']
+    except mediacloud.error.MCException:
+        # probably an old topic that has the dates in q instead of fq, so just return unknown
+        seed_query_story_count = None
+    topic['seed_query_story_count'] = seed_query_story_count
+    # add foci_count and story count for display
+    for s in snapshots:
+        s['topics_id'] = topic['topics_id']  # to make life easier
+    snapshots = _add_snapshot_foci_count(snapshots)
+    snapshots = sorted(snapshots, key=lambda d: d['snapshot_date'])
+    # extra stuff
+    snapshot_status = mc.topicSnapshotGenerateStatus(topic['topics_id'])['job_states']  # need to know if one is running
+    latest = snapshots[-1] if len(snapshots) > 0 else None
+    return {
+        'list': snapshots,
+        'jobStatus': snapshot_status,
+        'latestVersion': latest['note'] if latest else 1,
+    }
+
+
 def _topic_summary(topics_id):
     if access_public_topic(topics_id):
         local_mc = mc
@@ -45,14 +99,7 @@ def _topic_summary(topics_id):
         return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
     topic = local_mc.topic(topics_id)
     # add in snapshot list (with version numbers, by date)
-    snapshots = local_mc.topicSnapshotList(topics_id)
-    snapshots = sorted(snapshots, key=lambda d: d['snapshot_date'])
-    for idx in range(0, len(snapshots)):
-        if snapshots[idx]['note'] in [None, '']:
-            snapshots[idx]['note'] = idx + ARRAY_BASE_ONE
-    topic['snapshots'] = {
-        'list': snapshots,
-    }
+    topic['snapshots'] = _topic_snapshot_list(topic)
     if is_user_logged_in():
         add_user_favorite_flag_to_topics([topic])
     return topic
@@ -63,14 +110,9 @@ def _topic_summary(topics_id):
 @api_error_handler
 def topic_snapshots_list(topics_id):
     user_mc = user_mediacloud_client()
-    snapshots = user_mc.topicSnapshotList(topics_id)
-    # if note is missing
-    for idx in range(0, len(snapshots)):
-        if snapshots[idx]['note'] in [None, '']:
-            snapshots[idx]['note'] = idx
-    snapshot_status = mc.topicSnapshotGenerateStatus(topics_id)['job_states']  # need to know if one is running
-    latest = snapshots[:-1]
-    return jsonify({'list': snapshots, 'jobStatus': snapshot_status, 'latestVersion': latest['note']})
+    topic = user_mc.topic(topics_id)
+    snapshots = _topic_snapshot_list(topic)
+    return jsonify(snapshots)
 
 
 @app.route('/api/topics/<topics_id>/snapshots/<snapshots_id>/timespans/list', methods=['GET'])

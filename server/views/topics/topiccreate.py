@@ -1,6 +1,7 @@
 import logging
 from flask import jsonify, request
 import flask_login
+import mediacloud.error
 
 from server import app, mc
 from server.auth import user_mediacloud_client
@@ -126,6 +127,10 @@ def topic_create():
         # client will either make a empty snapshot, or a spidering one
         return topic_summary(topics_id)
     except Exception as e:
+        logging.error("Topic creation failed {}".format(name))
+        logging.exception(e)
+        return json_error_response(str(e), 500)
+    except mediacloud.error.MCException as e:
         logging.error("Topic creation failed {}".format(name))
         logging.exception(e)
         return json_error_response(e.message, e.status_code)

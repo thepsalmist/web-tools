@@ -28,13 +28,22 @@ class SourceSearchResultsContainer extends React.Component {
 
     const formValues = formQuery !== null && formQuery !== undefined ? formQuery : [];
     // this may not work if we have not updated the form via submit...
-    updatedQueryObj.tags = [];
+    updatedQueryObj.tags = []; // TODO check that we are not overwriting previous values
     const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus'];
 
+    // TODO there are multiple choices here that we need to iterate through
     metadataQueryFields.forEach((key) => {
       updatedQueryObj.tags[key] = [];
-      if (formValues && key in formValues) {
+      if (formValues && key in formValues) { // if in form, I don't think we are overwrited, except most recent updates are not there usually
         updatedQueryObj.tags[key].push(formValues[key]);
+      }
+    });
+    updatedQueryObj.tags.mediaType = [];
+
+    // mediaType handles multiple choice first. others to follow suite
+    Object.values(values).forEach((obj) => {
+      if (obj !== undefined && (obj.selected === true || obj.value === true)) {
+        updatedQueryObj.tags.mediaType.push(obj);
       }
     });
 
@@ -47,22 +56,6 @@ class SourceSearchResultsContainer extends React.Component {
   updateQuerySelection = (metadataType, values) => {
     const { updateMediaQuerySelection } = this.props;
     const updatedQueryObj = this.processQuery(values);
-
-
-    if (updatedQueryObj.tags === undefined) {
-      updatedQueryObj.tags = [];
-    }
-    updatedQueryObj.tags.mediaType = [];
-
-    Object.values(values).forEach((obj) => {
-      if (obj !== undefined && (obj.selected === true || obj.value === true)) {
-        updatedQueryObj.tags.mediaType.push({ tags_id: obj.tags_id });
-      }
-    });
-
-    if (typeof values === 'object' && 'allMedia' in values) {
-      updatedQueryObj.tags.push(values.allMedia);
-    }
 
     updateMediaQuerySelection(updatedQueryObj);
   }
@@ -81,7 +74,7 @@ class SourceSearchResultsContainer extends React.Component {
     content = (
       <div>
         <AdvancedMediaPickerSearchForm
-          initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword }, ...selectedMediaQueryArgs }}
+          initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword }, tags: selectedMediaQueryArgs }}
           onMetadataSelection={(metadataType, values) => this.updateQuerySelection(metadataType, values)}
           onSearch={val => this.updateAndSearchWithSelection(val)}
           hintText={formatMessage(localMessages.hintText)}
@@ -164,11 +157,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       if (values.allMedia) { // handle the "all media" placeholder selection
         ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
       } else {
-        // const type = Object.values(values.tags).filter(t => t.length > 0);
-        // const tags = Object.values(values.tags).filter(t => t.length > 0).reduce((a, b) => a.concat(b), []).map(i => i.tags_id)
-        //  .join(',');
         dispatch(selectMediaPickerQueryArgs({ type: values.type, ...values.tags }));
-        // dispatch(selectMetadata(values));
       }
     }
   },

@@ -13,14 +13,14 @@ const localMessages = {
   label: { id: 'system.mediaPicker.sources.label', defaultMessage: '{label}' },
 };
 
-const MediaTypesSelector = ({ mediaTypeValues, renderCheckbox, onChange, intl: { formatMessage }, fields }) => (
+const MediaTypesSelector = ({ initialValues, renderCheckbox, onChange, intl: { formatMessage }, fields }) => (
   <ul>
     {fields.map((name, index, thisFieldArray) => { // redux-form overrides map, and converts name to a string instead of an object!
       const fieldObject = thisFieldArray.get(index);
       return (
         <li key={index}>
           <Field
-            initialValues={mediaTypeValues}
+            initialValues={initialValues}
             key={index}
             name={`${name}.label`}
             component={info => (
@@ -39,7 +39,7 @@ const MediaTypesSelector = ({ mediaTypeValues, renderCheckbox, onChange, intl: {
 
 MediaTypesSelector.propTypes = {
   fields: PropTypes.object,
-  mediaTypeValues: PropTypes.object,
+  initialValues: PropTypes.object,
   renderCheckbox: PropTypes.func.isRequired,
   intl: PropTypes.object,
   onChange: PropTypes.func,
@@ -48,11 +48,13 @@ MediaTypesSelector.propTypes = {
 const MediaTypesList = injectIntl(withIntlForm(MediaTypesSelector));
 
 const MediaTypesFieldArray = (props) => {
-  const previouslySelected = Object.values(props.initialValues).filter(t => t.length > 0).reduce((a, b) => a.concat(b), []).map(i => i.tags_id);
-  const updatesToMake = props.mediaTypes.mediaType.filter(m => m.tags_id === previouslySelected);
-  updatesToMake.forEach((u) => {
-    updatesToMake.selected = props.initialValues.find(t => t.tags_id === u.tags_id);
-  });
+  if (props.previouslySelected.mediaType) {
+    props.previouslySelected.mediaType.forEach((p) => {
+      const toUpdate = props.initialValues.mediaType.find(t => t.tags_id === p.tags_id);
+      toUpdate.selected = p.value;
+      toUpdate.value = p.value;
+    });
+  }
   return (
     <div className="explorer-media-picker-media-types">
       <FieldArray
@@ -72,14 +74,14 @@ MediaTypesFieldArray.propTypes = {
   tags: PropTypes.array,
   name: PropTypes.string,
   initialValues: PropTypes.object,
-  mediaTypes: PropTypes.object,
+  previouslySelected: PropTypes.object,
   onChange: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.system.metadata.mediaType.fetchStatus,
   // mediaType: state.system.metadata.mediaType.tags.length ? state.system.metadata.mediaType.tags : null,
-  mediaTypes: { mediaType: state.system.metadata.mediaType.tags },
+  initialValues: { mediaType: state.system.metadata.mediaType.tags },
 });
 
 const fetchAsyncData = dispatch => dispatch(fetchMetadataValuesForMediaType(TAG_SET_MEDIA_TYPE));

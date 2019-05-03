@@ -123,6 +123,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         name="countryOfFocus"
         form="advanced-media-picker-search"
         label={formatMessage(messages.countryOfFocus)}
+        onChange={val => this.selectMetaData(TAG_SET_PUBLICATION_STATE, val)}
         async
       />
     ) : null;
@@ -132,6 +133,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         name="primaryLanguage"
         form="advanced-media-picker-search"
         label={formatMessage(messages.language)}
+        onChange={val => this.selectMetaData(TAG_SET_PUBLICATION_STATE, val)}
         async
       />
     ) : null;
@@ -143,7 +145,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         label={formatMessage(messages.mediaType)}
         onChange={(...args) => this.selectMetaData(TAG_SET_MEDIA_TYPE, args)}
         onSelect={this.setSelectedMediaTypes}
-        initialValues={initValues}
+        previouslySelected={initValues.tags}
       />
     ) : null;
 

@@ -39,10 +39,12 @@ class SelectedStoryDrillDownContainer extends React.Component {
     return (nextProps.lastSearchTime !== lastSearchTime || nextProps.selectedStory !== selectedStory);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const { selectedStory } = this.props;
+    const prevSelectedStory = prevProps.selectedStory;
     const rootNode = this.rootRef;
     // have to treat this node carefully, because it might not be showing
-    if (rootNode && rootNode.current) {
+    if (rootNode && rootNode.current && selectedStory && (selectedStory !== prevSelectedStory)) {
       rootNode.current.scrollIntoView();
     }
   }

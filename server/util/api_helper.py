@@ -1,6 +1,8 @@
 import datetime
+from operator import itemgetter
 
 from server import mc
+from server.util.stringutil import trim_solr_date
 
 
 def add_missing_dates_to_split_story_counts(counts, start, end, period="day"):
@@ -24,3 +26,24 @@ def add_missing_dates_to_split_story_counts(counts, start, end, period="day"):
         else:
             raise RuntimeError("Unsupport time period for filling in missing dates - {}".format(period))
     return new_counts
+
+
+def combined_split_and_normalized_counts(matching_results, total_results):
+    counts = []
+    for day in total_results:
+        day_info = {
+            'date': trim_solr_date(day['date']),
+            'total_count': day['count']
+        }
+        matching = [d for d in matching_results if d['date'] == day['date']]
+        if len(matching) == 0:
+            day_info['count'] = 0
+        else:
+            day_info['count'] = matching[0]['count']
+        if day_info['count'] == 0 or day['count'] == 0:
+            day_info['ratio'] = 0
+        else:
+            day_info['ratio'] = float(day_info['count']) / float(day['count'])
+        counts.append(day_info)
+    counts = sorted(counts, key=itemgetter('date'))
+    return counts

@@ -22,6 +22,7 @@ import { storyPubDateToTimestamp } from '../../../../lib/dateUtil';
 import Permissioned from '../../Permissioned';
 import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import StatBar from '../../statbar/StatBar';
+import StoryRedditAttention from '../../story/StoryRedditAttention';
 
 const localMessages = {
   title: { id: 'admin.story.title', defaultMessage: 'Admin Story Details: ' },
@@ -135,8 +136,11 @@ class SelectedStoryContainer extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col lg={9}>
+            <Col lg={6}>
               <TagListContainer story={selectedStory} />
+            </Col>
+            <Col lg={6}>
+              <StoryRedditAttention storyId={selectedStory.stories_id} />
             </Col>
           </Row>
         </React.Fragment>

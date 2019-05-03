@@ -14,10 +14,17 @@ class QueryAttentionOverTimeDrillDownContainer extends React.Component {
     this.rootRef = React.createRef();
   }
 
-  componentDidUpdate() {
+  shouldComponentUpdate(nextProps) {
+    const { dataPoint, lastSearchTime } = this.props;
+    return (nextProps.lastSearchTime !== lastSearchTime || nextProps.dataPoint !== dataPoint);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { dataPoint } = this.props;
+    const prevDataPoint = prevProps.dataPoint;
     const rootNode = this.rootRef;
     // have to treat this node carefully, because it might not be showing
-    if (rootNode && rootNode.current) {
+    if (rootNode && rootNode.current && dataPoint && (dataPoint !== prevDataPoint)) {
       rootNode.current.scrollIntoView();
     }
   }
@@ -46,8 +53,6 @@ class QueryAttentionOverTimeDrillDownContainer extends React.Component {
 QueryAttentionOverTimeDrillDownContainer.propTypes = {
   // from parent
   lastSearchTime: PropTypes.number.isRequired,
-  queries: PropTypes.array.isRequired,
-  isLoggedIn: PropTypes.bool.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
   // from dispatch

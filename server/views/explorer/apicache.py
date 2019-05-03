@@ -1,11 +1,10 @@
-from operator import itemgetter
-
 import server.util.wordembeddings as wordembeddings
 import server.views.apicache as base_cache
 from server import mc, TOOL_API_KEY
-from server.auth import user_mediacloud_client, user_admin_mediacloud_client
 from server.cache import cache
-from server.util.stringutil import trim_solr_date
+from server.auth import user_mediacloud_client, user_admin_mediacloud_client
+from server.views.explorer import dates_as_filter_query
+from server.util.api_helper import combined_split_and_normalized_counts, add_missing_dates_to_split_story_counts
 from server.util.tags import processed_for_entities_query_clause, processed_for_themes_query_clause, is_bad_theme, \
     NYT_LABELS_TAG_SET_ID, CLIFF_ORGS, CLIFF_PEOPLE, GEO_TAG_SET
 from server.views import TAG_SAMPLE_SIZE
@@ -19,30 +18,17 @@ def normalized_and_story_count(q, fq, open_q):
     return results
 
 
-def normalized_and_story_split_count(q, fq, open_q):
+def normalized_and_story_split_count(q, open_q, start_date, end_date):
     results = {}
-    counts = []
+    fq = dates_as_filter_query(start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
     mc_api_key = base_cache.api_key()
-    data = cached_story_split_count(mc_api_key, q, fq)
-    all_stories = cached_story_split_count(mc_api_key, open_q, fq)
-    for day in all_stories['counts']:
-        day_info = {
-            'date': trim_solr_date(day['date']),
-            'total_count': day['count']
-        }
-        matching = [d for d in data['counts'] if d['date'] == day['date']]
-        if len(matching) == 0:
-            day_info['count'] = 0
-        else:
-            day_info['count'] = matching[0]['count']
-        if day_info['count'] == 0 or day['count'] == 0:
-            day_info['ratio'] = 0
-        else:
-            day_info['ratio'] = float(day_info['count']) / float(day['count'])
-        counts.append(day_info)
-    results['counts'] = sorted(counts, key=itemgetter('date'))
-    results['total'] = sum([day['count'] for day in data['counts']])
-    results['normalized_total'] = sum([day['count'] for day in all_stories['counts']])
+    matching = cached_story_split_count(mc_api_key, q, fq)
+    matching = add_missing_dates_to_split_story_counts(matching['counts'], start_date, end_date)
+    total = cached_story_split_count(mc_api_key, open_q, fq)
+    total = add_missing_dates_to_split_story_counts(total['counts'], start_date, end_date)
+    results['counts'] = combined_split_and_normalized_counts(matching, total)
+    results['total'] = sum([day['count'] for day in matching])
+    results['normalized_total'] = sum([day['count'] for day in total])
     return results
 
 

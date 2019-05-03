@@ -5,6 +5,7 @@ import requests
 import logging
 
 from flask import request
+import server.util.pushshift as pushshift
 from server import app, cliff, NYT_THEME_LABELLER_URL, mc
 from server.auth import user_mediacloud_client, user_admin_mediacloud_client
 from server.util.request import api_error_handler
@@ -53,6 +54,26 @@ def story_raw(stories_id):
 def story_entities(stories_id):
     entities = entities_from_mc_or_cliff(stories_id)
     return jsonify({'list': entities})
+
+
+@app.route('/api/stories/<stories_id>/reddit-attention', methods=['GET'])
+def story_subreddit_shares(stories_id):
+    story = mc.story(stories_id)
+    submissions_by_sub = pushshift.reddit_url_submissions_by_subreddit(story['url'])
+    return jsonify({
+        'total': sum([r['value'] for r in submissions_by_sub]) if submissions_by_sub is not None else 0,
+        'subreddits': submissions_by_sub
+    })
+
+
+@app.route('/api/stories/<stories_id>/reddit-attention.csv', methods=['GET'])
+def story_subreddit_shares_csv(stories_id):
+    story = mc.story(stories_id)
+    submissions_by_sub = pushshift.reddit_url_submissions_by_subreddit(story['url'])
+    props = ['name', 'value']
+    column_names = ['subreddit', 'submissions']
+    return csv.stream_response(submissions_by_sub, props, 'story-' + str(stories_id) + '-subreddit',
+                               column_names=column_names)
 
 
 @app.route('/api/admin/story/<stories_id>/storytags.csv', methods=['GET'])

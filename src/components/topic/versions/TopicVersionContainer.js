@@ -14,13 +14,16 @@ import TopicVersionCreatedStatusContainer from './homepages/TopicVersionCreatedS
 import * as fetchConstants from '../../../lib/fetchConstants';
 import { filteredLinkTo } from '../../util/location';
 import { getCurrentVersionFromSnapshot } from '../../../lib/topicVersionUtil';
-import { topicStartSpider } from '../../../actions/topicActions';
+import { topicSnapshotSpider } from '../../../actions/topicActions';
 import { LEVEL_ERROR } from '../../common/Notice';
 import { addNotice, updateFeedback } from '../../../actions/appActions';
+import { topicMessageSaysTooBig } from '../../../reducers/topics/adminList';
 
 const localMessages = {
   startedGenerating: { id: 'topic.created.startedGenerating', defaultMessage: 'We started generating this version' },
   generationFailed: { id: 'topic.created.generationFailed', defaultMessage: 'Sorry, but we weren\'t able to start generating this version.' },
+  runningSubtitle: { id: 'version.running.title', defaultMessage: 'Still Generating' },
+  almostDoneSubtitle: { id: 'version.cancel', defaultMessage: 'Cancel This Version' },
 };
 
 /**
@@ -29,63 +32,79 @@ const localMessages = {
 const TopicVersionContainer = (props) => {
   const { children, topic, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo,
     setSideBarContent, snapshotId, filters, selectedSnapshot, handleSnapshotGenerate } = props;
-  // show a big error if there is one to show
   const currentVersionNum = getCurrentVersionFromSnapshot(topic, snapshotId);
-  let contentToShow = children; // has a filters renderer in it - show if a completed topic
-  const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent }));
-  contentToShow = childrenWithExtraProp;
-  const versionStatus = selectedSnapshot ? selectedSnapshot.state : topic.state;
-  const latestJob = selectedSnapshot ? selectedSnapshot.snapshotJobs[0] : topic.spiderJobs[0];
-  if (versionStatus === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
+  // carefully figure out what the latest state for this version is
+  let snapshotToUse;
+  if (selectedSnapshot) {
+    snapshotToUse = selectedSnapshot;
+    if (snapshotToUse.job_states.length > 0) {
+      snapshotToUse = {
+        ...selectedSnapshot,
+        state: snapshotToUse.job_states[0].state, // override the state because the job state is the most up-to-date
+      };
+    }
+  } else {
+    // legacy - there might be jobs but isn't a snapshot yet, so make one that looks right-ish
+    snapshotToUse = {
+      note: currentVersionNum,
+      job_states: topic.job_states,
+      state: topic.job_states.length > 0 ? topic.job_states[0].state : topic.state,
+    };
+  }
+  let contentToShow;
+  // handle case where there isn't a snapshot object yet (legacy)
+  if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
     contentToShow = (
       <TopicVersionCreatedStatusContainer
         topic={topic}
-        snapshot={selectedSnapshot || { note: currentVersionNum }}
-        job={latestJob}
+        snapshot={snapshotToUse}
         onSnapshotGenerate={handleSnapshotGenerate}
         goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
       />
     );
-  } else if (versionStatus === TOPIC_SNAPSHOT_STATE_QUEUED) {
+  } else if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_QUEUED) {
     contentToShow = (
       <TopicVersionQueuedStatusContainer
         topic={topic}
-        snapshot={selectedSnapshot || { note: currentVersionNum }}
-        job={latestJob}
+        snapshot={snapshotToUse}
         goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
       />
     );
-  } else if (versionStatus === TOPIC_SNAPSHOT_STATE_RUNNING) {
+  } else if ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_RUNNING)
+    || ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_COMPLETED) && !snapshotToUse.isUsable)) {
     contentToShow = (
       <TopicVersionRunningStatusContainer
         topic={topic}
-        snapshot={selectedSnapshot || { note: currentVersionNum }}
-        job={latestJob}
+        snapshot={snapshotToUse}
+        title={(snapshotToUse.state === TOPIC_SNAPSHOT_STATE_RUNNING) ? localMessages.runningSubtitle : localMessages.almostDoneSubtitle}
       />
     );
-  } else if ((versionStatus === TOPIC_SNAPSHOT_STATE_ERROR) && ((topic.message && topic.message.indexOf('exceeds topic max') > -1))) {
+  } else if ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_ERROR)
+    && topicMessageSaysTooBig(topic.latestState.message)) {
     contentToShow = (
       <TopicVersionTooBigStatusContainer
         topic={topic}
-        snapshot={selectedSnapshot || { note: currentVersionNum }}
-        job={latestJob}
+        snapshot={snapshotToUse}
         goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
       />
     );
-  } else if (versionStatus === TOPIC_SNAPSHOT_STATE_ERROR) {
+  } else if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_ERROR) {
     contentToShow = (
       <TopicVersionErrorStatusContainer
         topic={topic}
-        snapshot={selectedSnapshot || { note: currentVersionNum }}
-        job={latestJob}
+        snapshot={snapshotToUse}
         goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
       />
     );
-  } else if ((versionStatus === TOPIC_SNAPSHOT_STATE_COMPLETED)
+  } else if ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_COMPLETED)
     && (fetchStatusInfo !== fetchConstants.FETCH_SUCCEEDED
     && fetchStatusSnapshot !== fetchConstants.FETCH_SUCCEEDED)) {
     // complete
     contentToShow = <LoadingSpinner />;
+  } else {
+    // has a filters renderer in it - show if a completed topic
+    const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent }));
+    contentToShow = childrenWithExtraProp;
   }
   return contentToShow;
 };
@@ -130,12 +149,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(push(filteredLinkTo(url, filters)));
   },
   handleSnapshotGenerate: (topicId, snapshotId) => {
-    dispatch(topicStartSpider(topicId, { snapshotId }))
+    dispatch(topicSnapshotSpider(topicId, { snapshotId }))
       .then((results) => {
         if ((results.statusCode && results.statusCode !== 200) || results.error) {
           dispatch(addNotice({ message: localMessages.generationFailed, details: results.message || results.error, level: LEVEL_ERROR }));
         } else {
           dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.startedGenerating) }));
+          window.location.reload(); // to get new version status (ie. running hopefully)
         }
       });
   },

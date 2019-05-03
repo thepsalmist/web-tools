@@ -10,6 +10,7 @@ import Link from 'react-router/lib/Link';
 import { DeleteButton } from '../../common/IconButton';
 import AppButton from '../../common/AppButton';
 import { getDateFromTimestamp } from '../../../lib/dateUtil';
+import { serializeQueriesForUrl } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 
 const STORY_SEARCH_RELEASE_DATE = new Date(2018, 5, 18);
@@ -21,6 +22,8 @@ const localMessages = {
   load: { id: 'explorer.querypicker.loadSearch', defaultMessage: 'Load' },
   noSavedSearches: { id: 'explorer.querypicker.noSearches', defaultMessage: '<p>You have no saved searches.  You can save any searches you find useful and use this screen to reload it later.</p>' },
   needsUpdating: { id: 'explorer.querypicker.needsUpdating', defaultMessage: 'We\'ve switched to story-level searching since you saved this. Results will be different; you might need to update it. <a target="_new" href="https://mediacloud.org/news/2018/4/12/switching-to-story-based-searching-on-may-12th">Learn more</a>.' },
+  queryCount: { id: 'explorer.querypicker.queryCount', defaultMessage: ' - {count, plural,\n =1 {one query}\n other {# queries}\n}' },
+  queryNames: { id: 'explorer.querypicker.queryNames', defaultMessage: 'Query Names: ' },
 };
 
 class QueryPickerLoadUserSearchesDialog extends React.Component {
@@ -28,30 +31,19 @@ class QueryPickerLoadUserSearchesDialog extends React.Component {
     loadSearchDialogOpen: false,
   };
 
-  onLoadRequest = () => {
-    const { handleLoadSearches } = this.props;
+  handleLoadRequest = () => {
+    const { onLoadSearches } = this.props;
     this.setState({ loadSearchDialogOpen: true });
-    handleLoadSearches();
+    onLoadSearches();
   }
 
-  onDeleteRequest = (selectedSearch) => {
-    const { handleDeleteSearch } = this.props;
-    handleDeleteSearch(selectedSearch);
+  handleDeleteRequest = (selectedSearch) => {
+    const { onDeleteSearch } = this.props;
+    onDeleteSearch(selectedSearch);
   }
-
-  onLoadConfirm = (search) => {
-    const { handleLoadSelectedSearch } = this.props;
-    handleLoadSelectedSearch(search);
-    this.setState({ loadSearchDialogOpen: false });
-  };
 
   handleDialogClose = () => {
     this.setState({ loadSearchDialogOpen: false });
-  };
-
-  handleLabelChangeAndClose = () => {
-    this.setState({ loadSearchDialogOpen: false });
-    this.onLoadConfirm();
   };
 
   render() {
@@ -61,16 +53,29 @@ class QueryPickerLoadUserSearchesDialog extends React.Component {
     if (searches !== null && searches !== undefined && searches.length > 0) {
       searchList = (
         <div className="query-picker-save-search-list">
-          {searches.map((search, idx) => {
+          {searches.reverse().map((search, idx) => {
             const searchDate = getDateFromTimestamp(search.timestamp);
             const needsUpdating = searchDate < STORY_SEARCH_RELEASE_DATE;
+            let url;
+            if (search.queryParams) {
+              url = `queries/search?q=${search.queryParams}`;
+            } else if (search.queries) {
+              url = `queries/search?qs=${serializeQueriesForUrl(search.queries)}`;
+            }
+            let description;
+            let queryNames;
+            if (search.queries) {
+              description = (<FormattedMessage {...localMessages.queryCount} values={{ count: search.queries.length }} />);
+              queryNames = search.queries.map(q => q.label).join(', ');
+            }
             return (
               <Row key={idx}>
                 <Col lg={12}>
                   <div key={idx} className="query-picker-save-search-item">
-                    <DeleteButton className="delete-search" onClick={() => this.onDeleteRequest(search)} />
-                    <h3><Link to={`queries/search?q=${search.queryParams}`}>{search.queryName}</Link></h3>
-                    <p><FormattedDate value={searchDate} /></p>
+                    <DeleteButton className="delete-search" onClick={() => this.handleDeleteRequest(search)} />
+                    <h3><Link to={url}>{search.queryName}</Link></h3>
+                    <p><FormattedDate value={searchDate} /> {description}</p>
+                    {queryNames && (<i><FormattedMessage {...localMessages.queryNames} />{queryNames}</i>)}
                     {needsUpdating && (
                       <i><FormattedHTMLMessage {...localMessages.needsUpdating} /></i>
                     )}
@@ -102,15 +107,14 @@ class QueryPickerLoadUserSearchesDialog extends React.Component {
             <AppButton
               primary
               onClick={this.handleDialogClose}
-            >
-              <FormattedMessage {...messages.close} />
-            </AppButton>,
+              label={messages.close}
+            />
           </DialogActions>
         </Dialog>
         <AppButton
           variant="outlined"
           style={{ marginTop: 30 }}
-          onClick={this.onLoadRequest}
+          onClick={this.handleLoadRequest}
           label={formatMessage(localMessages.loadSavedSearches)}
           disabled={submitting}
         />
@@ -123,11 +127,8 @@ QueryPickerLoadUserSearchesDialog.propTypes = {
   // from parent
   submitting: PropTypes.bool.isRequired,
   searches: PropTypes.array.isRequired,
-  onDelete: PropTypes.func,
-  handleLoadSearches: PropTypes.func.isRequired,
-  handleLoadSelectedSearch: PropTypes.func.isRequired,
-  handleDeleteSearch: PropTypes.func.isRequired,
-  onLoad: PropTypes.func,
+  onLoadSearches: PropTypes.func.isRequired,
+  onDeleteSearch: PropTypes.func.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
 };

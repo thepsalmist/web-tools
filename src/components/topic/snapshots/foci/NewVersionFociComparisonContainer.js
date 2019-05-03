@@ -3,23 +3,27 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
+import { push } from 'react-router-redux';
 import AppButton from '../../../common/AppButton';
 import { needsNewVersion } from '../../versions/NeedsNewVersionWarning';
 import FocalSetSummary from './FocalSetSummary';
 import FocalSetDefinitionSummary from './FocalSetDefinitionSummary';
-import { updateAndCreateNewTopicVersion, updateTopicVersionSubtopics } from '../../../../actions/topicActions';
+import { topicSnapshotSpider } from '../../../../actions/topicActions';
 import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import Permissioned from '../../../common/Permissioned';
 import TabbedChip from '../../../common/TabbedChip';
+import { updateFeedback } from '../../../../actions/appActions';
 
 const localMessages = {
   createVersionAndStartSpider: { id: 'focalSets.manage.about', defaultMessage: 'Generate New Version' },
   updateTopicVersionSubtopics: { id: 'focalSets.manage.about', defaultMessage: 'Generate Into Current Version' },
   versionDiffTitle: { id: 'focalSets.list.versionDiffTitle', defaultMessage: 'You\'ve Made Changes' },
   applyChanges: { id: 'focalSets.list.applyChanges', defaultMessage: 'apply your changes' },
+  failed: { id: 'focalSets.save.failed', defaultMessage: 'Sorry, something went wrong!' },
+  worked: { id: 'focalSets.save.worked', defaultMessage: 'We started generating the version' },
 };
 
-const NewVersionFociComparisonContainer = ({ topicId, usingLatest, newDefinitions, latestVersionRunning, currentFocalSets, selectedSnapshot, focalSetDefinitions, handleGenerateIntoSameVersion, handleCreateVersionAndStartSpider }) => {
+const NewVersionFociComparisonContainer = ({ topicId, usingLatest, newDefinitions, latestVersionRunning, currentFocalSets, selectedSnapshot, focalSetDefinitions, handleNewVersionAndSpider }) => {
   if (needsNewVersion(usingLatest, newDefinitions, latestVersionRunning)) {
     return (
       <React.Fragment>
@@ -39,15 +43,16 @@ const NewVersionFociComparisonContainer = ({ topicId, usingLatest, newDefinition
             <FocalSetDefinitionSummary focalSetDefs={focalSetDefinitions} snapshot={selectedSnapshot} />
             <AppButton
               label={localMessages.createVersionAndStartSpider}
-              onClick={() => handleCreateVersionAndStartSpider(topicId)}
+              onClick={() => handleNewVersionAndSpider(topicId, null)}
               primary
             />
             <TabbedChip warning message={localMessages.applyChanges} />
             <Permissioned onlyRole={PERMISSION_ADMIN}>
               <AppButton
                 label={localMessages.updateTopicVersionSubtopics}
-                onClick={() => handleGenerateIntoSameVersion(topicId, selectedSnapshot)}
+                onClick={() => handleNewVersionAndSpider(topicId, selectedSnapshot.snapshots_id)}
               />
+              (admin only)
             </Permissioned>
           </Col>
         </Row>
@@ -69,8 +74,7 @@ NewVersionFociComparisonContainer.propTypes = {
   latestVersionRunning: PropTypes.bool.isRequired,
   selectedSnapshot: PropTypes.object,
   // from dispatch
-  handleCreateVersionAndStartSpider: PropTypes.func.isRequired,
-  handleGenerateIntoSameVersion: PropTypes.func.isRequired,
+  handleNewVersionAndSpider: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -83,12 +87,22 @@ const mapStateToProps = state => ({
   selectedSnapshot: state.topics.selected.snapshots.selected,
 });
 
-const mapDispatchToProps = dispatch => ({
-  handleCreateVersionAndStartSpider: (topicId) => {
-    dispatch(updateAndCreateNewTopicVersion(topicId));
-  },
-  handleGenerateIntoSameVersion: (topicId, currentVersion) => {
-    dispatch(updateTopicVersionSubtopics(topicId, currentVersion.snapshots_id));
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  handleNewVersionAndSpider: (topicId, snapshotId) => {
+    // if currentVersion is null this will make a new version
+    const params = {};
+    if (snapshotId) {
+      params.snapshotId = snapshotId;
+    }
+    dispatch(topicSnapshotSpider(topicId, params))
+      .then((results) => {
+        if (results && results.topics_id) {
+          // let them know it worked
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.worked) }));
+          return dispatch(push(`/topics/${topicId}/versions`));
+        }
+        return dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
+      });
   },
 });
 

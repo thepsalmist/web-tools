@@ -7,7 +7,6 @@ from mediacloud.tags import MediaTag, TAG_ACTION_ADD, TAG_ACTION_REMOVE
 from werkzeug.utils import secure_filename
 import csv as pycsv
 from multiprocessing import Pool
-from collections import defaultdict
 from deco import concurrent, synchronized
 
 from server import app, config, TOOL_API_KEY

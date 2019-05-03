@@ -93,7 +93,7 @@ InfluentialStoriesContainer.propTypes = {
   previousButton: PropTypes.node,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   fetchStatus: state.topics.selected.stories.fetchStatus,
   sort: state.topics.selected.stories.sort,
   stories: state.topics.selected.stories.stories,
@@ -101,6 +101,7 @@ const mapStateToProps = state => ({
   topicInfo: state.topics.selected.info,
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
   topicId: state.topics.selected.id,
+  linkId: ownProps.location.query.linkId,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -115,7 +116,7 @@ const fetchAsyncData = (dispatch, props) => {
     ...props.filters,
     sort: props.sort,
     limit: InfluentialStoriesContainer.ROWS_PER_PAGE,
-    linkId: props.location.query.linkId,
+    linkId: props.linkId,
   };
   dispatch(fetchTopicInfluentialStories(props.topicId, params));
 };

@@ -30,21 +30,16 @@ const stateToStep = {
   [TOPIC_SNAPSHOT_STATE_COMPLETED]: 3,
 };
 
-const getCurrentStep = (snapshot, topic) => {
+const getCurrentStep = (snapshot) => {
   let stateToUse;
   let error = false;
   let step = 0;
   if (snapshot && snapshot.state) {
     stateToUse = snapshot.state;
   }
-  if (topic) {
-    // old one that hasn't generated a snapshot yet so use topic status
-    stateToUse = topic.state;
-  }
   if (stateToUse === TOPIC_SNAPSHOT_STATE_ERROR) {
     error = true;
-    const spiderJobs = snapshot.spiderJobs || topic.spiderJobs;
-    if ((spiderJobs.length > 0) && (spiderJobs[0].state === TOPIC_SNAPSHOT_STATE_ERROR)) {
+    if ((snapshot.job_states.length > 0) && (snapshot.job_states[0].state === TOPIC_SNAPSHOT_STATE_ERROR)) {
       step = 2;
     }
   } else {
@@ -53,14 +48,14 @@ const getCurrentStep = (snapshot, topic) => {
   return { step, error };
 };
 
-const VersionGenerationProcess = ({ currentStep, snapshot, topic, job, inError }) => {
+const VersionGenerationProcess = ({ currentStep, snapshot, job, inError }) => {
   let step;
   let error;
   if (currentStep) {
     step = currentStep;
     error = inError;
   } else {
-    const results = getCurrentStep(snapshot, topic, job);
+    const results = getCurrentStep(snapshot, job);
     // eslint-disable-next-line prefer-destructuring
     step = results.step;
     // eslint-disable-next-line prefer-destructuring
@@ -87,7 +82,6 @@ VersionGenerationProcess.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
   // from parent
-  topic: PropTypes.object,
   snapshot: PropTypes.object,
   job: PropTypes.object,
   currentStep: PropTypes.number,

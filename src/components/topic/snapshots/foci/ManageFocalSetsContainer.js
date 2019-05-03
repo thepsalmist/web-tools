@@ -3,7 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import Link from 'react-router/lib/Link';
 import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
@@ -16,6 +15,7 @@ import BackLinkingControlBar from '../../BackLinkingControlBar';
 import FocusIcon from '../../../common/icons/FocusIcon';
 import NewVersionFociComparisonContainer from './NewVersionFociComparisonContainer';
 import NeedsNewVersionWarning from '../../versions/NeedsNewVersionWarning';
+import LinkWithFilters from '../../LinkWithFilters';
 
 const localMessages = {
   listTitle: { id: 'focalSets.list.title', defaultMessage: 'Subtopic Details' },
@@ -99,9 +99,9 @@ class ManageFocalSetsContainer extends React.Component {
             <Row>
               <Col lg={6}>
                 <div id="create-foci-button">
-                  <Link to={`/topics/${topicId}/snapshot/foci/create`}>
-                    <AppButton primary label={formatMessage(messages.addFocus)}>{formatMessage(messages.addFocus)}</AppButton>
-                  </Link>
+                  <LinkWithFilters to={`/topics/${topicId}/snapshot/foci/create`}>
+                    <AppButton primary label={messages.addFocus} />
+                  </LinkWithFilters>
                 </div>
               </Col>
             </Row>

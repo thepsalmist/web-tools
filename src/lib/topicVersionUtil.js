@@ -4,7 +4,6 @@ import { nullOrUndefined } from './formValidators';
 export function getTopicVersionInfo(topicInfo) {
   // get latest version and status
   const snapshots = topicInfo.snapshots.list;
-  const snapshotJobStatus = topicInfo.snapshots.jobStatus;
 
   const lastReadySnapshot = snapshots.filter(s => snapshotIsUsable(s)).sort((f1, f2) => {
     if (f1.snapshot_date < f2.snapshot_date) {
@@ -15,7 +14,6 @@ export function getTopicVersionInfo(topicInfo) {
 
   return ({
     versionList: snapshots,
-    jobStatuses: snapshotJobStatus,
     lastReadySnapshot,
   });
 }

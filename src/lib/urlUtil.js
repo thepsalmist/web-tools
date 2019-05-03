@@ -1,4 +1,6 @@
 import { getBrandDarkerColor } from '../styles/colors';
+import { parseId } from './numberUtil';
+import { serializeQueriesForUrl } from './explorerUtil';
 
 // internal tag used to get the hostname from a url
 const tempATag = document.createElement('a');
@@ -46,10 +48,18 @@ export function urlToTools(param) {
 }
 
 export function urlToExplorerQuery(name, keywords, sourceIds, collectionIds, startDate, endDate) {
-  const color = encodeURIComponent(`#${getBrandDarkerColor().substr(1)}`);
   let sources = sourceIds || [];
   let collections = collectionIds || [];
-  sources = sources.map(mediaId => parseInt(mediaId, 10));
-  collections = collections.map(tagsId => parseInt(tagsId, 10));
-  return `https://explorer.mediacloud.org/#/queries/search?q=[{"label":"${encodeURIComponent(name)}","q":"${encodeURIComponent(keywords)}","color":"${color}","startDate":"${startDate}","endDate":"${endDate}","sources":${JSON.stringify(sources)},"collections":${JSON.stringify(collections)}}]`;
+  sources = sources.map(mediaId => parseId(mediaId));
+  collections = collections.map(tagsId => parseId(tagsId));
+  const query = {
+    label: name,
+    q: keywords,
+    color: getBrandDarkerColor().substr,
+    startDate,
+    endDate,
+    sources,
+    collections,
+  };
+  return `https://explorer.mediacloud.org/#/queries/search?qs=${serializeQueriesForUrl([query])}`;
 }

@@ -15,13 +15,12 @@ const localMessages = {
   seeOtherVersionsDetails: { id: 'version.running.seeOtherVersions.details', defaultMessage: 'While you wait for this version to finish generating, you can browse any previous versions of your topic.' },
 };
 
-const TopicVersionRunningStatusContainer = ({ topic, snapshot, job, intl }) => (
+const TopicVersionRunningStatusContainer = ({ subtitle, topic, snapshot, intl }) => (
   <React.Fragment>
     <TopicVersionStatus
-      subtitle={localMessages.title}
+      subtitle={subtitle || localMessages.title}
       topic={topic}
       snapshot={snapshot}
-      job={job}
     >
       <h2>
         <FormattedMessage {...localMessages.explanationTitle} />
@@ -45,7 +44,7 @@ TopicVersionRunningStatusContainer.propTypes = {
   // from state
   topic: PropTypes.object.isRequired,
   snapshot: PropTypes.object,
-  job: PropTypes.object,
+  subtitle: PropTypes.object,
   // from context
   intl: PropTypes.object.isRequired,
 };

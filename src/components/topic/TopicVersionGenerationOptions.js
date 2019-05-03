@@ -8,7 +8,6 @@ const localMessages = {
   createVersion: { id: 'topics.versions.generation.newVersion', defaultMessage: 'Create New Version' },
   createVersionAndGenerate: { id: 'topics.versions.generation.generate', defaultMessage: 'Generate New Version, don\'t Spider' },
   createVersionGenerateAndStartSpider: { id: 'topics.versions.generation.generate', defaultMessage: 'Generate New Version and Spider' },
-  // startSpidering: { id: 'focalSets.manage.about', defaultMessage: 'Spider after generating new version.' },
 };
 const TopicVersionGenerationOptions = (props) => {
   const { topicInfo, handleCreateVersionAndStartSpider } = props;

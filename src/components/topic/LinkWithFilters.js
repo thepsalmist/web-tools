@@ -9,7 +9,7 @@ import { filteredLinkTo } from '../util/location';
  * replacement for the react-router Link tag.
  */
 const LinkWithFilters = (props) => {
-  const { to, style, children, existingFilters, filters } = props;
+  const { to, style, children, existingFilters, filters, title } = props;
   let updatedFilters;
   if (filters) {
     updatedFilters = { ...existingFilters, ...filters };
@@ -18,7 +18,7 @@ const LinkWithFilters = (props) => {
   }
   const linkLocation = filteredLinkTo(to, updatedFilters);
   return (
-    <Link to={linkLocation} style={style}>{children}</Link>
+    <Link to={linkLocation} style={style} title={title}>{children}</Link>
   );
 };
 
@@ -28,6 +28,7 @@ LinkWithFilters.propTypes = {
   to: PropTypes.string.isRequired,
   style: PropTypes.object,
   filters: PropTypes.object, // use this to override
+  title: PropTypes.string,
   // from state
   existingFilters: PropTypes.object.isRequired,
 };

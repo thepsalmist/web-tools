@@ -37,19 +37,22 @@ def api_explorer_sources_by_ids():
 @api_error_handler
 def api_explorer_collections_by_ids():
     client_mc = user_admin_mediacloud_client()
+    querying_all_media = False
     try:
         if int(request.args['collections[]']) == -1:
-            return jsonify([{'id': ALL_MEDIA, 'label': "All Media", 'tag_sets_id': ALL_MEDIA}])
-        else:
-            collection_ids = request.args['collections[]'].split(',')
+            querying_all_media = True
     except ValueError:
-        # ie. request.args['collections[]'] is not an int
+        # ie. request.args['collections[]'] is not an int (ie. it is a list of collections like a normal query)
+        querying_all_media = False
+    if querying_all_media:
+        collection_list = [{'id': ALL_MEDIA, 'label': "All Media", 'tag_sets_id': ALL_MEDIA}]
+    else:
         collection_ids = request.args['collections[]'].split(',')
-    collection_list = []
-    for tags_id in collection_ids:
-        info = client_mc.tag(tags_id)
-        info['id'] = int(tags_id)
-        collection_list.append(info)
+        collection_list = []
+        for tags_id in collection_ids:
+            info = client_mc.tag(tags_id)
+            info['id'] = int(tags_id)
+            collection_list.append(info)
     return jsonify({"results": collection_list})
 
 

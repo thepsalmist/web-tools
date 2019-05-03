@@ -14,13 +14,15 @@ export const TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED = 'created but not queued';
 
 export const snapshotIsUsable = s => (s.state === TOPIC_SNAPSHOT_STATE_COMPLETED) && (s.searchable === true);
 
+const snapshotsByDateDesc = list => list.sort((f1, f2) => {
+  if (f1.snapshot_date < f2.snapshot_date) {
+    return 1;
+  }
+  return -1;
+});
+
 export function latestUsableSnapshot(snapshots) {
-  const usableSnapshots = snapshots.filter(s => snapshotIsUsable(s)).sort((f1, f2) => {
-    if (f1.snapshot_date < f2.snapshot_date) {
-      return 1;
-    }
-    return -1;
-  });
+  const usableSnapshots = snapshotsByDateDesc(snapshots).filter(s => snapshotIsUsable(s));
   if (usableSnapshots.length > 0) {
     return usableSnapshots[0];
   }
@@ -33,11 +35,12 @@ function getSnapshotFromListById(list, id) {
 }
 
 function cleanUpSnapshotList(rawList, jobList) {
-  return rawList.map(s => ({
+  return snapshotsByDateDesc(rawList).map((s, idx) => ({
     ...s,
-    snapshotJobs: jobList.filter(job => s.snapshots_id === job.snapshots_id),
+    job_states: jobList.filter(job => s.snapshots_id === job.snapshots_id),
     snapshotDate: snapshotDateToMoment(s.snapshot_date),
     isUsable: snapshotIsUsable(s),
+    isLatest: idx === 0,
   }));
 }
 
@@ -49,13 +52,6 @@ function isLatestVersionRunning(rawList) {
   return (latestSnapshot.state === 'running')
     || ((latestSnapshot.state === 'completed') && (latestSnapshot.searchable === 0));
 }
-
-const snapshotsByDateDesc = list => list.sort((f1, f2) => {
-  if (f1.snapshot_date < f2.snapshot_date) {
-    return 1;
-  }
-  return -1;
-});
 
 const latestByDate = (list) => {
   const orderedList = snapshotsByDateDesc(list);
@@ -84,7 +80,6 @@ const latestSnaphostIsUsable = (list) => {
 const snapshots = createAsyncReducer({
   initialState: {
     list: [],
-    jobStatus: [],
     latest: null,
     usingLatest: false,
     latestUsableSnapshot: null,
@@ -94,11 +89,10 @@ const snapshots = createAsyncReducer({
   },
   action: FETCH_TOPIC_SNAPSHOTS_LIST,
   handleSuccess: (payload, state) => {
-    const snapshotList = cleanUpSnapshotList(payload.snapshots.list, payload.snapshots.jobStatus);
+    const snapshotList = cleanUpSnapshotList(payload.snapshots.list, payload.job_states);
     return {
       // add in an isUsable property to centralize that logic to one place (ie. here!)
       list: snapshotList,
-      jobStatus: payload.jobStatus, // DEPRECATED
       latest: latestByDate(payload.snapshots.list),
       usingLatest: usingLatestSnapshot(payload.snapshots.list, state.selectedId),
       latestIsUsable: latestSnaphostIsUsable(payload.snapshots.list),
@@ -108,8 +102,7 @@ const snapshots = createAsyncReducer({
     };
   },
   [resolve(FETCH_TOPIC_SUMMARY)]: (payload, state) => ({ // topic summary includes list of snapshots
-    list: cleanUpSnapshotList(payload.snapshots.list, payload.snapshots.jobStatus),
-    jobStatus: payload.snapshots.jobStatus, // DEPRECATED
+    list: cleanUpSnapshotList(payload.snapshots.list, payload.job_states),
     latest: latestByDate(payload.snapshots.list),
     usingLatest: usingLatestSnapshot(payload.snapshots.list, state.selectedId),
     latestIsUsable: latestSnaphostIsUsable(payload.snapshots.list),

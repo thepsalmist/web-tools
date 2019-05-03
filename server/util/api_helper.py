@@ -2,7 +2,7 @@ import datetime
 from operator import itemgetter
 
 from server import mc
-from server.util.stringutil import time_solr_date
+from server.util.stringutil import trim_solr_date
 
 
 def add_missing_dates_to_split_story_counts(counts, start, end, period="day"):
@@ -32,7 +32,7 @@ def combined_split_and_normalized_counts(matching_results, total_results):
     counts = []
     for day in total_results:
         day_info = {
-            'date': time_solr_date(day['date']),
+            'date': trim_solr_date(day['date']),
             'total_count': day['count']
         }
         matching = [d for d in matching_results if d['date'] == day['date']]

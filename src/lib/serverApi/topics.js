@@ -139,12 +139,6 @@ export function deleteFocalSetDefinition(topicId, focalSetDefinitionId) {
 export function deleteFocusDefinition(topicId, focusDefinitionId) {
   return createApiPromise(`/api/topics/${topicId}/focus-definitions/${focusDefinitionId}/delete`, null, 'delete');
 }
-
-export function topicGenerateSnapshot(topicId, params) {
-  const acceptedParams = acceptParams(params, ['note']);
-  return createPostingApiPromise(`/api/topics/${topicId}/snapshots/generate`, acceptedParams);
-}
-
 export function topicUpdatePermissions(topicId, permissions) {
   return createPostingApiPromise(`/api/topics/${topicId}/permissions/update`, { permissions: JSON.stringify(permissions) }, 'put');
 }
@@ -207,12 +201,6 @@ export function wordMedia(topicId, word, params) {
 }
 */
 
-export function createTopic(params) {
-  const acceptedParams = acceptParams(params, ['name', 'description', 'solr_seed_query', 'is_public', 'max_stories', 'max_iterations',
-    'ch_monitor_id', 'start_date', 'end_date', 'spidered', 'sources[]', 'collections[]', 'is_logogram']);
-  return createPostingApiPromise('/api/topics/create', acceptedParams, 'put');
-}
-
 export function fetchStoryCountByQuery(params) {
   const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources[]', 'collections[]']);
   return createPostingApiPromise('/api/topics/create/preview/story/count', acceptedParams);
@@ -236,16 +224,6 @@ export function fetchWordsByQuery(params) {
 export function updateTopicSettings(topicId, params) {
   const acceptedParams = acceptParams(params, ['name', 'description', 'is_public', 'is_logogram']);
   return createPostingApiPromise(`/api/topics/${topicId}/update-settings`, acceptedParams, 'put');
-}
-
-export function updateAndCreateNewTopicVersion(topicId, params) {
-  const acceptedParams = acceptParams(params, ['name', 'description', 'solr_seed_query', 'is_public', 'max_stories', 'max_iterations',
-    'ch_monitor_id', 'start_date', 'end_date', 'spidered', 'sources[]', 'collections[]', 'is_logogram']);
-  return createPostingApiPromise(`/api/topics/${topicId}/update`, acceptedParams, 'put');
-}
-
-export function updateTopicVersionSubtopics(topicId, snapshotId) {
-  return createPostingApiPromise(`/api/topics/${topicId}/update`, { snapshotId }, 'put');
 }
 
 export function topicMapFiles(topicId, params) {
@@ -285,11 +263,6 @@ export function topicGeocodedStoryCoverage(topicId, params) {
 export function topicGeocodedStoryCounts(topicId, params) {
   const acceptedParams = acceptParams(params, ['timespanId', 'q']);
   return createApiPromise(`/api/topics/${topicId}/geo-tags/counts`, acceptedParams);
-}
-
-export function topicSpider(topicId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId']);
-  return createPostingApiPromise(`/api/topics/${topicId}/spider`, acceptedParams);
 }
 
 export function userQueuedAndRunningTopics() {
@@ -384,4 +357,32 @@ export function getMediaTypes() {
 
 export function topicSnapshotStoryCounts(topicId) {
   return createApiPromise(`/api/topics/${topicId}/stories/counts-by-snapshot`);
+}
+
+const topicCreateOrUpdateParams = ['name', 'description', 'solr_seed_query', 'is_public',
+  'max_stories', 'max_iterations', 'ch_monitor_id', 'start_date', 'end_date', 'spidered',
+  'sources[]', 'collections[]', 'is_logogram', 'startSpidering'];
+
+export function createTopic(params) {
+  const acceptedParams = acceptParams(params, topicCreateOrUpdateParams);
+  return createPostingApiPromise('/api/topics/create', acceptedParams, 'put');
+}
+
+export function topicSnapshotGenerate(topicId, params) {
+  const acceptedParams = acceptParams(params, ['snapshotId']);
+  return createPostingApiPromise(`/api/topics/${topicId}/snapshots/generate`, acceptedParams);
+}
+
+export function topicSnapshotSpider(topicId, params) {
+  const acceptedParams = acceptParams(params, ['snapshotId']);
+  return createPostingApiPromise(`/api/topics/${topicId}/snapshots/spider`, acceptedParams);
+}
+
+export function topicUpdateSeedQuery(topicId, params) {
+  const acceptedParams = acceptParams(params, topicCreateOrUpdateParams);
+  return createPostingApiPromise(`/api/topics/${topicId}/snapshots/update-seed-query`, acceptedParams, 'put');
+}
+
+export function topicSnapshotCreate(topicId) {
+  return createPostingApiPromise(`/api/topics/${topicId}/snapshots/create`);
 }

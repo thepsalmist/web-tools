@@ -18,7 +18,7 @@
 .topic-info-sidebar {
   border: 1px solid $material-grey300;
   padding: 30px;
-  margin-top: 40px;
+  margin-top: 30px;
 
   p {
     b {
@@ -36,7 +36,7 @@
   }
 
   h2 {
-    margin-top: 0px;
+    margin-top: 0px !important;
   }
 
   .media-widget {

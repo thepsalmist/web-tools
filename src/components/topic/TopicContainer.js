@@ -164,7 +164,6 @@ class TopicContainer extends React.Component {
             topic={topicInfo}
             sideBarContent={this.state.sideBarContent}
             // implements handleRenderFilters and evaluates showFilters
-            // setupJumpToExplorer={setupJumpToExplorer} // defined in child Component VersionReady
           />
           {childrenWithExtraProp}
         </React.Fragment>

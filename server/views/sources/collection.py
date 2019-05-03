@@ -280,7 +280,7 @@ def collection_source_story_split_historical_counts_csv(collection_id):
 def _source_story_split_count_worker(info):
     source = info['media']
     q = "media_id:{}".format(source['media_id'])
-    split_stories = apicache.last_year_split_story_count(user_mediacloud_key(), q)
+    split_stories = apicache.split_story_count(user_mediacloud_key(), q)
     source_data = {
         'media_id': source['media_id'],
         'media_name': source['name'],
@@ -310,9 +310,9 @@ def collection_source_split_stories(collection_id):
         if 'separate_spidered' in request.args else collections_query
     interval = 'day'  # default, and not currently passed to the calls above
 
-    all_results = apicache.last_year_split_story_count(user_mediacloud_key(), collections_query)
+    all_results = apicache.split_story_count(user_mediacloud_key(), collections_query)
     # same if request.args doesn't ask to exclude_spidered
-    non_spidered_results = apicache.last_year_split_story_count(user_mediacloud_key(), exclude_spidered_stories)
+    non_spidered_results = apicache.split_story_count(user_mediacloud_key(), exclude_spidered_stories)
 
     all_stories = {
         'total_story_count': all_results['total_story_count'],

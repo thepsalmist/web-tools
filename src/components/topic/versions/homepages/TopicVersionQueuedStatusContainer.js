@@ -11,13 +11,12 @@ const localMessages = {
   whatNowText: { id: 'version.queued.explanation2.text', defaultMessage: 'Does that query on the right look wrong? Did you not need this version of the topic anymore?  You can cancel it.' },
 };
 
-const TopicVersionQueuedStatusContainer = ({ topic, snapshot, job }) => (
+const TopicVersionQueuedStatusContainer = ({ topic, snapshot }) => (
   <React.Fragment>
     <TopicVersionStatus
       subtitle={localMessages.title}
       topic={topic}
       snapshot={snapshot}
-      job={job}
     >
       <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
       <p><FormattedMessage {...localMessages.explanationText} /></p>
@@ -41,7 +40,6 @@ TopicVersionQueuedStatusContainer.propTypes = {
   topic: PropTypes.object,
   filters: PropTypes.object,
   snapshot: PropTypes.object,
-  job: PropTypes.object,
   goToCreateNewVersion: PropTypes.func,
   // from context
   intl: PropTypes.object.isRequired,

@@ -1,8 +1,8 @@
 import server.util.wordembeddings as wordembeddings
 import server.views.apicache as base_cache
 from server import mc, TOOL_API_KEY
-from server.auth import user_mediacloud_client, user_admin_mediacloud_client
 from server.cache import cache
+from server.auth import user_mediacloud_client, user_admin_mediacloud_client
 from server.views.explorer import dates_as_filter_query
 from server.util.api_helper import combined_split_and_normalized_counts, add_missing_dates_to_split_story_counts
 from server.util.tags import processed_for_entities_query_clause, processed_for_themes_query_clause, is_bad_theme, \

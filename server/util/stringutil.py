@@ -12,5 +12,5 @@ def ids_from_comma_separated_str(comma_separated_string):
     return id_list
 
 
-def time_solr_date(date_obj):
-    return datetime.strptime(date_obj, mc.SENTENCE_PUBLISH_DATE_FORMAT).strftime("%Y-%m-%d")
+def trim_solr_date(date_str):
+  return datetime.strptime(date_str, mc.SENTENCE_PUBLISH_DATE_FORMAT).strftime("%Y-%m-%d")

@@ -1,4 +1,4 @@
-import { createApiPromise, acceptParams, generateParamStr } from '../apiUtil';
+import { createApiPromise, acceptParams, generateParamStr, createPostingApiPromise } from '../apiUtil';
 
 export function fetchSampleSearches() {
   return createApiPromise('/api/explorer/sample-searches');
@@ -144,12 +144,14 @@ export function fetchQueryGeo(params) {
 export function fetchQuerySourcesByIds(params) {
   const acceptedParams = acceptParams(params, ['uid', 'sources']);
   acceptedParams['sources[]'] = params.sources;
+  delete acceptedParams.sources;
   return createApiPromise('api/explorer/sources/list', acceptedParams);
 }
 
 export function fetchQueryCollectionsByIds(params) {
   const acceptedParams = acceptParams(params, ['uid', 'collections']);
   acceptedParams['collections[]'] = params.collections;
+  delete acceptedParams.collections;
   return createApiPromise('api/explorer/collections/list', acceptedParams);
 }
 
@@ -158,13 +160,13 @@ export function loadUserSearches() {
 }
 
 export function saveUserSearch(params) {
-  const acceptedParams = acceptParams(params, ['queryName', 'timestamp', 'queryParams']);
-  return createApiPromise('api/explorer/save-searches', acceptedParams);
+  const acceptedParams = acceptParams(params, ['queryName', 'timestamp', 'queryParams', 'queries']);
+  return createPostingApiPromise('api/explorer/save-searches', acceptedParams);
 }
 
 export function deleteUserSearch(params) {
   const acceptedParams = acceptParams(params, ['queryName', 'timestamp', 'queryParams']);
-  return createApiPromise('api/explorer/delete-search', acceptedParams);
+  return createPostingApiPromise('api/explorer/delete-search', acceptedParams);
 }
 
 export function fetchQueryTopThemes(params) {

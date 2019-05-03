@@ -1,6 +1,52 @@
 {
   "releases": [
     {
+      "date": "2019-5-03",
+      "version": "v3.10.0",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics", "sources", "tools" ],
+          "type": "New",
+          "note": "Download personal data",
+          "details": "You can now download all the data we have associated with your account directly from your profile page."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Explorer saved searches work better",
+          "details": "Fixed a few bugs related to saving and loading searches in Explorer."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Better explorer attention charts for sources with little data",
+          "details": "If you queried these before the dates might look weird if we had missing days; now we fill in the zeros."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Exploreer Attention chart downloads work again",
+          "details": "The combined download wasn't working before, now it does."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Query attention on Reddit",
+          "details": "Now in Explorer, if you pick the 'Reddit News Subs' source, you'll get attention data from Reddit (via PushShift.io)"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Explorer language tag refreshes when you run a new search"
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "New",
+          "note": "Sources manager now shows full history of story volume for collections & sources"
+        }
+      ]
+    },
+    {
       "date": "2019-4-30",
       "version": "v3.9.3",
       "notes": [
@@ -101,7 +147,9 @@
       "version": "v3.8.5",
       "notes": [
         {
+          "apps": [ "sources" ],
           "note": "Collection spreadsheet upload works",
+          "type": "Fixed",
           "details": "Removed older string handling, removed pooling for now"
         }
       ]

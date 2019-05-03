@@ -1,4 +1,4 @@
-import { createApiPromise, acceptParams, generateParamStr } from '../apiUtil';
+import { createApiPromise, acceptParams, generateParamStr, createPostingApiPromise } from '../apiUtil';
 
 export function fetchSampleSearches() {
   return createApiPromise('/api/explorer/sample-searches');
@@ -160,13 +160,13 @@ export function loadUserSearches() {
 }
 
 export function saveUserSearch(params) {
-  const acceptedParams = acceptParams(params, ['queryName', 'timestamp', 'queryParams']);
-  return createApiPromise('api/explorer/save-searches', acceptedParams);
+  const acceptedParams = acceptParams(params, ['queryName', 'timestamp', 'queryParams', 'queries']);
+  return createPostingApiPromise('api/explorer/save-searches', acceptedParams);
 }
 
 export function deleteUserSearch(params) {
   const acceptedParams = acceptParams(params, ['queryName', 'timestamp', 'queryParams']);
-  return createApiPromise('api/explorer/delete-search', acceptedParams);
+  return createPostingApiPromise('api/explorer/delete-search', acceptedParams);
 }
 
 export function fetchQueryTopThemes(params) {

@@ -6,19 +6,19 @@ import QueryPickerSaveUserSearchesDialog from './QueryPickerSaveUserSearchesDial
 
 
 const SavedSearchControls = (props) => {
-  const { handleLoadSearches, handleLoadSelectedSearch, handleSaveSearch, handleDeleteSearch, savedSearches, searchNickname, submitting, setQueryFormChildDialogOpen } = props;
+  const { onLoadSearches, onSaveSearch, onDeleteSearch, savedSearches,
+    searchNickname, submitting, setQueryFormChildDialogOpen } = props;
   return (
     <div className="saved-search-controls-wrapper">
       <QueryPickerLoadUserSearchesDialog
-        handleLoadSearches={handleLoadSearches}
-        handleDeleteSearch={handleDeleteSearch}
-        handleLoadSelectedSearch={handleLoadSelectedSearch}
+        onLoadSearches={onLoadSearches}
+        onDeleteSearch={onDeleteSearch}
         searches={savedSearches}
         submitting={submitting}
         setQueryFormChildDialogOpen={setQueryFormChildDialogOpen}
       />
       <QueryPickerSaveUserSearchesDialog
-        handleSaveSearch={handleSaveSearch}
+        onSaveSearch={onSaveSearch}
         searchNickname={searchNickname}
         submitting={submitting}
         setQueryFormChildDialogOpen={setQueryFormChildDialogOpen}
@@ -31,15 +31,14 @@ SavedSearchControls.propTypes = {
   // from parent
   submitting: PropTypes.bool,
   updateQuery: PropTypes.func,
-  handleSubmit: PropTypes.func,
+  onSubmit: PropTypes.func,
   pristine: PropTypes.bool,
   setQueryFormChildDialogOpen: PropTypes.func.isRequired,
   searchNickname: PropTypes.string.isRequired,
   savedSearches: PropTypes.array,
-  handleSaveSearch: PropTypes.func.isRequired,
-  handleLoadSearches: PropTypes.func.isRequired,
-  handleLoadSelectedSearch: PropTypes.func.isRequired,
-  handleDeleteSearch: PropTypes.func.isRequired,
+  onSaveSearch: PropTypes.func.isRequired,
+  onLoadSearches: PropTypes.func.isRequired,
+  onDeleteSearch: PropTypes.func.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
 };

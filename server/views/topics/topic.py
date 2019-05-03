@@ -38,12 +38,10 @@ def topic_summary(topics_id):
 
 @concurrent
 def _snapshot_foci_count(snapshot):
-    details = {}
     # add in the number of focal sets
     focal_sets = apicache.topic_focal_sets_list(user_mediacloud_key(), snapshot['topics_id'], snapshot['snapshots_id'])
     foci_count = sum([len(fs['foci']) for fs in focal_sets])
     return foci_count
-
 
 @synchronized
 def _add_snapshot_foci_count(snapshots):

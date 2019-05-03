@@ -1,1 +1,1 @@
-gunicorn server:app -k gevent
+gunicorn server:app -k gevent --timeout 500

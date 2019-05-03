@@ -2,7 +2,7 @@
 
 .sentences-over-time-chart {
   .health-plot-line {
-    fill: $material-grey500 !important;
+    fill: $material-grey200 !important;
   }
 }
 
@@ -10,6 +10,6 @@
     cursor: pointer !important;
 
     .health-plot-line {
-        fill: $material-grey500 !important;
+        fill: $material-grey200 !important;
     }
 }

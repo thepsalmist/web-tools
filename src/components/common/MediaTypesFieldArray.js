@@ -48,11 +48,11 @@ MediaTypesSelector.propTypes = {
 const MediaTypesList = injectIntl(withIntlForm(MediaTypesSelector));
 
 const MediaTypesFieldArray = (props) => {
-  if (props.previouslySelected.mediaType) {
+  if (props.previouslySelected && props.previouslySelected.mediaType) {
     props.previouslySelected.mediaType.forEach((p) => {
       const toUpdate = props.initialValues.mediaType.find(t => t.tags_id === p.tags_id);
       toUpdate.selected = p.value;
-      toUpdate.value = p.value;
+      toUpdate.value = p.value; // TODO: decide value or selected
     });
   }
   return (
@@ -74,7 +74,7 @@ MediaTypesFieldArray.propTypes = {
   tags: PropTypes.array,
   name: PropTypes.string,
   initialValues: PropTypes.object,
-  previouslySelected: PropTypes.object,
+  previouslySelected: PropTypes.array,
   onChange: PropTypes.func,
 };
 

@@ -31,12 +31,6 @@ class AdvancedMediaPickerSearchForm extends React.Component {
     this.setState({ mode });
   }
 
-  setSelectedMediaTypes = (mode, input) => {
-    const { onSelectMediaType } = this.props;
-    // get the value from the metadata item and store
-    onSelectMediaType(mode, input);
-  }
-
   handleSearchButtonClick = (evt, inputRef) => {
     const { onSearch } = this.props;
     evt.preventDefault();
@@ -44,10 +38,11 @@ class AdvancedMediaPickerSearchForm extends React.Component {
     onSearch({ mediaKeyword: searchStr });
   }
 
-  selectMetaData = (mode, input) => {
+  selectMetaData = (mode, input, name) => {
     const { onMetadataSelection } = this.props;
-    // get the value from the metadata item and store
-    onMetadataSelection(mode, { ...input, selected: input.value });
+    // get the values from the metadata item, store so other components can access it (checkboxes)
+    // this would be pushed in as previouslySelected into cbx components
+    onMetadataSelection(mode, { ...input, name });
   }
 
 
@@ -104,7 +99,6 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         label={formatMessage(messages.pubCountry)}
         async
         onChange={val => this.selectMetaData(TAG_SET_PUBLICATION_COUNTRY, val)}
-        onBlur={val => this.selectMetaData(TAG_SET_PUBLICATION_COUNTRY, val)}
       />
     ) : null;
     const pubState = this.state.mode === TAG_SET_PUBLICATION_STATE ? (
@@ -133,7 +127,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         name="primaryLanguage"
         form="advanced-media-picker-search"
         label={formatMessage(messages.language)}
-        onChange={val => this.selectMetaData(TAG_SET_PUBLICATION_STATE, val)}
+        onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, 'primaryLanguage')}
         async
       />
     ) : null;
@@ -143,7 +137,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         name="mediaType"
         form="advanced-media-picker-search"
         label={formatMessage(messages.mediaType)}
-        onChange={(...args) => this.selectMetaData(TAG_SET_MEDIA_TYPE, args)}
+        onChange={(...args) => this.selectMetaData(TAG_SET_MEDIA_TYPE, args, 'mediaType')}
         onSelect={this.setSelectedMediaTypes}
         previouslySelected={initValues.tags}
       />

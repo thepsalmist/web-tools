@@ -23,29 +23,34 @@ const formSelector = formValueSelector('advanced-media-picker-search');
 
 class SourceSearchResultsContainer extends React.Component {
   processQuery = (values) => {
-    const { formQuery, selectedMediaQueryType } = this.props;
-    const updatedQueryObj = Object.assign({}, values, { type: selectedMediaQueryType });
+    const { selectedMediaQueryType, selectedMediaQueryTags } = this.props;
+    // TODO: is selectedMediaQueryArgs more current or formQuery?
 
-    const formValues = formQuery !== null && formQuery !== undefined ? formQuery : [];
-    // this may not work if we have not updated the form via submit...
-    updatedQueryObj.tags = []; // TODO check that we are not overwriting previous values
-    const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus'];
+    // essentially reselect all values that are currently selected, plus the newly clicked/entered ones
+    const updatedQueryObj = Object.assign({}, { type: selectedMediaQueryType, tags: selectedMediaQueryTags }, values);
+    // TODO: redundant w values since we add them below?
 
-    // TODO there are multiple choices here that we need to iterate through
+    if (updatedQueryObj.tags === undefined) {
+      updatedQueryObj.tags = []; // if first metadata selection
+    }
+
+    const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType'];
+
     metadataQueryFields.forEach((key) => {
-      updatedQueryObj.tags[key] = [];
-      if (formValues && key in formValues) { // if in form, I don't think we are overwrited, except most recent updates are not there usually
-        updatedQueryObj.tags[key].push(formValues[key]);
+      if (updatedQueryObj.tags[key] === undefined) {
+        updatedQueryObj.tags[key] = [];
       }
+      Object.values(values).forEach((obj) => {
+        if (obj !== undefined
+          && (values.name === key
+          // checkbox selection or manual entry via MetadataPicker Autocomplete
+          && ((obj.selected !== false && obj.selected !== undefined)
+            || (obj.value !== undefined && obj.value !== '')))) {
+          updatedQueryObj.tags[key].push(obj);
+        }
+      });
     });
-    updatedQueryObj.tags.mediaType = [];
 
-    // mediaType handles multiple choice first. others to follow suite
-    Object.values(values).forEach((obj) => {
-      if (obj !== undefined && (obj.selected === true || obj.value === true)) {
-        updatedQueryObj.tags.mediaType.push(obj);
-      }
-    });
 
     if (typeof values === 'object' && 'allMedia' in values) {
       updatedQueryObj.tags.push(values.allMedia);
@@ -67,14 +72,14 @@ class SourceSearchResultsContainer extends React.Component {
   }
 
   render() {
-    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryArgs } = this.props;
+    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     let resultContent = null;
     content = (
       <div>
         <AdvancedMediaPickerSearchForm
-          initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword }, tags: selectedMediaQueryArgs }}
+          initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword }, tags: selectedMediaQueryTags }}
           onMetadataSelection={(metadataType, values) => this.updateQuerySelection(metadataType, values)}
           onSearch={val => this.updateAndSearchWithSelection(val)}
           hintText={formatMessage(localMessages.hintText)}
@@ -112,7 +117,7 @@ SourceSearchResultsContainer.propTypes = {
   fetchStatus: PropTypes.string,
   selectedMediaQueryType: PropTypes.number,
   selectedMediaQueryKeyword: PropTypes.string,
-  selectedMediaQueryArgs: PropTypes.object,
+  selectedMediaQueryTags: PropTypes.array,
   sourceResults: PropTypes.object,
   formQuery: PropTypes.object,
   mediaQuery: PropTypes.array,
@@ -127,7 +132,7 @@ const mapStateToProps = state => ({
   fetchStatus: state.system.mediaPicker.sourceQueryResults.fetchStatus,
   selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : 0,
   selectedMediaQueryKeyword: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.mediaKeyword : null,
-  selectedMediaQueryArgs: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args : null,
+  selectedMediaQueryTags: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.tags : null,
   sourceResults: state.system.mediaPicker.sourceQueryResults,
   formQuery: formSelector(
     state,
@@ -137,10 +142,6 @@ const mapStateToProps = state => ({
     'countryOfFocus',
     'mediaType',
     'allMedia',
-  ),
-  mediaQuery: formSelector(
-    state,
-    'mediaType',
   ),
   selectedMetadata: state.system.metadata.selected,
 });
@@ -157,7 +158,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       if (values.allMedia) { // handle the "all media" placeholder selection
         ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
       } else {
-        dispatch(selectMediaPickerQueryArgs({ type: values.type, ...values.tags }));
+        dispatch(selectMediaPickerQueryArgs({ type: values.type, tags: values.tags }));
       }
     }
   },

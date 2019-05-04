@@ -36,6 +36,12 @@ export const TAG_SET_COUNTRY_OF_FOCUS = 1970;
 const VALID_METADATA_IDS = [TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE,
   TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE];
 
+export const PUBLICATION_COUNTRY = 'publicationCountry';
+export const PUBLICATION_STATE = 'publicationState';
+export const PRIMARY_LANGUAGE = 'primaryLanguage';
+export const COUNTRY_OF_FOCUS = 'countryOfFocus';
+export const MEDIA_TYPE = 'mediaType';
+
 /**
  * Call this to verify a tag set id is one of the metadata options for a media source
  */

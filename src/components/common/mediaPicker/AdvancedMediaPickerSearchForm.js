@@ -8,7 +8,7 @@ import MetadataPickerContainer from '../MetadataPickerContainer';
 import MediaTypesFieldArray from '../MediaTypesFieldArray';
 import AppButton from '../AppButton';
 import messages from '../../../resources/messages';
-import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE } from '../../../lib/tagUtil';
+import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE, PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE } from '../../../lib/tagUtil';
 
 const localMessages = {
   searchSuggestion: { id: 'search.advanced.searchTip', defaultMessage: 'match these words' },
@@ -94,50 +94,50 @@ class AdvancedMediaPickerSearchForm extends React.Component {
     const pubCountry = this.state.mode === TAG_SET_PUBLICATION_COUNTRY ? (
       <MetadataPickerContainer
         id={TAG_SET_PUBLICATION_COUNTRY}
-        name="publicationCountry"
+        name={PUBLICATION_COUNTRY}
         form="advanced-media-picker-search"
         label={formatMessage(messages.pubCountry)}
         async
-        onChange={val => this.selectMetaData(TAG_SET_PUBLICATION_COUNTRY, val)}
+        onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_COUNTRY, args, PUBLICATION_COUNTRY)}
       />
     ) : null;
     const pubState = this.state.mode === TAG_SET_PUBLICATION_STATE ? (
       <MetadataPickerContainer
         id={TAG_SET_PUBLICATION_STATE}
-        name="publicationState"
+        name={PUBLICATION_STATE}
         form="advanced-media-picker-search"
         label={formatMessage(messages.pubState)}
-        onChange={val => this.selectMetaData(TAG_SET_PUBLICATION_STATE, val)}
+        onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PUBLICATION_STATE)}
         async
       />
     ) : null;
     const countryOfFocus = this.state.mode === TAG_SET_COUNTRY_OF_FOCUS ? (
       <MetadataPickerContainer
         id={TAG_SET_COUNTRY_OF_FOCUS}
-        name="countryOfFocus"
+        name={COUNTRY_OF_FOCUS}
         form="advanced-media-picker-search"
         label={formatMessage(messages.countryOfFocus)}
-        onChange={val => this.selectMetaData(TAG_SET_PUBLICATION_STATE, val)}
+        onChange={(...args) => this.selectMetaData(TAG_SET_COUNTRY_OF_FOCUS, args, COUNTRY_OF_FOCUS)}
         async
       />
     ) : null;
     const language = this.state.mode === TAG_SET_PRIMARY_LANGUAGE ? (
       <MetadataPickerContainer
         id={TAG_SET_PRIMARY_LANGUAGE}
-        name="primaryLanguage"
+        name={PRIMARY_LANGUAGE}
         form="advanced-media-picker-search"
         label={formatMessage(messages.language)}
-        onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, 'primaryLanguage')}
+        onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PRIMARY_LANGUAGE)}
         async
       />
     ) : null;
     const mediaType = this.state.mode === TAG_SET_MEDIA_TYPE ? (
       <MediaTypesFieldArray
         id={TAG_SET_MEDIA_TYPE}
-        name="mediaType"
+        name={MEDIA_TYPE}
         form="advanced-media-picker-search"
         label={formatMessage(messages.mediaType)}
-        onChange={(...args) => this.selectMetaData(TAG_SET_MEDIA_TYPE, args, 'mediaType')}
+        onChange={(...args) => this.selectMetaData(TAG_SET_MEDIA_TYPE, args, MEDIA_TYPE)}
         onSelect={this.setSelectedMediaTypes}
         previouslySelected={initValues.tags}
       />

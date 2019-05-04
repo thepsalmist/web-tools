@@ -11,7 +11,7 @@ import messages from '../../../resources/messages';
 import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE, PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE } from '../../../lib/tagUtil';
 
 const localMessages = {
-  searchSuggestion: { id: 'search.advanced.searchTip', defaultMessage: 'match these words' },
+  searchSuggestion: { id: 'search.advanced.searchTip', defaultMessage: 'search by source name' },
   pubCountrySuggestion: { id: 'search.advanced.pubCountryTip', defaultMessage: 'country published in' },
   pubStateSuggestion: { id: 'search.advanced.pubStateTip', defaultMessage: 'state published in' },
   pLanguageSuggestion: { id: 'search.advanced.pLanguageTip', defaultMessage: 'primary language' },

@@ -3,6 +3,7 @@ import flask_login
 import mediacloud.error
 from flask import jsonify, request
 from deco import synchronized, concurrent
+from flask_executor import Executor
 
 import server.views.apicache as shared_apicache
 import server.views.topics.apicache as apicache
@@ -16,6 +17,8 @@ from server.views.topics.topiclist import add_user_favorite_flag_to_topics
 logger = logging.getLogger(__name__)
 
 ARRAY_BASE_ONE = 1
+
+executor = Executor(app)
 
 
 @app.route('/api/topics/<topics_id>/summary', methods=['GET'])
@@ -36,17 +39,28 @@ def topic_summary(topics_id):
     return jsonify(topic)
 
 
-@concurrent
-def _snapshot_foci_count(snapshot):
+#@concurrent
+@executor.job
+def _snapshot_foci_count_worker(job):
+    snapshot = job['snapshot']
     # add in the number of focal sets
-    focal_sets = apicache.topic_focal_sets_list(user_mediacloud_key(), snapshot['topics_id'], snapshot['snapshots_id'])
+    focal_sets = apicache.topic_focal_sets_list(job['user_mc_key'], job['topics_id'], snapshot['snapshots_id'])
     foci_count = sum([len(fs['foci']) for fs in focal_sets])
-    return foci_count
+    snapshot['foci_count'] = foci_count
+    return snapshot
 
-@synchronized
-def _add_snapshot_foci_count(snapshots):
+
+#@synchronized
+def _add_snapshot_foci_count(topics_id, snapshots):
+    jobs = []
     for s in snapshots:
-        s['foci_count'] = _snapshot_foci_count(s)
+        job = {
+            'topics_id': topics_id,
+            'user_mc_key': user_mediacloud_key(),
+            'snapshot': s,
+        }
+        jobs.append(job)
+    snapshots = _snapshot_foci_count_worker.map(jobs)
     return snapshots
 
 
@@ -73,10 +87,8 @@ def _topic_snapshot_list(topic):
         # probably an old topic that has the dates in q instead of fq, so just return unknown
         seed_query_story_count = None
     topic['seed_query_story_count'] = seed_query_story_count
-    # add foci_count and story count for display
-    for s in snapshots:
-        s['topics_id'] = topic['topics_id']  # to make life easier
-    snapshots = _add_snapshot_foci_count(snapshots)
+    # add foci_count for display
+    snapshots = _add_snapshot_foci_count(topic['topics_id'], snapshots)
     snapshots = sorted(snapshots, key=lambda d: d['snapshot_date'])
     # extra stuff
     snapshot_status = mc.topicSnapshotGenerateStatus(topic['topics_id'])['job_states']  # need to know if one is running

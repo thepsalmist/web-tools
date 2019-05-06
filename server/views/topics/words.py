@@ -1,9 +1,8 @@
 import logging
 from flask import request, jsonify
 import flask_login
-from deco import concurrent, synchronized
 
-from server import app, TOOL_API_KEY
+from server import app, TOOL_API_KEY, executor
 from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_DOWNLOAD_SAMPLE_SIZE, \
     WORD_COUNT_UI_NUM_WORDS
 import server.util.csv as csv
@@ -228,7 +227,7 @@ def topic_similar_words(topics_id, word):
 
 
 # Helper function for pooling word2vec timespans process
-@concurrent
+@executor.job
 def _grab_timespan_embeddings(job):
     ts_word_counts = apicache.cached_topic_word_counts(job['api_key'], job['topics_id'], num_words=250,
                                                        timespans_id=int(job['timespan']['timespans_id']),
@@ -247,11 +246,9 @@ def _grab_timespan_embeddings(job):
     return {'timespan': job['timespan'], 'words': ts_word_counts}
 
 
-@synchronized
 def _get_all_timespan_embeddings(jobs):
-    results = []
-    for j in jobs:
-        results.append(_grab_timespan_embeddings(j))
+    # need to get the generator to actually run and return real data
+    results = [item for item in _grab_timespan_embeddings.map(jobs)]
     return results
 
 

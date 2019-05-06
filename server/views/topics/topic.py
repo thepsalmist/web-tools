@@ -2,12 +2,10 @@ import logging
 import flask_login
 import mediacloud.error
 from flask import jsonify, request
-from deco import synchronized, concurrent
-from flask_executor import Executor
 
 import server.views.apicache as shared_apicache
 import server.views.topics.apicache as apicache
-from server import app, mc
+from server import app, mc, executor
 from server.auth import user_mediacloud_key, user_mediacloud_client, is_user_logged_in
 from server.util.request import api_error_handler
 from server.views.topics import access_public_topic
@@ -17,8 +15,6 @@ from server.views.topics.topiclist import add_user_favorite_flag_to_topics
 logger = logging.getLogger(__name__)
 
 ARRAY_BASE_ONE = 1
-
-executor = Executor(app)
 
 
 @app.route('/api/topics/<topics_id>/summary', methods=['GET'])
@@ -39,9 +35,8 @@ def topic_summary(topics_id):
     return jsonify(topic)
 
 
-#@concurrent
 @executor.job
-def _snapshot_foci_count_worker(job):
+def _snapshot_foci_count_job(job):
     snapshot = job['snapshot']
     # add in the number of focal sets
     focal_sets = apicache.topic_focal_sets_list(job['user_mc_key'], job['topics_id'], snapshot['snapshots_id'])
@@ -50,7 +45,6 @@ def _snapshot_foci_count_worker(job):
     return snapshot
 
 
-#@synchronized
 def _add_snapshot_foci_count(topics_id, snapshots):
     jobs = []
     for s in snapshots:
@@ -60,7 +54,7 @@ def _add_snapshot_foci_count(topics_id, snapshots):
             'snapshot': s,
         }
         jobs.append(job)
-    snapshots = _snapshot_foci_count_worker.map(jobs)
+    snapshots = _snapshot_foci_count_job.map(jobs)
     return snapshots
 
 

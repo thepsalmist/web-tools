@@ -52,9 +52,11 @@ const MetadataCheckboxFieldArray = (props) => {
   if (props.previouslySelected && props.previouslySelected[props.type]) {
     props.previouslySelected[props.type].forEach((p) => {
       const toUpdate = props.initialValues.shortList.find(t => t.tags_id === p.tags_id);
-      toUpdate.selected = p.value;
-      toUpdate.value = p.value; // TODO: decide value or selected
-      toUpdate.name = 'shortList';
+      if (toUpdate) {
+        toUpdate.selected = p.value;
+        toUpdate.value = p.value; // TODO: decide value or selected
+        toUpdate.name = 'shortList';
+      }
     });
   }
   return (

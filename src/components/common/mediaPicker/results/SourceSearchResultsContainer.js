@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
-import { selectMediaPickerQueryArgs, fetchMediaPickerSources } from '../../../../actions/systemActions';
+import { selectMediaPickerQueryArgs, fetchMediaPickerSources, selectMetadataQueryArgs } from '../../../../actions/systemActions';
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
 import SourceResultsTable from './SourceResultsTable';
 import AdvancedMediaPickerSearchForm from '../AdvancedMediaPickerSearchForm';
@@ -121,7 +121,6 @@ SourceSearchResultsContainer.propTypes = {
   sourceResults: PropTypes.object,
   formQuery: PropTypes.object,
   mediaQuery: PropTypes.array,
-  selectedMetadata: PropTypes.object,
   // from dispatch
   updateMediaQuerySelection: PropTypes.func.isRequired,
   // updateAdvancedMediaQuerySelection: PropTypes.func.isRequired,
@@ -143,22 +142,16 @@ const mapStateToProps = state => ({
     'mediaType',
     'allMedia',
   ),
-  selectedMetadata: state.system.metadata.selected,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  /* updateMediaQuerySelection: (values) => {
-    if (values && notEmptyString(values.mediaKeyword)) {
-      dispatch(selectMediaPickerQueryArgs(values));
-      dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword }));
-    }
-  }, */
   updateMediaQuerySelection: (values) => {
     if (values && values.tags && Object.values(values.tags).length > 0) {
       if (values.allMedia) { // handle the "all media" placeholder selection
         ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
       } else {
         dispatch(selectMediaPickerQueryArgs({ type: values.type, tags: values.tags }));
+        dispatch(selectMetadataQueryArgs({ type: values.type, tags: values.tags }));
       }
     }
   },

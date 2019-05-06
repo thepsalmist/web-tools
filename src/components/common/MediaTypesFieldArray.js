@@ -52,7 +52,7 @@ const MediaTypesFieldArray = (props) => {
     props.previouslySelected.mediaType.forEach((p) => {
       const toUpdate = props.initialValues.mediaType.find(t => t.tags_id === p.tags_id);
       toUpdate.selected = p.value;
-      toUpdate.value = p.value; // TODO: decide value or selected
+      toUpdate.value = p.value; // this pushes into the store via onChange
     });
   }
   return (

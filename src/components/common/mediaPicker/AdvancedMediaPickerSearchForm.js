@@ -102,14 +102,24 @@ class AdvancedMediaPickerSearchForm extends React.Component {
       </Row>
     );
     const pubCountry = this.state.mode === TAG_SET_PUBLICATION_COUNTRY ? (
-      <MetadataPickerContainer
-        id={TAG_SET_PUBLICATION_COUNTRY}
-        name={PUBLICATION_COUNTRY}
-        form="advanced-media-picker-search"
-        label={formatMessage(messages.pubCountry)}
-        async
-        onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_COUNTRY, args, PUBLICATION_COUNTRY)}
-      />
+      <div>
+        <MetadataPickerContainer
+          id={TAG_SET_PUBLICATION_COUNTRY}
+          name={PUBLICATION_COUNTRY}
+          form="advanced-media-picker-search"
+          label={formatMessage(messages.pubCountry)}
+          async
+          onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_COUNTRY, args, PUBLICATION_COUNTRY)}
+        />
+        <MetadataCheckboxFieldArray
+          id={TAG_SET_PUBLICATION_STATE}
+          type={PUBLICATION_STATE}
+          form="advanced-media-picker-search"
+          label={formatMessage(messages.language)}
+          onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PUBLICATION_STATE)}
+          previouslySelected={initValues.tags}
+        />
+      </div>
     ) : null;
     const pubState = this.state.mode === TAG_SET_PUBLICATION_STATE ? (
       <div>
@@ -153,14 +163,6 @@ class AdvancedMediaPickerSearchForm extends React.Component {
     ) : null;
     const language = this.state.mode === TAG_SET_PRIMARY_LANGUAGE ? (
       <div>
-        <MetadataPickerContainer
-          id={TAG_SET_PRIMARY_LANGUAGE}
-          name={PRIMARY_LANGUAGE}
-          form="advanced-media-picker-search"
-          label={formatMessage(messages.language)}
-          onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PRIMARY_LANGUAGE)}
-          async
-        />
         <MetadataCheckboxFieldArray
           id={TAG_SET_PRIMARY_LANGUAGE}
           type={PRIMARY_LANGUAGE}

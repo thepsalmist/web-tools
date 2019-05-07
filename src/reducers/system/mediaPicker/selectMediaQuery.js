@@ -8,7 +8,7 @@ function selectMediaQuery(state = INITIAL_STATE, action) {
   switch (action.type) {
     case SELECT_MEDIAPICKER_QUERY_ARGS:
       if (action.payload) { // format should be args: { type, mediaKeyword, tags}
-        const args = action.payload;
+        const args = { ...action.payload };
         return { args };
       }
       return updatedState;

@@ -49,13 +49,15 @@ MetadataCheckboxSelector.propTypes = {
 const MetadataCheckboxList = injectIntl(withIntlForm(MetadataCheckboxSelector));
 
 const MetadataCheckboxFieldArray = (props) => {
+  const metaAndSelected = { ...props.initialValues };
   if (props.previouslySelected && props.previouslySelected[props.type]) {
     props.previouslySelected[props.type].forEach((p) => {
-      const toUpdate = props.initialValues.shortList.find(t => t.tags_id === p.tags_id);
-      if (toUpdate) {
-        toUpdate.selected = p.value;
-        toUpdate.value = p.value; // TODO: decide value or selected
-        toUpdate.name = 'shortList';
+      const toUpdate = metaAndSelected.shortList.findIndex(t => t.tags_id === p.tags_id);
+      if (toUpdate > -1) {
+        metaAndSelected.shortList[toUpdate].selected = p.value !== false && p.value !== undefined;
+        metaAndSelected.shortList[toUpdate].value = p.value !== false && p.value !== undefined;
+      } else {
+        metaAndSelected.shortList.push(p); // from AutoComplete
       }
     });
   }
@@ -65,7 +67,7 @@ const MetadataCheckboxFieldArray = (props) => {
         form="advanced-media-picker-search"
         name="shortList"
         component={MetadataCheckboxList}
-        initialValues={props.initialValues}
+        initialValues={metaAndSelected}
         onChange={props.onChange}
       />
     </div>

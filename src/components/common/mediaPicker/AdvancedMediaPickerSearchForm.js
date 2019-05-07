@@ -33,7 +33,8 @@ class AdvancedMediaPickerSearchForm extends React.Component {
   }
 
   getTagsPerMetadata = (tagVals, type) => {
-    const count = tagVals.tags && tagVals.tags[type] ? tagVals.tags[type].length : 0;
+    const currentlySelected = tagVals.tags && tagVals.tags[type] ? tagVals.tags[type] : undefined;
+    const count = currentlySelected ? currentlySelected.filter(m => m.value).length : 0;
     if (count) {
       return `(${count})`;
     }

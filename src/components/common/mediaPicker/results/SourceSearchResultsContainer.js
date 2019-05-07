@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
-import { selectMediaPickerQueryArgs, fetchMediaPickerSources, selectMetadataQueryArgs } from '../../../../actions/systemActions';
+import { selectMediaPickerQueryArgs, fetchMediaPickerSources } from '../../../../actions/systemActions';
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
 import SourceResultsTable from './SourceResultsTable';
 import AdvancedMediaPickerSearchForm from '../AdvancedMediaPickerSearchForm';
@@ -42,11 +42,14 @@ class SourceSearchResultsContainer extends React.Component {
       }
       Object.values(values).forEach((obj) => {
         if (obj !== undefined
-          && (values.name === key
-          // checkbox selection or manual entry via MetadataPicker Autocomplete
-          && ((obj.selected !== false && obj.selected !== undefined)
-            || (obj.value !== undefined && obj.value !== '')))) {
-          updatedQueryObj.tags[key].push(obj);
+          && values.name === key) {
+          const modifiedObjIndex = updatedQueryObj.tags[key].findIndex(o => obj.tags_id === o.tags_id);
+          if (modifiedObjIndex > -1) {
+            updatedQueryObj.tags[key][modifiedObjIndex].value = obj.value; // update
+            updatedQueryObj.tags[key][modifiedObjIndex].selected = obj.value; // update
+          } else if (obj.tags_id) {
+            updatedQueryObj.tags[key].push(obj); // or insert ? Or do in reducer?
+          }
         }
       });
     });
@@ -150,8 +153,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       if (values.allMedia) { // handle the "all media" placeholder selection
         ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
       } else {
-        dispatch(selectMediaPickerQueryArgs({ type: values.type, tags: values.tags }));
-        dispatch(selectMetadataQueryArgs({ type: values.type, tags: values.tags }));
+        dispatch(selectMediaPickerQueryArgs({ type: values.type, tags: { ...values.tags } }));
       }
     }
   },
@@ -161,8 +163,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
       } else {
         dispatch(selectMediaPickerQueryArgs(values));
-        const tags = Object.values(values.tags).filter(t => t.length > 0).reduce((a, b) => a.concat(b), []).map(i => i.tags_id)
-          .join(',');
+        let tags = Object.values(values.tags).filter(t => t.length > 0);
+        const selectedTags = [];
+        tags.forEach((t) => {
+          selectedTags.push(t.filter(m => m.value).reduce((a, b) => a.concat(b), []).map(i => i.tags_id));
+        });
+        tags = selectedTags.join(',');
         dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags }));
       }
     }

@@ -48,11 +48,14 @@ MediaTypesSelector.propTypes = {
 const MediaTypesList = injectIntl(withIntlForm(MediaTypesSelector));
 
 const MediaTypesFieldArray = (props) => {
+  const metaAndSelected = { ...props.initialValues };
   if (props.previouslySelected && props.previouslySelected.mediaType) {
     props.previouslySelected.mediaType.forEach((p) => {
-      const toUpdate = props.initialValues.mediaType.find(t => t.tags_id === p.tags_id);
-      toUpdate.selected = p.value;
-      toUpdate.value = p.value; // this pushes into the store via onChange
+      const toUpdate = metaAndSelected.mediaType.findIndex(t => t.tags_id === p.tags_id);
+      if (toUpdate > -1) {
+        metaAndSelected.mediaType[toUpdate].selected = p.value;
+        metaAndSelected.mediaType[toUpdate].value = p.value;
+      }
     });
   }
   return (
@@ -61,7 +64,7 @@ const MediaTypesFieldArray = (props) => {
         form="advanced-media-picker-search"
         name="mediaType"
         component={MediaTypesList}
-        initialValues={props.initialValues}
+        initialValues={metaAndSelected}
         onChange={props.onChange}
       />
     </div>

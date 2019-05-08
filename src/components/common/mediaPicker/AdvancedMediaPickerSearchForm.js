@@ -32,9 +32,10 @@ class AdvancedMediaPickerSearchForm extends React.Component {
     this.setState({ mode });
   }
 
-  getTagsPerMetadata = (tagVals, type) => {
+  getTagsPerMetadata = (tagVals, type, retInt) => {
     const currentlySelected = tagVals.tags && tagVals.tags[type] ? tagVals.tags[type] : undefined;
     const count = currentlySelected ? currentlySelected.filter(m => m.value).length : 0;
+    if (retInt) return count;
     if (count) {
       return `(${count})`;
     }
@@ -64,38 +65,40 @@ class AdvancedMediaPickerSearchForm extends React.Component {
   render() {
     const { initValues, renderTextField, renderCheckbox } = this.props;
     const { formatMessage } = this.props.intl;
+    const colorStyle = mode => (this.getTagsPerMetadata(initValues, mode, true) > 0 ? 'purple' : 'gray');
+    const backgroundColorStyle = mode => (mode === this.state.mode ? 'lightgray' : 'white');
     const contentButtons = (
       <Row>
         <Col lg={6}>
           <AppButton
-            style={{ marginTop: 10 }}
+            style={{ marginTop: 10, color: colorStyle(PUBLICATION_COUNTRY), backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_COUNTRY) }}
             label={formatMessage(localMessages.pubCountrySuggestion, { count: this.getTagsPerMetadata(initValues, PUBLICATION_COUNTRY) })}
-            onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_COUNTRY)}
-            primary={(this.state.mode === TAG_SET_PUBLICATION_COUNTRY).toString()}
+            onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_COUNTRY, PUBLICATION_COUNTRY)}
+            secondary={this.state.mode === TAG_SET_PUBLICATION_COUNTRY}
           />
           <AppButton
-            style={{ marginTop: 10 }}
+            style={{ marginTop: 10, color: colorStyle(PUBLICATION_STATE), backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_STATE) }}
             label={formatMessage(localMessages.pubStateSuggestion, { count: this.getTagsPerMetadata(initValues, PUBLICATION_STATE) })}
-            onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_STATE)}
-            primary={this.state.mode === TAG_SET_PUBLICATION_STATE}
+            onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_STATE, PUBLICATION_STATE)}
+            secondary={this.state.mode === TAG_SET_PUBLICATION_STATE}
           />
           <AppButton
-            style={{ marginTop: 10 }}
+            style={{ marginTop: 10, color: colorStyle(PRIMARY_LANGUAGE), backgroundColor: backgroundColorStyle(TAG_SET_PRIMARY_LANGUAGE) }}
             label={formatMessage(localMessages.pLanguageSuggestion, { count: this.getTagsPerMetadata(initValues, PRIMARY_LANGUAGE) })}
-            onClick={() => this.setMetaClick(TAG_SET_PRIMARY_LANGUAGE)}
-            primary={this.state.mode === TAG_SET_PRIMARY_LANGUAGE}
+            onClick={() => this.setMetaClick(TAG_SET_PRIMARY_LANGUAGE, PRIMARY_LANGUAGE)}
+            secondary={this.state.mode === TAG_SET_PRIMARY_LANGUAGE}
           />
           <AppButton
-            style={{ marginTop: 10 }}
+            style={{ marginTop: 10, color: colorStyle(COUNTRY_OF_FOCUS), backgroundColor: backgroundColorStyle(TAG_SET_COUNTRY_OF_FOCUS) }}
             label={formatMessage(localMessages.pCountryOfFocusSuggestion, { count: this.getTagsPerMetadata(initValues, COUNTRY_OF_FOCUS) })}
-            onClick={() => this.setMetaClick(TAG_SET_COUNTRY_OF_FOCUS)}
-            primary={this.state.mode === TAG_SET_COUNTRY_OF_FOCUS}
+            onClick={() => this.setMetaClick(TAG_SET_COUNTRY_OF_FOCUS, COUNTRY_OF_FOCUS)}
+            secondary={this.state.mode === TAG_SET_COUNTRY_OF_FOCUS}
           />
           <AppButton
-            style={{ marginTop: 10 }}
+            style={{ marginTop: 10, color: colorStyle(MEDIA_TYPE), backgroundColor: backgroundColorStyle(TAG_SET_MEDIA_TYPE) }}
             label={formatMessage(localMessages.pMediaType, { count: this.getTagsPerMetadata(initValues, MEDIA_TYPE) })}
-            onClick={() => this.setMetaClick(TAG_SET_MEDIA_TYPE)}
-            primary={this.state.mode === TAG_SET_MEDIA_TYPE}
+            onClick={() => this.setMetaClick(TAG_SET_MEDIA_TYPE, MEDIA_TYPE)}
+            secondary={this.state.mode === TAG_SET_MEDIA_TYPE}
           />
         </Col>
       </Row>
@@ -144,7 +147,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
           type={PRIMARY_LANGUAGE}
           form="advanced-media-picker-search"
           label={formatMessage(messages.language)}
-          onChange={args => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PRIMARY_LANGUAGE)}
+          onChange={...args => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PRIMARY_LANGUAGE)}
           previouslySelected={initValues.tags}
         />
       </div>

@@ -1,18 +1,14 @@
-# -*- coding: utf-8 -*-
 import logging
 from flask import jsonify, request
 import flask_login
 import json
 
-from server import app, mc
+from server import app
 import server.util.csv as csv
-from server.auth import is_user_logged_in, user_mediacloud_key, user_mediacloud_client
-from server.cache import cache
 from server.util.request import api_error_handler
 from server.util.geo import COUNTRY_GEONAMES_ID_TO_APLHA3, HIGHCHARTS_KEYS
 import server.util.tags as tags
-from server.views.explorer import parse_as_sample, parse_query_with_keywords, \
-    load_sample_searches, file_name_for_download
+from server.views.explorer import parse_as_sample, parse_query_with_keywords, file_name_for_download
 import server.views.explorer.apicache as apicache
 
 logger = logging.getLogger(__name__)
@@ -24,8 +20,6 @@ logger = logging.getLogger(__name__)
 def api_explorer_geotag_count():
     search_id = int(request.args['search_id']) if 'search_id' in request.args else None
     if search_id not in [None, -1]:
-        SAMPLE_SEARCHES = load_sample_searches()
-        current_search = SAMPLE_SEARCHES[search_id]['queries']
         solr_q, solr_fq = parse_as_sample(search_id, request.args['index'])
     else:
         solr_q, solr_fq = parse_query_with_keywords(request.args)
@@ -39,11 +33,9 @@ def api_explorer_geotag_count():
 def api_explorer_demo_geotag_count():
     search_id = int(request.args['search_id']) if 'search_id' in request.args else None
     if search_id not in [None, -1]:
-        SAMPLE_SEARCHES = load_sample_searches()
-        current_search = SAMPLE_SEARCHES[search_id]['queries']
         solr_q, solr_fq = parse_as_sample(search_id, request.args['index'])
     else:
-        solr_q, solr_fq= parse_query_with_keywords(request.args)
+        solr_q, solr_fq = parse_query_with_keywords(request.args)
     data = apicache.top_tags_with_coverage(solr_q, solr_fq, tags.GEO_TAG_SET)
     data['results'] = _filter_for_countries(data['results'])
     return jsonify(data)
@@ -52,7 +44,8 @@ def api_explorer_demo_geotag_count():
 def _filter_for_countries(top_geo_tags):
     # this tag set has country and state tags, so we have to filter out to get just the country ones to draw a heatmap
     # 1: parse out the geonames id from the tag (ie. "geonames_6252001" and verify it on the whitelist
-    country_tags = [t for t in top_geo_tags if int(t['tag'].split('_')[1]) in list(COUNTRY_GEONAMES_ID_TO_APLHA3.keys())]
+    country_tags = [t for t in top_geo_tags if int(t['tag'].split('_')[1]) in
+                    list(COUNTRY_GEONAMES_ID_TO_APLHA3.keys())]
     # 2: now add in helpful data for mapping it
     for t in country_tags:
         geonames_id = int(t['tag'].split('_')[1])

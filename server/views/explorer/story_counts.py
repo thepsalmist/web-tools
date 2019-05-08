@@ -155,7 +155,7 @@ def api_explorer_combined_story_split_count_csv():
     data = []
     dates = [d['date'] for d in story_count_results[0]['by_date']]
     for idx in range(len(dates)):
-        row = { 'date': dates[idx] }
+        row = {'date': dates[idx]}
         for q in story_count_results:
             row[q['label']] = q['by_date'][idx]['count']
         data.append(row)    

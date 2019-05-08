@@ -12,7 +12,7 @@ from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_
 from server.util.request import arguments_required, form_fields_required, api_error_handler
 from server.util.tags import TAG_SETS_ID_PUBLICATION_COUNTRY, TAG_SETS_ID_PUBLICATION_STATE, VALID_COLLECTION_TAG_SETS_IDS, \
     TAG_SETS_ID_PRIMARY_LANGUAGE, TAG_SETS_ID_COUNTRY_OF_FOCUS, TAG_SETS_ID_MEDIA_TYPE, TAG_SET_GEOCODER_VERSION, \
-    TAG_SET_NYT_LABELS_VERSION, is_metadata_tag_set
+    TAG_SET_NYT_LABELS_VERSION, is_metadata_tag_set, TAG_SPIDERED_STORY
 from server.views.sources.words import word_count, stream_wordcount_csv
 from server.views.sources.geocount import stream_geo_csv, cached_geotag_count
 from server.views.sources.stories_split_by_time import stream_split_stories_csv
@@ -161,7 +161,7 @@ def source_split_stories_csv(media_id):
 @api_error_handler
 def api_media_source_split_stories(media_id):
     media_query = 'media_id:' + str(media_id)
-    exclude_spidered_stories = " media_id:{} AND NOT tags_id_stories:{}".format(str(media_id), 8875452) if 'separate_spidered' in request.args else media_query
+    exclude_spidered_stories = " media_id:{} AND NOT tags_id_stories:{}".format(str(media_id), TAG_SPIDERED_STORY) if 'separate_spidered' in request.args else media_query
 
     health = _cached_media_source_health(user_mediacloud_key(), media_id)
 

@@ -32,6 +32,7 @@ const MediaTypesSelector = ({ initialValues, renderCheckbox, onChange, intl: { f
             label={`${name}.label`}
             placeholder={formatMessage(messages.ok)}
           />
+          {fieldObject.description}
         </li>
       );
     })}

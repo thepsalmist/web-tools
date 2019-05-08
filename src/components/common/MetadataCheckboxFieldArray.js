@@ -40,7 +40,10 @@ const MetadataCheckboxSelector = ({ initialValues, renderCheckbox, onChange, int
 
 MetadataCheckboxSelector.propTypes = {
   fields: PropTypes.object,
-  initialValues: PropTypes.array,
+  initialValues: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
   renderCheckbox: PropTypes.func.isRequired,
   intl: PropTypes.object,
   onChange: PropTypes.func,
@@ -57,7 +60,7 @@ const MetadataCheckboxFieldArray = (props) => {
         metaAndSelected.shortList[toUpdate].selected = p.value !== false && p.value !== undefined;
         metaAndSelected.shortList[toUpdate].value = p.value !== false && p.value !== undefined;
       } else {
-        metaAndSelected.shortList.push(p); // from AutoComplete
+        metaAndSelected.shortList.push(p); // from autocomplete selections
       }
     });
   }
@@ -78,15 +81,21 @@ MetadataCheckboxFieldArray.propTypes = {
   // from parent
   intl: PropTypes.object.isRequired,
   type: PropTypes.string,
-  initialValues: PropTypes.object,
-  previouslySelected: PropTypes.array,
+  initialValues: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
+  previouslySelected: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
   onChange: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   fetchStatus: state.system.metadata[ownProps.type].fetchStatus,
   label: state.system.metadata[ownProps.type].label,
-  initialValues: state.system.metadata[ownProps.type],
+  initialValues: { shortList: state.system.metadata[ownProps.type].shortList },
 });
 
 const fetchAsyncData = (dispatch, props) => {

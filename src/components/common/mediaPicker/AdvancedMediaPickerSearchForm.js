@@ -5,6 +5,7 @@ import { injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../hocs/IntlForm';
 import MetadataPickerContainer from '../MetadataPickerContainer';
+import MediaPickerMetadataContainer from '../MediaPickerMetadataContainer';
 import MediaTypesFieldArray from '../MediaTypesFieldArray';
 import MetadataCheckboxFieldArray from '../MetadataCheckboxFieldArray';
 import AppButton from '../AppButton';
@@ -143,21 +144,14 @@ class AdvancedMediaPickerSearchForm extends React.Component {
     ) : null;
     const countryOfFocus = this.state.mode === TAG_SET_COUNTRY_OF_FOCUS ? (
       <div>
-        <MetadataPickerContainer
-          id={TAG_SET_COUNTRY_OF_FOCUS}
-          name={COUNTRY_OF_FOCUS}
-          form="advanced-media-picker-search"
-          label={formatMessage(messages.countryOfFocus)}
-          onChange={(...args) => this.selectMetaData(TAG_SET_COUNTRY_OF_FOCUS, args, COUNTRY_OF_FOCUS)}
-          async
-        />
-        <MetadataCheckboxFieldArray
+        <MediaPickerMetadataContainer
           id={TAG_SET_COUNTRY_OF_FOCUS}
           type={COUNTRY_OF_FOCUS}
           form="advanced-media-picker-search"
           label={formatMessage(messages.language)}
           onChange={(...args) => this.selectMetaData(TAG_SET_COUNTRY_OF_FOCUS, args, COUNTRY_OF_FOCUS)}
-          previouslySelected={initValues.tags}
+          onSearch={val => this.updateAndSearchWithSelection(val)}
+          previouslySelectedTags={initValues.tags}
         />
       </div>
     ) : null;
@@ -168,7 +162,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
           type={PRIMARY_LANGUAGE}
           form="advanced-media-picker-search"
           label={formatMessage(messages.language)}
-          onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PRIMARY_LANGUAGE)}
+          onChange={args => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PRIMARY_LANGUAGE)}
           previouslySelected={initValues.tags}
         />
       </div>

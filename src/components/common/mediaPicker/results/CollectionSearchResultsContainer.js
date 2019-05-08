@@ -16,37 +16,72 @@ const localMessages = {
 };
 
 
-const CollectionSearchResultsContainer = (props) => {
-  const { selectedMediaQueryKeyword, selectedMediaQueryType, initCollections, collectionResults, updateMediaQuerySelection, onToggleSelected, fetchStatus, hintTextMsg } = props;
-  const { formatMessage } = props.intl;
-  let content = null;
-  if (fetchStatus === FETCH_ONGOING) {
-    // we have to do this here to show a loading spinner when first searching (and featured collections are showing)
-    content = <LoadingSpinner />;
-  } else if (collectionResults.list && selectedMediaQueryKeyword) {
-    content = (
-      <CollectionResultsTable
-        title={formatMessage(localMessages.title, { name: selectedMediaQueryKeyword })}
-        collections={collectionResults.list}
-        onToggleSelected={onToggleSelected}
-      />
-    );
-  } else if (initCollections) {
-    content = initCollections;
-  } else {
-    content = <FormattedMessage {...localMessages.noResults} />;
+class CollectionSearchResultsContainer extends React.Component {
+  componentWillMount() {
+    this.correlateSelection(this.props);
   }
-  return (
-    <div>
-      <MediaPickerSearchForm
-        initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
-        onSearch={val => updateMediaQuerySelection({ ...val, type: selectedMediaQueryType })}
-        hintText={formatMessage(hintTextMsg || localMessages.hintText)}
-      />
-      {content}
-    </div>
-  );
-};
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selectedMedia !== this.props.selectedMedia
+      // if the results have changed from a keyword entry, we need to update the UI
+      || (nextProps.collectionResults && nextProps.collectionResults.lastFetchSuccess !== this.props.collectionResults.lastFetchSuccess)) {
+      this.correlateSelection(nextProps);
+    }
+  }
+
+  correlateSelection(whichProps) {
+    const whichList = whichProps.collectionResults.list;
+
+    // if selected media has changed, update current results
+    if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0
+      // we can't be sure we have received results yet
+      && whichList && whichList.length > 0) {
+      // sync up selectedMedia and push to result sets.
+      whichList.map((m) => {
+        const mediaIndex = whichProps.selectedMedia.findIndex(q => q.id === m.id);
+        if (mediaIndex < 0) {
+          this.props.handleMediaConcurrency(m, false);
+        } else if (mediaIndex >= 0) {
+          this.props.handleMediaConcurrency(m, true);
+        }
+        return m;
+      });
+    }
+    return 0;
+  }
+
+  render() {
+    const { selectedMediaQueryKeyword, selectedMediaQueryType, initCollections, collectionResults, updateMediaQuerySelection, onToggleSelected, fetchStatus, hintTextMsg } = this.props;
+    const { formatMessage } = this.props.intl;
+    let content = null;
+    if (fetchStatus === FETCH_ONGOING) {
+      // we have to do this here to show a loading spinner when first searching (and featured collections are showing)
+      content = <LoadingSpinner />;
+    } else if (collectionResults.list && selectedMediaQueryKeyword) {
+      content = (
+        <CollectionResultsTable
+          title={formatMessage(localMessages.title, { name: selectedMediaQueryKeyword })}
+          collections={collectionResults.list}
+          onToggleSelected={onToggleSelected}
+        />
+      );
+    } else if (initCollections) {
+      content = initCollections;
+    } else {
+      content = <FormattedMessage {...localMessages.noResults} />;
+    }
+    return (
+      <div>
+        <MediaPickerSearchForm
+          initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
+          onSearch={val => updateMediaQuerySelection({ ...val, type: selectedMediaQueryType })}
+          hintText={formatMessage(hintTextMsg || localMessages.hintText)}
+        />
+        {content}
+      </div>
+    );
+  }
+}
 
 
 CollectionSearchResultsContainer.propTypes = {
@@ -54,6 +89,10 @@ CollectionSearchResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
+  handleMediaConcurrency: PropTypes.func.isRequired,
+  // from state
+  fetchStatus: PropTypes.string,
+  selectedMedia: PropTypes.array,
   whichTagSet: PropTypes.array,
   hintTextMsg: PropTypes.object,
   // from state
@@ -61,12 +100,12 @@ CollectionSearchResultsContainer.propTypes = {
   selectedMediaQueryType: PropTypes.number,
   collectionResults: PropTypes.object,
   initCollections: PropTypes.object,
-  fetchStatus: PropTypes.string,
   updateMediaQuerySelection: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.system.mediaPicker.collectionQueryResults.fetchStatus,
+  selectedMedia: state.system.mediaPicker.selectMedia.list,
   selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : 0,
   selectedMediaQueryKeyword: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.mediaKeyword : null,
   collectionResults: state.system.mediaPicker.collectionQueryResults,

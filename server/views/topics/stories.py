@@ -15,6 +15,7 @@ from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_
 from server.cache import cache
 from server.util.request import api_error_handler
 from server.views.topics import access_public_topic
+from server.util.tags import TAG_SPIDERED_STORY
 
 logger = logging.getLogger(__name__)
 
@@ -352,7 +353,7 @@ def story_counts_by_snapshot(topics_id):
             spidered = apicache.topic_story_count(user_mediacloud_key(), topics_id,
                                                   snapshots_id=s['snapshots_id'], foci_id=None,
                                                   timespans_id=timespans[0]['timespans_id'],
-                                                  q="* AND NOT tags_id_stories:{}".format(8875452))['count']
+                                                  q="* AND tags_id_stories:{}".format(TAG_SPIDERED_STORY))['count']
         except mediacloud.error.MCException:
             spidered = 0
         except IndexError:  # this doesn't have any snapshots (ie. it failed to generate correctly)

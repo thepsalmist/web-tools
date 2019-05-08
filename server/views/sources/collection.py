@@ -11,7 +11,7 @@ from server import app, mc, user_db, analytics_db
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client, user_name,\
     user_has_auth_role, ROLE_MEDIA_EDIT
 from server.util.request import arguments_required, form_fields_required, api_error_handler
-from server.util.tags import TAG_SETS_ID_COLLECTIONS, format_name_from_label, media_with_tag
+from server.util.tags import TAG_SETS_ID_COLLECTIONS, format_name_from_label, media_with_tag, TAG_SPIDERED_STORY
 from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS, SOURCE_FEED_LIST_CSV_PROPS
 from server.views.sources.feeds import source_feed_list
 from server.views.favorites import add_user_favorite_flag_to_collections, add_user_favorite_flag_to_sources
@@ -306,7 +306,7 @@ def _collection_source_story_split_historical_counts(collection_id):
 @api_error_handler
 def collection_source_split_stories(collection_id):
     collections_query = "tags_id_media:{}".format(collection_id)
-    exclude_spidered_stories = " tags_id_media:{} AND NOT tags_id_stories:{}".format(str(collection_id), 8875452)\
+    exclude_spidered_stories = " tags_id_media:{} AND NOT tags_id_stories:{}".format(str(collection_id), TAG_SPIDERED_STORY)\
         if 'separate_spidered' in request.args else collections_query
     interval = 'day'  # default, and not currently passed to the calls above
 

@@ -1,6 +1,18 @@
 {
   "releases": [
     {
+      "date": "2019-5-06",
+      "version": "v3.10.1",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Better URL support for explorer queries",
+          "details": "If you search against 'all media' now you can reload your query correctly from the URL."
+        }
+      ]
+    },
+    {
       "date": "2019-5-03",
       "version": "v3.10.0",
       "notes": [

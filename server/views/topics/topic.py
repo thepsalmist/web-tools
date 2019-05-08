@@ -17,12 +17,9 @@ logger = logging.getLogger(__name__)
 ARRAY_BASE_ONE = 1
 
 
-@app.route('/api/topics/<topics_id>/summary', methods=['GET'])
-@api_error_handler
-def topic_summary(topics_id):
-    topic = _topic_summary(topics_id)
+def _topic_seed_story_count(topic):
     try:
-        topic['seed_query_story_count'] = shared_apicache.story_count(
+        seed_query_count = shared_apicache.story_count(
             user_mediacloud_key(),
             q=concatenate_query_for_solr(solr_seed_query=topic['solr_seed_query'],
                                          media_ids=[m['media_id'] for m in topic['media']],
@@ -31,7 +28,15 @@ def topic_summary(topics_id):
         )['count']
     except mediacloud.error.MCException:
         # the query syntax is wrong (perhaps pre-story-level search
-        topic['seed_query_story_count'] = 'unknown'
+        seed_query_count = None
+    return seed_query_count
+
+
+@app.route('/api/topics/<topics_id>/summary', methods=['GET'])
+@api_error_handler
+def topic_summary(topics_id):
+    topic = _topic_summary(topics_id)
+    topic['seed_query_story_count'] = _topic_seed_story_count(topic)
     return jsonify(topic)
 
 
@@ -63,24 +68,15 @@ def _topic_snapshot_list(topic):
         local_mc = mc
     elif is_user_logged_in():
         local_mc = user_mediacloud_client()
+    else:
+        return {} # prob something smarter we can do here
     snapshots = local_mc.topicSnapshotList(topic['topics_id'])
     # add in any missing version numbers
     for idx in range(0, len(snapshots)):
         if snapshots[idx]['note'] in [None, '']:
             snapshots[idx]['note'] = idx + ARRAY_BASE_ONE
     # seed_query story count
-    try:
-        seed_query_story_count = shared_apicache.story_count(
-            user_mediacloud_key(),
-            q=concatenate_query_for_solr(solr_seed_query=topic['solr_seed_query'],
-                                        media_ids=[m['media_id'] for m in topic['media']],
-                                        tags_ids=[t['tags_id'] for t in topic['media_tags']]),
-            fq=concatenate_solr_dates(start_date=topic['start_date'], end_date=topic['end_date']),
-        )['count']
-    except mediacloud.error.MCException:
-        # probably an old topic that has the dates in q instead of fq, so just return unknown
-        seed_query_story_count = None
-    topic['seed_query_story_count'] = seed_query_story_count
+    topic['seed_query_story_count'] = _topic_seed_story_count(topic)
     # add foci_count for display
     snapshots = _add_snapshot_foci_count(topic['topics_id'], snapshots)
     snapshots = sorted(snapshots, key=lambda d: d['snapshot_date'])

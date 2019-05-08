@@ -147,7 +147,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
           type={PRIMARY_LANGUAGE}
           form="advanced-media-picker-search"
           label={formatMessage(messages.language)}
-          onChange={...args => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PRIMARY_LANGUAGE)}
+          onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PRIMARY_LANGUAGE)}
           previouslySelected={initValues.tags}
         />
       </div>

@@ -4,6 +4,7 @@ import { Field, reduxForm, FormSection, keepDirtyOnReinitialize, enableReinitial
 import { injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../hocs/IntlForm';
+import DataCard from '../DataCard';
 import MediaPickerMetadataContainer from '../MediaPickerMetadataContainer';
 import MediaTypesFieldArray from '../MediaTypesFieldArray';
 import MetadataCheckboxFieldArray from '../MetadataCheckboxFieldArray';
@@ -108,7 +109,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         id={TAG_SET_PUBLICATION_COUNTRY}
         type={PUBLICATION_COUNTRY}
         form="advanced-media-picker-search"
-        label={formatMessage(messages.language)}
+        label={formatMessage(messages.pubCountry)}
         onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_COUNTRY, args, PUBLICATION_COUNTRY)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
         previouslySelectedTags={initValues.tags}
@@ -120,7 +121,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
           id={TAG_SET_PUBLICATION_STATE}
           type={PUBLICATION_STATE}
           form="advanced-media-picker-search"
-          label={formatMessage(messages.language)}
+          label={formatMessage(messages.pubState)}
           onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PUBLICATION_STATE)}
           onSearch={val => this.updateAndSearchWithSelection(val)}
           previouslySelectedTags={initValues.tags}
@@ -141,7 +142,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
       </div>
     ) : null;
     const language = this.state.mode === TAG_SET_PRIMARY_LANGUAGE ? (
-      <div>
+      <DataCard>
         <MetadataCheckboxFieldArray
           id={TAG_SET_PRIMARY_LANGUAGE}
           type={PRIMARY_LANGUAGE}
@@ -150,7 +151,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
           onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PRIMARY_LANGUAGE)}
           previouslySelected={initValues.tags}
         />
-      </div>
+      </DataCard>
     ) : null;
     const mediaType = this.state.mode === TAG_SET_MEDIA_TYPE ? (
       <MediaTypesFieldArray

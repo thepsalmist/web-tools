@@ -11,6 +11,7 @@ const publicationState = createAsyncReducer({
   handleSuccess: payload => ({
     // add name and id so we can display it in an Autocomplete
     shortList: payload.short_list,
+    ...payload,
   }),
 });
 

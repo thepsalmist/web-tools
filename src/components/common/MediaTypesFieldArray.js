@@ -5,6 +5,7 @@ import { reduxForm, FieldArray, Field, propTypes } from 'redux-form';
 import { injectIntl } from 'react-intl';
 import withIntlForm from './hocs/IntlForm';
 import withAsyncData from './hocs/AsyncDataContainer';
+import DataCard from './DataCard';
 import { fetchMetadataValuesForMediaType } from '../../actions/systemActions';
 import { TAG_SET_MEDIA_TYPE } from '../../lib/tagUtil';
 import messages from '../../resources/messages';
@@ -59,7 +60,7 @@ const MediaTypesFieldArray = (props) => {
     });
   }
   return (
-    <div className="explorer-media-picker-media-types">
+    <DataCard className="explorer-media-picker-media-types">
       <FieldArray
         form="advanced-media-picker-search"
         name="mediaType"
@@ -67,7 +68,7 @@ const MediaTypesFieldArray = (props) => {
         initialValues={metaAndSelected}
         onChange={props.onChange}
       />
-    </div>
+    </DataCard>
   );
 };
 

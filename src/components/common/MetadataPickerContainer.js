@@ -13,7 +13,7 @@ import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY
 const MAX_SUGGESTIONS = 15;
 
 const localMessages = {
-  hintText: { id: 'metadata.pick.hint', defaultMessage: 'Pick a {label}' },
+  hintText: { id: 'metadata.pick.hint', defaultMessage: 'search for a {label}' },
 };
 
 const MetadataPickerContainer = (props) => {

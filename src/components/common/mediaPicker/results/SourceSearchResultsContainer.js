@@ -120,7 +120,10 @@ SourceSearchResultsContainer.propTypes = {
   fetchStatus: PropTypes.string,
   selectedMediaQueryType: PropTypes.number,
   selectedMediaQueryKeyword: PropTypes.string,
-  selectedMediaQueryTags: PropTypes.array,
+  selectedMediaQueryTags: : PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
   sourceResults: PropTypes.object,
   formQuery: PropTypes.object,
   mediaQuery: PropTypes.array,

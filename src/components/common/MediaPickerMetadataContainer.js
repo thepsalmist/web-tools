@@ -17,6 +17,7 @@ const MediaPickerMetadataContainer = props => (
       onSearch={props.onSearch}
       async
     />
+    <h5>{props.intl.formatMessage(messages.frequentlyUsed)}</h5>
     <MetadataCheckboxFieldArray
       id={props.id}
       type={props.type}

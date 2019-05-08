@@ -4,7 +4,6 @@ import { Field, reduxForm, FormSection, keepDirtyOnReinitialize, enableReinitial
 import { injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../hocs/IntlForm';
-import MetadataPickerContainer from '../MetadataPickerContainer';
 import MediaPickerMetadataContainer from '../MediaPickerMetadataContainer';
 import MediaTypesFieldArray from '../MediaTypesFieldArray';
 import MetadataCheckboxFieldArray from '../MetadataCheckboxFieldArray';
@@ -65,7 +64,6 @@ class AdvancedMediaPickerSearchForm extends React.Component {
   render() {
     const { initValues, renderTextField, renderCheckbox } = this.props;
     const { formatMessage } = this.props.intl;
-
     const contentButtons = (
       <Row>
         <Col lg={6}>
@@ -73,72 +71,56 @@ class AdvancedMediaPickerSearchForm extends React.Component {
             style={{ marginTop: 10 }}
             label={formatMessage(localMessages.pubCountrySuggestion, { count: this.getTagsPerMetadata(initValues, PUBLICATION_COUNTRY) })}
             onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_COUNTRY)}
-            color="primary"
+            primary={(this.state.mode === TAG_SET_PUBLICATION_COUNTRY).toString()}
           />
           <AppButton
             style={{ marginTop: 10 }}
             label={formatMessage(localMessages.pubStateSuggestion, { count: this.getTagsPerMetadata(initValues, PUBLICATION_STATE) })}
             onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_STATE)}
-            color="primary"
+            primary={this.state.mode === TAG_SET_PUBLICATION_STATE}
           />
           <AppButton
             style={{ marginTop: 10 }}
             label={formatMessage(localMessages.pLanguageSuggestion, { count: this.getTagsPerMetadata(initValues, PRIMARY_LANGUAGE) })}
             onClick={() => this.setMetaClick(TAG_SET_PRIMARY_LANGUAGE)}
-            color="primary"
+            primary={this.state.mode === TAG_SET_PRIMARY_LANGUAGE}
           />
           <AppButton
             style={{ marginTop: 10 }}
             label={formatMessage(localMessages.pCountryOfFocusSuggestion, { count: this.getTagsPerMetadata(initValues, COUNTRY_OF_FOCUS) })}
             onClick={() => this.setMetaClick(TAG_SET_COUNTRY_OF_FOCUS)}
-            color="primary"
+            primary={this.state.mode === TAG_SET_COUNTRY_OF_FOCUS}
           />
           <AppButton
             style={{ marginTop: 10 }}
             label={formatMessage(localMessages.pMediaType, { count: this.getTagsPerMetadata(initValues, MEDIA_TYPE) })}
             onClick={() => this.setMetaClick(TAG_SET_MEDIA_TYPE)}
-            color="primary"
+            primary={this.state.mode === TAG_SET_MEDIA_TYPE}
           />
         </Col>
       </Row>
     );
     const pubCountry = this.state.mode === TAG_SET_PUBLICATION_COUNTRY ? (
-      <div>
-        <MetadataPickerContainer
-          id={TAG_SET_PUBLICATION_COUNTRY}
-          name={PUBLICATION_COUNTRY}
-          form="advanced-media-picker-search"
-          label={formatMessage(messages.pubCountry)}
-          async
-          onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_COUNTRY, args, PUBLICATION_COUNTRY)}
-        />
-        <MetadataCheckboxFieldArray
-          id={TAG_SET_PUBLICATION_STATE}
-          type={PUBLICATION_STATE}
-          form="advanced-media-picker-search"
-          label={formatMessage(messages.language)}
-          onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PUBLICATION_STATE)}
-          previouslySelected={initValues.tags}
-        />
-      </div>
+      <MediaPickerMetadataContainer
+        id={TAG_SET_PUBLICATION_COUNTRY}
+        type={PUBLICATION_COUNTRY}
+        form="advanced-media-picker-search"
+        label={formatMessage(messages.language)}
+        onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_COUNTRY, args, PUBLICATION_COUNTRY)}
+        onSearch={val => this.updateAndSearchWithSelection(val)}
+        previouslySelectedTags={initValues.tags}
+      />
     ) : null;
     const pubState = this.state.mode === TAG_SET_PUBLICATION_STATE ? (
       <div>
-        <MetadataPickerContainer
-          id={TAG_SET_PUBLICATION_STATE}
-          name={PUBLICATION_STATE}
-          form="advanced-media-picker-search"
-          label={formatMessage(messages.pubState)}
-          onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PUBLICATION_STATE)}
-          async
-        />
-        <MetadataCheckboxFieldArray
+        <MediaPickerMetadataContainer
           id={TAG_SET_PUBLICATION_STATE}
           type={PUBLICATION_STATE}
           form="advanced-media-picker-search"
           label={formatMessage(messages.language)}
           onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PUBLICATION_STATE)}
-          previouslySelected={initValues.tags}
+          onSearch={val => this.updateAndSearchWithSelection(val)}
+          previouslySelectedTags={initValues.tags}
         />
       </div>
     ) : null;

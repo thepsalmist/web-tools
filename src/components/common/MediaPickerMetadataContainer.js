@@ -39,8 +39,14 @@ MediaPickerMetadataContainer.propTypes = {
   id: PropTypes.number,
   label: PropTypes.string,
   type: PropTypes.string,
-  initialValues: PropTypes.object,
-  previouslySelectedTags: PropTypes.object,
+  initialValues: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
+  previouslySelectedTags: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
   onChange: PropTypes.func,
   onSearch: PropTypes.func,
 };

@@ -70,7 +70,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
     const backgroundColorStyle = mode => (mode === this.state.mode ? 'lightgray' : 'white');
     const contentButtons = (
       <Row>
-        <Col lg={6}>
+        <Col lg={12}>
           <AppButton
             style={{ marginTop: 10, color: colorStyle(PUBLICATION_COUNTRY), backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_COUNTRY) }}
             label={formatMessage(localMessages.pubCountrySuggestion, { count: this.getTagsPerMetadata(initValues, PUBLICATION_COUNTRY) })}
@@ -184,7 +184,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col lg={6}>
+          <Col lg={12}>
             {pubCountry}
             {pubState}
             {countryOfFocus}

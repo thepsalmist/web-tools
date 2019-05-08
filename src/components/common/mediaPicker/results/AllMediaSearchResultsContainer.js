@@ -19,7 +19,7 @@ class AllMediaSearchResultsContainer extends React.Component {
   }
 
   render() {
-    const { selectedMediaQueryType, selectedMediaQueryKeyword, whichTagSet, collectionResults, sourceResults, onToggleSelected, fetchStatus } = this.props;
+    const { selectedMediaQueryType, selectedMediaQueryKeyword, handleMediaConcurrency, whichTagSet, collectionResults, sourceResults, onToggleSelected, fetchStatus } = this.props;
     const queryResults = {
       collections: collectionResults.list,
       sources: sourceResults.list,
@@ -35,6 +35,7 @@ class AllMediaSearchResultsContainer extends React.Component {
           initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
           onSearch={val => this.updateMediaQuery(val)}
           hintTextMsg={localMessages.hintText}
+          handleMediaConcurrency={handleMediaConcurrency}
         />
       </div>
     );
@@ -46,6 +47,7 @@ AllMediaSearchResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
+  handleMediaConcurrency: PropTypes.func.isRequired,
   whichTagSet: PropTypes.array,
   // from state
   updateMediaQuerySelection: PropTypes.func,

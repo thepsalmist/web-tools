@@ -86,6 +86,7 @@ class MediaPickerResultsContainer extends React.Component {
           <AllMediaSearchResultsContainer
             whichTagSet={VALID_COLLECTION_IDS}
             onToggleSelected={handleToggleSelected}
+            handleMediaConcurrency={toggleConcurrency}
           />
         );
         break;

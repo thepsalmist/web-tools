@@ -22,13 +22,23 @@ const localMessages = {
 const formSelector = formValueSelector('advanced-media-picker-search');
 
 class SourceSearchResultsContainer extends React.Component {
+  componentWillMount() {
+    this.correlateSelection(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selectedMedia !== this.props.selectedMedia
+      // if the results have changed from a keyword entry, we need to update the UI
+      || (nextProps.sourceResults && nextProps.sourceResults.lastFetchSuccess !== this.props.sourceResults.lastFetchSuccess)) {
+      this.correlateSelection(nextProps);
+    }
+  }
+
   processQuery = (values) => {
     const { selectedMediaQueryType, selectedMediaQueryTags } = this.props;
-    // TODO: is selectedMediaQueryArgs more current or formQuery?
-
     // essentially reselect all values that are currently selected, plus the newly clicked/entered ones
+    // TODO: redundant assignment w values since we add them below?
     const updatedQueryObj = Object.assign({}, { type: selectedMediaQueryType, tags: selectedMediaQueryTags }, values);
-    // TODO: redundant w values since we add them below?
 
     if (updatedQueryObj.tags === undefined) {
       updatedQueryObj.tags = []; // if first metadata selection
@@ -74,6 +84,27 @@ class SourceSearchResultsContainer extends React.Component {
     handleUpdateAndSearchWithSelection(updatedQueryObj);
   }
 
+  correlateSelection(whichProps) {
+    const whichList = whichProps.sourceResults.list;
+
+    // if selected media has changed, update current results
+    if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0
+      // we can't be sure we have received results yet
+      && whichList && whichList.length > 0) {
+      // sync up selectedMedia and push to result sets.
+      whichList.map((m) => {
+        const mediaIndex = whichProps.selectedMedia.findIndex(q => q.id === m.id);
+        if (mediaIndex < 0) {
+          this.props.handleMediaConcurrency(m, false);
+        } else if (mediaIndex >= 0) {
+          this.props.handleMediaConcurrency(m, true);
+        }
+        return m;
+      });
+    }
+    return 0;
+  }
+
   render() {
     const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags } = this.props;
     const { formatMessage } = this.props.intl;
@@ -116,11 +147,13 @@ SourceSearchResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
+  handleMediaConcurrency: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string,
+  selectedMedia: PropTypes.array,
   selectedMediaQueryType: PropTypes.number,
   selectedMediaQueryKeyword: PropTypes.string,
-  selectedMediaQueryTags: : PropTypes.oneOfType([
+  selectedMediaQueryTags: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.array,
   ]),
@@ -135,6 +168,7 @@ SourceSearchResultsContainer.propTypes = {
 
 const mapStateToProps = state => ({
   fetchStatus: state.system.mediaPicker.sourceQueryResults.fetchStatus,
+  selectedMedia: state.system.mediaPicker.selectMedia.list,
   selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : 0,
   selectedMediaQueryKeyword: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.mediaKeyword : null,
   selectedMediaQueryTags: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.tags : null,

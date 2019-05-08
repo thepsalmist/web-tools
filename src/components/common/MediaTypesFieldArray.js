@@ -76,8 +76,14 @@ MediaTypesFieldArray.propTypes = {
   intl: PropTypes.object.isRequired,
   tags: PropTypes.array,
   name: PropTypes.string,
-  initialValues: PropTypes.object,
-  previouslySelected: PropTypes.array,
+  initialValues: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
+  previouslySelected: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
   onChange: PropTypes.func,
 };
 

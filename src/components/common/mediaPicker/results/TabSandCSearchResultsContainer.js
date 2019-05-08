@@ -23,7 +23,7 @@ class TabSandCSearchResultsContainer extends React.Component {
   };
 
   render() {
-    const { queryResults, onToggleSelected, fetchStatus, whichTagSet, selectedMediaQueryKeyword } = this.props;
+    const { queryResults, onToggleSelected, handleMediaConcurrency, fetchStatus, whichTagSet, selectedMediaQueryKeyword } = this.props;
     const { formatMessage } = this.props.intl;
     const tabs = (
       <div className="media-picker-results-container">
@@ -55,6 +55,7 @@ class TabSandCSearchResultsContainer extends React.Component {
             selectedMediaQueryKeyword={selectedMediaQueryKeyword}
             initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
             hintTextMsg={localMessages.hintText}
+            handleMediaConcurrency={handleMediaConcurrency}
           />
         </div>
       );
@@ -64,6 +65,7 @@ class TabSandCSearchResultsContainer extends React.Component {
           <SourceSearchResultsContainer
             initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
             onToggleSelected={onToggleSelected}
+            handleMediaConcurrency={handleMediaConcurrency}
           />
         </div>
       );
@@ -85,6 +87,7 @@ TabSandCSearchResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
+  handleMediaConcurrency: PropTypes.func.isRequired,
   whichTagSet: PropTypes.array,
   hintTextMsg: PropTypes.object,
   onSearch: PropTypes.func.isRequired,

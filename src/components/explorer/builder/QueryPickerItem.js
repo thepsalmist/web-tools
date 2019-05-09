@@ -160,7 +160,7 @@ class QueryPickerItem extends React.Component {
     }
     const extraClassNames = (isSelected) ? 'selected' : '';
     let fullQuery = query.label;
-    if (fullQuery.indexOf('...') > 0) {
+    if (fullQuery && fullQuery.indexOf('...') > 0) {
       fullQuery = fullQuery.slice(0, fullQuery.indexOf('...') - 1);
     }
     return (

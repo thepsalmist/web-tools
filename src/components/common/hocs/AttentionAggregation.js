@@ -16,10 +16,10 @@ const localMessages = {
  * * `attentionAggregationMenuItems` UI elements
  * * `selectedTimePeriod` string for the selected aggregation tme period
  */
-const withAttentionAggregation = (ChildComponent) => {
+const withAttentionAggregation = (ChildComponent, defaultTimePeriod) => {
   class AttentionAggregation extends React.Component {
     state = {
-      selectedTimePeriod: PAST_DAY,
+      selectedTimePeriod: defaultTimePeriod || PAST_DAY,
     }
 
     saveStateAndReorder = (newTimePeriod) => {

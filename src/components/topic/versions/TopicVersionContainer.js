@@ -13,103 +13,101 @@ import TopicVersionTooBigStatusContainer from './homepages/TopicVersionTooBigSta
 import TopicVersionCreatedStatusContainer from './homepages/TopicVersionCreatedStatusContainer';
 import * as fetchConstants from '../../../lib/fetchConstants';
 import { filteredLinkTo } from '../../util/location';
-import { VERSION_ERROR, VERSION_ERROR_EXCEEDED, VERSION_CREATING, VERSION_QUEUED, VERSION_RUNNING,
-  VERSION_READY } from '../../../lib/topicFilterUtil';
 import { getCurrentVersionFromSnapshot } from '../../../lib/topicVersionUtil';
+import { topicSnapshotSpider } from '../../../actions/topicActions';
+import { LEVEL_ERROR } from '../../common/Notice';
+import { addNotice, updateFeedback } from '../../../actions/appActions';
+import { topicMessageSaysTooBig } from '../../../reducers/topics/adminList';
+
+const localMessages = {
+  startedGenerating: { id: 'topic.created.startedGenerating', defaultMessage: 'We started generating this version' },
+  generationFailed: { id: 'topic.created.generationFailed', defaultMessage: 'Sorry, but we weren\'t able to start generating this version.' },
+  runningSubtitle: { id: 'version.running.title', defaultMessage: 'Still Generating' },
+  almostDoneSubtitle: { id: 'version.cancel', defaultMessage: 'Cancel This Version' },
+};
 
 /**
  * This decides which topic version homepage to show, based on the version and topic state
  */
-class TopicVersionContainer extends React.Component {
-  determineVersionStatus(snapshot, topic) {
-    const stateToUse = snapshot ? snapshot.state : topic.state;
-    const { snapshotCount } = this.props;
-    switch (stateToUse) {
-      case TOPIC_SNAPSHOT_STATE_ERROR:
-        if (topic.message && topic.message.indexOf('exceeds topic max') > -1) {
-          return VERSION_ERROR_EXCEEDED;
-        }
-        return VERSION_ERROR;
-      case TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED:
-        return VERSION_CREATING;
-      case TOPIC_SNAPSHOT_STATE_QUEUED:
-        return VERSION_QUEUED;
-      case TOPIC_SNAPSHOT_STATE_RUNNING:
-        if (snapshotCount === 0) {
-          return VERSION_RUNNING;
-        }
-        // also evaluate another kind of error like VERSION_RUNNING_ERROR
-        return VERSION_RUNNING;
-      case TOPIC_SNAPSHOT_STATE_COMPLETED:
-        return VERSION_READY;
-      default:
-        return 0;
-      // case ? return VERSION_CANCELLED:
+const TopicVersionContainer = (props) => {
+  const { children, topic, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo,
+    setSideBarContent, snapshotId, filters, selectedSnapshot, handleSnapshotGenerate } = props;
+  const currentVersionNum = getCurrentVersionFromSnapshot(topic, snapshotId);
+  // carefully figure out what the latest state for this version is
+  let snapshotToUse;
+  if (selectedSnapshot) {
+    snapshotToUse = selectedSnapshot;
+    if (snapshotToUse.job_states.length > 0) {
+      snapshotToUse = {
+        ...selectedSnapshot,
+        state: snapshotToUse.job_states[0].state, // override the state because the job state is the most up-to-date
+      };
     }
+  } else {
+    // legacy - there might be jobs but isn't a snapshot yet, so make one that looks right-ish
+    snapshotToUse = {
+      note: currentVersionNum,
+      job_states: topic.job_states,
+      state: topic.job_states.length > 0 ? topic.job_states[0].state : topic.state,
+    };
   }
-
-  render() {
-    const { children, topicInfo, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo,
-      setSideBarContent, currentVersionId, filters, selectedSnapshot } = this.props;
-    // show a big error if there is one to show
-    const currentVersionNum = getCurrentVersionFromSnapshot(topicInfo, currentVersionId);
-    let contentToShow = children; // has a filters renderer in it - show if a completed topic
+  let contentToShow;
+  // handle case where there isn't a snapshot object yet (legacy)
+  if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
+    contentToShow = (
+      <TopicVersionCreatedStatusContainer
+        topic={topic}
+        snapshot={snapshotToUse}
+        onSnapshotGenerate={handleSnapshotGenerate}
+        goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
+      />
+    );
+  } else if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_QUEUED) {
+    contentToShow = (
+      <TopicVersionQueuedStatusContainer
+        topic={topic}
+        snapshot={snapshotToUse}
+        goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
+      />
+    );
+  } else if ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_RUNNING)
+    || ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_COMPLETED) && !snapshotToUse.isUsable)) {
+    contentToShow = (
+      <TopicVersionRunningStatusContainer
+        topic={topic}
+        snapshot={snapshotToUse}
+        title={(snapshotToUse.state === TOPIC_SNAPSHOT_STATE_RUNNING) ? localMessages.runningSubtitle : localMessages.almostDoneSubtitle}
+      />
+    );
+  } else if ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_ERROR)
+    && topicMessageSaysTooBig(topic.latestState.message)) {
+    contentToShow = (
+      <TopicVersionTooBigStatusContainer
+        topic={topic}
+        snapshot={snapshotToUse}
+        goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
+      />
+    );
+  } else if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_ERROR) {
+    contentToShow = (
+      <TopicVersionErrorStatusContainer
+        topic={topic}
+        snapshot={snapshotToUse}
+        goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
+      />
+    );
+  } else if ((snapshotToUse.state === TOPIC_SNAPSHOT_STATE_COMPLETED)
+    && (fetchStatusInfo !== fetchConstants.FETCH_SUCCEEDED
+    && fetchStatusSnapshot !== fetchConstants.FETCH_SUCCEEDED)) {
+    // complete
+    contentToShow = <LoadingSpinner />;
+  } else {
+    // has a filters renderer in it - show if a completed topic
     const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent }));
     contentToShow = childrenWithExtraProp;
-    const versionStatus = this.determineVersionStatus(selectedSnapshot, topicInfo);
-    const latestJob = selectedSnapshot ? selectedSnapshot.snapshotJobs[0] : topicInfo.spiderJobs[0];
-    if (versionStatus === VERSION_CREATING) {
-      contentToShow = (
-        <TopicVersionCreatedStatusContainer
-          topic={topicInfo}
-          snapshot={selectedSnapshot || { note: currentVersionNum }}
-          job={latestJob}
-          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
-        />
-      );
-    } else if (versionStatus === VERSION_QUEUED) {
-      contentToShow = (
-        <TopicVersionQueuedStatusContainer
-          topic={topicInfo}
-          snapshot={selectedSnapshot || { note: currentVersionNum }}
-          job={latestJob}
-          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
-        />
-      );
-    } if (versionStatus === VERSION_RUNNING) {
-      contentToShow = (
-        <TopicVersionRunningStatusContainer
-          topic={topicInfo}
-          snapshot={selectedSnapshot || { note: currentVersionNum }}
-          job={latestJob}
-        />
-      );
-    } else if (versionStatus === VERSION_ERROR_EXCEEDED) { // we know this is not the ideal location nor ideal test but it addresses an immediate need for our admins
-      contentToShow = (
-        <TopicVersionTooBigStatusContainer
-          topic={topicInfo}
-          snapshot={selectedSnapshot || { note: currentVersionNum }}
-          job={latestJob}
-          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
-        />
-      );
-    } else if (versionStatus === VERSION_ERROR) {
-      contentToShow = (
-        <TopicVersionErrorStatusContainer
-          topic={topicInfo}
-          snapshot={selectedSnapshot || { note: currentVersionNum }}
-          job={latestJob}
-          goToCreateNewVersion={() => goToCreateNewVersion(topicInfo, filters)}
-        />
-      );
-    } else if (fetchStatusInfo !== fetchConstants.FETCH_SUCCEEDED
-      && fetchStatusSnapshot !== fetchConstants.FETCH_SUCCEEDED) {
-      // complete
-      contentToShow = <LoadingSpinner />;
-    }
-    return contentToShow;
   }
-}
+  return contentToShow;
+};
 
 TopicVersionContainer.propTypes = {
   // from context
@@ -118,36 +116,48 @@ TopicVersionContainer.propTypes = {
   location: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   // from dispatch
+  handleSnapshotGenerate: PropTypes.func.isRequired,
+  goToCreateNewVersion: PropTypes.func,
   // from state
   filters: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string.isRequired,
   fetchStatusInfo: PropTypes.string,
   fetchStatusSnapshot: PropTypes.string,
-  topicInfo: PropTypes.object,
+  topic: PropTypes.object,
   selectedSnapshot: PropTypes.object,
   needsNewSnapshot: PropTypes.bool.isRequired,
   snapshotCount: PropTypes.number.isRequired,
-  goToCreateNewVersion: PropTypes.func,
   setSideBarContent: PropTypes.func,
-  currentVersionId: PropTypes.number,
+  snapshotId: PropTypes.number,
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
   fetchStatus: state.topics.selected.info.fetchStatus,
   fetchStatusInfo: state.topics.selected.info.fetchStatus,
-  topicInfo: state.topics.selected.info,
-  topicId: parseInt(ownProps.params.topicId, 10),
+  topic: state.topics.selected.info,
+  topicId: state.topics.selected.id,
   selectedSnapshot: state.topics.selected.snapshots.selected,
-  currentVersionId: parseInt(ownProps.location.query.snapshotId, 10),
+  snapshotId: state.topics.selected.filters.snapshotId,
   needsNewSnapshot: state.topics.selected.needsNewSnapshot,
   snapshotCount: state.topics.selected.snapshots.list.length,
 });
 
-const mapDispatchToProps = dispatch => ({
-  goToCreateNewVersion: (topicInfo, filters) => {
-    const url = `/topics/${topicInfo.topics_id}/update`;
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  goToCreateNewVersion: (topic, filters) => {
+    const url = `/topics/${topic.topics_id}/update`;
     dispatch(push(filteredLinkTo(url, filters)));
+  },
+  handleSnapshotGenerate: (topicId, snapshotId) => {
+    dispatch(topicSnapshotSpider(topicId, { snapshotId }))
+      .then((results) => {
+        if ((results.statusCode && results.statusCode !== 200) || results.error) {
+          dispatch(addNotice({ message: localMessages.generationFailed, details: results.message || results.error, level: LEVEL_ERROR }));
+        } else {
+          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.startedGenerating) }));
+          window.location.reload(); // to get new version status (ie. running hopefully)
+        }
+      });
   },
 });
 

@@ -59,7 +59,7 @@ class MediaSummaryContainer extends React.Component {
           onChangeSort={isLoggedIn ? this.onChangeSort : null}
           sortedBy={sort}
           topicId={topicId}
-          showMetadata
+          includeMetadata={false}
           showTweetCounts={showTweetCounts}
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>

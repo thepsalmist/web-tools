@@ -73,10 +73,10 @@ TopicNewVersionContainer.propTypes = {
   goToUrl: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
   topicInfo: state.topics.selected.info,
-  topicId: parseInt(ownProps.params.topicId, 10),
+  topicId: state.topics.selected.id,
   // if they are an admin the async doesn't need to run
   fetchStatus: state.user.isAdmin ? FETCH_SUCCEEDED : state.topics.modify.userRunningTopicStatus.fetchStatus,
   allowedToRun: state.topics.modify.userRunningTopicStatus.allowed, // non-admin users can only run one at a time
@@ -87,9 +87,9 @@ const mapDispatchToProps = dispatch => ({
   goToUrl: url => dispatch(push(url)),
 });
 
-const fetchAsyncData = (dispatch, props) => {
+const fetchAsyncData = (dispatch, { isAdmin }) => {
   // non-admin users can only run one topic at a time
-  if (!props.isAdmin) {
+  if (!isAdmin) {
     dispatch(fetchUserQueuedAndRunningTopics());
   }
 };

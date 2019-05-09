@@ -209,6 +209,9 @@ if (server_app == SERVER_APP_TOPICS) or is_dev_mode():
     import server.views.topics.story
     import server.views.topics.stories
     import server.views.topics.topic
+    import server.views.topics.topiclist
+    import server.views.topics.topiccreate
+    import server.views.topics.topicsnapshot
     import server.views.topics.words
     import server.views.topics.foci.focalsets
     import server.views.topics.foci.focaldefs
@@ -221,7 +224,6 @@ if (server_app == SERVER_APP_TOPICS) or is_dev_mode():
     import server.views.topics.nyttags
     import server.views.topics.entities
     import server.views.topics.geotags
-    import server.views.topics.topiccreate
 if (server_app == SERVER_APP_EXPLORER) or is_dev_mode():
     import server.views.explorer.explorer_query
     import server.views.explorer.sentences

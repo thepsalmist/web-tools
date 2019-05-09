@@ -25,6 +25,7 @@ const BUBBLES_TO_SHOW = 5;
 
 const localMessages = {
   title: { id: 'topic.summary.nytLabels.title', defaultMessage: 'Top 5 Themes' },
+  all: { id: 'topic.summary.nytLabels.all', defaultMessage: 'Themes' },
   descriptionIntro: { id: 'topic.summary.nytLabels.help.title', defaultMessage: '<p>The top themes that stories within this Topic are about, as determined by our machine learning models trained on news media.</p>' },
   notEnoughData: { id: 'topic.summary.nytLabels.notEnoughData',
     defaultMessage: 'Sorry, but only {pct} of the stories have been processed to add themes.  We can\'t gaurantee the accuracy of partial results, so we can\'t show a report of the top themes right now.  If you are really curious, you can download the CSV using the link in the top-right of this box, but don\'t trust those numbers as fully accurate. Email us if you want us to process this topic to add themes.',
@@ -106,7 +107,7 @@ class NytLabelSummaryContainer extends React.Component {
                     `${topicDownloadFilename(topicName, filters)}-top-NYT-themes`,
                     BUBBLE_CHART_DOM_ID
                   )}
-                  label={formatMessage(localMessages.title)}
+                  label={formatMessage(localMessages.all)}
                 />
               </ActionMenu>
             </div>

@@ -8,12 +8,14 @@ import server.util.csv as csv
 import server.util.tags as tag_util
 import server.views.topics.apicache as apicache
 import server.views.apicache as base_apicache
+import server.util.pushshift as pushshift
 from server import app, cliff, TOOL_API_KEY
 from server.auth import is_user_logged_in
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
 from server.cache import cache
 from server.util.request import api_error_handler
 from server.views.topics import access_public_topic
+from server.util.tags import TAG_SPIDERED_STORY
 
 logger = logging.getLogger(__name__)
 
@@ -91,7 +93,8 @@ def topic_stories(topics_id):
 def topic_stories_csv(topics_id):
     user_mc = user_admin_mediacloud_client()
     topic = user_mc.topic(topics_id)
-    return stream_story_list_csv(user_mediacloud_key(), topic['name']+'-stories', topics_id)
+    story_limit = request.args['story_limit'] if 'story_limit' in request.args else None
+    return stream_story_list_csv(user_mediacloud_key(), topic['name']+'-stories', topics_id, story_limit=story_limit)
 
 
 def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
@@ -115,8 +118,8 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
 
     story_count = apicache.topic_story_count(user_mediacloud_key(), topics_id,
                                              snapshots_id=params['snapshots_id'], timespans_id=params['timespans_id'],
-                                             foci_id = params['foci_id'], q=params['q'])
-    logger.info("Total stories to download: {}".format(story_count))
+                                             foci_id=params['foci_id'], q=params['q'])
+    logger.info("Total stories to download: {}".format(story_count['count']))
 
     if 'as_attachment' in params:
         del params['as_attachment']
@@ -126,7 +129,7 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
         params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
     params['limit'] = 1000  # an arbitrary value to let us page through with big topics
 
-    # determine which props the user actaully wants to download
+    # determine which props the user actually wants to download
     props = [
         'stories_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',
         'themes', 'subtopics',
@@ -213,6 +216,7 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
         # 'media_pub_country', 'media_pub_state', 'media_language', 'media_about_country', 'media_media_type'
     ]
     yield ','.join(spec_props) + '\n'  # first send the column names
+    story_count = 0
     link_id = 0
     more_pages = True
     while more_pages:
@@ -245,9 +249,10 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
 # generator you can use to handle a long list of stories row by row (one row per story)
 def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
     yield ','.join(props) + '\n'  # first send the column names
+    story_count = 0
     link_id = 0
     more_pages = True
-    while more_pages:
+    while more_pages and (('story_limit' in kwargs) and (story_count < int(kwargs['story_limit']))):
         page = _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs)
         if 'next' in page['link_ids']:
             link_id = page['link_ids']['next']
@@ -259,6 +264,7 @@ def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
             cleaned_row = csv.dict2row(props, s)
             row_string = ','.join(cleaned_row) + '\n'
             yield row_string
+        story_count += len(page['stories'])
 
 
 def _media_info_worker(info):
@@ -270,12 +276,15 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
     add_media_fields = False  # switch for including all the media metadata in each row (ie. story)
     media_lookup = {}
 
-    story_page = apicache.topic_story_list_by_page(user_key, topics_id, link_id=link_id, **kwargs)
+    args = kwargs.copy()   # need to make sure invalid params don't make it to API call
+    if 'story_limit' in args:
+        del args['story_limit']
+    story_page = apicache.topic_story_list_by_page(user_key, topics_id, link_id=link_id, **args)
 
     if len(story_page['stories']) > 0:  # be careful to not construct malformed query if no story ids
 
         story_ids = [str(s['stories_id']) for s in story_page['stories']]
-        stories_with_tags = apicache.story_list(user_key, 'stories_id:(' + " ".join(story_ids) + ")", kwargs['limit'])
+        stories_with_tags = apicache.story_list(user_key, 'stories_id:(' + " ".join(story_ids) + ")", args['limit'])
 
         # build a media lookup table in parallel so it is faster
         if add_media_fields:
@@ -313,6 +322,11 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
                                          if t['tag_sets_id'] == tag_util.NYT_LABELS_TAG_SET_ID]
                         s['themes'] = ", ".join(story_tag_ids)
 
+        # now add in reddit share data
+        story_reddit_submissions = pushshift.reddit_url_submission_counts(story_page['stories'])
+        for s in story_page['stories']:
+            s['reddit_submissions'] = story_reddit_submissions[s['stories_id']]
+
     return story_page  # need links too
 
 
@@ -339,7 +353,7 @@ def story_counts_by_snapshot(topics_id):
             spidered = apicache.topic_story_count(user_mediacloud_key(), topics_id,
                                                   snapshots_id=s['snapshots_id'], foci_id=None,
                                                   timespans_id=timespans[0]['timespans_id'],
-                                                  q="* AND NOT tags_id_stories:{}".format(8875452))['count']
+                                                  q="* AND tags_id_stories:{}".format(TAG_SPIDERED_STORY))['count']
         except mediacloud.error.MCException:
             spidered = 0
         except IndexError:  # this doesn't have any snapshots (ie. it failed to generate correctly)

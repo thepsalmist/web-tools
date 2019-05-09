@@ -76,7 +76,12 @@ def _cached_topic_story_count(user_mc_key, topics_id, **kwargs):
         local_mc = mc
     else:
         local_mc = user_mediacloud_client()
-    return local_mc.topicStoryCount(topics_id, **kwargs)
+    try:
+        results = local_mc.topicStoryCount(topics_id, **kwargs)
+    except mediacloud.error.MCException as mce:
+        # when there is nno timespan (ie. an ungenerated version you are adding subtopics to)
+        return {'count': 0}
+    return results
 
 
 def story_list(user_mc_key, q, rows):
@@ -285,15 +290,14 @@ def _cached_topic_split_story_counts(user_mc_key, topics_id, **kwargs):
 @cache.cache_on_arguments()
 def topic_foci_list(user_mc_key, topics_id, focal_sets_id):
     # This needs user_mc_key in the function signature to make sure the caching is keyed correctly.
-    user_mc = user_mediacloud_client()
+    user_mc = user_mediacloud_client(user_mc_key)
     response = user_mc.topicFociList(topics_id, focal_sets_id)
     return response
 
 
-@cache.cache_on_arguments()
 def topic_focal_sets_list(user_mc_key, topics_id, snapshots_id):
     # This needs user_mc_key in the function signature to make sure the caching is keyed correctly.
-    user_mc = user_mediacloud_client()
+    user_mc = user_mediacloud_client(user_mc_key)
     try:
         response = user_mc.topicFocalSetList(topics_id, snapshots_id=snapshots_id)
     except mediacloud.error.MCException:
@@ -312,7 +316,6 @@ def topic_focal_set(user_mc_key, topics_id, snapshots_id, focal_sets_id):
     raise ValueError("Unknown subtopic set id of {}".format(focal_sets_id))
 
 
-@cache.cache_on_arguments()
 def cached_topic_timespan_list(user_mc_key, topics_id, snapshots_id=None, foci_id=None):
     # this includes the user_mc_key as a first param so the cache works right
     user_mc = user_mediacloud_client()

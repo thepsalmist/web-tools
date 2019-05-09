@@ -36,6 +36,7 @@ import { trimToMaxLength } from '../../../lib/stringUtil';
 import { filteredLinkTo, urlWithFilters } from '../../util/location';
 import { storyPubDateToTimestamp } from '../../../lib/dateUtil';
 import TopicPageTitle from '../TopicPageTitle';
+import StoryRedditAttention from '../../common/story/StoryRedditAttention';
 
 const MAX_STORY_TITLE_LENGTH = 70; // story titles longer than this will be trimmed and ellipses added
 
@@ -189,6 +190,9 @@ class StoryContainer extends React.Component {
           <Row>
             <Col lg={6}>
               <StoryDetails mediaLink={urlWithFilters(mediaUrl, filters).substring(2)} story={storyInfo} />
+            </Col>
+            <Col lg={6}>
+              <StoryRedditAttention storyId={storiesId} />
             </Col>
           </Row>
           <Row>

@@ -127,7 +127,7 @@ const messages = {
   storyTitle: { id: 'story.title', defaultMessage: 'Title' },
   storyDescription: { id: 'story.description', defaultMessage: 'Description' },
   storyUrl: { id: 'story.url', defaultMessage: 'URL' },
-  storyDate: { id: 'story.date', defaultMessage: 'Publish Date' },
+  storyDate: { id: 'story.date', defaultMessage: 'Published' },
   storyCustomDate: { id: 'story.customDate', defaultMessage: 'Custom Date?' },
   storyUndateable: { id: 'story.undateable', defaultMessage: 'Undateable?' },
   storiesTableHelpTitle: { id: 'stories.help.title', defaultMessage: 'About Stories' },

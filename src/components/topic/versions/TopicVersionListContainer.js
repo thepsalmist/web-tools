@@ -15,13 +15,16 @@ import TopicVersionListItem from './TopicVersionListItem';
 import NeedsNewVersionWarning from './NeedsNewVersionWarning';
 
 const localMessages = {
-  title: { id: 'topic.versionList.title', defaultMessage: 'Your Topic Has {count} Versions' },
+  title: { id: 'topic.versionList.title', defaultMessage: 'Topic Versions' },
+  subtitle: { id: 'topic.versionList.subtitle', defaultMessage: 'Refine your seed query and manage subtopics.' },
+  description: { id: 'topic.versionList.description', defaultMessage: 'Media Cloud topics contain one or more versions. If you want to change your seed query parameters or add/remove subtopics, you have to make a new version. Each version is a non-changing corpus of stories; older versions cannot be changed (this is intended to support our academic research mission).' },
   versionNumber: { id: 'topic.versionNumber', defaultMessage: 'Version {number}' },
   versionState: { id: 'topic.versionState', defaultMessage: '{state}' },
   versionDate: { id: 'topic.versionDate', defaultMessage: '{date}' },
   versionStatus: { id: 'topic.versionStatus', defaultMessage: 'Job status: {status}' },
   createdBy: { id: 'topic.createdBy', defaultMessage: 'Created by: ' },
-  createButton: { id: 'topic.create', defaultMessage: 'Create A New Version ' },
+  createButton: { id: 'topic.create', defaultMessage: 'Create A New Version' },
+  createButtonWhy: { id: 'topic.create.why', defaultMessage: 'Change your seed query or manage subtopics by creating a new version.' },
   viewButton: { id: 'topic.viewBy', defaultMessage: 'Find Out More ' },
   hasAnError: { id: 'topic.hasError', defaultMessage: 'Sorry, this topic has an error!' },
   otherError: { id: 'topic.otherError', defaultMessage: 'Sorry, this topic has an error!' },
@@ -35,7 +38,7 @@ const localMessages = {
   notUsingLatestSnapshot: { id: 'topic.notUsingLatestSnapshot', defaultMessage: 'You are not using the latest snapshot!  If you are not doing this on purpose, <a href="{url}">switch to the latest snapshot</a> to get the best data.' },
 };
 
-const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, selectedSnapshot, intl }) => {
+const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, selectedSnapshot, intl, isAdmin }) => {
   const { formatMessage } = intl;
   let versionListContent;
   if (versions.length > 0) {
@@ -52,6 +55,7 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
         number={versions.length - idx}
         version={snapshot}
         storyCounts={storyCounts[snapshot.snapshots_id]}
+        isAdmin={isAdmin}
       />
     ));
   } else {
@@ -68,35 +72,44 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
           status: '?',
         }}
         storyCounts={{}}
+        isAdmin={isAdmin}
       />
     );
   }
   const cannotCreate = false; // TODO: if any snapshot is building
   return (
-    <div className="topic-version-list">
+    <React.Fragment>
       <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
       <NeedsNewVersionWarning />
       <Grid>
         <Row>
           <Col lg={12}>
-            <h1><FormattedMessage {...localMessages.title} values={{ count: Math.max(1, versions.length) }} /></h1>
+            <h1><FormattedMessage {...localMessages.title} /></h1>
+            <h2><FormattedMessage {...localMessages.subtitle} /></h2>
+            <p><FormattedMessage {...localMessages.description} /></p>
           </Col>
         </Row>
         <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-          {versionListContent}
-          <LinkWithFilters to={`/topics/${topicId}/new-version`}>
-            <AppButton
-              style={{ marginTop: 30 }}
-              type="submit"
-              disabled={cannotCreate}
-              label={formatMessage(localMessages.createButton)}
-              primary
-            />
-          </LinkWithFilters>
+          <Row>
+            <Col lg={12}>
+              <LinkWithFilters to={`/topics/${topicId}/new-version`}>
+                <AppButton
+                  style={{ marginRight: 15 }}
+                  type="submit"
+                  disabled={cannotCreate}
+                  label={formatMessage(localMessages.createButton)}
+                  primary
+                />
+              </LinkWithFilters>
+              <FormattedMessage {...localMessages.createButtonWhy} />
+            </Col>
+          </Row>
+          <div className="topic-version-list">
+            {versionListContent}
+          </div>
         </Permissioned>
       </Grid>
-
-    </div>
+    </React.Fragment>
   );
 };
 
@@ -105,6 +118,7 @@ TopicVersionListContainer.propTypes = {
   versions: PropTypes.array.isRequired,
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   storyCounts: PropTypes.object,
   selectedSnapshot: PropTypes.object,
   // from compositional chain
@@ -118,6 +132,7 @@ const mapStateToProps = state => ({
   storyCounts: state.topics.selected.snapshotStoryCounts,
   fetchStatus: state.topics.selected.snapshotStoryCounts.fetchStatus,
   selectedSnapshot: state.topics.selected.snapshots.selected,
+  isAdmin: state.user.isAdmin,
 });
 
 const fetchAsyncData = (dispatch, { topicId }) => {

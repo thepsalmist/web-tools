@@ -1,13 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { reduxForm, Field } from 'redux-form';
-import { FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../common/AppButton';
 import withIntlForm from '../../common/hocs/IntlForm';
 
 const localMessages = {
-  basics: { id: 'topic.form.section.basics', defaultMessage: 'Settings' },
   name: { id: 'topic.form.detail.name', defaultMessage: 'Topic Name (what is this about?)' },
   nameError: { id: 'topic.form.detail.name.error', defaultMessage: 'Your topic needs a short dsecriptive name.' },
   advancedSettings: { id: 'topic.form.detail.advancedSettings', defaultMessage: 'Advanced Settings' },
@@ -28,11 +26,6 @@ const TopicSettingsForm = (props) => {
   const { formatMessage } = props.intl;
   return (
     <form className="edit-topic-settings" name="topicForm" onSubmit={handleSubmit(onSubmit.bind(this))}>
-      <Row>
-        <Col lg={12}>
-          <h2><FormattedMessage {...localMessages.basics} /></h2>
-        </Col>
-      </Row>
       <Row>
         <Col lg={6}>
           <Field
@@ -98,7 +91,6 @@ TopicSettingsForm.propTypes = {
   renderSelect: PropTypes.func.isRequired,
   // from parent
   initialValues: PropTypes.object,
-  mode: PropTypes.string.isRequired,
   currentStepText: PropTypes.object,
   handleSubmit: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,

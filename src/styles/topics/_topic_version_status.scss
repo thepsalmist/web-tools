@@ -1,4 +1,6 @@
-.topic-version-status-container {
+@import '../_constants';
+
+.topic-version-status {
 
   h1 {
     .error-background {
@@ -8,10 +10,20 @@
 
   h2 {
     padding-bottom: 0px;
+    margin-top: 30px;
   }
 
   .app-button {
-    margin-top: 30px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+  }
+
+  table {
+    margin-top: 15px;
+
+    tr.highlight {
+      background-color: $topics-primary;
+    }
   }
 
 }

@@ -60,7 +60,6 @@ class TopicStoryTable extends React.Component {
           <tbody>
             <tr>
               <th><FormattedMessage {...messages.storyTitle} /></th>
-              <th>{}</th>
               <th><FormattedMessage {...messages.media} /></th>
               <th><FormattedMessage {...messages.storyDate} />{helpButton}</th>
               <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
@@ -112,8 +111,6 @@ class TopicStoryTable extends React.Component {
                   </td>
                   <td>
                     <img className="google-icon" src={googleFavIconUrl(domain)} alt={domain} />
-                  </td>
-                  <td>
                     <LinkWithFilters to={`/topics/${topicId}/media/${story.media_id}`}>
                       {story.media_name}
                     </LinkWithFilters>

@@ -27,7 +27,7 @@ const StoryDetailsContainer = props => (
         onSearch={values => props.dispatch(push({ pathname: `/admin/story/${values.storyId}/details` }))}
         initialValues={{ storyId: props.params.id }}
       />
-      <SelectedStoryContainer id={props.params.id} />
+      { props.params.id && <SelectedStoryContainer id={props.params.id} /> }
     </Permissioned>
   </Grid>
 );

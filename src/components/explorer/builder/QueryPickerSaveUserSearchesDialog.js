@@ -22,15 +22,15 @@ class QueryPickerSaveUserSearchesDialog extends React.Component {
     searchName: this.props.searchNickname, // the actual label they type into the change-label popup dialog
   };
 
-  onSaveRequest = () => {
+  handleSaveRequest = () => {
     const { setQueryFormChildDialogOpen } = this.props;
     this.setState({ saveSearchDialogOpen: true });
     setQueryFormChildDialogOpen(true);
   }
 
-  onSaveConfirm = () => {
-    const { handleSaveSearch } = this.props;
-    handleSaveSearch({ queryName: this.state.searchName });
+  handleSaveConfirm = () => {
+    const { onSaveSearch } = this.props;
+    onSaveSearch({ queryName: this.state.searchName });
   };
 
   focusQueryInputField = (input) => {
@@ -49,7 +49,7 @@ class QueryPickerSaveUserSearchesDialog extends React.Component {
 
   handleLabelChangeAndClose = () => {
     this.setState({ saveSearchDialogOpen: false });
-    this.onSaveConfirm();
+    this.handleSaveConfirm();
   };
 
   updateTextInDialog = (ev) => {
@@ -97,7 +97,7 @@ class QueryPickerSaveUserSearchesDialog extends React.Component {
         <AppButton
           variant="outlined"
           style={{ marginTop: 30 }}
-          onClick={this.onSaveRequest}
+          onClick={this.handleSaveRequest}
           label={formatMessage(localMessages.saveSearch)}
           disabled={submitting}
           key="qpsusd-reallySave"
@@ -111,7 +111,7 @@ QueryPickerSaveUserSearchesDialog.propTypes = {
   // from parent
   submitting: PropTypes.bool.isRequired,
   searchNickname: PropTypes.string.isRequired,
-  handleSaveSearch: PropTypes.func,
+  onSaveSearch: PropTypes.func,
   setQueryFormChildDialogOpen: PropTypes.func.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,

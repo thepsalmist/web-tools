@@ -69,8 +69,8 @@ class QueryForm extends React.Component {
   }
 
   render() {
-    const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, handleLoadSearches, handleDeleteSearch, handleLoadSelectedSearch, savedSearches, searchNickname, handleSaveSearch,
-      submitting, handleSubmit, onSave, onMediaChange, renderTextField, renderTextFieldWithFocus, handleCopyAll } = this.props;
+    const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, onLoadSearches, onDeleteSearch, savedSearches, searchNickname, onSaveSearch,
+      submitting, handleSubmit, onSave, onMediaChange, renderTextField, renderTextFieldWithFocus, onCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
     const cleanedInitialValues = initialValues ? { ...initialValues } : {};
     if (cleanedInitialValues.disabled === undefined) {
@@ -109,7 +109,7 @@ class QueryForm extends React.Component {
                       label={formatMessage(localMessages.query)}
                       title={formatMessage(localMessages.copyQueryKeywordTitle)}
                       msg={formatMessage(localMessages.copyQueryKeywordMsg)}
-                      onOk={() => handleCopyAll(KEYWORD)}
+                      onOk={() => onCopyAll(KEYWORD)}
                     />
                   </div>
                   <Field
@@ -139,7 +139,7 @@ class QueryForm extends React.Component {
                       label={mediaLabel}
                       title={formatMessage(localMessages.copyQueryMediaTitle)}
                       msg={formatMessage(localMessages.copyQueryMediaMsg)}
-                      onOk={() => handleCopyAll(MEDIA)}
+                      onOk={() => onCopyAll(MEDIA)}
                     />
                   </div>
                   <SourceCollectionsMediaForm
@@ -177,7 +177,7 @@ class QueryForm extends React.Component {
                     label={formatMessage(localMessages.dates)}
                     title={formatMessage(localMessages.copyQueryDatesTitle)}
                     msg={formatMessage(localMessages.copyQueryDatesMsg)}
-                    onOk={() => handleCopyAll(DATES)}
+                    onOk={() => onCopyAll(DATES)}
                   />
                 </div>
                 <div className="dates-field-wrapper">
@@ -217,10 +217,9 @@ class QueryForm extends React.Component {
                   <SavedSearchControls
                     searchNickname={searchNickname}
                     savedSearches={savedSearches}
-                    handleLoadSearches={handleLoadSearches}
-                    handleLoadSelectedSearch={handleLoadSelectedSearch}
-                    handleSaveSearch={l => handleSaveSearch(l)}
-                    handleDeleteSearch={handleDeleteSearch}
+                    onLoadSearches={onLoadSearches}
+                    onSaveSearch={l => onSaveSearch(l)}
+                    onDeleteSearch={onDeleteSearch}
                     submitting={submitting}
                     setQueryFormChildDialogOpen={this.setQueryFormChildDialogOpen}
                   />
@@ -258,11 +257,10 @@ QueryForm.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
   initialValues: PropTypes.object,
   onWillSearch: PropTypes.func,
-  handleLoadSearches: PropTypes.func.isRequired,
-  handleLoadSelectedSearch: PropTypes.func.isRequired,
-  handleSaveSearch: PropTypes.func.isRequired,
-  handleDeleteSearch: PropTypes.func.isRequired,
-  handleCopyAll: PropTypes.func.isRequired,
+  onLoadSearches: PropTypes.func.isRequired,
+  onSaveSearch: PropTypes.func.isRequired,
+  onDeleteSearch: PropTypes.func.isRequired,
+  onCopyAll: PropTypes.func.isRequired,
   onMediaDelete: PropTypes.func.isRequired,
   onDateChange: PropTypes.func.isRequired,
   // from state

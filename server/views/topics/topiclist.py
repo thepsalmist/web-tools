@@ -1,7 +1,6 @@
 import flask_login
 import logging
 from flask import jsonify, request
-from deco import concurrent, synchronized
 
 from server import app, user_db, mc
 from server.auth import user_mediacloud_client, user_name, user_admin_mediacloud_client, is_user_logged_in
@@ -36,7 +35,7 @@ def topic_admin_list():
     # but for admins this will return ALL topics
     topics = user_mc.topicList(limit=500)['topics']
     # we also want snapshot info
-    topics = _add_snapshots_info_to_topics(topics)
+    # topics = _add_snapshots_info_to_topics(topics)
     return jsonify(topics)
 
 
@@ -130,22 +129,4 @@ def add_user_favorite_flag_to_topics(topics):
     user_favorited = user_db.get_users_lists(user_name(), 'favoriteTopics')
     for t in topics:
         t['isFavorite'] = t['topics_id'] in user_favorited
-    return topics
-
-
-@concurrent
-def _topic_snapshot_worker(topics_id):
-    user_mc = user_admin_mediacloud_client()
-    return {
-        'list': user_mc.topicSnapshotList(topics_id),
-        'jobStatus': mc.topicSnapshotGenerateStatus(topics_id)['job_states']  # need to know if one is running
-    }
-
-
-@synchronized
-def _add_snapshots_info_to_topics(topics):
-    for t in topics:
-        topics_id = t['topics_id']
-        if t['state'] == 'error':
-            t['snapshots'] = _topic_snapshot_worker(topics_id)
     return topics

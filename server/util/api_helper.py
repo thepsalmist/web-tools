@@ -9,8 +9,8 @@ def add_missing_dates_to_split_story_counts(counts, start, end, period="day"):
     if start is None and end is None:
         return counts
     new_counts = []
-    current = start
-    while current <= end:
+    current = start.date()
+    while current <= end.date():
         date_string = current.strftime(mc.SENTENCE_PUBLISH_DATE_FORMAT)
         existing_count = next((r for r in counts if r['date'] == date_string), None)
         if existing_count:

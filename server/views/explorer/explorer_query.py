@@ -103,7 +103,6 @@ def api_explorer_collection_set(tag_sets_id):
 
 
 def _tag_set_with_collections(tag_sets_id, show_only_public_collections):
-
     # TODO use which mc or user_mc here
     tag_set = mc.tagSet(tag_sets_id)
     # page through tags

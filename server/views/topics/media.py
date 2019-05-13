@@ -213,7 +213,6 @@ def _media_info_worker(info):
 def _topic_media_link_list_by_page_as_csv_row(user_mc_key, topics_id, props, **kwargs):
     yield ','.join(props) + '\n'  # first send the column names
     more_media = True
-    use_pool = True
     link_id = 0
     basic_media_props = ['media_id', 'name', 'url']
     while more_media:
@@ -223,15 +222,9 @@ def _topic_media_link_list_by_page_as_csv_row(user_mc_key, topics_id, props, **k
         media_src_ids = [str(s['source_media_id']) for s in media_link_page['links']]
         media_ref_ids = [str(s['ref_media_id']) for s in media_link_page['links']]
         media_src_ids = set(media_src_ids + media_ref_ids)  # make it distinct
-        if use_pool:
-            # for editing users, add in last scrape and active feed count (if requested)
-            jobs = [{'key': user_mc_key, 'media_id': mid} for mid in media_src_ids]
-            pool = Pool(processes=15)
-            page_media_info = pool.map(_media_info_worker, jobs)  # blocks until they are all done
-            media_lookup = {int(m['media_id']): m for m in page_media_info}
-        else:
-            media_lookup = {int(mid): _media_info_worker({'key': user_mc_key, 'media_id': mid})
-                            for mid in media_src_ids}
+        # TODO: PARALLELIZE - can't use executor here, because we are out of the context?
+        media_lookup = {int(mid): _media_info_worker({'key': user_mc_key, 'media_id': mid})
+                        for mid in media_src_ids}
         # connect the link data to the media info data
         for link_pair in media_link_page['links']:
             link_pair['source_info'] = media_lookup[int(link_pair['source_media_id'])]

@@ -1,5 +1,4 @@
 import logging
-from multiprocessing import Pool
 from operator import itemgetter
 import flask_login
 import os
@@ -7,7 +6,7 @@ from flask import jsonify, request
 from mediacloud.tags import MediaTag, TAG_ACTION_ADD
 
 import server.util.csv as csv
-from server import app, mc, user_db, analytics_db
+from server import app, mc, user_db, analytics_db, executor
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client, user_name,\
     user_has_auth_role, ROLE_MEDIA_EDIT
 from server.util.request import arguments_required, form_fields_required, api_error_handler
@@ -22,9 +21,6 @@ import server.views.sources.apicache as apicache
 from server.views.sources.words import word_count, stream_wordcount_csv
 
 logger = logging.getLogger(__name__)
-
-HISTORICAL_COUNT_POOL_SIZE = 10  # number of parallel processes to use while fetching historical story counts for each media source
-FEED_SCRAPE_JOB_POOL_SIZE = 10
 
 
 def allowed_file(filename):
@@ -191,17 +187,22 @@ def api_collection_sources_csv(collection_id):
 def api_collection_sources_feed_status_csv(collection_id, source_type):
     user_mc = user_mediacloud_client()
     collection = user_mc.tag(collection_id)
-    type = str(source_type).lower()
+    list_type = str(source_type).lower()
     media_in_collection = media_with_tag(user_mediacloud_key(), collection_id)
-    media_info_in_collection = _fetch_collection_source_feed_info(media_in_collection)
-    if type == 'review':
-        filtered_media = [m for m in media_info_in_collection if m['active_feed_count'] > 0 and m['num_stories_90'] == 0 and m['num_stories_last_year'] > 0]
-    elif type == 'remove':
-        filtered_media = [m for m in media_info_in_collection if m['active_feed_count'] > 0 and m['num_stories_90'] == 0 and m['num_stories_last_year'] == 0 and m['latest_scrape_job.state'] == 'failed']
-    elif type == 'unscrapeable':
-        filtered_media = [m for m in media_info_in_collection if m['active_feed_count'] == 0 and m['num_stories_90'] > 0]
-    elif type == 'working':
-        filtered_media = [m for m in media_info_in_collection if m['active_feed_count'] > 0 and m['num_stories_last_year'] > 0]
+    media_info_in_collection = _media_list_edit_job.map(media_in_collection)
+    if list_type == 'review':
+        filtered_media = [m for m in media_info_in_collection
+                          if m['active_feed_count'] > 0 and m['num_stories_90'] == 0 and m['num_stories_last_year'] > 0]
+    elif list_type == 'remove':
+        filtered_media = [m for m in media_info_in_collection
+                          if m['active_feed_count'] > 0 and m['num_stories_90'] == 0
+                          and m['num_stories_last_year'] == 0 and m['latest_scrape_job.state'] == 'failed']
+    elif list_type == 'unscrapeable':
+        filtered_media = [m for m in media_info_in_collection
+                          if m['active_feed_count'] == 0 and m['num_stories_90'] > 0]
+    elif list_type == 'working':
+        filtered_media = [m for m in media_info_in_collection
+                          if m['active_feed_count'] > 0 and m['num_stories_last_year'] > 0]
     else:
         filtered_media = media_info_in_collection
     file_prefix = "Collection {} ({}) - sources feed {}".format(collection_id, collection['tag'], source_type)
@@ -209,52 +210,33 @@ def api_collection_sources_feed_status_csv(collection_id, source_type):
     return csv.download_media_csv(filtered_media, file_prefix, properties_to_include)
 
 
-def _media_list_edit_worker(media_id):
+@executor.job
+def _media_list_edit_job(media):
     user_mc = user_admin_mediacloud_client()
     # latest scrape job
-    scrape_jobs = user_mc.feedsScrapeStatus(media_id)
+    scrape_jobs = user_mc.feedsScrapeStatus(media['media_id'])
     latest_scrape_job = None
     if len(scrape_jobs['job_states']) > 0:
         latest_scrape_job = scrape_jobs['job_states'][0]
     # active feed count
-    feeds = source_feed_list(media_id)
+    feeds = source_feed_list(media['media_id'])
     active_syndicated_feeds = [f for f in feeds if f['active'] and f['type'] == 'syndicated']
     active_feed_count = len(active_syndicated_feeds)
-    query = "media_id:{}".format(media_id)
+    query = "media_id:{}".format(media['media_id'])
     full_count = apicache.timeperiod_story_count(user_mc, query, QUERY_LAST_YEAR)['count']
-    return {
-        'media_id': media_id,
-        'latest_scrape_job': latest_scrape_job,
-        'active_feed_count': active_feed_count,
-        'num_stories_last_year': full_count,
-    }
-
-
-def _fetch_collection_source_feed_info(media_in_collection):
-    # for editing users, add in last scrape and active feed count (if requested)
-    use_pool = True
-    jobs = [m['media_id'] for m in media_in_collection]
-    if use_pool:
-        pool = Pool(processes=FEED_SCRAPE_JOB_POOL_SIZE)
-        job_results = pool.map(_media_list_edit_worker, jobs)  # blocks until they are all done
-    else:
-        job_results = [_media_list_edit_worker(job) for job in jobs]
-
-    job_by_media_id = {j['media_id']: j for j in job_results}
-    for m in media_in_collection:
-        m['num_stories_last_year'] = job_by_media_id[m['media_id']]['num_stories_last_year']
-        m['latest_scrape_job'] = job_by_media_id[m['media_id']]['latest_scrape_job']
-        m['active_feed_count'] = job_by_media_id[m['media_id']]['active_feed_count']
-    if use_pool:
-        pool.terminate()
-    return media_in_collection
+    # add the details to the media object and return it
+    media['latest_scrape_job'] = latest_scrape_job
+    media['active_feed_count'] = active_feed_count
+    media['num_stories_last_year'] = full_count
+    return media
 
 
 @app.route('/api/collections/<collection_id>/sources/story-split/historical-counts')
 @flask_login.login_required
 @api_error_handler
 def collection_source_story_split_historical_counts(collection_id):
-    results = _collection_source_story_split_historical_counts(collection_id)
+    # need to turn the generator into objects before returning to json
+    results = [r for r in _collection_source_story_split_historical_counts(collection_id)]
     return jsonify({'counts': results})
 
 
@@ -276,11 +258,11 @@ def collection_source_story_split_historical_counts_csv(collection_id):
     return csv.stream_response(results, props, filename)
 
 
-# worker function to help in parallel
-def _source_story_split_count_worker(info):
+@executor.job
+def _source_story_split_count_job(info):
     source = info['media']
     q = "media_id:{}".format(source['media_id'])
-    split_stories = apicache.split_story_count(user_mediacloud_key(), q)
+    split_stories = apicache.split_story_count(user_mediacloud_key(), q, 360)
     source_data = {
         'media_id': source['media_id'],
         'media_name': source['name'],
@@ -295,10 +277,8 @@ def _collection_source_story_split_historical_counts(collection_id):
     media_list = media_with_tag(user_mediacloud_key(), collection_id)
     jobs = [{'media': m} for m in media_list]
     # fetch in parallel to make things faster
-    pool = Pool(processes=HISTORICAL_COUNT_POOL_SIZE)
-    results = pool.map(_source_story_split_count_worker, jobs)  # blocks until they are all done
-    pool.terminate()  # extra safe garbage collection
-    return results
+    #return [_source_story_split_count_job(j) for j in jobs]
+    return _source_story_split_count_job.map(jobs)
 
 
 @app.route('/api/collections/<collection_id>/story-split/count')
@@ -306,7 +286,8 @@ def _collection_source_story_split_historical_counts(collection_id):
 @api_error_handler
 def collection_source_split_stories(collection_id):
     collections_query = "tags_id_media:{}".format(collection_id)
-    exclude_spidered_stories = " tags_id_media:{} AND NOT tags_id_stories:{}".format(str(collection_id), TAG_SPIDERED_STORY)\
+    exclude_spidered_stories = " tags_id_media:{} AND NOT tags_id_stories:{}".format(
+        str(collection_id), TAG_SPIDERED_STORY)\
         if 'separate_spidered' in request.args else collections_query
     interval = 'day'  # default, and not currently passed to the calls above
 
@@ -330,7 +311,7 @@ def collection_source_split_stories(collection_id):
 @api_error_handler
 def collection_split_stories_csv(collection_id):
     return stream_split_stories_csv(user_mediacloud_key(), 'splitStoryCounts-Collection-' + collection_id,
-                                    collection_id, "tags_id_media")
+                                    "tags_id_media:{}".format(collection_id))
 
 
 def _tag_set_info(user_mc_key, tag_sets_id):

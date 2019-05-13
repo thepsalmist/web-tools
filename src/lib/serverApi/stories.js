@@ -36,3 +36,7 @@ export function storyOutlinks(id, storiesId, params) {
   const acceptedParams = acceptParams(params, ['id', 'snapshotId', 'timespanId', 'focusId', 'q']);
   return createApiPromise(`/api/stories/${storiesId}/outlinks`, acceptedParams);
 }
+
+export function storyRedditAttention(storiesId) {
+  return createApiPromise(`/api/stories/${storiesId}/reddit-attention`);
+}

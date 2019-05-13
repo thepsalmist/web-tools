@@ -37,10 +37,12 @@ class WordInContextDrillDownContainer extends React.Component {
     return (nextProps.selectedWord !== selectedWord) || (nextProps.fragments !== fragments);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const { selectedWord } = this.props;
+    const prevSelectedWord = prevProps.selectedWord;
     const rootNode = this.rootRef;
     // have to treat this node carefully, because it might not be showing
-    if (rootNode && rootNode.current) {
+    if (rootNode && rootNode.current && selectedWord && (selectedWord !== prevSelectedWord)) {
       rootNode.current.scrollIntoView();
     }
   }

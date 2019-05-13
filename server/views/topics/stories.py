@@ -8,6 +8,7 @@ import server.util.csv as csv
 import server.util.tags as tag_util
 import server.views.topics.apicache as apicache
 import server.views.apicache as base_apicache
+import server.util.pushshift as pushshift
 from server import app, cliff, TOOL_API_KEY
 from server.auth import is_user_logged_in
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
@@ -320,6 +321,11 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
                         story_tag_ids = [t['tag'] for t in s['story_tags']
                                          if t['tag_sets_id'] == tag_util.NYT_LABELS_TAG_SET_ID]
                         s['themes'] = ", ".join(story_tag_ids)
+
+        # now add in reddit share data
+        story_reddit_submissions = pushshift.reddit_url_submission_counts(story_page['stories'])
+        for s in story_page['stories']:
+            s['reddit_submissions'] = story_reddit_submissions[s['stories_id']]
 
     return story_page  # need links too
 

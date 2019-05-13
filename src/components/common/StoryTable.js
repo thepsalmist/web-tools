@@ -20,7 +20,7 @@ const StoryTable = (props) => {
         <tbody>
           <tr>
             <th><FormattedMessage {...messages.storyTitle} /></th>
-            <th colSpan="2"><FormattedMessage {...messages.media} /></th>
+            <th><FormattedMessage {...messages.media} /></th>
             <th><FormattedMessage {...messages.storyDate} /></th>
             { extraHeaderColumns}
           </tr>
@@ -49,8 +49,6 @@ const StoryTable = (props) => {
                   <a href={story.media_url} rel="noopener noreferrer" target="_blank">
                     <img className="google-icon" src={googleFavIconUrl(domain)} alt={domain} />
                   </a>
-                </td>
-                <td>
                   <a href={story.media_url} rel="noopener noreferrer" target="_blank">{story.media_name}</a>
                 </td>
                 <td><span className={`story-date ${dateStyle}`}>{dateToShow}</span></td>

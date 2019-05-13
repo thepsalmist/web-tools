@@ -39,5 +39,5 @@ def load_user_searches():
 @form_fields_required('queryName', 'timestamp')
 def delete_user_search():
     username = user_name()
-    result = user_db.remove_item_from_users_list(username, 'searches', {'timestamp': request.form['timestamp']})
+    result = user_db.remove_item_from_users_list(username, 'searches', {'timestamp': int(request.form['timestamp'])})
     return jsonify({'success': result.raw_result})

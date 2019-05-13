@@ -147,7 +147,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   updateAdvancedMediaQuerySelection: (values) => {
     if (values.mediaKeyword || (values.tags && values.tags.length > 0)) {
       if (values.allMedia) { // handle the "all media" placeholder selection
-        ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
+        ownProps.onToggleSelected({ tags_id: ALL_MEDIA, id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
       } else {
         dispatch(selectMediaPickerQueryArgs(values));
         dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: values.tags.map(tag => tag.tags_id) }));

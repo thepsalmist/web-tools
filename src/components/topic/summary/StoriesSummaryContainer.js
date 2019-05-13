@@ -25,7 +25,7 @@ const localMessages = {
   title: { id: 'topic.summary.stories.title', defaultMessage: 'Top Stories' },
   descriptionIntro: { id: 'topic.summary.stories.help.title', defaultMessage: '<p>The top stories within this topic can suggest the main ways it is talked about.  Sort by different measures to get a better picture of a story\'s influence.</p>' },
   downloadNoFBData: { id: 'topic.summary.stories.download.noFB', defaultMessage: 'Download CSV with all stories' },
-  downloadTopN: { id: 'topic.summary.stories.download.1k', defaultMessage: `Download CSV with top ${TOP_N_DOWNLOAD} stories (fast!)` },
+  downloadTopN: { id: 'topic.summary.stories.download.1k', defaultMessage: `Download CSV with top ${TOP_N_DOWNLOAD} stories (w/Reddit data)` },
   downloadWithFBData: { id: 'topic.summary.stories.download.withFB', defaultMessage: 'Download CSV with all stories & Facebook collection date (takes longer)' },
   downloadLinkCsv: { id: 'topic.summary.stories.download.downloadLinkCsv', defaultMessage: 'Download CSV of all story links' },
 };
@@ -82,20 +82,20 @@ class StoriesSummaryContainer extends React.Component {
             <ActionMenu actionTextMsg={messages.downloadOptions}>
               <MenuItem
                 className="action-icon-menu-item"
-                id="topic-summary-top-N-stories-download"
-                onClick={this.downloadCsvTopN}
+                id="topic-summary-top-stories-download"
+                onClick={this.downloadCsvNoFBData}
               >
-                <ListItemText><FormattedMessage {...localMessages.downloadTopN} /></ListItemText>
+                <ListItemText><FormattedMessage {...localMessages.downloadNoFBData} /></ListItemText>
                 <ListItemIcon>
                   <DownloadButton />
                 </ListItemIcon>
               </MenuItem>
               <MenuItem
                 className="action-icon-menu-item"
-                id="topic-summary-top-stories-download"
-                onClick={this.downloadCsvNoFBData}
+                id="topic-summary-top-N-stories-download"
+                onClick={this.downloadCsvTopN}
               >
-                <ListItemText><FormattedMessage {...localMessages.downloadNoFBData} /></ListItemText>
+                <ListItemText><FormattedMessage {...localMessages.downloadTopN} /></ListItemText>
                 <ListItemIcon>
                   <DownloadButton />
                 </ListItemIcon>

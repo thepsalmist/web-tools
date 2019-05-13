@@ -45,7 +45,7 @@ def api_explorer_collections_by_ids():
         # ie. request.args['collections[]'] is not an int (ie. it is a list of collections like a normal query)
         querying_all_media = False
     if querying_all_media:
-        collection_list = [{'id': ALL_MEDIA, 'label': "All Media", 'tag_sets_id': ALL_MEDIA}]
+        collection_list = [{'tags_id': ALL_MEDIA, 'id': ALL_MEDIA, 'label': "All Media", 'tag_sets_id': ALL_MEDIA}]
     else:
         collection_ids = request.args['collections[]'].split(',')
         collection_list = []
@@ -103,7 +103,6 @@ def api_explorer_collection_set(tag_sets_id):
 
 
 def _tag_set_with_collections(tag_sets_id, show_only_public_collections):
-
     # TODO use which mc or user_mc here
     tag_set = mc.tagSet(tag_sets_id)
     # page through tags

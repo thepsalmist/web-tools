@@ -1,7 +1,18 @@
 {
   "releases": [
     {
-      "date": "2019-5-06",
+      "date": "2019-5-14",
+      "version": "v3.10.3",
+      "notes": [
+        {
+          "apps": [ "topics", "explorer", "tools", "sources" ],
+          "type": "Fixed",
+          "note": "About pages work again"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-13",
       "version": "v3.10.2",
       "notes": [
         {

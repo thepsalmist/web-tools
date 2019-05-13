@@ -78,7 +78,7 @@ AppButton.propTypes = {
     PropTypes.string,
     // or pass in a message to be formatted
     PropTypes.shape(intlMessageShape),
-  ]).isRequired,
+  ]),
   // from composition chain
   intl: PropTypes.object.isRequired,
 };

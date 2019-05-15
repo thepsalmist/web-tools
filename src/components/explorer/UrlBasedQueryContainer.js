@@ -161,8 +161,8 @@ function composeUrlBasedQueryContainer() {
           ...query, // let anything on URL override label and color
           label: notEmptyString(query.label) ? query.label : autoMagicQueryLabel(query),
           // remember demo queries won't have sources or collections on the URL
-          sources: query.sources ? query.sources.map(s => ({ id: s, media_id: s })) : undefined,
-          collections: query.collections ? query.collections.map(s => ({ id: s, tags_id: s })) : undefined,
+          sources: query.sources ? query.sources.map(s => ({ id: s, media_id: s })) : [],
+          collections: query.collections ? query.collections.filter(c => c != null).map(c => ({ id: c, tags_id: c })) : [],
           q: replaceCurlyQuotes(query.q),
           color: query.color ? query.color : schemeCategory10[index % 10],
           uid: uniqueQueryId(),

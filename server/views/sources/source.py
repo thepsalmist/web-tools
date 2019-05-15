@@ -153,7 +153,8 @@ def api_media_source_scrape_feeds(media_id):
 @flask_login.login_required
 @api_error_handler
 def source_split_stories_csv(media_id):
-    return stream_split_stories_csv(user_mediacloud_key(), 'splitStoryCounts-Source-' + media_id, media_id, "media_id")
+    return stream_split_stories_csv(user_mediacloud_key(), 'splitStoryCounts-Source-{}'.format(media_id),
+                                    "media_id:{}".format(media_id))
 
 
 @app.route('/api/sources/<media_id>/story-split/count')
@@ -161,7 +162,8 @@ def source_split_stories_csv(media_id):
 @api_error_handler
 def api_media_source_split_stories(media_id):
     media_query = 'media_id:' + str(media_id)
-    exclude_spidered_stories = " media_id:{} AND NOT tags_id_stories:{}".format(str(media_id), TAG_SPIDERED_STORY) if 'separate_spidered' in request.args else media_query
+    exclude_spidered_stories = " media_id:{} AND NOT tags_id_stories:{}".format(str(media_id), TAG_SPIDERED_STORY)\
+        if 'separate_spidered' in request.args else media_query
 
     health = _cached_media_source_health(user_mediacloud_key(), media_id)
 

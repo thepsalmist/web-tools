@@ -58,6 +58,7 @@ function queries(state = INITIAL_STATE, action) {
         queryIndex = state.findIndex(q => q.uid !== null && q.uid === action.payload.uid);
         updatedState = [...state];
         updatedState[queryIndex] = Object.assign({}, updatedState[queryIndex], action.payload.newValues);
+        updatedState[queryIndex].label = action.payload.newValues.q;
         return updatedState;
       }
       return null;

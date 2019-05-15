@@ -2,11 +2,11 @@ import logging
 import flask_login
 import mediacloud.error
 from flask import jsonify, request
-from deco import synchronized, concurrent
+from operator import itemgetter
 
 import server.views.apicache as shared_apicache
 import server.views.topics.apicache as apicache
-from server import app, mc
+from server import app, mc, executor
 from server.auth import user_mediacloud_key, user_mediacloud_client, is_user_logged_in
 from server.util.request import api_error_handler
 from server.views.topics import access_public_topic
@@ -41,17 +41,26 @@ def topic_summary(topics_id):
     return jsonify(topic)
 
 
-@concurrent
-def _snapshot_foci_count(snapshot):
+@executor.job
+def _snapshot_foci_count_job(job):
+    snapshot = job['snapshot']
     # add in the number of focal sets
-    focal_sets = apicache.topic_focal_sets_list(user_mediacloud_key(), snapshot['topics_id'], snapshot['snapshots_id'])
+    focal_sets = apicache.topic_focal_sets_list(job['user_mc_key'], job['topics_id'], snapshot['snapshots_id'])
     foci_count = sum([len(fs['foci']) for fs in focal_sets])
-    return foci_count
+    snapshot['foci_count'] = foci_count
+    return snapshot
 
-@synchronized
-def _add_snapshot_foci_count(snapshots):
+
+def _add_snapshot_foci_count(topics_id, snapshots):
+    jobs = []
     for s in snapshots:
-        s['foci_count'] = _snapshot_foci_count(s)
+        job = {
+            'topics_id': topics_id,
+            'user_mc_key': user_mediacloud_key(),
+            'snapshot': s,
+        }
+        jobs.append(job)
+    snapshots = _snapshot_foci_count_job.map(jobs)
     return snapshots
 
 
@@ -60,17 +69,18 @@ def _topic_snapshot_list(topic):
         local_mc = mc
     elif is_user_logged_in():
         local_mc = user_mediacloud_client()
+    else:
+        return {}  # prob something smarter we can do here
     snapshots = local_mc.topicSnapshotList(topic['topics_id'])
+    snapshots = sorted(snapshots, key=itemgetter('snapshots_id'))
     # add in any missing version numbers
     for idx in range(0, len(snapshots)):
         if snapshots[idx]['note'] in [None, '']:
             snapshots[idx]['note'] = idx + ARRAY_BASE_ONE
     # seed_query story count
     topic['seed_query_story_count'] = _topic_seed_story_count(topic)
-    # add foci_count and story count for display
-    for s in snapshots:
-        s['topics_id'] = topic['topics_id']  # to make life easier
-    snapshots = _add_snapshot_foci_count(snapshots)
+    # add foci_count for display
+    snapshots = _add_snapshot_foci_count(topic['topics_id'], snapshots)
     snapshots = sorted(snapshots, key=lambda d: d['snapshot_date'])
     # extra stuff
     snapshot_status = mc.topicSnapshotGenerateStatus(topic['topics_id'])['job_states']  # need to know if one is running

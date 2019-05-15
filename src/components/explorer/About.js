@@ -5,7 +5,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import ExplorerMarketingFeatureList from './home/ExplorerMarketingFeatureList';
 import messages from '../../resources/messages';
 import AppButton from '../common/AppButton';
-import { urlToExplorer } from '../../lib/urlUtil';
+import { urlToExplorerQuery } from '../../lib/urlUtil';
 import PageTitle from '../common/PageTitle';
 
 const localMessages = {
@@ -31,9 +31,21 @@ const About = () => (
     </Grid>
     <Grid>
       <Row>
-        <Col lg={10} md={10} sm={10} />
-        <Col m={2} lg={2}>
-          <AppButton color="primary" primary onClick={() => { window.location = urlToExplorer('queries/search?q=[{"label":"*","q":"*","color":"%231f77b4","sources":[],"collections":[58722749]}]'); }}>
+        <Col lg={10} />
+        <Col lg={2}>
+          <AppButton
+            primary
+            onClick={() => {
+              window.location = urlToExplorerQuery(
+                'election news',
+                'election*',
+                [],
+                [58722749],
+                '2019-01-01',
+                '2020-01-01',
+              );
+            }}
+          >
             <FormattedMessage {...messages.tryItNow} />
           </AppButton>
         </Col>

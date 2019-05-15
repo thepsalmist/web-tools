@@ -10,7 +10,7 @@ const SourceOrCollectionWidget = ({ object, onDelete, onClick, children, link })
   // link the text if there is a click handler defined
   let text;
   if (link) {
-    text = (<a href={link}>{name}</a>);
+    text = (<a href={link} target="_blank" rel="noopener noreferrer">{name}</a>);
   } else if (onClick) {
     text = (<a href="#" onClick={onClick}>{name}</a>);
   } else {

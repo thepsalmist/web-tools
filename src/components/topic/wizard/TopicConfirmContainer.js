@@ -152,18 +152,21 @@ const mapStateToProps = state => ({
   selectedSnapshot: state.topics.selected ? state.topics.selected.snapshots.selected : null,
 });
 
+export const createNewSpideredVersion = (topicId, dispatch, formatMessage) => {
+  dispatch(topicSnapshotSpider(topicId))
+    .then((spiderResults) => {
+      if (spiderResults && spiderResults.topics_id) { // let them know it worked
+        dispatch(updateFeedback({ classes: 'info-notice', open: true, message: formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
+        return dispatch(push(`/topics/${spiderResults.topics_id}/versions`));
+      }
+      return dispatch(updateFeedback({ open: true, message: formatMessage(localMessages.failed) }));
+    });
+};
+
 const finishTopic = (results, dispatch, intl, startSpidering) => {
   // We start a new spider for new version
   if (results.topics_id && startSpidering) {
-    dispatch(topicSnapshotSpider(results.topics_id))
-      .then((spiderResults) => {
-        if (spiderResults && spiderResults.topics_id) {
-          // let them know it worked
-          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
-          return dispatch(push(`/topics/${spiderResults.topics_id}/versions`));
-        }
-        return dispatch(updateFeedback({ open: true, message: intl.formatMessage(localMessages.failed) }));
-      });
+    createNewSpideredVersion(results.topics_id, dispatch, intl.formatMessage);
   } else if (results.topics_id) {
     // they selected the option to leave it empty so they can add more subtopics to it
     dispatch(topicSnapshotCreate(results.topics_id))

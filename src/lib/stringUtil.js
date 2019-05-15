@@ -35,8 +35,11 @@ export function humanReadableNumber(number, numSigFigs, formatNumber) {
 
 // Use this to intl a variable when you don't know if it is a string or a message object
 export function intlIfObject(formatter, value) {
-  if (typeof value === 'string') {
-    return value;
+  if (value) {
+    if (typeof value === 'string') {
+      return value;
+    }
+    return formatter(value);
   }
-  return formatter(value);
+  return value; // it is some kind of null, so return it as is for caller to deal with (ie. render empty or cause error)
 }

@@ -129,7 +129,12 @@ class QueryPickerItem extends React.Component {
       oneSourceLabel = sourceCount === 1 ? oneSourceLabel : '';
 
       const oneCollStatus = oneCollLabel;
-      subT = <span className="error"><FormattedMessage {...localMessages.emptyMedia} values={{ totalMediaCount }} /></span>;
+      subT = (
+        <div>
+          <span className="error"><FormattedMessage {...localMessages.emptyMedia} values={{ totalMediaCount }} /></span>
+          <br />{query.startDate ? getShortDate(query.startDate) : ''} to {query.endDate ? getShortDate(query.endDate) : ''}
+        </div>
+      );
 
       if (sourceCount === 0 && collectionCount === 1) {
         subT = (
@@ -160,7 +165,7 @@ class QueryPickerItem extends React.Component {
     }
     const extraClassNames = (isSelected) ? 'selected' : '';
     let fullQuery = query.label;
-    if (fullQuery.indexOf('...') > 0) {
+    if (fullQuery && fullQuery.indexOf('...') > 0) {
       fullQuery = fullQuery.slice(0, fullQuery.indexOf('...') - 1);
     }
     return (

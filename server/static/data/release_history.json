@@ -1,6 +1,22 @@
 {
   "releases": [
     {
+      "date": "2019-5-15",
+      "version": "v3.10.4",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic story CSV download works again"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Better version indications & admin management shortcuts"
+        }
+      ]
+    },
+    {
       "date": "2019-5-14",
       "version": "v3.10.3",
       "notes": [

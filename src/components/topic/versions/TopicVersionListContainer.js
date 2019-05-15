@@ -14,6 +14,7 @@ import { fetchSnapshotStoryCounts } from '../../../actions/topicActions';
 import JobList from './homepages/JobList';
 import TopicVersionListItem from './TopicVersionListItem';
 import NeedsNewVersionWarning from './NeedsNewVersionWarning';
+import { createNewSpideredVersion } from '../wizard/TopicConfirmContainer';
 
 const localMessages = {
   title: { id: 'topic.versionList.title', defaultMessage: 'Topic Versions' },
@@ -26,6 +27,8 @@ const localMessages = {
   createdBy: { id: 'topic.createdBy', defaultMessage: 'Created by: ' },
   createButton: { id: 'topic.create', defaultMessage: 'Create A New Version' },
   createButtonWhy: { id: 'topic.create.why', defaultMessage: 'Change your seed query or manage subtopics by creating a new version.' },
+  quickCreateButton: { id: 'topic.create.quick', defaultMessage: 'Quick Create & Spider' },
+  quickCreateButtonWhy: { id: 'topic.create.quick.why', defaultMessage: 'Admins Only: Create a new version and spider it (with no changes)' },
   viewButton: { id: 'topic.viewBy', defaultMessage: 'Find Out More ' },
   hasAnError: { id: 'topic.hasError', defaultMessage: 'Sorry, this topic has an error!' },
   otherError: { id: 'topic.otherError', defaultMessage: 'Sorry, this topic has an error!' },
@@ -39,7 +42,7 @@ const localMessages = {
   notUsingLatestSnapshot: { id: 'topic.notUsingLatestSnapshot', defaultMessage: 'You are not using the latest snapshot!  If you are not doing this on purpose, <a href="{url}">switch to the latest snapshot</a> to get the best data.' },
 };
 
-const TopicVersionListContainer = ({ topicId, topic, storyCounts, versions, selectedSnapshot, intl, isAdmin }) => {
+const TopicVersionListContainer = ({ topicId, topic, storyCounts, versions, selectedSnapshot, intl, isAdmin, handleQuickCreate }) => {
   const { formatMessage } = intl;
   let versionListContent;
   if (versions.length > 0) {
@@ -95,8 +98,7 @@ const TopicVersionListContainer = ({ topicId, topic, storyCounts, versions, sele
             <Col lg={12}>
               <LinkWithFilters to={`/topics/${topicId}/new-version`}>
                 <AppButton
-                  style={{ marginRight: 15 }}
-                  type="submit"
+                  style={{ marginRight: 15, marginBottom: 15 }}
                   disabled={cannotCreate}
                   label={formatMessage(localMessages.createButton)}
                   primary
@@ -105,10 +107,23 @@ const TopicVersionListContainer = ({ topicId, topic, storyCounts, versions, sele
               <FormattedMessage {...localMessages.createButtonWhy} />
             </Col>
           </Row>
-          <div className="topic-version-list">
-            {versionListContent}
-          </div>
         </Permissioned>
+        <Permissioned onlyRole={PERMISSION_ADMIN}>
+          <Row>
+            <Col lg={12}>
+              <AppButton
+                style={{ marginRight: 15 }}
+                disabled={cannotCreate}
+                label={formatMessage(localMessages.quickCreateButton)}
+                onClick={() => handleQuickCreate(topicId)}
+              />
+              <FormattedMessage {...localMessages.quickCreateButtonWhy} />
+            </Col>
+          </Row>
+        </Permissioned>
+        <div className="topic-version-list">
+          {versionListContent}
+        </div>
         <Permissioned onlyRole={PERMISSION_ADMIN}>
           <Row>
             <Col lg={10}>
@@ -131,6 +146,8 @@ TopicVersionListContainer.propTypes = {
   selectedSnapshot: PropTypes.object,
   // from compositional chain
   intl: PropTypes.object.isRequired,
+  // from dispatch
+  handleQuickCreate: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -143,13 +160,19 @@ const mapStateToProps = state => ({
   isAdmin: state.user.isAdmin,
 });
 
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  handleQuickCreate: (topicId) => {
+    createNewSpideredVersion(topicId, dispatch, ownProps.intl.formatMessage);
+  },
+});
+
 const fetchAsyncData = (dispatch, { topicId }) => {
   dispatch(fetchSnapshotStoryCounts(topicId));
 };
 
 export default
 injectIntl(
-  connect(mapStateToProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withAsyncData(fetchAsyncData)(
       TopicVersionListContainer
     )

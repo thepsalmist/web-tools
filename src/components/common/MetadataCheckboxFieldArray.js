@@ -65,7 +65,7 @@ const MetadataCheckboxFieldArray = (props) => {
     });
   }
   return (
-    <div className="explorer-media-picker-media-types">
+    <div>
       <FieldArray
         form="advanced-media-picker-search"
         name="shortList"

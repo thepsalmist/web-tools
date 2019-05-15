@@ -1,0 +1,43 @@
+
+.advanced-media-picker-search {
+
+
+  label {
+    &.categorical {
+      float: right;
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 14px;
+
+      &for-name {
+        margin-top: 33px;
+      }
+    }
+  }
+
+  .media-picker-filter-options {
+    padding: 20px;
+
+    .form-field-checkbox {
+      padding: 5px;
+    }
+
+    ul {
+      margin-top: 5px;
+      list-style-type: none;
+      padding-left: 20px;
+
+      li {
+        margin-bottom: 5px;
+
+        small {
+          padding-left: 20px;
+          display: block;
+        }
+
+      }
+
+    }
+  }
+
+}

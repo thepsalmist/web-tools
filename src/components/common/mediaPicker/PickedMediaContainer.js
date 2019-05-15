@@ -21,13 +21,6 @@ class PickedMediaContainer extends React.Component {
 
   render() {
     const { selectedMediaQueryType, selectedMedia, handleUnselectMedia } = this.props;
-    const selectedMediaList = selectedMedia.map(obj => (
-      <SourceOrCollectionWidget
-        key={obj.id || obj.tags_id || obj.media_id}
-        object={obj}
-        onDelete={() => handleUnselectMedia(obj)}
-      />
-    ));
     const options = [
       { label: localMessages.pickFeatured, value: PICK_FEATURED },
       { label: localMessages.pickSAndC, value: PICK_SOURCE_AND_COLLECTION },
@@ -55,7 +48,13 @@ class PickedMediaContainer extends React.Component {
         </div>
         <div className="select-media-selected-list">
           <h3><FormattedMessage {...localMessages.selectedMedia} /></h3>
-          {selectedMediaList}
+          {selectedMedia.map(obj => (
+            <SourceOrCollectionWidget
+              key={obj.id || obj.tags_id || obj.media_id}
+              object={obj}
+              onDelete={() => handleUnselectMedia(obj)}
+            />
+          ))}
         </div>
       </div>
     );
@@ -73,8 +72,8 @@ PickedMediaContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : PICK_FEATURED,
   sourcesResults: state.system.mediaPicker.media ? state.system.mediaPicker.media.results : null, // resutl of query?
+  selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery.args.type,
   collectionsResults: state.system.mediaPicker.collections ? state.system.mediaPicker.collections.results : null,
   favoritedCollections: state.system.mediaPicker.favoritedCollections ? state.system.mediaPicker.favoritedCollections.results : null,
   favoritedSources: state.system.mediaPicker.favoritedSources ? state.system.mediaPicker.favoritedSources.results : null,

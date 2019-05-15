@@ -45,7 +45,7 @@ class StoriesSummaryContainer extends React.Component {
 
   downloadCsvTopN = () => {
     const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
-    const url = `/api/topics/${topicId}/stories.csv?${filtersAsUrlParams(filters)}&sort=${sort}&story_limit=${TOP_N_DOWNLOAD}`;
+    const url = `/api/topics/${topicId}/stories.csv?${filtersAsUrlParams(filters)}&sort=${sort}&story_limit=${TOP_N_DOWNLOAD}&reddit_submissions=1`;
     window.location = url;
     notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
   }
@@ -59,7 +59,7 @@ class StoriesSummaryContainer extends React.Component {
 
   downloadLinkCsv = () => {
     const { filters, sort, topicId } = this.props;
-    const url = `/api/topics/${topicId}/stories/story-links.csv?${filtersAsUrlParams(filters)}&sort=${sort}&fbData=1`;
+    const url = `/api/topics/${topicId}/stories/story-links.csv?${filtersAsUrlParams(filters)}&sort=${sort}`;
     window.location = url;
   }
 

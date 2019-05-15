@@ -9,8 +9,9 @@ import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import messages from '../../../resources/messages';
 import BackLinkingControlBar from '../BackLinkingControlBar';
 import Permissioned from '../../common/Permissioned';
-import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
+import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../../lib/auth';
 import { fetchSnapshotStoryCounts } from '../../../actions/topicActions';
+import JobList from './homepages/JobList';
 import TopicVersionListItem from './TopicVersionListItem';
 import NeedsNewVersionWarning from './NeedsNewVersionWarning';
 
@@ -38,7 +39,7 @@ const localMessages = {
   notUsingLatestSnapshot: { id: 'topic.notUsingLatestSnapshot', defaultMessage: 'You are not using the latest snapshot!  If you are not doing this on purpose, <a href="{url}">switch to the latest snapshot</a> to get the best data.' },
 };
 
-const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, selectedSnapshot, intl, isAdmin }) => {
+const TopicVersionListContainer = ({ topicId, topic, storyCounts, versions, selectedSnapshot, intl, isAdmin }) => {
   const { formatMessage } = intl;
   let versionListContent;
   if (versions.length > 0) {
@@ -66,7 +67,7 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
         number={1}
         topicId={topicId}
         version={{
-          state: topicInfo.state,
+          state: topic.state,
           snapshots_id: -1,
           snapshot_date: '?',
           status: '?',
@@ -108,6 +109,13 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
             {versionListContent}
           </div>
         </Permissioned>
+        <Permissioned onlyRole={PERMISSION_ADMIN}>
+          <Row>
+            <Col lg={10}>
+              <JobList jobs={[...topic.job_states]} highlightSnapshotId={selectedSnapshot.snapshots_id} />
+            </Col>
+          </Row>
+        </Permissioned>
       </Grid>
     </React.Fragment>
   );
@@ -117,7 +125,7 @@ TopicVersionListContainer.propTypes = {
   // from state
   versions: PropTypes.array.isRequired,
   topicId: PropTypes.number.isRequired,
-  topicInfo: PropTypes.object.isRequired,
+  topic: PropTypes.object.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   storyCounts: PropTypes.object,
   selectedSnapshot: PropTypes.object,
@@ -127,7 +135,7 @@ TopicVersionListContainer.propTypes = {
 
 const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
-  topicInfo: state.topics.selected.info,
+  topic: state.topics.selected.info,
   versions: state.topics.selected.snapshots.list,
   storyCounts: state.topics.selected.snapshotStoryCounts,
   fetchStatus: state.topics.selected.snapshotStoryCounts.fetchStatus,

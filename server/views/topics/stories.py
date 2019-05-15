@@ -94,7 +94,11 @@ def topic_stories_csv(topics_id):
     user_mc = user_admin_mediacloud_client()
     topic = user_mc.topic(topics_id)
     story_limit = request.args['story_limit'] if 'story_limit' in request.args else None
-    return stream_story_list_csv(user_mediacloud_key(), topic['name']+'-stories', topics_id, story_limit=story_limit)
+    reddit_submissions = (request.args['reddit_submissions'] == '1') if 'reddit_submissions' in request.args else False
+    include_fb_date = (request.args['fb_data'] == '1') if 'fb_data' in request.args else False
+    return stream_story_list_csv(user_mediacloud_key(), topic['name']+'-stories', topics_id,
+                                 story_limit=story_limit, reddit_submissions=reddit_submissions,
+                                 include_fb_date=include_fb_date)
 
 
 def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
@@ -252,7 +256,8 @@ def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
     story_count = 0
     link_id = 0
     more_pages = True
-    while more_pages and (('story_limit' in kwargs) and (story_count < int(kwargs['story_limit']))):
+    has_story_limit = ('story_limit' in kwargs) and (kwargs['story_limit'] is not None)
+    while more_pages and ((has_story_limit is False) or (story_count < int(kwargs['story_limit']))):
         page = _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs)
         if 'next' in page['link_ids']:
             link_id = page['link_ids']['next']
@@ -277,8 +282,10 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
     media_lookup = {}
 
     args = kwargs.copy()   # need to make sure invalid params don't make it to API call
-    if 'story_limit' in args:
-        del args['story_limit']
+    optional_args = ['story_limit', 'reddit_submissions', 'include_fb_date']
+    for key in optional_args:
+        if key in args:
+            del args[key]
     story_page = apicache.topic_story_list_by_page(user_key, topics_id, link_id=link_id, **args)
 
     if len(story_page['stories']) > 0:  # be careful to not construct malformed query if no story ids
@@ -322,10 +329,11 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
                                          if t['tag_sets_id'] == tag_util.NYT_LABELS_TAG_SET_ID]
                         s['themes'] = ", ".join(story_tag_ids)
 
-        # now add in reddit share data
-        story_reddit_submissions = pushshift.reddit_url_submission_counts(story_page['stories'])
-        for s in story_page['stories']:
-            s['reddit_submissions'] = story_reddit_submissions[s['stories_id']]
+        # now add in reddit share data if requested
+        if ('reddit_submissions' in kwargs) and (kwargs['reddit_submissions'] is True):
+            story_reddit_submissions = pushshift.reddit_url_submission_counts(story_page['stories'])
+            for s in story_page['stories']:
+                s['reddit_submissions'] = story_reddit_submissions[s['stories_id']]
 
     return story_page  # need links too
 

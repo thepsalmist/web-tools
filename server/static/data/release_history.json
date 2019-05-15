@@ -1,6 +1,22 @@
 {
   "releases": [
     {
+      "date": "2019-5-15",
+      "version": "v3.10.4",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic story CSV download works again"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Better version indications & admin management shortcuts"
+        }
+      ]
+    },
+    {
       "date": "2019-5-14",
       "version": "v3.10.3",
       "notes": [
@@ -8,6 +24,17 @@
           "apps": [ "topics", "explorer", "tools", "sources" ],
           "type": "Fixed",
           "note": "About pages work again"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Improvements to multi-query Explorer searches",
+          "details": "When you add a new query, the tabs up and the date shows up."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Sources & collections on an Explorer search are clickable again"
         }
       ]
     },

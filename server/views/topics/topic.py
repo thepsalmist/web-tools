@@ -2,6 +2,7 @@ import logging
 import flask_login
 import mediacloud.error
 from flask import jsonify, request
+from operator import itemgetter
 
 import server.views.apicache as shared_apicache
 import server.views.topics.apicache as apicache
@@ -69,8 +70,9 @@ def _topic_snapshot_list(topic):
     elif is_user_logged_in():
         local_mc = user_mediacloud_client()
     else:
-        return {} # prob something smarter we can do here
+        return {}  # prob something smarter we can do here
     snapshots = local_mc.topicSnapshotList(topic['topics_id'])
+    snapshots = sorted(snapshots, key=itemgetter('snapshots_id'))
     # add in any missing version numbers
     for idx in range(0, len(snapshots)):
         if snapshots[idx]['note'] in [None, '']:

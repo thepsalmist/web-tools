@@ -1,22 +1,41 @@
 
 .advanced-media-picker-search {
 
+  .filter-options {
+    .app-button {
+      margin-right: 10px;
+      color: black;
+    }
+  }
 
   label {
     &.categorical {
       float: right;
-      margin-top: 15px;
+      margin-top: 10px;
       font-weight: bold;
       font-size: 14px;
 
-      &for-name {
-        margin-top: 33px;
+      &.for-name {
+        margin-top: 40px;
       }
     }
   }
 
   .media-picker-filter-options {
     padding: 20px;
+    margin-top: 10px;
+
+    &.media-picker-media-types {
+      margin-top: 10px;
+      margin-left: 65px;
+      max-width: 400px;
+    }
+
+    &.media-picker-pub-in {
+      margin-top: 10px;
+      margin-left: 195px;
+      max-width: 400px;
+    }
 
     .form-field-checkbox {
       padding: 5px;

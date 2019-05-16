@@ -16,8 +16,8 @@ const localMessages = {
   nameFieldLabel: { id: 'search.advanced.nameField.label', defaultMessage: 'Name:' },
   nameFieldSuggestion: { id: 'search.advanced.nameField.suggestion', defaultMessage: 'search by source name or URL' },
   filtersFieldLabel: { id: 'search.advanced.filtersField.label', defaultMessage: 'Filters:' },
-  pubCountrySuggestion: { id: 'search.advanced.pubCountryTip', defaultMessage: 'country published in {count}' },
-  pubStateSuggestion: { id: 'search.advanced.pubStateTip', defaultMessage: 'state published in {count}' },
+  pubCountrySuggestion: { id: 'search.advanced.pubCountryTip', defaultMessage: 'pub country {count}' },
+  pubStateSuggestion: { id: 'search.advanced.pubStateTip', defaultMessage: 'pub state {count}' },
   pLanguageSuggestion: { id: 'search.advanced.pLanguageTip', defaultMessage: 'language {count}' },
   pCountryOfFocusSuggestion: { id: 'search.advanced.pCountryOfFocusTip', defaultMessage: 'about place {count}' },
   pMediaType: { id: 'search.advanced.pMediaType', defaultMessage: 'media type {count}' },
@@ -68,7 +68,6 @@ class AdvancedMediaPickerSearchForm extends React.Component {
   render() {
     const { initValues, renderTextField, renderCheckbox } = this.props;
     const { formatMessage } = this.props.intl;
-    const colorStyle = mode => (this.getTagsPerMetadata(initValues, mode, true) > 0 ? 'purple' : 'gray');
     const backgroundColorStyle = mode => (mode === this.state.mode ? 'lightgray' : 'white');
     const pubCountry = this.state.mode === TAG_SET_PUBLICATION_COUNTRY ? (
       <MediaPickerMetadataContainer
@@ -79,20 +78,20 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_COUNTRY, args, PUBLICATION_COUNTRY)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
         previouslySelectedTags={initValues.tags}
+        className="media-picker-pub-in"
       />
     ) : null;
     const pubState = this.state.mode === TAG_SET_PUBLICATION_STATE ? (
-      <div>
-        <MediaPickerMetadataContainer
-          id={TAG_SET_PUBLICATION_STATE}
-          type={PUBLICATION_STATE}
-          form="advanced-media-picker-search"
-          label={formatMessage(messages.pubState)}
-          onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PUBLICATION_STATE)}
-          onSearch={val => this.updateAndSearchWithSelection(val)}
-          previouslySelectedTags={initValues.tags}
-        />
-      </div>
+      <MediaPickerMetadataContainer
+        id={TAG_SET_PUBLICATION_STATE}
+        type={PUBLICATION_STATE}
+        form="advanced-media-picker-search"
+        label={formatMessage(messages.pubState)}
+        onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PUBLICATION_STATE)}
+        onSearch={val => this.updateAndSearchWithSelection(val)}
+        previouslySelectedTags={initValues.tags}
+        className="media-picker-pub-in"
+      />
     ) : null;
     const countryOfFocus = this.state.mode === TAG_SET_COUNTRY_OF_FOCUS ? (
       <MediaPickerMetadataContainer
@@ -151,40 +150,42 @@ class AdvancedMediaPickerSearchForm extends React.Component {
               <label className="categorical for-filters" htmlFor="filters"><FormattedMessage {...localMessages.filtersFieldLabel} /></label>
             </Col>
             <Col lg={11}>
-              <AppButton
-                style={{ marginTop: 10, color: colorStyle(MEDIA_TYPE), backgroundColor: backgroundColorStyle(TAG_SET_MEDIA_TYPE) }}
-                label={formatMessage(localMessages.pMediaType, { count: this.getTagsPerMetadata(initValues, MEDIA_TYPE) })}
-                onClick={() => this.setMetaClick(TAG_SET_MEDIA_TYPE, MEDIA_TYPE)}
-                secondary={this.state.mode === TAG_SET_MEDIA_TYPE}
-              />
-              <AppButton
-                style={{ marginTop: 10, color: colorStyle(PUBLICATION_COUNTRY), backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_COUNTRY) }}
-                label={formatMessage(localMessages.pubCountrySuggestion, { count: this.getTagsPerMetadata(initValues, PUBLICATION_COUNTRY) })}
-                onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_COUNTRY, PUBLICATION_COUNTRY)}
-                secondary={this.state.mode === TAG_SET_PUBLICATION_COUNTRY}
-              />
-              <AppButton
-                style={{ marginTop: 10, color: colorStyle(PUBLICATION_STATE), backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_STATE) }}
-                label={formatMessage(localMessages.pubStateSuggestion, { count: this.getTagsPerMetadata(initValues, PUBLICATION_STATE) })}
-                onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_STATE, PUBLICATION_STATE)}
-                secondary={this.state.mode === TAG_SET_PUBLICATION_STATE}
-              />
-              <AppButton
-                style={{ marginTop: 10, color: colorStyle(PRIMARY_LANGUAGE), backgroundColor: backgroundColorStyle(TAG_SET_PRIMARY_LANGUAGE) }}
-                label={formatMessage(localMessages.pLanguageSuggestion, { count: this.getTagsPerMetadata(initValues, PRIMARY_LANGUAGE) })}
-                onClick={() => this.setMetaClick(TAG_SET_PRIMARY_LANGUAGE, PRIMARY_LANGUAGE)}
-                secondary={this.state.mode === TAG_SET_PRIMARY_LANGUAGE}
-              />
-              <AppButton
-                style={{ marginTop: 10, color: colorStyle(COUNTRY_OF_FOCUS), backgroundColor: backgroundColorStyle(TAG_SET_COUNTRY_OF_FOCUS) }}
-                label={formatMessage(localMessages.pCountryOfFocusSuggestion, { count: this.getTagsPerMetadata(initValues, COUNTRY_OF_FOCUS) })}
-                onClick={() => this.setMetaClick(TAG_SET_COUNTRY_OF_FOCUS, COUNTRY_OF_FOCUS)}
-                secondary={this.state.mode === TAG_SET_COUNTRY_OF_FOCUS}
-              />
+              <div className="filter-options">
+                <AppButton
+                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_MEDIA_TYPE) }}
+                  label={formatMessage(localMessages.pMediaType, { count: this.getTagsPerMetadata(initValues, MEDIA_TYPE) })}
+                  onClick={() => this.setMetaClick(TAG_SET_MEDIA_TYPE, MEDIA_TYPE)}
+                  secondary={this.state.mode === TAG_SET_MEDIA_TYPE}
+                />
+                <AppButton
+                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_COUNTRY) }}
+                  label={formatMessage(localMessages.pubCountrySuggestion, { count: this.getTagsPerMetadata(initValues, PUBLICATION_COUNTRY) })}
+                  onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_COUNTRY, PUBLICATION_COUNTRY)}
+                  secondary={this.state.mode === TAG_SET_PUBLICATION_COUNTRY}
+                />
+                <AppButton
+                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_STATE) }}
+                  label={formatMessage(localMessages.pubStateSuggestion, { count: this.getTagsPerMetadata(initValues, PUBLICATION_STATE) })}
+                  onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_STATE, PUBLICATION_STATE)}
+                  secondary={this.state.mode === TAG_SET_PUBLICATION_STATE}
+                />
+                <AppButton
+                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_PRIMARY_LANGUAGE) }}
+                  label={formatMessage(localMessages.pLanguageSuggestion, { count: this.getTagsPerMetadata(initValues, PRIMARY_LANGUAGE) })}
+                  onClick={() => this.setMetaClick(TAG_SET_PRIMARY_LANGUAGE, PRIMARY_LANGUAGE)}
+                  secondary={this.state.mode === TAG_SET_PRIMARY_LANGUAGE}
+                />
+                <AppButton
+                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_COUNTRY_OF_FOCUS) }}
+                  label={formatMessage(localMessages.pCountryOfFocusSuggestion, { count: this.getTagsPerMetadata(initValues, COUNTRY_OF_FOCUS) })}
+                  onClick={() => this.setMetaClick(TAG_SET_COUNTRY_OF_FOCUS, COUNTRY_OF_FOCUS)}
+                  secondary={this.state.mode === TAG_SET_COUNTRY_OF_FOCUS}
+                />
+              </div>
             </Col>
           </Row>
           <Row>
-            <Col lg={8}>
+            <Col lg={12}>
               {pubCountry}
               {pubState}
               {countryOfFocus}

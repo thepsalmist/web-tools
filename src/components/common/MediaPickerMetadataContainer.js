@@ -8,7 +8,7 @@ import MetadataCheckboxFieldArray from './MetadataCheckboxFieldArray';
 import messages from '../../resources/messages';
 
 const MediaPickerMetadataContainer = props => (
-  <DataCard className="media-picker-filter-options">
+  <DataCard className={`media-picker-filter-options ${props.className}`}>
     <MetadataPickerContainer
       id={props.id}
       name={props.type}
@@ -47,6 +47,7 @@ MediaPickerMetadataContainer.propTypes = {
   ]),
   onChange: PropTypes.func,
   onSearch: PropTypes.func,
+  className: PropTypes.string,
 };
 
 const mapStateToProps = state => ({

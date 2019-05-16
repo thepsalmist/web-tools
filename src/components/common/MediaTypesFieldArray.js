@@ -61,7 +61,7 @@ const MediaTypesFieldArray = (props) => {
     });
   }
   return (
-    <DataCard className="media-picker-filter-options explorer-media-picker-media-types">
+    <DataCard className="media-picker-filter-options media-picker-media-types">
       <FieldArray
         form="advanced-media-picker-search"
         name="mediaType"

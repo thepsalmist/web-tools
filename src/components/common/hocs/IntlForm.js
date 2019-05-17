@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedHTMLMessage, injectIntl } from 'react-intl';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import Select from '@material-ui/core/Select';
@@ -16,7 +16,7 @@ function withIntlForm(Component) {
   class IntlFormForm extends React.Component {
     intlIfObject = (value) => {
       if (typeof value === 'object') {
-        return <FormattedMessage {...value} />;
+        return <FormattedHTMLMessage {...value} />;
       }
       return value;
     };

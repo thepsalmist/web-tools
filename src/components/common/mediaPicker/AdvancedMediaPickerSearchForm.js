@@ -159,31 +159,26 @@ class AdvancedMediaPickerSearchForm extends React.Component {
                   style={{ backgroundColor: backgroundColorStyle(TAG_SET_MEDIA_TYPE) }}
                   label={formatMessage(localMessages.pMediaType, { count: this.getTagsPerMetadata(initValues, MEDIA_TYPE) })}
                   onClick={() => this.setMetaClick(TAG_SET_MEDIA_TYPE)}
-                  secondary={this.state.mode === TAG_SET_MEDIA_TYPE}
                 />
                 <AppButton
                   style={{ backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_COUNTRY) }}
                   label={formatMessage(localMessages.pubCountrySuggestion, { count: this.getTagsPerMetadata(initValues, PUBLICATION_COUNTRY) })}
                   onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_COUNTRY)}
-                  secondary={this.state.mode === TAG_SET_PUBLICATION_COUNTRY}
                 />
                 <AppButton
                   style={{ backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_STATE) }}
                   label={formatMessage(localMessages.pubStateSuggestion, { count: this.getTagsPerMetadata(initValues, PUBLICATION_STATE) })}
                   onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_STATE)}
-                  secondary={this.state.mode === TAG_SET_PUBLICATION_STATE}
                 />
                 <AppButton
                   style={{ backgroundColor: backgroundColorStyle(TAG_SET_PRIMARY_LANGUAGE) }}
                   label={formatMessage(localMessages.pLanguageSuggestion, { count: this.getTagsPerMetadata(initValues, PRIMARY_LANGUAGE) })}
                   onClick={() => this.setMetaClick(TAG_SET_PRIMARY_LANGUAGE)}
-                  secondary={this.state.mode === TAG_SET_PRIMARY_LANGUAGE}
                 />
                 <AppButton
                   style={{ backgroundColor: backgroundColorStyle(TAG_SET_COUNTRY_OF_FOCUS) }}
                   label={formatMessage(localMessages.pCountryOfFocusSuggestion, { count: this.getTagsPerMetadata(initValues, COUNTRY_OF_FOCUS) })}
                   onClick={() => this.setMetaClick(TAG_SET_COUNTRY_OF_FOCUS)}
-                  secondary={this.state.mode === TAG_SET_COUNTRY_OF_FOCUS}
                 />
               </div>
             </Col>

@@ -73,6 +73,17 @@ class AdvancedMediaPickerSearchForm extends React.Component {
     const { initValues, renderTextField, renderCheckbox } = this.props;
     const { formatMessage } = this.props.intl;
     const backgroundColorStyle = mode => (mode === this.state.mode ? 'lightgray' : 'white');
+    const mediaType = this.state.mode === TAG_SET_MEDIA_TYPE ? (
+      <MediaTypesFieldArray
+        id={TAG_SET_MEDIA_TYPE}
+        name={MEDIA_TYPE}
+        form="advanced-media-picker-search"
+        label={formatMessage(messages.mediaType)}
+        onChange={(...args) => this.selectMetaData(TAG_SET_MEDIA_TYPE, args, MEDIA_TYPE)}
+        onSelect={this.setSelectedMediaTypes}
+        previouslySelected={initValues.tags}
+      />
+    ) : null;
     const pubCountry = this.state.mode === TAG_SET_PUBLICATION_COUNTRY ? (
       <MediaPickerMetadataContainer
         id={TAG_SET_PUBLICATION_COUNTRY}
@@ -97,18 +108,8 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         className="media-picker-pub-in"
       />
     ) : null;
-    const countryOfFocus = this.state.mode === TAG_SET_COUNTRY_OF_FOCUS ? (
-      <MediaPickerMetadataContainer
-        id={TAG_SET_COUNTRY_OF_FOCUS}
-        type={COUNTRY_OF_FOCUS}
-        form="advanced-media-picker-search"
-        onChange={(...args) => this.selectMetaData(TAG_SET_COUNTRY_OF_FOCUS, args, COUNTRY_OF_FOCUS)}
-        onSearch={val => this.updateAndSearchWithSelection(val)}
-        previouslySelectedTags={initValues.tags}
-      />
-    ) : null;
     const language = this.state.mode === TAG_SET_PRIMARY_LANGUAGE ? (
-      <DataCard className="media-picker-filter-options">
+      <DataCard className="media-picker-filter-options media-picker-language">
         <MetadataCheckboxFieldArray
           id={TAG_SET_PRIMARY_LANGUAGE}
           type={PRIMARY_LANGUAGE}
@@ -119,15 +120,15 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         />
       </DataCard>
     ) : null;
-    const mediaType = this.state.mode === TAG_SET_MEDIA_TYPE ? (
-      <MediaTypesFieldArray
-        id={TAG_SET_MEDIA_TYPE}
-        name={MEDIA_TYPE}
+    const countryOfFocus = this.state.mode === TAG_SET_COUNTRY_OF_FOCUS ? (
+      <MediaPickerMetadataContainer
+        id={TAG_SET_COUNTRY_OF_FOCUS}
+        type={COUNTRY_OF_FOCUS}
         form="advanced-media-picker-search"
-        label={formatMessage(messages.mediaType)}
-        onChange={(...args) => this.selectMetaData(TAG_SET_MEDIA_TYPE, args, MEDIA_TYPE)}
-        onSelect={this.setSelectedMediaTypes}
-        previouslySelected={initValues.tags}
+        onChange={(...args) => this.selectMetaData(TAG_SET_COUNTRY_OF_FOCUS, args, COUNTRY_OF_FOCUS)}
+        onSearch={val => this.updateAndSearchWithSelection(val)}
+        previouslySelectedTags={initValues.tags}
+        className="media-picker-about"
       />
     ) : null;
 

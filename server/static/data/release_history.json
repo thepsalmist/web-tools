@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2019-5-17",
+      "version": "v3.10.5",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Viewing historical collection attention works again"
+        }
+      ]
+    },
+    {
       "date": "2019-5-15",
       "version": "v3.10.4",
       "notes": [

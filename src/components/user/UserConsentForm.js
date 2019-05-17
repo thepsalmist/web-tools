@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { push } from 'react-router-redux';
 import { resendActivation } from '../../actions/userActions';
+import PrivacyPolicyContainer from '../common/PrivacyPolicyContainer';
+import TermsOfUseContainer from '../common/TermsOfUseContainer';
 import AppButton from '../common/AppButton';
 import messages from '../../resources/messages';
 import { invalidEmail } from '../../lib/formValidators';
@@ -13,8 +15,8 @@ import withIntlForm from '../common/hocs/IntlForm';
 
 const localMessages = {
   request: { id: 'user.requestConsent', defaultMessage: 'You need to consent to our policies' },
-  title: { id: 'user.requestConsent.title', defaultMessage: 'Didn\'t get the activation email?' },
-  intro: { id: 'user.requestConsent.intro', defaultMessage: 'Sorry about that! Enter your email address again and we\'ll send you another activation email.' },
+  terms: { id: 'user.requestConsent.title', defaultMessage: 'Terms Of Use' },
+  policy: { id: 'user.requestConsent.intro', defaultMessage: 'Privacy Policy' },
 };
 
 const UserConsentForm = (props) => {
@@ -25,8 +27,22 @@ const UserConsentForm = (props) => {
       <form onSubmit={handleSubmit(handleFormSubmission.bind(this))} className="app-form request-consent-form">
         <Row>
           <Col lg={12}>
-            <h1><FormattedMessage {...localMessages.title} /></h1>
-            <p><FormattedMessage {...localMessages.intro} /></p>
+            <h2><FormattedMessage {...localMessages.terms} /></h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={10}>
+            <TermsOfUseContainer />
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={12}>
+            <h2><FormattedMessage {...localMessages.policy} /></h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={10}>
+            <PrivacyPolicyContainer />
           </Col>
         </Row>
         <Row>
@@ -35,7 +51,7 @@ const UserConsentForm = (props) => {
               fullWidth
               name="has_consented"
               component={renderCheckbox}
-              label={messages.userEmail}
+              label={messages.consent}
             />
           </Col>
         </Row>

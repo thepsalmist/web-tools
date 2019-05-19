@@ -6,7 +6,7 @@ import { push } from 'react-router-redux';
 import UserConsentForm from './UserConsentForm';
 import withIntlForm from '../common/hocs/IntlForm';
 
-import { updateSystemUser } from '../../actions/systemActions';
+import { updateProfile } from '../../actions/userActions';
 
 const UserConsentContainer = props => <UserConsentForm onSubmit={args => props.handleUserConsent(args, props.user)} />;
 
@@ -26,7 +26,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   handleUserConsent: (values, user) => {
-    dispatch(updateSystemUser(user.auth_users_id, { ...user, ...values }))
+    dispatch(updateProfile({ ...user, ...values }))
       .then((response) => { // go to home page
         if (response.success === 1) {
           dispatch(push('/user/'));

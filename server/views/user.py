@@ -190,13 +190,14 @@ def api_user_delete():
 
 
 @app.route('/api/user/update', methods=['POST'])
-@form_fields_required('full_name', 'notes')
+@form_fields_required('full_name', 'notes', 'has_consented')
 @api_error_handler
 @flask_login.login_required
 def api_user_update():
     valid_params = {
         'full_name': request.form['full_name'],
         'notes': request.form['notes'],
+        'has_consented': bool(request.form['has_consented'] == 'true') if 'has_consented' in request.form else False,
     }
     user = flask_login.current_user
     results = mc.userUpdate(user.profile['auth_users_id'], **valid_params)  # need to do this with the tool admin client

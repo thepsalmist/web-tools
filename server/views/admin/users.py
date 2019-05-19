@@ -50,7 +50,7 @@ def api_system_user_update(user_id):
         'weekly_requests_limit': request.form['weekly_requests_limit'] if 'weekly_requests_limit' in request.form else None,
         'has_consented': bool(request.form['has_consented'] == 'true') if 'has_consented' in request.form else False,
     }
-    results = user_mc .userUpdate(user_id, **valid_params)
+    results = user_mc.userUpdate(user_id, **valid_params)
     return jsonify(results)
 
 

@@ -114,7 +114,9 @@ const UserDetailsForm = (props) => {
               label={localMessages.isActiveLabel}
             />
           </Col>
-          <Col lg={2}>
+        </Row>
+        <Row>
+          <Col lg={6}>
             <Field
               name="has_consented"
               component={renderCheckbox}

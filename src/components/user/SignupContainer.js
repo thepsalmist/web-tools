@@ -111,7 +111,7 @@ class SignupContainer extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col lg={2}>
+            <Col lg={6}>
               <Field
                 name="has_consented"
                 component={renderCheckbox}

@@ -55,7 +55,7 @@ def login_with_cookie():
 
 
 @app.route('/api/user/signup', methods=['POST'])
-@form_fields_required('email', 'password', 'fullName', 'notes')
+@form_fields_required('email', 'password', 'fullName', 'notes', 'has_consented')
 @api_error_handler 
 def signup():
     logger.debug("reg request from %s", request.form['email'])
@@ -63,8 +63,10 @@ def signup():
                               request.form['password'],
                               request.form['fullName'],
                               request.form['notes'],
-                              False,    # removing subscribe_to_newsletter option
-                              ACTIVATION_URL)
+                              False,
+                              ACTIVATION_URL,
+                              bool(request.form['has_consented'] == 'true') if 'has_consented' in request.form else False,
+                              )
     return jsonify(results)
 
 

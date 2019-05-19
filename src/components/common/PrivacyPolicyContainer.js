@@ -28,7 +28,7 @@ const PrivacyPolicyContainer = () => {
     If any of the information collected through the Platform or our surveys will be used for research (i.e. more than administrative tasks), we will also follow the policies and protocols required by MIT’s Committee on the Use of Humans as Experimental Subjects (COUHES), including applying for a review and approval of such study.\
     \
     PERSONAL DATA COLLECTED AUTOMATICALLY \
-    To improve your experience on our Website and Platform, we may use \'cookies\'. Cookies are an industry standard, and most major websites use them. A cookie is a small text file that our site may place on your computer as a tool to remember who you are and your preferences.\
+    To improve your experience on our Website and Platform, we may use 'cookies'. Cookies are an industry standard, and most major websites use them. A cookie is a small text file that our site may place on your computer as a tool to remember who you are and your preferences.\
     On the Website, we use only the cookies necessary to deliver the Website content and maintain functionality of the Website. On the Platform, we use cookies necessary to Platform functionality and to keep you logged into your account and to remember your preferences throughout multiple browser sessions. You may refuse the use of cookies by selecting the appropriate settings on your browser, however, please note that if you do this you may not be able to use the full functionality of the Website or Platform.  \
     We do not track or save IP addresses and log files. Your IP address may show up temporarily in log files, but all log files are deleted on a monthly basis. \
     We honor Do Not Track signals and do not track, plant cookies or use advertising when a Do Not Track browser mechanism is in place. \
@@ -38,7 +38,7 @@ const PrivacyPolicyContainer = () => {
     \
     USE OF GOOGLE ANALYTICS\
     Media Cloud uses Google Analytics, a service which transmits website traffic data to Google servers in the United States. Google Analytics does not identify individual users or associate your IP address with any other data held by Google. We use reports provided by Google Analytics to help us understand website traffic and web page usage. \
-    By using this website, you consent to the processing of data about you by Google in the manner described in Google\'s Privacy Policy (external site) and for the purposes set out above. You can opt out of Google Analytics if you disable or refuse the cookie, disable JavaScript, or use the opt-out service provided by Google (external site). \
+    By using this website, you consent to the processing of data about you by Google in the manner described in Google's Privacy Policy (external site) and for the purposes set out above. You can opt out of Google Analytics if you disable or refuse the cookie, disable JavaScript, or use the opt-out service provided by Google (external site). \
     Your Access to and Control over Personal Data \
     Media Cloud respects any and all rights you may have regarding personal data collected about you. You may access and change your account information at any time on your account profile page. You can also exercise any of the following rights at any time by contacting us at support@mediacloud.org:\
     opt out of any future contact from us at any time; \

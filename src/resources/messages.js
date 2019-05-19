@@ -21,7 +21,7 @@ const messages = {
   userLogout: { id: 'user.logout', defaultMessage: 'Logout' },
   unlimited: { id: 'user.unlimited', defaultMessage: 'Unlimited' },
   userProfile: { id: 'user.profile', defaultMessage: 'Profile' },
-
+  userConsent: { id: 'user.consent', defaultMessage: 'I have read and agree to Media Cloud\'s <a href="">Terms of Use</a> and <a href="">Privacy Policy</a>' },
   topicName: { id: 'topic.title.default', defaultMessage: 'Topic' },
   topicSnapshot: { id: 'topic.snapshot', defaultMessage: 'Snapshot' },
   topicTimespan: { id: 'topic.timespan', defaultMessage: 'Timespan' },

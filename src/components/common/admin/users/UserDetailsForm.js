@@ -119,7 +119,7 @@ const UserDetailsForm = (props) => {
               name="has_consented"
               component={renderCheckbox}
               fullWidth
-              label={localMessages.hasConsented}
+              label={messages.userConsent}
             />
           </Col>
         </Row>

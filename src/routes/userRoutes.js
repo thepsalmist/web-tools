@@ -15,7 +15,7 @@ import ResetPasswordSuccessMessage from '../components/user/ResetPasswordSuccess
 import UserProfileContainer from '../components/user/UserProfileContainer';
 import ResendActivationForm from '../components/user/ResendActivationForm';
 import UserEditProfileContainer from '../components/user/UserEditProfileContainer';
-import UserConsentForm from '../components/user/UserConsentForm';
+import UserConsentContainer from '../components/user/UserConsentContainer';
 
 const userRoutes = (
   <Route path="/user">
@@ -39,7 +39,7 @@ const userRoutes = (
     <Route path="change-password-success" component={ChangePasswordSuccessMessage} onEnter={requireAuth} />
 
     <Route path="profile/edit" component={UserEditProfileContainer} onEnter={requireAuth} />
-    <Route path="consent" component={UserConsentForm} onEnter={requireAuth} />
+    <Route path="consent" component={UserConsentContainer} onEnter={requireAuth} />
 
   </Route>
 );

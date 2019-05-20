@@ -3,14 +3,16 @@ import flask_login
 from operator import itemgetter
 import requests
 import logging
+import newspaper
 
 from flask import request
 import server.util.pushshift as pushshift
-from server import app, cliff, NYT_THEME_LABELLER_URL, mc
-from server.auth import user_mediacloud_client, user_admin_mediacloud_client
+from server import app, cliff, NYT_THEME_LABELLER_URL, mc, TOOL_API_KEY
+from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_mediacloud_key
 from server.util.request import api_error_handler
 import server.util.csv as csv
 from server.cache import cache
+import server.views.apicache as apicache
 
 QUERY_LAST_FEW_DAYS = "publish_date:[NOW-3DAY TO NOW]"
 QUERY_LAST_WEEK = "publish_date:[NOW-7DAY TO NOW]"
@@ -42,9 +44,8 @@ def story_info(stories_id):
 @flask_login.login_required
 @api_error_handler
 def story_raw(stories_id):
-    admin_mc = user_admin_mediacloud_client()
-    story = admin_mc.story(stories_id, raw_1st_download=True)
-    text = story['raw_first_download_file']
+    # only let admins see this
+    text = apicache.story_raw_1st_download(user_mediacloud_key(), stories_id)
     return text
 
 
@@ -173,7 +174,7 @@ def nyt_themes_from_mc_or_labeller(stories_id):
 
 @cache.cache_on_arguments()
 def cached_story_raw_theme_results(stories_id):
-    # have to use internal tool admin client here to fetch these (permissons)
+    # have to use internal tool admin client here to fetch these (permissions)
     themes = mc.storyRawNytThemeResults([stories_id])[0]
     return themes
 
@@ -184,5 +185,21 @@ def predict_news_labels(story_text):
         r = requests.post(url, json={'text': story_text})
         return r.json()
     except requests.exceptions.RequestException as e:
-        l.exception(e)
+        logger.exception(e)
     return []
+
+
+@app.route('/api/stories/<stories_id>/images', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def story_top_image(stories_id):
+    story = mc.story(stories_id)
+    # use the tool key so anyone can see these images
+    story_html = apicache.story_raw_1st_download(TOOL_API_KEY, stories_id)
+    article = newspaper.Article(url=story['url'])
+    article.set_html(story_html)
+    article.parse()
+    return jsonify({
+        'top': article.top_image,
+        'all': list(article.images),
+    })

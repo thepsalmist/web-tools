@@ -24,12 +24,20 @@ const mapStateToProps = state => ({
   user: state.user.profile,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   handleUserConsent: (values, user) => {
     dispatch(updateProfile({ ...user, ...values }))
       .then((response) => { // go to home page
-        if (response.success === 1) {
-          dispatch(push('/user/'));
+        if (response.success) {
+          // redirect to destination if there is one
+          // const loc = ownProps.location; -- empty here - what is best way to send home?
+          if (ownProps.redirect) {
+            const { redirect } = ownProps.redirect;
+            dispatch(push(redirect));
+          } else {
+            window.location = '/';
+          }
+          // dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.loginSucceeded) }));
         }
       });
   },

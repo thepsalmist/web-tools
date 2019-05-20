@@ -100,9 +100,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(loginWithPassword(values.email, values.password))
       .then((response) => {
         if (response.profile && response.profile.has_consented === false) {
-          dispatch(push('/consent'));
+          dispatch(push('/user/consent'));
         }
-        if (response.key) {
+        if (response.profile && response.profile.key) {
           // redirect to destination if there is one
           const loc = ownProps.location;
           let redirectTo;

@@ -121,7 +121,7 @@ const UserDetailsForm = (props) => {
               name="has_consented"
               component={renderCheckbox}
               fullWidth
-              label={messages.userConsent}
+              label={messages.user3rdPersonConsent}
             />
           </Col>
         </Row>

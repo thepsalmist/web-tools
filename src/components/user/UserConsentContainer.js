@@ -5,8 +5,13 @@ import { injectIntl } from 'react-intl';
 import { push } from 'react-router-redux';
 import UserConsentForm from './UserConsentForm';
 import withIntlForm from '../common/hocs/IntlForm';
+import { updateFeedback } from '../../actions/appActions';
 
 import { updateProfile } from '../../actions/userActions';
+
+const localMessages = {
+  consented: { id: 'user.consented', defaultMessage: 'Consent Form completed' },
+};
 
 const UserConsentContainer = props => <UserConsentForm onSubmit={args => props.handleUserConsent(args, props.user)} />;
 
@@ -37,7 +42,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           } else {
             window.location = '/';
           }
-          // dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.loginSucceeded) }));
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.consented) }));
         }
       });
   },

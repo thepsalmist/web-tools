@@ -35,3 +35,6 @@ export const updateStory = createAsyncAction(UPDATE_STORY, api.storyUpdate, para
 
 export const FETCH_STORY_REDDIT_ATTENTION = 'FETCH_STORY_REDDIT_ATTENTION';
 export const fetchStoryRedditAttention = createAsyncAction(FETCH_STORY_REDDIT_ATTENTION, api.storyRedditAttention);
+
+export const FETCH_STORY_IMAGES = 'FETCH_STORY_IMAGES';
+export const fetchStoryImages = createAsyncAction(FETCH_STORY_IMAGES, api.storyImages);

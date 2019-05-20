@@ -56,6 +56,8 @@ class FocalSetDefinitionDetails extends React.Component {
           <Row key={`fs-${focusDef.focus_definitions_id}`}>
             <Col lg={12}>
               <FocusDefinition
+                focalSetDefinitionName={focalSetDefinition.name}
+                focalSetDefinitionDesc={focalSetDefinition.description}
                 topicId={topicId}
                 focusDefinition={focusDef}
                 onDelete={onFocusDefinitionDelete}

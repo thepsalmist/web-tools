@@ -41,7 +41,7 @@ class SignupContainer extends React.Component {
   }
 
   render() {
-    const { handleSubmit, handleSignupSubmission, pristine, submitting, renderTextField } = this.props;
+    const { handleSubmit, handleSignupSubmission, pristine, submitting, renderTextField, renderCheckbox } = this.props;
     const { formatMessage } = this.props.intl;
     return (
       <Grid>
@@ -111,6 +111,16 @@ class SignupContainer extends React.Component {
             </Col>
           </Row>
           <Row>
+            <Col lg={6}>
+              <Field
+                name="has_consented"
+                component={renderCheckbox}
+                fullWidth
+                label={messages.userConsent}
+              />
+            </Col>
+          </Row>
+          <Row>
             <Captcha onChange={() => this.passedCaptcha()} />
           </Row>
           <Row>
@@ -136,6 +146,7 @@ SignupContainer.propTypes = {
   redirect: PropTypes.string,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,
+  renderCheckbox: PropTypes.func.isRequired,
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   // from state

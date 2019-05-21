@@ -2,21 +2,38 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+import { Row, Col } from 'react-flexbox-grid/lib';
 import { fetchStoryImages } from '../../../actions/storyActions';
 import withAsyncData from '../hocs/AsyncDataContainer';
 import withHelp from '../hocs/HelpfulContainer';
 import DataCard from '../DataCard';
 
 const localMessages = {
-  title: { id: 'story.images.title', defaultMessage: 'Images' },
+  title: { id: 'story.images.title', defaultMessage: 'Story Images' },
+  top: { id: 'story.images.top', defaultMessage: 'Top Image' },
+  other: { id: 'story.images.other', defaultMessage: 'Other Images' },
 };
 
-const StoryImages = ({ topImage }) => (
+const StoryImages = ({ topImage, allImages }) => (
   <DataCard className="story-images-container">
     <h2><FormattedMessage {...localMessages.title} /></h2>
-    {topImage && (
-      <img alt="top" src="topImage" width="100%" />
-    )}
+    <Row>
+      <Col lg={6}>
+        <h3><FormattedMessage {...localMessages.top} /></h3>
+        {topImage && (
+          <a href={topImage}><img alt="top" src={topImage} width="100%" /></a>
+        )}
+      </Col>
+      <Col lg={6}>
+        <h3><FormattedMessage {...localMessages.other} /></h3>
+        <ul>
+          {allImages && allImages.map((item, idx) => (
+            <li key={idx}><a href={item}>{item}</a></li>
+          ))}
+        </ul>
+      </Col>
+    </Row>
+
   </DataCard>
 );
 
@@ -28,7 +45,7 @@ StoryImages.propTypes = {
   storyId: PropTypes.number.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
-  allImages: PropTypes.array.isRequired,
+  allImages: PropTypes.array,
   topImage: PropTypes.string,
 };
 

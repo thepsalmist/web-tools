@@ -145,7 +145,7 @@ class SelectedStoryContainer extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col lg={6}>
+            <Col lg={12}>
               <StoryImages storyId={selectedStory.stories_id} />
             </Col>
           </Row>

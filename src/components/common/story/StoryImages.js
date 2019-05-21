@@ -7,6 +7,7 @@ import { fetchStoryImages } from '../../../actions/storyActions';
 import withAsyncData from '../hocs/AsyncDataContainer';
 import withHelp from '../hocs/HelpfulContainer';
 import DataCard from '../DataCard';
+import { trimToMaxLength } from '../../../lib/stringUtil';
 
 const localMessages = {
   title: { id: 'story.images.title', defaultMessage: 'Story Images' },
@@ -27,13 +28,12 @@ const StoryImages = ({ topImage, allImages }) => (
       <Col lg={6}>
         <h3><FormattedMessage {...localMessages.other} /></h3>
         <ul>
-          {allImages && allImages.map((item, idx) => (
-            <li key={idx}><a href={item}>{item}</a></li>
+          {allImages && allImages.map((imageUrl, idx) => (
+            <li key={idx}><a href={imageUrl}>{trimToMaxLength(imageUrl, 70)}</a></li>
           ))}
         </ul>
       </Col>
     </Row>
-
   </DataCard>
 );
 

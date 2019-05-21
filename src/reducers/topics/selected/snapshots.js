@@ -78,7 +78,7 @@ function isLatestVersionRunning(snapshotList, jobList) {
   || latestJob.state === TOPIC_SNAPSHOT_STATE_RUNNING
   || latestSnapshot.state === TOPIC_SNAPSHOT_STATE_QUEUED
   || latestJob.state === TOPIC_SNAPSHOT_STATE_QUEUED
-  || ((latestJob.state === TOPIC_SNAPSHOT_STATE_COMPLETED) || (latestSnapshot.state === TOPIC_SNAPSHOT_STATE_COMPLETED)) && (latestSnapshot.searchable === 0));
+  || (((latestJob.state === TOPIC_SNAPSHOT_STATE_COMPLETED) || (latestSnapshot.state === TOPIC_SNAPSHOT_STATE_COMPLETED)) && (latestSnapshot.searchable === 0)));
 }
 
 const usingLatestSnapshot = (list, selectedId) => {

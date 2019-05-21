@@ -108,29 +108,30 @@ def entities_from_mc_or_cliff(stories_id):
         story = mc.story(stories_id, text=True)
         cliff_results = cliff.parse_text(story['story_text'])
     # clean up for reporting
-    for org in cliff_results['results']['organizations']:
-        entities.append({
-            'type': 'ORGANIZATION',
-            'name': org['name'],
-            'frequency': org['count']
-        })
-    for person in cliff_results['results']['people']:
-        entities.append({
-            'type': 'PERSON',
-            'name': person['name'],
-            'frequency': person['count']
-        })
-    # places don't have frequency set correctly, so we need to sum them
-    locations = []
-    place_names = set([place['name'] for place in cliff_results['results']['places']['mentions']])
-    for place in place_names:
-        loc = {
-            'type': 'LOCATION',
-            'name': place,
-            'frequency': len([p for p in cliff_results['results']['places']['mentions'] if p['name'] == place])
-        }
-        locations.append(loc)
-    entities += locations
+    if 'results' in cliff_results:
+        for org in cliff_results['results']['organizations']:
+            entities.append({
+                'type': 'ORGANIZATION',
+                'name': org['name'],
+                'frequency': org['count']
+            })
+        for person in cliff_results['results']['people']:
+            entities.append({
+                'type': 'PERSON',
+                'name': person['name'],
+                'frequency': person['count']
+            })
+        # places don't have frequency set correctly, so we need to sum them
+        locations = []
+        place_names = set([place['name'] for place in cliff_results['results']['places']['mentions']])
+        for place in place_names:
+            loc = {
+                'type': 'LOCATION',
+                'name': place,
+                'frequency': len([p for p in cliff_results['results']['places']['mentions'] if p['name'] == place])
+            }
+            locations.append(loc)
+        entities += locations
     # sort smartly
     unique_entities = sorted(entities, key=itemgetter('frequency'), reverse=True)
     return unique_entities

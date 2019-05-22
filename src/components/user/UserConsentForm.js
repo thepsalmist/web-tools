@@ -4,16 +4,14 @@ import { Field, reduxForm } from 'redux-form';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import PrivacyPolicyContainer from '../common/PrivacyPolicyContainer';
-import TermsOfUseContainer from '../common/TermsOfUseContainer';
 import AppButton from '../common/AppButton';
 import messages from '../../resources/messages';
 import withIntlForm from '../common/hocs/IntlForm';
 
 const localMessages = {
-  request: { id: 'user.requestConsent', defaultMessage: 'You need to consent to our policies' },
-  terms: { id: 'user.requestConsent.title', defaultMessage: 'Terms Of Use' },
-  policy: { id: 'user.requestConsent.intro', defaultMessage: 'Privacy Policy' },
+  request: { id: 'user.requestConsent', defaultMessage: 'I consent to these policies' },
+  info: { id: 'user.requestConsent.info', defaultMessage: 'Media Cloud has a new Terms of Use and Privacy Policy detailing the data we collect about you and the reasons why, your rights to and about this data, and the proper uses of Media Cloud. In order to continue using the platform, please review these documents and click the box below to agree to them. If you do not agree, feel free to share your concerns at support@mediacloud.org.' },
+  terms: { id: 'user.requestConsent.title', defaultMessage: 'Consent to Terms and Policy required.' },
   noConsent: { id: 'user.requestConsent.error', defaultMessage: 'We need you to consent to our policies.' },
 };
 
@@ -29,18 +27,8 @@ const UserConsentForm = (props) => {
           </Col>
         </Row>
         <Row>
-          <Col lg={10}>
-            <TermsOfUseContainer />
-          </Col>
-        </Row>
-        <Row>
           <Col lg={12}>
-            <h2><FormattedMessage {...localMessages.policy} /></h2>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={10}>
-            <PrivacyPolicyContainer />
+            <h3><FormattedMessage {...localMessages.info} /></h3>
           </Col>
         </Row>
         <Row>

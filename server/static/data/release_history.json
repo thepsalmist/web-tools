@@ -1,6 +1,35 @@
 {
   "releases": [
     {
+      "date": "2019-5-23",
+      "version": "v3.10.6",
+      "notes": [
+        {
+          "apps": [ "topics", "explorer", "tools", "sources" ],
+          "type": "New",
+          "note": "Consent Policy"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Cannot rename subtopics",
+          "details": "Renaming subtopics now correctly works and should notify the need to generate another new version."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Total Attention download",
+          "details": "Now you can download all stories per query"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Attention Download All",
+          "details": "Now you can download all stories in a merged format by date"
+        }
+      ]
+    },
+    {
       "date": "2019-5-17",
       "version": "v3.10.5",
       "notes": [

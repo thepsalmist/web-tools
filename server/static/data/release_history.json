@@ -9,7 +9,7 @@
           "type": "Fixed",
           "note": "Double login was occurring",
           "details": "We updated the user cache with the new consent information"
-        },
+        }
       ]
     },
     {

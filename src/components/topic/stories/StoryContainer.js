@@ -21,6 +21,7 @@ import StoryOutlinksContainer from './StoryOutlinksContainer';
 import ActionMenu from '../../common/ActionMenu';
 import StoryEntitiesContainer from '../../common/story/StoryEntitiesContainer';
 import StoryNytThemesContainer from '../../common/story/StoryNytThemesContainer';
+import StoryImages from '../../common/story/StoryImages';
 import { TAG_SET_GEOGRAPHIC_PLACES, TAG_SET_NYT_THEMES } from '../../../lib/tagUtil';
 import StoryDetails from '../../common/story/StoryDetails';
 import StoryPlaces from './StoryPlaces';
@@ -198,6 +199,11 @@ class StoryContainer extends React.Component {
           <Row>
             <Col lg={12}>
               <StoryEntitiesContainer storyId={storiesId} />
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={12}>
+              <StoryImages storyId={storiesId} />
             </Col>
           </Row>
         </Grid>

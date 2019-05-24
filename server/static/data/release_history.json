@@ -14,6 +14,16 @@
           "apps": [ "explorer" ],
           "type": "Fixed",
           "note": "Don't show login form when logged in already"
+        },
+        {
+          "apps": [ "explorer", "topics", "sources", "tools" ],
+          "type": "Fixed",
+          "note": "Show error message if your password is wrong"
+        },
+        {
+          "apps": [ "topics"],
+          "type": "Fixed",
+          "note": "More fixes to subtopic editing"
         }
       ]
     },

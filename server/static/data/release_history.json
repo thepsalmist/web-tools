@@ -2,6 +2,23 @@
   "releases": [
     {
       "date": "2019-5-24",
+      "version": "v3.10.8",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "See top images for Topic stories",
+          "details": "We now parse images out of a story you look at in Topic Mapper and show you the top image, with links to all of them (using the <a href=\"https://newspaper.readthedocs.io/en/latest/\">Newspaper3k library</a>)"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Don't show login form when logged in already"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-24",
       "version": "v3.10.7",
       "notes": [
         {

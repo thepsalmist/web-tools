@@ -194,15 +194,17 @@ def api_user_delete():
 @api_error_handler
 @flask_login.login_required
 def api_user_update():
+    has_consented = request.form['has_consented'] == 'true'
     valid_params = {
         'full_name': request.form['full_name'],
         'notes': request.form['notes'],
-        'has_consented': bool(request.form['has_consented'] == 'true') if 'has_consented' in request.form else False,
+        'has_consented': has_consented
     }
     user = flask_login.current_user
     results = mc.userUpdate(user.profile['auth_users_id'], **valid_params)  # need to do this with the tool admin client
     user_mc = user_mediacloud_client()
     results['profile'] = user_mc.userProfile()
+    results['profile']['has_consented'] = has_consented
     return jsonify(results)
 
 

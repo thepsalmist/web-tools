@@ -20,6 +20,21 @@ AUTH_MANAGEMENT_DOMAIN = 'https://tools.mediacloud.org'  # because it is too har
 ACTIVATION_URL = AUTH_MANAGEMENT_DOMAIN + "/api/user/activate/confirm"
 PASSWORD_RESET_URL = AUTH_MANAGEMENT_DOMAIN + "/api/user/reset-password-request-receive"
 
+def merged_user_profile(user_results):
+    # if this is a user object, convert to a dict?
+    if not isinstance(user_results,dict):
+        user_results = user_results.get_properties()
+
+    user_email = user_results['profile']['email']
+    user_results["user"] = mc.userList(search=user_email)['users'][0]
+
+    merged_user_info = user_results['profile'].copy()  # start with x's keys and values
+    merged_user_info.update(user_results["user"])
+    if 'error' in user_results:
+        return json_error_response(user_results['error'], 401)
+    user = auth.create_and_cache_user(merged_user_info)
+    return user
+
 
 @app.route('/api/login', methods=['POST'])
 @form_fields_required('email', 'password')
@@ -30,15 +45,7 @@ def login_with_password():
     password = request.form["password"]
     # try to log them in
     results = mc.authLogin(username, password)
-    user_email = results['profile']['email']
-    # grab other user info and merge
-    results["user"] = mc.userList(search=user_email)['users'][0]
-
-    merged_user_info = results['profile'].copy()  # start with x's keys and values
-    merged_user_info.update(results["user"])
-    if 'error' in results:
-        return json_error_response(results['error'], 401)
-    user = auth.create_and_cache_user(merged_user_info)
+    user = merged_user_profile(results)
     logger.debug("  succeeded - got a key (user.is_anonymous=%s)", user.is_anonymous)
     auth.login_user(user)
     return jsonify(user.get_properties())
@@ -47,7 +54,8 @@ def login_with_password():
 @app.route('/api/login-with-cookie')
 @api_error_handler
 def login_with_cookie():
-    user = flask_login.current_user
+    cached_user = flask_login.current_user
+    user = merged_user_profile(cached_user)
     if user.is_anonymous:   # no user session
         logger.debug("  login failed (%s)", user.is_anonymous)
         return json_error_response("Login failed", 401)
@@ -200,11 +208,9 @@ def api_user_update():
         'notes': request.form['notes'],
         'has_consented': has_consented
     }
-    user = flask_login.current_user
-    results = mc.userUpdate(user.profile['auth_users_id'], **valid_params)  # need to do this with the tool admin client
-    user_mc = user_mediacloud_client()
-    results['profile'] = user_mc.userProfile()
-    results['profile']['has_consented'] = has_consented
+    cached_user = flask_login.current_user
+    results = mc.userUpdate(cached_user.profile['auth_users_id'], **valid_params)  # need to do this with the tool admin client
+    merged_user_profile(cached_user)
     return jsonify(results)
 
 

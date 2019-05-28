@@ -38,7 +38,7 @@ def merged_user_profile(user_results):
 
 @app.route('/api/login', methods=['POST'])
 @form_fields_required('email', 'password')
-@api_error_handler 
+@api_error_handler
 def login_with_password():
     username = request.form["email"]
     logger.debug("login request from %s", username)
@@ -64,7 +64,7 @@ def login_with_cookie():
 
 @app.route('/api/user/signup', methods=['POST'])
 @form_fields_required('email', 'password', 'fullName', 'notes', 'has_consented')
-@api_error_handler 
+@api_error_handler
 def signup():
     logger.debug("reg request from %s", request.form['email'])
     results = mc.authRegister(request.form['email'],
@@ -210,8 +210,8 @@ def api_user_update():
     }
     cached_user = flask_login.current_user
     results = mc.userUpdate(cached_user.profile['auth_users_id'], **valid_params)  # need to do this with the tool admin client
-    merged_user_profile(cached_user)
-    return jsonify(results)
+    user = merged_user_profile(cached_user)
+    return jsonify(user.get_properties())
 
 
 @app.route('/api/user/download-data')

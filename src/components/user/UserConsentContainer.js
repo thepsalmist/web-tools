@@ -33,7 +33,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleUserConsent: (values, user) => {
     dispatch(updateProfile({ ...user, ...values }))
       .then((response) => { // go to home page
-        if (response.success) {
+        if (response.profile) {
           // redirect to destination if there is one
           // const loc = ownProps.location; -- empty here - what is best way to send home?
           if (ownProps.redirect) {

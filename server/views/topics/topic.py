@@ -48,6 +48,10 @@ def _snapshot_foci_count_job(job):
     focal_sets = apicache.topic_focal_sets_list(job['user_mc_key'], job['topics_id'], snapshot['snapshots_id'])
     foci_count = sum([len(fs['foci']) for fs in focal_sets])
     snapshot['foci_count'] = foci_count
+    snapshot['foci_names'] = [{
+        'focal_set_name': fs['name'],
+        'foci_names': [f['name'] for f in fs['foci']]
+    } for fs in focal_sets ]
     return snapshot
 
 

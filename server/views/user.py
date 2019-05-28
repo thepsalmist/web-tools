@@ -20,8 +20,8 @@ AUTH_MANAGEMENT_DOMAIN = 'https://tools.mediacloud.org'  # because it is too har
 ACTIVATION_URL = AUTH_MANAGEMENT_DOMAIN + "/api/user/activate/confirm"
 PASSWORD_RESET_URL = AUTH_MANAGEMENT_DOMAIN + "/api/user/reset-password-request-receive"
 
-def merged_user_profile(user_results):
 
+def merged_user_profile(user_results):
     if not isinstance(user_results,dict):
         user_results = user_results.get_properties()
 
@@ -55,10 +55,10 @@ def login_with_password():
 @api_error_handler
 def login_with_cookie():
     cached_user = flask_login.current_user
-    user = merged_user_profile(cached_user)
-    if user.is_anonymous:   # no user session
-        logger.debug("  login failed (%s)", user.is_anonymous)
+    if cached_user.is_anonymous:   # no user session
+        logger.debug("  login failed (%s)", cached_user.is_anonymous)
         return json_error_response("Login failed", 401)
+    user = merged_user_profile(cached_user)
     return jsonify(user.get_properties())
 
 

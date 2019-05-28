@@ -21,7 +21,7 @@ ACTIVATION_URL = AUTH_MANAGEMENT_DOMAIN + "/api/user/activate/confirm"
 PASSWORD_RESET_URL = AUTH_MANAGEMENT_DOMAIN + "/api/user/reset-password-request-receive"
 
 def merged_user_profile(user_results):
-    # if this is a user object, convert to a dict?
+
     if not isinstance(user_results,dict):
         user_results = user_results.get_properties()
 

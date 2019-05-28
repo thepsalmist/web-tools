@@ -14,6 +14,7 @@ import mediacloud.api
 from cliff.api import Cliff
 import redis
 import jinja2
+from flask_executor import Executor
 
 from server.sessions import RedisSessionInterface
 from server.util.config import get_default_config, ConfigException
@@ -153,10 +154,14 @@ def create_app():
             ])
             my_app.jinja_loader = my_loader
         else:
-            logger.warn("Mail configured, but not enabled")
+            logger.warning("Mail configured, but not enabled")
     except ConfigException as ce:
         logger.exception(ce)
-        logger.warn("No mail configured")
+        logger.warning("No mail configured")
+    # set up thread pooling
+    my_app.config['EXECUTOR_PROPAGATE_EXCEPTIONS'] = True
+    my_app.config['EXECUTOR_MAX_WORKERS'] = 20
+    #app.config['EXECUTOR_TYPE'] = 'thread' # valid options - 'thread' (default) or 'process'
     # set up user login
     cookie_domain = config.get('COOKIE_DOMAIN')
     my_app.config['SESSION_COOKIE_NAME'] = "mc_session"
@@ -177,6 +182,9 @@ app.secret_key = config.get('SECRET_KEY')
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
+# connect executor pool to app, so it loads context for us automatically on each parallel process :-)
+# using one shared executor pool for now - can revisit later if we need to
+executor = Executor(app)
 
 # set up all the views
 @app.route('/')

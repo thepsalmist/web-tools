@@ -13,12 +13,10 @@ import RecentNewsMenuContainer from '../news/RecentNewsMenuContainer';
 import AppButton from '../AppButton';
 import Permissioned from '../Permissioned';
 import { PERMISSION_ADMIN } from '../../../lib/auth';
+import { getAppName, APP_TOOLS } from '../../../config';
 
-export const TOPICS_URL = 'https://topics.mediacloud.org/';
-export const EXPLORER_URL = 'https://explorer.mediacloud.org/';
-export const SOURCES_URL = 'https://sources.mediacloud.org/';
 const BLOG_URL = 'https://mediacloud.org/news/';
-const SUPPORT_URL = 'https://mediacloud.org/tools/';
+const SUPPORT_URL = 'https://mediacloud.org/support/';
 
 const localMessages = {
   goHome: { id: 'nav.home', defaultMessage: 'Home' },
@@ -84,14 +82,15 @@ const NavToolbar = (props) => {
                   label={formatMessage(messages.blogToolName)}
                 />
               </li>
-              <li className="about">
-                <AppButton
-                  variant="text"
-                  href="#/about"
-                  target="new"
-                  label={formatMessage(messages.menuAbout)}
-                />
-              </li>
+              { (getAppName() !== APP_TOOLS) && (
+                <li className="about">
+                  <AppButton
+                    variant="text"
+                    href="#/about"
+                    label={formatMessage(messages.menuAbout)}
+                  />
+                </li>
+              )}
               <li className="recent-changes-item">
                 <RecentNewsMenuContainer />
               </li>

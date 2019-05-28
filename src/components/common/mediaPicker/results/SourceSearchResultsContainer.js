@@ -197,7 +197,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleUpdateAndSearchWithSelection: (values) => {
     if (values.mediaKeyword || values.tags) {
       if (values.allMedia) { // handle the "all media" placeholder selection
-        ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
+        ownProps.onToggleSelected({ tags_id: ALL_MEDIA, id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
       } else {
         dispatch(selectMediaPickerQueryArgs(values));
         let tags = Object.values(values.tags).filter(t => t.length > 0);

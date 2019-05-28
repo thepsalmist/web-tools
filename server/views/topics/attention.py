@@ -1,6 +1,5 @@
 import logging
 from operator import itemgetter
-
 import flask_login
 from flask import jsonify
 

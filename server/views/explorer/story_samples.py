@@ -110,7 +110,7 @@ def _story_list_by_page(q, fq, stories_per_page, sort, page_limit=None):
         if (page_limit is not None) and (page_count >= page_limit):
             break
         story_page = apicache.story_list_page(q, fq, last_processed_stories_id, stories_per_page, sort)
-        if len(story_page) is 0: # this is the last page so bail out
+        if len(story_page) is 0:  # this is the last page so bail out
             break
         for s in story_page:
             # add in media metadata to the story (from lazy cache)

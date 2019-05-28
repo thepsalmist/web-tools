@@ -1,6 +1,95 @@
 {
   "releases": [
     {
+      "date": "2019-5-17",
+      "version": "v3.10.5",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Viewing historical collection attention works again"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-15",
+      "version": "v3.10.4",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic story CSV download works again"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Better version indications & admin management shortcuts"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-14",
+      "version": "v3.10.3",
+      "notes": [
+        {
+          "apps": [ "topics", "explorer", "tools", "sources" ],
+          "type": "Fixed",
+          "note": "About pages work again"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Improvements to multi-query Explorer searches",
+          "details": "When you add a new query, the tabs up and the date shows up."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Sources & collections on an Explorer search are clickable again"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-13",
+      "version": "v3.10.2",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Topics now have different Versions",
+          "details": "See our blog post for details, there are many workflow changes related to creating and changing topics."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Animated Word Space over time chart for a Topic works again"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Quickly download the top stories within your Topic"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "See basic Reddit stats for stories within your Topic",
+          "details": "Including total submissions, submissions by subreddit, and submission counts for the quick top stories download"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-06",
+      "version": "v3.10.1",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Better URL support for explorer queries",
+          "details": "If you search against 'all media' now you can reload your query correctly from the URL."
+        }
+      ]
+    },
+    {
       "date": "2019-5-03",
       "version": "v3.10.0",
       "notes": [

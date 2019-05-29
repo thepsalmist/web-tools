@@ -76,8 +76,8 @@ class TopicConfirmContainer extends React.Component {
           <Row>
             {previousVersion}
             <Col lg={6}>
-              <h2>{currentStepText.savingTitle}</h2>
-              <p>{currentStepText.savingDesc}</p>
+              <h2 dangerouslySetInnerHTML={{ __html: currentStepText.savingTitle }} />
+              <p dangerouslySetInnerHTML={{ __html: currentStepText.savingDesc }} />
               <LoadingSpinner />
               {topicNewVersionContent}
             </Col>
@@ -91,7 +91,7 @@ class TopicConfirmContainer extends React.Component {
         <Grid className="topic-container">
           <Row>
             <Col lg={12}>
-              <h2>{currentStepText.title}</h2>
+              <h2 dangerouslySetInnerHTML={{ __html: currentStepText.title }} />
               <WarningNotice><FormattedMessage {...localMessages.state} /></WarningNotice>
             </Col>
           </Row>

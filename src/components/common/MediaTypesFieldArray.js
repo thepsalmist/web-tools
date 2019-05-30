@@ -32,7 +32,7 @@ const MediaTypesSelector = ({ initialValues, renderCheckbox, onChange, intl: { f
             label={`${name}.label`}
             placeholder={formatMessage(messages.ok)}
           />
-          {fieldObject.description}
+          <small>{fieldObject.description}</small>
         </li>
       );
     })}
@@ -61,7 +61,7 @@ const MediaTypesFieldArray = (props) => {
     });
   }
   return (
-    <DataCard className="explorer-media-picker-media-types">
+    <DataCard className="media-picker-filter-options media-picker-media-types">
       <FieldArray
         form="advanced-media-picker-search"
         name="mediaType"

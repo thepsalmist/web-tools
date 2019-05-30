@@ -8,29 +8,27 @@ import MetadataCheckboxFieldArray from './MetadataCheckboxFieldArray';
 import messages from '../../resources/messages';
 
 const MediaPickerMetadataContainer = props => (
-  <div className="explorer-media-picker-metadata-types">
-    <DataCard>
-      <MetadataPickerContainer
-        id={props.id}
-        name={props.type}
-        form="advanced-media-picker-search"
-        label={props.label}
-        onChange={args => props.onChange(props.id, args, props.type)}
-        onSearch={props.onSearch}
-        async
-      />
-      <h5>{props.intl.formatMessage(messages.frequentlyUsed)}</h5>
-      <MetadataCheckboxFieldArray
-        id={props.id}
-        type={props.type}
-        form="advanced-media-picker-search"
-        label={props.label}
-        onChange={args => props.onChange(props.id, args, props.type)}
-        onSearch={props.onSearch}
-        previouslySelected={props.previouslySelectedTags}
-      />
-    </DataCard>
-  </div>
+  <DataCard className={`media-picker-filter-options ${props.className}`}>
+    <MetadataPickerContainer
+      id={props.id}
+      name={props.type}
+      form="advanced-media-picker-search"
+      hideLabel
+      onChange={args => props.onChange(props.id, args, props.type)}
+      onSearch={props.onSearch}
+      async
+    />
+    <h5>{props.intl.formatMessage(messages.frequentlyUsed)}</h5>
+    <MetadataCheckboxFieldArray
+      id={props.id}
+      type={props.type}
+      form="advanced-media-picker-search"
+      label={props.label}
+      onChange={args => props.onChange(props.id, args, props.type)}
+      onSearch={props.onSearch}
+      previouslySelected={props.previouslySelectedTags}
+    />
+  </DataCard>
 );
 
 MediaPickerMetadataContainer.propTypes = {
@@ -49,6 +47,7 @@ MediaPickerMetadataContainer.propTypes = {
   ]),
   onChange: PropTypes.func,
   onSearch: PropTypes.func,
+  className: PropTypes.string,
 };
 
 const mapStateToProps = state => ({

@@ -128,8 +128,7 @@ MediaPickerResultsContainer.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: (state.system.mediaPicker.sourceQueryResults.fetchStatus === fetchConstants.FETCH_SUCCEEDED || state.system.mediaPicker.collectionQueryResults.fetchStatus === fetchConstants.FETCH_SUCCEEDED || state.system.mediaPicker.favoritedCollections.fetchStatus === fetchConstants.FETCH_SUCCEEDED) ? fetchConstants.FETCH_SUCCEEDED : fetchConstants.FETCH_INVALID,
   selectedMedia: state.system.mediaPicker.selectMedia.list,
-  selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : 0,
-  timestamp: state.system.mediaPicker.featured ? state.system.mediaPicker.featured.timestamp : null,
+  selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery.args.type,
   collectionResults: state.system.mediaPicker.collectionQueryResults,
   featured: state.system.mediaPicker.featured ? state.system.mediaPicker.featured : null,
   sourceResults: state.system.mediaPicker.sourceQueryResults,

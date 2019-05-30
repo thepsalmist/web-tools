@@ -18,7 +18,7 @@ const localMessages = {
 
 const MetadataPickerContainer = (props) => {
   const { initialValues, label, name, tags, onChange, handleLoadOptions, renderAsyncAutocomplete, renderAutocomplete,
-    async, disabled } = props;
+    async, disabled, hideLabel } = props;
   const { formatMessage } = props.intl;
   let properties;
   // set up default
@@ -44,7 +44,7 @@ const MetadataPickerContainer = (props) => {
   return (
     <div className={`metadata-picker metadata-picker-${name}`}>
       <React.Fragment>
-        <label>{label}</label>
+        {(hideLabel !== true) && <label>{label}</label>}
         <Field
           name={name}
           fullWidth
@@ -68,6 +68,7 @@ MetadataPickerContainer.propTypes = {
   disabled: PropTypes.bool,
   async: PropTypes.bool,
   onChange: PropTypes.func,
+  hideLabel: PropTypes.bool,
   // from compositional chain
   intl: PropTypes.object.isRequired,
   renderAutocomplete: PropTypes.func.isRequired,

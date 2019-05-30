@@ -14,12 +14,12 @@ const localMessages = {
   sources: { id: 'system.mediaPicker.sources', defaultMessage: 'Search Sources' },
 };
 
-const VIEW_COLLECTIONS = 0;
-// const VIEW_SOURCES = 1;
+const VIEW_COLLECTIONS = 1;
+const VIEW_SOURCES = 0;
 
 class TabSandCSearchResultsContainer extends React.Component {
   state = {
-    selectedViewIndex: VIEW_COLLECTIONS,
+    selectedViewIndex: VIEW_SOURCES,
   };
 
   render() {
@@ -31,8 +31,8 @@ class TabSandCSearchResultsContainer extends React.Component {
           <Row>
             <TabSelector
               tabLabels={[
-                formatMessage(localMessages.collections),
                 formatMessage(localMessages.sources),
+                formatMessage(localMessages.collections),
               ]}
               onViewSelected={index => this.setState({ selectedViewIndex: index })}
             />
@@ -44,8 +44,8 @@ class TabSandCSearchResultsContainer extends React.Component {
     if (fetchStatus === FETCH_ONGOING) {
       // we have to do this here to show a loading spinner when first searching (and featured collections are showing)
       tabContent = <LoadingSpinner />;
-    } else if (this.state.selectedViewIndex === VIEW_COLLECTIONS
-      && queryResults && (queryResults.collections || queryResults.collections)) {
+    } else if ((this.state.selectedViewIndex === VIEW_COLLECTIONS)
+      && (queryResults && (queryResults.collections || queryResults.collections))) {
       tabContent = (
         <div className="media-picker-tabbed-content-wrapper">
           <CollectionSearchResultsContainer
@@ -59,7 +59,8 @@ class TabSandCSearchResultsContainer extends React.Component {
           />
         </div>
       );
-    } else if (queryResults && (queryResults.sources)) {
+    } else if ((this.state.selectedViewIndex === VIEW_SOURCES)
+      && (queryResults && (queryResults.sources))) {
       tabContent = (
         <div className="media-picker-tabbed-content-wrapper">
           <SourceSearchResultsContainer

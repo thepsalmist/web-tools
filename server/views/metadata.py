@@ -35,7 +35,7 @@ def api_metadata_search(tag_sets_id):
     search_string = request.args['name']
     # search by ourselves in the file-based cache of all the tags (faster than asking the API to do it over and over)
     data = tags_in_tag_set(user_mediacloud_key(), tag_sets_id, False, True)
-    matching_tags = [t for t in data['tags'] if search_string in t['label'].lower()]
+    matching_tags = [t for t in data['tags'] if search_string.lower() in t['label'].lower()]
     return jsonify(matching_tags)
 
 

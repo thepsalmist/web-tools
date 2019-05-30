@@ -14,26 +14,49 @@ const localMessages = {
   label: { id: 'system.mediaPicker.sources.label', defaultMessage: '{label}' },
 };
 
-const MetadataCheckboxSelector = ({ initialValues, renderCheckbox, onChange, intl: { formatMessage }, fields }) => (
+const MetadataCheckboxSelector = ({ filter, initialValues, renderCheckbox, onChange, intl: { formatMessage }, fields }) => (
   <ul>
     {fields.map((name, index, thisFieldArray) => { // redux-form overrides map, and converts name to a string instead of an object!
       const fieldObject = thisFieldArray.get(index);
-      return (
-        <li key={index}>
-          <Field
-            initialValues={initialValues}
-            key={index}
-            name={`${name}.label`}
-            component={info => (
-              <div>
-                {renderCheckbox({ ...info, label: formatMessage(localMessages.label, { label: fieldObject.label }), input: { ...info.input, ...fieldObject, value: fieldObject.selected, onChange } })}
-              </div>
-            )}
-            label={`${name}.label`}
-            placeholder={formatMessage(messages.ok)}
-          />
-        </li>
-      );
+      if (filter === 'selected' && fieldObject.selected && fieldObject.description) {
+        // render selected items that were *not* part of the frequently used suggestions
+        return (
+          <li key={index}>
+            <Field
+              initialValues={initialValues}
+              key={index}
+              name={`${name}.label`}
+              component={info => (
+                <div>
+                  {renderCheckbox({ ...info, label: formatMessage(localMessages.label, { label: fieldObject.label }), input: { ...info.input, ...fieldObject, value: fieldObject.selected, onChange } })}
+                </div>
+              )}
+              label={`${name}.label`}
+              placeholder={formatMessage(messages.ok)}
+            />
+          </li>
+        );
+      }
+      if (filter === 'defaults' && fieldObject.description === undefined) {
+        // render the frequently used suggestions (regardless of if they are selected or not)
+        return (
+          <li key={index}>
+            <Field
+              initialValues={initialValues}
+              key={index}
+              name={`${name}.label`}
+              component={info => (
+                <div>
+                  {renderCheckbox({ ...info, label: formatMessage(localMessages.label, { label: fieldObject.label }), input: { ...info.input, ...fieldObject, value: fieldObject.selected, onChange } })}
+                </div>
+              )}
+              label={`${name}.label`}
+              placeholder={formatMessage(messages.ok)}
+            />
+          </li>
+        );
+      }
+      return null;
     })}
   </ul>
 );
@@ -47,11 +70,13 @@ MetadataCheckboxSelector.propTypes = {
   renderCheckbox: PropTypes.func.isRequired,
   intl: PropTypes.object,
   onChange: PropTypes.func,
+  filter: PropTypes.string.isRequired,
 };
 
 const MetadataCheckboxList = injectIntl(withIntlForm(MetadataCheckboxSelector));
 
 const MetadataCheckboxFieldArray = (props) => {
+  console.log('bar');
   const metaAndSelected = { ...props.initialValues };
   if (props.previouslySelected && props.previouslySelected[props.type]) {
     props.previouslySelected[props.type].forEach((p) => {
@@ -64,14 +89,26 @@ const MetadataCheckboxFieldArray = (props) => {
       }
     });
   }
+  // We can't figure out how to get it to render two separate field array lists here, so we are using the
+  // `filter` property as a hack to tell it which subset of the elemnts to render
   return (
     <div>
       <FieldArray
         form="advanced-media-picker-search"
         name="shortList"
         component={MetadataCheckboxList}
-        initialValues={metaAndSelected}
+        initialValues={{ shortList: props.initialValues.shortList }}
         onChange={props.onChange}
+        props={{ filter: 'selected' }}
+      />
+      <h5>{props.intl.formatMessage(messages.frequentlyUsed)}</h5>
+      <FieldArray
+        form="advanced-media-picker-search"
+        name="shortList"
+        component={MetadataCheckboxList}
+        initialValues={{ shortList: props.initialValues.shortList }}
+        onChange={props.onChange}
+        props={{ filter: 'defaults' }}
       />
     </div>
   );

@@ -5,7 +5,6 @@ import { injectIntl } from 'react-intl';
 import DataCard from './DataCard';
 import MetadataPickerContainer from './MetadataPickerContainer';
 import MetadataCheckboxFieldArray from './MetadataCheckboxFieldArray';
-import messages from '../../resources/messages';
 
 const MediaPickerMetadataContainer = props => (
   <DataCard className={`media-picker-filter-options ${props.className}`}>
@@ -18,7 +17,6 @@ const MediaPickerMetadataContainer = props => (
       onSearch={props.onSearch}
       async
     />
-    <h5>{props.intl.formatMessage(messages.frequentlyUsed)}</h5>
     <MetadataCheckboxFieldArray
       id={props.id}
       type={props.type}

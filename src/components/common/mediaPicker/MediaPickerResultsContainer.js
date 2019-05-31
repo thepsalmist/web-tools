@@ -149,8 +149,8 @@ const mapDispatchToProps = dispatch => ({
   },
   handleToggleSelected: (selectedMedia) => {
     if (selectedMedia) {
-      // dispatch(toggleMedia(selectedMedia));
-      dispatch(selectMedia(selectedMedia)); // disable button too
+      dispatch(selectMediaPickerQueryArgs(selectedMedia));
+      // dispatch(selectMedia(selectedMedia)); // disable button too
     }
   },
   resetComponents: () => {

@@ -63,8 +63,8 @@ class AdvancedMediaPickerSearchForm extends React.Component {
 
 
   handleSearchAll = (evt) => {
-    const { onSearch } = this.props;
-    onSearch({ allMedia: evt.target.checked });
+    const { onMetadataSelection } = this.props;
+    onMetadataSelection({ allMedia: evt.value }, { allMedia: evt.value });
   }
 
   render() {
@@ -243,7 +243,6 @@ const reduxFormConfig = {
   form: 'advanced-media-picker-search',
   enableReinitialize,
   keepDirtyOnReinitialize,
-  destroyOnUnmount: false,
 };
 
 export default

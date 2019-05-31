@@ -70,7 +70,7 @@ class SourceSearchResultsContainer extends React.Component {
 
 
     if (typeof values === 'object' && 'allMedia' in values) {
-      updatedQueryObj.tags.push(values.allMedia);
+      updatedQueryObj.allMedia = values.allMedia;
     }
     return updatedQueryObj;
   }
@@ -192,7 +192,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   updateMediaQuerySelection: (values) => {
     if (values && values.tags && Object.values(values.tags).length > 0) {
       if (values.allMedia) { // handle the "all media" placeholder selection
-        ownProps.onToggleSelected({ id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
+        ownProps.onToggleSelected({ media_keyword: values.mediaKeyword, type: values.type, tags: { allMedia: { tags_id: ALL_MEDIA, id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) } } });
       } else {
         dispatch(selectMediaPickerQueryArgs({ type: values.type, tags: { ...values.tags } }));
       }
@@ -201,7 +201,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handleUpdateAndSearchWithSelection: (values) => {
     if (values.mediaKeyword || values.tags) {
       if (values.allMedia) { // handle the "all media" placeholder selection
-        ownProps.onToggleSelected({ tags_id: ALL_MEDIA, id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) });
+        ownProps.onToggleSelected({ media_keyword: values.mediaKeyword, type: values.type, tags: { allMedia: { tags_id: ALL_MEDIA, id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) } } });
       } else {
         dispatch(selectMediaPickerQueryArgs(values));
         let tags = Object.values(values.tags).filter(t => t.length > 0);

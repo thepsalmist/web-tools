@@ -4,10 +4,8 @@ import { Field, reduxForm, FormSection, keepDirtyOnReinitialize, enableReinitial
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../hocs/IntlForm';
-import DataCard from '../DataCard';
 import MediaPickerMetadataContainer from '../MediaPickerMetadataContainer';
 import MediaTypesFieldArray from '../MediaTypesFieldArray';
-import MetadataCheckboxFieldArray from '../MetadataCheckboxFieldArray';
 import AppButton from '../AppButton';
 import messages from '../../../resources/messages';
 import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE, PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE } from '../../../lib/tagUtil';
@@ -245,6 +243,7 @@ const reduxFormConfig = {
   form: 'advanced-media-picker-search',
   enableReinitialize,
   keepDirtyOnReinitialize,
+  destroyOnUnmount: false,
 };
 
 export default

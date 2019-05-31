@@ -20,7 +20,7 @@ const MediaPickerMetadataContainer = props => (
     <MetadataCheckboxFieldArray
       id={props.id}
       type={props.type}
-      form="advanced-media-picker-search"
+      form={props.type}
       label={props.label}
       onChange={args => props.onChange(props.id, args, props.type)}
       onSearch={props.onSearch}

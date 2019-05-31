@@ -58,7 +58,11 @@ class SourceSearchResultsContainer extends React.Component {
             updatedQueryObj.tags[key][modifiedObjIndex].value = obj.value; // update
             updatedQueryObj.tags[key][modifiedObjIndex].selected = obj.value; // update
           } else if (obj.tags_id) {
-            updatedQueryObj.tags[key].push(obj); // or insert ? Or do in reducer?
+            const updatedWithSelection = obj;
+            if (updatedWithSelection.value !== false && updatedWithSelection.value !== undefined) { // user has selected a new entry and we set the selected flag acc to the value
+              updatedWithSelection.selected = true;
+            }
+            updatedQueryObj.tags[key].push(updatedWithSelection); // or insert ? Or do in reducer?
           }
         }
       });

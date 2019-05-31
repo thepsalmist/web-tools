@@ -109,16 +109,16 @@ class AdvancedMediaPickerSearchForm extends React.Component {
       />
     ) : null;
     const language = this.state.mode === TAG_SET_PRIMARY_LANGUAGE ? (
-      <DataCard className="media-picker-filter-options media-picker-language">
-        <MetadataCheckboxFieldArray
-          id={TAG_SET_PRIMARY_LANGUAGE}
-          type={PRIMARY_LANGUAGE}
-          form="advanced-media-picker-search"
-          label={formatMessage(messages.language)}
-          onChange={(...args) => this.selectMetaData(TAG_SET_PRIMARY_LANGUAGE, args, PRIMARY_LANGUAGE)}
-          previouslySelected={initValues.tags}
-        />
-      </DataCard>
+      <MediaPickerMetadataContainer
+        id={TAG_SET_PRIMARY_LANGUAGE}
+        type={PRIMARY_LANGUAGE}
+        form="advanced-media-picker-search"
+        label={formatMessage(messages.language)}
+        onChange={(...args) => this.selectMetaData(TAG_SET_PRIMARY_LANGUAGE, args, PRIMARY_LANGUAGE)}
+        onSearch={val => this.updateAndSearchWithSelection(val)}
+        previouslySelectedTags={initValues.tags}
+        className="media-picker-pub-in"
+      />
     ) : null;
     const countryOfFocus = this.state.mode === TAG_SET_COUNTRY_OF_FOCUS ? (
       <MediaPickerMetadataContainer

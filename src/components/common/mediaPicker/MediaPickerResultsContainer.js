@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { toggleMedia, selectMediaPickerQueryArgs, resetMediaPickerQueryArgs, resetMediaPickerSources, resetMediaPickerCollections } from '../../../actions/systemActions';
+import { toggleMedia, selectMedia, selectMediaPickerQueryArgs, resetMediaPickerQueryArgs, resetMediaPickerSources, resetMediaPickerCollections } from '../../../actions/systemActions';
 import { PICK_SOURCE_AND_COLLECTION, PICK_FEATURED } from '../../../lib/explorerUtil';
 import * as fetchConstants from '../../../lib/fetchConstants';
 import AllMediaSearchResultsContainer from './results/AllMediaSearchResultsContainer';
@@ -149,8 +149,7 @@ const mapDispatchToProps = dispatch => ({
   },
   handleToggleSelected: (selectedMedia) => {
     if (selectedMedia) {
-      dispatch(selectMediaPickerQueryArgs(selectedMedia));
-      // dispatch(selectMedia(selectedMedia)); // disable button too
+      dispatch(selectMedia(selectedMedia)); // disable button too
     }
   },
   resetComponents: () => {

@@ -152,6 +152,7 @@ SourceSearchResultsContainer.propTypes = {
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
   handleMediaConcurrency: PropTypes.func.isRequired,
+  updateMediaQuerySelection: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string,
   selectedMedia: PropTypes.array,

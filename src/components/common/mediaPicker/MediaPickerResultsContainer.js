@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { selectMedia, toggleMedia, selectMediaPickerQueryArgs, resetMediaPickerQueryArgs, resetMediaPickerSources, resetMediaPickerCollections } from '../../../actions/systemActions';
+import { toggleMedia, selectMediaPickerQueryArgs, resetMediaPickerQueryArgs, resetMediaPickerSources, resetMediaPickerCollections } from '../../../actions/systemActions';
 import { PICK_SOURCE_AND_COLLECTION, PICK_FEATURED } from '../../../lib/explorerUtil';
 import * as fetchConstants from '../../../lib/fetchConstants';
 import AllMediaSearchResultsContainer from './results/AllMediaSearchResultsContainer';

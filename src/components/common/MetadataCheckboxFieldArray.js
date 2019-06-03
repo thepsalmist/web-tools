@@ -93,7 +93,6 @@ const MetadataCheckboxFieldArray = (props) => {
   return (
     <div>
       <FieldArray
-        form="advanced-media-picker-search-field-array"
         name="shortList"
         component={MetadataCheckboxList}
         initialValues={{ shortList: metaAndSelected.shortList }}
@@ -102,7 +101,6 @@ const MetadataCheckboxFieldArray = (props) => {
       />
       <h5>{props.intl.formatMessage(messages.frequentlyUsed)}</h5>
       <FieldArray
-        form="advanced-media-picker-search-field-array"
         name="shortList"
         component={MetadataCheckboxList}
         initialValues={{ shortList: metaAndSelected.shortList }}

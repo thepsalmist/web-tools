@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Field, reduxForm, FormSection, keepDirtyOnReinitialize, enableReinitialize } from 'redux-form';
+import { Field, reduxForm, keepDirtyOnReinitialize, enableReinitialize } from 'redux-form';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../hocs/IntlForm';
@@ -9,6 +9,7 @@ import MediaTypesFieldArray from '../MediaTypesFieldArray';
 import AppButton from '../AppButton';
 import messages from '../../../resources/messages';
 import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE, PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE } from '../../../lib/tagUtil';
+import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
 const localMessages = {
   nameFieldLabel: { id: 'search.advanced.nameField.label', defaultMessage: 'Name:' },
@@ -62,13 +63,14 @@ class AdvancedMediaPickerSearchForm extends React.Component {
   }
 
 
-  handleSearchAll = (evt) => {
+  handleSearchAll = (mode, input) => {
     const { onMetadataSelection } = this.props;
-    onMetadataSelection({ allMedia: evt.value }, { allMedia: evt.value });
+    this.setMetaClick(ALL_MEDIA);
+    onMetadataSelection({ allMedia: input.value }, { allMedia: input.value });
   }
 
   render() {
-    const { initValues, renderTextField, renderCheckbox } = this.props;
+    const { initialValues, renderTextField, renderCheckbox } = this.props;
     const { formatMessage } = this.props.intl;
     const backgroundColorStyle = mode => (mode === this.state.mode ? 'lightgray' : 'white');
     const mediaType = this.state.mode === TAG_SET_MEDIA_TYPE ? (
@@ -79,7 +81,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         label={formatMessage(messages.mediaType)}
         onChange={(...args) => this.selectMetaData(TAG_SET_MEDIA_TYPE, args, MEDIA_TYPE)}
         onSelect={this.setSelectedMediaTypes}
-        previouslySelected={initValues.tags}
+        previouslySelected={initialValues.tags}
       />
     ) : null;
     const pubCountry = this.state.mode === TAG_SET_PUBLICATION_COUNTRY ? (
@@ -90,7 +92,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         label={formatMessage(messages.pubCountry)}
         onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_COUNTRY, args, PUBLICATION_COUNTRY)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
-        previouslySelectedTags={initValues.tags}
+        previouslySelectedTags={initialValues.tags}
         className="media-picker-pub-in"
       />
     ) : null;
@@ -102,7 +104,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         label={formatMessage(messages.pubState)}
         onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PUBLICATION_STATE)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
-        previouslySelectedTags={initValues.tags}
+        previouslySelectedTags={initialValues.tags}
         className="media-picker-pub-in"
       />
     ) : null;
@@ -114,7 +116,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         label={formatMessage(messages.language)}
         onChange={(...args) => this.selectMetaData(TAG_SET_PRIMARY_LANGUAGE, args, PRIMARY_LANGUAGE)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
-        previouslySelectedTags={initValues.tags}
+        previouslySelectedTags={initialValues.tags}
         className="media-picker-pub-in"
       />
     ) : null;
@@ -125,14 +127,14 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         form="advanced-media-picker-search"
         onChange={(...args) => this.selectMetaData(TAG_SET_COUNTRY_OF_FOCUS, args, COUNTRY_OF_FOCUS)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
-        previouslySelectedTags={initValues.tags}
+        previouslySelectedTags={initialValues.tags}
         className="media-picker-about"
       />
     ) : null;
 
     const content = (
       <div className="advanced-media-picker-search">
-        <FormSection name="advanced-media-picker-search">
+        <div name="advanced-media-picker-search">
           <Row>
             <Col lg={1}>
               <label className="categorical for-name" htmlFor="advancedSearchQueryString"><FormattedMessage {...localMessages.nameFieldLabel} /></label>
@@ -140,7 +142,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
             <Col lg={6}>
               <Field
                 name="advancedSearchQueryString"
-                value={initValues}
+                value={initialValues}
                 ref={(input) => { this.textInputRef = input; }}
                 component={renderTextField}
                 label={formatMessage(localMessages.nameFieldSuggestion)}
@@ -156,28 +158,33 @@ class AdvancedMediaPickerSearchForm extends React.Component {
               <div className="filter-options">
                 <AppButton
                   style={{ backgroundColor: backgroundColorStyle(TAG_SET_MEDIA_TYPE) }}
-                  label={formatMessage(localMessages.pMediaType, { count: this.getTagsPerMetadata(initValues, MEDIA_TYPE) })}
+                  label={formatMessage(localMessages.pMediaType, { count: this.getTagsPerMetadata(initialValues, MEDIA_TYPE) })}
                   onClick={() => this.setMetaClick(TAG_SET_MEDIA_TYPE)}
+                  disabled={this.state.mode === ALL_MEDIA}
                 />
                 <AppButton
                   style={{ backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_COUNTRY) }}
-                  label={formatMessage(localMessages.pubCountrySuggestion, { count: this.getTagsPerMetadata(initValues, PUBLICATION_COUNTRY) })}
+                  label={formatMessage(localMessages.pubCountrySuggestion, { count: this.getTagsPerMetadata(initialValues, PUBLICATION_COUNTRY) })}
                   onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_COUNTRY)}
+                  disabled={this.state.mode === ALL_MEDIA}
                 />
                 <AppButton
                   style={{ backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_STATE) }}
-                  label={formatMessage(localMessages.pubStateSuggestion, { count: this.getTagsPerMetadata(initValues, PUBLICATION_STATE) })}
+                  label={formatMessage(localMessages.pubStateSuggestion, { count: this.getTagsPerMetadata(initialValues, PUBLICATION_STATE) })}
                   onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_STATE)}
+                  disabled={this.state.mode === ALL_MEDIA}
                 />
                 <AppButton
                   style={{ backgroundColor: backgroundColorStyle(TAG_SET_PRIMARY_LANGUAGE) }}
-                  label={formatMessage(localMessages.pLanguageSuggestion, { count: this.getTagsPerMetadata(initValues, PRIMARY_LANGUAGE) })}
+                  label={formatMessage(localMessages.pLanguageSuggestion, { count: this.getTagsPerMetadata(initialValues, PRIMARY_LANGUAGE) })}
                   onClick={() => this.setMetaClick(TAG_SET_PRIMARY_LANGUAGE)}
+                  disabled={this.state.mode === ALL_MEDIA}
                 />
                 <AppButton
                   style={{ backgroundColor: backgroundColorStyle(TAG_SET_COUNTRY_OF_FOCUS) }}
-                  label={formatMessage(localMessages.pCountryOfFocusSuggestion, { count: this.getTagsPerMetadata(initValues, COUNTRY_OF_FOCUS) })}
+                  label={formatMessage(localMessages.pCountryOfFocusSuggestion, { count: this.getTagsPerMetadata(initialValues, COUNTRY_OF_FOCUS) })}
                   onClick={() => this.setMetaClick(TAG_SET_COUNTRY_OF_FOCUS)}
+                  disabled={this.state.mode === ALL_MEDIA}
                 />
               </div>
             </Col>
@@ -195,11 +202,15 @@ class AdvancedMediaPickerSearchForm extends React.Component {
             <Col lg={6}>
               <Field
                 name="allMedia"
-                component={renderCheckbox}
+                component={info => (
+                  <div>
+                    {renderCheckbox({ ...info, input: { ...info.input, value: initialValues.allMedia }, onChange: (event, newValue) => this.handleSearchAll(ALL_MEDIA, newValue) })}
+                  </div>
+                )}
                 fullWidth
                 label={localMessages.allMedia}
                 helpertext={localMessages.allMedia}
-                onChange={this.handleSearchAll}
+                onChange={(event, newValue) => this.handleSearchAll(ALL_MEDIA, newValue)}
               />
             </Col>
           </Row>
@@ -213,7 +224,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
               />
             </Col>
           </Row>
-        </FormSection>
+        </div>
       </div>
     );
 
@@ -225,7 +236,7 @@ AdvancedMediaPickerSearchForm.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
   // from form healper
-  initValues: PropTypes.object,
+  initialValues: PropTypes.object,
   handleSubmit: PropTypes.func,
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,

@@ -8,7 +8,7 @@ import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
 import SourceResultsTable from './SourceResultsTable';
 import AdvancedMediaPickerSearchForm from '../AdvancedMediaPickerSearchForm';
 import LoadingSpinner from '../../LoadingSpinner';
-import { ALL_MEDIA } from '../../../../lib/mediaUtil';
+// import { ALL_MEDIA } from '../../../../lib/mediaUtil';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching "{name}"' },
@@ -35,10 +35,10 @@ class SourceSearchResultsContainer extends React.Component {
   }
 
   processQuery = (values) => {
-    const { selectedMediaQueryType, selectedMediaQueryTags } = this.props;
+    const { selectedMediaQueryType, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
     // essentially reselect all values that are currently selected, plus the newly clicked/entered ones
     // TODO: redundant assignment w values since we add them below?
-    const updatedQueryObj = Object.assign({}, { type: selectedMediaQueryType, tags: selectedMediaQueryTags }, values);
+    const updatedQueryObj = Object.assign({}, { type: selectedMediaQueryType, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags }, values);
 
     if (updatedQueryObj.tags === undefined) {
       updatedQueryObj.tags = []; // if first metadata selection
@@ -110,14 +110,14 @@ class SourceSearchResultsContainer extends React.Component {
   }
 
   render() {
-    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags } = this.props;
+    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     let resultContent = null;
     content = (
       <div>
         <AdvancedMediaPickerSearchForm
-          initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword }, tags: selectedMediaQueryTags }}
+          initialValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword }, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags }}
           onMetadataSelection={(metadataType, values) => this.updateQuerySelection(metadataType, values)}
           onSearch={val => this.updateAndSearchWithSelection(val)}
           hintText={formatMessage(localMessages.hintText)}
@@ -161,6 +161,7 @@ SourceSearchResultsContainer.propTypes = {
     PropTypes.object,
     PropTypes.array,
   ]),
+  selectedMediaQueryAllTags: PropTypes.bool,
   sourceResults: PropTypes.object,
   formQuery: PropTypes.object,
   mediaQuery: PropTypes.array,
@@ -176,6 +177,7 @@ const mapStateToProps = state => ({
   selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : 0,
   selectedMediaQueryKeyword: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.mediaKeyword : null,
   selectedMediaQueryTags: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.tags : null,
+  selectedMediaQueryAllTags: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.allMedia : null,
   sourceResults: state.system.mediaPicker.sourceQueryResults,
   formQuery: formSelector(
     state,
@@ -192,7 +194,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   updateMediaQuerySelection: (values) => {
     if (values && values.tags && Object.values(values.tags).length > 0) {
       if (values.allMedia) { // handle the "all media" placeholder selection
-        ownProps.onToggleSelected({ media_keyword: values.mediaKeyword, type: values.type, tags: { allMedia: { tags_id: ALL_MEDIA, id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) } } });
+        ownProps.onToggleSelected({ media_keyword: values.mediaKeyword, type: values.type, allMedia: true });
       } else {
         dispatch(selectMediaPickerQueryArgs({ type: values.type, tags: { ...values.tags } }));
       }
@@ -200,18 +202,17 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   handleUpdateAndSearchWithSelection: (values) => {
     if (values.mediaKeyword || values.tags) {
-      if (values.allMedia) { // handle the "all media" placeholder selection
-        ownProps.onToggleSelected({ media_keyword: values.mediaKeyword, type: values.type, tags: { allMedia: { tags_id: ALL_MEDIA, id: ALL_MEDIA, label: ownProps.intl.formatMessage(localMessages.allMedia) } } });
-      } else {
+      let tags = null;
+      if (!values.allMedia) { // handle the "all media" placeholder selection
         dispatch(selectMediaPickerQueryArgs(values));
-        let tags = Object.values(values.tags).filter(t => t.length > 0);
+        tags = Object.values(values.tags).filter(t => t.length > 0);
         const selectedTags = [];
         tags.forEach((t) => {
           selectedTags.push(t.filter(m => m.value).reduce((a, b) => a.concat(b), []).map(i => i.tags_id));
         });
         tags = selectedTags.join(',');
-        dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags }));
       }
+      dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: (values.allMedia ? -1 : tags) }));
     }
   },
 });

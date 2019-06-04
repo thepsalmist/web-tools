@@ -138,7 +138,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const fetchAsyncData = (dispatch) => {
-  dispatch(selectMediaPickerQueryArgs(0));
+  dispatch(selectMediaPickerQueryArgs({ type: 0 }));
   dispatch(fetchMediaPickerFeaturedCollections(TAG_SET_MC_ID));
   dispatch(fetchFavoriteCollections());
   dispatch(fetchFavoriteSources());

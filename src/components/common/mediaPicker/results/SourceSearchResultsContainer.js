@@ -167,7 +167,6 @@ SourceSearchResultsContainer.propTypes = {
   formQuery: PropTypes.object,
   mediaQuery: PropTypes.array,
   // from dispatch
-  updateMediaQuerySelection: PropTypes.func.isRequired,
   // updateAdvancedMediaQuerySelection: PropTypes.func.isRequired,
   handleUpdateAndSearchWithSelection: PropTypes.func.isRequired,
 };

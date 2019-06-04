@@ -14,9 +14,9 @@ const localMessages = {
 };
 
 class PickedMediaContainer extends React.Component {
-  updateMediaType = (type) => {
+  updateMediaType = (menuSelection) => {
     const { updateMediaSelection } = this.props;
-    updateMediaSelection(type);
+    updateMediaSelection({ type: menuSelection });
   };
 
   render() {
@@ -73,7 +73,7 @@ PickedMediaContainer.propTypes = {
 
 const mapStateToProps = state => ({
   sourcesResults: state.system.mediaPicker.media ? state.system.mediaPicker.media.results : null, // resutl of query?
-  selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery.args.type,
+  selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : 0,
   collectionsResults: state.system.mediaPicker.collections ? state.system.mediaPicker.collections.results : null,
   favoritedCollections: state.system.mediaPicker.favoritedCollections ? state.system.mediaPicker.favoritedCollections.results : null,
   favoritedSources: state.system.mediaPicker.favoritedSources ? state.system.mediaPicker.favoritedSources.results : null,
@@ -81,8 +81,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   updateMediaSelection: (type) => {
-    if (type >= 0) {
-      dispatch(selectMediaPickerQueryArgs({ type }));
+    if (type.type >= 0) {
+      dispatch(selectMediaPickerQueryArgs(type));
     }
   },
   handleUnselectMedia: (selectedMedia) => {

@@ -33,7 +33,7 @@ class MediaPickerResultsContainer extends React.Component {
 
   correlateSelection(whichProps) {
     let whichList = {};
-
+    if (!whichProps.selectedMediaQueryType) return 0;
     switch (whichProps.selectedMediaQueryType) {
       /* case PICK_COUNTRY:
         whichList = whichProps.collectionResults;
@@ -129,7 +129,7 @@ MediaPickerResultsContainer.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: (state.system.mediaPicker.sourceQueryResults.fetchStatus === fetchConstants.FETCH_SUCCEEDED || state.system.mediaPicker.collectionQueryResults.fetchStatus === fetchConstants.FETCH_SUCCEEDED || state.system.mediaPicker.favoritedCollections.fetchStatus === fetchConstants.FETCH_SUCCEEDED) ? fetchConstants.FETCH_SUCCEEDED : fetchConstants.FETCH_INVALID,
   selectedMedia: state.system.mediaPicker.selectMedia.list,
-  selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery.args.type,
+  selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : null,
   collectionResults: state.system.mediaPicker.collectionQueryResults,
   featured: state.system.mediaPicker.featured ? state.system.mediaPicker.featured : null,
   sourceResults: state.system.mediaPicker.sourceQueryResults,

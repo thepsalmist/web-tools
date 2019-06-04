@@ -5,7 +5,6 @@ const mediaType = createAsyncReducer({
   initialState: {
     tags: [],
     label: null,
-    value: false,
   },
   action: FETCH_METADATA_VALUES_FOR_MEDIA_TYPE,
   handleSuccess: payload => ({

@@ -68,6 +68,14 @@ class QueryForm extends React.Component {
     return anyQueriesNoMedia || thisCurrentQueryFormNoMedia;
   }
 
+  focusQueryInputField = (input) => {
+    if (input) {
+      setTimeout(() => {
+        input.focus();
+      }, 1000);
+    }
+  };
+
   render() {
     const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, onLoadSearches, onDeleteSearch, savedSearches, searchNickname, onSaveSearch,
       submitting, handleSubmit, onSave, onMediaChange, renderTextField, renderTextFieldWithFocus, onCopyAll } = this.props;
@@ -121,7 +129,8 @@ class QueryForm extends React.Component {
                     rows={3}
                     rowsMax={4}
                     fullWidth
-                    onChange={this.focusSelect}
+                    inputRef={this.focusQueryInputField}
+                    onChange={this.focusQueryInputField}
                     component={renderTextFieldWithFocus}
                   />
                 </div>

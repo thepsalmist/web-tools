@@ -29,6 +29,10 @@ class AdvancedMediaPickerSearchForm extends React.Component {
     mode: null,
   }
 
+  componentDidMount() {
+    // this.textInputRef.focus();
+  }
+
   setMetaClick = (mode) => {
     // work like a toggle
     if (mode === this.state.mode) {
@@ -47,6 +51,14 @@ class AdvancedMediaPickerSearchForm extends React.Component {
     }
     return '';
   }
+
+  focusQueryInputField = (input) => {
+    if (input) {
+      setTimeout(() => {
+        input.focus();
+      }, 100);
+    }
+  };
 
   handleSearchButtonClick = (evt, inputRef) => {
     const { onSearch } = this.props;
@@ -144,6 +156,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
                 name="advancedSearchQueryString"
                 value={initialValues}
                 ref={(input) => { this.textInputRef = input; }}
+                inputRef={this.focusQueryInputField}
                 component={renderTextField}
                 label={formatMessage(localMessages.nameFieldSuggestion)}
                 fullWidth

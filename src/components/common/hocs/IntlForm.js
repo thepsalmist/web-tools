@@ -58,7 +58,9 @@ function withIntlForm(Component) {
           <TextField
             className="form-field-text"
             error={error !== undefined}
-            ref={saveRef}
+            ref={() => saveRef(input)}
+            inputRef={saveRef}
+            autoFocus
             {...input}
             {...intlCustom}
             helpertext={touched ? this.intlIfObject(error) : ''}

@@ -51,8 +51,19 @@ const localMessages = {
 };
 
 class QueryForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.textInputRef = React.createRef();
+  }
+
   state = { // do not focus on primary textfield if we have a dialog open
     childDialogOpen: false,
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selected !== this.props.selected) {
+      this.textInputRef.saveRef();
+    }
   }
 
   getAllActiveQueries = queries => (queries.filter(q => q.deleted !== true));
@@ -72,13 +83,13 @@ class QueryForm extends React.Component {
     if (input) {
       setTimeout(() => {
         input.focus();
-      }, 1000);
+      }, 100);
     }
   };
 
   render() {
-    const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, onLoadSearches, onDeleteSearch, savedSearches, searchNickname, onSaveSearch,
-      submitting, handleSubmit, onSave, onMediaChange, renderTextField, renderTextFieldWithFocus, onCopyAll } = this.props;
+    const { initialValues, onWillSearch, renderTextFieldWithFocus, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, onLoadSearches, onDeleteSearch, savedSearches, searchNickname, onSaveSearch,
+      submitting, handleSubmit, onSave, onMediaChange, renderTextField, onCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
     const cleanedInitialValues = initialValues ? { ...initialValues } : {};
     if (cleanedInitialValues.disabled === undefined) {
@@ -129,8 +140,9 @@ class QueryForm extends React.Component {
                     rows={3}
                     rowsMax={4}
                     fullWidth
+                    ref={(input) => { this.textInputRef = input; }}
                     inputRef={this.focusQueryInputField}
-                    onChange={this.focusQueryInputField}
+                    saveRef={this.focusQueryInputField}
                     component={renderTextFieldWithFocus}
                   />
                 </div>

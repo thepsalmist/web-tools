@@ -322,8 +322,6 @@ class QueryPickerContainer extends React.Component {
             onDeleteSearch={l => handleDeleteUserSearch(l)}
             onCopyAll={property => handleCopyAll(property, selected.uid, queries, formQuery)}
             isEditable={canSelectMedia}
-            focusRequested={field => field.focus()}
-            // TODO change to on
           />
         );
       }

@@ -66,6 +66,6 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
 def concatenate_solr_dates(start_date, end_date):
     publish_date = mediacloud.api.MediaCloud.publish_date_query(
         datetime.datetime.strptime(start_date, '%Y-%m-%d').date(),
-        datetime.datetime.strptime(end_date, '%Y-%m-%d').date())
+        datetime.datetime.strptime(end_date, '%Y-%m-%d').date(), True, True)
 
     return publish_date

@@ -64,7 +64,7 @@ class QueryForm extends React.Component {
   evalAllQueriesForValidMedia = () => {
     const { queries, mediaUpdates } = this.props;
     const anyQueriesNoMedia = this.getAllActiveQueries(queries).filter(q => (q.uid !== mediaUpdates.uid) && q.media && q.media.length === 0).length; // if any query is missing media
-    const thisCurrentQueryFormNoMedia = mediaUpdates && (mediaUpdates.media === undefined || mediaUpdates.media.length === 0) && mediaUpdates.sources.length === 0 && mediaUpdates.collections.length === 0;
+    const thisCurrentQueryFormNoMedia = mediaUpdates && (mediaUpdates.media === undefined || mediaUpdates.media.length === 0) && (mediaUpdates.sources === undefined || mediaUpdates.sources.length === 0) && (mediaUpdates.collections === undefined || mediaUpdates.collections.length === 0);
     return anyQueriesNoMedia || thisCurrentQueryFormNoMedia;
   }
 
@@ -79,15 +79,26 @@ class QueryForm extends React.Component {
     if (initialValues.collections && initialValues.collections.length && initialValues.collections[0].tags_id === ALL_MEDIA) {
       cleanedInitialValues.media = [{ id: ALL_MEDIA, label: formatMessage(messages.allMedia) }];
     } else {
-      cleanedInitialValues.media = [ // merge intial sources and collections into one list for display with `renderFields`
-        ...initialValues.sources,
-        ...initialValues.collections,
-      ];
+      cleanedInitialValues.media = [];
+      if (initialValues.collections && initialValues.collections.length) {
+        cleanedInitialValues.media.concat( // merge intial sources and collections into one list for display with `renderFields`
+          ...initialValues.collections,
+        );
+      }
+      if (initialValues.sources && initialValues.sources.length) {
+        cleanedInitialValues.media.concat( // merge intial sources and collections into one list for display with `renderFields`
+          ...initialValues.sources,
+        );
+      }
     }
-    selected.media = [ // merge sources and collections into one list for display with `renderFields`
-      ...selected.sources,
-      ...selected.collections,
-    ];
+    selected.media = [];
+    if (selected.collections && selected.collections.length) {
+      selected.media = selected.media.concat(selected.collections);
+    }
+    if (selected.sources && selected.sources.length) {
+      selected.media = selected.media.concat(selected.sources);
+    } // merge into one list with `renderFields`
+
     const currentQ = selected.q;
     let mediaPicker = null;
     let mediaLabel = formatMessage(localMessages.SandC);

@@ -36,15 +36,19 @@ function withIntlForm(Component) {
       if (intlCustom && intlCustom.helpertext !== undefined) {
         intlCustom.helpertext = intlCustom.helpertext;
       }
+      const intlError = this.intlIfObject(error);
       return (
-        <TextField
-          className={`form-field-text ${asyncValidating ? 'async-validating' : ''}`}
-          {...input}
-          {...intlCustom}
-          error={Boolean(touched && error)}
-          helpertext={touched ? this.intlIfObject(error) : ''}
-          margin="normal"
-        />
+        <React.Fragment>
+          <TextField
+            className={`form-field-text ${asyncValidating ? 'async-validating' : ''}`}
+            {...input}
+            {...intlCustom}
+            error={Boolean(touched && intlError)}
+            helpertext={touched ? intlError : ''}
+            margin="normal"
+          />
+          {error ? <span className="error">{intlError}</span> : ''}
+        </React.Fragment>
       );
     };
 
@@ -84,7 +88,7 @@ function withIntlForm(Component) {
           )}
           label={this.intlIfObject(label)}
         />
-        {error ? <span className="error"><FormattedHTMLMessage {...error} /></span> : ''}
+        {error ? <span className="error">{...error}</span> : ''}
       </div>
     );
 

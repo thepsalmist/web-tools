@@ -13,7 +13,7 @@
         {
           "apps": [ "topics" ],
           "type": "New",
-          "note": "See subtopic information in version list",
+          "note": "See subtopic information in version list"
         },
         {
           "apps": [ "topics"],
@@ -29,7 +29,7 @@
           "apps": [ "explorer" ],
           "type": "Fixed",
           "note": "Copy All works correctly for query terms, media and dates"
-        },
+        }
       ]
     },
     {

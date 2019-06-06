@@ -26,6 +26,7 @@ const localMessages = {
   helpDetails: { id: 'explorer.storyCount.help.details',
     defaultMessage: '<p>It is harder to determine how much of the media\'s attention your search got. If you want to dig into that, a good place to start is comparing your query to a search for everything from the sources and collections you are searching.  You can do this by searching for * in the same date range and media; that matches every story.</p>',
   },
+  downloadOneCsv: { id: 'explorer.attention.total.downloadCsv', defaultMessage: 'Download all story URLs' },
   downloadCsv: { id: 'explorer.attention.total.downloadCsv', defaultMessage: 'Download all story URLs for {name}' },
   viewNormalized: { id: 'explorer.attention.mode.viewNormalized', defaultMessage: 'View by Story Count (default)' },
   viewRegular: { id: 'explorer.attention.mode.viewRegular', defaultMessage: 'View by Story Percentage' },
@@ -171,24 +172,41 @@ const mapStateToProps = state => ({
   results: state.explorer.storySplitCount.results,
 });
 
-const mapDispatchToProps = (dispath, ownProps) => ({
-  handleExplore: (
-    <ActionMenu className="border-button" actionTextMsg={messages.downloadOptions}>
-      {ownProps.queries.map(q => (
-        <MenuItem
-          className="action-icon-menu-item"
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  handleExplore: () => {
+    if (ownProps.queries.length === 1) {
+      const q = ownProps.queries[0];
+      return (
+        <AppButton
+          variant="text"
+          className="action-menu-single-download"
           onClick={() => postToDownloadUrl('/api/explorer/stories/samples.csv', q)}
-        >
-          <ListItemText>
-            <FormattedMessage {...localMessages.downloadCsv} values={{ name: q.label }} />
-          </ListItemText>
-          <ListItemIcon>
-            <DownloadButton />
-          </ListItemIcon>
-        </MenuItem>
-      ))}
-    </ActionMenu>
-  ),
+          aria-controls="action-menu"
+          aria-haspopup="true"
+          aria-owns="action-menu"
+          label={ownProps.intl.formatMessage(localMessages.downloadOneCsv, { name: q.label })}
+          size="small"
+        />
+      );
+    }
+    return (
+      <ActionMenu className="border-button" actionTextMsg={messages.downloadOptions}>
+        {ownProps.queries.map(q => (
+          <MenuItem
+            className="action-icon-menu-item"
+            onClick={() => postToDownloadUrl('/api/explorer/stories/samples.csv', q)}
+          >
+            <ListItemText>
+              <FormattedMessage {...localMessages.downloadCsv} values={{ name: q.label }} />
+            </ListItemText>
+            <ListItemIcon>
+              <DownloadButton />
+            </ListItemIcon>
+          </MenuItem>
+        ))}
+      </ActionMenu>
+    );
+  },
 });
 
 
@@ -204,7 +222,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-    withSummary(localMessages.title, localMessages.helpIntro, [localMessages.helpDetails, messages.countsVsPercentageHelp])(
+    withSummary(localMessages.title, localMessages.helpIntro, [localMessages.helpDetails, messages.countsVsPercentageHelp], null, true)(
       withQueryResults(resetSentenceCounts, fetchQuerySplitStoryCount, fetchDemoQuerySplitStoryCount)(
         QueryTotalAttentionResultsContainer
       )

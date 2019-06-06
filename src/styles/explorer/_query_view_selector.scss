@@ -45,6 +45,12 @@ ul.tab-selector {
           padding: 5px 16px;
         }
       }
+      .action-menu-single-download {
+          border-radius: 4px;
+          color: $explorer-primary;
+          border: 1px solid rgba(0, 0, 0, 0.23);
+          padding: 5px 16px;
+      }
     }
   }
 }

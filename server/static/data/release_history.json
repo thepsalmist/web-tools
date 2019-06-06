@@ -29,6 +29,11 @@
           "apps": [ "explorer" ],
           "type": "Fixed",
           "note": "Copy All works correctly for query terms, media and dates"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Total Attention has a new download all story URLs button"
         }
       ]
     },

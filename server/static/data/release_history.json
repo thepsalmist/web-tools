@@ -1,6 +1,38 @@
 {
   "releases": [
     {
+      "date": "2019-6-6",
+      "version": "v3.10.10",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics", "sources", "tools" ],
+          "type": "Fixed",
+          "note": "Inclusive start and end dates",
+          "details": "Across queries, we include the entire day's worth of stories encompassing 12 AM on the start date through 11:59:59 PM on the end date"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "See subtopic information in version list",
+        },
+        {
+          "apps": [ "topics"],
+          "type": "Fixed",
+          "note": "Better error feedback in create topic, including duplicate topic name"
+        },
+        {
+          "apps": [ "topics"],
+          "type": "Fixed",
+          "note": "Better visual feedback that a user has started a topic version"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Copy All works correctly for query terms, media and dates"
+        },
+      ]
+    },
+    {
       "date": "2019-5-24",
       "version": "v3.10.9",
       "notes": [

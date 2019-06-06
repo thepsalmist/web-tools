@@ -49,6 +49,8 @@ function withSummary(titleMessage, introMessage, detailedMessage, wide) {
               onClick={handleExplore}
             />
           );
+        } else if (handleExplore && typeof handleExplore === 'object') {
+          detailsExploreContent = <div className="summarized-button">{handleExplore}</div>; // actionButtonMenu
         }
 
         if (detailedMessage) { // only toggle extra text if there is any

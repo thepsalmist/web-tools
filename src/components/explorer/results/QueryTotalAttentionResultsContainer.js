@@ -26,7 +26,7 @@ const localMessages = {
   helpDetails: { id: 'explorer.storyCount.help.details',
     defaultMessage: '<p>It is harder to determine how much of the media\'s attention your search got. If you want to dig into that, a good place to start is comparing your query to a search for everything from the sources and collections you are searching.  You can do this by searching for * in the same date range and media; that matches every story.</p>',
   },
-  downloadCsv: { id: 'explorer.attention.total.downloadCsv', defaultMessage: 'Download all stories for {name}' },
+  downloadCsv: { id: 'explorer.attention.total.downloadCsv', defaultMessage: 'Download all story URLs for {name}' },
   viewNormalized: { id: 'explorer.attention.mode.viewNormalized', defaultMessage: 'View by Story Count (default)' },
   viewRegular: { id: 'explorer.attention.mode.viewRegular', defaultMessage: 'View by Story Percentage' },
 };
@@ -171,6 +171,26 @@ const mapStateToProps = state => ({
   results: state.explorer.storySplitCount.results,
 });
 
+const mapDispatchToProps = (dispath, ownProps) => ({
+  handleExplore: (
+    <ActionMenu className="border-button" actionTextMsg={messages.downloadOptions}>
+      {ownProps.queries.map(q => (
+        <MenuItem
+          className="action-icon-menu-item"
+          onClick={() => postToDownloadUrl('/api/explorer/stories/samples.csv', q)}
+        >
+          <ListItemText>
+            <FormattedMessage {...localMessages.downloadCsv} values={{ name: q.label }} />
+          </ListItemText>
+          <ListItemIcon>
+            <DownloadButton />
+          </ListItemIcon>
+        </MenuItem>
+      ))}
+    </ActionMenu>
+  ),
+});
+
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
   return Object.assign({}, stateProps, dispatchProps, ownProps, {
@@ -183,7 +203,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 
 export default
 injectIntl(
-  connect(mapStateToProps, null, mergeProps)(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withSummary(localMessages.title, localMessages.helpIntro, [localMessages.helpDetails, messages.countsVsPercentageHelp])(
       withQueryResults(resetSentenceCounts, fetchQuerySplitStoryCount, fetchDemoQuerySplitStoryCount)(
         QueryTotalAttentionResultsContainer

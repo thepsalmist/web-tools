@@ -7,7 +7,7 @@
         {
           "apps": [ "explorer", "topics", "sources", "tools" ],
           "type": "Fixed",
-          "note": "Consent form was broken",
+          "note": "Consent form was broken"
         }
       ]
     },

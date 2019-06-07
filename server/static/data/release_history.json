@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2019-6-7",
+      "version": "v3.10.10.1",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics", "sources", "tools" ],
+          "type": "Fixed",
+          "note": "Consent form was broken",
+        }
+      ]
+    },
+    {
       "date": "2019-6-6",
       "version": "v3.10.10",
       "notes": [

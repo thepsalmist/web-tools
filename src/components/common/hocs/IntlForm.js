@@ -72,25 +72,28 @@ function withIntlForm(Component) {
       );
     };
 
-    renderCheckbox = ({ input, label, meta: { error }, disabled, initialValues }) => (
-      <div>
-        <FormControlLabel
-          control={(
-            <Checkbox
-              name={input.name}
-              error={error}
-              className="form-field-checkbox"
-              label={this.intlIfObject(label)}
-              checked={input.value === true || input.value === 1 || initialValues === 'checked'}
-              onChange={input.onChange}
-              disabled={this.intlIfObject(disabled)}
-            />
-          )}
-          label={this.intlIfObject(label)}
-        />
-        {error ? <span className="error">{...error}</span> : ''}
-      </div>
-    );
+    renderCheckbox = ({ input, label, meta: { error }, disabled, initialValues }) => {
+      const intlError = this.intlIfObject(error);
+      return (
+        <div>
+          <FormControlLabel
+            control={(
+              <Checkbox
+                name={input.name}
+                error={intlError}
+                className="form-field-checkbox"
+                label={this.intlIfObject(label)}
+                checked={input.value === true || input.value === 1 || initialValues === 'checked'}
+                onChange={input.onChange}
+                disabled={this.intlIfObject(disabled)}
+              />
+            )}
+            label={this.intlIfObject(label)}
+          />
+          {error ? <span className="error">{intlError}</span> : ''}
+        </div>
+      );
+    };
 
     renderSelect = ({ input, meta: { touched, error }, children, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);

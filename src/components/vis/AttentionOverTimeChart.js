@@ -62,7 +62,7 @@ export function dataAsSeries(data, fieldName = 'count') {
  */
 class AttentionOverTimeChart extends React.Component {
   getConfig() {
-    const { backgroundColor, normalizeYAxis, interval, onDataPointClick } = this.props;
+    const { backgroundColor, normalizeYAxis, interval } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
 
     const config = {
@@ -109,11 +109,11 @@ class AttentionOverTimeChart extends React.Component {
           if (intervalDays > 1) {
             this.series.tooltipOptions.xDateFormat = `Date Range: ${thisDate} to ${nextDate}`;
           }
-          const date0 = new Date(this.x);
+          // const date0 = new Date(this.x);
           // handle clicking on last point
-          const point1 = (this.index < (this.series.data.length - 1)) ? this.series.data[this.index + 1] : this;
-          const date1 = new Date(point1.x);
-          const dataFunction = () => onDataPointClick(date0, date1, this, this);
+          // const point1 = (this.index < (this.series.data.length - 1)) ? this.series.data[this.index + 1] : this;
+          // const date1 = new Date(point1.x);
+          // const dataFunction = () => onDataPointClick(date0, date1, this, this);
           return (`${seriesName}<br/>${val}<br />${clickForDetails}`);
         },
       },

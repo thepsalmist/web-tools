@@ -74,6 +74,9 @@ function isLatestVersionRunning(snapshotList, jobList) {
   const latestSnapshot = snapshotList[0];
   // check Job statuses also
   const latestJob = latestJobByDate(jobList);
+  if (latestJob === null) {
+    return false;
+  }
   return (latestSnapshot.state === TOPIC_SNAPSHOT_STATE_RUNNING
   || latestJob.state === TOPIC_SNAPSHOT_STATE_RUNNING
   || latestSnapshot.state === TOPIC_SNAPSHOT_STATE_QUEUED

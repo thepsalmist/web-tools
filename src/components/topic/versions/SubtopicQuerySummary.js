@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedHTMLMessage, injectIntl } from 'react-intl';
-import messages from '../../../resources/messages';
-import SourceOrCollectionWidget from '../../common/SourceOrCollectionWidget';
-import { urlToCollection, urlToSource } from '../../../lib/urlUtil';
+import { Row, Col } from 'react-flexbox-grid/lib';
+import { connect } from 'react-redux';
+import withFilteredAsyncData from '../FilteredAsyncDataContainer';
+import { fetchTopicFocalSetsList } from '../../../actions/topicActions';
 
 const localMessages = {
   title: { id: 'topic.info.title', defaultMessage: 'Version {versionNumber}: Subtopics' },
@@ -14,53 +15,57 @@ const localMessages = {
   datesData: { id: 'topic.info.datesData', defaultMessage: '{startDate} to {endDate}' },
 };
 
-const SubtopicQuerySummary = ({ seedQueryCount, topic, snapshot, intl, faded }) => {
+const SubtopicQuerySummary = ({ focalSets, snapshot }) => (
   // the form has them grouped together, but the topic object has them separate
-  let sourcesAndCollections = topic.media ? topic.media : topic.sourcesAndCollections;
-  sourcesAndCollections = topic.media_tags ? [...sourcesAndCollections, ...topic.media_tags] : sourcesAndCollections;
-  return (
-    <div className={`topic-info-sidebar ${faded ? 'faded' : ''}`}>
-      <h2>
-        {snapshot && <FormattedHTMLMessage {...localMessages.title} values={{ versionNumber: snapshot.note }} />}
-      </h2>
-      <p>
-        <FormattedHTMLMessage
-          {...localMessages.seedQueryCount}
-          values={{ storyCount: intl.formatNumber(seedQueryCount || topic.seed_query_story_count) }}
-        />
+  <div className="topic-info-sidebar-subtopic">
+    <h2>
+      {snapshot && <FormattedHTMLMessage {...localMessages.title} values={{ versionNumber: snapshot.note }} />}
+    </h2>
+    {focalSets.sort((a, b) => a.name.localeCompare(b.name)).map(fs => (
+      <div>
+        <Row>
+          <Col lg={2}>
+            {fs.name}
+          </Col>
+          {fs.foci && fs.foci.map(f => (
+            <div>
+              <Col lg={3}>
+                {f.name}
+              </Col>
+              <Col lg={3}>
+                {f.query}
+              </Col>
+            </div>
+          ))}
+        </Row>
         <br />
-      </p>
-      <p>
-        <b><FormattedHTMLMessage {...messages.topicQueryProp} /></b>
-        <code>{topic.solr_seed_query}</code>
-      </p>
-      <p>
-        <b><FormattedHTMLMessage {...localMessages.dates} /></b>
-        <FormattedHTMLMessage
-          {...localMessages.datesData}
-          values={{ startDate: topic.start_date, endDate: topic.end_date }}
-        />
-      </p>
-      <p>
-        <b><FormattedHTMLMessage {...messages.topicSourceCollectionsProp} /></b>
-        {sourcesAndCollections.map(o => (
-          <SourceOrCollectionWidget
-            key={o.id || o.tags_id || o.media_id}
-            object={o}
-            link={o.tags_id ? urlToCollection(o.tags_id) : urlToSource(o.media_id)}
-          />
-        ))}
-      </p>
-    </div>
-  );
-};
+      </div>
+    ))}
+  </div>
+);
 
 SubtopicQuerySummary.propTypes = {
-  topic: PropTypes.object.isRequired,
+  topicId: PropTypes.number.isRequired,
   snapshot: PropTypes.object,
-  seedQueryCount: PropTypes.number,
-  faded: PropTypes.bool,
-  intl: PropTypes.object.isRequired,
+  focalSets: PropTypes.array,
+  // intl: PropTypes.object.isRequired,
 };
 
-export default injectIntl(SubtopicQuerySummary);
+const mapStateToProps = state => ({
+  fetchStatus: state.topics.selected.focalSets.all.fetchStatus,
+  focalSets: state.topics.selected.focalSets.all.list,
+  timespanStoryCount: state.topics.selected.timespans.selected.story_count,
+});
+
+const fetchAsyncData = (dispatch, { topicId, filters }) => {
+  dispatch(fetchTopicFocalSetsList(topicId, { ...filters, includeStoryCounts: 1 }));
+};
+
+export default
+injectIntl(
+  connect(mapStateToProps)(
+    withFilteredAsyncData(fetchAsyncData)(
+      SubtopicQuerySummary
+    )
+  )
+);

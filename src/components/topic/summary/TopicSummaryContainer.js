@@ -167,7 +167,7 @@ class TopicSummaryContainer extends React.Component {
                     <SeedQuerySummary topic={topic} snapshot={selectedSnapshot} />
                   </Col>
                   <Col lg={6}>
-                    <SubtopicQuerySummary topic={topic} snapshot={selectedSnapshot} />
+                    <SubtopicQuerySummary topicId={topic.topics_id} snapshot={selectedSnapshot} />
                   </Col>
                 </Row>
               </Permissioned>

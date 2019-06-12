@@ -14,11 +14,12 @@ import PageTitle from '../../common/PageTitle';
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Admin: Topic Status Dashboard' },
   stateToShow: { id: 'topics.adminList.selectState', defaultMessage: 'State To Show' },
+  all: { id: 'topics.adminList.all', defaultMessage: 'all' },
 };
 
-class TopicStatusDashboardContainer extends React.Component {
+class AdminAllTopicsContainer extends React.Component {
   state = {
-    selectedTopicState: 'error',
+    selectedTopicState: 'all',
   };
 
   handleTopicStateSelected = value => this.setState({ selectedTopicState: value });
@@ -26,8 +27,8 @@ class TopicStatusDashboardContainer extends React.Component {
   render() {
     const { topics } = this.props;
     const { formatMessage } = this.props.intl;
-    const uniqueStates = Array.from(new Set(topics.map(t => t.state)));
-    const topicsToShow = topics.filter(t => t.state === this.state.selectedTopicState);
+    const uniqueStates = [formatMessage(localMessages.all)].concat(Array.from(new Set(topics.map(t => t.state))));
+    const topicsToShow = topics.filter(t => ['all', t.state].includes(this.state.selectedTopicState));
     return (
       <Grid>
         <PageTitle value={localMessages.title} />
@@ -54,7 +55,7 @@ class TopicStatusDashboardContainer extends React.Component {
   }
 }
 
-TopicStatusDashboardContainer.propTypes = {
+AdminAllTopicsContainer.propTypes = {
   // from state
   topics: PropTypes.array,
   // from context
@@ -72,7 +73,7 @@ export default
 injectIntl(
   connect(mapStateToProps)(
     withAsyncData(fetchAsyncData)(
-      TopicStatusDashboardContainer
+      AdminAllTopicsContainer
     )
   )
 );

@@ -29,8 +29,8 @@ const SubtopicQuerySummary = ({ focalSets, snapshot }) => (
           <div>
             {fs.foci && fs.foci.map(f => (
               <tr key={fs.name}>
+                <td>{fs.name}</td>
                 <td>{f.name}</td>
-                <td>{fs.focal_sets_id}</td>
                 <td>{f.query}</td>
               </tr>
             ))}

@@ -1,18 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedHTMLMessage, injectIntl } from 'react-intl';
-import { Row, Col } from 'react-flexbox-grid/lib';
+import { FormattedHTMLMessage, FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import { fetchTopicFocalSetsList } from '../../../actions/topicActions';
 
 const localMessages = {
-  title: { id: 'topic.info.title', defaultMessage: 'Version {versionNumber}: Subtopics' },
-  seedQueryCount: { id: 'topic.info.seedQueryCount', defaultMessage: 'Matches {storyCount} stories already in our database.' },
-  willSpider: { id: 'topic.info.willSpider', defaultMessage: 'Links will be followed to find more stories ({rounds} rounds).' },
-  willNotSpider: { id: 'topic.info.willNotSpider', defaultMessage: 'Links will <em>not</em> be followed to find more stories.' },
-  dates: { id: 'topic.info.dates', defaultMessage: 'Dates:' },
-  datesData: { id: 'topic.info.datesData', defaultMessage: '{startDate} to {endDate}' },
+  title: { id: 'topic.info.title', defaultMessage: 'Subtopic Details' },
+  set: { id: 'topic.info.set', defaultMessage: 'Set' },
+  type: { id: 'topic.info.type', defaultMessage: 'Type' },
+  search: { id: 'topic.info.search', defaultMessage: 'Search Terms' },
 };
 
 const SubtopicQuerySummary = ({ focalSets, snapshot }) => (
@@ -21,26 +18,26 @@ const SubtopicQuerySummary = ({ focalSets, snapshot }) => (
     <h2>
       {snapshot && <FormattedHTMLMessage {...localMessages.title} values={{ versionNumber: snapshot.note }} />}
     </h2>
-    {focalSets.sort((a, b) => a.name.localeCompare(b.name)).map(fs => (
-      <div>
-        <Row>
-          <Col lg={2}>
-            {fs.name}
-          </Col>
-          {fs.foci && fs.foci.map(f => (
-            <div>
-              <Col lg={3}>
-                {f.name}
-              </Col>
-              <Col lg={3}>
-                {f.query}
-              </Col>
-            </div>
-          ))}
-        </Row>
-        <br />
-      </div>
-    ))}
+    <table className="table">
+      <tbody>
+        <tr>
+          <th><FormattedMessage {...localMessages.set} /></th>
+          <th><FormattedMessage {...localMessages.type} /></th>
+          <th><FormattedMessage {...localMessages.search} /></th>
+        </tr>
+        {focalSets.sort((a, b) => a.name.localeCompare(b.name)).map(fs => (
+          <div>
+            {fs.foci && fs.foci.map(f => (
+              <tr key={fs.name}>
+                <td>{f.name}</td>
+                <td>{fs.focal_sets_id}</td>
+                <td>{f.query}</td>
+              </tr>
+            ))}
+          </div>
+        ))}
+      </tbody>
+    </table>
   </div>
 );
 

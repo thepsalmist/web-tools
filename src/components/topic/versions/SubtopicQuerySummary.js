@@ -7,14 +7,14 @@ import { fetchTopicFocalSetsList } from '../../../actions/topicActions';
 
 const localMessages = {
   title: { id: 'topic.info.title', defaultMessage: 'Subtopic Details' },
-  set: { id: 'topic.info.set', defaultMessage: 'Set' },
-  type: { id: 'topic.info.type', defaultMessage: 'Type' },
+  set: { id: 'topic.info.set', defaultMessage: 'Name' },
+  type: { id: 'topic.info.type', defaultMessage: 'Class' },
   search: { id: 'topic.info.search', defaultMessage: 'Search Terms' },
 };
 
 const SubtopicQuerySummary = ({ focalSets, snapshot }) => (
   // the form has them grouped together, but the topic object has them separate
-  <div className="topic-info-sidebar-subtopic">
+  <div className="">
     <h2>
       {snapshot && <FormattedHTMLMessage {...localMessages.title} values={{ versionNumber: snapshot.note }} />}
     </h2>
@@ -26,14 +26,16 @@ const SubtopicQuerySummary = ({ focalSets, snapshot }) => (
           <th><FormattedMessage {...localMessages.search} /></th>
         </tr>
         {focalSets.sort((a, b) => a.name.localeCompare(b.name)).map(fs => (
-          <div>
-            {fs.foci && fs.foci.map(f => (
-              <tr key={fs.name}>
-                <td>{fs.name}</td>
-                <td>{f.name}</td>
-                <td>{f.query}</td>
-              </tr>
-            ))}
+          <div className="subtopic-table">
+            <tr key={fs.name}>
+              <td>{fs.name}</td>
+              {fs.foci && fs.foci.map(f => (
+                <span>
+                  <td>{f.name}</td>
+                  <td>{f.query}</td>
+                </span>
+              ))}
+            </tr>
           </div>
         ))}
       </tbody>

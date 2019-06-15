@@ -98,10 +98,11 @@ class QueryTotalAttentionResultsContainer extends React.Component {
       } else {
         downloadOptimizer = (
           <ActionMenu actionTextMsg={messages.downloadOptions}>
-            {queries.map(q => (
+            {queries.map((q, idx) => (
               <MenuItem
                 className="action-icon-menu-item"
                 onClick={() => this.downloadCsv(q)}
+                key={idx}
               >
                 <ListItemText>
                   <FormattedMessage {...localMessages.downloadCsv} values={{ name: q.label }} />

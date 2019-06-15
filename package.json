@@ -42,6 +42,7 @@
     "highcharts-treemap": "^0.1.7",
     "intl": "1.2.5",
     "isomorphic-fetch": "2.2.1",
+    "logic-query-parser": "0.0.5",
     "moment": "2.19.3",
     "nightmare-inline-download": "^0.2.2",
     "npm": "^6.4.1",

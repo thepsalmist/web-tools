@@ -16,7 +16,7 @@ export const fetchStoryNytThemes = createAsyncAction(FETCH_STORY_NYT_THEMES, api
 
 export const SELECT_STORY = 'SELECT_STORY';
 // pass in stories id
-export const selectStory = createAction(SELECT_STORY, id => id);
+export const selectStory = createAction(SELECT_STORY);
 export const RESET_STORY = 'RESET_STORY';
 
 export const resetStory = createAction(RESET_STORY);

@@ -1,17 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import FocusSelector from './FocusSelector';
 
 const localMessages = {
-  title: { id: 'subtopic.title', defaultMessage: 'Subtopic' },
-  helpTitle: { id: 'subtopic.help.title', defaultMessage: 'About Subtopic' },
-  helpText: { id: 'subtopic.help.text',
-    defaultMessage: '<p>subtopic info {this.props.selectedFocus}</p>',
-  },
-  close: { id: 'subtopic.close', defaultMessage: 'Close' },
+  set: { id: 'focus.set', defaultMessage: '<b>Set</b>: {set}' },
+  type: { id: 'focus.type', defaultMessage: '<b>Set Description</b>: {type}' },
+  name: { id: 'focus.name', defaultMessage: '<b>Definition Name</b>: {name}' },
+  description: { id: 'focus.description', defaultMessage: '<b>Description</b>: {description}' },
 };
 
 class FocusSelectorContainer extends React.Component {
@@ -20,9 +18,13 @@ class FocusSelectorContainer extends React.Component {
     if (setCustomContent && selectedFocus) {
       setCustomContent(
         <div>
-          <label>{selectedFocus.name}</label>
-          <label>{selectedFocus.description}</label>
-          <label>{selectedFocus.query}</label>
+          <FormattedHTMLMessage {...localMessages.set} values={{ set: selectedFocus.focalSet.name }} />
+          <br />
+          <FormattedHTMLMessage {...localMessages.type} values={{ type: selectedFocus.focalSet.description }} />
+          <br />
+          <FormattedHTMLMessage {...localMessages.name} values={{ name: selectedFocus.name }} />
+          <br />
+          <FormattedHTMLMessage {...localMessages.description} values={{ description: selectedFocus.description }} />
         </div>
       );
     }

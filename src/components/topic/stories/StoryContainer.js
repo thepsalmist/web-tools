@@ -244,7 +244,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const fetchAsyncData = (dispatch, props) => {
-  dispatch(selectStory(props.storiesId));
+  dispatch(selectStory({ id: props.storiesId }));
   const q = {
     ...props.filters,
     id: props.topicId,

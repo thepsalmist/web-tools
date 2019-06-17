@@ -2,16 +2,29 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+import withHelp from '../../common/hocs/HelpfulContainer';
 import FocusSelector from './FocusSelector';
 
+const localMessages = {
+  title: { id: 'subtopic.title', defaultMessage: 'Subtopic' },
+  helpTitle: { id: 'subtopic.help.title', defaultMessage: 'About Subtopic' },
+  helpText: { id: 'subtopic.help.text',
+    defaultMessage: '<p>subtopic info .</p>',
+  },
+  close: { id: 'subtopic.close', defaultMessage: 'Close' },
+};
+
 const FocusSelectorContainer = (props) => {
-  const { foci, selectedFocus, onFocusSelected } = props;
+  const { foci, selectedFocus, onFocusSelected, helpButton } = props;
   return (
-    <FocusSelector
-      selectedId={(selectedFocus) ? selectedFocus.foci_id : null}
-      foci={foci}
-      onFocusSelected={onFocusSelected}
-    />
+    <span>
+      <FocusSelector
+        selectedId={(selectedFocus) ? selectedFocus.foci_id : null}
+        foci={foci}
+        onFocusSelected={onFocusSelected}
+      />
+      {helpButton}
+    </span>
   );
 };
 
@@ -24,6 +37,7 @@ FocusSelectorContainer.propTypes = {
   // from composition
   intl: PropTypes.object.isRequired,
   // from state
+  helpButton: PropTypes.node.isRequired,
   foci: PropTypes.array.isRequired,
   selectedFocus: PropTypes.object,
 };
@@ -36,6 +50,8 @@ const mapStateToProps = state => ({
 export default
 connect(mapStateToProps)(
   injectIntl(
-    FocusSelectorContainer
+    withHelp(localMessages.helpTitle, localMessages.helpText)(
+      FocusSelectorContainer
+    )
   )
 );

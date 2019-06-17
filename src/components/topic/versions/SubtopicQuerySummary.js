@@ -12,7 +12,7 @@ const localMessages = {
   search: { id: 'topic.info.search', defaultMessage: 'Search Terms' },
 };
 
-const SubtopicQuerySummary = ({ focalSets, snapshot }) => (
+const SubtopicQuerySummary = ({ focalSets, snapshot, filters }) => (
   // the form has them grouped together, but the topic object has them separate
   <div className="">
     <h2>
@@ -47,6 +47,7 @@ SubtopicQuerySummary.propTypes = {
   topicId: PropTypes.number.isRequired,
   snapshot: PropTypes.object,
   focalSets: PropTypes.array,
+  filters: PropTypes.object.isRequired,
   // intl: PropTypes.object.isRequired,
 };
 

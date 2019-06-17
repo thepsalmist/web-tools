@@ -16,13 +16,14 @@ import AppButton from '../AppButton';
  * that you specify.
  * `contentHTMLTextMsg` can be a intl message  or an array of intl message s.
  */
-function withHelp(contentTitleMsg, contentHTMLTextMsg, showHelpSidebar) {
+function withHelp(contentTitleMsg, contentHTMLTextMsg, showHelpSidebar, showCustomContent) {
   return (ChildComponent) => {
     class HelpfulContainer extends React.Component {
       state = {
         open: false,
         titleMsg: contentTitleMsg,
         contentMsg: contentHTMLTextMsg,
+        customContent: undefined,
       };
 
       setTitleMsg = (titleMsg) => {
@@ -31,6 +32,10 @@ function withHelp(contentTitleMsg, contentHTMLTextMsg, showHelpSidebar) {
 
       setContentMsg = (contentMsg) => {
         this.setState({ contentMsg });
+      };
+
+      showCustomContent = (customContent) => {
+        this.setState({ customContent });
       };
 
       handleOpen = () => {
@@ -53,7 +58,9 @@ function withHelp(contentTitleMsg, contentHTMLTextMsg, showHelpSidebar) {
         ];
         const helpButton = <HelpButton color="lightgrey" onClick={this.handleOpen} />;
         let content = <br />;
-        if (this.state.contentMsg) {
+        if (this.state.customContent !== undefined) {
+          content = this.state.customContent;
+        } else if (this.state.contentMsg) {
           if (Array.isArray(this.state.contentMsg)) {
             content = this.state.contentMsg.map(msg => (msg ? <FormattedHTMLMessage key={msg.id} {...msg} /> : ''));
           } else {
@@ -82,6 +89,7 @@ function withHelp(contentTitleMsg, contentHTMLTextMsg, showHelpSidebar) {
               helpContent={content}
               setHelpTitleMsg={this.setTitleMsg}
               setHelpContentMsg={this.setContentMsg}
+              setCustomContent={this.showCustomContent}
             />
           );
         }

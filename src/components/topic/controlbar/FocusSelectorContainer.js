@@ -9,24 +9,39 @@ const localMessages = {
   title: { id: 'subtopic.title', defaultMessage: 'Subtopic' },
   helpTitle: { id: 'subtopic.help.title', defaultMessage: 'About Subtopic' },
   helpText: { id: 'subtopic.help.text',
-    defaultMessage: '<p>subtopic info .</p>',
+    defaultMessage: '<p>subtopic info {this.props.selectedFocus}</p>',
   },
   close: { id: 'subtopic.close', defaultMessage: 'Close' },
 };
 
-const FocusSelectorContainer = (props) => {
-  const { foci, selectedFocus, onFocusSelected, helpButton } = props;
-  return (
-    <span>
-      <FocusSelector
-        selectedId={(selectedFocus) ? selectedFocus.foci_id : null}
-        foci={foci}
-        onFocusSelected={onFocusSelected}
-      />
-      {helpButton}
-    </span>
-  );
-};
+class FocusSelectorContainer extends React.Component {
+  componentWillMount() {
+    const { setCustomContent, selectedFocus } = this.props;
+    if (setCustomContent && selectedFocus) {
+      setCustomContent(
+        <div>
+          <label>{selectedFocus.name}</label>
+          <label>{selectedFocus.description}</label>
+          <label>{selectedFocus.query}</label>
+        </div>
+      );
+    }
+  }
+
+  render() {
+    const { foci, selectedFocus, onFocusSelected, helpButton } = this.props;
+    return (
+      <span>
+        <FocusSelector
+          selectedId={(selectedFocus) ? selectedFocus.foci_id : null}
+          foci={foci}
+          onFocusSelected={onFocusSelected}
+        />
+        {helpButton}
+      </span>
+    );
+  };
+}
 
 FocusSelectorContainer.propTypes = {
   // from parent
@@ -37,6 +52,8 @@ FocusSelectorContainer.propTypes = {
   // from composition
   intl: PropTypes.object.isRequired,
   // from state
+  // from context
+  setCustomContent: PropTypes.func.isRequired,
   helpButton: PropTypes.node.isRequired,
   foci: PropTypes.array.isRequired,
   selectedFocus: PropTypes.object,
@@ -50,7 +67,7 @@ const mapStateToProps = state => ({
 export default
 connect(mapStateToProps)(
   injectIntl(
-    withHelp(localMessages.helpTitle, localMessages.helpText)(
+    withHelp(null, null, null, true)(
       FocusSelectorContainer
     )
   )

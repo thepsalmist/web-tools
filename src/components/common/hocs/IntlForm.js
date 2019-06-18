@@ -86,7 +86,7 @@ function withIntlForm(Component) {
                 className="form-field-checkbox"
                 label={this.intlIfObject(label)}
                 checked={input.value === true || input.value === 1 || initialValues === 'checked'}
-                onChange={input.onChange}
+                onChange={() => input.onChange({ ...input, value: !input.value })}
                 disabled={this.intlIfObject(disabled)}
               />
             )}

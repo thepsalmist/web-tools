@@ -303,7 +303,6 @@ QueryForm.propTypes = {
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   isEditable: PropTypes.bool.isRequired,
-  focusRequested: PropTypes.func.isRequired,
   mediaUpdates: PropTypes.object,
 };
 

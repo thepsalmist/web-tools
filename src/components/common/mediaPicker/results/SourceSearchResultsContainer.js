@@ -3,12 +3,13 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
+import { Col } from 'react-flexbox-grid/lib';
 import { selectMediaPickerQueryArgs, fetchMediaPickerSources } from '../../../../actions/systemActions';
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
 import SourceResultsTable from './SourceResultsTable';
 import AdvancedMediaPickerSearchForm from '../AdvancedMediaPickerSearchForm';
 import LoadingSpinner from '../../LoadingSpinner';
-// import { ALL_MEDIA } from '../../../../lib/mediaUtil';
+import AppButton from '../../AppButton';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching "{name}"' },
@@ -17,6 +18,7 @@ const localMessages = {
   showAdvancedOptions: { id: 'system.mediaPicker.sources.showAdvancedOptions', defaultMessage: 'Show Advanced Options' },
   hideAdvancedOptions: { id: 'system.mediaPicker.sources.hideAdvancedOptions', defaultMessage: 'Hide Advanced Options' },
   allMedia: { id: 'system.mediaPicker.sources.allMedia', defaultMessage: 'All Media (not advised)' },
+  addAllSearch: { id: 'system.mediaPicker.sources.addAllSearch', defaultMessage: 'Add All' },
 };
 
 const formSelector = formValueSelector('advanced-media-picker-search');
@@ -71,6 +73,10 @@ class SourceSearchResultsContainer extends React.Component {
 
     if (typeof values === 'object' && 'allMedia' in values) {
       updatedQueryObj.allMedia = values.allMedia;
+    } else if (typeof values === 'object' && 'addAllSearch' in values) {
+      updatedQueryObj.tags.name = 'search';
+      updatedQueryObj.tags.label = 'search';
+      updatedQueryObj.addAllSearch = values.addAllSearch;
     }
     return updatedQueryObj;
   }
@@ -80,6 +86,13 @@ class SourceSearchResultsContainer extends React.Component {
     const updatedQueryObj = this.processQuery(values);
 
     updateMediaQuerySelection(updatedQueryObj);
+  }
+
+  addAllSearchToSelection = (values) => {
+    const { onToggleSelected } = this.props;
+    const updatedQueryObj = this.processQuery(values);
+
+    onToggleSelected(updatedQueryObj);
   }
 
   updateAndSearchWithSelection = (values) => {
@@ -125,6 +138,18 @@ class SourceSearchResultsContainer extends React.Component {
       </div>
     );
 
+    const addAllButton = (
+      <Col lg={2}>
+        <AppButton
+          style={{ marginTop: 10 }}
+          label={formatMessage(localMessages.addAllSearch)}
+          onClick={() => this.addAllSearchToSelection({ addAllSearch: true })}
+          disabled={Object.keys(selectedMediaQueryTags).length === 0}
+          color="primary"
+        />
+      </Col>
+    );
+
     if (fetchStatus === FETCH_ONGOING) {
       resultContent = <LoadingSpinner />;
     } else if (sourceResults && (sourceResults.list && (sourceResults.list.length > 0 || (sourceResults.args && sourceResults.args.media_keyword)))) {
@@ -142,6 +167,7 @@ class SourceSearchResultsContainer extends React.Component {
       <div>
         {content}
         {resultContent}
+        {addAllButton}
       </div>
     );
   }

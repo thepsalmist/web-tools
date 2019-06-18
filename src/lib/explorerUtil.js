@@ -98,6 +98,7 @@ export function decodeQueryParamString(queryString) {
     endDate: query.endDate,
     sources: query.sources, // de-aggregate media bucket into sources and collections
     collections: query.collections,
+    searches: query.searches,
   }));
   return queriesForUrl;
 }

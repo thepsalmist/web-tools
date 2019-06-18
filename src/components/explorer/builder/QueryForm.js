@@ -117,7 +117,9 @@ class QueryForm extends React.Component {
     if (selected.sources && selected.sources.length) {
       selected.media = selected.media.concat(selected.sources);
     } // merge into one list with `renderFields`
-
+    if (selected.searches && Object.keys(selected.searches).length > 0) {
+      selected.media = selected.media.concat(selected.searches);
+    }
     const currentQ = selected.q;
     let mediaLabel = formatMessage(localMessages.SandC);
     if (isEditable) {

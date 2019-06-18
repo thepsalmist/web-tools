@@ -4,7 +4,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { selectMediaPickerQueryArgs, selectMedia } from '../../../actions/systemActions';
 import { PICK_SOURCE_AND_COLLECTION, PICK_FEATURED } from '../../../lib/explorerUtil';
-import SourceOrCollectionWidget from '../SourceOrCollectionWidget';
+import SourceOrCollectionOrSearchWidget from '../SourceOrCollectionOrSearchWidget';
 // import SelectedMediaContainer from './SelectedMediaContainer';
 
 const localMessages = {
@@ -49,8 +49,8 @@ class PickedMediaContainer extends React.Component {
         <div className="select-media-selected-list">
           <h3><FormattedMessage {...localMessages.selectedMedia} /></h3>
           {selectedMedia.map(obj => (
-            <SourceOrCollectionWidget
-              key={obj.id || obj.tags_id || obj.media_id}
+            <SourceOrCollectionOrSearchWidget
+              key={obj.id || obj.tags_id || obj.media_id || obj.tags.name}
               object={obj}
               onDelete={() => handleUnselectMedia(obj)}
             />

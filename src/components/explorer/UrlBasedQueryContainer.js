@@ -151,6 +151,7 @@ function composeUrlBasedQueryContainer() {
           extraDefaults = {
             sources: [],
             collections: DEFAULT_COLLECTION_OBJECT_ARRAY,
+            searches: [],
             startDate: solrFormat(dateObj.start),
             endDate: solrFormat(dateObj.end),
           };
@@ -163,6 +164,7 @@ function composeUrlBasedQueryContainer() {
           // remember demo queries won't have sources or collections on the URL
           sources: query.sources ? query.sources.map(s => ({ id: s, media_id: s })) : [],
           collections: query.collections ? query.collections.filter(c => c != null).map(c => ({ id: c, tags_id: c })) : [],
+          searches: query.searches ? query.searches : [],
           q: replaceCurlyQuotes(query.q),
           color: query.color ? query.color : schemeCategory10[index % 10],
           uid: uniqueQueryId(),
@@ -276,6 +278,7 @@ function composeUrlBasedQueryContainer() {
             endDate: q.endDate,
             sources: q.sources.map(s => s.media_id), // de-aggregate media bucket into sources and collections
             collections: q.collections.map(c => c.tags_id),
+            searches: q.searches && q.searches.tags ? Object.values(q.searches.tags).filter(j => Array.isArray(j) && j.length > 0)[0].map(m => m.tags_id) : [],
           }));
           dispatch(push({ pathname: '/queries/search', search: `?qs=${serializeQueriesForUrl(queriesToSerialize)}` }));
         }

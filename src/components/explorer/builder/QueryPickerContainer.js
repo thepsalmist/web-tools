@@ -70,8 +70,10 @@ class QueryPickerContainer extends React.Component {
     if (sourceAndCollections.filter(m => m.id === ALL_MEDIA).length === 0) {
       const updatedSources = sourceAndCollections.filter(m => m.type === 'source' || m.media_id);
       const updatedCollections = sourceAndCollections.filter(m => m.type === 'collection' || m.tags_id);
+      const updatedSearches = sourceAndCollections.filter(m => m.addAllSearch);
       updatedQuery.collections = updatedCollections;
       updatedQuery.sources = updatedSources;
+      updatedQuery.searches = updatedSearches && updatedSearches.length > 0 ? updatedSearches[0] : [];
       updateCurrentQueryThenReselect(updatedQuery);
     } else {
       updatedQuery.collections = sourceAndCollections; // push ALL_MEDIA selection into query so it shows up
@@ -114,6 +116,7 @@ class QueryPickerContainer extends React.Component {
       endDate: q.endDate,
       sources: q.sources.map(m => m.media_id),
       collections: q.collections.map(c => c.tags_id),
+      searches: Object.values(q.searches).filter(t => t.length > 0),
     }));
     const userSearch = {
       ...queryName,
@@ -412,6 +415,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       newValues = {
         collections: currentFormValues.media.filter(obj => obj.tags_id),
         sources: currentFormValues.media.filter(obj => obj.media_id),
+        searches: currentFormValues.media.filter(obj => obj.tags),
       };
     }
     queries.map((query) => {

@@ -21,6 +21,7 @@ import StoryOutlinksContainer from './StoryOutlinksContainer';
 import ActionMenu from '../../common/ActionMenu';
 import StoryEntitiesContainer from '../../common/story/StoryEntitiesContainer';
 import StoryNytThemesContainer from '../../common/story/StoryNytThemesContainer';
+import StoryImages from '../../common/story/StoryImages';
 import { TAG_SET_GEOGRAPHIC_PLACES, TAG_SET_NYT_THEMES } from '../../../lib/tagUtil';
 import StoryDetails from '../../common/story/StoryDetails';
 import StoryPlaces from './StoryPlaces';
@@ -200,6 +201,11 @@ class StoryContainer extends React.Component {
               <StoryEntitiesContainer storyId={storiesId} />
             </Col>
           </Row>
+          <Row>
+            <Col lg={12}>
+              <StoryImages storyId={storiesId} />
+            </Col>
+          </Row>
         </Grid>
       </div>
     );
@@ -238,7 +244,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const fetchAsyncData = (dispatch, props) => {
-  dispatch(selectStory(props.storiesId));
+  dispatch(selectStory({ id: props.storiesId }));
   const q = {
     ...props.filters,
     id: props.topicId,

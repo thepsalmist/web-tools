@@ -23,6 +23,7 @@ import TopicWordSpaceContainer from './TopicWordSpaceContainer';
 import TabSelector from '../../common/TabSelector';
 import messages from '../../../resources/messages';
 import SeedQuerySummary from '../versions/SeedQuerySummary';
+import SubtopicQuerySummary from '../versions/SubtopicQuerySummary';
 
 const localMessages = {
   title: { id: 'topic.summary.summary.title', defaultMessage: 'Topic: {name}' },
@@ -164,6 +165,9 @@ class TopicSummaryContainer extends React.Component {
                 <Row>
                   <Col lg={6}>
                     <SeedQuerySummary topic={topic} snapshot={selectedSnapshot} />
+                  </Col>
+                  <Col lg={6}>
+                    <SubtopicQuerySummary topicId={topic.topics_id} snapshot={selectedSnapshot} />
                   </Col>
                 </Row>
               </Permissioned>

@@ -48,3 +48,13 @@ def _cached_story_count(api_key, q, fq):
     # api_key passed in just to make this a user-level cache
     local_client = mc_client()
     return local_client.storyCount(solr_query=q, solr_filter=fq)
+
+
+def story_raw_1st_download(api_key, stories_id):
+    return _cached_story_raw_1st_download(api_key, stories_id)
+
+
+@cache.cache_on_arguments()
+def _cached_story_raw_1st_download(api_key, stories_id):
+    story = mc.story(stories_id, raw_1st_download=True)
+    return story['raw_first_download_file']

@@ -7,7 +7,7 @@ from server.util.api_helper import combined_split_and_normalized_counts, add_mis
 from server.util.tags import processed_for_entities_query_clause, processed_for_themes_query_clause, is_bad_theme, \
     NYT_LABELS_TAG_SET_ID, CLIFF_ORGS, CLIFF_PEOPLE, GEO_TAG_SET
 import server.views.apicache as base_cache
-from server.views import TAG_SAMPLE_SIZE
+from server.views import TAG_SAMPLE_SIZE, TAG_COUNT_SAMPLE_SIZE
 
 
 def normalized_and_story_count(q, fq, open_q):
@@ -79,7 +79,7 @@ def top_tags_with_coverage(q, fq, tag_sets_id, limit=TAG_SAMPLE_SIZE):
 def _most_used_tags(q, fq, tag_sets_id):
     # top tags used in stories matching query (pass in None for no limit)
     api_key = base_cache.api_key()
-    tags = _cached_most_used_tags(api_key, q, fq, tag_sets_id, 1000)
+    tags = _cached_most_used_tags(api_key, q, fq, tag_sets_id, TAG_COUNT_SAMPLE_SIZE)
     # extract bogus NYT tags
     for t in tags:
         if is_bad_theme(t['tags_id']):

@@ -23,6 +23,7 @@ import Permissioned from '../../Permissioned';
 import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import StatBar from '../../statbar/StatBar';
 import StoryRedditAttention from '../../story/StoryRedditAttention';
+import StoryImages from '../../story/StoryImages';
 
 const localMessages = {
   title: { id: 'admin.story.title', defaultMessage: 'Admin Story Details: ' },
@@ -141,6 +142,11 @@ class SelectedStoryContainer extends React.Component {
             </Col>
             <Col lg={6}>
               <StoryRedditAttention storyId={selectedStory.stories_id} />
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={12}>
+              <StoryImages storyId={selectedStory.stories_id} />
             </Col>
           </Row>
         </React.Fragment>

@@ -16,7 +16,7 @@ import AppButton from '../AppButton';
  * that you specify.
  * `contentHTMLTextMsg` can be a intl message  or an array of intl message s.
  */
-function withHelp(contentTitleMsg, contentHTMLTextMsg, showHelpSidebar, showCustomContent) {
+function withHelp(contentTitleMsg, contentHTMLTextMsg, showHelpSidebar) {
   return (ChildComponent) => {
     class HelpfulContainer extends React.Component {
       state = {

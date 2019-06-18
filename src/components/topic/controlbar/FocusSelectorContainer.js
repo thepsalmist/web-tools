@@ -10,6 +10,7 @@ const localMessages = {
   type: { id: 'focus.type', defaultMessage: '<b>Set Description</b>: {type}' },
   name: { id: 'focus.name', defaultMessage: '<b>Definition Name</b>: {name}' },
   description: { id: 'focus.description', defaultMessage: '<b>Description</b>: {description}' },
+  helpDefault: { id: 'focus.help', defaultMessage: 'Select a subtopic to scope the data to that particular set and technique.' },
 };
 
 class FocusSelectorContainer extends React.Component {
@@ -27,6 +28,10 @@ class FocusSelectorContainer extends React.Component {
           <FormattedHTMLMessage {...localMessages.description} values={{ description: selectedFocus.description }} />
         </div>
       );
+    } else if (setCustomContent) {
+      setCustomContent(
+        <FormattedHTMLMessage {...localMessages.helpDefault} />
+      );
     }
   }
 
@@ -42,7 +47,7 @@ class FocusSelectorContainer extends React.Component {
         {helpButton}
       </span>
     );
-  };
+  }
 }
 
 FocusSelectorContainer.propTypes = {
@@ -69,7 +74,7 @@ const mapStateToProps = state => ({
 export default
 connect(mapStateToProps)(
   injectIntl(
-    withHelp(null, null, null, true)(
+    withHelp()(
       FocusSelectorContainer
     )
   )

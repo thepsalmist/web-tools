@@ -33,7 +33,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE, PERMISSION_STORY_EDIT, PERMISSION_ADMIN } from '../../../lib/auth';
 import StatBar from '../../common/statbar/StatBar';
 import AppButton from '../../common/AppButton';
-import { trimToMaxLength } from '../../../lib/stringUtil';
+import { trimToMaxLength, extractWordsFromQuery } from '../../../lib/stringUtil';
 import { filteredLinkTo, urlWithFilters } from '../../util/location';
 import { storyPubDateToTimestamp } from '../../../lib/dateUtil';
 import TopicPageTitle from '../TopicPageTitle';
@@ -78,7 +78,7 @@ class StoryContainer extends React.Component {
 
   render() {
     const { storyInfo, topicStoryInfo, topicId, storiesId, topicName,
-      handleStoryCachedTextClick, handleStoryEditClick, filters } = this.props;
+      handleStoryCachedTextClick, handleStoryEditClick, filters, topicSeedQuery } = this.props;
     const { formatMessage, formatNumber, formatDate } = this.props.intl;
     const mediaUrl = `/topics/${topicId}/media/${storyInfo.media.media_id}`;
     return (
@@ -94,7 +94,11 @@ class StoryContainer extends React.Component {
                     <ListItemIcon><ReadItNowButton /></ListItemIcon>
                   </MenuItem>
                   <Permissioned onlyTopic={PERMISSION_ADMIN}>
-                    <MenuItem onClick={() => handleStoryCachedTextClick(topicId, storiesId, filters)}>
+                    <MenuItem
+                      onClick={() => handleStoryCachedTextClick(
+                        topicId, storiesId, filters, extractWordsFromQuery(topicSeedQuery)
+                      )}
+                    >
                       <ListItemText><FormattedMessage {...localMessages.readCachedCopy} /></ListItemText>
                     </MenuItem>
                     <MenuItem onClick={() => window.open(`/api/stories/${storyInfo.stories_id}/raw.html`, '_blank')}>
@@ -230,6 +234,7 @@ StoryContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   fetchStatus: PropTypes.array.isRequired,
   filters: PropTypes.object.isRequired,
+  topicSeedQuery: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -239,6 +244,7 @@ const mapStateToProps = (state, ownProps) => ({
   storiesId: parseInt(ownProps.params.storiesId, 10),
   topicId: state.topics.selected.id,
   topicName: state.topics.selected.info.name,
+  topicSeedQuery: state.topics.selected.info.solr_seed_query,
   topicStoryInfo: state.topics.selected.story.info,
   storyInfo: state.story.info,
 });
@@ -257,8 +263,8 @@ const mapDispatchToProps = dispatch => ({
   refetchAsyncData: (props) => {
     fetchAsyncData(dispatch, props);
   },
-  handleStoryCachedTextClick: (topicId, storiesId, filters) => {
-    dispatch(push(filteredLinkTo(`topics/${topicId}/stories/${storiesId}/cached`, filters)));
+  handleStoryCachedTextClick: (topicId, storiesId, filters, searchStr) => {
+    dispatch(push(filteredLinkTo(`topics/${topicId}/stories/${storiesId}/cached`, filters, { search: searchStr })));
   },
   handleStoryEditClick: (storiesId) => {
     dispatch(push(`admin/story/${storiesId}/update`)); // to admin page

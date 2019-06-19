@@ -3,7 +3,6 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
-import LogicQueryParser from 'logic-query-parser';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { CloseButton } from '../../../common/IconButton';
@@ -15,7 +14,7 @@ import StoryNytThemesContainer from '../../../common/story/StoryNytThemesContain
 import messages from '../../../../resources/messages';
 import { urlToSource } from '../../../../lib/urlUtil';
 import { TAG_SET_NYT_THEMES } from '../../../../lib/tagUtil';
-import { trimToMaxLength } from '../../../../lib/stringUtil';
+import { trimToMaxLength, extractWordsFromQuery } from '../../../../lib/stringUtil';
 import { storyPubDateToTimestamp } from '../../../../lib/dateUtil';
 import Permissioned from '../../../common/Permissioned';
 import { PERMISSION_ADMIN } from '../../../../lib/auth';
@@ -30,31 +29,6 @@ const localMessages = {
   adminOptions: { id: 'drilldown.adminOptions.title', defaultMessage: 'Admin Options...' },
   goToManageStory: { id: 'drilldown.adminOptions.manageStory', defaultMessage: 'Manage Story' },
   highlightedCachedText: { id: 'drilldown.adminOptions.highlightedCachedText', defaultMessage: 'Cached Text (highlighted)' },
-};
-
-const extractStringsFromParseTree = (node) => {
-  let words = [];
-  if (node.lexeme.type === 'string') {
-    const str = node.lexeme.value.replace('*', ''); // remove any wildcards
-    words = [str];
-  } else {
-    if (node.left) {
-      words = words.concat(extractStringsFromParseTree(node.left));
-    }
-    if (node.right) {
-      words = words.concat(extractStringsFromParseTree(node.right));
-    }
-  }
-  return words;
-};
-
-const queryTopWords = (searchString) => {
-  if (searchString) {
-    const binaryTree = LogicQueryParser.parse(searchString);
-    const strings = extractStringsFromParseTree(binaryTree);
-    return strings.join(',');
-  }
-  return null;
 };
 
 class SelectedStoryDrillDownContainer extends React.Component {
@@ -99,7 +73,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
                       <MenuItem onClick={() => window.open(`/#/admin/story/${storyInfo.stories_id}/details`, '_blank')}>
                         <ListItemText><FormattedMessage {...localMessages.goToManageStory} /></ListItemText>
                       </MenuItem>
-                      <MenuItem onClick={() => window.open(`/#/admin/story/${storyInfo.stories_id}/cached?search=${queryTopWords(storyInfo.search)}`, '_blank')}>
+                      <MenuItem onClick={() => window.open(`/#/admin/story/${storyInfo.stories_id}/cached?search=${extractWordsFromQuery(storyInfo.search)}`, '_blank')}>
                         <ListItemText><FormattedMessage {...localMessages.highlightedCachedText} /></ListItemText>
                       </MenuItem>
                     </ActionMenu>

@@ -84,6 +84,19 @@ export function generateQueryParamObject(query, skipEncoding) {
   };
 }
 
+export function prepSearches(q) { // grab all data from each object in tags
+  if (q && q.tags) {
+    const dataTags = Object.values(q.tags).filter(j => Array.isArray(j) && j.length > 0)[0].map((m) => {
+      const tagObj = {};
+      const tagSetId = m.tag_sets_id;
+      tagObj[tagSetId] = m.tags_id;
+      return tagObj;
+    });
+    return dataTags;
+  }
+  return [];
+}
+
 export function generateQueryParamString(queries) {
   const queriesForUrl = queries.map(q => generateQueryParamObject(q, false));
   return JSON.stringify(queriesForUrl);

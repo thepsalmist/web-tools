@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { reduxForm, FieldArray, Field, propTypes } from 'redux-form';
 import withIntlForm from '../hocs/IntlForm';
-import SourceOrCollectionWidget from '../SourceOrCollectionWidget';
+import SourceOrCollectionOrSearchWidget from '../SourceOrCollectionOrSearchWidget';
 import { urlToSource, urlToCollection } from '../../../lib/urlUtil';
 
 const renderCollectionSelector = ({ allowRemoval, fields, meta, onDelete }) => (
@@ -23,7 +23,7 @@ const renderCollectionSelector = ({ allowRemoval, fields, meta, onDelete }) => (
           }
           const sourceOrCollectionUrl = tempObj.tag_set_name === 'collection' ? urlToCollection(tempObj.id) : urlToSource(tempObj.id);
           return (
-            <SourceOrCollectionWidget object={tempObj} onDelete={handleDelete} link={sourceOrCollectionUrl} />
+            <SourceOrCollectionOrSearchWidget object={tempObj} onDelete={handleDelete} link={sourceOrCollectionUrl} />
           );
         }}
       />

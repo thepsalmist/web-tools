@@ -10,6 +10,7 @@ import QueryPickerContainer from './QueryPickerContainer';
 import QueryResultsContainer from '../results/QueryResultsContainer';
 import composeUrlBasedQueryContainer from '../UrlBasedQueryContainer';
 import PageTitle from '../../common/PageTitle';
+import { prepSearches } from '../../../lib/explorerUtil';
 
 const localMessages = {
   title: { id: 'explorer.queryBuilder.title', defaultMessage: 'Search' },
@@ -91,13 +92,15 @@ const mapDispatchToProps = dispatch => ({
     const collections = queries
       .map(q => q.collections.map(c => c.tags_id))
       .reduce((combined, current) => [...combined, ...current]);
-    const searchTags = queries
-      .map(q => q.searches.tags);
     let selectedSearchTags = [];
-    searchTags.forEach((t) => {
-      selectedSearchTags.push(Object.values(t).filter(j => Array.isArray(j) && j.length > 0)[0].map(m => m.tags_id));
+    const searchTagsPerQuery = queries.map((q) => {
+      if (q.searches) {
+        return prepSearches(q.searches); // with metadata objects
+      }
+      return null;
     });
-    selectedSearchTags = selectedSearchTags.join(',');
+
+    selectedSearchTags = searchTagsPerQuery.map(q => Object.values());
     dispatch(countSourceCollectionUsage({ sources, collections, selectedSearchTags }));
     dispatch(removeDeletedQueries());
     dispatch(removeNewStatusFromQueries());

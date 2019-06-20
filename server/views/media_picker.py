@@ -19,17 +19,26 @@ logger = logging.getLogger(__name__)
 MAX_COLLECTIONS = 20
 MEDIA_SEARCH_POOL_SIZE = len(VALID_COLLECTION_TAG_SETS_IDS)
 STORY_COUNT_POOL_SIZE = 20  # number of parallel processes to use while fetching historical story counts for sources
-
+ALL_MEDIA = '-1'
 
 @app.route('/api/mediapicker/sources/search', methods=['GET'])
 @flask_login.login_required
-@arguments_required('media_keyword')
 @api_error_handler
 def api_mediapicker_source_search():
     search_str = request.args['media_keyword']
     cleaned_search_str = None if search_str == '*' else search_str
     tags = None
-    if 'tags' in request.args:
+    querying_all_media = False
+    try:
+        if int(request.args['tags']) == int(ALL_MEDIA):
+            querying_all_media = True
+    except ValueError:
+        # ie. request.args['tags'] is not an int (ie. it is a list of collections like a normal query)
+        querying_all_media = False
+
+    if querying_all_media:
+        tags = [{'tags_id': ALL_MEDIA, 'id': ALL_MEDIA, 'label': "All Media", 'tag_sets_id': ALL_MEDIA}]
+    elif 'tags' in request.args:
         tags = request.args['tags'].split(',')
     matching_sources = media_search(cleaned_search_str, tags)
     return jsonify({'list': matching_sources})

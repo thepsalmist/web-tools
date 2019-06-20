@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import Modal from '@material-ui/core/Modal';
@@ -7,10 +8,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import messages from '../../../resources/messages';
 import PickedMediaContainer from './PickedMediaContainer';
 import MediaPickerResultsContainer from './MediaPickerResultsContainer';
-import { fetchMediaPickerFeaturedCollections, initializePreviouslySelectedMedia, clearSelectedMedia } from '../../../actions/systemActions';
+import { initializePreviouslySelectedMedia, clearSelectedMedia } from '../../../actions/systemActions';
 import AppButton from '../AppButton';
-import { PICK_FEATURED } from '../../../lib/explorerUtil';
-import { TAG_SET_MC_ID } from '../../../lib/tagUtil';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
 const localMessages = {
@@ -80,9 +79,10 @@ class MediaPickerDialog extends React.Component {
   };
 
   render() {
-    const { initMedia, selectedMedia, handleSelection, lookupTimestamp } = this.props;
+    const { initMedia, selectedMedia } = this.props;
     const { formatMessage } = this.props.intl;
     let modalContent = null;
+    const containingEl = document.getElementById('mediaPicker') ? document.getElementById('mediaPicker') : document.getElementById('app');
     if (this.state.open) {
       modalContent = (
         <div>
@@ -94,7 +94,9 @@ class MediaPickerDialog extends React.Component {
             <DialogContent className="select-media-dialog-wrapper">
               <div className="select-media-dialog-inner">
                 <div className="select-media-sidebar">
-                  <PickedMediaContainer selectedMedia={selectedMedia} />
+                  <PickedMediaContainer
+                    selectedMedia={selectedMedia}
+                  />
                   <AppButton
                     className="select-media-ok-button"
                     label={formatMessage(messages.ok)}
@@ -110,7 +112,9 @@ class MediaPickerDialog extends React.Component {
                   />
                 </div>
                 <div className="select-media-content">
-                  <MediaPickerResultsContainer timestamp={lookupTimestamp} selectedMediaQueryType={PICK_FEATURED} selectedMedia={selectedMedia} handleSelection={handleSelection} />
+                  <MediaPickerResultsContainer
+                    selectedMedia={selectedMedia}
+                  />
                 </div>
               </div>
             </DialogContent>
@@ -120,13 +124,18 @@ class MediaPickerDialog extends React.Component {
     }
 
     return (
-      <div className="add-media">
-        <AppButton
-          onClick={() => this.handleModifyClick(initMedia)}
-          tooltip={formatMessage(localMessages.addMedia)}
-          label={localMessages.pickMedia}
-        />
-        {modalContent}
+      <div id="mediaPicker">
+        {ReactDOM.createPortal(
+          <div className="add-media">
+            <AppButton
+              onClick={() => this.handleModifyClick(initMedia)}
+              tooltip={formatMessage(localMessages.addMedia)}
+              label="Add Media"
+            />
+            {modalContent}
+          </div>,
+          containingEl
+        )}
       </div>
     );
   }
@@ -137,27 +146,21 @@ MediaPickerDialog.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent/implementer
   initMedia: PropTypes.array,
-  selectedMedia: PropTypes.array,
-  lookupTimestamp: PropTypes.string,
-  handleSelection: PropTypes.func.isRequired,
   handleInitialSelectionOfMedia: PropTypes.func.isRequired,
   onConfirmSelection: PropTypes.func.isRequired,
   reset: PropTypes.func.isRequired,
   setQueryFormChildDialogOpen: PropTypes.func,
+  elId: PropTypes.object,
+  // from state
+  selectedMedia: PropTypes.array,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.system.mediaPicker.selectMedia.fetchStatus,
   selectedMedia: state.system.mediaPicker.selectMedia.list, // initially empty
-  lookupTimestamp: state.system.mediaPicker.featured.timestamp, // or maybe any of them? trying to get to receive new props when fetch succeeds
 });
 
 const mapDispatchToProps = dispatch => ({
-  handleSelection: (values) => {
-    if (values) {
-      dispatch(fetchMediaPickerFeaturedCollections(TAG_SET_MC_ID));
-    }
-  },
   reset: () => {
     dispatch(clearSelectedMedia());
   },

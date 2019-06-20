@@ -1,12 +1,13 @@
-import { FETCH_METADATA_VALUES_FOR_MEDIA_TYPE } from '../../../actions/systemActions';
-import { createAsyncReducer } from '../../../lib/reduxHelpers';
+import { SELECT_METADATA_QUERY_ARGS } from '../../../../actions/systemActions';
+import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 
 const mediaType = createAsyncReducer({
   initialState: {
     tags: [],
     label: null,
+    value: false,
   },
-  action: FETCH_METADATA_VALUES_FOR_MEDIA_TYPE,
+  action: SELECT_METADATA_QUERY_ARGS,
   handleSuccess: payload => ({
     tags: payload.tags.map(c => ({
       ...c,

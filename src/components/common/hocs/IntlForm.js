@@ -62,7 +62,9 @@ function withIntlForm(Component) {
           <TextField
             className="form-field-text"
             error={error !== undefined}
-            ref={saveRef}
+            ref={() => saveRef(input)}
+            inputRef={saveRef}
+            autoFocus
             {...input}
             {...intlCustom}
             helpertext={touched ? this.intlIfObject(error) : ''}
@@ -80,11 +82,10 @@ function withIntlForm(Component) {
             control={(
               <Checkbox
                 name={input.name}
-                error={intlError}
                 className="form-field-checkbox"
                 label={this.intlIfObject(label)}
                 checked={input.value === true || input.value === 1 || initialValues === 'checked'}
-                onChange={input.onChange}
+                onChange={() => input.onChange({ ...input, value: !input.value })}
                 disabled={this.intlIfObject(disabled)}
               />
             )}

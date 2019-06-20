@@ -51,8 +51,19 @@ const localMessages = {
 };
 
 class QueryForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.textInputRef = React.createRef();
+  }
+
   state = { // do not focus on primary textfield if we have a dialog open
     childDialogOpen: false,
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selected !== this.props.selected) {
+      this.textInputRef.saveRef();
+    }
   }
 
   getAllActiveQueries = queries => (queries.filter(q => q.deleted !== true));
@@ -68,9 +79,17 @@ class QueryForm extends React.Component {
     return anyQueriesNoMedia || thisCurrentQueryFormNoMedia;
   }
 
+  focusQueryInputField = (input) => {
+    if (input) {
+      setTimeout(() => {
+        input.focus();
+      }, 100);
+    }
+  };
+
   render() {
-    const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, onLoadSearches, onDeleteSearch, savedSearches, searchNickname, onSaveSearch,
-      submitting, handleSubmit, onSave, onMediaChange, renderTextField, renderTextFieldWithFocus, onCopyAll } = this.props;
+    const { initialValues, onWillSearch, renderTextFieldWithFocus, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, onLoadSearches, onDeleteSearch, savedSearches, searchNickname, onSaveSearch,
+      submitting, handleSubmit, onSave, onMediaChange, renderTextField, onCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
     const cleanedInitialValues = initialValues ? { ...initialValues } : {};
     if (cleanedInitialValues.disabled === undefined) {
@@ -100,16 +119,8 @@ class QueryForm extends React.Component {
     } // merge into one list with `renderFields`
 
     const currentQ = selected.q;
-    let mediaPicker = null;
     let mediaLabel = formatMessage(localMessages.SandC);
     if (isEditable) {
-      mediaPicker = (
-        <MediaPickerDialog
-          initMedia={selected.media ? selected.media : cleanedInitialValues.media}
-          onConfirmSelection={selections => onMediaChange(selections)}
-          setQueryFormChildDialogOpen={this.setQueryFormChildDialogOpen}
-        />
-      );
       mediaLabel = formatMessage(localMessages.selectSandC);
     }
     const queriesMissingMedia = this.evalAllQueriesForValidMedia();
@@ -140,7 +151,9 @@ class QueryForm extends React.Component {
                     rows={3}
                     rowsMax={4}
                     fullWidth
-                    onChange={this.focusSelect}
+                    ref={(input) => { this.textInputRef = input; }}
+                    inputRef={this.focusQueryInputField}
+                    saveRef={this.focusQueryInputField}
                     component={renderTextFieldWithFocus}
                   />
                 </div>
@@ -151,7 +164,7 @@ class QueryForm extends React.Component {
                 </div>
               </Col>
               <Col lg={4}>
-                <div className="media-field-wrapper">
+                <div className="media-field-wrapper" ref={this.myRef} id="mediaPicker">
                   <div className="media-field-label query-field-label">
                     <span className="query-field-number">2</span>
                     <CopyAllComponent
@@ -172,7 +185,16 @@ class QueryForm extends React.Component {
                     title="title"
                     intro="intro"
                   />
-                  {mediaPicker}
+                  <div>
+                    {isEditable
+                    && (
+                      <MediaPickerDialog
+                        initMedia={selected.media ? selected.media : cleanedInitialValues.media}
+                        onConfirmSelection={selections => onMediaChange(selections)}
+                        setQueryFormChildDialogOpen={this.setQueryFormChildDialogOpen}
+                      />
+                    )}
+                  </div>
                   <div className="query-field-desc">
                     <FormattedMessage {...localMessages.selectSandCDesc} />
                     &nbsp;

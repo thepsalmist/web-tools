@@ -155,6 +155,13 @@ export function fetchQueryCollectionsByIds(params) {
   return createApiPromise('api/explorer/collections/list', acceptedParams);
 }
 
+export function fetchQuerySearchesByIds(params) {
+  const acceptedParams = acceptParams(params, ['uid', 'searches']);
+  acceptedParams['searches[]'] = params.searches;
+  delete acceptedParams.searches;
+  return createApiPromise('api/explorer/custom-searches/list', acceptedParams);
+}
+
 export function loadUserSearches() {
   return createApiPromise('api/explorer/load-user-searches');
 }

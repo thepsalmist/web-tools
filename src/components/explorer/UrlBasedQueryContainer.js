@@ -8,8 +8,8 @@ import withAsyncData from '../common/hocs/AsyncDataContainer';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { LEVEL_ERROR } from '../common/Notice';
 import { addNotice } from '../../actions/appActions';
-import { saveParsedQueries, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo,
-  fetchQuerySourcesByIds, fetchQueryCollectionsByIds, demoQuerySourcesByIds, demoQueryCollectionsByIds } from '../../actions/explorerActions';
+import { saveParsedQueries, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo, updateQuerySearchLookupInfo,
+  fetchQuerySourcesByIds, fetchQueryCollectionsByIds, fetchQuerySearchesByIds, demoQuerySourcesByIds, demoQueryCollectionsByIds } from '../../actions/explorerActions';
 import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, decodeQueryParamString, serializeQueriesForUrl,
   replaceCurlyQuotes, uniqueQueryId, prepSearches } from '../../lib/explorerUtil';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../lib/dateUtil';
@@ -186,7 +186,9 @@ function composeUrlBasedQueryContainer() {
         const querySourceStatus = queries.map(q => q.sources.length === 0
           || q.sources.reduce((combined, s) => combined && s.name !== undefined, true));
         const sourcesAreReady = querySourceStatus.reduce((combined, q) => combined && q, true);
-        return collectionsAreReady && sourcesAreReady;
+        const querySearchStatus = queries.filter(q => q.searches === []).length > 0
+          || queries.filter(q => JSON.stringify(q.searches).indexOf('name') > 0).length > 0;
+        return collectionsAreReady && sourcesAreReady && querySearchStatus;
       }
 
       render() {
@@ -259,6 +261,16 @@ function composeUrlBasedQueryContainer() {
                 queryInfo.collections = results;
                 dispatch(updateQueryCollectionLookupInfo(queryInfo)); // updates the query and the selected query
               });
+          }
+          if (isLoggedIn) {
+            if (q.searches && q.searches !== undefined) {
+              queryInfo.searches = JSON.stringify(q.searches); // back to string
+              dispatch(fetchQuerySearchesByIds(queryInfo))
+                .then((results) => {
+                  queryInfo.searches = results;
+                  dispatch(updateQuerySearchLookupInfo(queryInfo)); // updates the query and the selected query
+                });
+            }
           }
         });
       },

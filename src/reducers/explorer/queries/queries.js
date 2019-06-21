@@ -1,4 +1,4 @@
-import { UPDATE_QUERY, UPDATE_QUERY_COLLECTION_LOOKUP_INFO, UPDATE_QUERY_SOURCE_LOOKUP_INFO, ADD_CUSTOM_QUERY, SELECT_SEARCH_BY_ID, SAVE_PARSED_QUERIES, MARK_AS_DELETED_QUERY, RESET_QUERIES, REMOVE_DELETED_QUERIES, COPY_AND_REPLACE_QUERY_FIELD, REMOVE_NEW_STATUS, SWAP_SORT_QUERIES } from '../../../actions/explorerActions';
+import { UPDATE_QUERY, UPDATE_QUERY_COLLECTION_LOOKUP_INFO, UPDATE_QUERY_SOURCE_LOOKUP_INFO, UPDATE_QUERY_SEARCH_LOOKUP_INFO, ADD_CUSTOM_QUERY, SELECT_SEARCH_BY_ID, SAVE_PARSED_QUERIES, MARK_AS_DELETED_QUERY, RESET_QUERIES, REMOVE_DELETED_QUERIES, COPY_AND_REPLACE_QUERY_FIELD, REMOVE_NEW_STATUS, SWAP_SORT_QUERIES } from '../../../actions/explorerActions';
 import { autoMagicQueryLabel } from '../../../lib/explorerUtil';
 
 const INITIAL_STATE = [];
@@ -86,6 +86,19 @@ function queries(state = INITIAL_STATE, action) {
           return state;
         }
         updatedState[queryIndex].collections = action.payload.collections.results;
+        return updatedState;
+      }
+      return null;
+    case UPDATE_QUERY_SEARCH_LOOKUP_INFO:
+      if (action.payload && state && state.length > 0) { // just for safety
+        updatedState = [...state];
+        queryIndex = state.findIndex(q => q.uid !== null && q.uid === action.payload.uid);
+        if (queryIndex === -1) {
+          // we didn't fine the query uid we are looking for, so this is an error
+          // so swallow the error for now with no updates
+          return state;
+        }
+        updatedState[queryIndex].searches = action.payload.searches.results;
         return updatedState;
       }
       return null;

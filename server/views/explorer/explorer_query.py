@@ -6,7 +6,7 @@ from server.auth import user_admin_mediacloud_client, user_has_auth_role, is_use
 from server.util.request import form_fields_required, api_error_handler, arguments_required
 from server.views.explorer import read_sample_searches, ALL_MEDIA
 from operator import itemgetter
-
+import json
 logger = logging.getLogger(__name__)
 
 
@@ -54,6 +54,27 @@ def api_explorer_collections_by_ids():
             info['id'] = int(tags_id)
             collection_list.append(info)
     return jsonify({"results": collection_list})
+
+
+@app.route('/api/explorer/custom-searches/list', methods=['GET'])
+@flask_login.login_required
+@arguments_required('searches[]')
+@api_error_handler
+def api_explorer_searches_by_ids():
+    user_mc = user_admin_mediacloud_client()
+    tag_set_tag_list = []
+    tag_list = json.loads(request.args['searches[]'])
+    for t in tag_list:
+        info = user_mc.tagSet(t)
+        info['id'] = int(t)
+        info['tags'] =[]
+        for s in tag_list[t]:
+            tag_info = user_mc.tag(s)
+            info['tags'].append(tag_info)
+        tag_set_tag_list.append(info)
+    return jsonify({"results": tag_set_tag_list})
+
+
 
 
 @app.route('/api/explorer/demo/sources/list', methods=['GET'])

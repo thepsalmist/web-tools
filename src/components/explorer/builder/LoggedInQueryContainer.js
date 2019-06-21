@@ -75,7 +75,7 @@ const mapStateToProps = state => ({
 
 // push any updates (including selected) into queries in state, will trigger async load in sub sections
 const mapDispatchToProps = dispatch => ({
-  resetExplorerData: () => { // TODO we will reduce this down to one call
+  resetExplorerData: () => {
     dispatch(resetSelected());
     // dispatch(resetQueries());
     dispatch(resetSentenceCounts());
@@ -92,7 +92,6 @@ const mapDispatchToProps = dispatch => ({
     const collections = queries
       .map(q => q.collections.map(c => c.tags_id))
       .reduce((combined, current) => [...combined, ...current]);
-    let selectedSearchTags = [];
     const searchTagsPerQuery = queries.map((q) => {
       if (q.searches) {
         return prepSearches(q.searches); // with metadata objects

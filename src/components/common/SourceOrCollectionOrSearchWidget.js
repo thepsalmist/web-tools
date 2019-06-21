@@ -8,14 +8,16 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children,
   let typeClass = 'source';
   let objectId = object.media_id;
   let name = (object.name || object.label || object.url);
+  let subSearch = '';
   if (isCollection) {
     typeClass = 'collection';
     objectId = object.tags_id;
     name = (object.name || object.label || object.tag);
   } else if (isSearch) {
-    typeClass = 'search';
-    objectId = 'search';
-    name = 'search';
+    typeClass = object.name;
+    objectId = object.tag_sets_id;
+    name = object.label;
+    subSearch = object.tags.map(t => t.label);
   }
   // link the text if there is a click handler defined
   let text;
@@ -23,8 +25,9 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children,
     text = (<a href={link} target="_blank" rel="noopener noreferrer">{name}</a>);
   } else if (onClick) {
     text = (<a href="#" onClick={onClick}>{name}</a>);
-  } else {
+  } else if (isSearch) {
     text = name;
+    subSearch = `<span><br />with ${subSearch}</span>`;
   }
   return (
     <span
@@ -32,6 +35,7 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children,
       key={`media-widget${objectId}`}
     >
       {text}
+      {subSearch}
       {children}
       {onDelete && <DeleteButton onClick={onDelete} />}
     </span>

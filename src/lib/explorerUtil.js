@@ -84,17 +84,23 @@ export function generateQueryParamObject(query, skipEncoding) {
   };
 }
 
+export const metadataQueryFields = new Set(['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType']);
+
+
 export function prepSearches(q) { // grab all data from each object in tags
+  const tagObj = {};
   if (q && q.tags) {
-    const dataTags = Object.values(q.tags).filter(j => Array.isArray(j) && j.length > 0)[0].map((m) => {
-      const tagObj = {};
-      const tagSetId = m.tag_sets_id;
-      tagObj[tagSetId] = m.tags_id;
-      return tagObj;
+    Object.keys(q.tags).forEach((m) => { // for each tag
+      if (metadataQueryFields.has(m) && q.tags[m].tag_sets_id) { // that is metadata
+        const tagSetId = q.tags[m].tag_sets_id;
+        const vals = Object.values(q.tags[m]).map(a => a.tags_id).filter(t => t);
+        tagObj[tagSetId] = vals;
+        return tagObj;
+      }
+      return null;
     });
-    return dataTags;
   }
-  return [];
+  return tagObj;
 }
 
 export function generateQueryParamString(queries) {

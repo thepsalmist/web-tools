@@ -100,8 +100,7 @@ const mapDispatchToProps = dispatch => ({
       return null;
     });
 
-    selectedSearchTags = searchTagsPerQuery.map(q => Object.values());
-    dispatch(countSourceCollectionUsage({ sources, collections, selectedSearchTags }));
+    dispatch(countSourceCollectionUsage({ sources, collections, searchTagsPerQuery }));
     dispatch(removeDeletedQueries());
     dispatch(removeNewStatusFromQueries());
     dispatch(updateTimestampForQueries()); // but this doesn't update the query... only the timestamp.. nextprops.queries should be new?

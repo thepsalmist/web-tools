@@ -62,17 +62,24 @@ def api_explorer_collections_by_ids():
 @api_error_handler
 def api_explorer_searches_by_ids():
     user_mc = user_admin_mediacloud_client()
-    tag_set_tag_list = []
+    tag_set_tag_obj = {}
+    tag_set_tag_obj['tags'] = {}
     tag_list = json.loads(request.args['searches[]'])
     for t in tag_list:
-        info = user_mc.tagSet(t)
-        info['id'] = int(t)
-        info['tags'] =[]
+        metadata_tag = user_mc.tagSet(t)
+        metadata_tag['id'] = int(t)
+        search_tags =[]
+        tag_set_tag_obj['tags'][metadata_tag['name']] = []
         for s in tag_list[t]:
             tag_info = user_mc.tag(s)
-            info['tags'].append(tag_info)
-        tag_set_tag_list.append(info)
-    return jsonify({"results": tag_set_tag_list})
+            search_tags.append(tag_info)
+        metadata_tag['searchTags'] = search_tags
+        tag_set_tag_obj['tags'][metadata_tag['name']].append(metadata_tag)
+    tag_set_tag_obj['addAllSearch'] = True
+    tag_set_tag_obj['name'] = "search"
+
+
+    return jsonify({"results": tag_set_tag_obj})
 
 
 

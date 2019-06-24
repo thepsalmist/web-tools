@@ -50,7 +50,7 @@ class PickedMediaContainer extends React.Component {
           <h3><FormattedMessage {...localMessages.selectedMedia} /></h3>
           {selectedMedia.map(obj => (
             <SourceOrCollectionOrSearchWidget
-              key={obj.id || obj.tags_id || obj.media_id || obj.tags.name}
+              key={obj.id || obj.tags_id || obj.media_id || obj.tag_sets_id || obj.tags.name}
               object={obj}
               onDelete={() => handleUnselectMedia(obj)}
             />

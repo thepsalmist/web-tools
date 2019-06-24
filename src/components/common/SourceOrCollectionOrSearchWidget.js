@@ -8,7 +8,7 @@ const localMessages = {
 };
 
 const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children, link }) => {
-  const isSearch = object.tags !== undefined;
+  const isSearch = object.addAllSearch === true;
   const isCollection = object.tags_id !== undefined;
   let typeClass = 'source';
   let objectId = object.media_id;

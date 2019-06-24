@@ -151,7 +151,7 @@ function composeUrlBasedQueryContainer() {
           extraDefaults = {
             sources: [],
             collections: DEFAULT_COLLECTION_OBJECT_ARRAY,
-            searches: [],
+            searches: {}, // note, searches is an object
             startDate: solrFormat(dateObj.start),
             endDate: solrFormat(dateObj.end),
           };
@@ -186,7 +186,8 @@ function composeUrlBasedQueryContainer() {
         const querySourceStatus = queries.map(q => q.sources.length === 0
           || q.sources.reduce((combined, s) => combined && s.name !== undefined, true));
         const sourcesAreReady = querySourceStatus.reduce((combined, q) => combined && q, true);
-        const querySearchStatus = queries.filter(q => q.searches === []).length === 0
+        const querySearchStatus = queries.filter(q => Object.values(q.searches).length === 0).length === queries.length
+          // if all searches fields are empty or if searches have fetched name
           || queries.filter(q => JSON.stringify(q.searches).indexOf('name') > 0).length > 0;
         return collectionsAreReady && sourcesAreReady && querySearchStatus;
       }
@@ -263,7 +264,7 @@ function composeUrlBasedQueryContainer() {
               });
           }
           if (isLoggedIn) {
-            if (q.searches && q.searches !== undefined && q.searches.length > 0) {
+            if (q.searches && q.searches !== undefined && Object.values(q.searches).length > 0) {
               queryInfo.searches = JSON.stringify(q.searches); // back to string
               dispatch(fetchQuerySearchesByIds(queryInfo))
                 .then((results) => {

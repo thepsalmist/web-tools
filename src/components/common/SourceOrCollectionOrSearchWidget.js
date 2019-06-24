@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FormattedHTMLMessage } from 'react-intl';
 import { DeleteButton } from './IconButton';
+
+const localMessages = {
+  withSearch: { id: 'explorer.mediaPicker.search', defaultMessage: 'With Search<br /> {value}' },
+};
 
 const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children, link }) => {
   const isSearch = object.tags !== undefined;
@@ -14,10 +19,13 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children,
     objectId = object.tags_id;
     name = (object.name || object.label || object.tag);
   } else if (isSearch) {
-    typeClass = object.name;
-    objectId = object.tag_sets_id;
-    name = object.label;
-    subSearch = object.tags.map(t => t.label);
+    subSearch = Object.values(object.tags)
+      .filter(t => Array.isArray(t) && t.length > 0)
+      .map((i) => {
+        const tags = i.map(a => `<li key=${a.tags_id}>${a.label}</li>`);
+        return `<ul key=${i.tag_sets_id}>${tags}</ul>`;
+      });
+    subSearch = <FormattedHTMLMessage {...localMessages.withSearch} values={{ value: subSearch }} />;
   }
   // link the text if there is a click handler defined
   let text;
@@ -25,9 +33,8 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children,
     text = (<a href={link} target="_blank" rel="noopener noreferrer">{name}</a>);
   } else if (onClick) {
     text = (<a href="#" onClick={onClick}>{name}</a>);
-  } else if (isSearch) {
+  } else {
     text = name;
-    subSearch = `<span><br />with ${subSearch}</span>`;
   }
   return (
     <span

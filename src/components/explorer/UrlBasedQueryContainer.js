@@ -186,7 +186,7 @@ function composeUrlBasedQueryContainer() {
         const querySourceStatus = queries.map(q => q.sources.length === 0
           || q.sources.reduce((combined, s) => combined && s.name !== undefined, true));
         const sourcesAreReady = querySourceStatus.reduce((combined, q) => combined && q, true);
-        const querySearchStatus = queries.filter(q => q.searches === []).length > 0
+        const querySearchStatus = queries.filter(q => q.searches === []).length === 0
           || queries.filter(q => JSON.stringify(q.searches).indexOf('name') > 0).length > 0;
         return collectionsAreReady && sourcesAreReady && querySearchStatus;
       }
@@ -263,7 +263,7 @@ function composeUrlBasedQueryContainer() {
               });
           }
           if (isLoggedIn) {
-            if (q.searches && q.searches !== undefined) {
+            if (q.searches && q.searches !== undefined && q.searches.length > 0) {
               queryInfo.searches = JSON.stringify(q.searches); // back to string
               dispatch(fetchQuerySearchesByIds(queryInfo))
                 .then((results) => {

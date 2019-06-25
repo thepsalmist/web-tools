@@ -4,6 +4,7 @@ import flask_login
 from server import app, mc
 from server.auth import user_admin_mediacloud_client, user_has_auth_role, is_user_logged_in, ROLE_MEDIA_EDIT
 from server.util.request import form_fields_required, api_error_handler, arguments_required
+from server.util.tags import TAG_SETS_ID_PUBLICATION_COUNTRY, TAG_SETS_ID_PUBLICATION_STATE, TAG_SETS_ID_PRIMARY_LANGUAGE, TAG_SETS_ID_COUNTRY_OF_FOCUS, TAG_SETS_ID_MEDIA_TYPE
 from server.views.explorer import read_sample_searches, ALL_MEDIA
 from operator import itemgetter
 import json
@@ -56,6 +57,20 @@ def api_explorer_collections_by_ids():
     return jsonify({"results": collection_list})
 
 
+def lookup_readable_metadata_name(tag_sets_id):
+    if tag_sets_id == TAG_SETS_ID_PUBLICATION_COUNTRY:
+        return "publicationCountry"
+    elif tag_sets_id == TAG_SETS_ID_PUBLICATION_STATE:
+        return "publicationState"
+    elif tag_sets_id == TAG_SETS_ID_PRIMARY_LANGUAGE:
+        return "primaryLanguage"
+    elif tag_sets_id == TAG_SETS_ID_COUNTRY_OF_FOCUS:
+        return "countryOfFocu"
+    elif tag_sets_id == TAG_SETS_ID_MEDIA_TYPE:
+        return "mediaType"
+
+
+
 @app.route('/api/explorer/custom-searches/list', methods=['GET'])
 @flask_login.login_required
 @arguments_required('searches[]')
@@ -72,9 +87,10 @@ def api_explorer_searches_by_ids():
         tag_set_tag_obj['tags'][metadata_tag['name']] = []
         for s in tag_list[t]:
             tag_info = user_mc.tag(s)
+            tag_info['value'] = True #test before
             search_tags.append(tag_info)
-        metadata_tag['searchTags'] = search_tags
-        tag_set_tag_obj['tags'][metadata_tag['name']].append(metadata_tag)
+        readable_name = lookup_readable_metadata_name(metadata_tag['tag_sets_id'])
+        tag_set_tag_obj['tags'][readable_name] = search_tags
     tag_set_tag_obj['addAllSearch'] = True
     tag_set_tag_obj['name'] = "search"
 

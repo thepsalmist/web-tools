@@ -46,7 +46,7 @@ class SourceSearchResultsContainer extends React.Component {
       updatedQueryObj.tags = []; // if first metadata selection
     }
 
-    const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType'];
+    const metadataQueryFields = ['publicationCountry', 'pub_country', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType', 'media_format'];
 
     metadataQueryFields.forEach((key) => {
       if (updatedQueryObj.tags[key] === undefined) {
@@ -125,14 +125,15 @@ class SourceSearchResultsContainer extends React.Component {
   }
 
   render() {
-    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
+    const { fetchStatus, selectedMedia, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     let resultContent = null;
+    const tagsAndMetadataTagSelections = Object.assign({}, selectedMediaQueryTags, selectedMedia);
     content = (
       <div>
         <AdvancedMediaPickerSearchForm
-          initialValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword }, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags }}
+          initialValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword }, tags: tagsAndMetadataTagSelections, allMedia: selectedMediaQueryAllTags }}
           onMetadataSelection={(metadataType, values) => this.updateQuerySelection(metadataType, values)}
           onSearch={val => this.updateAndSearchWithSelection(val)}
           hintText={formatMessage(localMessages.hintText)}
@@ -218,6 +219,7 @@ const mapStateToProps = state => ({
   ),
 });
 
+// tags holds metadata search tags
 const mapDispatchToProps = (dispatch, ownProps) => ({
   updateMediaQuerySelection: (values) => {
     if (values && values.tags && Object.values(values.tags).length > 0) {

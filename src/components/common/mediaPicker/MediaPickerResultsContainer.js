@@ -31,6 +31,11 @@ class MediaPickerResultsContainer extends React.Component {
     resetComponents();
   }
 
+  updateMediaQuery(values) {
+    const { updateMediaQuerySelection } = this.props;
+    updateMediaQuerySelection(values);
+  }
+
   correlateSelection(whichProps) {
     let whichList = {};
     if (!whichProps.selectedMediaQueryType) return 0;
@@ -59,12 +64,12 @@ class MediaPickerResultsContainer extends React.Component {
         return m;
       });
     }
+    // if selected metadata has changed, update here
+    if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0) {
+      // sync up selectedMedia and push to result sets.
+      whichProps.selectedMedia.map(m => this.updateMediaQuery({ type: this.props.selectedMediaQueryType, ...m }));
+    }
     return 0;
-  }
-
-  updateMediaQuery(values) {
-    const { updateMediaQuerySelection } = this.props;
-    updateMediaQuerySelection(values);
   }
 
   render() {
@@ -117,6 +122,10 @@ MediaPickerResultsContainer.propTypes = {
   handleToggleSelected: PropTypes.func.isRequired,
   updateMediaQuerySelection: PropTypes.func.isRequired,
   selectedMediaQueryType: PropTypes.number,
+  selectedMediaQueryTags: PropTypes.oneOfType([
+    PropTypes.object, // one tag
+    PropTypes.array, // list of tags
+  ]),
   resetComponents: PropTypes.func.isRequired,
   featured: PropTypes.object,
   favoritedCollections: PropTypes.object,
@@ -130,6 +139,7 @@ const mapStateToProps = state => ({
   fetchStatus: (state.system.mediaPicker.sourceQueryResults.fetchStatus === fetchConstants.FETCH_SUCCEEDED || state.system.mediaPicker.collectionQueryResults.fetchStatus === fetchConstants.FETCH_SUCCEEDED || state.system.mediaPicker.favoritedCollections.fetchStatus === fetchConstants.FETCH_SUCCEEDED) ? fetchConstants.FETCH_SUCCEEDED : fetchConstants.FETCH_INVALID,
   selectedMedia: state.system.mediaPicker.selectMedia.list,
   selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : null,
+  selectedMediaQueryTags: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.tags : null,
   collectionResults: state.system.mediaPicker.collectionQueryResults,
   featured: state.system.mediaPicker.featured ? state.system.mediaPicker.featured : null,
   sourceResults: state.system.mediaPicker.sourceQueryResults,

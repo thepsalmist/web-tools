@@ -117,10 +117,8 @@ class QueryForm extends React.Component {
     if (selected.sources && selected.sources.length) {
       selected.media = selected.media.concat(selected.sources);
     } // merge into one list with `renderFields`
-    if (selected.searches && Object.keys(selected.searches).length > 0) {
+    if (selected.searches && selected.searches.tags && Object.keys(selected.searches.tags).length > 0) {
       selected.media = selected.media.concat(selected.searches);
-      // TODO - we want to handle the concept of a Search item so would need to preserve media concept
-      // like selected.media.searches.. but would have to handle going into mediapicker too
     }
     const currentQ = selected.q;
     let mediaLabel = formatMessage(localMessages.SandC);
@@ -299,7 +297,7 @@ QueryForm.propTypes = {
   onCopyAll: PropTypes.func.isRequired,
   onMediaDelete: PropTypes.func.isRequired,
   onDateChange: PropTypes.func.isRequired,
-  // from state
+  // from setState
   queries: PropTypes.array,
   // from form helper
   updateQuery: PropTypes.func,

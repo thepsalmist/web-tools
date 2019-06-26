@@ -98,15 +98,18 @@ function queries(state = INITIAL_STATE, action) {
           // so swallow the error for now with no updates
           return state;
         }
-        const updatedArray = action.payload.searches.results;
+        const updatedArray = {};
         Object.keys(action.payload.searches.results.tags).forEach((m) => { // for each tag
-          // pubcountry
-          let storeArray = action.payload.searches.results.tags[m];
+          // get readable name from tag id for each metadata selection
+          let storeArray = {};
+          storeArray = action.payload.searches.results.tags[m];
           const tagSet = Object.values(storeArray).map(a => a.tag_sets_id).reduce(t => t);
           storeArray = Object.values(storeArray).map(a => Object.assign({}, a, { selected: true }));
           const readableName = lookupReadableMetadataName(tagSet);
-          updatedArray.tags = {};
+          if (!updatedArray.tags) updatedArray.tags = {};
+          // set up array with updated values
           updatedArray.tags[readableName] = storeArray;
+          updatedArray.addAllSearch = action.payload.searches.results.addAllSearch;
         });
         updatedState[queryIndex].searches = updatedArray;
         return updatedState;

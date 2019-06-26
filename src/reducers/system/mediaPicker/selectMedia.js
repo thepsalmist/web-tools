@@ -21,6 +21,7 @@ function selectMedia(state = INITIAL_STATE, action) {
     case MEDIA_PICKER_SELECT_MEDIA:
       updatedSelectedList = [...state.list];
       // if it is a new item to add to the list
+      // TODO: how do we accomodate searches?
       if (!updatedSelectedList.some(s => s.id === action.payload.id)) {
         const selectedObj = action.payload;
         selectedObj.selected = selectedObj.selected === undefined ? true : !selectedObj.selected;
@@ -30,6 +31,15 @@ function selectMedia(state = INITIAL_STATE, action) {
         const mediaIndex = updatedSelectedList.findIndex(s => s.id === action.payload.id);
         // mediaObj.selected = !(mediaObj.selected);
         updatedSelectedList.splice(mediaIndex, 1); // in display check matches
+      }
+
+      if (action.payload.tags) { // update metadata selections
+        const prevTags = updatedSelectedList.filter(m => 'tags' in m)[0];
+        if (prevTags) {
+          prevTags.tags = action.payload.tags;
+        } else {
+          updatedSelectedList.push(action.payload);
+        }
       }
       return { list: updatedSelectedList };
 

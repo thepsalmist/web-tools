@@ -1,5 +1,5 @@
 import { UPDATE_QUERY, UPDATE_QUERY_COLLECTION_LOOKUP_INFO, UPDATE_QUERY_SOURCE_LOOKUP_INFO, UPDATE_QUERY_SEARCH_LOOKUP_INFO, ADD_CUSTOM_QUERY, SELECT_SEARCH_BY_ID, SAVE_PARSED_QUERIES, MARK_AS_DELETED_QUERY, RESET_QUERIES, REMOVE_DELETED_QUERIES, COPY_AND_REPLACE_QUERY_FIELD, REMOVE_NEW_STATUS, SWAP_SORT_QUERIES } from '../../../actions/explorerActions';
-import { autoMagicQueryLabel } from '../../../lib/explorerUtil';
+import { autoMagicQueryLabel, lookupReadableMetadataName } from '../../../lib/explorerUtil';
 
 const INITIAL_STATE = [];
 
@@ -98,7 +98,17 @@ function queries(state = INITIAL_STATE, action) {
           // so swallow the error for now with no updates
           return state;
         }
-        updatedState[queryIndex].searches = action.payload.searches.results;
+        const updatedArray = action.payload.searches.results;
+        Object.keys(action.payload.searches.results.tags).forEach((m) => { // for each tag
+          // pubcountry
+          let storeArray = action.payload.searches.results.tags[m];
+          const tagSet = Object.values(storeArray).map(a => a.tag_sets_id).reduce(t => t);
+          storeArray = Object.values(storeArray).map(a => Object.assign({}, a, { selected: true }));
+          const readableName = lookupReadableMetadataName(tagSet);
+          updatedArray.tags = {};
+          updatedArray.tags[readableName] = storeArray;
+        });
+        updatedState[queryIndex].searches = updatedArray;
         return updatedState;
       }
       return null;

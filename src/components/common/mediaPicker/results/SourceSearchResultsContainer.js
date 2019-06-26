@@ -46,7 +46,7 @@ class SourceSearchResultsContainer extends React.Component {
       updatedQueryObj.tags = []; // if first metadata selection
     }
 
-    const metadataQueryFields = ['publicationCountry', 'pub_country', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType', 'media_format'];
+    const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType'];
 
     metadataQueryFields.forEach((key) => {
       if (updatedQueryObj.tags[key] === undefined) {

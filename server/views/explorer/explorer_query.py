@@ -57,20 +57,6 @@ def api_explorer_collections_by_ids():
     return jsonify({"results": collection_list})
 
 
-def lookup_readable_metadata_name(tag_sets_id):
-    if tag_sets_id == TAG_SETS_ID_PUBLICATION_COUNTRY:
-        return "publicationCountry"
-    elif tag_sets_id == TAG_SETS_ID_PUBLICATION_STATE:
-        return "publicationState"
-    elif tag_sets_id == TAG_SETS_ID_PRIMARY_LANGUAGE:
-        return "primaryLanguage"
-    elif tag_sets_id == TAG_SETS_ID_COUNTRY_OF_FOCUS:
-        return "countryOfFocu"
-    elif tag_sets_id == TAG_SETS_ID_MEDIA_TYPE:
-        return "mediaType"
-
-
-
 @app.route('/api/explorer/custom-searches/list', methods=['GET'])
 @flask_login.login_required
 @arguments_required('searches[]')
@@ -89,8 +75,7 @@ def api_explorer_searches_by_ids():
             tag_info = user_mc.tag(s)
             tag_info['value'] = True #test before
             search_tags.append(tag_info)
-        readable_name = lookup_readable_metadata_name(metadata_tag['tag_sets_id'])
-        tag_set_tag_obj['tags'][readable_name] = search_tags
+        tag_set_tag_obj['tags'][metadata_tag['name']] = search_tags
     tag_set_tag_obj['addAllSearch'] = True
     tag_set_tag_obj['name'] = "search"
 

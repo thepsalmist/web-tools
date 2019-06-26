@@ -4,6 +4,7 @@ import { trimToMaxLength } from './stringUtil';
 import { notEmptyString } from './formValidators';
 import { downloadViaFormPost } from './apiUtil';
 import { downloadSvg } from '../components/util/svg';
+import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE, PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE } from './tagUtil';
 
 export const DEFAULT_SOURCES = '';
 
@@ -84,10 +85,27 @@ export function generateQueryParamObject(query, skipEncoding) {
   };
 }
 
-export const metadataQueryFields = new Set(['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType']);
+export function lookupReadableMetadataName(tagSetsId) {
+  switch (tagSetsId) {
+    case TAG_SET_PUBLICATION_COUNTRY:
+      return PUBLICATION_COUNTRY;
+    case TAG_SET_PUBLICATION_STATE:
+      return PUBLICATION_STATE;
+    case TAG_SET_PRIMARY_LANGUAGE:
+      return PRIMARY_LANGUAGE;
+    case TAG_SET_COUNTRY_OF_FOCUS:
+      return COUNTRY_OF_FOCUS;
+    case TAG_SET_MEDIA_TYPE:
+      return MEDIA_TYPE;
+    default:
+      return null;
+  }
+}
+
+export const metadataQueryFields = new Set([PUBLICATION_COUNTRY, PUBLICATION_STATE, PRIMARY_LANGUAGE, COUNTRY_OF_FOCUS, MEDIA_TYPE]);
 
 
-export function prepSearches(q) { // grab all data from each object in tags
+export function prepSearches(q) { // grab all data from each object in tags - we will serialize out to URL
   const tagObj = {};
   if (q && q.tags) {
     Object.keys(q.tags).forEach((m) => { // for each tag

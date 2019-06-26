@@ -14,6 +14,7 @@ function selectMedia(state = INITIAL_STATE, action) {
     case MEDIA_PICKER_INITIALIZE_ALREADY_SELECTED_MEDIA:
       updatedSelectedList = [...action.payload];
       updatedSelectedList = updatedSelectedList.map(c => ({ ...c, selected: true, id: c.tags_id ? c.tags_id : c.media_id }));
+      updatedSelectedList.map(c => c.isAllSearch);
       return { list: updatedSelectedList };
 
     // toggle a particular item on the list

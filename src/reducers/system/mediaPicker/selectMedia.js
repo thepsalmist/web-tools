@@ -37,6 +37,7 @@ function selectMedia(state = INITIAL_STATE, action) {
         const prevTags = updatedSelectedList.filter(m => 'tags' in m)[0];
         if (prevTags) {
           prevTags.tags = action.payload.tags;
+          // need to do something to set selected here
         } else {
           updatedSelectedList.push(action.payload);
         }

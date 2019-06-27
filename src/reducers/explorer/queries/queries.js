@@ -109,6 +109,7 @@ function queries(state = INITIAL_STATE, action) {
           if (!updatedArray.tags) updatedArray.tags = {};
           // set up array with updated values
           updatedArray.tags[readableName] = storeArray;
+          updatedArray.tags[readableName].tag_sets_id = tagSet;
           updatedArray.addAllSearch = action.payload.searches.results.addAllSearch;
         });
         updatedState[queryIndex].searches = updatedArray;

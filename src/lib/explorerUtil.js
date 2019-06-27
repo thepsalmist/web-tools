@@ -111,7 +111,7 @@ export function prepSearches(q) { // grab all data from each object in tags - we
     Object.keys(q.tags).forEach((m) => { // for each tag
       if (metadataQueryFields.has(m) && q.tags[m].tag_sets_id) { // that is metadata
         const tagSetId = q.tags[m].tag_sets_id;
-        const vals = Object.values(q.tags[m]).map(a => a.tags_id).filter(t => t);
+        const vals = Object.values(q.tags[m]).map(a => (a.selected ? a.tags_id : null)).filter(t => t);
         tagObj[tagSetId] = vals;
         return tagObj;
       }

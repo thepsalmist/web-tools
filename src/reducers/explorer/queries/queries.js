@@ -103,14 +103,16 @@ function queries(state = INITIAL_STATE, action) {
           // get readable name from tag id for each metadata selection
           let storeArray = {};
           storeArray = action.payload.searches.results.tags[m];
-          const tagSet = Object.values(storeArray).map(a => a.tag_sets_id).reduce(t => t);
-          storeArray = Object.values(storeArray).map(a => Object.assign({}, a, { selected: true }));
-          const readableName = lookupReadableMetadataName(tagSet);
-          if (!updatedArray.tags) updatedArray.tags = {};
-          // set up array with updated values
-          updatedArray.tags[readableName] = storeArray;
-          updatedArray.tags[readableName].tag_sets_id = tagSet;
-          updatedArray.addAllSearch = action.payload.searches.results.addAllSearch;
+          if (storeArray.length > 0) {
+            const tagSet = Object.values(storeArray).map(a => a.tag_sets_id).reduce(t => t);
+            storeArray = Object.values(storeArray).map(a => Object.assign({}, a, { selected: true }));
+            const readableName = lookupReadableMetadataName(tagSet);
+            if (!updatedArray.tags) updatedArray.tags = {};
+            // set up array with updated values
+            updatedArray.tags[readableName] = storeArray;
+            updatedArray.tags[readableName].tag_sets_id = tagSet;
+            updatedArray.addAllSearch = action.payload.searches.results.addAllSearch;
+          }
         });
         updatedState[queryIndex].searches = updatedArray;
         return updatedState;

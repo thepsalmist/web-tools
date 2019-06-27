@@ -87,8 +87,18 @@ const mapDispatchToProps = dispatch => ({
   },
   handleUnselectMedia: (selectedMedia) => {
     if (selectedMedia) {
-      const unselectecMedia = Object.assign({}, selectedMedia, { selected: false });
-      dispatch(selectMedia(unselectecMedia)); // disable button too
+      let unselectedMedia = {};
+      if (selectedMedia.id) {
+        unselectedMedia = Object.assign({}, selectedMedia, { selected: false });
+      } else {
+        Object.keys(selectedMedia.tags).forEach((m) => { // for each tag
+          Object.values(selectedMedia.tags[m]).map(a => Object.assign(a, { selected: false }));
+        });
+        const unselectedMetadataTags = Object.values(selectedMedia.tags).map(t => (Object.assign({}, t, { selected: false })));
+        unselectedMedia.tags = unselectedMetadataTags;
+        unselectedMedia.addAllSearch = false;
+      }
+      dispatch(selectMedia(unselectedMedia)); // TODO: why aren't we using a specific action and reducer to do this?
     }
   },
 });

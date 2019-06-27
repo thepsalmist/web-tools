@@ -22,8 +22,9 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children,
     subSearch = Object.values(object.tags)
       .filter(t => Array.isArray(t) && t.length > 0)
       .map((i) => {
+        const metadataName = i.map(a => a.tag_set_label).reduce(l => l);
         const tags = i.map(a => (a.selected ? `<li key=${a.tags_id}>${a.label}</li>` : ''));
-        return `<ul key=${i.tag_sets_id}>${tags}</ul>`;
+        return `<ul key=${i.tag_sets_id}>${metadataName}${tags}</ul>`;
       });
     subSearch = <FormattedHTMLMessage {...localMessages.withSearch} values={{ value: subSearch }} />;
   }

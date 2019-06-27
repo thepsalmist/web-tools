@@ -57,6 +57,7 @@ class QueryPickerContainer extends React.Component {
     const updatedCollections = formQuery.media.filter(m => m.id !== toBeDeletedObj.id && (m.type === 'collection' || m.tags_id));
     updatedMedia.collections = updatedCollections;
     updatedMedia.sources = updatedSources;
+    updatedMedia.searches = formQuery.media.filter(m => m.tags === toBeDeletedObj.tags && toBeDeletedObj.addAllSearch);
     updateCurrentQuery(updatedMedia, null);
   }
 

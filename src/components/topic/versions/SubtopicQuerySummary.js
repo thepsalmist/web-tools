@@ -12,7 +12,7 @@ const localMessages = {
   search: { id: 'topic.info.search', defaultMessage: 'Search Terms' },
 };
 
-const SubtopicQuerySummary = ({ focalSets, snapshot, filters }) => (
+const SubtopicQuerySummary = ({ focalSets, snapshot }) => (
   // the form has them grouped together, but the topic object has them separate
   <div className="">
     <h2>

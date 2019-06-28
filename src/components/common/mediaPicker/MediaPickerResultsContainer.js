@@ -67,8 +67,7 @@ class MediaPickerResultsContainer extends React.Component {
     // if selected metadata has changed, update here
     // selected metadata search settings has to be handled
     if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0) {
-      // sync up selectedMedia and push to result sets.
-      // TODO losing queries when unselected.. this should be a merge/add
+      // sync up incoming selectedMedia and push to result sets.
       whichProps.selectedMedia.map(m => this.updateMediaQuery({ ...m, type: this.props.selectedMediaQueryType }));
     }
     return 0;

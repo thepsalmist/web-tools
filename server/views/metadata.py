@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 PUBLICATION_COUNTRY_DEFAULTS = [{'label':'United States', 'tags_id': 9353663, 'tag_sets_id': 1935}, {'label': 'Japan', 'tags_id': 9353544, 'tag_sets_id': 1935}, {'label': 'Australia', 'tags_id': 9353443, 'tag_sets_id': 1935}, {'label': 'China', 'tags_id': 9353472, 'tag_sets_id': 1935}, {'label': 'Russia', 'tags_id': 9353618, 'tag_sets_id': 1935}]
 PUBLICATION_STATE_DEFAULTS = [{'label':'USA', 'tags_id': 9353663, 'tag_sets_id': 1962}, {'label': 'VEN', 'tags_id': 3625428, 'tag_sets_id': 1962}]
 PRIMARY_LANGUAGE_DEFAULTS = [{'label': 'armenian', 'tags_id': 9361542, 'tag_sets_id': 1969}, {'label': 'english', 'tags_id': 9361542, 'tag_sets_id': 1969}]
-COUNTRY_OF_FOCUS_DEFAULTS = [{'label':'USA', 'tags_id': 9353663}, {'label': 'VEN', 'tags_id': 3625428, 'tag_sets_id': 1970}]
+COUNTRY_OF_FOCUS_DEFAULTS = [{'label':'USA', 'tags_id': 9353663, 'tag_sets_id':1970 }, {'label': 'VEN', 'tags_id': 3625428, 'tag_sets_id': 1970}]
 
 @app.route('/api/metadata/<tag_sets_id>/values', methods=['GET'])
 @flask_login.login_required

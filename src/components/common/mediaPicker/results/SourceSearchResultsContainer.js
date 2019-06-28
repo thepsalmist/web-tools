@@ -18,7 +18,7 @@ const localMessages = {
   showAdvancedOptions: { id: 'system.mediaPicker.sources.showAdvancedOptions', defaultMessage: 'Show Advanced Options' },
   hideAdvancedOptions: { id: 'system.mediaPicker.sources.hideAdvancedOptions', defaultMessage: 'Hide Advanced Options' },
   allMedia: { id: 'system.mediaPicker.sources.allMedia', defaultMessage: 'All Media (not advised)' },
-  addAllSearch: { id: 'system.mediaPicker.sources.addAllSearch', defaultMessage: 'Add Searches By Metadata' },
+  addAllSearch: { id: 'system.mediaPicker.sources.addAllSearch', defaultMessage: 'Add/Remove Searches By Metadata' },
 };
 
 const formSelector = formValueSelector('advanced-media-picker-search');

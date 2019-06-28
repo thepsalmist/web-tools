@@ -19,14 +19,20 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children,
     objectId = object.tags_id;
     name = (object.name || object.label || object.tag);
   } else if (isSearch) {
+    typeClass = 'search';
     subSearch = Object.values(object.tags)
       .filter(t => Array.isArray(t) && t.length > 0)
       .map((i) => {
         const metadataName = i.map(a => a.tag_set_label).reduce(l => l);
-        const tags = i.map(a => (a.selected ? `<li key=${a.tags_id}>${a.label}</li>` : ''));
-        return `<ul key=${i.tag_sets_id}>${metadataName}${tags}</ul>`;
+        const tags = i.map(a => (a.selected ? a.label : ''));
+        if (tags.length > 0) {
+          return `<span key=${i.tag_sets_id}>${metadataName}: ${tags}</span><br />`;
+        }
+        return [];
       });
-    subSearch = <FormattedHTMLMessage {...localMessages.withSearch} values={{ value: subSearch }} />;
+    if (subSearch.length > 0) {
+      subSearch = <FormattedHTMLMessage {...localMessages.withSearch} values={{ value: subSearch }} />;
+    }
   }
   // link the text if there is a click handler defined
   let text;

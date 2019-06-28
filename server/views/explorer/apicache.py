@@ -48,7 +48,7 @@ def sentence_list(q, fq=None, rows=1000, include_stories=True):
 def _cached_sentence_list(mc_api_key, q, fq, rows, include_stories=True):
     # need to get an admin client with the tool key so they have sentence read permissions
     tool_mc = user_admin_mediacloud_client(mc_api_key)
-    sentences = tool_mc.sentenceList(q, fq)[:rows]
+    sentences = tool_mc.sentenceList(q, fq, sort=mc.SORT_RANDOM)[:rows]
     stories_id_list = [str(s['stories_id']) for s in sentences]
     if (len(stories_id_list) > 0) and include_stories:
         # this is the fastest way to get a list of stories by id

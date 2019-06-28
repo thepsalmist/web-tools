@@ -69,7 +69,7 @@ class MediaPickerResultsContainer extends React.Component {
     if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0) {
       // sync up selectedMedia and push to result sets.
       // TODO losing queries when unselected.. this should be a merge/add
-      whichProps.selectedMedia.map(m => this.updateMediaQuery({ type: this.props.selectedMediaQueryType, ...m }));
+      whichProps.selectedMedia.map(m => this.updateMediaQuery({ ...m, type: this.props.selectedMediaQueryType }));
     }
     return 0;
   }

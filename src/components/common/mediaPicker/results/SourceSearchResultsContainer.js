@@ -148,6 +148,7 @@ class SourceSearchResultsContainer extends React.Component {
           label={formatMessage(localMessages.addAllSearch)}
           onClick={() => this.addAllSearchToSelection({ addAllSearch: true })}
           color="primary"
+          disabled={!selectedMediaQueryTags || Object.keys(selectedMediaQueryTags).length === 0}
         />
       </Col>
     );

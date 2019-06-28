@@ -98,7 +98,7 @@ const mapDispatchToProps = dispatch => ({
         unselectedMedia.tags = unselectedMetadataTags;
         unselectedMedia.addAllSearch = false;
       }
-      dispatch(selectMedia(unselectedMedia)); // TODO: why aren't we using a specific action and reducer to do this?
+      dispatch(selectMedia(unselectedMedia));
     }
   },
 });

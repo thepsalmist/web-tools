@@ -5,6 +5,8 @@ const countryOfFocus = createAsyncReducer({
   initialState: {
     tags: [],
     label: null,
+    value: false,
+    selected: false,
   },
   action: SELECT_METADATA_QUERY_ARGS,
 });

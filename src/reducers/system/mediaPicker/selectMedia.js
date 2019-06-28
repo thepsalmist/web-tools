@@ -17,22 +17,22 @@ function selectMedia(state = INITIAL_STATE, action) {
       updatedSelectedList.map(c => c.isAllSearch);
       return { list: updatedSelectedList };
 
-    // toggle a particular item on the list, source, collection, or search
+    // update a particular item on the list, source, collection, or search
     case MEDIA_PICKER_SELECT_MEDIA:
       updatedSelectedList = [...state.list];
-      // if it is a new source or collection to add to the list
       if (!updatedSelectedList.some(s => s.id === action.payload.id)) {
+        // if it is a new source or collection to add to the list, toggle selected (which is initialized false)
         const selectedObj = action.payload;
         selectedObj.selected = selectedObj.selected === undefined ? true : !selectedObj.selected;
         updatedSelectedList.push(selectedObj);
-      // if there already, treat as a removal/toggle
-      } else if (action.payload.id !== undefined) { // in the case of updated metadata tags, id would be empty
+      } else if (action.payload.id !== undefined) {
+        // find existing source/collection and update it. in the case of updated metadata search tags, id would be empty
         const mediaIndex = updatedSelectedList.findIndex(s => s.id === action.payload.id);
-        // mediaObj.selected = !(mediaObj.selected);
+        // we are setting the selected flag before we get here via checkboxes so don't set it here
         updatedSelectedList.splice(mediaIndex, 1); // in display check matches
       }
 
-      if (action.payload.tags) { // update metadata selections:: search
+      if (action.payload.tags) { // we have metadata selections:: search to update too
         const prevTags = updatedSelectedList.filter(m => 'tags' in m)[0];
         if (prevTags) {
           prevTags.tags = action.payload.tags;

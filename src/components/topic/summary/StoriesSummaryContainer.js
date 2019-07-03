@@ -15,52 +15,57 @@ import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import TopicStoryTable from '../TopicStoryTable';
 import messages from '../../../resources/messages';
-import { urlWithFilters, filtersAsUrlParams } from '../../util/location';
+import { urlWithFilters, filtersAsUrlParams, formatAsUrlParams } from '../../util/location';
 import { HELP_STORIES_CSV_COLUMNS } from '../../../lib/helpConstants';
+import StoryDownloadDialog, { FIELD_STORY_COUNT, FIELD_MEDIA_METADATA, FIELD_STORY_TAGS, FIELD_FACEBOOK_DATES, FIELD_REDDIT_DATA } from '../stories/StoryDownloadDialog';
 
 const NUM_TO_SHOW = 10;
-const TOP_N_DOWNLOAD = 2000;
 
 const localMessages = {
   title: { id: 'topic.summary.stories.title', defaultMessage: 'Top Stories' },
   descriptionIntro: { id: 'topic.summary.stories.help.title', defaultMessage: '<p>The top stories within this topic can suggest the main ways it is talked about.  Sort by different measures to get a better picture of a story\'s influence.</p>' },
-  downloadNoFBData: { id: 'topic.summary.stories.download.noFB', defaultMessage: 'Download CSV with all stories' },
-  downloadTopN: { id: 'topic.summary.stories.download.1k', defaultMessage: `Download CSV with top ${TOP_N_DOWNLOAD} stories` },
-  downloadWithFBData: { id: 'topic.summary.stories.download.withFB', defaultMessage: 'Download CSV with all stories & Facebook collection date (takes longer)' },
-  downloadLinkCsv: { id: 'topic.summary.stories.download.downloadLinkCsv', defaultMessage: 'Download CSV of all story links' },
+  downloadTopStories: { id: 'topic.summary.stories.download.top', defaultMessage: 'Download Top Stories...' },
+  handleStoryLinkCsvDownload: { id: 'topic.summary.stories.download.handleStoryLinkCsvDownload', defaultMessage: 'Download CSV of all story links' },
 };
 
 class StoriesSummaryContainer extends React.Component {
+  state = {
+    showDownloadDialog: false,
+  }
+
   onChangeSort = (newSort) => {
     const { sortData } = this.props;
     sortData(newSort);
-  };
-
-  downloadCsvNoFBData = () => {
-    const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
-    const url = `/api/topics/${topicId}/stories.csv?${filtersAsUrlParams(filters)}&sort=${sort}`;
-    window.location = url;
-    notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
   }
 
-  downloadCsvTopN = () => {
-    const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
-    const url = `/api/topics/${topicId}/stories.csv?${filtersAsUrlParams(filters)}&sort=${sort}&story_limit=${TOP_N_DOWNLOAD}`;
-    window.location = url;
-    notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
-  }
-
-  downloadCsvWithFBData = () => {
-    const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
-    const url = `/api/topics/${topicId}/stories.csv?${filtersAsUrlParams(filters)}&sort=${sort}&fbData=1`;
-    window.location = url;
-    notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
-  }
-
-  downloadLinkCsv = () => {
+  handleStoryLinkCsvDownload = () => {
     const { filters, sort, topicId } = this.props;
     const url = `/api/topics/${topicId}/stories/story-links.csv?${filtersAsUrlParams(filters)}&sort=${sort}`;
     window.location = url;
+  }
+
+  handleStoryListDownload = (options) => {
+    const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
+    const params = { ...filters, sort };
+    if (options[FIELD_STORY_COUNT]) {
+      params.storyLimit = options.storyCount;
+    }
+    if (options[FIELD_STORY_TAGS]) {
+      params.storyTags = 1;
+    }
+    if (options[FIELD_MEDIA_METADATA]) {
+      params.mediaMetadata = 1;
+    }
+    if (options[FIELD_REDDIT_DATA]) {
+      params.redditData = 1;
+    }
+    if (options[FIELD_FACEBOOK_DATES]) {
+      params.fbData = 1;
+    }
+    const url = `/api/topics/${topicId}/stories.csv?${formatAsUrlParams(params)}`;
+    window.location = url;
+    this.setState({ showDownloadDialog: false });
+    notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
   }
 
   render() {
@@ -78,34 +83,20 @@ class StoriesSummaryContainer extends React.Component {
           maxTitleLength={50}
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
+          <StoryDownloadDialog
+            open={this.state.showDownloadDialog}
+            onDownload={this.handleStoryListDownload}
+            onCancel={() => this.setState({ showDownloadDialog: false })}
+            initialValues={{ storyCount: 1000 }}
+          />
           <div className="actions">
             <ActionMenu actionTextMsg={messages.downloadOptions}>
               <MenuItem
                 className="action-icon-menu-item"
-                id="topic-summary-top-stories-download"
-                onClick={this.downloadCsvNoFBData}
+                id="topic-summary-top-stories-download-dialog"
+                onClick={() => this.setState({ showDownloadDialog: true })}
               >
-                <ListItemText><FormattedMessage {...localMessages.downloadNoFBData} /></ListItemText>
-                <ListItemIcon>
-                  <DownloadButton />
-                </ListItemIcon>
-              </MenuItem>
-              <MenuItem
-                className="action-icon-menu-item"
-                id="topic-summary-top-N-stories-download"
-                onClick={this.downloadCsvTopN}
-              >
-                <ListItemText><FormattedMessage {...localMessages.downloadTopN} /></ListItemText>
-                <ListItemIcon>
-                  <DownloadButton />
-                </ListItemIcon>
-              </MenuItem>
-              <MenuItem
-                className="action-icon-menu-item"
-                id="topic-summary-top-stories-download-with-facebook"
-                onClick={this.downloadCsvWithFBData}
-              >
-                <ListItemText><FormattedMessage {...localMessages.downloadWithFBData} /></ListItemText>
+                <ListItemText><FormattedMessage {...localMessages.downloadTopStories} /></ListItemText>
                 <ListItemIcon>
                   <DownloadButton />
                 </ListItemIcon>
@@ -113,9 +104,9 @@ class StoriesSummaryContainer extends React.Component {
               <MenuItem
                 className="action-icon-menu-item"
                 id="topic-summary-top-stories-download-links"
-                onClick={this.downloadLinkCsv}
+                onClick={this.handleStoryLinkCsvDownload}
               >
-                <ListItemText><FormattedMessage {...localMessages.downloadLinkCsv} /></ListItemText>
+                <ListItemText><FormattedMessage {...localMessages.handleStoryLinkCsvDownload} /></ListItemText>
                 <ListItemIcon>
                   <DownloadButton />
                 </ListItemIcon>

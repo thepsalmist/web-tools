@@ -2,6 +2,17 @@
   "releases": [
     {
       "date": "2019-6-27",
+      "version": "v3.11.1",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics" ],
+          "type": "Fixed",
+          "note": "Web app version numbers fixed"
+        }
+      ]
+    },
+    {
+      "date": "2019-6-27",
       "version": "v3.11.0",
       "notes": [
         {

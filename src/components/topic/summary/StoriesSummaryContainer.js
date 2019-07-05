@@ -15,9 +15,8 @@ import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import TopicStoryTable from '../TopicStoryTable';
 import messages from '../../../resources/messages';
-import { urlWithFilters, filtersAsUrlParams, formatAsUrlParams } from '../../util/location';
-import { HELP_STORIES_CSV_COLUMNS } from '../../../lib/helpConstants';
-import StoryDownloadDialog, { FIELD_STORY_COUNT, FIELD_MEDIA_METADATA, FIELD_STORY_TAGS, FIELD_FACEBOOK_DATES, FIELD_REDDIT_DATA, FIELD_SORT } from '../stories/StoryDownloadDialog';
+import { urlWithFilters, filtersAsUrlParams } from '../../util/location';
+import withTopicStoryDownload from '../TopicStoryDownloader';
 
 const NUM_TO_SHOW = 10;
 
@@ -29,10 +28,6 @@ const localMessages = {
 };
 
 class StoriesSummaryContainer extends React.Component {
-  state = {
-    showDownloadDialog: false,
-  }
-
   onChangeSort = (newSort) => {
     const { sortData } = this.props;
     sortData(newSort);
@@ -44,35 +39,8 @@ class StoriesSummaryContainer extends React.Component {
     window.location = url;
   }
 
-  handleStoryListDownload = (options) => {
-    const { filters, topicId, notifyOfCsvDownload } = this.props;
-    const params = {
-      ...filters,
-      sort: options[FIELD_SORT],
-    };
-    if (options[FIELD_STORY_COUNT]) {
-      params.storyLimit = options.storyCount;
-    }
-    if (options[FIELD_STORY_TAGS]) {
-      params.storyTags = 1;
-    }
-    if (options[FIELD_MEDIA_METADATA]) {
-      params.mediaMetadata = 1;
-    }
-    if (options[FIELD_REDDIT_DATA]) {
-      params.redditData = 1;
-    }
-    if (options[FIELD_FACEBOOK_DATES]) {
-      params.fbData = 1;
-    }
-    const url = `/api/topics/${topicId}/stories.csv?${formatAsUrlParams(params)}`;
-    window.location = url;
-    this.setState({ showDownloadDialog: false });
-    notifyOfCsvDownload(HELP_STORIES_CSV_COLUMNS);
-  }
-
   render() {
-    const { stories, sort, topicId, handleFocusSelected, user, showTweetCounts } = this.props;
+    const { stories, sort, topicId, handleFocusSelected, user, showTweetCounts, showTopicStoryDownloadDialog } = this.props;
     const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
     return (
       <React.Fragment>
@@ -86,20 +54,12 @@ class StoriesSummaryContainer extends React.Component {
           maxTitleLength={50}
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-          {this.state.showDownloadDialog && (
-            <StoryDownloadDialog
-              open={this.state.showDownloadDialog}
-              onDownload={this.handleStoryListDownload}
-              onCancel={() => this.setState({ showDownloadDialog: false })}
-              initialValues={{ storyCount: 1000, sort }}
-            />
-          )}
           <div className="actions">
             <ActionMenu actionTextMsg={messages.downloadOptions}>
               <MenuItem
                 className="action-icon-menu-item"
                 id="topic-summary-top-stories-download-dialog"
-                onClick={() => this.setState({ showDownloadDialog: true })}
+                onClick={() => showTopicStoryDownloadDialog(sort, showTweetCounts)}
               >
                 <ListItemText><FormattedMessage {...localMessages.downloadTopStories} /></ListItemText>
                 <ListItemIcon>
@@ -128,6 +88,7 @@ StoriesSummaryContainer.propTypes = {
   // from the composition chain
   intl: PropTypes.object.isRequired,
   notifyOfCsvDownload: PropTypes.func.isRequired,
+  showTopicStoryDownloadDialog: PropTypes.func.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
@@ -177,7 +138,9 @@ injectIntl(
     withSummary(localMessages.title, localMessages.descriptionIntro, messages.storiesTableHelpText, true)(
       withCsvDownloadNotifyContainer(
         withFilteredAsyncData(fetchAsyncData, ['sort'])( // refetch data if sort property has changed
-          StoriesSummaryContainer
+          withTopicStoryDownload()(
+            StoriesSummaryContainer
+          )
         ),
       )
     )

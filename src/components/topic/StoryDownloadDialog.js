@@ -8,9 +8,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import { Row, Col } from 'react-flexbox-grid/lib';
-import withIntlForm from '../../common/hocs/IntlForm';
-import AppButton from '../../common/AppButton';
-import messages from '../../../resources/messages';
+import withIntlForm from '../common/hocs/IntlForm';
+import AppButton from '../common/AppButton';
+import messages from '../../resources/messages';
 
 const localMessages = {
   title: { id: 'topic.story.download.title', defaultMessage: 'Download Story List' },

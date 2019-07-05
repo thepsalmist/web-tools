@@ -15,8 +15,7 @@ import messages from '../../../resources/messages';
 const localMessages = {
   title: { id: 'topic.story.download.title', defaultMessage: 'Download Story List' },
   intro: { id: 'topic.story.download.intro', defaultMessage: 'A list of top stories is a CSV including basic information like the story URL, publication date, language, media source, and title. Use the form below to pick any additional data you want to download in addition to this.' },
-  storyCount: { id: 'topic.story.download.storyCount', defaultMessage: 'Download Size' },
-  storyCountDetails: { id: 'topic.story.download.storyCountDetails', defaultMessage: 'Pick how many stories you\'d like to download.  They will be sorted based on your currently selected sort option. Downloading more stories will take longer.' },
+  storyCount: { id: 'topic.story.download.storyCount', defaultMessage: 'Download' },
   storyTags: { id: 'topic.story.download.storyTags', defaultMessage: 'Include themes and subtopics?' },
   facebookDates: { id: 'topic.story.download.facebookDates', defaultMessage: 'Include the date we collected Facebook share data?' },
   redditData: { id: 'topic.story.download.redditData', defaultMessage: 'Include live Reddit submission counts?' },
@@ -26,24 +25,34 @@ const localMessages = {
 };
 
 export const FIELD_STORY_COUNT = 'storyCount';
+export const FIELD_SORT = 'sort';
 export const FIELD_STORY_TAGS = 'includeStoryTags';
 export const FIELD_FACEBOOK_DATES = 'includeFacebookDates';
 export const FIELD_REDDIT_DATA = 'includeRedditData';
 export const FIELD_MEDIA_METADATA = 'includeMediaMetadata';
 
+// TODO: figure out how to intl these
 const DOWNLOAD_SIZE_OPTIONS = {
-  '100 top stories': 100,
-  '500 top stories': 500,
-  '1,000 top stories': 1000,
-  '5,000 top stories': 5000,
-  '10,000 top stories': 10000,
-  '50,000 top stories': 50000,
-  '100,000 top stories': 100000,
+  '100 stories': 100,
+  '500 stories': 500,
+  '1,000 stories': 1000,
+  '5,000 stories': 5000,
+  '10,000 stories': 10000,
+  '50,000 stories': 50000,
+  '100,000 stories': 100000,
   'all stories': 0,
 };
 
+// TODO: figure out how to intl these
+const DOWNLOAD_SORT_OPTIONS = {
+  'sorted by media inlinks': 'inlink',
+  'sorted by Facebook shares': 'facebook',
+  'sorted by Twitter shares': 'twitter',
+  'sorted randomly': 'random',
+};
+
 const StoryDownloadDialog = (props) => {
-  const { open, onCancel, onDownload, intl, handleSubmit, renderCheckbox, renderSelect } = props;
+  const { open, onCancel, onDownload, intl, handleSubmit, renderCheckbox, renderSelect, hasTweetCounts } = props;
   return (
     <form
       className="app-form topic-story-download-form"
@@ -62,7 +71,6 @@ const StoryDownloadDialog = (props) => {
           <Row>
             <Col lg={12}>
               <h4><FormattedMessage {...localMessages.storyCount} /></h4>
-              <p><small><FormattedMessage {...localMessages.storyCountDetails} /></small></p>
               <Field
                 name={FIELD_STORY_COUNT}
                 component={renderSelect}
@@ -72,6 +80,31 @@ const StoryDownloadDialog = (props) => {
                 {Object.keys(DOWNLOAD_SIZE_OPTIONS).map(label => (
                   <MenuItem key={DOWNLOAD_SIZE_OPTIONS[label]} value={DOWNLOAD_SIZE_OPTIONS[label]}>{label}</MenuItem>
                 ))}
+              </Field>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={12}>
+              <Field
+                name={FIELD_SORT}
+                component={renderSelect}
+                type="inline"
+                fullWidth
+              >
+                {Object.keys(DOWNLOAD_SORT_OPTIONS).map((label) => {
+                  // only show twitter option if topic has tweet data
+                  if (!hasTweetCounts && (DOWNLOAD_SORT_OPTIONS[label] === 'twitter')) {
+                    return '';
+                  }
+                  return (
+                    <MenuItem
+                      key={DOWNLOAD_SORT_OPTIONS[label]}
+                      value={DOWNLOAD_SORT_OPTIONS[label]}
+                    >
+                      {label}
+                    </MenuItem>
+                  );
+                })}
               </Field>
             </Col>
           </Row>
@@ -152,6 +185,7 @@ StoryDownloadDialog.propTypes = {
   onDownload: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   initialValues: PropTypes.object,
+  hasTweetCounts: PropTypes.bool, // defaults to false
   // from context
   intl: PropTypes.object.isRequired,
   renderTextField: PropTypes.func.isRequired,
@@ -164,7 +198,7 @@ StoryDownloadDialog.propTypes = {
 };
 
 const reduxFormConfig = {
-  form: 'storyDetailForm',
+  form: 'topicStoryDownloadForm',
 };
 
 export default

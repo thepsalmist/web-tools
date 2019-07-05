@@ -17,7 +17,7 @@ import TopicStoryTable from '../TopicStoryTable';
 import messages from '../../../resources/messages';
 import { urlWithFilters, filtersAsUrlParams, formatAsUrlParams } from '../../util/location';
 import { HELP_STORIES_CSV_COLUMNS } from '../../../lib/helpConstants';
-import StoryDownloadDialog, { FIELD_STORY_COUNT, FIELD_MEDIA_METADATA, FIELD_STORY_TAGS, FIELD_FACEBOOK_DATES, FIELD_REDDIT_DATA } from '../stories/StoryDownloadDialog';
+import StoryDownloadDialog, { FIELD_STORY_COUNT, FIELD_MEDIA_METADATA, FIELD_STORY_TAGS, FIELD_FACEBOOK_DATES, FIELD_REDDIT_DATA, FIELD_SORT } from '../stories/StoryDownloadDialog';
 
 const NUM_TO_SHOW = 10;
 
@@ -45,8 +45,11 @@ class StoriesSummaryContainer extends React.Component {
   }
 
   handleStoryListDownload = (options) => {
-    const { filters, sort, topicId, notifyOfCsvDownload } = this.props;
-    const params = { ...filters, sort };
+    const { filters, topicId, notifyOfCsvDownload } = this.props;
+    const params = {
+      ...filters,
+      sort: options[FIELD_SORT],
+    };
     if (options[FIELD_STORY_COUNT]) {
       params.storyLimit = options.storyCount;
     }
@@ -83,12 +86,14 @@ class StoriesSummaryContainer extends React.Component {
           maxTitleLength={50}
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-          <StoryDownloadDialog
-            open={this.state.showDownloadDialog}
-            onDownload={this.handleStoryListDownload}
-            onCancel={() => this.setState({ showDownloadDialog: false })}
-            initialValues={{ storyCount: 1000 }}
-          />
+          {this.state.showDownloadDialog && (
+            <StoryDownloadDialog
+              open={this.state.showDownloadDialog}
+              onDownload={this.handleStoryListDownload}
+              onCancel={() => this.setState({ showDownloadDialog: false })}
+              initialValues={{ storyCount: 1000, sort }}
+            />
+          )}
           <div className="actions">
             <ActionMenu actionTextMsg={messages.downloadOptions}>
               <MenuItem

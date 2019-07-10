@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import Select from '@material-ui/core/Select';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import InputLabel from '@material-ui/core/InputLabel';
 import Autocomplete, { AsyncAutocomplete } from '../form/Autocomplete';
 
 /**
@@ -97,21 +98,24 @@ function withIntlForm(Component) {
       );
     };
 
-    renderSelect = ({ input, meta: { touched, error }, children, ...custom }) => {
+    renderSelect = ({ input, label, name, meta: { touched, error }, children, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
       if (intlCustom && intlCustom.helpertext !== undefined) {
         intlCustom.helpertext = intlCustom.helpertext;
       }
       return (
-        <Select
-          className="form-field-select"
-          error={touched && (error ? this.intlIfObject(error) : null)}
-          {...input}
-          onChange={event => input.onChange(event.target.value)}
-          {...intlCustom}
-        >
-          {children}
-        </Select>
+        <React.Fragment>
+          {label && (<InputLabel htmlFor={name}>{this.intlIfObject(label)}</InputLabel>) }
+          <Select
+            className="form-field-select"
+            error={touched && (error ? this.intlIfObject(error) : null)}
+            {...input}
+            onChange={event => input.onChange(event.target.value)}
+            {...intlCustom}
+          >
+            {children}
+          </Select>
+        </React.Fragment>
       );
     }
 

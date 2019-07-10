@@ -21,6 +21,10 @@ def media(media_id):
     return _cached_media(api_key(), media_id)
 
 
+def get_media(mc_api_key, media_id):
+    return _cached_media(mc_api_key, media_id)
+
+
 @cache.cache_on_arguments()
 def _cached_media(api_key, media_id):
     # api_key passed in just to make this a user-level cache

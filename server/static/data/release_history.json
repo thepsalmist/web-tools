@@ -1,6 +1,75 @@
 {
   "releases": [
     {
+      "date": "2019-7-5",
+      "version": "v3.11.2",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Downloading topic story lists works again, with new options",
+          "details": "Now you can specify the size of the download, the sort order, and anny optional metadata you want to add.  The basic download with nothing is faster now too."
+        }
+      ]
+    },
+    {
+      "date": "2019-6-27",
+      "version": "v3.11.1",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics" ],
+          "type": "Fixed",
+          "note": "Web app version numbers fixed"
+        }
+      ]
+    },
+    {
+      "date": "2019-6-27",
+      "version": "v3.11.0",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics" ],
+          "type": "New",
+          "note": "Highlight words matching queries (admin only)"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic created-not-queued now properly rendering"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Kitten GIFS have returned!"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic status dashboard now properly appearing"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Link to manage stories is correct"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Story stats for selected subtopic now appear in Stats tab"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic Queued date now properly formatted"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Document and increase explorer tag count size on Entity tab"
+        }
+      ]
+    },
+    {
       "date": "2019-6-7",
       "version": "v3.10.10.1",
       "notes": [

@@ -21,6 +21,7 @@ MEDIA_SEARCH_POOL_SIZE = len(VALID_COLLECTION_TAG_SETS_IDS)
 STORY_COUNT_POOL_SIZE = 20  # number of parallel processes to use while fetching historical story counts for sources
 ALL_MEDIA = '-1'
 
+
 @app.route('/api/mediapicker/sources/search', methods=['GET'])
 @flask_login.login_required
 @api_error_handler

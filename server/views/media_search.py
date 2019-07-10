@@ -7,9 +7,9 @@ logger = logging.getLogger(__name__)
 MAX_SOURCES = 40
 
 
-def media_search(search_str, tags_id=None):
+def media_search(search_str, tags_id=None, **kwargs):
     mc = user_mediacloud_client()
-    return mc.mediaList(name_like=search_str, tags_id=tags_id, rows=MAX_SOURCES, sort="num_stories")
+    return mc.mediaList(name_like=search_str, tags_id=tags_id, rows=MAX_SOURCES, sort="num_stories", **kwargs)
 
 
 def collection_search(search_str, public_only, tag_sets_id_list):

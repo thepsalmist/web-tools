@@ -3,6 +3,7 @@ from multiprocessing import Pool
 import flask_login
 from flask import jsonify, request, Response
 import mediacloud
+import concurrent.futures
 
 import server.util.csv as csv
 import server.util.tags as tag_util
@@ -98,15 +99,14 @@ def topic_stories_csv(topics_id):
     media_metadata = (request.args['mediaMetadata'] == '1') if 'mediaMetadata' in request.args else False
     reddit_submissions = (request.args['redditData'] == '1') if 'redditData' in request.args else False
     include_fb_date = (request.args['fbData'] == '1') if 'fbData' in request.args else False
-    return stream_story_list_csv(user_mediacloud_key(), topic['name']+'-stories', topics_id,
+    return stream_story_list_csv(user_mediacloud_key(), topic,
                                  story_limit=story_limit, reddit_submissions=reddit_submissions,
                                  story_tags=story_tags, include_fb_date=include_fb_date,
                                  media_metadata=media_metadata)
 
 
-def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
-    user_mc = user_mediacloud_client(user_key)
-    topic = user_mc.topic(topics_id)
+def stream_story_list_csv(user_key, topic, **kwargs):
+    filename = topic['name']+'-stories'
     has_twitter_data = (topic['ch_monitor_id'] is not None) and (topic['ch_monitor_id'] != 0)
 
     # as_attachment = kwargs['as_attachment'] if 'as_attachment' in kwargs else True
@@ -126,7 +126,7 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
     }
     params.update(merged_args)
 
-    story_count = apicache.topic_story_count(user_mediacloud_key(), topics_id,
+    story_count = apicache.topic_story_count(user_mediacloud_key(), topic['topics_id'],
                                              snapshots_id=params['snapshots_id'], timespans_id=params['timespans_id'],
                                              foci_id=params['foci_id'], q=params['q'])
     logger.info("Total stories to download: {}".format(story_count['count']))
@@ -162,7 +162,7 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
         link_id = 0
         local_mc = user_admin_mediacloud_client()
         while more_fb_count:
-            fb_page = local_mc.topicStoryListFacebookData(topics_id, limit=100, link_id=link_id)
+            fb_page = local_mc.topicStoryListFacebookData(topic['topics_id'], limit=100, link_id=link_id)
 
             all_fb_count = all_fb_count + fb_page['counts']
             if 'next' in fb_page['link_ids']:
@@ -181,7 +181,7 @@ def stream_story_list_csv(user_key, filename, topics_id, **kwargs):
     headers = {
         "Content-Disposition": "attachment;filename=" + timestamped_filename
     }
-    return Response(_topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **params),
+    return Response(_topic_story_list_by_page_as_csv_row(user_key, topic['topics_id'], props, **params),
                     mimetype='text/csv; charset=utf-8', headers=headers)
 
 
@@ -305,11 +305,10 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
 
         # build a media lookup table in parallel so it is faster
         if include_media_metadata:
-            pool = Pool(processes=MEDIA_INFO_POOL_SIZE)
-            jobs = [{'user_key': user_key, 'media_id': s['media_id']} for s in story_page['stories']]
-            job_results = pool.map(_media_info_worker, jobs)  # blocks until they are all done
-            media_lookup = {j['media_id']: j for j in job_results}
-            pool.terminate()
+            with concurrent.futures.ProcessPoolExecutor() as executor:
+                jobs = [{'user_key': user_key, 'media_id': s['media_id']} for s in story_page['stories']]
+                job_results = executor.map(_media_info_worker, jobs)  # blocks until they are all done
+                media_lookup = {j['media_id']: j for j in job_results}
 
         if include_story_tags:
             story_ids = [str(s['stories_id']) for s in story_page['stories']]

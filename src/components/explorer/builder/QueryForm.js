@@ -82,7 +82,7 @@ class QueryForm extends React.Component {
   focusQueryInputField = (input) => {
     if (input) {
       setTimeout(() => {
-        input.focus();
+        // input.focus();
       }, 100);
     }
   };
@@ -91,13 +91,14 @@ class QueryForm extends React.Component {
     const { initialValues, onWillSearch, renderTextFieldWithFocus, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, onLoadSearches, onDeleteSearch, savedSearches, searchNickname, onSaveSearch,
       submitting, handleSubmit, onSave, onMediaChange, renderTextField, onCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
-    const cleanedInitialValues = initialValues ? { ...initialValues, media: [] } : {};
+    const cleanedInitialValues = JSON.parse(JSON.stringify(initialValues));
     if (cleanedInitialValues.disabled === undefined) {
       cleanedInitialValues.disabled = false;
     }
     if (initialValues.collections && initialValues.collections.length && initialValues.collections[0].tags_id === ALL_MEDIA) {
       cleanedInitialValues.media = [{ id: ALL_MEDIA, label: formatMessage(messages.allMedia) }];
     } else {
+      cleanedInitialValues.media = [];
       if (initialValues.collections && initialValues.collections.length) {
         cleanedInitialValues.media = cleanedInitialValues.media.concat( // merge intial sources and collections into one list for display with `renderFields`
           initialValues.collections,
@@ -182,12 +183,13 @@ class QueryForm extends React.Component {
                   <SourceCollectionsMediaForm
                     className="query-field"
                     form="queryForm"
+                    fieldName="media"
                     enableReinitialize
+                    keepDirtyOnReinitialize
                     destroyOnUnmount={false}
                     onDelete={onMediaDelete}
-                    initialValues={{ media: cleanedInitialValues.media }}
                     allowRemoval={isEditable}
-                    name="media"
+                    initialValues={selectedCopy || cleanedInitialValues}
                     title="title"
                     intro="intro"
                   />
@@ -314,7 +316,7 @@ QueryForm.propTypes = {
 
 
 const mapStateToProps = state => ({
-  mediaUpdates: formSelector(state, 'uid', 'media', 'sources', 'collections'),
+  mediaUpdates: formSelector(state, 'uid', 'media', 'sources', 'collections', 'searches'),
   queries: state.explorer.queries.queries ? state.explorer.queries.queries : null,
 });
 

@@ -41,12 +41,12 @@ renderCollectionSelector.propTypes = {
 };
 
 const SourceCollectionsMediaForm = (props) => {
-  const { name, initialValues, allowRemoval, onDelete } = props;
+  const { fieldName, initialValues, allowRemoval, onDelete } = props;
   return (
     <div className="explorer-source-collection-form">
       <FieldArray
         form={propTypes.form}
-        name={name}
+        name={fieldName}
         validate={propTypes.validate}
         allowRemoval={allowRemoval}
         component={renderCollectionSelector}
@@ -63,7 +63,7 @@ SourceCollectionsMediaForm.propTypes = {
   initialValues: PropTypes.object,
   selected: PropTypes.object,
   allowRemoval: PropTypes.bool,
-  name: PropTypes.string,
+  fieldName: PropTypes.string,
   // valid: PropTypes.bool,  not using - but this is helpful to determine if validation is getting
   onDelete: PropTypes.func,
 };

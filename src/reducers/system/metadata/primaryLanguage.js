@@ -1,4 +1,4 @@
-import { FETCH_METADATA_VALUES_FOR_PRIMARY_LANGUAGE } from '../../../actions/systemActions';
+import { FETCH_METADATA_VALUES_FOR_PRIMARY_LANGUAGE, RESET_METADATA_SHORTLIST } from '../../../actions/systemActions';
 import { createAsyncReducer } from '../../../lib/reduxHelpers';
 
 const primaryLanguage = createAsyncReducer({
@@ -10,9 +10,18 @@ const primaryLanguage = createAsyncReducer({
   action: FETCH_METADATA_VALUES_FOR_PRIMARY_LANGUAGE,
   handleSuccess: payload => ({
     ...payload,
-    shortList: payload.shortList ? payload.shortList.map(c => ({
+    shortList: payload.short_list.map(c => ({
       ...c,
       selected: false,
+      value: false,
+    })),
+  }),
+  [RESET_METADATA_SHORTLIST]: (payload, state) => ({
+    ...state,
+    shortList: state.shortList ? state.shortList.map(c => ({
+      ...c,
+      selected: false,
+      value: false,
     })) : [],
   }),
 });

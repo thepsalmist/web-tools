@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
-import { reduxForm, Field, propTypes, formValueSelector, enableReinitialize } from 'redux-form';
+import { reduxForm, Field, propTypes, formValueSelector } from 'redux-form';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
@@ -182,6 +182,7 @@ class QueryForm extends React.Component {
                   <SourceCollectionsMediaForm
                     className="query-field"
                     form="queryForm"
+                    enableReinitialize
                     destroyOnUnmount={false}
                     onDelete={onMediaDelete}
                     initialValues={{ media: cleanedInitialValues.media }}
@@ -189,7 +190,6 @@ class QueryForm extends React.Component {
                     name="media"
                     title="title"
                     intro="intro"
-                    enableReinitialize
                   />
                   <div>
                     {isEditable

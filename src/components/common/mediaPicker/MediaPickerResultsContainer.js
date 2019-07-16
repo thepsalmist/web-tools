@@ -152,7 +152,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   updateMediaQuerySelection: (values) => {
     if (values) {
-      console.log('values are '.concat(JSON.stringify(values)));
       dispatch(selectMediaPickerQueryArgs(values));
     }
   },

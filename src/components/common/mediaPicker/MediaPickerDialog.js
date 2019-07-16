@@ -8,7 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import messages from '../../../resources/messages';
 import PickedMediaContainer from './PickedMediaContainer';
 import MediaPickerResultsContainer from './MediaPickerResultsContainer';
-import { initializePreviouslySelectedMedia, clearSelectedMedia } from '../../../actions/systemActions';
+import { initializePreviouslySelectedMedia, clearSelectedMedia, resetMetadataShortlist } from '../../../actions/systemActions';
 import AppButton from '../AppButton';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
@@ -163,6 +163,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   reset: () => {
     dispatch(clearSelectedMedia());
+    dispatch(resetMetadataShortlist());
   },
   handleInitialSelectionOfMedia: (prevSelectedMedia) => {
     if (prevSelectedMedia) {

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { toggleMedia, selectMedia, selectMediaPickerQueryArgs, resetMediaPickerQueryArgs, resetMediaPickerSources, resetMediaPickerCollections } from '../../../actions/systemActions';
+import { toggleMedia, selectMedia, selectMediaPickerQueryArgs, resetMediaPickerQueryArgs, resetMediaPickerSources, resetMediaPickerCollections, resetMetadataShortlist } from '../../../actions/systemActions';
 import { PICK_SOURCE_AND_COLLECTION, PICK_FEATURED } from '../../../lib/explorerUtil';
 import * as fetchConstants from '../../../lib/fetchConstants';
 import AllMediaSearchResultsContainer from './results/AllMediaSearchResultsContainer';
@@ -68,7 +68,8 @@ class MediaPickerResultsContainer extends React.Component {
     // selected metadata search settings has to be handled
     if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0) {
       // sync up incoming selectedMedia and push to result sets.
-      whichProps.selectedMedia.map(m => this.updateMediaQuery({ ...m, type: this.props.selectedMediaQueryType }));
+      // for each *metadata search item*, push it into query args
+      whichProps.selectedMedia.filter(m => m.addAllSearch).map(s => this.updateMediaQuery({ ...s, type: this.props.selectedMediaQueryType }));
     }
     return 0;
   }
@@ -151,6 +152,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   updateMediaQuerySelection: (values) => {
     if (values) {
+      console.log('values are '.concat(JSON.stringify(values)));
       dispatch(selectMediaPickerQueryArgs(values));
     }
   },
@@ -168,6 +170,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(resetMediaPickerQueryArgs());
     dispatch(resetMediaPickerSources());
     dispatch(resetMediaPickerCollections());
+    dispatch(resetMetadataShortlist());
   },
 });
 

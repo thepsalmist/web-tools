@@ -9,9 +9,11 @@ const primaryLanguage = createAsyncReducer({
   },
   action: FETCH_METADATA_VALUES_FOR_PRIMARY_LANGUAGE,
   handleSuccess: payload => ({
-    // add name and id so we can display it in an Autocomplete
     ...payload,
-    shortList: payload.short_list,
+    shortList: payload.shortList ? payload.shortList.map(c => ({
+      ...c,
+      selected: false,
+    })) : [],
   }),
 });
 

@@ -1,4 +1,4 @@
-import { FETCH_METADATA_VALUES_FOR_COUNTRY } from '../../../actions/systemActions';
+import { FETCH_METADATA_VALUES_FOR_COUNTRY, RESET_METADATA_SHORTLIST } from '../../../actions/systemActions';
 import { createAsyncReducer } from '../../../lib/reduxHelpers';
 
 const publicationCountry = createAsyncReducer({
@@ -9,9 +9,20 @@ const publicationCountry = createAsyncReducer({
   },
   action: FETCH_METADATA_VALUES_FOR_COUNTRY,
   handleSuccess: payload => ({
-    // add name and id so we can display it in an Autocomplete
     ...payload,
-    shortList: payload.short_list,
+    shortList: payload.short_list.map(c => ({
+      ...c,
+      selected: false,
+      value: false,
+    })),
+  }),
+  [RESET_METADATA_SHORTLIST]: (payload, state) => ({
+    ...state,
+    shortList: state.shortList ? state.shortList.map(c => ({
+      ...c,
+      selected: false,
+      value: false,
+    })) : [],
   }),
 });
 

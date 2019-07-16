@@ -88,15 +88,16 @@ const mapDispatchToProps = dispatch => ({
   handleUnselectMedia: (selectedMedia) => {
     if (selectedMedia) {
       let unselectedMedia = {};
-      if (selectedMedia.id) {
+      if (selectedMedia.id) { // if this is a source or collection
         unselectedMedia = Object.assign({}, selectedMedia, { selected: false });
-      } else {
+      } else { // if this is a search composite
         Object.keys(selectedMedia.tags).forEach((m) => { // for each tag
-          Object.values(selectedMedia.tags[m]).map(a => Object.assign(a, { selected: false }));
+          Object.values(selectedMedia.tags[m]).map(a => Object.assign(a, { selected: false, value: false }));
         });
-        const unselectedMetadataTags = Object.values(selectedMedia.tags).map(t => (Object.assign({}, t, { selected: false })));
+        const unselectedMetadataTags = Object.values(selectedMedia.tags).map(t => (Object.assign({}, t, { selected: false, value: false })));
         unselectedMedia.tags = unselectedMetadataTags;
         unselectedMedia.addAllSearch = false;
+        unselectedMedia.selected = false;
       }
       dispatch(selectMedia(unselectedMedia));
     }

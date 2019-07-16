@@ -9,9 +9,11 @@ const publicationState = createAsyncReducer({
   },
   action: FETCH_METADATA_VALUES_FOR_STATE,
   handleSuccess: payload => ({
-    // add name and id so we can display it in an Autocomplete
-    shortList: payload.short_list,
     ...payload,
+    shortList: payload.short_list.map(c => ({
+      ...c,
+      selected: false,
+    })),
   }),
 });
 

@@ -109,6 +109,7 @@ class QueryForm extends React.Component {
           initialValues.sources,
         );
       }
+      // initial values, searches is an object
       if (initialValues.searches && initialValues.searches.tags && Object.keys(initialValues.searches.tags).length > 0) {
         cleanedInitialValues.media = cleanedInitialValues.media.concat(initialValues.searches);
       }
@@ -120,9 +121,14 @@ class QueryForm extends React.Component {
     }
     if (selectedCopy.sources && selectedCopy.sources.length) {
       selectedCopy.media = selectedCopy.media.concat(selectedCopy.sources);
-    } // merge into one list with `renderFields`
+    } // searches is an array
+
     if (selectedCopy.searches && selectedCopy.searches.tags && Object.keys(selectedCopy.searches.tags).length > 0) {
       selectedCopy.media = selectedCopy.media.concat(selectedCopy.searches);
+    } else if (selectedCopy.searches && selectedCopy.searches.length) {
+      if (selectedCopy.searches[0].tags && Object.keys(selectedCopy.searches[0].tags).length > 0) {
+        selectedCopy.media = selectedCopy.media.concat(selectedCopy.searches);
+      }
     }
     const currentQ = selectedCopy.q;
     let mediaLabel = formatMessage(localMessages.SandC);

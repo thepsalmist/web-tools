@@ -241,11 +241,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         dispatch(selectMediaPickerQueryArgs(values));
         tags = Object.values(values.tags).filter(t => t.length > 0);
         const selectedTags = [];
-        // TODO: create and/or conjunction with tags_id_1, tags_id_2 etc per metadata
+        // parsing and/or in backend
         tags.forEach((t) => {
-          selectedTags.push(t.filter(m => m.value).reduce((a, b) => a.concat(b), []).map(i => i.tags_id));
+          if (Array.isArray(t)) {
+            selectedTags.push(t.filter(m => m.value).reduce((a, b) => a.concat(b), []).map(i => i.tags_id));
+          }
         });
-        tags = selectedTags.join(',');
+        tags = selectedTags.filter(t => t.length > 0).join(',');
       }
       dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: (values.allMedia ? -1 : tags) }));
     }

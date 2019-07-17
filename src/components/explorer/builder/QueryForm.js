@@ -75,7 +75,7 @@ class QueryForm extends React.Component {
   evalAllQueriesForValidMedia = () => {
     const { queries, mediaUpdates } = this.props;
     const anyQueriesNoMedia = this.getAllActiveQueries(queries).filter(q => (q.uid !== mediaUpdates.uid) && q.media && q.media.length === 0).length; // if any query is missing media
-    const thisCurrentQueryFormNoMedia = mediaUpdates && (mediaUpdates.media === undefined || mediaUpdates.media.length === 0) && (mediaUpdates.sources === undefined || mediaUpdates.sources.length === 0) && (mediaUpdates.collections === undefined || mediaUpdates.collections.length === 0);
+    const thisCurrentQueryFormNoMedia = mediaUpdates && (mediaUpdates.media === undefined || mediaUpdates.media.length === 0) && (mediaUpdates.sources === undefined || mediaUpdates.sources.length === 0) && (mediaUpdates.collections === undefined || mediaUpdates.collections.length === 0) && (mediaUpdates.searches === undefined || mediaUpdates.searches.length === 0);
     return anyQueriesNoMedia || thisCurrentQueryFormNoMedia;
   }
 

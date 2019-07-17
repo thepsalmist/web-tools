@@ -39,22 +39,23 @@ class SourceSearchResultsContainer extends React.Component {
   processQuery = (values) => {
     const { selectedMediaQueryType, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
     // essentially reselect all values that are currently selected, plus the newly clicked/entered ones
-    // TODO: redundant assignment w values since we add them below?
-    const updatedQueryObj = Object.assign({}, { type: selectedMediaQueryType, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags }, values);
+    // any updates to MediaQuery need to be in the right form { type, tags, allMedia || addAllSearch || null }
+    // initialize with previously selected query args
+    const updatedQueryObj = Object.assign({}, { type: selectedMediaQueryType, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags });
 
     if (updatedQueryObj.tags === undefined) {
       updatedQueryObj.tags = []; // if first metadata selection
     }
 
     const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType'];
-
+    // ignore/remove any non metadata args (like search etc)
     metadataQueryFields.forEach((key) => {
       if (updatedQueryObj.tags[key] === undefined) {
         updatedQueryObj.tags[key] = [];
       }
       Object.values(values).forEach((obj) => {
         if (obj !== undefined
-          && values.name === key) {
+          && obj.name === key) {
           const modifiedObjIndex = updatedQueryObj.tags[key].findIndex(o => obj.tags_id === o.tags_id);
           if (modifiedObjIndex > -1) {
             updatedQueryObj.tags[key][modifiedObjIndex].value = obj.value; // update
@@ -66,6 +67,7 @@ class SourceSearchResultsContainer extends React.Component {
               updatedWithSelection.selected = true;
             }
             updatedQueryObj.tags[key].tag_sets_id = obj.tag_sets_id;
+            updatedQueryObj.tags[key].tag_set_label = obj.tag_set_label;
             updatedQueryObj.tags[key].push(updatedWithSelection); // or insert ? Or do in reducer?
           }
         }
@@ -84,8 +86,9 @@ class SourceSearchResultsContainer extends React.Component {
   }
 
   updateQuerySelection = (metadataType, values) => {
+    // triggered when a singular metadata is un/checked
     const { updateMediaQuerySelection } = this.props;
-    const updatedQueryObj = this.processQuery(values);
+    const updatedQueryObj = this.processQuery([values]);
 
     updateMediaQuerySelection(updatedQueryObj);
   }
@@ -237,6 +240,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         dispatch(selectMediaPickerQueryArgs(values));
         tags = Object.values(values.tags).filter(t => t.length > 0);
         const selectedTags = [];
+        // TODO: create and/or conjunction with tags_id_1, tags_id_2 etc per metadata
         tags.forEach((t) => {
           selectedTags.push(t.filter(m => m.value).reduce((a, b) => a.concat(b), []).map(i => i.tags_id));
         });

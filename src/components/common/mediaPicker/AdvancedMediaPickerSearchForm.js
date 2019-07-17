@@ -91,7 +91,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         name={MEDIA_TYPE}
         form="advanced-media-picker-search"
         label={formatMessage(messages.mediaType)}
-        onChange={(...args) => this.selectMetaData(TAG_SET_MEDIA_TYPE, args, MEDIA_TYPE)}
+        onChange={(id, args) => this.selectMetaData(args.tag_set_label, args, MEDIA_TYPE)}
         onSelect={this.setSelectedMediaTypes}
         previouslySelected={initialValues.tags}
       />
@@ -102,7 +102,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         type={PUBLICATION_COUNTRY}
         form="advanced-media-picker-search"
         label={formatMessage(messages.pubCountry)}
-        onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_COUNTRY, args, PUBLICATION_COUNTRY)}
+        onChange={(id, args) => this.selectMetaData(args.tag_set_label, args, PUBLICATION_COUNTRY)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
         previouslySelectedTags={initialValues.tags}
         className="media-picker-pub-in"
@@ -114,7 +114,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         type={PUBLICATION_STATE}
         form="advanced-media-picker-search"
         label={formatMessage(messages.pubState)}
-        onChange={(...args) => this.selectMetaData(TAG_SET_PUBLICATION_STATE, args, PUBLICATION_STATE)}
+        onChange={(id, args) => this.selectMetaData(args.tag_set_label, args, PUBLICATION_STATE)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
         previouslySelectedTags={initialValues.tags}
         className="media-picker-pub-in"
@@ -126,7 +126,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         type={PRIMARY_LANGUAGE}
         form="advanced-media-picker-search"
         label={formatMessage(messages.language)}
-        onChange={(...args) => this.selectMetaData(TAG_SET_PRIMARY_LANGUAGE, args, PRIMARY_LANGUAGE)}
+        onChange={(id, args) => this.selectMetaData(args.tag_set_label, args, PRIMARY_LANGUAGE)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
         previouslySelectedTags={initialValues.tags}
         className="media-picker-pub-in"
@@ -137,7 +137,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         id={TAG_SET_COUNTRY_OF_FOCUS}
         type={COUNTRY_OF_FOCUS}
         form="advanced-media-picker-search"
-        onChange={(...args) => this.selectMetaData(TAG_SET_COUNTRY_OF_FOCUS, args, COUNTRY_OF_FOCUS)}
+        onChange={(id, args) => this.selectMetaData(args.tag_set_label, args, COUNTRY_OF_FOCUS)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
         previouslySelectedTags={initialValues.tags}
         className="media-picker-about"

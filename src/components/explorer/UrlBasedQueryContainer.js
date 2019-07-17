@@ -151,7 +151,7 @@ function composeUrlBasedQueryContainer() {
           extraDefaults = {
             sources: [],
             collections: DEFAULT_COLLECTION_OBJECT_ARRAY,
-            searches: {}, // note, searches is an object
+            searches: [],
             startDate: solrFormat(dateObj.start),
             endDate: solrFormat(dateObj.end),
           };
@@ -187,7 +187,7 @@ function composeUrlBasedQueryContainer() {
           || q.sources.reduce((combined, s) => combined && s.name !== undefined, true));
         const sourcesAreReady = querySourceStatus.reduce((combined, q) => combined && q, true);
         const querySearchStatus = queries.filter(q => Object.values(q.searches).length === 0).length === queries.length
-          // if all searches fields are empty or if searches have fetched name
+          // if all searches fields are empty or if searches have fetched name && metadata info
           || queries.filter(q => JSON.stringify(q.searches).indexOf('name') > 0).length > 0;
         return collectionsAreReady && sourcesAreReady && querySearchStatus;
       }

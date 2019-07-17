@@ -57,7 +57,8 @@ class QueryPickerContainer extends React.Component {
     const updatedCollections = formQuery.media.filter(m => m.id !== toBeDeletedObj.id && (m.type === 'collection' || m.tags_id));
     updatedMedia.collections = updatedCollections;
     updatedMedia.sources = updatedSources;
-    updatedMedia.searches = formQuery.media.filter(m => m.tags === toBeDeletedObj.tags && toBeDeletedObj.addAllSearch);
+    updatedMedia.searches = formQuery.media.filter(m => (((m.tags === undefined && m.tags === toBeDeletedObj.tags && m.addAllSearch) || (m.tags !== undefined && m.tags !== toBeDeletedObj.tags && m.addAllSearch))));
+    updatedMedia.media = [];
     updateCurrentQuery(updatedMedia, null);
   }
 
@@ -74,7 +75,7 @@ class QueryPickerContainer extends React.Component {
       const updatedSearches = sourceAndCollections.filter(m => m.addAllSearch);
       updatedQuery.collections = updatedCollections;
       updatedQuery.sources = updatedSources;
-      updatedQuery.searches = updatedSearches && updatedSearches.length > 0 ? updatedSearches[0] : [];
+      updatedQuery.searches = updatedSearches;
       updateCurrentQueryThenReselect(updatedQuery);
     } else {
       updatedQuery.collections = sourceAndCollections; // push ALL_MEDIA selection into query so it shows up
@@ -314,6 +315,7 @@ class QueryPickerContainer extends React.Component {
             savedSearches={savedSearches}
             form="queryForm"
             enableReinitialize
+            keepDirtyOnReinitialize
             destroyOnUnmount={false}
             buttonLabel={formatMessage(localMessages.querySearch)}
             onSave={this.saveAndSearch}

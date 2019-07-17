@@ -107,12 +107,13 @@ export const metadataQueryFields = new Set([PUBLICATION_COUNTRY, PUBLICATION_STA
 
 export function prepSearches(q) { // grab all data from each object in tags - we will serialize out to URL
   const tagObj = {};
-  if (q && q.tags) {
-    Object.keys(q.tags).forEach((m) => { // for each tag
+  // assuming q is an array
+  if (q[0] && q[0].tags) {
+    Object.keys(q[0].tags).forEach((m) => { // for each tag
       if (metadataQueryFields.has(m)) { // that is metadata
-        const vals = Object.values(q.tags[m]).map(a => (a.selected ? a.tags_id : null)).filter(t => t);
+        const vals = Object.values(q[0].tags[m]).map(a => (a.selected ? a.tags_id : null)).filter(t => t);
         if (vals && vals.length > 0) {
-          const tagSetsId = q.tags[m][0].tag_sets_id;
+          const tagSetsId = q[0].tags[m][0].tag_sets_id;
           tagObj[tagSetsId] = vals;
           tagObj[tagSetsId].tag_sets_id = tagSetsId;
         }

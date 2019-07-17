@@ -109,10 +109,13 @@ export function prepSearches(q) { // grab all data from each object in tags - we
   const tagObj = {};
   if (q && q.tags) {
     Object.keys(q.tags).forEach((m) => { // for each tag
-      if (metadataQueryFields.has(m) && q.tags[m].tag_sets_id) { // that is metadata
-        const tagSetId = q.tags[m].tag_sets_id;
+      if (metadataQueryFields.has(m)) { // that is metadata
         const vals = Object.values(q.tags[m]).map(a => (a.selected ? a.tags_id : null)).filter(t => t);
-        tagObj[tagSetId] = vals;
+        if (vals && vals.length > 0) {
+          const tagSetsId = q.tags[m][0].tag_sets_id;
+          tagObj[tagSetsId] = vals;
+          tagObj[tagSetsId].tag_sets_id = tagSetsId;
+        }
         return tagObj;
       }
       return null;

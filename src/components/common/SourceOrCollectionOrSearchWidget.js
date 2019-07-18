@@ -4,11 +4,11 @@ import { FormattedHTMLMessage } from 'react-intl';
 import { DeleteButton } from './IconButton';
 
 const localMessages = {
-  withSearch: { id: 'explorer.mediaPicker.search', defaultMessage: 'With Search<br /> {value}' },
+  withSearch: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection<br /> with {keyword} in <br />{value}' },
 };
 
 const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children, link }) => {
-  const isSearch = object.addAllSearch === true;
+  const isSearch = object.customColl === true;
   const isCollection = object.tags_id !== undefined;
   let typeClass = 'source';
   let objectId = object.media_id;
@@ -31,7 +31,7 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children,
         return [];
       });
     if (subSearch.length > 0) {
-      subSearch = <FormattedHTMLMessage {...localMessages.withSearch} values={{ value: subSearch }} />;
+      subSearch = <FormattedHTMLMessage {...localMessages.withSearch} values={{ keyword: object.mediaKeyword, value: subSearch }} />;
     }
   }
   // link the text if there is a click handler defined

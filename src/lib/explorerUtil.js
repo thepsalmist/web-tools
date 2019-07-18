@@ -105,24 +105,29 @@ export function lookupReadableMetadataName(tagSetsId) {
 export const metadataQueryFields = new Set([PUBLICATION_COUNTRY, PUBLICATION_STATE, PRIMARY_LANGUAGE, COUNTRY_OF_FOCUS, MEDIA_TYPE]);
 
 
-export function prepSearches(q) { // grab all data from each object in tags - we will serialize out to URL
+export function prepSearches(searches) { // serialize in the form searches: [{ keyword, <metadataId1>:[], <metadataId2>:[] }, {...}]
   const tagObj = {};
+  const currentSearch = [];
   // assuming q is an array
-  if (q[0] && q[0].tags) {
-    Object.keys(q[0].tags).forEach((m) => { // for each tag
-      if (metadataQueryFields.has(m)) { // that is metadata
-        const vals = Object.values(q[0].tags[m]).map(a => (a.selected ? a.tags_id : null)).filter(t => t);
-        if (vals && vals.length > 0) {
-          const tagSetsId = q[0].tags[m][0].tag_sets_id;
-          tagObj[tagSetsId] = vals;
-          tagObj[tagSetsId].tag_sets_id = tagSetsId;
+  searches.map((q) => {
+    if (q && q.tags) {
+      Object.keys(q.tags).forEach((m) => { // for each tag
+        if (metadataQueryFields.has(m)) { // that is metadata
+          const vals = Object.values(q.tags[m]).map(a => (a.selected ? a.tags_id : null)).filter(t => t);
+          if (vals && vals.length > 0) {
+            const tagSetsId = q.tags[m][0].tag_sets_id;
+            tagObj[tagSetsId] = vals;
+            tagObj[tagSetsId].tag_sets_id = tagSetsId;
+          }
+          return tagObj;
         }
-        return tagObj;
-      }
-      return null;
-    });
-  }
-  return tagObj;
+        return null;
+      });
+      currentSearch.push({ media_keyword: q.mediaKeyword, ...tagObj });
+    }
+    return false;
+  });
+  return currentSearch;
 }
 
 export function generateQueryParamString(queries) {

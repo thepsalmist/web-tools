@@ -57,7 +57,7 @@ class QueryPickerContainer extends React.Component {
     const updatedCollections = formQuery.media.filter(m => m.id !== toBeDeletedObj.id && (m.type === 'collection' || m.tags_id));
     updatedMedia.collections = updatedCollections;
     updatedMedia.sources = updatedSources;
-    updatedMedia.searches = formQuery.media.filter(m => (((m.tags === undefined && m.tags === toBeDeletedObj.tags && m.addAllSearch) || (m.tags !== undefined && m.tags !== toBeDeletedObj.tags && m.addAllSearch))));
+    updatedMedia.searches = formQuery.media.filter(m => (((m.tags === undefined && m.tags === toBeDeletedObj.tags && m.customColl) || (m.tags !== undefined && m.tags !== toBeDeletedObj.tags && m.customColl))));
     updatedMedia.media = [];
     updateCurrentQuery(updatedMedia, null);
   }
@@ -72,7 +72,7 @@ class QueryPickerContainer extends React.Component {
     if (sourceAndCollections.filter(m => m.id === ALL_MEDIA).length === 0) {
       const updatedSources = sourceAndCollections.filter(m => m.type === 'source' || m.media_id);
       const updatedCollections = sourceAndCollections.filter(m => m.type === 'collection' || m.tags_id);
-      const updatedSearches = sourceAndCollections.filter(m => m.addAllSearch);
+      const updatedSearches = sourceAndCollections.filter(m => m.customColl);
       updatedQuery.collections = updatedCollections;
       updatedQuery.sources = updatedSources;
       updatedQuery.searches = updatedSearches;

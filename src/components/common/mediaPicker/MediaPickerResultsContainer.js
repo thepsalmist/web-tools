@@ -17,7 +17,7 @@ class MediaPickerResultsContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
     // const { handleMediaConcurrency } = this.props;
     if (nextProps.selectedMediaQueryType !== this.props.selectedMediaQueryType) {
-      this.updateMediaQuery({ type: nextProps.selectedMediaQueryType });
+      this.updateMediaQuery({ type: nextProps.selectedMediaQueryType, tags: {}, keyword: '' });
     }
     if (nextProps.selectedMedia !== this.props.selectedMedia
       // if the results have changed from a keyword entry, we need to update the UI
@@ -69,7 +69,7 @@ class MediaPickerResultsContainer extends React.Component {
     if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0) {
       // sync up incoming selectedMedia and push to result sets.
       // for each *metadata search item*, push it into query args
-      whichProps.selectedMedia.filter(m => m.addAllSearch).map(s => this.updateMediaQuery({ ...s, type: this.props.selectedMediaQueryType }));
+      // whichProps.selectedMedia.filter(m => m.addAllSearch).map(s => this.updateMediaQuery({ ...s, type: this.props.selectedMediaQueryType }));
     }
     return 0;
   }
@@ -124,10 +124,6 @@ MediaPickerResultsContainer.propTypes = {
   handleToggleSelected: PropTypes.func.isRequired,
   updateMediaQuerySelection: PropTypes.func.isRequired,
   selectedMediaQueryType: PropTypes.number,
-  selectedMediaQueryTags: PropTypes.oneOfType([
-    PropTypes.object, // one tag
-    PropTypes.array, // list of tags
-  ]),
   resetComponents: PropTypes.func.isRequired,
   featured: PropTypes.object,
   favoritedCollections: PropTypes.object,
@@ -141,7 +137,6 @@ const mapStateToProps = state => ({
   fetchStatus: (state.system.mediaPicker.sourceQueryResults.fetchStatus === fetchConstants.FETCH_SUCCEEDED || state.system.mediaPicker.collectionQueryResults.fetchStatus === fetchConstants.FETCH_SUCCEEDED || state.system.mediaPicker.favoritedCollections.fetchStatus === fetchConstants.FETCH_SUCCEEDED) ? fetchConstants.FETCH_SUCCEEDED : fetchConstants.FETCH_INVALID,
   selectedMedia: state.system.mediaPicker.selectMedia.list,
   selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : null,
-  selectedMediaQueryTags: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.tags : null,
   collectionResults: state.system.mediaPicker.collectionQueryResults,
   featured: state.system.mediaPicker.featured ? state.system.mediaPicker.featured : null,
   sourceResults: state.system.mediaPicker.sourceQueryResults,

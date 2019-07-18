@@ -62,22 +62,26 @@ def api_explorer_collections_by_ids():
 @arguments_required('searches[]')
 @api_error_handler
 def api_explorer_searches_by_ids():
+
     user_mc = user_admin_mediacloud_client()
     tag_set_tag_obj = {}
     tag_set_tag_obj['tags'] = {}
-    tag_list = json.loads(request.args['searches[]'])
-    for t in tag_list:
-        metadata_tag = user_mc.tagSet(t)
-        metadata_tag['id'] = int(t)
-        search_tags =[]
-        tag_set_tag_obj['tags'][metadata_tag['name']] = []
-        for s in tag_list[t]:
-            tag_info = user_mc.tag(s)
-            tag_info['value'] = True #test before
-            search_tags.append(tag_info)
-        tag_set_tag_obj['tags'][metadata_tag['name']] = search_tags
-    tag_set_tag_obj['addAllSearch'] = True
-    tag_set_tag_obj['name'] = "search"
+    searches_list = json.loads(request.args['searches[]'])
+    for s in searches_list:
+        for items in s: #grab tagsets and corresponding tags
+            keyword = items['media_keyword'] if 'media_keyword' in items else '*'
+            tags = items[]
+            metadata_tag = user_mc.tagSet(tag_set)
+            metadata_tag['id'] = int(tag_set)
+            search_tags =[]
+            tag_set_tag_obj['tags'][metadata_tag['name']] = []
+            for t in tag_set:
+                tag_info = user_mc.tag(t)
+                tag_info['value'] = True #test before
+                search_tags.append(tag_info)
+            tag_set_tag_obj['tags'][metadata_tag['name']] = search_tags
+        tag_set_tag_obj['addAllSearch'] = True
+        tag_set_tag_obj['name'] = "search"
 
 
     return jsonify({"results": tag_set_tag_obj})

@@ -21,6 +21,11 @@ const devConfig = {
     chunkFilename: '[id].[hash].js',
     publicPath: 'http://localhost:2992/', // needed to get correct path in dev manifest file
   },
+  resolve: {
+    alias: {
+      'react-dom': '@hot-loader/react-dom',
+    },
+  },
   plugins: [
     // this writes JS files for our Flask server to read
     new ManifestRevisionPlugin(

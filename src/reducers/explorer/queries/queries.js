@@ -111,7 +111,8 @@ function queries(state = INITIAL_STATE, action) {
             // set up array with updated values
             updatedArray.tags[readableName] = storeArray;
             updatedArray.tags[readableName].tag_sets_id = tagSet;
-            updatedArray.addAllSearch = action.payload.searches.results.addAllSearch;
+            updatedArray.customColl = true; // action.payload.searches.results.customColl;
+            updatedArray.mediaKeyword = action.payload.searches.results.media_keyword;
           }
         });
         updatedState[queryIndex].searches = updatedArray;

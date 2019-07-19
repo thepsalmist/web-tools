@@ -68,20 +68,22 @@ def api_explorer_searches_by_ids():
     tag_set_tag_obj['tags'] = {}
     searches_list = json.loads(request.args['searches[]'])
     for s in searches_list:
-        for items in s: #grab tagsets and corresponding tags
-            keyword = items['media_keyword'] if 'media_keyword' in items else '*'
-            tags = items[]
-            metadata_tag = user_mc.tagSet(tag_set)
-            metadata_tag['id'] = int(tag_set)
+        for key_tag_set in s.keys(): #grab tagsets and corresponding tags
+            if 'media_keyword' in key_tag_set:
+                keyword = s[key_tag_set]
+                continue
+            tags = s[key_tag_set]
+            metadata_tag = user_mc.tagSet(key_tag_set)
+            metadata_tag['id'] = int(key_tag_set)
             search_tags =[]
             tag_set_tag_obj['tags'][metadata_tag['name']] = []
-            for t in tag_set:
+            for t in tags:
                 tag_info = user_mc.tag(t)
-                tag_info['value'] = True #test before
+                # tag_info['value'] = True #test before
                 search_tags.append(tag_info)
             tag_set_tag_obj['tags'][metadata_tag['name']] = search_tags
-        tag_set_tag_obj['addAllSearch'] = True
-        tag_set_tag_obj['name'] = "search"
+        # tag_set_tag_obj['customColl'] = True
+        tag_set_tag_obj['media_keyword'] = keyword or "search"
 
 
     return jsonify({"results": tag_set_tag_obj})

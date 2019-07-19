@@ -44,7 +44,7 @@ const MetadataPickerContainer = (props) => {
   return (
     <div className={`metadata-picker metadata-picker-${name}`}>
       <React.Fragment>
-        {(hideLabel !== true) && <label>{label}</label>}
+        {(hideLabel !== true) && <label htmlFor={name}>{label}</label>}
         <Field
           name={name}
           fullWidth

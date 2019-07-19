@@ -43,6 +43,7 @@ class TopicForm extends React.Component {
     const { formatMessage } = this.props.intl;
     const selectedMedia = initialValues.sourcesAndCollections ? initialValues.sourcesAndCollections : [];
     let mediaPicker = null;
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
     let mediaLabel = <label htmlFor="media"><FormattedMessage {...localMessages.SandC} /></label>;
     mediaPicker = (
       <MediaPickerDialog
@@ -50,6 +51,7 @@ class TopicForm extends React.Component {
         onConfirmSelection={selections => onMediaChange(selections)}
       />
     );
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
     mediaLabel = <label htmlFor="media"><FormattedMessage {...localMessages.selectSandC} /></label>;
     let useForm = (
       <TopicCreateForm

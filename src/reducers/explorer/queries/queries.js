@@ -109,15 +109,13 @@ function queries(state = INITIAL_STATE, action) {
               if (vals && vals.length > 0) {
                 const tagSet = Object.values(searchObj.tags[m]).map(a => a.tag_sets_id).reduce(ts => ts);
                 const readableName = lookupReadableMetadataName(tagSet);
-
-
                 updatedCustonObj.tags[readableName] = Object.values(searchObj.tags[m]).map(a => Object.assign({}, a, { selected: true }));
               }
               return null;
             });
             updatedCustonObj.customColl = true; // action.payload.searches.results.customColl;
             updatedCustonObj.mediaKeyword = searchObj.media_keyword;
-            updatedCustonObj.id = searchObj.id;
+            updatedCustonObj.id = searchObj.id; // from python when loaded in
             searches.push(updatedCustonObj);
             return null;
           }

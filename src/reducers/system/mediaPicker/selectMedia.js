@@ -13,10 +13,10 @@ function selectMedia(state = INITIAL_STATE, action) {
     // recieving a whole new list of media to show
     case MEDIA_PICKER_INITIALIZE_ALREADY_SELECTED_MEDIA:
       updatedSelectedList = [...action.payload];
-      updatedSelectedList = updatedSelectedList.map(c => ({ ...c, selected: true, id: c.tags_id ? c.tags_id : c.media_id }));
+      updatedSelectedList = updatedSelectedList.map(c => ({ ...c, selected: true, id: c.tags_id || c.media_id || c.id }));
       return { list: updatedSelectedList };
 
-    // update a particular item on the list, source, collection, or search
+    // update a particular item on the list, source, collection, or search. Search id is generated in SourceSelectContainer for new Custom searches and in python for URL loading
     case MEDIA_PICKER_SELECT_MEDIA:
       updatedSelectedList = [...state.list];
       if (!updatedSelectedList.some(s => s.id !== undefined && s.id === action.payload.id)) {

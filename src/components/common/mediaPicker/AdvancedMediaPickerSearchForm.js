@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Field, reduxForm, keepDirtyOnReinitialize, enableReinitialize } from 'redux-form';
+import { Field, reduxForm } from 'redux-form';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../hocs/IntlForm';
@@ -265,8 +265,8 @@ AdvancedMediaPickerSearchForm.propTypes = {
 
 const reduxFormConfig = {
   form: 'advanced-media-picker-search',
-  enableReinitialize,
-  keepDirtyOnReinitialize,
+  enableReinitialize: true,
+  keepDirtyOnReinitialize: true,
 };
 
 export default

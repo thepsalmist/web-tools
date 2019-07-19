@@ -6,7 +6,7 @@ import withAsyncData from '../../hocs/AsyncDataContainer';
 import { fetchMediaPickerFeaturedCollections } from '../../../../actions/systemActions';
 import CollectionResultsTable from './CollectionResultsTable';
 import * as fetchConstants from '../../../../lib/fetchConstants';
-import TAG_SET_MC_ID from '../../../../lib/tagUtil';
+import { TAG_SET_MC_ID } from '../../../../lib/tagUtil';
 import LoadingSpinner from '../../LoadingSpinner';
 
 const localMessages = {

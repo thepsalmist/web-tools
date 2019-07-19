@@ -94,28 +94,36 @@ function queries(state = INITIAL_STATE, action) {
         updatedState = [...state];
         queryIndex = state.findIndex(q => q.uid !== null && q.uid === action.payload.uid);
         if (queryIndex === -1) {
-          // we didn't fine the query uid we are looking for, so this is an error
+          // we didn't find the query uid we are looking for, so this is an error
           // so swallow the error for now with no updates
           return state;
         }
-        const updatedArray = {};
-        Object.keys(action.payload.searches.results.tags).forEach((m) => { // for each tag
-          // get readable name from tag id for each metadata selection
-          let storeArray = {};
-          storeArray = action.payload.searches.results.tags[m];
-          if (storeArray.length > 0) {
-            const tagSet = Object.values(storeArray).map(a => a.tag_sets_id).reduce(t => t);
-            storeArray = Object.values(storeArray).map(a => Object.assign({}, a, { selected: true }));
-            const readableName = lookupReadableMetadataName(tagSet);
-            if (!updatedArray.tags) updatedArray.tags = {};
-            // set up array with updated values
-            updatedArray.tags[readableName] = storeArray;
-            updatedArray.tags[readableName].tag_sets_id = tagSet;
-            updatedArray.customColl = true; // action.payload.searches.results.customColl;
-            updatedArray.mediaKeyword = action.payload.searches.results.media_keyword;
+        const searches = [];
+        // for each searchoject in the array, see what tags have entries, and go through them and make the tags readable and selected
+        action.payload.searches.results.map((searchObj) => {
+          if (searchObj && searchObj.tags) {
+            const updatedCustonObj = {};
+            if (!updatedCustonObj.tags) updatedCustonObj.tags = {};
+            Object.keys(searchObj.tags).forEach((m) => { // for each tag
+              const vals = Object.values(searchObj.tags[m]).map(a => a.tags_id);
+              if (vals && vals.length > 0) {
+                const tagSet = Object.values(searchObj.tags[m]).map(a => a.tag_sets_id).reduce(ts => ts);
+                const readableName = lookupReadableMetadataName(tagSet);
+
+
+                updatedCustonObj.tags[readableName] = Object.values(searchObj.tags[m]).map(a => Object.assign({}, a, { selected: true }));
+              }
+              return null;
+            });
+            updatedCustonObj.customColl = true; // action.payload.searches.results.customColl;
+            updatedCustonObj.mediaKeyword = searchObj.media_keyword;
+            updatedCustonObj.id = searchObj.id;
+            searches.push(updatedCustonObj);
+            return null;
           }
+          return null;
         });
-        updatedState[queryIndex].searches = updatedArray;
+        updatedState[queryIndex].searches = searches;
         return updatedState;
       }
       return null;

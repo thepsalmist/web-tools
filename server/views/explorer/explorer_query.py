@@ -1,6 +1,7 @@
 import logging
 from flask import jsonify, request
 import flask_login
+import random
 from server import app, mc
 from server.auth import user_admin_mediacloud_client, user_has_auth_role, is_user_logged_in, ROLE_MEDIA_EDIT
 from server.util.request import form_fields_required, api_error_handler, arguments_required
@@ -64,29 +65,31 @@ def api_explorer_collections_by_ids():
 def api_explorer_searches_by_ids():
 
     user_mc = user_admin_mediacloud_client()
-    tag_set_tag_obj = {}
-    tag_set_tag_obj['tags'] = {}
+    searches_results = []
     searches_list = json.loads(request.args['searches[]'])
     for s in searches_list:
+        keyword = s['media_keyword'] if 'media_keyword' in s else '*'
+        tag_set_tag_obj = {}
+        tag_set_tag_obj['tags'] = {}
+
         for key_tag_set in s.keys(): #grab tagsets and corresponding tags
             if 'media_keyword' in key_tag_set:
-                keyword = s[key_tag_set]
                 continue
             tags = s[key_tag_set]
             metadata_tag = user_mc.tagSet(key_tag_set)
             metadata_tag['id'] = int(key_tag_set)
-            search_tags =[]
             tag_set_tag_obj['tags'][metadata_tag['name']] = []
+            search_tags =[]
             for t in tags:
                 tag_info = user_mc.tag(t)
-                # tag_info['value'] = True #test before
+                tag_info['value'] = True #test before
                 search_tags.append(tag_info)
             tag_set_tag_obj['tags'][metadata_tag['name']] = search_tags
-        # tag_set_tag_obj['customColl'] = True
         tag_set_tag_obj['media_keyword'] = keyword or "search"
+        tag_set_tag_obj['id'] = random.uniform(1, 10)
+        searches_results.append(tag_set_tag_obj)
 
-
-    return jsonify({"results": tag_set_tag_obj})
+    return jsonify({"results": searches_results})
 
 
 

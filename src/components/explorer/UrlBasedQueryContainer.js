@@ -37,7 +37,6 @@ function composeUrlBasedQueryContainer() {
         const autoMagic = location.query.auto === 'true';
         this.setState({ queryInStore: false }); // if/def automagic here
         // console.log('saving queries from will mount');
-        // console.log('saving queries from will mount');
         this.updateQueriesFromLocation(location, autoMagic);
       }
 
@@ -57,8 +56,8 @@ function composeUrlBasedQueryContainer() {
             // console.log('  got media info from server, ready!');
             this.setState({ queryInStore: true }); // mark that the parsing process has finished
           }
-          if (nextProps.queries.filter(q => q.sources.length > 0).length === 0 && nextProps.queries.filter(q => q.collections.length > 0).length === 0) {
-            // console.log('no sources or collections');
+          if (nextProps.queries.filter(q => q.sources.length > 0).length === 0 && nextProps.queries.filter(q => q.collections.length > 0).length === 0 && nextProps.queries.filter(q => q.searches.length > 0).length === 0) {
+            // console.log('no sources or collections or searches');
             this.setState({ queryInStore: true });
             updateUrl(nextProps.queries, isLoggedIn);
           }

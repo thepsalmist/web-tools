@@ -105,6 +105,29 @@ export function lookupReadableMetadataName(tagSetsId) {
 export const metadataQueryFields = new Set([PUBLICATION_COUNTRY, PUBLICATION_STATE, PRIMARY_LANGUAGE, COUNTRY_OF_FOCUS, MEDIA_TYPE]);
 
 
+export function deselectSearches(searches) {
+  const tagObj = {};
+  const currentSearch = [];
+  // assuming q is an array
+  searches.map((q) => {
+    if (q && q.tags) {
+      Object.keys(q.tags).forEach((m) => { // for each tag
+        if (metadataQueryFields.has(m)) { // that is metadata
+          const vals = Object.values(q.tags[m]).map(a => (a.selected ? a.tags_id : null)).filter(t => t);
+          if (vals && vals.length > 0) {
+            tagObj[m].selected = false;
+          }
+          return tagObj;
+        }
+        return null;
+      });
+      currentSearch.push({ media_keyword: q.mediaKeyword, ...tagObj });
+    }
+    return false;
+  });
+  return currentSearch;
+}
+
 export function prepSearches(searches) { // serialize in the form searches: [{ keyword, <metadataId1>:[], <metadataId2>:[] }, {...}]
   const tagObj = {};
   const currentSearch = [];

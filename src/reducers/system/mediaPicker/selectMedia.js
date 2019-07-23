@@ -17,20 +17,15 @@ function selectMedia(state = INITIAL_STATE, action) {
       return { list: updatedSelectedList };
 
     // update a particular item on the list, source, collection, or search. Search id is generated in SourceSelectContainer for new Custom searches and in python for URL loading
-    // this should work - the list is updated according to newly selected media
-    // however, the list tags field is somehow updated for all of the list entries
-    // maybe the problem is that this is a list
-    // but I'm trying to update it with one object at time?
-    // somewhere the updated tags is getting added to every item in selectedMedia..
-    // as if a singular tags object itself is added to select media
     case MEDIA_PICKER_SELECT_MEDIA:
       updatedSelectedList = [...state.list];
       if (action.payload.id !== undefined) {
         const mediaIndex = updatedSelectedList.findIndex(s => s.id === action.payload.id);
-        if (mediaIndex > -1 && !action.payload.customColl) { // we don't update custom searches, just add
-          updatedSelectedList[mediaIndex] = action.payload; // in display check matches
-        } else if (!action.payload.customColl) {
-          updatedSelectedList.push(action.payload);
+        if (mediaIndex > -1 && !action.payload.customColl) {
+          // if there already, treat as a removal/toggle
+          updatedSelectedList.splice(mediaIndex, 1);
+        } else { // if newly selected
+          updatedSelectedList.push({ ...action.payload, selected: action.payload.selected === undefined ? true : !action.payload.selected });
         }
         return { list: updatedSelectedList };
       }
@@ -52,12 +47,12 @@ function selectMedia(state = INITIAL_STATE, action) {
       }
       return state;
     case MEDIA_PICKER_UNSELECT_MEDIA:
-      updatedSelectedList = { ...state };
+      updatedSelectedList = [...state.list];
       if (action.payload.id !== undefined) {
         const mediaIndex = updatedSelectedList.findIndex(s => s.id === action.payload.id);
-        if (mediaIndex > -1) { // we don't update custom searches, just add
+        if (mediaIndex > -1) {
           updatedSelectedList[mediaIndex] = action.payload; // in display check matches
-          updatedSelectedList.pop(mediaIndex);
+          updatedSelectedList.splice(mediaIndex, 1); // or just toggle selected...
         }
         return { list: updatedSelectedList };
       }

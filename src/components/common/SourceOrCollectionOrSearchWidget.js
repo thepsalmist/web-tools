@@ -11,6 +11,8 @@ const localMessages = {
 const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children, link }) => {
   const isSearch = object.customColl === true;
   const isCollection = object.tags_id !== undefined;
+  if (!isSearch && !object.selected) return null;
+
   let typeClass = 'source';
   let objectId = object.media_id;
   let name = (object.name || object.label || object.url);

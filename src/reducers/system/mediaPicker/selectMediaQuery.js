@@ -8,10 +8,12 @@ function selectMediaQuery(state = INITIAL_STATE, action) {
     case SELECT_MEDIAPICKER_QUERY_ARGS:
       if (action.payload) { // format should be args: { type, mediaKeyword, tags }. tags = metadata tags
         const testArray = [];
-        Object.keys(action.payload.tags).forEach((t) => { // for each tag, specifically clone it or we have a reference issue
-          const vals = Object.values(action.payload.tags[t]).filter(o => o.name).map(obj => Object.assign({}, { ...obj }, {}));
-          testArray[t] = [...vals];
-        });
+        if (action.payload.tags) { // custom Collections in source search
+          Object.keys(action.payload.tags).forEach((t) => { // for each tag, specifically clone it or we have a reference issue
+            const vals = Object.values(action.payload.tags[t]).filter(o => o.name).map(obj => Object.assign({}, { ...obj }, {}));
+            testArray[t] = [...vals];
+          });
+        }
         const args = {
           type: action.payload.type,
           allMedia: action.payload.allMedia,

@@ -83,7 +83,6 @@ function withIntlForm(Component) {
             control={(
               <Checkbox
                 name={input.name}
-                error={intlError}
                 className="form-field-checkbox"
                 label={this.intlIfObject(label)}
                 checked={input.value === true || input.value === 1 || initialValues === 'checked'}

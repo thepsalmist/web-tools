@@ -36,6 +36,7 @@ function selectMedia(state = INITIAL_STATE, action) {
         const newObj = {};
         newObj.mediaKeyword = action.payload.mediaKeyword;
         newObj.customColl = action.payload.customColl;
+        newObj.id = action.payload.id;
         const testObj = {};
         Object.keys(action.payload.tags).forEach((t) => { // for each tag
           const valArray = Object.values(action.payload.tags[t]);

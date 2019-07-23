@@ -55,7 +55,7 @@ def api_mediapicker_source_search():
         tags_id_3 = tag_ids_by_set[2] if len(tag_ids_by_set) > 2 else None
         tags_id_4 = tag_ids_by_set[3] if len(tag_ids_by_set) > 3 else None
         tags_id_5 = tag_ids_by_set[4] if len(tag_ids_by_set) > 4 else None
-        matching_sources = media_search(cleaned_search_str, tags_id_1=tags_id_1, tags_id_2=tags_id_2,
+        matching_sources = media_search(search_str=cleaned_search_str, tags_id_1=tags_id_1, tags_id_2=tags_id_2,
                                         tags_id_3=tags_id_3, tags_id_4=tags_id_4, tags_id_5=tags_id_5)
     return jsonify({'list': matching_sources})
 

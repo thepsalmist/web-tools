@@ -84,10 +84,10 @@ class SourceSearchResultsContainer extends React.Component {
     } else if (typeof values === 'object' && 'customColl' in values) {
       updatedQueryObj.tags.name = 'search';
       updatedQueryObj.tags.label = 'search';
-      updatedQueryObj.mediaKeyword = formQuery.advancedSearchQueryString;
       updatedQueryObj.customColl = values.customColl;
       updatedQueryObj.id = Math.random(0, 100000);
     }
+    updatedQueryObj.mediaKeyword = formQuery.advancedSearchQueryString;
     return updatedQueryObj;
   }
 

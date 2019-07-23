@@ -4,7 +4,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import { Col } from 'react-flexbox-grid/lib';
-import { selectMediaPickerQueryArgs, fetchMediaPickerSources } from '../../../../actions/systemActions';
+import { selectMediaPickerQueryArgs, fetchMediaPickerSources, selectMediaCustomColl } from '../../../../actions/systemActions';
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
 import SourceResultsTable from './SourceResultsTable';
 import AdvancedMediaPickerSearchForm from '../AdvancedMediaPickerSearchForm';
@@ -39,7 +39,7 @@ class SourceSearchResultsContainer extends React.Component {
   }
 
   processQuery = (values) => {
-    const { selectedMediaQueryType, selectedMediaQueryTags, selectedMediaQueryAllTags, formQuery } = this.props;
+    const { formQuery, selectedMediaQueryType, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
     // essentially reselect all values that are currently selected, plus the newly clicked/entered ones
     // any updates to MediaQuery need to be in the right form { type, tags, allMedia || customColl || null }
     // initialize with previously selected query args
@@ -55,6 +55,7 @@ class SourceSearchResultsContainer extends React.Component {
       if (updatedQueryObj.tags[key] === undefined) {
         updatedQueryObj.tags[key] = [];
       }
+      // update tags with information we need to keep in query args
       Object.values(values).forEach((obj) => {
         if (obj !== undefined
           && obj.name === key) {
@@ -99,10 +100,11 @@ class SourceSearchResultsContainer extends React.Component {
   }
 
   addCustomSelection = (values) => {
-    const { onToggleSelected } = this.props;
+    const { handleSelectMediaCustomColl } = this.props;
+    // get current selected tags and current selected media
     const updatedQueryObj = this.processQuery(values);
 
-    onToggleSelected(updatedQueryObj);
+    handleSelectMediaCustomColl(updatedQueryObj);
   }
 
   updateAndSearchWithSelection = (values) => {
@@ -205,6 +207,7 @@ SourceSearchResultsContainer.propTypes = {
   // from dispatch
   // updateAdvancedMediaQuerySelection: PropTypes.func.isRequired,
   handleUpdateAndSearchWithSelection: PropTypes.func.isRequired,
+  handleSelectMediaCustomColl: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -234,7 +237,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       if (values.allMedia) { // handle the "all media" placeholder selection
         ownProps.updateMediaQuerySelection({ media_keyword: values.mediaKeyword, type: values.type, allMedia: true });
       } else {
-        dispatch(selectMediaPickerQueryArgs({ type: values.type, tags: { ...values.tags } }));
+        dispatch(selectMediaPickerQueryArgs({ type: values.type, tags: Object.assign({}, { ...values.tags }) }));
       }
     }
   },
@@ -255,6 +258,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       }
       dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: (values.allMedia ? -1 : tags) }));
     }
+  },
+  handleSelectMediaCustomColl: (values) => {
+    dispatch(selectMediaCustomColl(values));
   },
 });
 

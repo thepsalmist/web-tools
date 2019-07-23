@@ -137,8 +137,11 @@ export function prepSearches(searches) { // serialize in the form searches: [{ k
       Object.keys(q.tags).forEach((m) => { // for each tag
         if (metadataQueryFields.has(m)) { // that is metadata
           const vals = Object.values(q.tags[m]).map(a => (a.selected ? a.tags_id : null)).filter(t => t);
-          if (vals && vals.length > 0) {
+          if (vals && vals.length > 0) { // grab just the tags_id that are selected
             const tagSetsId = q.tags[m][0].tag_sets_id;
+            /* into the format
+            {tag_sets_id: [tags_id, ...], tag_sets_id, tag_set_label}
+            */
             tagObj[tagSetsId] = vals;
             tagObj[tagSetsId].tag_sets_id = tagSetsId;
           }

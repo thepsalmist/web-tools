@@ -10,9 +10,9 @@ from server.util.tags import TAG_SETS_ID_PUBLICATION_COUNTRY, TAG_SETS_ID_PUBLIC
 logger = logging.getLogger(__name__)
 
 PUBLICATION_COUNTRY_DEFAULTS = [{'label':'United States', 'tags_id': 9353663, 'tag_sets_id': 1935, 'tag_set_label':'Publication Country'}, {'label': 'Japan', 'tags_id': 9353544, 'tag_sets_id': 1935, 'tag_set_label': 'Publication Country'}, {'label': 'Australia', 'tags_id': 9353443, 'tag_sets_id': 1935, 'tag_set_label': 'Publication Country'}, {'label': 'China', 'tags_id': 9353472, 'tag_sets_id': 1935}, {'label': 'Russia', 'tags_id': 9353618, 'tag_sets_id': 1935, 'tag_set_label': 'Publication Country'}]
-PUBLICATION_STATE_DEFAULTS = [{'label':'USA', 'tags_id': 9353663, 'tag_sets_id': 1962, 'tag_set_label':'Publication State'}, {'label': 'VEN', 'tags_id': 3625428, 'tag_sets_id': 1962, 'tag_set_label':'Publication State'}]
-PRIMARY_LANGUAGE_DEFAULTS = [{'label': 'armenian', 'tags_id': 9361543, 'tag_sets_id': 1969, 'tag_set_label':'Primary Language'}, {'label': 'english', 'tags_id': 9361542, 'tag_sets_id': 1969, 'tag_set_label':'Primary Language'}]
-COUNTRY_OF_FOCUS_DEFAULTS = [{'label':'USA', 'tags_id': 9353663, 'tag_sets_id':1970, 'tag_set_label':'Country Of Focus' }, {'label': 'VEN', 'tags_id': 3625428, 'tag_sets_id': 1970, 'tag_set_label':'Country Of Focus'}]
+PUBLICATION_STATE_DEFAULTS = [{'label':'Massachusetts', 'tags_id': 9360578, 'tag_sets_id': 1962, 'tag_set_label':'Publication State'}, {'label': 'Georgia', 'tags_id': 9360565, 'tag_sets_id': 1962, 'tag_set_label':'Publication State'}]
+PRIMARY_LANGUAGE_DEFAULTS = [{'label': 'spanish', 'tags_id': 9361427, 'tag_sets_id': 1969, 'tag_set_label':'Primary Language'}, {'label': 'english', 'tags_id': 9361422, 'tag_sets_id': 1969, 'tag_set_label':'Primary Language'}]
+COUNTRY_OF_FOCUS_DEFAULTS = [{'label':'USA', 'tags_id': 9361596, 'tag_sets_id':1970, 'tag_set_label':'Country Of Focus' }, {'label': 'Spain', 'tags_id': 9361893, 'tag_sets_id': 1970, 'tag_set_label':'Country Of Focus'}]
 
 @app.route('/api/metadata/<tag_sets_id>/values', methods=['GET'])
 @flask_login.login_required

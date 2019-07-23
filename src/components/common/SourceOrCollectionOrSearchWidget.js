@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedHTMLMessage } from 'react-intl';
 import { DeleteButton } from './IconButton';
+import { metadataQueryFields } from '../../lib/explorerUtil';
 
 const localMessages = {
   withSearch: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection<br /> with \'{keyword}\' in <br />{value}' },
@@ -20,13 +21,14 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children,
     name = (object.name || object.label || object.tag);
   } else if (isSearch) {
     typeClass = 'search';
-    subSearch = Object.values(object.tags)
-      .filter(t => Array.isArray(t) && t.length > 0)
+    subSearch = Object.keys(object.tags)
+      .filter(t => metadataQueryFields.has(t) > 0 && Array.isArray(object.tags[t]) && object.tags[t].length > 0)
       .map((i) => {
-        const metadataName = i.map(a => a.tag_set_label).reduce(l => l);
-        const tags = i.map(a => (a.selected ? a.label : ''));
+        const obj = object.tags[i];
+        const metadataName = obj.map(a => a.tag_set_label).reduce(l => l);
+        const tags = obj.map(a => (a.selected ? a.label : ''));
         if (tags.length > 0) {
-          return `<span key=${i.tag_sets_id}>${metadataName}: ${tags}</span><br />`;
+          return `<span key=${obj.tag_sets_id}>${metadataName}: ${tags}</span><br />`;
         }
         return [];
       });

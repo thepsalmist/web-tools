@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import { selectMediaPickerQueryArgs, selectMedia } from '../../../actions/systemActions';
+import { selectMediaPickerQueryArgs, unselectMedia } from '../../../actions/systemActions';
 import { PICK_SOURCE_AND_COLLECTION, PICK_FEATURED } from '../../../lib/explorerUtil';
 import SourceOrCollectionOrSearchWidget from '../SourceOrCollectionOrSearchWidget';
 // import SelectedMediaContainer from './SelectedMediaContainer';
@@ -95,7 +95,7 @@ const mapDispatchToProps = dispatch => ({
         unselectedMedia.addAllSearch = false;
         unselectedMedia.selected = false;
       }
-      dispatch(selectMedia(unselectedMedia));
+      dispatch(unselectMedia(unselectedMedia));
     }
   },
 });

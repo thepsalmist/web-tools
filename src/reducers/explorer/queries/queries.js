@@ -72,7 +72,7 @@ function queries(state = INITIAL_STATE, action) {
           return state;
         }
         queryIndex = queryIndex > -1 ? queryIndex : action.payload.uid;
-        updatedState[queryIndex].sources = action.payload.sources.results.map(r => Object.assign({}, r, { selected: true }));;
+        updatedState[queryIndex].sources = action.payload.sources.results.map(r => Object.assign({}, r, { selected: true }));
         return updatedState;
       }
       return null;

@@ -72,7 +72,7 @@ function queries(state = INITIAL_STATE, action) {
           return state;
         }
         queryIndex = queryIndex > -1 ? queryIndex : action.payload.uid;
-        updatedState[queryIndex].sources = action.payload.sources.results;
+        updatedState[queryIndex].sources = action.payload.sources.results.map(r => Object.assign({}, r, { selected: true }));;
         return updatedState;
       }
       return null;
@@ -85,7 +85,7 @@ function queries(state = INITIAL_STATE, action) {
           // so swallow the error for now with no updates
           return state;
         }
-        updatedState[queryIndex].collections = action.payload.collections.results;
+        updatedState[queryIndex].collections = action.payload.collections.results.map(r => Object.assign({}, r, { selected: true }));
         return updatedState;
       }
       return null;

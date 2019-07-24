@@ -8,7 +8,7 @@
           "apps": [ "explorer" ],
           "type": "New",
           "note": "Media Picker now enables custom search collections",
-          "details": "Now you can search and save a set of custom searches containing a media keyword and a set of metadata tags. For example, search for sources with keyword 'mainstream' published in the US or Canada and in Massachusetts'",
+          "details": "Now you can search and save a set of custom searches containing a media keyword and a set of metadata tags. For example, search for sources with keyword 'mainstream' published in the US or Canada and in Massachusetts'"
         },
         {
           "apps": [ "explorer" ],

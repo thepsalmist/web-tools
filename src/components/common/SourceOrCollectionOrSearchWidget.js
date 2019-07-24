@@ -53,9 +53,8 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children,
       key={`media-widget${objectId}`}
     >
       {text}
-      {subSearch}
-      {children}
       {onDelete && <DeleteButton onClick={onDelete} />}
+      {subSearch}
     </span>
   );
 };

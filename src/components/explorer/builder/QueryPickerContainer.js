@@ -147,7 +147,11 @@ class QueryPickerContainer extends React.Component {
 
   saveChangesToSelectedQuery = () => {
     const { selected, formQuery, updateCurrentQuery } = this.props;
-    const updatedQuery = Object.assign({}, selected, formQuery);
+    const updatedQuery = {
+      ...selected,
+      ...formQuery,
+      color: selected.color,
+    };
     updatedQuery.q = replaceCurlyQuotes(updatedQuery.q);
     updateCurrentQuery(updatedQuery, 'label');
   }
@@ -315,7 +319,6 @@ class QueryPickerContainer extends React.Component {
             savedSearches={savedSearches}
             form="queryForm"
             enableReinitialize
-            keepDirtyOnReinitialize
             destroyOnUnmount={false}
             buttonLabel={formatMessage(localMessages.querySearch)}
             onSave={this.saveAndSearch}

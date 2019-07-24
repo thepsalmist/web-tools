@@ -69,7 +69,8 @@ def api_explorer_story_split_count():
         # get all the stories (no keyword) so we can support normalization
         solr_open_query = concatenate_query_for_solr(solr_seed_query='*',
                                                      media_ids=request.args['sources'],
-                                                     tags_ids=request.args['collections'])
+                                                     tags_ids=request.args['collections'],
+                                                     custom_ids=request.args['searches'])
         results = apicache.normalized_and_story_split_count(solr_q, solr_open_query, start_date, end_date)
     return jsonify({'results': results})
 

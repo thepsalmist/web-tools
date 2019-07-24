@@ -105,23 +105,15 @@ export function lookupReadableMetadataName(tagSetsId) {
 export const metadataQueryFields = new Set([PUBLICATION_COUNTRY, PUBLICATION_STATE, PRIMARY_LANGUAGE, COUNTRY_OF_FOCUS, MEDIA_TYPE]);
 
 
-export function deselectSearches(searches) {
-  const tagObj = {};
+export function serializeSearchTags(searches) {
+  let tagArrays = [];
   const currentSearch = [];
   // assuming q is an array
   searches.map((q) => {
     if (q && q.tags) {
-      Object.keys(q.tags).forEach((m) => { // for each tag
-        if (metadataQueryFields.has(m)) { // that is metadata
-          const vals = Object.values(q.tags[m]).map(a => (a.selected ? a.tags_id : null)).filter(t => t);
-          if (vals && vals.length > 0) {
-            tagObj[m].selected = false;
-          }
-          return tagObj;
-        }
-        return null;
-      });
-      currentSearch.push({ media_keyword: q.mediaKeyword, ...tagObj });
+      // get all the tags and send them - python will order them by tag_sets ?
+      tagArrays = Object.keys(q.tags).map(m => Object.values(q.tags[m]).map(t => t.tags_id)); // .reduce((a, b) => a.concat(b), []).map(i => i.tags_id);
+      currentSearch.push(`{"media_keyword": "${q.mediaKeyword}", "tags_id_media": "${JSON.stringify(tagArrays)}"}`);
     }
     return false;
   });
@@ -253,6 +245,7 @@ export const formatQueryForServer = q => ({
   sortPosition: q.sortPosition,
   sources: q.sources.map(s => s.id),
   collections: q.collections.map(c => c.id),
+  searches: serializeSearchTags(q.searches).map(c => c),
 });
 
 export const formatDemoQueryForServer = (q, index) => ({

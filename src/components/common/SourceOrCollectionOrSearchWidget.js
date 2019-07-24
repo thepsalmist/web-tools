@@ -8,7 +8,7 @@ const localMessages = {
   withSearch: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection<br /> with \'{keyword}\' in <br />{value}' },
 };
 
-const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, children, link }) => {
+const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link }) => {
   const isSearch = object.customColl === true;
   const isCollection = object.tags_id !== undefined;
   if (!isSearch && !object.selected) return null;

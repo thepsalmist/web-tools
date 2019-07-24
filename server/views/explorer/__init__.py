@@ -41,10 +41,10 @@ def access_public_topic(topics_id):
 
 # helper for preview queries
 # tags_id is either a string or a list, which is handled in either case by the len() test. ALL_MEDIA is the exception
-def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
+def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids):
     query = '({})'.format(solr_seed_query)
 
-    if len(media_ids) > 0 or len(tags_ids) > 0:
+    if len(media_ids) > 0 or len(tags_ids) > 0 or len(custom_ids):
         if tags_ids == [ALL_MEDIA] or tags_ids == ALL_MEDIA:
             return query
         query += " AND ("
@@ -65,6 +65,19 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
             query_tags_ids = " ".join([str(t) for t in tags_ids])
             query_tags_ids = " tags_id_media:({})".format(query_tags_ids)
             query += '('+query_tags_ids+')'
+
+        # grab any custom collections and turn it into a boolean tags_id_media phrase
+        if len(custom_ids) > 0:
+            custom_ids_dict = json.loads(custom_ids)
+            tags = json.loads(custom_ids_dict['tags_id_media'])
+            custom_sets = []
+            for m in tags: #each metadata set
+                custom_id_set_string = " OR ".join(str(t) for t in m)
+                custom_id_set_string = "({})".format(custom_id_set_string)
+                custom_sets.append(custom_id_set_string)
+            query_custom_ids = " AND ".join(custom_sets)
+            query_custom_ids = " tags_id_media:({})".format(query_custom_ids)
+            query += ' OR ('+query_custom_ids+')'
         query += ')'
 
     return query
@@ -152,7 +165,8 @@ def parse_query_with_keywords(args):
         collections = _parse_collection_ids(args)
         solr_q = concatenate_query_for_solr(solr_seed_query=current_query,
                                             media_ids=media_ids,
-                                            tags_ids=collections)
+                                            tags_ids=collections,
+                                            custom_ids=args['searches'])
         solr_fq = dates_as_filter_query(start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
     # otherwise, default
     except Exception as e:

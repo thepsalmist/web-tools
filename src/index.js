@@ -1,5 +1,5 @@
 import 'core-js/stable';
-import 'react-hot-loader'
+import 'react-hot-loader';
 import 'regenerator-runtime/runtime';
 import 'intl';
 import React from 'react';

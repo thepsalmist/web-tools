@@ -236,7 +236,7 @@ export function createIndexedAsyncReducer(handlers) {
     desiredInitialState = handlers.initialState;
   }
   const initialState = {
-    results: {},
+    results: [],
     fetchStatus: fetchConstants.FETCH_INVALID,
     fetchStatuses: {}, // array of fetchStatus
     fetchUids: {}, // array of unique ids for each fetch in the list

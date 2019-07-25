@@ -113,7 +113,15 @@ export function serializeSearchTags(searches) {
   searches.map((q) => {
     if (q && q.tags) {
       // get all the tags and send them - python will order them by tag_sets ?
-      tagArrays = Object.keys(q.tags).map(m => Object.values(q.tags[m]).map(t => t.tags_id)); // .reduce(t => t)
+      tagArrays = Object.keys(q.tags).map((m) => {
+        if (metadataQueryFields.has(m)) {
+          const vals = Object.values(q.tags[m]).map(a => a.tags_id).filter(t => t);
+          if (vals && vals.length > 0) { // grab just the tags_id that are selected
+            return vals;
+          }
+        }
+        return '';
+      });
       currentSearch.push(`{"media_keyword": "${q.mediaKeyword}", "tags_id_media": "${JSON.stringify(tagArrays)}"}`);
     }
     return false;

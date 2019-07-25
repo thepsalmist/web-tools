@@ -117,10 +117,10 @@ export function serializeSearchTags(searches) {
     }
     return false;
   });
-  return currentSearch;
+  return `[${currentSearch}]`;
 }
 
-export function prepSearches(searches) { // serialize in the form searches: [{ keyword, <metadataId1>:[], <metadataId2>:[] }, {...}]
+export function prepSearches(searches) { // serialize to URL in the form - searches: [{ keyword, <metadataId1>:[], <metadataId2>:[] }, {...}]
   const tagObj = {};
   const currentSearch = [];
   // assuming q is an array
@@ -245,7 +245,7 @@ export const formatQueryForServer = q => ({
   sortPosition: q.sortPosition,
   sources: q.sources.map(s => s.id),
   collections: q.collections.map(c => c.id),
-  searches: serializeSearchTags(q.searches).map(c => c),
+  searches: serializeSearchTags(q.searches),
 });
 
 export const formatDemoQueryForServer = (q, index) => ({

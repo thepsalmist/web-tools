@@ -63,23 +63,34 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids)
         if len(tags_ids) > 0:
             tags_ids = tags_ids.split(',') if isinstance(tags_ids, str) else tags_ids
             query_tags_ids = " ".join([str(t) for t in tags_ids])
-            query_tags_ids = " tags_id_media:({})".format(query_tags_ids)
-            query += '('+query_tags_ids+')'
+            query_tags_ids = " tags_id_media:{}".format(query_tags_ids)
+            if len(custom_ids) == 0:
+                query += '('+query_tags_ids+')'
+            else:
+                query += '(' + query_tags_ids
 
         # grab any custom collections and turn it into a boolean tags_id_media phrase
         if len(custom_ids) > 0:
             custom_ids_dict = json.loads(custom_ids)
             query_custom_ids = ''
             for item in custom_ids_dict:
-                tags = json.loads(item['tags_id_media'])
+                tag_groups = json.loads(item['tags_id_media'])
                 custom_sets = []
-                for m in tags: #each metadata set
-                    custom_id_set_string = " OR ".join(str(t) for t in m)
+                if len(tag_groups) > 1:
+                    for tag_ids in tag_groups:
+                        custom_id_set_string = " OR ".join(str(t) for t in tag_ids)
+                        custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
+                        custom_sets.append(custom_id_set_string)
+                    custom_id_set_string = "tags_id_media:({})".format(custom_sets)
+                elif len(tag_groups) == 1:
+                    custom_id_set_string = tag_groups[0]
                     custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
                     custom_sets.append(custom_id_set_string)
-                query_custom_ids = " AND ".join(custom_sets)
-                query_custom_ids = "({})".format(query_custom_ids)
-            query += ' OR ('+query_custom_ids+')'
+            query_custom_ids = " AND ".join(custom_sets)
+            query_custom_ids = "({})".format(query_custom_ids)
+            query += ' OR '+query_custom_ids+''
+            if len(tags_ids) > 0:
+                query += ')' # part of the requirement that ORS can only live inside tags_id_media phrases
         query += ')'
 
     return query

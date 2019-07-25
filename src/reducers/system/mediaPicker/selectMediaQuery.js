@@ -18,6 +18,7 @@ function selectMediaQuery(state = INITIAL_STATE, action) {
           type: action.payload.type,
           allMedia: action.payload.allMedia,
           mediaKeyword: action.payload.mediaKeyword || action.payload.media_keyword,
+          advancedSearchQueryString: action.payload.mediaKeyword || action.payload.media_keyword,
           tags: testArray,
         };
         return { args };

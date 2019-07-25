@@ -85,6 +85,7 @@ export function generateQueryParamObject(query, skipEncoding) {
   };
 }
 
+
 export function lookupReadableMetadataName(tagSetsId) {
   switch (tagSetsId) {
     case TAG_SET_PUBLICATION_COUNTRY:
@@ -112,7 +113,7 @@ export function serializeSearchTags(searches) {
   searches.map((q) => {
     if (q && q.tags) {
       // get all the tags and send them - python will order them by tag_sets ?
-      tagArrays = Object.keys(q.tags).map(m => Object.values(q.tags[m]).map(t => t.tags_id)); // .reduce((a, b) => a.concat(b), []).map(i => i.tags_id);
+      tagArrays = Object.keys(q.tags).map(m => Object.values(q.tags[m]).map(t => t.tags_id)); // .reduce(t => t)
       currentSearch.push(`{"media_keyword": "${q.mediaKeyword}", "tags_id_media": "${JSON.stringify(tagArrays)}"}`);
     }
     return false;

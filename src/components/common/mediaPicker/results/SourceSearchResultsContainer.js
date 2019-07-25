@@ -39,11 +39,11 @@ class SourceSearchResultsContainer extends React.Component {
   }
 
   processQuery = (values) => {
-    const { formQuery, selectedMediaQueryType, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
+    const { formQuery, selectedMediaQueryType, selectedMediaQueryKeyword, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
     // essentially reselect all values that are currently selected, plus the newly clicked/entered ones
     // any updates to MediaQuery need to be in the right form { type, tags, allMedia || customColl || null }
     // initialize with previously selected query args
-    const updatedQueryObj = Object.assign({}, { type: selectedMediaQueryType, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags });
+    const updatedQueryObj = Object.assign({}, { mediaKeyword: selectedMediaQueryKeyword, type: selectedMediaQueryType, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags });
 
     if (updatedQueryObj.tags === undefined) {
       updatedQueryObj.tags = []; // if first metadata selection
@@ -142,8 +142,8 @@ class SourceSearchResultsContainer extends React.Component {
     content = (
       <div>
         <AdvancedMediaPickerSearchForm
-          initialValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword }, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags }}
-          onMetadataSelection={(metadataType, values) => this.updateQuerySelection(metadataType, values)}
+          initialValues={{ mediaKeyword: selectedMediaQueryKeyword, advancedSearchQueryString: selectedMediaQueryKeyword, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags }}
+          onQueryUpdateSelection={(metadataType, values) => this.updateQuerySelection(metadataType, values)}
           onSearch={val => this.updateAndSearchWithSelection(val)}
           hintText={formatMessage(localMessages.hintText)}
         />
@@ -237,7 +237,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       if (values.allMedia) { // handle the "all media" placeholder selection
         ownProps.updateMediaQuerySelection({ media_keyword: values.mediaKeyword, type: values.type, allMedia: true });
       } else {
-        dispatch(selectMediaPickerQueryArgs({ type: values.type, tags: Object.assign({}, { ...values.tags }) }));
+        dispatch(selectMediaPickerQueryArgs({ media_keyword: values.mediaKeyword, type: values.type, tags: Object.assign({}, { ...values.tags }) }));
       }
     }
   },

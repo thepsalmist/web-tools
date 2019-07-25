@@ -17,7 +17,7 @@ function selectMediaQuery(state = INITIAL_STATE, action) {
         const args = {
           type: action.payload.type,
           allMedia: action.payload.allMedia,
-          mediaKeyword: action.payload.mediaKeyword,
+          mediaKeyword: action.payload.mediaKeyword || action.payload.media_keyword,
           tags: testArray,
         };
         return { args };

@@ -35,11 +35,14 @@ class AdvancedMediaPickerSearchForm extends React.Component {
 
   setMetaClick = (mode) => {
     // work like a toggle
+    const { onQueryUpdateSelection } = this.props;
     if (mode === this.state.mode) {
       this.setState({ mode: null });
     } else {
       this.setState({ mode });
     }
+    // save keyword
+    onQueryUpdateSelection(mode, { mediaKeyword: this.textInputRef.value });
   }
 
   getTagsPerMetadata = (tagVals, type, retInt) => {
@@ -68,17 +71,18 @@ class AdvancedMediaPickerSearchForm extends React.Component {
   }
 
   selectMetaData = (mode, input, name) => {
-    const { onMetadataSelection } = this.props;
+    const { onQueryUpdateSelection } = this.props;
     // get the values from the metadata item, store so other components can access it (checkboxes)
     // this would be pushed in as previouslySelected into cbx components
-    onMetadataSelection(mode, { ...input, name });
+    const searchStr = this.textInputRef.value;
+    onQueryUpdateSelection(mode, { ...input, name, mediaKeyword: searchStr });
   }
 
 
   handleSearchAll = (mode, input) => {
-    const { onMetadataSelection } = this.props;
+    const { onQueryUpdateSelection } = this.props;
     this.setMetaClick(ALL_MEDIA);
-    onMetadataSelection({ allMedia: input.value }, { allMedia: input.value });
+    onQueryUpdateSelection({ allMedia: input.value }, { allMedia: input.value });
   }
 
   render() {
@@ -154,9 +158,8 @@ class AdvancedMediaPickerSearchForm extends React.Component {
             <Col lg={6}>
               <Field
                 name="advancedSearchQueryString"
-                value={initialValues.mediaKeyword}
                 ref={(input) => { this.textInputRef = input; }}
-                inputRef={this.focusQueryInputField}
+                // inputRef={this.focusQueryInputField}
                 component={renderTextField}
                 label={formatMessage(localMessages.nameFieldSuggestion)}
                 fullWidth
@@ -258,7 +261,7 @@ AdvancedMediaPickerSearchForm.propTypes = {
   hintText: PropTypes.string,
   // from parent
   onSearch: PropTypes.func,
-  onMetadataSelection: PropTypes.func,
+  onQueryUpdateSelection: PropTypes.func,
   onSelectMediaType: PropTypes.func,
   searchString: PropTypes.string,
 };

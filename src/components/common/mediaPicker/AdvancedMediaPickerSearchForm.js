@@ -90,8 +90,8 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         id={TAG_SET_MEDIA_TYPE}
         name={MEDIA_TYPE}
         form="advanced-media-picker-search"
-        label={formatMessage(messages.mediaType)}
-        onChange={obj => this.selectMetaData(obj.tag_set_label, obj, MEDIA_TYPE)}
+        label={formatMessage(messages.mediaTypeShort)}
+        onChange={obj => this.selectMetaData(formatMessage(messages.mediaTypeShort), obj, MEDIA_TYPE)}
         previouslySelected={initialValues.tags}
       />
     ) : null;
@@ -100,8 +100,8 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         id={TAG_SET_PUBLICATION_COUNTRY}
         type={PUBLICATION_COUNTRY}
         form="advanced-media-picker-search"
-        label={formatMessage(messages.pubCountry)}
-        onChange={(id, args) => this.selectMetaData(args.tag_set_label, args, PUBLICATION_COUNTRY)}
+        label={formatMessage(messages.pubCountryShort)}
+        onChange={(id, args) => this.selectMetaData(formatMessage(messages.pubCountryShort), args, PUBLICATION_COUNTRY)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
         previouslySelectedTags={initialValues.tags}
         className="media-picker-pub-in"
@@ -112,8 +112,8 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         id={TAG_SET_PUBLICATION_STATE}
         type={PUBLICATION_STATE}
         form="advanced-media-picker-search"
-        label={formatMessage(messages.pubState)}
-        onChange={(id, args) => this.selectMetaData(args.tag_set_label, args, PUBLICATION_STATE)}
+        label={formatMessage(messages.pubStateShort)}
+        onChange={(id, args) => this.selectMetaData(formatMessage(messages.pubStateShort), args, PUBLICATION_STATE)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
         previouslySelectedTags={initialValues.tags}
         className="media-picker-pub-in"
@@ -124,8 +124,8 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         id={TAG_SET_PRIMARY_LANGUAGE}
         type={PRIMARY_LANGUAGE}
         form="advanced-media-picker-search"
-        label={formatMessage(messages.language)}
-        onChange={(id, args) => this.selectMetaData(args.tag_set_label, args, PRIMARY_LANGUAGE)}
+        label={formatMessage(messages.languageShort)}
+        onChange={(id, args) => this.selectMetaData(formatMessage(messages.languageShort), args, PRIMARY_LANGUAGE)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
         previouslySelectedTags={initialValues.tags}
         className="media-picker-pub-in"
@@ -136,7 +136,8 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         id={TAG_SET_COUNTRY_OF_FOCUS}
         type={COUNTRY_OF_FOCUS}
         form="advanced-media-picker-search"
-        onChange={(id, args) => this.selectMetaData(args.tag_set_label, args, COUNTRY_OF_FOCUS)}
+        label={formatMessage(messages.countryShort)}
+        onChange={(id, args) => this.selectMetaData(formatMessage(messages.countryShort), args, COUNTRY_OF_FOCUS)}
         onSearch={val => this.updateAndSearchWithSelection(val)}
         previouslySelectedTags={initialValues.tags}
         className="media-picker-about"

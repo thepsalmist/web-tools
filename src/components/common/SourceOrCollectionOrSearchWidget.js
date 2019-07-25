@@ -3,12 +3,31 @@ import React from 'react';
 import { FormattedHTMLMessage } from 'react-intl';
 import { DeleteButton } from './IconButton';
 import { metadataQueryFields } from '../../lib/explorerUtil';
+import messages from '../../resources/messages';
+import { PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE } from '../../lib/tagUtil';
 
 const localMessages = {
-  withSearch: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection<br /> with \'{keyword}\' in <br />{value}' },
+  withSearch: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection<br /> &nbsp;Name: \'{keyword}\'<br />&nbsp;{value}' },
 };
 
-const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link }) => {
+function getShortName(tagName, formatMessage) {
+  switch (tagName) {
+    case PUBLICATION_COUNTRY:
+      return formatMessage(messages.pubCountryShort);
+    case PUBLICATION_STATE:
+      return formatMessage(messages.pubStateShort);
+    case PRIMARY_LANGUAGE:
+      return formatMessage(messages.languageShort);
+    case COUNTRY_OF_FOCUS:
+      return formatMessage(messages.countryShort);
+    case MEDIA_TYPE:
+      return formatMessage(messages.mediaTypeShort);
+    default:
+      return null;
+  }
+}
+
+const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link, formatMessage }) => {
   const isSearch = object.customColl === true;
   const isCollection = object.tags_id !== undefined;
   if (!isSearch && !object.selected) return null;
@@ -27,10 +46,10 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link }) =
       .filter(t => metadataQueryFields.has(t) > 0 && Array.isArray(object.tags[t]) && object.tags[t].length > 0)
       .map((i) => {
         const obj = object.tags[i];
-        const metadataName = obj.map(a => a.tag_set_label).reduce(l => l);
+        const metadataName = getShortName((obj.map(a => a.name).reduce(l => l)), formatMessage);
         const tags = obj.map(a => (a.selected ? a.label : ''));
         if (tags.length > 0) {
-          return `<span key=${obj.tag_sets_id}>${metadataName}: ${tags}</span><br />`;
+          return `&nbsp;<span key=${obj.tag_sets_id}>${metadataName}: ${tags}</span><br />`;
         }
         return [];
       });
@@ -64,6 +83,7 @@ SourceOrCollectionOrSearchWidget.propTypes = {
   onDelete: PropTypes.func,
   onClick: PropTypes.func,
   children: PropTypes.node,
+  formatMessage: PropTypes.func.isRequired,
   link: PropTypes.string,
 };
 

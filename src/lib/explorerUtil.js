@@ -117,7 +117,7 @@ export function serializeSearchTags(searches) {
     }
     return false;
   });
-  return `[${currentSearch}]`;
+  return currentSearch.length ? `[${currentSearch}]` : '';
 }
 
 export function prepSearches(searches) { // serialize to URL in the form - searches: [{ keyword, <metadataId1>:[], <metadataId2>:[] }, {...}]

@@ -286,6 +286,11 @@ const messages = {
   mediaType: { id: 'source.pubState', defaultMessage: 'Media Type' },
   primaryLanguage: { id: 'source.primaryLanguage', defaultMessage: 'Primary Language' },
   countryOfFocus: { id: 'source.countryOfFocus', defaultMessage: 'Country of Focus' },
+  pubCountryShort: { id: 'source.pubCountryShort', defaultMessage: 'Pub Country' },
+  pubStateShort: { id: 'source.pubStateShort', defaultMessage: 'Pub State' },
+  mediaTypeShort: { id: 'source.pubStateShort', defaultMessage: 'Media Type' },
+  languageShort: { id: 'source.primaryLanguageShort', defaultMessage: 'Language' },
+  countryShort: { id: 'source.countryOfFocusShort', defaultMessage: 'Country' },
   languageHelpContent: { id: 'source.details.language.help.content', defaultMessage: '<p>We automatically guess the langauge of stories in our system. This language is the one most used by this source based on the automatic detection.</p>' },
   geoHelpDetailedContent: { id: 'source.details.geo.title', defaultMessage: '<p>This is the country this source writes about most.</p>' },
 

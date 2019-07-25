@@ -198,6 +198,7 @@ class QueryForm extends React.Component {
                     initialValues={selectedCopy || cleanedInitialValues}
                     title="title"
                     intro="intro"
+                    formatMessage={formatMessage}
                   />
                   <div>
                     {isEditable

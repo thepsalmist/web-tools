@@ -6,7 +6,7 @@ import withIntlForm from '../hocs/IntlForm';
 import SourceOrCollectionOrSearchWidget from '../SourceOrCollectionOrSearchWidget';
 import { urlToSource, urlToCollection } from '../../../lib/urlUtil';
 
-const renderCollectionSelector = ({ allowRemoval, fields, meta, onDelete }) => (
+const renderCollectionSelector = ({ allowRemoval, fields, meta, onDelete, formatMessage }) => (
   <div>
     {fields.map((name, index) => (
       <Field
@@ -23,7 +23,7 @@ const renderCollectionSelector = ({ allowRemoval, fields, meta, onDelete }) => (
           }
           const sourceOrCollectionUrl = tempObj.tag_set_name === 'collection' ? urlToCollection(tempObj.id) : urlToSource(tempObj.id);
           return (
-            <SourceOrCollectionOrSearchWidget object={tempObj} onDelete={handleDelete} link={sourceOrCollectionUrl} />
+            <SourceOrCollectionOrSearchWidget object={tempObj} onDelete={handleDelete} link={sourceOrCollectionUrl} formatMessage={formatMessage} />
           );
         }}
       />
@@ -38,10 +38,11 @@ renderCollectionSelector.propTypes = {
   allowRemoval: PropTypes.bool,
   validate: PropTypes.func,
   onDelete: PropTypes.func,
+  formatMessage: PropTypes.func.isRequired,
 };
 
 const SourceCollectionsMediaForm = (props) => {
-  const { fieldName, initialValues, allowRemoval, onDelete } = props;
+  const { fieldName, initialValues, allowRemoval, onDelete, formatMessage } = props;
   return (
     <div className="explorer-source-collection-form">
       <FieldArray
@@ -52,6 +53,7 @@ const SourceCollectionsMediaForm = (props) => {
         component={renderCollectionSelector}
         initialValues={initialValues}
         onDelete={onDelete}
+        formatMessage={formatMessage}
       />
     </div>
   );
@@ -64,6 +66,7 @@ SourceCollectionsMediaForm.propTypes = {
   selected: PropTypes.object,
   allowRemoval: PropTypes.bool,
   fieldName: PropTypes.string,
+  formatMessage: PropTypes.func.isRequired,
   // valid: PropTypes.bool,  not using - but this is helpful to determine if validation is getting
   onDelete: PropTypes.func,
 };

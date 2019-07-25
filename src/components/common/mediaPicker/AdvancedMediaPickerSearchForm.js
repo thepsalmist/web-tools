@@ -154,7 +154,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
             <Col lg={6}>
               <Field
                 name="advancedSearchQueryString"
-                value={initialValues}
+                value={initialValues.mediaKeyword}
                 ref={(input) => { this.textInputRef = input; }}
                 inputRef={this.focusQueryInputField}
                 component={renderTextField}

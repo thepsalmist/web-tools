@@ -4,7 +4,7 @@ import { FormattedHTMLMessage } from 'react-intl';
 import { DeleteButton } from './IconButton';
 import { metadataQueryFields } from '../../lib/explorerUtil';
 import messages from '../../resources/messages';
-import { PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE } from '../../lib/tagUtil';
+import { PUB_COUNTRY_TAG_NAME, PUB_STATE_TAG_NAME, PRIMARY_LANGUAGE_TAG_NAME, COUNTRY_OF_FOCUS_TAG_NAME, MEDIA_TYPE_TAG_NAME } from '../../lib/tagUtil';
 
 const localMessages = {
   withSearch: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection<br /> &nbsp;Name: \'{keyword}\'<br />&nbsp;{value}' },
@@ -12,15 +12,15 @@ const localMessages = {
 
 function getShortName(tagName, formatMessage) {
   switch (tagName) {
-    case PUBLICATION_COUNTRY:
+    case PUB_COUNTRY_TAG_NAME:
       return formatMessage(messages.pubCountryShort);
-    case PUBLICATION_STATE:
+    case PUB_STATE_TAG_NAME:
       return formatMessage(messages.pubStateShort);
-    case PRIMARY_LANGUAGE:
+    case PRIMARY_LANGUAGE_TAG_NAME:
       return formatMessage(messages.languageShort);
-    case COUNTRY_OF_FOCUS:
+    case COUNTRY_OF_FOCUS_TAG_NAME:
       return formatMessage(messages.countryShort);
-    case MEDIA_TYPE:
+    case MEDIA_TYPE_TAG_NAME:
       return formatMessage(messages.mediaTypeShort);
     default:
       return null;
@@ -46,7 +46,7 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link, for
       .filter(t => metadataQueryFields.has(t) > 0 && Array.isArray(object.tags[t]) && object.tags[t].length > 0)
       .map((i) => {
         const obj = object.tags[i];
-        const metadataName = getShortName((obj.map(a => a.name).reduce(l => l)), formatMessage);
+        const metadataName = getShortName((obj.map(a => a.tag_set_name).reduce(l => l)), formatMessage);
         const tags = obj.map(a => (a.selected ? a.label : ''));
         if (tags.length > 0) {
           return `&nbsp;<span key=${obj.tag_sets_id}>${metadataName}: ${tags}</span><br />`;

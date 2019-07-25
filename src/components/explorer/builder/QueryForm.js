@@ -79,12 +79,15 @@ class QueryForm extends React.Component {
     return anyQueriesNoMedia || thisCurrentQueryFormNoMedia;
   }
 
-  focusQueryInputField = (input) => {
+  focusQueryInputField = () => {
+    // commented out because this is throwing a JS error on the console
+    /*
     if (input) {
       setTimeout(() => {
         input.focus();
       }, 100);
     }
+    */
   };
 
   render() {
@@ -303,7 +306,7 @@ QueryForm.propTypes = {
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   isEditable: PropTypes.bool.isRequired,
-  focusRequested: PropTypes.func.isRequired,
+  focusRequested: PropTypes.func,
   mediaUpdates: PropTypes.object,
 };
 

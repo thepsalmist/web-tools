@@ -61,4 +61,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-export default connect(null, mapDispatchToProps)(ResetPasswordContainer);
+export default
+connect(null, mapDispatchToProps)(
+  ResetPasswordContainer
+);

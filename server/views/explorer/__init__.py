@@ -69,6 +69,7 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids)
         # grab any custom collections and turn it into a boolean tags_id_media phrase
         if len(custom_ids) > 0:
             custom_ids_dict = json.loads(custom_ids)
+            query_custom_ids = ''
             for item in custom_ids_dict:
                 tags = json.loads(item['tags_id_media'])
                 custom_sets = []

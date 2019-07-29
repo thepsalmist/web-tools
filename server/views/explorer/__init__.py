@@ -56,7 +56,7 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids)
             query += '('+query_media_ids+')'
 
         # conjunction
-        if len(media_ids) > 0 and len(tags_ids) > 0:
+        if len(media_ids) > 0 and (len(tags_ids) > 0 or len(custom_ids) > 0) :
             query += " OR "
 
         # add in the collections they specified
@@ -76,9 +76,9 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids)
             for item in custom_ids_dict:
                 tag_groups = json.loads(item['tags_id_media'])
                 custom_sets = []
-                if len(tag_groups) > 1:
+                if len(tag_groups) > 1: #handle singular vs groups of tags
                     for tag_ids in tag_groups:
-                        custom_id_set_string = " OR ".join(str(t) for t in tag_ids)
+                        custom_id_set_string = " OR ".join(str(t) for t in tag_ids) # OR the ids within the same metadata set
                         custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
                         custom_sets.append(custom_id_set_string)
                     custom_id_set_string = "tags_id_media:({})".format(custom_sets)
@@ -86,11 +86,12 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids)
                     custom_id_set_string = tag_groups[0]
                     custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
                     custom_sets.append(custom_id_set_string)
-            query_custom_ids = " AND ".join(custom_sets)
+            query_custom_ids = " AND ".join(custom_sets) # AND the metadata sets together
             query_custom_ids = "({})".format(query_custom_ids)
-            query += ' OR '+query_custom_ids+''
             if len(tags_ids) > 0:
-                query += ')' # part of the requirement that ORS can only live inside tags_id_media phrases
+                query = ' OR '+ query_custom_ids + ')' #  OR all the sets with the other Collection ids
+            else:
+                query += query_custom_ids  # add the sets to the query (the OR was added before)
         query += ')'
 
     return query

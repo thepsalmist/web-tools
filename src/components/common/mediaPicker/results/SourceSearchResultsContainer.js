@@ -10,15 +10,16 @@ import SourceResultsTable from './SourceResultsTable';
 import AdvancedMediaPickerSearchForm from '../AdvancedMediaPickerSearchForm';
 import LoadingSpinner from '../../LoadingSpinner';
 import AppButton from '../../AppButton';
+import { metadataQueryFields } from '../../../../lib/explorerUtil';
 
 const localMessages = {
-  title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching "{name} and {tags} "' },
+  title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching \' {name} and {tags} \'' },
   hintText: { id: 'system.mediaPicker.sources.hint', defaultMessage: 'Search sources by name or url' },
   noResults: { id: 'system.mediaPicker.sources.noResults', defaultMessage: 'No results. Try searching for the name or URL of a specific source to see if we cover it, like Washington Post, Hindustan Times, or guardian.co.uk.' },
   showAdvancedOptions: { id: 'system.mediaPicker.sources.showAdvancedOptions', defaultMessage: 'Show Advanced Options' },
   hideAdvancedOptions: { id: 'system.mediaPicker.sources.hideAdvancedOptions', defaultMessage: 'Hide Advanced Options' },
   allMedia: { id: 'system.mediaPicker.sources.allMedia', defaultMessage: 'All Media (not advised)' },
-  customColl: { id: 'system.mediaPicker.sources.customColl', defaultMessage: 'Add Custom Collection' },
+  customColl: { id: 'system.mediaPicker.sources.customColl', defaultMessage: '<< Add Custom Collection' },
 };
 
 const formSelector = formValueSelector('advanced-media-picker-search');
@@ -49,7 +50,6 @@ class SourceSearchResultsContainer extends React.Component {
       updatedQueryObj.tags = []; // if first metadata selection
     }
 
-    const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType'];
     // ignore/remove any non metadata args (like search etc)
     metadataQueryFields.forEach((key) => {
       if (updatedQueryObj.tags[key] === undefined) {
@@ -146,18 +146,19 @@ class SourceSearchResultsContainer extends React.Component {
           onQueryUpdateSelection={(metadataType, values) => this.updateQuerySelection(metadataType, values)}
           onSearch={val => this.updateAndSearchWithSelection(val)}
           hintText={formatMessage(localMessages.hintText)}
+          keepDirtyOnReinitialize
         />
       </div>
     );
 
     const addAllButton = (
-      <Col lg={2}>
+      <Col lg={8}>
         <AppButton
-          style={{ marginTop: 10 }}
+          style={{ marginTop: -30, float: 'right' }}
           label={formatMessage(localMessages.customColl)}
           onClick={() => this.addCustomSelection({ customColl: true })}
           color="primary"
-          disabled={!selectedMediaQueryTags || Object.keys(selectedMediaQueryTags).length === 0}
+          disabled={!selectedMediaQueryTags || Object.keys(selectedMediaQueryTags).length === 0 || sourceResults === undefined || sourceResults.list.length === 0}
         />
       </Col>
     );
@@ -165,9 +166,16 @@ class SourceSearchResultsContainer extends React.Component {
     if (fetchStatus === FETCH_ONGOING) {
       resultContent = <LoadingSpinner />;
     } else if (sourceResults && (sourceResults.list && (sourceResults.list.length > 0 || (sourceResults.args && sourceResults.args.media_keyword)))) {
+      const tags = Object.keys(selectedMediaQueryTags)
+        .filter(t => metadataQueryFields.has(t) > 0 && Array.isArray(selectedMediaQueryTags[t]) && selectedMediaQueryTags[t].length > 0)
+        .map((i) => {
+          const obj = selectedMediaQueryTags[i];
+          return obj.map(a => a.tag_set_name).reduce(l => l);
+        });
+
       resultContent = (
         <SourceResultsTable
-          title={formatMessage(localMessages.title, { name: selectedMediaQueryKeyword, tags: { ...selectedMediaQueryTags } })}
+          title={formatMessage(localMessages.title, { name: selectedMediaQueryKeyword, tags })}
           sources={sourceResults.list}
           onToggleSelected={onToggleSelected}
         />

@@ -6,6 +6,7 @@ import flask_login
 import json
 import datetime
 from slugify import slugify
+import re
 
 from server import mc, app, analytics_db
 from server.auth import is_user_logged_in
@@ -83,7 +84,7 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids)
                         custom_sets.append(custom_id_set_string)
                     custom_id_set_string = "tags_id_media:({})".format(custom_sets)
                 elif len(tag_groups) == 1:
-                    custom_id_set_string = tag_groups[0]
+                    custom_id_set_string = re.sub('\[*\]*', '', str(tag_groups[0]))
                     custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
                     custom_sets.append(custom_id_set_string)
             query_custom_ids = " AND ".join(custom_sets) # AND the metadata sets together

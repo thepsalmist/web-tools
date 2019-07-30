@@ -56,7 +56,7 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids)
             query += '('+query_media_ids+')'
 
         # conjunction
-        if len(media_ids) > 0 and (len(tags_ids) > 0 or len(custom_ids) > 0) :
+        if len(media_ids) > 0 and ((len(tags_ids) > 0 or len(custom_ids) > 0)) :
             query += " OR "
 
         # add in the collections they specified
@@ -89,7 +89,7 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids)
             query_custom_ids = " AND ".join(custom_sets) # AND the metadata sets together
             query_custom_ids = "({})".format(query_custom_ids)
             if len(tags_ids) > 0:
-                query = ' OR '+ query_custom_ids + ')' #  OR all the sets with the other Collection ids
+                query = query + ' OR '+ query_custom_ids + ')' #  OR all the sets with the other Collection ids
             else:
                 query += query_custom_ids  # add the sets to the query (the OR was added before)
         query += ')'

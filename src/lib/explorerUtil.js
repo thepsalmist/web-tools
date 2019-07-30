@@ -109,7 +109,7 @@ export const metadataQueryFields = new Set([PUBLICATION_COUNTRY, PUBLICATION_STA
 export function serializeSearchTags(searches) {
   let tagArrays = [];
   const currentSearch = [];
-  // assuming q is an array
+  // assumes q is an array
   searches.map((q) => {
     if (q && q.tags) {
       // get all the tags and send them - python will order them by tag_sets ?
@@ -170,7 +170,7 @@ export function decodeQueryParamString(queryString) {
     color: notEmptyString(query.color) ? decodeURIComponent(query.color) : '',
     startDate: query.startDate,
     endDate: query.endDate,
-    sources: query.sources, // de-aggregate media bucket into sources and collections
+    sources: query.sources, // de-aggregate media bucket into sources and collections and custom colls
     collections: query.collections,
     searches: query.searches,
   }));

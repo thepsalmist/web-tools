@@ -69,7 +69,7 @@ class MediaPickerResultsContainer extends React.Component {
     if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0) {
       // sync up incoming selectedMedia and push to result sets.
       // for each *metadata search item*, push it into query args
-      // whichProps.selectedMedia.filter(m => m.addAllSearch).map(s => this.updateMediaQuery({ ...s, type: this.props.selectedMediaQueryType }));
+      // whichProps.selectedMedia.filter(m => m.customColl).map(s => this.updateMediaQuery({ ...s, type: this.props.selectedMediaQueryType }));
     }
     return 0;
   }

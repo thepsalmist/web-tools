@@ -39,6 +39,7 @@ class SourceSearchResultsContainer extends React.Component {
     }
   }
 
+  // values may contain mediaKeyword, tags, allMedia, customColl
   processQuery = (values) => {
     const { formQuery, selectedMediaQueryType, selectedMediaQueryKeyword, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
     // essentially reselect all values that are currently selected, plus the newly clicked/entered ones
@@ -57,7 +58,8 @@ class SourceSearchResultsContainer extends React.Component {
       }
       // update tags with information we need to keep in query args
       Object.values(values).forEach((obj) => {
-        if (obj !== undefined
+        if (obj !== undefined && obj !== null
+          && obj.name
           && obj.name === key) {
           const modifiedObjIndex = updatedQueryObj.tags[key].findIndex(o => obj.tags_id === o.tags_id);
           if (modifiedObjIndex > -1) {

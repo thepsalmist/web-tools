@@ -43,6 +43,7 @@ def api_mediapicker_source_search():
         matching_sources = media_search(cleaned_search_str, tags)
     elif 'tags' in request.args:
         # group the tags by tags_sets_id to support boolean searches
+        #search within ABYZ collection so we have good results?
         tags_id_list = request.args['tags'].split(',')
         tags = [base_api_cache.tag(tid) for tid in tags_id_list]  # ok to use cache here (metadata tags don't change)
         tags_by_set = defaultdict(list)

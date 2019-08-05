@@ -33,6 +33,7 @@ class CountryCollectionSearchResultsContainer extends React.Component {
           initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
           onSearch={val => this.updateMediaQuery(val)}
           hintTextMsg={localMessages.countrySearchHintText}
+          handleMediaConcurrency={this.props.handleMediaConcurrency}
         />
       </div>
     );
@@ -45,6 +46,7 @@ CountryCollectionSearchResultsContainer.propTypes = {
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
   whichTagSet: PropTypes.number,
+  handleMediaConcurrency: PropTypes.func.isRequired,
   // from dispatch
   updateMediaQuerySelection: PropTypes.func.isRequired,
   // from state

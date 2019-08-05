@@ -8,6 +8,7 @@ import { selectMediaPickerQueryArgs, fetchMediaPickerCollections } from '../../.
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
 import LoadingSpinner from '../../LoadingSpinner';
 import { notEmptyString } from '../../../../lib/formValidators';
+import { TAG_SET_MC_ID } from '../../../../lib/tagUtil';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.collections.title', defaultMessage: 'Collections matching "{name}"' },
@@ -115,7 +116,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   updateMediaQuerySelection: (values) => {
     if (values && notEmptyString(values.mediaKeyword)) {
       dispatch(selectMediaPickerQueryArgs(values));
-      dispatch(fetchMediaPickerCollections({ media_keyword: values.mediaKeyword, which_set: ownProps.whichTagSet, type: values.type }));
+      dispatch(fetchMediaPickerCollections({ media_keyword: values.mediaKeyword, which_set: ownProps.whichTagSet || TAG_SET_MC_ID, type: values.type }));
     }
   },
 });

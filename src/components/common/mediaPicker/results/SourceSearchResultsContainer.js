@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import { Col } from 'react-flexbox-grid/lib';
@@ -10,10 +10,11 @@ import SourceResultsTable from './SourceResultsTable';
 import AdvancedMediaPickerSearchForm from '../AdvancedMediaPickerSearchForm';
 import LoadingSpinner from '../../LoadingSpinner';
 import AppButton from '../../AppButton';
-import { metadataQueryFields } from '../../../../lib/explorerUtil';
+import { metadataQueryFields, stringifyTags } from '../../../../lib/explorerUtil';
 
 const localMessages = {
-  title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching \' {name} and {tags} \'' },
+  fullTitle: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching {name} and {tags}' },
+  title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching {tags}' },
   hintText: { id: 'system.mediaPicker.sources.hint', defaultMessage: 'Search sources by name or url' },
   noResults: { id: 'system.mediaPicker.sources.noResults', defaultMessage: 'No results. Try searching for the name or URL of a specific source to see if we cover it, like Washington Post, Hindustan Times, or guardian.co.uk.' },
   showAdvancedOptions: { id: 'system.mediaPicker.sources.showAdvancedOptions', defaultMessage: 'Show Advanced Options' },
@@ -167,17 +168,32 @@ class SourceSearchResultsContainer extends React.Component {
 
     if (fetchStatus === FETCH_ONGOING) {
       resultContent = <LoadingSpinner />;
-    } else if (sourceResults && (sourceResults.list && (sourceResults.list.length > 0 || (sourceResults.args && sourceResults.args.media_keyword)))) {
-      const tags = Object.keys(selectedMediaQueryTags)
+    } else if (sourceResults && (sourceResults.list && (sourceResults.list.length > 0 || (sourceResults.args && sourceResults.args.media_keyword) || (sourceResults.args && sourceResults.args.tags)))) {
+      const searchedTags = {};
+      const tagNames = Object.keys(selectedMediaQueryTags)
         .filter(t => metadataQueryFields.has(t) > 0 && Array.isArray(selectedMediaQueryTags[t]) && selectedMediaQueryTags[t].length > 0)
         .map((i) => {
           const obj = selectedMediaQueryTags[i];
+          if (sourceResults.args.tags) {
+            if (!searchedTags[i]) searchedTags[i] = [];
+            searchedTags[i] = obj.map(t => (
+              sourceResults.args.tags.indexOf(t.tags_id) > -1 ? t : ''
+            ));
+          }
           return obj.map(a => a.tag_set_name).reduce(l => l);
         });
-
+      let conditionalTitle = '';
+      if (tagNames.length > 0) {
+        const stringifiedTags = stringifyTags(searchedTags, formatMessage);
+        if (selectedMediaQueryKeyword) {
+          conditionalTitle = <FormattedHTMLMessage {...localMessages.fullTitle} values={{ tags: stringifiedTags }} />;
+        } else {
+          conditionalTitle = <FormattedHTMLMessage {...localMessages.title} values={{ keyword: selectedMediaQueryKeyword, tags: stringifiedTags }} />;
+        }
+      }
       resultContent = (
         <SourceResultsTable
-          title={formatMessage(localMessages.title, { name: selectedMediaQueryKeyword, tags })}
+          title={conditionalTitle}
           sources={sourceResults.list}
           onToggleSelected={onToggleSelected}
         />

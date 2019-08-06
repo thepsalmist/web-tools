@@ -4,7 +4,8 @@ import { trimToMaxLength } from './stringUtil';
 import { notEmptyString } from './formValidators';
 import { downloadViaFormPost } from './apiUtil';
 import { downloadSvg } from '../components/util/svg';
-import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE, PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE } from './tagUtil';
+import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE, PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE, PUB_COUNTRY_TAG_NAME, PUB_STATE_TAG_NAME, PRIMARY_LANGUAGE_TAG_NAME, COUNTRY_OF_FOCUS_TAG_NAME, MEDIA_TYPE_TAG_NAME } from './tagUtil';
+import messages from '../resources/messages';
 
 export const DEFAULT_SOURCES = '';
 
@@ -105,14 +106,45 @@ export function lookupReadableMetadataName(tagSetsId) {
 
 export const metadataQueryFields = new Set([PUBLICATION_COUNTRY, PUBLICATION_STATE, PRIMARY_LANGUAGE, COUNTRY_OF_FOCUS, MEDIA_TYPE]);
 
+export function getShortName(tagName, formatMessage) {
+  switch (tagName) {
+    case PUB_COUNTRY_TAG_NAME:
+      return formatMessage(messages.pubCountryShort);
+    case PUB_STATE_TAG_NAME:
+      return formatMessage(messages.pubStateShort);
+    case PRIMARY_LANGUAGE_TAG_NAME:
+      return formatMessage(messages.languageShort);
+    case COUNTRY_OF_FOCUS_TAG_NAME:
+      return formatMessage(messages.countryShort);
+    case MEDIA_TYPE_TAG_NAME:
+      return formatMessage(messages.mediaTypeShort);
+    default:
+      return null;
+  }
+}
 
+// for display in UI
+export function stringifyTags(tags, formatMessage) {
+  return Object.keys(tags)
+    .filter(t => metadataQueryFields.has(t) > 0 && Array.isArray(tags[t]) && tags[t].length > 0)
+    .map((i) => {
+      const obj = tags[i];
+      const metadataName = getShortName((obj.map(a => a.tag_set_name).reduce(l => l)), formatMessage);
+      const tagsObj = obj.map(a => (a.selected ? a.label : ''));
+      if (tagsObj.length > 0) {
+        return `&nbsp;<span key=${obj.tag_sets_id}>${metadataName}: ${tagsObj}</span><br />`;
+      }
+      return [];
+    });
+}
+
+// grab media keyword and array of tags Ids (irregardless of metadata type) to send to python
 export function serializeSearchTags(searches) {
   let tagArrays = [];
   const currentSearch = [];
   // assumes q is an array
   searches.map((q) => {
     if (q && q.tags) {
-      // get all the tags and send them - python will order them by tag_sets ?
       tagArrays = Object.keys(q.tags).map((m) => {
         if (metadataQueryFields.has(m)) {
           const vals = Object.values(q.tags[m]).map(a => a.tags_id).filter(t => t);
@@ -130,7 +162,8 @@ export function serializeSearchTags(searches) {
   return currentSearch.length ? `[${currentSearch}]` : '';
 }
 
-export function prepSearches(searches) { // serialize to URL in the form - searches: [{ keyword, <metadataId1>:[], <metadataId2>:[] }, {...}]
+// serialize to URL in the form - searches: [{ media_keyword, <metadataId1>:[], <metadataId2>:[] }, {...}]
+export function prepSearches(searches) {
   const tagObj = {};
   const currentSearch = [];
   // assuming q is an array

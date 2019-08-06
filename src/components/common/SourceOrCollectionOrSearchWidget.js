@@ -2,30 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedHTMLMessage } from 'react-intl';
 import { DeleteButton } from './IconButton';
-import { metadataQueryFields } from '../../lib/explorerUtil';
-import messages from '../../resources/messages';
-import { PUB_COUNTRY_TAG_NAME, PUB_STATE_TAG_NAME, PRIMARY_LANGUAGE_TAG_NAME, COUNTRY_OF_FOCUS_TAG_NAME, MEDIA_TYPE_TAG_NAME } from '../../lib/tagUtil';
+import { stringifyTags } from '../../lib/explorerUtil';
 
 const localMessages = {
-  withSearch: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection<br /> &nbsp;Name: \'{keyword}\'<br />&nbsp;{value}' },
+  withSearch: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection<br /> &nbsp;Name: "{keyword}" <br />&nbsp;{value}' },
 };
-
-function getShortName(tagName, formatMessage) {
-  switch (tagName) {
-    case PUB_COUNTRY_TAG_NAME:
-      return formatMessage(messages.pubCountryShort);
-    case PUB_STATE_TAG_NAME:
-      return formatMessage(messages.pubStateShort);
-    case PRIMARY_LANGUAGE_TAG_NAME:
-      return formatMessage(messages.languageShort);
-    case COUNTRY_OF_FOCUS_TAG_NAME:
-      return formatMessage(messages.countryShort);
-    case MEDIA_TYPE_TAG_NAME:
-      return formatMessage(messages.mediaTypeShort);
-    default:
-      return null;
-  }
-}
 
 const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link, formatMessage }) => {
   const isSearch = object.customColl === true;
@@ -42,17 +23,7 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link, for
     name = (object.name || object.label || object.tag);
   } else if (isSearch) {
     typeClass = 'search';
-    subSearch = Object.keys(object.tags)
-      .filter(t => metadataQueryFields.has(t) > 0 && Array.isArray(object.tags[t]) && object.tags[t].length > 0)
-      .map((i) => {
-        const obj = object.tags[i];
-        const metadataName = getShortName((obj.map(a => a.tag_set_name).reduce(l => l)), formatMessage);
-        const tags = obj.map(a => (a.selected ? a.label : ''));
-        if (tags.length > 0) {
-          return `&nbsp;<span key=${obj.tag_sets_id}>${metadataName}: ${tags}</span><br />`;
-        }
-        return [];
-      });
+    subSearch = stringifyTags(object.tags, formatMessage);
     if (subSearch.length > 0) {
       subSearch = <FormattedHTMLMessage {...localMessages.withSearch} values={{ keyword: object.mediaKeyword, value: subSearch }} />;
     }

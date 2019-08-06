@@ -37,11 +37,11 @@ def api_mediapicker_source_search():
     except ValueError:
         # ie. request.args['tags'] is not an int (ie. it is a list of collections like a normal query)
         querying_all_media = False
-
+    tags_fq = "media_source_tags: {tag_sets_id: " + str(VALID_COLLECTION_TAG_SETS_IDS) + "}"
     if querying_all_media:
         tags = [{'tags_id': ALL_MEDIA, 'id': ALL_MEDIA, 'label': "All Media", 'tag_sets_id': ALL_MEDIA}]
         matching_sources = media_search(cleaned_search_str, tags)
-    elif 'tags' in request.args:
+    elif 'tags' in request.args and len(request.args['tags']) > 0:
         # group the tags by tags_sets_id to support boolean searches
         #search within ABYZ collection so we have good results?
         tags_id_list = request.args['tags'].split(',')
@@ -56,8 +56,10 @@ def api_mediapicker_source_search():
         tags_id_3 = tag_ids_by_set[2] if len(tag_ids_by_set) > 2 else None
         tags_id_4 = tag_ids_by_set[3] if len(tag_ids_by_set) > 3 else None
         tags_id_5 = tag_ids_by_set[4] if len(tag_ids_by_set) > 4 else None
-        matching_sources = media_search(search_str=cleaned_search_str, tags_id=VALID_COLLECTION_TAG_SETS_IDS, tags_id_1=tags_id_1, tags_id_2=tags_id_2,
+        matching_sources = media_search(search_str=cleaned_search_str, fq=tags_fq, tags_id_1=tags_id_1, tags_id_2=tags_id_2,
                                         tags_id_3=tags_id_3, tags_id_4=tags_id_4, tags_id_5=tags_id_5)
+    else:
+        matching_sources = media_search(search_str=cleaned_search_str, fq=tags_fq)
     return jsonify({'list': matching_sources})
 
 

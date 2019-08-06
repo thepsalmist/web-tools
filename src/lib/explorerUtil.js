@@ -123,16 +123,33 @@ export function getShortName(tagName, formatMessage) {
   }
 }
 
+export function hasMultipleMetadataTags(tagsObj) {
+  const tagObj = {};
+  Object.keys(tagsObj).forEach((m) => { // for each tag
+    if (metadataQueryFields.has(m)) { // that is metadata
+      const vals = Object.values(tagsObj[m]).map(a => (a.selected ? a.tags_id : null)).filter(t => t);
+      if (vals && vals.length > 0) { // grab just the tags_id that are selected
+        const tagSetsId = tagsObj[m][0].tag_sets_id;
+        tagObj[tagSetsId] = true;
+      }
+    }
+    return tagObj;
+  });
+  return Object.values(tagObj).filter(t => t).length > 1;
+}
+
 // for display in UI
 export function stringifyTags(tags, formatMessage) {
   return Object.keys(tags)
     .filter(t => metadataQueryFields.has(t) > 0 && Array.isArray(tags[t]) && tags[t].length > 0)
-    .map((i) => {
+    .map((i, index) => {
       const obj = tags[i];
       const metadataName = getShortName((obj.map(a => a.tag_set_name).reduce(l => l)), formatMessage);
-      const tagsObj = obj.map(a => (a.selected ? a.label : ''));
+      const tagsObj = obj.map(a => (a.selected ? a.label : '')).filter(l => notEmptyString(l));
       if (tagsObj.length > 0) {
-        return `&nbsp;<span key=${obj.tag_sets_id}>${metadataName}: ${tagsObj}</span><br />`;
+        const tagsString = tagsObj.length > 1 ? tagsObj.join(' OR ') : tagsObj;
+        const andTags = hasMultipleMetadataTags(tags) && index ? ' AND ' : '';
+        return `${andTags}<span key=${obj.tag_sets_id}>${metadataName}: ${tagsString}</span><br />`;
       }
       return [];
     });

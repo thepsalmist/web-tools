@@ -11,9 +11,10 @@ import AdvancedMediaPickerSearchForm from '../AdvancedMediaPickerSearchForm';
 import LoadingSpinner from '../../LoadingSpinner';
 import AppButton from '../../AppButton';
 import { metadataQueryFields, stringifyTags } from '../../../../lib/explorerUtil';
+import { notEmptyString } from '../../../../lib/formValidators';
 
 const localMessages = {
-  fullTitle: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching {name} and {tags}' },
+  fullTitle: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching {keyword} and {tags}' },
   title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching {tags}' },
   hintText: { id: 'system.mediaPicker.sources.hint', defaultMessage: 'Search sources by name or url' },
   noResults: { id: 'system.mediaPicker.sources.noResults', defaultMessage: 'No results. Try searching for the name or URL of a specific source to see if we cover it, like Washington Post, Hindustan Times, or guardian.co.uk.' },
@@ -169,26 +170,26 @@ class SourceSearchResultsContainer extends React.Component {
     if (fetchStatus === FETCH_ONGOING) {
       resultContent = <LoadingSpinner />;
     } else if (sourceResults && (sourceResults.list && (sourceResults.list.length > 0 || (sourceResults.args && sourceResults.args.media_keyword) || (sourceResults.args && sourceResults.args.tags)))) {
-      const searchedTags = {};
+      const previouslySearchedTags = {};
       const tagNames = Object.keys(selectedMediaQueryTags)
         .filter(t => metadataQueryFields.has(t) > 0 && Array.isArray(selectedMediaQueryTags[t]) && selectedMediaQueryTags[t].length > 0)
         .map((i) => {
           const obj = selectedMediaQueryTags[i];
-          if (sourceResults.args.tags) {
-            if (!searchedTags[i]) searchedTags[i] = [];
-            searchedTags[i] = obj.map(t => (
-              sourceResults.args.tags.indexOf(t.tags_id) > -1 ? t : ''
+          if (sourceResults.args.tags) { // correlate searched tag ids with objects so we can display the labels
+            if (!previouslySearchedTags[i]) previouslySearchedTags[i] = [];
+            previouslySearchedTags[i] = obj.map(t => ( // if in tags, it is selected, so reflect this
+              sourceResults.args.tags.indexOf(t.tags_id) > -1 ? Object.assign({}, t, { selected: true }) : ''
             ));
           }
           return obj.map(a => a.tag_set_name).reduce(l => l);
         });
       let conditionalTitle = '';
       if (tagNames.length > 0) {
-        const stringifiedTags = stringifyTags(searchedTags, formatMessage);
-        if (selectedMediaQueryKeyword) {
-          conditionalTitle = <FormattedHTMLMessage {...localMessages.fullTitle} values={{ tags: stringifiedTags }} />;
+        const stringifiedTags = stringifyTags(previouslySearchedTags, formatMessage);
+        if (notEmptyString(selectedMediaQueryKeyword)) {
+          conditionalTitle = <FormattedHTMLMessage {...localMessages.fullTitle} values={{ keyword: selectedMediaQueryKeyword, tags: stringifiedTags }} />;
         } else {
-          conditionalTitle = <FormattedHTMLMessage {...localMessages.title} values={{ keyword: selectedMediaQueryKeyword, tags: stringifiedTags }} />;
+          conditionalTitle = <FormattedHTMLMessage {...localMessages.title} values={{ tags: stringifiedTags }} />;
         }
       }
       resultContent = (

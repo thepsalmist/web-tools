@@ -4,6 +4,7 @@ from flask import jsonify, request
 
 from server import app
 from server.auth import user_mediacloud_key
+from server.cache import cache
 from server.util.request import arguments_required, api_error_handler
 from server.views.sources.apicache import tags_in_tag_set
 from server.util.tags import TAG_SETS_ID_PUBLICATION_COUNTRY, TAG_SETS_ID_PUBLICATION_STATE, TAG_SETS_ID_COUNTRY_OF_FOCUS, TAG_SETS_ID_PRIMARY_LANGUAGE
@@ -38,7 +39,7 @@ def api_metadata_search(tag_sets_id):
     matching_tags = [t for t in data['tags'] if search_string.lower() in t['label'].lower()]
     return jsonify(matching_tags)
 
-
+@cache.cache_on_arguments()
 def get_metadata_defaults(tag_sets_id):
     short_list = []
     if int(tag_sets_id) == TAG_SETS_ID_PUBLICATION_COUNTRY:

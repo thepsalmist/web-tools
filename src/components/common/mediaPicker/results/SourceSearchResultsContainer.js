@@ -14,7 +14,7 @@ import { metadataQueryFields, stringifyTags } from '../../../../lib/explorerUtil
 import { notEmptyString } from '../../../../lib/formValidators';
 
 const localMessages = {
-  fullTitle: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching {keyword} and {tags}' },
+  fullTitle: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching "{keyword}" and {tags}' },
   title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching {tags}' },
   hintText: { id: 'system.mediaPicker.sources.hint', defaultMessage: 'Search sources by name or url' },
   noResults: { id: 'system.mediaPicker.sources.noResults', defaultMessage: 'No results. Try searching for the name or URL of a specific source to see if we cover it, like Washington Post, Hindustan Times, or guardian.co.uk.' },

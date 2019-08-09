@@ -12,7 +12,7 @@ import LoadingSpinner from '../../LoadingSpinner';
 import AppButton from '../../AppButton';
 
 const localMessages = {
-  title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching "{name} and {tags} "' },
+  title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Top sources matching "{name} and {tags} "' },
   hintText: { id: 'system.mediaPicker.sources.hint', defaultMessage: 'Search sources by name or url' },
   noResults: { id: 'system.mediaPicker.sources.noResults', defaultMessage: 'No results. Try searching for the name or URL of a specific source to see if we cover it, like Washington Post, Hindustan Times, or guardian.co.uk.' },
   showAdvancedOptions: { id: 'system.mediaPicker.sources.showAdvancedOptions', defaultMessage: 'Show Advanced Options' },

@@ -140,7 +140,7 @@ export function hasMultipleMetadataTags(tagsObj) {
 
 // for display in UI
 export function stringifyTags(tags, formatMessage) {
-  return Object.keys(tags)
+  const htmlTags = Object.keys(tags)
     .filter(t => metadataQueryFields.has(t) > 0 && Array.isArray(tags[t]) && tags[t].length > 0)
     .map((i, index) => {
       const obj = tags[i];
@@ -149,10 +149,11 @@ export function stringifyTags(tags, formatMessage) {
       if (tagsObj.length > 0) {
         const tagsString = tagsObj.length > 1 ? tagsObj.join(' OR ') : tagsObj;
         const andTags = hasMultipleMetadataTags(tags) && index ? ' AND ' : '';
-        return `${andTags}<span key=${obj.tag_sets_id}>${metadataName}: ${tagsString}</span><br />`;
+        return `${andTags}${metadataName}: ${tagsString}`;
       }
       return [];
     });
+  return htmlTags.join(' ');
 }
 
 // grab media keyword and array of tags Ids (irregardless of metadata type) to send to python

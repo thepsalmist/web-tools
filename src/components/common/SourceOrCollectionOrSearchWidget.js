@@ -1,11 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedHTMLMessage } from 'react-intl';
+import { FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { DeleteButton } from './IconButton';
 import { stringifyTags } from '../../lib/explorerUtil';
+import { emptyString } from '../../lib/formValidators';
 
 const localMessages = {
-  withSearch: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection<br /> &nbsp;Name: "{keyword}" <br />&nbsp;{value}' },
+  searchWithKeyword: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection<br /> &nbsp;Name: "{keyword}" <br /> {values}' },
+  search: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection: <br /> {values} ' },
+
 };
 
 const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link, formatMessage }) => {
@@ -16,16 +19,21 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link, for
   let typeClass = 'source';
   let objectId = object.media_id;
   let name = (object.name || object.label || object.url);
-  let subSearch = '';
+  let metadataSearch = '';
   if (isCollection) {
     typeClass = 'collection';
     objectId = object.tags_id;
     name = (object.name || object.label || object.tag);
   } else if (isSearch) {
     typeClass = 'search';
-    subSearch = stringifyTags(object.tags, formatMessage);
-    if (subSearch.length > 0) {
-      subSearch = <FormattedHTMLMessage {...localMessages.withSearch} values={{ keyword: object.mediaKeyword, value: subSearch }} />;
+    objectId = 'custom'; // maybe create a unique id
+    metadataSearch = stringifyTags(object.tags, formatMessage);
+    if (metadataSearch.length > 0) {
+      if (emptyString(object.mediaKeyword)) {
+        metadataSearch = <FormattedMessage {...localMessages.search} values={{ values: metadataSearch }} />;
+      } else {
+        metadataSearch = <FormattedHTMLMessage {...localMessages.searchWithKeyword} values={{ keyword: object.mediaKeyword, values: metadataSearch }} />;
+      }
     }
   }
   // link the text if there is a click handler defined
@@ -44,7 +52,7 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link, for
     >
       {text}
       {onDelete && <DeleteButton onClick={onDelete} />}
-      {subSearch}
+      {metadataSearch}
     </span>
   );
 };

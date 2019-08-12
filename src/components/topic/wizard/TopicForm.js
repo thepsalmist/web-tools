@@ -94,6 +94,7 @@ class TopicForm extends React.Component {
             <div className="media-field-wrapper">
               {mediaLabel}
               <SourceCollectionsMediaForm
+                formatMessage={formatMessage}
                 title={title}
                 intro={intro}
                 className="query-field"

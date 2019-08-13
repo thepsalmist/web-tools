@@ -6,6 +6,7 @@ import { formValueSelector } from 'redux-form';
 import { Col } from 'react-flexbox-grid/lib';
 import { selectMediaPickerQueryArgs, fetchMediaPickerSources, selectMediaCustomColl } from '../../../../actions/systemActions';
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
+import withHelp from '../../hocs/HelpfulContainer';
 import SourceResultsTable from './SourceResultsTable';
 import AdvancedMediaPickerSearchForm from '../AdvancedMediaPickerSearchForm';
 import LoadingSpinner from '../../LoadingSpinner';
@@ -14,14 +15,14 @@ import { metadataQueryFields, stringifyTags } from '../../../../lib/explorerUtil
 import { notEmptyString } from '../../../../lib/formValidators';
 
 const localMessages = {
-  fullTitle: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching "{keyword}" and {tags}' },
-  title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching {tags}' },
+  fullTitle: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching<br /> "{keyword}" and {tags}' },
+  title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching<br />{tags}' },
   hintText: { id: 'system.mediaPicker.sources.hint', defaultMessage: 'Search sources by name or url' },
   noResults: { id: 'system.mediaPicker.sources.noResults', defaultMessage: 'No results. Try searching for the name or URL of a specific source to see if we cover it, like Washington Post, Hindustan Times, or guardian.co.uk.' },
   showAdvancedOptions: { id: 'system.mediaPicker.sources.showAdvancedOptions', defaultMessage: 'Show Advanced Options' },
   hideAdvancedOptions: { id: 'system.mediaPicker.sources.hideAdvancedOptions', defaultMessage: 'Hide Advanced Options' },
   allMedia: { id: 'system.mediaPicker.sources.allMedia', defaultMessage: 'All Media (not advised)' },
-  customColl: { id: 'system.mediaPicker.sources.customColl', defaultMessage: '<< Add Custom Collection' },
+  customColl: { id: 'system.mediaPicker.sources.customColl', defaultMessage: 'Add As Custom Collection' },
 };
 
 const formSelector = formValueSelector('advanced-media-picker-search');
@@ -139,7 +140,7 @@ class SourceSearchResultsContainer extends React.Component {
   }
 
   render() {
-    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
+    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags, selectedMediaQueryAllTags, helpButton } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     let resultContent = null;
@@ -156,7 +157,7 @@ class SourceSearchResultsContainer extends React.Component {
     );
 
     const addAllButton = (
-      <Col lg={8}>
+      <Col lg={12}>
         <AppButton
           style={{ marginTop: -30, float: 'right' }}
           label={formatMessage(localMessages.customColl)}
@@ -164,6 +165,7 @@ class SourceSearchResultsContainer extends React.Component {
           color="primary"
           disabled={!selectedMediaQueryTags || Object.keys(selectedMediaQueryTags).length === 0 || sourceResults === undefined || sourceResults.list.length === 0}
         />
+        { helpButton }
       </Col>
     );
 
@@ -193,11 +195,14 @@ class SourceSearchResultsContainer extends React.Component {
         }
       }
       resultContent = (
-        <SourceResultsTable
-          title={conditionalTitle}
-          sources={sourceResults.list}
-          onToggleSelected={onToggleSelected}
-        />
+        <div>
+          <h2>{ conditionalTitle }</h2>
+          { addAllButton }
+          <SourceResultsTable
+            sources={sourceResults.list}
+            onToggleSelected={onToggleSelected}
+          />
+        </div>
       );
     } else {
       resultContent = <FormattedMessage {...localMessages.noResults} />;
@@ -205,7 +210,6 @@ class SourceSearchResultsContainer extends React.Component {
     return (
       <div>
         {content}
-        {addAllButton}
         {resultContent}
       </div>
     );
@@ -231,6 +235,7 @@ SourceSearchResultsContainer.propTypes = {
   sourceResults: PropTypes.object,
   formQuery: PropTypes.object,
   mediaQuery: PropTypes.array,
+  helpButton: PropTypes.node.isRequired,
   // from dispatch
   // updateAdvancedMediaQuerySelection: PropTypes.func.isRequired,
   handleUpdateAndSearchWithSelection: PropTypes.func.isRequired,
@@ -294,6 +299,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    SourceSearchResultsContainer
+    withHelp(localMessages.hintText, [localMessages.hintText, localMessages.customColl])(
+      SourceSearchResultsContainer
+    )
   )
 );

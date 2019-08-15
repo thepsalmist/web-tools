@@ -180,7 +180,7 @@ export function serializeSearchTags(searches) {
   return currentSearch.length ? `[${currentSearch}]` : '';
 }
 
-// serialize to URL in the form - searches: [{ media_keyword, <metadataId1>:[], <metadataId2>:[] }, {...}]
+// serialize to URL (not python which expects JSON & solr tags!) in the form - searches: [{ media_keyword, <metadataId1>:[], <metadataId2>:[] }, {...}]
 export function prepSearches(searches) {
   const tagObj = {};
   const currentSearch = [];

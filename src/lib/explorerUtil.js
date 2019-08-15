@@ -173,7 +173,7 @@ export function serializeSearchTags(searches) {
         return '';
       });
       tagArrays = tagArrays.filter(t => Array.isArray(t));
-      currentSearch.push(`{"media_keyword": "${q.mediaKeyword}", "tags_id_media": "${JSON.stringify(tagArrays)}"}`);
+      currentSearch.push(`{"media_keyword": "${notEmptyString(q.mediaKeyword) ? q.mediaKeyword : ''}", "tags_id_media": "${JSON.stringify(tagArrays)}"}`);
     }
     return false;
   });

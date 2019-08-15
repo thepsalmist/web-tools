@@ -17,7 +17,7 @@ import { selectQuery, updateQuery, addCustomQuery, loadUserSearches, saveUserSea
 import { AddQueryButton } from '../../common/IconButton';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
 import { autoMagicQueryLabel, KEYWORD, DATES, MEDIA,
-  DEFAULT_COLLECTION_OBJECT_ARRAY, replaceCurlyQuotes, uniqueQueryId, LEFT } from '../../../lib/explorerUtil';
+  DEFAULT_COLLECTION_OBJECT_ARRAY, replaceCurlyQuotes, uniqueQueryId, LEFT, prepSearches } from '../../../lib/explorerUtil';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
 const localMessages = {
@@ -110,6 +110,7 @@ class QueryPickerContainer extends React.Component {
   saveThisSearch = (queryName) => {
     const { queries, sendAndSaveUserSearch } = this.props; // formQuery same as selected
     // filter out removed ids...
+
     const queriesToSave = queries.map(q => ({
       label: q.label,
       q: replaceCurlyQuotes(q.q),
@@ -118,7 +119,7 @@ class QueryPickerContainer extends React.Component {
       endDate: q.endDate,
       sources: q.sources.map(m => m.media_id),
       collections: q.collections.map(c => c.tags_id),
-      searches: Object.values(q.searches).filter(t => t.length > 0),
+      searches: prepSearches(q.searches),
     }));
     const userSearch = {
       ...queryName,

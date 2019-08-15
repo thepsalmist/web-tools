@@ -68,7 +68,7 @@ def api_explorer_searches_by_ids():
     searches_results = []
     searches_list = json.loads(request.args['searches[]'])
     for s in searches_list:
-        keyword = s['media_keyword'] if 'media_keyword' in s else '*'
+        keyword = s['media_keyword'] if 'media_keyword' not in ['undefined'] and 'media_keyword' in s else '*'
         tag_set_tag_obj = {}
         tag_set_tag_obj['tags'] = {}
 

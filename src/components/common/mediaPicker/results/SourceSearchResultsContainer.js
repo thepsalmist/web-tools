@@ -23,6 +23,8 @@ const localMessages = {
   hideAdvancedOptions: { id: 'system.mediaPicker.sources.hideAdvancedOptions', defaultMessage: 'Hide Advanced Options' },
   allMedia: { id: 'system.mediaPicker.sources.allMedia', defaultMessage: 'All Media (not advised)' },
   customColl: { id: 'system.mediaPicker.sources.customColl', defaultMessage: 'Add As Custom Collection' },
+  customCollTitle: { id: 'system.mediaPicker.sources.customCollTitle', defaultMessage: 'Add As Custom Collection' },
+  customCollDef: { id: 'system.mediaPicker.sources.customCollDef', defaultMessage: 'Click this button to store your custom search as your own collection of sources that match the selected metadata query above.' },
 };
 
 const formSelector = formValueSelector('advanced-media-picker-search');
@@ -195,7 +197,7 @@ class SourceSearchResultsContainer extends React.Component {
         }
       }
       resultContent = (
-        <div>
+        <div className="source-search-results">
           <h2>{ conditionalTitle }</h2>
           { addAllButton }
           <SourceResultsTable
@@ -299,7 +301,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withHelp(localMessages.hintText, [localMessages.hintText, localMessages.customColl])(
+    withHelp(localMessages.customCollTitle, localMessages.customCollDef)(
       SourceSearchResultsContainer
     )
   )

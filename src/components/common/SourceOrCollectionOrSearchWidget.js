@@ -29,7 +29,7 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link, for
     objectId = 'custom'; // maybe create a unique id
     metadataSearch = stringifyTags(object.tags, formatMessage);
     if (metadataSearch.length > 0) {
-      if (emptyString(object.mediaKeyword)) {
+      if (emptyString(object.mediaKeyword) || object.mediaKeyword === '*') {
         metadataSearch = <FormattedHTMLMessage {...localMessages.search} values={{ values: metadataSearch }} />;
       } else {
         metadataSearch = <FormattedHTMLMessage {...localMessages.searchWithKeyword} values={{ keyword: object.mediaKeyword, values: metadataSearch }} />;

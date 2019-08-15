@@ -158,6 +158,7 @@ class SourceSearchResultsContainer extends React.Component {
 
     const addAllButton = (
       <Col lg={12}>
+        { helpButton }
         <AppButton
           style={{ marginTop: -30, float: 'right' }}
           label={formatMessage(localMessages.customColl)}
@@ -165,7 +166,6 @@ class SourceSearchResultsContainer extends React.Component {
           color="primary"
           disabled={!selectedMediaQueryTags || Object.keys(selectedMediaQueryTags).length === 0 || sourceResults === undefined || sourceResults.list.length === 0}
         />
-        { helpButton }
       </Col>
     );
 

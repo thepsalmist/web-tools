@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedMessage, FormattedHTMLMessage } from 'react-intl';
+import { FormattedHTMLMessage } from 'react-intl';
 import { DeleteButton } from './IconButton';
 import { stringifyTags } from '../../lib/explorerUtil';
 import { emptyString } from '../../lib/formValidators';
@@ -30,7 +30,7 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link, for
     metadataSearch = stringifyTags(object.tags, formatMessage);
     if (metadataSearch.length > 0) {
       if (emptyString(object.mediaKeyword)) {
-        metadataSearch = <FormattedMessage {...localMessages.search} values={{ values: metadataSearch }} />;
+        metadataSearch = <FormattedHTMLMessage {...localMessages.search} values={{ values: metadataSearch }} />;
       } else {
         metadataSearch = <FormattedHTMLMessage {...localMessages.searchWithKeyword} values={{ keyword: object.mediaKeyword, values: metadataSearch }} />;
       }

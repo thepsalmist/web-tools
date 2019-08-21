@@ -74,21 +74,21 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids)
         if len(custom_ids) > 0:
             custom_ids_dict = json.loads(custom_ids)
             query_custom_ids = ''
-            for item in custom_ids_dict:
-                tag_groups = json.loads(item['tags_id_media'])
+            for sets_of_tags in custom_ids_dict: #for each custom collections
+                custom_tag_groups = json.loads(sets_of_tags['tags_id_media']) # expect tags in format [[x, ...], ...]
                 custom_sets = []
-                if len(tag_groups) > 1: #handle singular vs groups of tags
-                    for tag_ids in tag_groups:
-                        custom_id_set_string = " OR ".join(str(t) for t in tag_ids) # OR the ids within the same metadata set
+                for tag_grp in custom_tag_groups:
+                    if len(tag_grp) > 1: #handle singular [] vs groups of tags [x, y,z]
+                        custom_id_set_string = " OR ".join(str(tag) for tag in tag_grp) # OR the ids within the same metadata set
                         custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
                         custom_sets.append(custom_id_set_string)
-                    custom_id_set_string = "tags_id_media:({})".format(custom_sets)
-                elif len(tag_groups) == 1:
-                    custom_id_set_string = re.sub('\[*\]*', '', str(tag_groups[0]))
-                    custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
-                    custom_sets.append(custom_id_set_string)
-            query_custom_ids = " AND ".join(custom_sets) # AND the metadata sets together
-            query_custom_ids = "({})".format(query_custom_ids)
+                        custom_id_set_string = "tags_id_media:({})".format(custom_sets)
+                    elif len(tag_grp) == 1:
+                        custom_id_set_string = re.sub('\[*\]*', '', str(tag_grp))
+                        custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
+                        custom_sets.append(custom_id_set_string)
+                query_custom_ids = " AND ".join(custom_sets) # AND the metadata sets together
+                query_custom_ids = "({})".format(query_custom_ids)
             if len(tags_ids) > 0:
                 query = query + ' OR '+ query_custom_ids + ')' #  OR all the sets with the other Collection ids
             else:

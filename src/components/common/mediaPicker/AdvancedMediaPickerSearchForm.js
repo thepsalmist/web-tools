@@ -173,21 +173,9 @@ class AdvancedMediaPickerSearchForm extends React.Component {
             <Col lg={11}>
               <div className="filter-options">
                 <AppButton
-                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_MEDIA_TYPE) }}
-                  label={formatMessage(localMessages.pMediaType, { count: this.getTagsPerMetadata(initialValues, MEDIA_TYPE) })}
-                  onClick={() => this.setMetaClick(TAG_SET_MEDIA_TYPE)}
-                  disabled={this.state.mode === ALL_MEDIA}
-                />
-                <AppButton
                   style={{ backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_COUNTRY) }}
                   label={formatMessage(localMessages.pubCountrySuggestion, { count: this.getTagsPerMetadata(initialValues, PUBLICATION_COUNTRY) })}
                   onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_COUNTRY)}
-                  disabled={this.state.mode === ALL_MEDIA}
-                />
-                <AppButton
-                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_STATE) }}
-                  label={formatMessage(localMessages.pubStateSuggestion, { count: this.getTagsPerMetadata(initialValues, PUBLICATION_STATE) })}
-                  onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_STATE)}
                   disabled={this.state.mode === ALL_MEDIA}
                 />
                 <AppButton
@@ -197,9 +185,21 @@ class AdvancedMediaPickerSearchForm extends React.Component {
                   disabled={this.state.mode === ALL_MEDIA}
                 />
                 <AppButton
+                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_STATE) }}
+                  label={formatMessage(localMessages.pubStateSuggestion, { count: this.getTagsPerMetadata(initialValues, PUBLICATION_STATE) })}
+                  onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_STATE)}
+                  disabled={this.state.mode === ALL_MEDIA}
+                />
+                <AppButton
                   style={{ backgroundColor: backgroundColorStyle(TAG_SET_COUNTRY_OF_FOCUS) }}
                   label={formatMessage(localMessages.pCountryOfFocusSuggestion, { count: this.getTagsPerMetadata(initialValues, COUNTRY_OF_FOCUS) })}
                   onClick={() => this.setMetaClick(TAG_SET_COUNTRY_OF_FOCUS)}
+                  disabled={this.state.mode === ALL_MEDIA}
+                />
+                <AppButton
+                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_MEDIA_TYPE) }}
+                  label={formatMessage(localMessages.pMediaType, { count: this.getTagsPerMetadata(initialValues, MEDIA_TYPE) })}
+                  onClick={() => this.setMetaClick(TAG_SET_MEDIA_TYPE)}
                   disabled={this.state.mode === ALL_MEDIA}
                 />
               </div>

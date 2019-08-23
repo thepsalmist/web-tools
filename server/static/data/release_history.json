@@ -1,14 +1,14 @@
 {
   "releases": [
     {
-      "date": "2019-7-23",
+      "date": "2019-8-23",
       "version": "v3.12.0",
       "notes": [
         {
           "apps": [ "explorer" ],
           "type": "New",
-          "note": "Media Picker now enables custom search collections",
-          "details": "Now you can search and save a set of custom searches containing a media keyword and a set of metadata tags. For example, search for sources with keyword 'mainstream' published in the US or Canada and in Massachusetts'"
+          "note": "Media Picker now enables you to create custom search collections",
+          "details": "Now you can search and save a set of custom searches containing a media keyword and a set of metadata tags. For example, search for sources with keyword 'mainstream' published in the US or Canada and in Massachusetts.' See our blog post for more information."
         },
         {
           "apps": [ "explorer" ],

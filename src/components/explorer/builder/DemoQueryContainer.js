@@ -4,7 +4,7 @@ import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { selectQuery, resetSelected, resetQueries, resetSentenceCounts, resetSampleStories, resetStoryCounts,
-  resetGeo, updateTimestampForQueries, removeDeletedQueries } from '../../../actions/explorerActions';
+  resetGeo, updateTimestampForQueries, removeNewStatusFromQueries, removeDeletedQueries } from '../../../actions/explorerActions';
 import QueryPickerContainer from './QueryPickerContainer';
 import QueryResultsContainer from '../results/QueryResultsContainer';
 import { WarningNotice } from '../../common/Notice';
@@ -95,6 +95,7 @@ const mapDispatchToProps = dispatch => ({
   },
   reallyHandleSearch: () => {
     dispatch(removeDeletedQueries());
+    dispatch(removeNewStatusFromQueries());
     dispatch(updateTimestampForQueries());
   },
 });

@@ -42,7 +42,7 @@ def access_public_topic(topics_id):
 
 # helper for preview queries
 # tags_id is either a string or a list, which is handled in either case by the len() test. ALL_MEDIA is the exception
-def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids):
+def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids=[]):
     query = '({})'.format(solr_seed_query)
 
     if len(media_ids) > 0 or len(tags_ids) > 0 or len(custom_ids):
@@ -178,10 +178,11 @@ def parse_query_with_keywords(args):
         start_date, end_date = parse_query_dates(args)
         media_ids = _parse_media_ids(args)
         collections = _parse_collection_ids(args)
+        searches = args['searches'] if 'searches' in args else []
         solr_q = concatenate_query_for_solr(solr_seed_query=current_query,
                                             media_ids=media_ids,
                                             tags_ids=collections,
-                                            custom_ids=args['searches'])
+                                            custom_ids=searches)
         solr_fq = dates_as_filter_query(start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
     # otherwise, default
     except Exception as e:

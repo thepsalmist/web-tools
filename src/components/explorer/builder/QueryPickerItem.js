@@ -132,7 +132,7 @@ class QueryPickerItem extends React.Component {
         let oneSourceLabel = query.sources && query.sources[0] && query.sources[0].name ? query.sources[0].name : '';
         const oneCollLabelOrNumber = query.collections[0] && query.collections[0].label ? query.collections[0].label : '';
         const oneCollLabel = collectionCount === 1 ? oneCollLabelOrNumber : '';
-        const oneCustomCollLabelOrNumber = query.searches[0] ? `${query.searches[0].mediaKeyword || ''} (custom)` : '';
+        const oneCustomCollLabelOrNumber = query.searches && query.searches[0] ? `${query.searches[0].mediaKeyword || ''} (custom)` : '';
         const oneCustomCollLabel = customCollCount === 1 ? oneCustomCollLabelOrNumber : '';
         oneSourceLabel = sourceCount === 1 ? oneSourceLabel : '';
 

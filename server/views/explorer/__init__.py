@@ -64,7 +64,7 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids=
         if len(tags_ids) > 0:
             tags_ids = tags_ids.split(',') if isinstance(tags_ids, str) else tags_ids
             query_tags_ids = " ".join([str(t) for t in tags_ids])
-            query_tags_ids = " tags_id_media:{}".format(query_tags_ids)
+            query_tags_ids = " tags_id_media:({})".format(query_tags_ids)
             if len(custom_ids) == 0:
                 query += '('+query_tags_ids+')'
             else:

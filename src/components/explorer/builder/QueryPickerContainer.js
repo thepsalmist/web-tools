@@ -250,7 +250,7 @@ class QueryPickerContainer extends React.Component {
         const newQueryLabel = `Query ${String.fromCharCode('A'.charCodeAt(0) + newPosition)}`;
         const defaultQueryField = '';
         const defaultDemoQuery = { uid: newUid, sortPosition: newPosition, new: true, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
-        const defaultQuery = { uid: newUid, sortPosition: newPosition, new: true, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: [], sources: [], color: genDefColor, autoNaming: true };
+        const defaultQuery = { uid: newUid, sortPosition: newPosition, new: true, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, searches: [], collections: [], sources: [], color: genDefColor, autoNaming: true };
 
         const emptyQuerySlide = (
           <div key={fixedQuerySlides.length}>

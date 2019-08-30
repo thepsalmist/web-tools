@@ -36,6 +36,33 @@ export function serializeQueriesForUrl(queries) {
   return encodeURIComponent(JSON.stringify(queries));
 }
 
+export const metadataQueryFields = new Set([PUBLICATION_COUNTRY, PUBLICATION_STATE, PRIMARY_LANGUAGE, COUNTRY_OF_FOCUS, MEDIA_TYPE]);
+
+// grab media keyword and array of tags Ids (irregardless of metadata type) to send to python
+export function serializeSearchTags(searches) {
+  let tagArrays = [];
+  const currentSearch = [];
+  // assumes q is an array
+  searches.map((q) => {
+    if (q && q.tags) {
+      tagArrays = Object.keys(q.tags).map((m) => {
+        if (metadataQueryFields.has(m)) {
+          const vals = Object.values(q.tags[m]).map(a => a.tags_id).filter(t => t);
+          if (vals && vals.length > 0) { // grab just the tags_id that are selected
+            return vals;
+          }
+        }
+        return '';
+      });
+      tagArrays = tagArrays.filter(t => Array.isArray(t));
+      currentSearch.push(`{"media_keyword": "${notEmptyString(q.mediaKeyword) ? q.mediaKeyword : ''}", "tags_id_media": "${JSON.stringify(tagArrays)}"}`);
+    }
+    return false;
+  });
+  return currentSearch.length ? `[${currentSearch}]` : '';
+}
+
+
 export function replaceCurlyQuotes(stringWithQuotes) {
   let removedQuotes = stringWithQuotes.replace(/[\u2018]/g, "'").replace(/[\u2019]/g, "'"); // replace single curly quotes
   removedQuotes = removedQuotes.replace(/[\u201C]/g, '"').replace(/[\u201D]/g, '"'); // replace double curly quotes
@@ -83,6 +110,7 @@ export function generateQueryParamObject(query, skipEncoding) {
     endDate: query.endDate,
     sources: query.sources && query.sources.length > 0 ? query.sources.map(s => (s.id ? s.id : s)) : [], // id field or the id itself
     collections: query.collections && query.collections.length > 0 ? query.collections.map(s => (s.id ? s.id : s)) : [],
+    searches: query.searches && query.searches.length > 0 ? serializeSearchTags(query.searches) : [],
   };
 }
 
@@ -104,7 +132,6 @@ export function lookupReadableMetadataName(tagSetsId) {
   }
 }
 
-export const metadataQueryFields = new Set([PUBLICATION_COUNTRY, PUBLICATION_STATE, PRIMARY_LANGUAGE, COUNTRY_OF_FOCUS, MEDIA_TYPE]);
 
 export function getShortName(tagName, formatMessage) {
   switch (tagName) {
@@ -154,30 +181,6 @@ export function stringifyTags(tags, formatMessage) {
       return [];
     });
   return htmlTags.join(' ');
-}
-
-// grab media keyword and array of tags Ids (irregardless of metadata type) to send to python
-export function serializeSearchTags(searches) {
-  let tagArrays = [];
-  const currentSearch = [];
-  // assumes q is an array
-  searches.map((q) => {
-    if (q && q.tags) {
-      tagArrays = Object.keys(q.tags).map((m) => {
-        if (metadataQueryFields.has(m)) {
-          const vals = Object.values(q.tags[m]).map(a => a.tags_id).filter(t => t);
-          if (vals && vals.length > 0) { // grab just the tags_id that are selected
-            return vals;
-          }
-        }
-        return '';
-      });
-      tagArrays = tagArrays.filter(t => Array.isArray(t));
-      currentSearch.push(`{"media_keyword": "${notEmptyString(q.mediaKeyword) ? q.mediaKeyword : ''}", "tags_id_media": "${JSON.stringify(tagArrays)}"}`);
-    }
-    return false;
-  });
-  return currentSearch.length ? `[${currentSearch}]` : '';
 }
 
 // serialize to URL (not python which expects JSON & solr tags!) in the form - searches: [{ media_keyword, <metadataId1>:[], <metadataId2>:[] }, {...}]

@@ -4,7 +4,7 @@ import React from 'react';
 // https://stackoverflow.com/questions/29652862/highlight-text-using-reactjs
 
 const HighlightedText = ({ text, search }) => {
-  if (search === undefined) {
+  if (search === undefined || search === null) {
     return text;
   }
   if (text === undefined) { // just being extra safe here

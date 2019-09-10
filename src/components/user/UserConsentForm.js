@@ -32,7 +32,7 @@ const UserConsentForm = (props) => {
           </Col>
         </Row>
         <Row>
-          <Col lg={8} xs={12}>
+          <Col lg={12}>
             <Field
               fullWidth
               name="has_consented"
@@ -73,7 +73,7 @@ UserConsentForm.propTypes = {
 // in-browser validation callback
 function validate(values) {
   const errors = {};
-  if (!values.has_consented) {
+  if (!values.has_consented || !values.has_consented.value) {
     errors.has_consented = localMessages.noConsent;
   }
   return errors;

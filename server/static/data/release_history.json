@@ -7,7 +7,7 @@
         {
           "apps": [ "explorer", "tools"],
           "type": "Fixed",
-          "note": "Logging and agreed to the consent form works again"
+          "note": "Login and agreed to the consent form works again"
         }
       ]
     },{

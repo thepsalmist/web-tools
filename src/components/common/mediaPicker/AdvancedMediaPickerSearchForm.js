@@ -79,10 +79,10 @@ class AdvancedMediaPickerSearchForm extends React.Component {
   }
 
 
-  handleSearchAll = (mode, input) => {
+  handleSearchAll = (mode, allMedia) => {
     const { onQueryUpdateSelection } = this.props;
     this.setMetaClick(ALL_MEDIA);
-    onQueryUpdateSelection({ allMedia: input.value }, { allMedia: input.value });
+    onQueryUpdateSelection({ allMedia }, { allMedia });
   }
 
   render() {
@@ -218,11 +218,7 @@ class AdvancedMediaPickerSearchForm extends React.Component {
             <Col lg={6}>
               <Field
                 name="allMedia"
-                component={info => (
-                  <div>
-                    {renderCheckbox({ ...info, input: { ...info.input, value: initialValues.allMedia }, onChange: (event, newValue) => this.handleSearchAll(ALL_MEDIA, newValue) })}
-                  </div>
-                )}
+                component={renderCheckbox}
                 fullWidth
                 label={localMessages.allMedia}
                 helpertext={localMessages.allMedia}

@@ -5,7 +5,7 @@
       "version": "v3.12.4",
       "notes": [
         {
-          "apps": [ "explorer" ],
+          "apps": [ "explorer", "tootls"],
           "type": "Fixed",
           "note": "Logging and agreed to the consent form works again"
         }

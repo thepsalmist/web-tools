@@ -8,7 +8,6 @@
   "env": {
     "development": {
       "plugins": [
-        ["react-hot-loader/babel"],
         ["@babel/plugin-transform-react-jsx-source"],
         ["react-intl", {
           "messagesDir": "./build/messages/"

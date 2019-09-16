@@ -24,6 +24,7 @@ Building and Purshing a Release
 2. Test the changes locally to make sure they worked (after pulling into release branch)
 3. Update the version number in the appropriate `src/[tool]Index.js` file.
 4. Update release notes in `server/static/data/release_history.json`
+4a. Commit these files
 <br/><br/>
 5. Build the release version of the JS and CSS: `npm run topics-release`, or `npm run sources-release`, etc.
 6. Commit those built files 

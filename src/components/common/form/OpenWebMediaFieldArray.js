@@ -41,7 +41,7 @@ renderCollectionSelector.propTypes = {
   formatMessage: PropTypes.func.isRequired,
 };
 
-const SourceCollectionsMediaForm = (props) => {
+const OpenWebMediaFieldArray = (props) => {
   const { fieldName, initialValues, allowRemoval, onDelete, formatMessage } = props;
   return (
     <div className="explorer-source-collection-form">
@@ -59,7 +59,7 @@ const SourceCollectionsMediaForm = (props) => {
   );
 };
 
-SourceCollectionsMediaForm.propTypes = {
+OpenWebMediaFieldArray.propTypes = {
   // from parent
   intl: PropTypes.object.isRequired,
   initialValues: PropTypes.object,
@@ -75,7 +75,7 @@ export default
 injectIntl(
   withIntlForm(
     reduxForm({ propTypes })(
-      SourceCollectionsMediaForm
+      OpenWebMediaFieldArray
     )
   )
 );

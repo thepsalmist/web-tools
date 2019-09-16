@@ -8,7 +8,7 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import CopyAllComponent from '../../common/CopyAllComponent';
-import SourceCollectionsMediaForm from '../../common/form/SourceCollectionsMediaForm';
+import OpenWebMediaFieldArray from '../../common/form/OpenWebMediaFieldArray';
 import MediaPickerDialog from '../../common/mediaPicker/MediaPickerDialog';
 import QueryHelpDialog from '../../common/help/QueryHelpDialog';
 import MediaHelpDialog from '../../common/help/MediaHelpDialog';
@@ -189,7 +189,7 @@ class QueryForm extends React.Component {
                       onOk={() => onCopyAll(MEDIA)}
                     />
                   </div>
-                  <SourceCollectionsMediaForm
+                  <OpenWebMediaFieldArray
                     className="query-field"
                     form="queryForm"
                     fieldName="media"

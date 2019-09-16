@@ -8,7 +8,7 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import TopicCreateForm from './TopicCreateForm';
 import TopicSeedDetailsForm from './TopicSeedDetailsForm';
 import MediaPickerDialog from '../../common/mediaPicker/MediaPickerDialog';
-import SourceCollectionsMediaForm from '../../common/form/SourceCollectionsMediaForm';
+import OpenWebMediaFieldArray from '../../common/form/OpenWebMediaFieldArray';
 import { emptyString, invalidDate, validDate } from '../../../lib/formValidators';
 import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil';
 import { fetchTopicWithNameExists } from '../../../actions/topicActions';
@@ -95,7 +95,7 @@ class TopicForm extends React.Component {
           <Col lg={6}>
             <div className="media-field-wrapper">
               {mediaLabel}
-              <SourceCollectionsMediaForm
+              <OpenWebMediaFieldArray
                 formatMessage={formatMessage}
                 title={title}
                 intro={intro}

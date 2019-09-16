@@ -77,6 +77,8 @@ function withIntlForm(Component) {
 
     renderCheckbox = ({ input, label, meta: { error }, disabled, initialValues }) => {
       const intlError = this.intlIfObject(error);
+      //  be extra safe about how the initialValues might have come in
+      const checked = input.value === true || input.value === 1 || initialValues === 'checked';
       return (
         <div>
           <FormControlLabel
@@ -85,8 +87,8 @@ function withIntlForm(Component) {
                 name={input.name}
                 className="form-field-checkbox"
                 label={this.intlIfObject(label)}
-                checked={input.value === true || input.value === 1 || initialValues === 'checked'}
-                onChange={() => input.onChange({ ...input, value: !input.value })}
+                checked={checked}
+                onChange={() => input.onChange(!checked)}
                 disabled={this.intlIfObject(disabled)}
               />
             )}

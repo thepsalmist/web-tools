@@ -4,9 +4,11 @@ import flask_login
 from multiprocessing import Pool
 from operator import itemgetter
 import time
+from collections import defaultdict
 
-from server.cache import cache
 from server import app, mc
+from server.cache import cache
+import server.views.apicache as base_api_cache
 from server.auth import user_has_auth_role, ROLE_MEDIA_EDIT
 from server.util.tags import VALID_COLLECTION_TAG_SETS_IDS
 from server.views.sources import FEATURED_COLLECTION_LIST
@@ -21,13 +23,13 @@ MEDIA_SEARCH_POOL_SIZE = len(VALID_COLLECTION_TAG_SETS_IDS)
 STORY_COUNT_POOL_SIZE = 20  # number of parallel processes to use while fetching historical story counts for sources
 ALL_MEDIA = '-1'
 
+
 @app.route('/api/mediapicker/sources/search', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
 def api_mediapicker_source_search():
     search_str = request.args['media_keyword']
     cleaned_search_str = None if search_str == '*' else search_str
-    tags = None
     querying_all_media = False
     try:
         if int(request.args['tags']) == int(ALL_MEDIA):
@@ -35,12 +37,29 @@ def api_mediapicker_source_search():
     except ValueError:
         # ie. request.args['tags'] is not an int (ie. it is a list of collections like a normal query)
         querying_all_media = False
-
+    tags_fq = "media_source_tags: {tag_sets_id: " + str(VALID_COLLECTION_TAG_SETS_IDS) + "}"
     if querying_all_media:
         tags = [{'tags_id': ALL_MEDIA, 'id': ALL_MEDIA, 'label': "All Media", 'tag_sets_id': ALL_MEDIA}]
-    elif 'tags' in request.args:
-        tags = request.args['tags'].split(',')
-    matching_sources = media_search(cleaned_search_str, tags)
+        matching_sources = media_search(cleaned_search_str, tags)
+    elif 'tags' in request.args and len(request.args['tags']) > 0:
+        # group the tags by tags_sets_id to support boolean searches
+        #search within ABYZ collection so we have good results?
+        tags_id_list = request.args['tags'].split(',')
+        tags = [base_api_cache.tag(tid) for tid in tags_id_list]  # ok to use cache here (metadata tags don't change)
+        tags_by_set = defaultdict(list)
+        for tag in tags:
+            tags_by_set[tag['tag_sets_id']].append(tag['tags_id'])
+        tag_ids_by_set = list(tags_by_set.values())
+        # TODO: find a more clever way to do this
+        tags_id_1 = tag_ids_by_set[0] if len(tag_ids_by_set) > 0 else None
+        tags_id_2 = tag_ids_by_set[1] if len(tag_ids_by_set) > 1 else None
+        tags_id_3 = tag_ids_by_set[2] if len(tag_ids_by_set) > 2 else None
+        tags_id_4 = tag_ids_by_set[3] if len(tag_ids_by_set) > 3 else None
+        tags_id_5 = tag_ids_by_set[4] if len(tag_ids_by_set) > 4 else None
+        matching_sources = media_search(search_str=cleaned_search_str, fq=tags_fq, tags_id_1=tags_id_1, tags_id_2=tags_id_2,
+                                        tags_id_3=tags_id_3, tags_id_4=tags_id_4, tags_id_5=tags_id_5)
+    else:
+        matching_sources = media_search(search_str=cleaned_search_str, fq=tags_fq)
     return jsonify({'list': matching_sources})
 
 

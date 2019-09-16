@@ -36,6 +36,10 @@ def collection(tags_id):
     return _cached_tag(api_key(), tags_id)
 
 
+def tag(tags_id):
+    return _cached_tag(api_key(), tags_id)
+
+
 @cache.cache_on_arguments()
 def _cached_tag(api_key, tags_id):
     # api_key passed in just to make this a user-level cache

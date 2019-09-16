@@ -17,7 +17,7 @@ import { selectQuery, updateQuery, addCustomQuery, loadUserSearches, saveUserSea
 import { AddQueryButton } from '../../common/IconButton';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
 import { autoMagicQueryLabel, KEYWORD, DATES, MEDIA,
-  DEFAULT_COLLECTION_OBJECT_ARRAY, replaceCurlyQuotes, uniqueQueryId, LEFT } from '../../../lib/explorerUtil';
+  DEFAULT_COLLECTION_OBJECT_ARRAY, replaceCurlyQuotes, uniqueQueryId, LEFT, prepSearches } from '../../../lib/explorerUtil';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
 const localMessages = {
@@ -57,6 +57,8 @@ class QueryPickerContainer extends React.Component {
     const updatedCollections = formQuery.media.filter(m => m.id !== toBeDeletedObj.id && (m.type === 'collection' || m.tags_id));
     updatedMedia.collections = updatedCollections;
     updatedMedia.sources = updatedSources;
+    updatedMedia.searches = formQuery.media.filter(m => (((m.tags === undefined && m.tags === toBeDeletedObj.tags && m.customColl) || (m.tags !== undefined && m.tags !== toBeDeletedObj.tags && m.customColl))));
+    updatedMedia.media = [];
     updateCurrentQuery(updatedMedia, null);
   }
 
@@ -70,8 +72,10 @@ class QueryPickerContainer extends React.Component {
     if (sourceAndCollections.filter(m => m.id === ALL_MEDIA).length === 0) {
       const updatedSources = sourceAndCollections.filter(m => m.type === 'source' || m.media_id);
       const updatedCollections = sourceAndCollections.filter(m => m.type === 'collection' || m.tags_id);
+      const updatedSearches = sourceAndCollections.filter(m => m.customColl);
       updatedQuery.collections = updatedCollections;
       updatedQuery.sources = updatedSources;
+      updatedQuery.searches = updatedSearches;
       updateCurrentQueryThenReselect(updatedQuery);
     } else {
       updatedQuery.collections = sourceAndCollections; // push ALL_MEDIA selection into query so it shows up
@@ -106,6 +110,7 @@ class QueryPickerContainer extends React.Component {
   saveThisSearch = (queryName) => {
     const { queries, sendAndSaveUserSearch } = this.props; // formQuery same as selected
     // filter out removed ids...
+
     const queriesToSave = queries.map(q => ({
       label: q.label,
       q: replaceCurlyQuotes(q.q),
@@ -114,6 +119,7 @@ class QueryPickerContainer extends React.Component {
       endDate: q.endDate,
       sources: q.sources.map(m => m.media_id),
       collections: q.collections.map(c => c.tags_id),
+      searches: prepSearches(q.searches),
     }));
     const userSearch = {
       ...queryName,
@@ -142,7 +148,11 @@ class QueryPickerContainer extends React.Component {
 
   saveChangesToSelectedQuery = () => {
     const { selected, formQuery, updateCurrentQuery } = this.props;
-    const updatedQuery = Object.assign({}, selected, formQuery);
+    const updatedQuery = {
+      ...selected,
+      ...formQuery,
+      color: selected.color,
+    };
     updatedQuery.q = replaceCurlyQuotes(updatedQuery.q);
     updateCurrentQuery(updatedQuery, 'label');
   }
@@ -240,7 +250,7 @@ class QueryPickerContainer extends React.Component {
         const newQueryLabel = `Query ${String.fromCharCode('A'.charCodeAt(0) + newPosition)}`;
         const defaultQueryField = '';
         const defaultDemoQuery = { uid: newUid, sortPosition: newPosition, new: true, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
-        const defaultQuery = { uid: newUid, sortPosition: newPosition, new: true, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: [], sources: [], color: genDefColor, autoNaming: true };
+        const defaultQuery = { uid: newUid, sortPosition: newPosition, new: true, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, searches: [], collections: [], sources: [], color: genDefColor, autoNaming: true };
 
         const emptyQuerySlide = (
           <div key={fixedQuerySlides.length}>
@@ -412,6 +422,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       newValues = {
         collections: currentFormValues.media.filter(obj => obj.tags_id),
         sources: currentFormValues.media.filter(obj => obj.media_id),
+        searches: currentFormValues.media.filter(obj => obj.tags),
       };
     }
     queries.map((query) => {

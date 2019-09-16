@@ -1,12 +1,14 @@
 import logging
 from flask import jsonify, request
 import flask_login
+import random
 from server import app, mc
 from server.auth import user_admin_mediacloud_client, user_has_auth_role, is_user_logged_in, ROLE_MEDIA_EDIT
 from server.util.request import form_fields_required, api_error_handler, arguments_required
+from server.util.tags import TAG_SETS_ID_PUBLICATION_COUNTRY, TAG_SETS_ID_PUBLICATION_STATE, TAG_SETS_ID_PRIMARY_LANGUAGE, TAG_SETS_ID_COUNTRY_OF_FOCUS, TAG_SETS_ID_MEDIA_TYPE
 from server.views.explorer import read_sample_searches, ALL_MEDIA
 from operator import itemgetter
-
+import json
 logger = logging.getLogger(__name__)
 
 
@@ -54,6 +56,42 @@ def api_explorer_collections_by_ids():
             info['id'] = int(tags_id)
             collection_list.append(info)
     return jsonify({"results": collection_list})
+
+
+@app.route('/api/explorer/custom-searches/list', methods=['GET'])
+@flask_login.login_required
+@arguments_required('searches[]')
+@api_error_handler
+def api_explorer_searches_by_ids():
+
+    user_mc = user_admin_mediacloud_client()
+    searches_results = []
+    searches_list = json.loads(request.args['searches[]'])
+    for s in searches_list:
+        keyword = s['media_keyword'] if 'media_keyword' not in ['undefined'] and 'media_keyword' in s else '*'
+        tag_set_tag_obj = {}
+        tag_set_tag_obj['tags'] = {}
+
+        for key_tag_set in s.keys(): #grab tagsets and corresponding tags
+            if 'media_keyword' in key_tag_set:
+                continue
+            tags = s[key_tag_set]
+            metadata_tag = user_mc.tagSet(key_tag_set)
+            metadata_tag['id'] = int(key_tag_set)
+            tag_set_tag_obj['tags'][metadata_tag['name']] = []
+            search_tags =[]
+            for t in tags:
+                tag_info = user_mc.tag(t)
+                tag_info['value'] = True #test before
+                search_tags.append(tag_info)
+            tag_set_tag_obj['tags'][metadata_tag['name']] = search_tags
+        tag_set_tag_obj['media_keyword'] = keyword or "search"
+        tag_set_tag_obj['id'] = random.uniform(1, 10)
+        searches_results.append(tag_set_tag_obj)
+
+    return jsonify({"results": searches_results})
+
+
 
 
 @app.route('/api/explorer/demo/sources/list', methods=['GET'])

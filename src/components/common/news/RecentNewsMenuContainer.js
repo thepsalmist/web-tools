@@ -13,7 +13,7 @@ const RecentNewsMenuContainer = ({ recentNews }) => (
     {recentNews && (
       <RecentNewsMenu
         newsItems={recentNews[0].notes.slice(0, MAX_ITEMS)}
-        subTitle={moment(recentNews[0].notes.date, 'YYYY-MM-DD').fromNow()}
+        subTitle={moment(recentNews[0].date, 'YYYY-M-DD').fromNow()}
       />
     )}
   </React.Fragment>

@@ -6,7 +6,7 @@ import withSummary from '../../common/hocs/SummarizedVizualization';
 import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import { fetchQueryTopWords, fetchDemoQueryTopWords, resetTopWords, selectWord, setQueryWordCountSampleSize }
   from '../../../actions/explorerActions';
-import { postToDownloadUrl, slugifiedQueryLabel } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, slugifiedQueryLabel, prepSearches } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
 import EditableWordCloudDataCard from '../../common/EditableWordCloudDataCard';
@@ -101,6 +101,7 @@ const mapDispatchToProps = dispatch => ({
       end_date: selectedQuery.endDate,
       sources: selectedQuery.sources.map(s => s.id),
       collections: selectedQuery.collections.map(c => c.id),
+      searches: prepSearches(selectedQuery.searches), // for each query, go prep searches
       word,
       rows: 1000, // need a big sample size here for good results
     };

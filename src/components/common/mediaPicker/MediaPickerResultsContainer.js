@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { toggleMedia, selectMedia, selectMediaPickerQueryArgs, resetMediaPickerQueryArgs, resetMediaPickerSources, resetMediaPickerCollections } from '../../../actions/systemActions';
+import { toggleMedia, selectMedia, selectMediaPickerQueryArgs, resetMediaPickerQueryArgs, resetMediaPickerSources, resetMediaPickerCollections, resetMetadataShortlist } from '../../../actions/systemActions';
 import { PICK_SOURCE_AND_COLLECTION, PICK_FEATURED } from '../../../lib/explorerUtil';
 import * as fetchConstants from '../../../lib/fetchConstants';
 import AllMediaSearchResultsContainer from './results/AllMediaSearchResultsContainer';
@@ -17,7 +17,7 @@ class MediaPickerResultsContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
     // const { handleMediaConcurrency } = this.props;
     if (nextProps.selectedMediaQueryType !== this.props.selectedMediaQueryType) {
-      this.updateMediaQuery({ type: nextProps.selectedMediaQueryType });
+      this.updateMediaQuery({ type: nextProps.selectedMediaQueryType, tags: {}, keyword: '' });
     }
     if (nextProps.selectedMedia !== this.props.selectedMedia
       // if the results have changed from a keyword entry, we need to update the UI
@@ -29,6 +29,11 @@ class MediaPickerResultsContainer extends React.Component {
   componentWillUnmount() {
     const { resetComponents } = this.props;
     resetComponents();
+  }
+
+  updateMediaQuery(values) {
+    const { updateMediaQuerySelection } = this.props;
+    updateMediaQuerySelection(values);
   }
 
   correlateSelection(whichProps) {
@@ -59,12 +64,14 @@ class MediaPickerResultsContainer extends React.Component {
         return m;
       });
     }
+    // if selected metadata has changed, update here
+    // selected metadata search settings has to be handled
+    if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0) {
+      // sync up incoming selectedMedia and push to result sets.
+      // for each *metadata search item*, push it into query args
+      // whichProps.selectedMedia.filter(m => m.customColl).map(s => this.updateMediaQuery({ ...s, type: this.props.selectedMediaQueryType }));
+    }
     return 0;
-  }
-
-  updateMediaQuery(values) {
-    const { updateMediaQuerySelection } = this.props;
-    updateMediaQuerySelection(values);
   }
 
   render() {
@@ -157,6 +164,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(resetMediaPickerQueryArgs());
     dispatch(resetMediaPickerSources());
     dispatch(resetMediaPickerCollections());
+    dispatch(resetMetadataShortlist());
   },
 });
 

@@ -63,7 +63,10 @@ function withQueryResults(resetResults, fetchResults, fetchDemoResults, extraPro
       // from store
       isLoggedIn: PropTypes.bool.isRequired,
       fetchStatus: PropTypes.string.isRequired,
-      results: PropTypes.array,
+      results: PropTypes.oneOfType([
+        PropTypes.array,
+        PropTypes.object,
+      ]),
       queries: PropTypes.array,
       lastSearchTime: PropTypes.number,
       // from children

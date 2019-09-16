@@ -3,10 +3,10 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { reduxForm, FieldArray, Field, propTypes } from 'redux-form';
 import withIntlForm from '../hocs/IntlForm';
-import SourceOrCollectionWidget from '../SourceOrCollectionWidget';
+import SourceOrCollectionOrSearchWidget from '../SourceOrCollectionOrSearchWidget';
 import { urlToSource, urlToCollection } from '../../../lib/urlUtil';
 
-const renderCollectionSelector = ({ allowRemoval, fields, meta, onDelete }) => (
+const renderCollectionSelector = ({ allowRemoval, fields, meta, onDelete, formatMessage }) => (
   <div>
     {fields.map((name, index) => (
       <Field
@@ -23,7 +23,7 @@ const renderCollectionSelector = ({ allowRemoval, fields, meta, onDelete }) => (
           }
           const sourceOrCollectionUrl = tempObj.tag_set_name === 'collection' ? urlToCollection(tempObj.id) : urlToSource(tempObj.id);
           return (
-            <SourceOrCollectionWidget object={tempObj} onDelete={handleDelete} link={sourceOrCollectionUrl} />
+            <SourceOrCollectionOrSearchWidget object={tempObj} onDelete={handleDelete} link={sourceOrCollectionUrl} formatMessage={formatMessage} />
           );
         }}
       />
@@ -38,20 +38,22 @@ renderCollectionSelector.propTypes = {
   allowRemoval: PropTypes.bool,
   validate: PropTypes.func,
   onDelete: PropTypes.func,
+  formatMessage: PropTypes.func.isRequired,
 };
 
 const SourceCollectionsMediaForm = (props) => {
-  const { name, initialValues, allowRemoval, onDelete } = props;
+  const { fieldName, initialValues, allowRemoval, onDelete, formatMessage } = props;
   return (
     <div className="explorer-source-collection-form">
       <FieldArray
         form={propTypes.form}
-        name={name}
+        name={fieldName}
         validate={propTypes.validate}
         allowRemoval={allowRemoval}
         component={renderCollectionSelector}
         initialValues={initialValues}
         onDelete={onDelete}
+        formatMessage={formatMessage}
       />
     </div>
   );
@@ -60,10 +62,11 @@ const SourceCollectionsMediaForm = (props) => {
 SourceCollectionsMediaForm.propTypes = {
   // from parent
   intl: PropTypes.object.isRequired,
-  initialValues: PropTypes.array,
+  initialValues: PropTypes.object,
   selected: PropTypes.object,
   allowRemoval: PropTypes.bool,
-  name: PropTypes.string,
+  fieldName: PropTypes.string,
+  formatMessage: PropTypes.func.isRequired,
   // valid: PropTypes.bool,  not using - but this is helpful to determine if validation is getting
   onDelete: PropTypes.func,
 };

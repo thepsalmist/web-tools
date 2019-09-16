@@ -10,6 +10,7 @@ import QueryPickerContainer from './QueryPickerContainer';
 import QueryResultsContainer from '../results/QueryResultsContainer';
 import composeUrlBasedQueryContainer from '../UrlBasedQueryContainer';
 import PageTitle from '../../common/PageTitle';
+import { prepSearches } from '../../../lib/explorerUtil';
 
 const localMessages = {
   title: { id: 'explorer.queryBuilder.title', defaultMessage: 'Search' },
@@ -74,7 +75,7 @@ const mapStateToProps = state => ({
 
 // push any updates (including selected) into queries in state, will trigger async load in sub sections
 const mapDispatchToProps = dispatch => ({
-  resetExplorerData: () => { // TODO we will reduce this down to one call
+  resetExplorerData: () => {
     dispatch(resetSelected());
     // dispatch(resetQueries());
     dispatch(resetSentenceCounts());
@@ -91,7 +92,14 @@ const mapDispatchToProps = dispatch => ({
     const collections = queries
       .map(q => q.collections.map(c => c.tags_id))
       .reduce((combined, current) => [...combined, ...current]);
-    dispatch(countSourceCollectionUsage({ sources, collections }));
+    const searchTagsPerQuery = queries.map((q) => {
+      if (q.searches) {
+        return prepSearches(q.searches); // with metadata objects
+      }
+      return null;
+    });
+
+    dispatch(countSourceCollectionUsage({ sources, collections, searchTagsPerQuery }));
     dispatch(removeDeletedQueries());
     dispatch(removeNewStatusFromQueries());
     dispatch(updateTimestampForQueries()); // but this doesn't update the query... only the timestamp.. nextprops.queries should be new?

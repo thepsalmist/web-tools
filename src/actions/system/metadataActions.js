@@ -24,3 +24,6 @@ export const searchMetadataValues = createAsyncAction(SEARCH_METADATA_VALUES, ap
 
 export const SELECT_METADATA_QUERY_ARGS = 'SELECT_METADATA_QUERY_ARGS';
 export const selectMetadataQueryArgs = createAction(SELECT_METADATA_QUERY_ARGS, args => args);
+
+export const RESET_METADATA_SHORTLIST = 'RESET_METADATA_SHORTLIST';
+export const resetMetadataShortlist = createAction(RESET_METADATA_SHORTLIST, params => params);

@@ -86,6 +86,7 @@ class FeaturedFavoriteGeoSearchResultsContainer extends React.Component {
           initValues={{ storedKeyword: { mediaKeyword: '' } }}
           onSearch={val => this.updateMediaQuery(val)}
           hintTextMsg={localMessages.hintText}
+          handleMediaConcurrency={this.props.handleMediaConcurrency}
         />
       </div>
     );

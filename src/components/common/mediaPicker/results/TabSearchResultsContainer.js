@@ -9,6 +9,7 @@ import CountryCollectionSearchResultsContainer from './CountryCollectionSearchRe
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
 import LoadingSpinner from '../../LoadingSpinner';
 import TabSelector from '../../TabSelector';
+import { TAG_SET_ABYZ_GEO_COLLECTIONS } from '../../../../lib/tagUtil';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.collections.title', defaultMessage: 'Collections matching "{name}"' },
@@ -77,9 +78,11 @@ class TabSearchResultsContainer extends React.Component {
       tabContent = (
         <div className="media-picker-tabbed-content-wrapper">
           <CountryCollectionSearchResultsContainer
+            whichTagSet={TAG_SET_ABYZ_GEO_COLLECTIONS}
             title={formatMessage(localMessages.featured)}
             collections={queryResults.featured}
             onToggleSelected={onToggleSelected}
+            handleMediaConcurrency={this.props.handleMediaConcurrency}
           />
         </div>
       );
@@ -102,6 +105,7 @@ TabSearchResultsContainer.propTypes = {
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
   whichTagSet: PropTypes.number,
+  handleMediaConcurrency: PropTypes.func.isRequired,
   hintTextMsg: PropTypes.object,
   onSearch: PropTypes.func.isRequired,
   // from state

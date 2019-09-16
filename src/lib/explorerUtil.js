@@ -4,6 +4,8 @@ import { trimToMaxLength } from './stringUtil';
 import { notEmptyString } from './formValidators';
 import { downloadViaFormPost } from './apiUtil';
 import { downloadSvg } from '../components/util/svg';
+import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE, PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE, PUB_COUNTRY_TAG_NAME, PUB_STATE_TAG_NAME, PRIMARY_LANGUAGE_TAG_NAME, COUNTRY_OF_FOCUS_TAG_NAME, MEDIA_TYPE_TAG_NAME } from './tagUtil';
+import messages from '../resources/messages';
 
 export const DEFAULT_SOURCES = '';
 
@@ -33,6 +35,33 @@ export const RIGHT = 1;
 export function serializeQueriesForUrl(queries) {
   return encodeURIComponent(JSON.stringify(queries));
 }
+
+export const metadataQueryFields = new Set([PUBLICATION_COUNTRY, PUBLICATION_STATE, PRIMARY_LANGUAGE, COUNTRY_OF_FOCUS, MEDIA_TYPE]);
+
+// grab media keyword and array of tags Ids (irregardless of metadata type) to send to python
+export function serializeSearchTags(searches) {
+  let tagArrays = [];
+  const currentSearch = [];
+  // assumes q is an array
+  searches.map((q) => {
+    if (q && q.tags) {
+      tagArrays = Object.keys(q.tags).map((m) => {
+        if (metadataQueryFields.has(m)) {
+          const vals = Object.values(q.tags[m]).map(a => a.tags_id).filter(t => t);
+          if (vals && vals.length > 0) { // grab just the tags_id that are selected
+            return vals;
+          }
+        }
+        return '';
+      });
+      tagArrays = tagArrays.filter(t => Array.isArray(t));
+      currentSearch.push(`{"media_keyword": "${notEmptyString(q.mediaKeyword) ? q.mediaKeyword : ''}", "tags_id_media": "${JSON.stringify(tagArrays)}"}`);
+    }
+    return false;
+  });
+  return currentSearch.length ? `[${currentSearch}]` : '';
+}
+
 
 export function replaceCurlyQuotes(stringWithQuotes) {
   let removedQuotes = stringWithQuotes.replace(/[\u2018]/g, "'").replace(/[\u2019]/g, "'"); // replace single curly quotes
@@ -81,7 +110,106 @@ export function generateQueryParamObject(query, skipEncoding) {
     endDate: query.endDate,
     sources: query.sources && query.sources.length > 0 ? query.sources.map(s => (s.id ? s.id : s)) : [], // id field or the id itself
     collections: query.collections && query.collections.length > 0 ? query.collections.map(s => (s.id ? s.id : s)) : [],
+    searches: query.searches && query.searches.length > 0 ? serializeSearchTags(query.searches) : [],
   };
+}
+
+
+export function lookupReadableMetadataName(tagSetsId) {
+  switch (tagSetsId) {
+    case TAG_SET_PUBLICATION_COUNTRY:
+      return PUBLICATION_COUNTRY;
+    case TAG_SET_PUBLICATION_STATE:
+      return PUBLICATION_STATE;
+    case TAG_SET_PRIMARY_LANGUAGE:
+      return PRIMARY_LANGUAGE;
+    case TAG_SET_COUNTRY_OF_FOCUS:
+      return COUNTRY_OF_FOCUS;
+    case TAG_SET_MEDIA_TYPE:
+      return MEDIA_TYPE;
+    default:
+      return null;
+  }
+}
+
+
+export function getShortName(tagName, formatMessage) {
+  switch (tagName) {
+    case PUB_COUNTRY_TAG_NAME:
+      return formatMessage(messages.pubCountryShort);
+    case PUB_STATE_TAG_NAME:
+      return formatMessage(messages.pubStateShort);
+    case PRIMARY_LANGUAGE_TAG_NAME:
+      return formatMessage(messages.languageShort);
+    case COUNTRY_OF_FOCUS_TAG_NAME:
+      return formatMessage(messages.countryShort);
+    case MEDIA_TYPE_TAG_NAME:
+      return formatMessage(messages.mediaTypeShort);
+    default:
+      return null;
+  }
+}
+
+export function hasMultipleMetadataTags(tagsObj) {
+  const tagObj = {};
+  Object.keys(tagsObj).forEach((m) => { // for each tag
+    if (metadataQueryFields.has(m)) { // that is metadata
+      const vals = Object.values(tagsObj[m]).map(a => (a.selected ? a.tags_id : null)).filter(t => t);
+      if (vals && vals.length > 0) { // grab just the tags_id that are selected
+        const tagSetsId = tagsObj[m][0].tag_sets_id;
+        tagObj[tagSetsId] = true;
+      }
+    }
+    return tagObj;
+  });
+  return Object.values(tagObj).filter(t => t).length > 1;
+}
+
+// for display in UI
+export function stringifyTags(tags, formatMessage) {
+  const htmlTags = Object.keys(tags)
+    .filter(t => metadataQueryFields.has(t) > 0 && Array.isArray(tags[t]) && tags[t].length > 0)
+    .map((i, index) => {
+      const obj = tags[i];
+      const metadataName = getShortName((obj.map(a => a.tag_set_name).reduce(l => l)), formatMessage);
+      const tagsObj = obj.map(a => (a.selected ? a.label : '')).filter(l => notEmptyString(l));
+      if (tagsObj.length > 0) {
+        const tagsString = tagsObj.length > 1 ? tagsObj.join(' OR ') : tagsObj;
+        const andTags = hasMultipleMetadataTags(tags) && index ? ' AND ' : '';
+        return `${andTags}${metadataName}: ${tagsString}`;
+      }
+      return [];
+    });
+  return htmlTags.join(' ');
+}
+
+// serialize to URL (not python which expects JSON & solr tags!) in the form - searches: [{ media_keyword, <metadataId1>:[], <metadataId2>:[] }, {...}]
+export function prepSearches(searches) {
+  const tagObj = {};
+  const currentSearch = [];
+  // assuming q is an array
+  searches.map((q) => {
+    if (q && q.tags) {
+      Object.keys(q.tags).forEach((m) => { // for each tag
+        if (metadataQueryFields.has(m)) { // that is metadata
+          const vals = Object.values(q.tags[m]).map(a => (a.selected ? a.tags_id : null)).filter(t => t);
+          if (vals && vals.length > 0) { // grab just the tags_id that are selected
+            const tagSetsId = q.tags[m][0].tag_sets_id;
+            /* into the format
+            {tag_sets_id: [tags_id, ...], tag_sets_id, tag_set_label}
+            */
+            tagObj[tagSetsId] = vals;
+            tagObj[tagSetsId].tag_sets_id = tagSetsId;
+          }
+          return tagObj;
+        }
+        return null;
+      });
+      currentSearch.push({ media_keyword: q.mediaKeyword, ...tagObj });
+    }
+    return false;
+  });
+  return currentSearch;
 }
 
 export function generateQueryParamString(queries) {
@@ -96,8 +224,9 @@ export function decodeQueryParamString(queryString) {
     color: notEmptyString(query.color) ? decodeURIComponent(query.color) : '',
     startDate: query.startDate,
     endDate: query.endDate,
-    sources: query.sources, // de-aggregate media bucket into sources and collections
+    sources: query.sources, // de-aggregate media bucket into sources and collections and custom colls
     collections: query.collections,
+    searches: query.searches,
   }));
   return queriesForUrl;
 }
@@ -180,6 +309,7 @@ export const formatQueryForServer = q => ({
   sortPosition: q.sortPosition,
   sources: q.sources.map(s => s.id),
   collections: q.collections.map(c => c.id),
+  searches: serializeSearchTags(q.searches),
 });
 
 export const formatDemoQueryForServer = (q, index) => ({

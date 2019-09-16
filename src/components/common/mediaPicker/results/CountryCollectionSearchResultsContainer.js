@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { selectMediaPickerQueryArgs, fetchMediaPickerCountryCollections } from '../../../../actions/systemActions';
 import CollectionSearchResultsContainer from './CollectionSearchResultsContainer';
 import { notEmptyString } from '../../../../lib/formValidators';
+import { TAG_SET_ABYZ_GEO_COLLECTIONS } from '../../../../lib/tagUtil';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.collections.title', defaultMessage: 'Collections matching "{name}"' },
@@ -26,6 +27,7 @@ class CountryCollectionSearchResultsContainer extends React.Component {
       <div>
         <CollectionSearchResultsContainer
           fetchStatus={fetchCountryStatus}
+          whichTagSet={TAG_SET_ABYZ_GEO_COLLECTIONS}
           onToggleSelected={onToggleSelected}
           selectedMediaQueryType={selectedMediaQueryType}
           selectedMediaQueryKeyword={selectedMediaQueryKeyword}
@@ -33,6 +35,7 @@ class CountryCollectionSearchResultsContainer extends React.Component {
           initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
           onSearch={val => this.updateMediaQuery(val)}
           hintTextMsg={localMessages.countrySearchHintText}
+          handleMediaConcurrency={this.props.handleMediaConcurrency}
         />
       </div>
     );
@@ -45,6 +48,7 @@ CountryCollectionSearchResultsContainer.propTypes = {
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
   whichTagSet: PropTypes.number,
+  handleMediaConcurrency: PropTypes.func.isRequired,
   // from dispatch
   updateMediaQuerySelection: PropTypes.func.isRequired,
   // from state
@@ -61,11 +65,11 @@ const mapStateToProps = state => ({
   collectionResults: state.system.mediaPicker.countryCollectionQueryResults,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   updateMediaQuerySelection: (values) => {
     if (values && notEmptyString(values.mediaKeyword)) {
       dispatch(selectMediaPickerQueryArgs(values));
-      dispatch(fetchMediaPickerCountryCollections({ media_keyword: values.mediaKeyword, which_set: ownProps.whichTagSet }));
+      dispatch(fetchMediaPickerCountryCollections({ media_keyword: values.mediaKeyword, which_set: TAG_SET_ABYZ_GEO_COLLECTIONS }));
     }
   },
 });

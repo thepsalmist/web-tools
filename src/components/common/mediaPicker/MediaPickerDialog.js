@@ -8,7 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import messages from '../../../resources/messages';
 import PickedMediaContainer from './PickedMediaContainer';
 import MediaPickerResultsContainer from './MediaPickerResultsContainer';
-import { initializePreviouslySelectedMedia, clearSelectedMedia } from '../../../actions/systemActions';
+import { initializePreviouslySelectedMedia, clearSelectedMedia, resetMetadataShortlist } from '../../../actions/systemActions';
 import AppButton from '../AppButton';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
@@ -42,6 +42,20 @@ class MediaPickerDialog extends React.Component {
         handleInitialSelectionOfMedia(nextProps.initMedia);
       }
     }
+    if ((nextProps.selectedMedia !== this.props.selectedMedia)
+      || (nextProps.selectedMedia && this.props.selectedMedia && nextProps.selectedMedia.length !== this.props.selectedMedia.length)) {
+      // if the results have changed from a keyword entry, we need to update the UI
+      this.shouldComponentUpdate(nextProps);
+    }
+  }
+
+  shouldComponentUpdate(nextProps) {
+    if ((nextProps.selectedMedia !== this.props.selectedMedia)
+      || (nextProps.selectedMedia && this.props.selectedMedia && nextProps.selectedMedia.length !== this.props.selectedMedia.length)) {
+      // if the results have changed from a keyword entry, we need to update the UI
+      return true;
+    }
+    return true;
   }
 
   componentWillUnmount() {
@@ -163,6 +177,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   reset: () => {
     dispatch(clearSelectedMedia());
+    dispatch(resetMetadataShortlist());
   },
   handleInitialSelectionOfMedia: (prevSelectedMedia) => {
     if (prevSelectedMedia) {

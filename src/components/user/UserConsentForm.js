@@ -32,7 +32,7 @@ const UserConsentForm = (props) => {
           </Col>
         </Row>
         <Row>
-          <Col lg={8} xs={12}>
+          <Col lg={12}>
             <Field
               fullWidth
               name="has_consented"

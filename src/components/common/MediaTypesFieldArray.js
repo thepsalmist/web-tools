@@ -29,7 +29,7 @@ const MediaTypesSelector = ({ initialValues, renderCheckbox, onChange, intl: { f
               name={`${name}.label`}
               component={info => (
                 <div>
-                  {renderCheckbox({ ...info, label: formatMessage(localMessages.label, { label: fieldObject.label }), input: { ...info.input, ...fieldObject, value: fieldObject.selected, onChange } })}
+                  {renderCheckbox({ ...info, label: formatMessage(localMessages.label, { label: fieldObject.label, tagSetName: fieldObject.name }), input: { ...info.input, ...fieldObject, value: fieldObject.selected, onChange } })}
                 </div>
               )}
               label={`${name}.label`}

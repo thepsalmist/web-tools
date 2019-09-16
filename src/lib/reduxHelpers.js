@@ -264,7 +264,7 @@ export function createIndexedAsyncReducer(handlers) {
       const updatedFetchStatuses = { ...state.fetchStatuses };
       updatedFetchStatuses[uid] = fetchConstants.FETCH_SUCCEEDED;
       // if results already exist (by uid), we need to replace them, otherwise add them as new results
-      const updatedResults = [...state.results];
+      const updatedResults = Array.isArray(state.results) ? [...state.results] : [];
       let resultsToSave;
       if ('handleSuccess' in handlers) {
         const results = handlers.handleSuccess(payload, state, args, uid);

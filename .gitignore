@@ -31,3 +31,4 @@ config/app.config
 src/components/explorer/results/drilldowns/WordInContextDrillDownContainer.js
 .cache-loader
 build/public/
+server/static/data/tags_in*

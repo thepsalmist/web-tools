@@ -27,7 +27,7 @@
     }],
     "click-events-have-key-events": 0,
     "object-curly-newline": 0,
-    "arrow-parens": 'as-needed',
+    "arrow-parens": 0,
 
     "react/jsx-filename-extension": 0,
     "react/jsx-no-bind": 0,

@@ -264,8 +264,8 @@ AdvancedMediaPickerSearchForm.propTypes = {
 
 const reduxFormConfig = {
   form: 'advanced-media-picker-search',
-  enableReinitialize,
-  keepDirtyOnReinitialize,
+  enableReinitialize: true,
+  keepDirtyOnReinitialize: true,
 };
 
 export default

@@ -202,22 +202,22 @@ export function wordMedia(topicId, word, params) {
 */
 
 export function fetchStoryCountByQuery(params) {
-  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources[]', 'collections[]']);
+  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources[]', 'collections[]', 'searches[]']);
   return createPostingApiPromise('/api/topics/create/preview/story/count', acceptedParams);
 }
 
 export function fetchAttentionByQuery(params) {
-  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources[]', 'collections[]']);
+  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources[]', 'collections[]', 'searches[]']);
   return createPostingApiPromise('/api/topics/create/preview/split-story/count', acceptedParams);
 }
 
 export function fetchStorySampleByQuery(params) {
-  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources[]', 'collections[]', 'rows']);
+  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources[]', 'collections[]', 'rows', 'searches[]']);
   return createPostingApiPromise('/api/topics/create/preview/stories/sample', acceptedParams);
 }
 
 export function fetchWordsByQuery(params) {
-  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources[]', 'collections[]']);
+  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources[]', 'collections[]', 'searches[]']);
   return createPostingApiPromise('/api/topics/create/preview/words/count', acceptedParams);
 }
 

@@ -10,7 +10,8 @@ from server import app, mc, executor, TOOL_API_KEY
 from server.auth import user_mediacloud_key, user_mediacloud_client, is_user_logged_in
 from server.util.request import api_error_handler
 from server.views.topics import access_public_topic
-from server.views.topics import concatenate_query_for_solr, concatenate_solr_dates
+from server.views.topics import concatenate_solr_dates
+from server.views.media_picker import concatenate_query_for_solr
 from server.views.topics.topiclist import add_user_favorite_flag_to_topics
 
 logger = logging.getLogger(__name__)

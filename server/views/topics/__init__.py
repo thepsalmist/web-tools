@@ -40,6 +40,7 @@ def access_public_topic(topics_id):
     return False
 
 
+# TODO: Tigrat eto use mediapicker.concate!
 # helper for topic preview queries
 def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
     query = '({})'.format(solr_seed_query)

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedHTMLMessage, injectIntl } from 'react-intl';
 import messages from '../../../resources/messages';
-import SourceOrCollectionWidget from '../../common/SourceOrCollectionWidget';
+import OpenWebMediaItem from '../../common/OpenWebMediaItem';
 import { urlToCollection, urlToSource } from '../../../lib/urlUtil';
 
 const localMessages = {
@@ -48,7 +48,7 @@ const SeedQuerySummary = ({ seedQueryCount, topic, snapshot, intl, faded }) => {
       <p>
         <b><FormattedHTMLMessage {...messages.topicSourceCollectionsProp} /></b>
         {sourcesAndCollections.map(o => (
-          <SourceOrCollectionWidget
+          <OpenWebMediaItem
             key={o.id || o.tags_id || o.media_id}
             object={o}
             link={o.tags_id ? urlToCollection(o.tags_id) : urlToSource(o.media_id)}

@@ -11,7 +11,7 @@ const localMessages = {
 
 };
 
-const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link, formatMessage }) => {
+const OpenWebMediaItem = ({ object, onDelete, onClick, link, formatMessage }) => {
   const isSearch = object.customColl === true;
   const isCollection = object.tags_id !== undefined;
   if (!isSearch && !object.selected) return null;
@@ -57,7 +57,7 @@ const SourceOrCollectionOrSearchWidget = ({ object, onDelete, onClick, link, for
   );
 };
 
-SourceOrCollectionOrSearchWidget.propTypes = {
+OpenWebMediaItem.propTypes = {
   object: PropTypes.object.isRequired,
   onDelete: PropTypes.func,
   onClick: PropTypes.func,
@@ -66,4 +66,4 @@ SourceOrCollectionOrSearchWidget.propTypes = {
   link: PropTypes.string,
 };
 
-export default SourceOrCollectionOrSearchWidget;
+export default OpenWebMediaItem;

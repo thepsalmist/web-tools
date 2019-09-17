@@ -102,8 +102,8 @@ class TopicForm extends React.Component {
                 className="query-field"
                 form="topicForm"
                 destroyOnUnmount={false}
-                name="sourcesAndCollections"
-                defaultValue={initialValues.sourcesAndCollections} // to and from MediaPicker
+                fieldName="sourcesAndCollections"
+                initialValues={initialValues.sourcesAndCollections} // to and from MediaPicker
                 allowRemoval
               />
               {mediaPicker}

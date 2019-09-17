@@ -81,7 +81,7 @@ export function ensureSafeResults(queries, results) {
   let safeQueryWithResults = null;
 
   if (results !== undefined && results !== null && results.length > 0) {
-    safeQueryWithResults = unDeletedQueries.map(q => Object.assign({}, q, results.find(r => r.uid === q.uid)));
+    safeQueryWithResults = unDeletedQueries.map(q => ({ ...q, ...results.find(r => r.uid === q.uid) }));
     const nonEmptyQueries = safeQueryWithResults.filter(q => q.q !== undefined && q.results && q.results !== undefined);
     safeQueryWithResults = Object.values(nonEmptyQueries).sort((a, b) => a.sortPosition - b.sortPosition);
     const allQueriesHaveResults = safeQueryWithResults.filter(q => q.results); // trying to handle not-yet fetched queries (dupes/new)

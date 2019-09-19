@@ -15,7 +15,7 @@ import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTim
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import { oneDayLater, solrFormat } from '../../../lib/dateUtil';
-import { postToDownloadUrl, postToCombinedDownloadUrl, ACTION_MENU_ITEM_CLASS, ensureSafeResults } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, postToCombinedDownloadUrl, ACTION_MENU_ITEM_CLASS, ensureSafeResults, serializeSearchTags } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
@@ -56,6 +56,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
         dayGap,
         sources: currentQueryOfInterest.sources.map(s => s.media_id),
         collections: currentQueryOfInterest.collections.map(c => c.tags_id),
+        searches: serializeSearchTags(currentQueryOfInterest.searches), // for each query, go prep searches
       };
       clickedQuery.end_date = solrFormat(oneDayLater(date1), true);
       selectDataPoint(clickedQuery);
@@ -102,7 +103,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
         }),
       ];
       return (
-        <React.Fragment>
+        <>
           <AttentionOverTimeChart
             series={series}
             height={300}
@@ -163,7 +164,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
               {this.props.attentionAggregationMenuItems}
             </ActionMenu>
           </div>
-        </React.Fragment>
+        </>
       );
     }
     return <div>Error</div>;
@@ -206,12 +207,13 @@ const mapDispatchToProps = dispatch => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return { ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
       const { selectedTimePeriod } = stateProps;
       return nextProps.selectedTimePeriod !== selectedTimePeriod;
-    },
-  });
+    } };
 }
 
 export default

@@ -53,7 +53,7 @@ class TabSandCSearchResultsContainer extends React.Component {
             onToggleSelected={onToggleSelected}
             whichTagSet={whichTagSet}
             selectedMediaQueryKeyword={selectedMediaQueryKeyword}
-            initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
+            initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword, tags: {} } }}
             hintTextMsg={localMessages.hintText}
             handleMediaConcurrency={handleMediaConcurrency}
           />
@@ -64,7 +64,7 @@ class TabSandCSearchResultsContainer extends React.Component {
       tabContent = (
         <div className="media-picker-tabbed-content-wrapper">
           <SourceSearchResultsContainer
-            initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
+            initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword, tags: {} } }} // empty
             onToggleSelected={onToggleSelected}
             handleMediaConcurrency={handleMediaConcurrency}
             updateMediaQuerySelection={updateMediaQuerySelection}

@@ -8,7 +8,8 @@ from server.auth import user_mediacloud_client
 from server.util.request import form_fields_required, api_error_handler, json_error_response, arguments_required
 from server.util.stringutil import ids_from_comma_separated_str
 from server.util.tags import US_COLLECTIONS
-from server.views.topics import concatenate_query_for_solr, concatenate_solr_dates
+from server.views.topics import concatenate_solr_dates
+from server.views.media_picker import concatenate_query_for_solr, custom_collection_as_solr_query
 from server.views.topics.foci.retweetpartisanship import add_retweet_partisanship_to_topic
 from server.views.topics.topic import topic_summary
 
@@ -16,18 +17,26 @@ logger = logging.getLogger(__name__)
 VERSION_1 = 1
 
 
+def _topic_query_from_request():
+    # helper to centralize parsing of request params in any create preview widgets
+    q = concatenate_query_for_solr(solr_seed_query=request.form['q'],
+                                   media_ids=ids_from_comma_separated_str(request.form['sources[]'])
+                                   if 'sources[]' in request.form else None,
+                                   tags_ids=ids_from_comma_separated_str(request.form['collections[]'])
+                                   if 'collections[]' in request.form else None,
+                                   custom_ids=request.form['searches[]'])
+    fq = concatenate_solr_dates(start_date=request.form['start_date'],
+                                end_date=request.form['end_date'])
+    return q, fq
+
+
 @app.route('/api/topics/create/preview/split-story/count', methods=['POST'])
 @flask_login.login_required
 @form_fields_required('q')
 @api_error_handler
 def api_topics_preview_split_story_count():
+    solr_query, fq = _topic_query_from_request()
     user_mc = user_mediacloud_client()
-
-    solr_query = concatenate_query_for_solr(solr_seed_query=request.form['q'],
-                                            media_ids=ids_from_comma_separated_str(request.form['sources[]']) if 'sources[]' in request.form else None,
-                                            tags_ids=ids_from_comma_separated_str(request.form['collections[]'])) if 'collections[]' in request.form else None,
-    fq = concatenate_solr_dates(start_date=request.form['start_date'],
-                                end_date=request.form['end_date'])
     results = user_mc.storyCount(solr_query=solr_query, solr_filter=fq, split=True)
     total_stories = 0
     for c in results['counts']:
@@ -41,13 +50,8 @@ def api_topics_preview_split_story_count():
 @form_fields_required('q')
 @api_error_handler
 def api_topics_preview_story_count():
+    solr_query, fq = _topic_query_from_request()
     user_mc = user_mediacloud_client()
-
-    solr_query = concatenate_query_for_solr(solr_seed_query=request.form['q'],
-                                            media_ids=ids_from_comma_separated_str(request.form['sources[]']) if 'sources[]' in request.form else None,
-                                            tags_ids=ids_from_comma_separated_str(request.form['collections[]'])) if 'collections[]' in request.form else None,
-    fq = concatenate_solr_dates(start_date=request.form['start_date'],
-                                end_date=request.form['end_date'])
     story_count_result = user_mc.storyCount(solr_query=solr_query, solr_filter=fq)
     # maybe check admin role before we run this?
     return jsonify(story_count_result)  # give them back new data, so they can update the client
@@ -58,14 +62,8 @@ def api_topics_preview_story_count():
 @form_fields_required('q')
 @api_error_handler
 def api_topics_preview_story_sample():
+    solr_query, fq = _topic_query_from_request()
     user_mc = user_mediacloud_client()
-
-    solr_query = concatenate_query_for_solr(solr_seed_query=request.form['q'],
-                                            media_ids=ids_from_comma_separated_str(request.form['sources[]']) if 'sources[]' in request.form else None,
-                                            tags_ids=ids_from_comma_separated_str(request.form['collections[]'])) if 'collections[]' in request.form else None,
-
-    fq = concatenate_solr_dates(start_date=request.form['start_date'],
-                                end_date=request.form['end_date'])
     num_stories = request.form['rows']
     story_count_result = user_mc.storyList(solr_query=solr_query, solr_filter=fq, sort=user_mc.SORT_RANDOM, rows=num_stories)
     return jsonify(story_count_result)
@@ -76,15 +74,9 @@ def api_topics_preview_story_sample():
 @form_fields_required('q')
 @api_error_handler
 def api_topics_preview_word_count():
+    solr_query, fq = _topic_query_from_request()
     user_mc = user_mediacloud_client()
-
-    solr_query = concatenate_query_for_solr(solr_seed_query=request.form['q'],
-                                            media_ids=ids_from_comma_separated_str(request.form['sources[]']) if 'sources[]' in request.form else None,
-                                            tags_ids=ids_from_comma_separated_str(request.form['collections[]'])) if 'collections[]' in request.form else None,
-    fq = concatenate_solr_dates(start_date=request.form['start_date'],
-                                end_date=request.form['end_date'])
     word_count_result = user_mc.wordCount(solr_query=solr_query, solr_filter=fq)
-
     return jsonify(word_count_result)  # give them back new data, so they can update the client
 
 
@@ -99,7 +91,6 @@ def topic_create():
     solr_seed_query = request.form['solr_seed_query']
     start_date = request.form['start_date']
     end_date = request.form['end_date']
-
     optional_args = {
         'is_public': request.form['is_public'] if 'is_public' in request.form else None,
         'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
@@ -108,9 +99,12 @@ def topic_create():
         'max_stories': request.form['max_stories'] if 'max_stories' in request.form and request.form['max_stories'] != 'null' else flask_login.current_user.profile['max_topic_stories'],
     }
 
-    # parse out any sources and collections to add
+    # parse out any sources and collections, or custom collections to add
     media_ids_to_add = ids_from_comma_separated_str(request.form['sources[]'])
     tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]'])
+    custom_collections_clause = custom_collection_as_solr_query(request.form['searches[]'])
+    if len(custom_collections_clause) > 0:
+        solr_seed_query = '{} OR {}'.format(solr_seed_query, custom_collections_clause)
 
     try:
         topic_result = user_mc.topicCreate(name=name, description=description, solr_seed_query=solr_seed_query,

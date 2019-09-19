@@ -212,12 +212,15 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return {
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
       const { selectedTimePeriod } = stateProps;
       return nextProps.selectedTimePeriod !== selectedTimePeriod;
     },
-  });
+  };
 }
 
 export default

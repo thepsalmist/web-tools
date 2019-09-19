@@ -8,10 +8,10 @@ import withAsyncData from '../common/hocs/AsyncDataContainer';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { LEVEL_ERROR } from '../common/Notice';
 import { addNotice } from '../../actions/appActions';
-import { saveParsedQueries, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo,
-  fetchQuerySourcesByIds, fetchQueryCollectionsByIds, demoQuerySourcesByIds, demoQueryCollectionsByIds } from '../../actions/explorerActions';
+import { saveParsedQueries, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo, updateQuerySearchLookupInfo,
+  fetchQuerySourcesByIds, fetchQueryCollectionsByIds, fetchQuerySearchesByIds, demoQuerySourcesByIds, demoQueryCollectionsByIds } from '../../actions/explorerActions';
 import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, decodeQueryParamString, serializeQueriesForUrl,
-  replaceCurlyQuotes, uniqueQueryId } from '../../lib/explorerUtil';
+  replaceCurlyQuotes, uniqueQueryId, prepSearches } from '../../lib/explorerUtil';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../lib/dateUtil';
 import { notEmptyString } from '../../lib/formValidators';
 
@@ -37,7 +37,6 @@ function composeUrlBasedQueryContainer() {
         const autoMagic = location.query.auto === 'true';
         this.setState({ queryInStore: false }); // if/def automagic here
         // console.log('saving queries from will mount');
-        // console.log('saving queries from will mount');
         this.updateQueriesFromLocation(location, autoMagic);
       }
 
@@ -57,8 +56,8 @@ function composeUrlBasedQueryContainer() {
             // console.log('  got media info from server, ready!');
             this.setState({ queryInStore: true }); // mark that the parsing process has finished
           }
-          if (nextProps.queries.filter(q => q.sources.length > 0).length === 0 && nextProps.queries.filter(q => q.collections.length > 0).length === 0) {
-            // console.log('no sources or collections');
+          if (nextProps.queries.filter(q => q.sources.length > 0).length === 0 && nextProps.queries.filter(q => q.collections.length > 0).length === 0 && nextProps.queries.filter(q => q.searches.length > 0).length === 0) {
+            // console.log('no sources or collections or searches');
             this.setState({ queryInStore: true });
             updateUrl(nextProps.queries, isLoggedIn);
           }
@@ -151,6 +150,7 @@ function composeUrlBasedQueryContainer() {
           extraDefaults = {
             sources: [],
             collections: DEFAULT_COLLECTION_OBJECT_ARRAY,
+            searches: [],
             startDate: solrFormat(dateObj.start),
             endDate: solrFormat(dateObj.end),
           };
@@ -163,6 +163,7 @@ function composeUrlBasedQueryContainer() {
           // remember demo queries won't have sources or collections on the URL
           sources: query.sources ? query.sources.map(s => ({ id: s, media_id: s })) : [],
           collections: query.collections ? query.collections.filter(c => c != null).map(c => ({ id: c, tags_id: c })) : [],
+          searches: query.searches ? query.searches : [],
           q: replaceCurlyQuotes(query.q),
           color: query.color ? query.color : schemeCategory10[index % 10],
           uid: uniqueQueryId(),
@@ -184,7 +185,10 @@ function composeUrlBasedQueryContainer() {
         const querySourceStatus = queries.map(q => q.sources.length === 0
           || q.sources.reduce((combined, s) => combined && s.name !== undefined, true));
         const sourcesAreReady = querySourceStatus.reduce((combined, q) => combined && q, true);
-        return collectionsAreReady && sourcesAreReady;
+        const querySearchStatus = queries.filter(q => Object.values(q.searches).length === 0).length === queries.length
+          // if all searches fields are empty or if searches have fetched name && metadata info
+          || queries.filter(q => JSON.stringify(q.searches).indexOf('name') > 0).length > 0;
+        return collectionsAreReady && sourcesAreReady && querySearchStatus;
       }
 
       render() {
@@ -258,6 +262,16 @@ function composeUrlBasedQueryContainer() {
                 dispatch(updateQueryCollectionLookupInfo(queryInfo)); // updates the query and the selected query
               });
           }
+          if (isLoggedIn) {
+            if (q.searches && q.searches !== undefined && Object.values(q.searches).length > 0) {
+              queryInfo.searches = JSON.stringify(q.searches); // back to string
+              dispatch(fetchQuerySearchesByIds(queryInfo))
+                .then((results) => {
+                  queryInfo.searches = results;
+                  dispatch(updateQuerySearchLookupInfo(queryInfo)); // updates the query and the selected query
+                });
+            }
+          }
         });
       },
       updateUrl: (queries, isLoggedIn) => {
@@ -276,6 +290,7 @@ function composeUrlBasedQueryContainer() {
             endDate: q.endDate,
             sources: q.sources.map(s => s.media_id), // de-aggregate media bucket into sources and collections
             collections: q.collections.map(c => c.tags_id),
+            searches: prepSearches(q.searches), // for each query, go prep searches
           }));
           dispatch(push({ pathname: '/queries/search', search: `?qs=${serializeQueriesForUrl(queriesToSerialize)}` }));
         }

@@ -1,7 +1,6 @@
-import 'babel-polyfill';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import 'intl';
-import 'core-js/es6/map';
-import 'core-js/es6/set';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactGA from 'react-ga';

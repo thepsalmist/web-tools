@@ -86,7 +86,7 @@ class NytLabelSummaryContainer extends React.Component {
         );
       }
       content = (
-        <React.Fragment>
+        <>
           {warning}
           <BubbleRowChart
             maxBubbleRadius={60}
@@ -112,18 +112,18 @@ class NytLabelSummaryContainer extends React.Component {
               </ActionMenu>
             </div>
           </Permissioned>
-        </React.Fragment>
+        </>
       );
     } else {
       content = (
-        <React.Fragment>
+        <>
           <p>
             <FormattedMessage
               {...localMessages.notEnoughData}
               values={{ pct: formatNumber(coverageRatio, { style: 'percent', maximumFractionDigits: 2 }) }}
             />
           </p>
-        </React.Fragment>
+        </>
       );
     }
     return content;

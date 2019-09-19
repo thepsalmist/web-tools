@@ -16,7 +16,7 @@ class TopicVersionReadySummary extends React.Component {
     const { storyCounts, snapshot } = this.props;
     const { formatNumber } = this.props.intl;
     return (
-      <React.Fragment>
+      <>
         <FormattedMessage
           {...localMessages.completedDetails}
           values={{
@@ -44,7 +44,7 @@ class TopicVersionReadySummary extends React.Component {
             </ul>
           )}
         </span>
-      </React.Fragment>
+      </>
     );
   }
 }

@@ -7,6 +7,7 @@ import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import StoryTable from '../../../common/StoryTable'; // use this istead of TopicStoryTable because here we don't have extra metadata
 import { fetchStorySampleByQuery } from '../../../../actions/topicActions';
 import DataCard from '../../../common/DataCard';
+import { formatTopicPreviewQuery } from '../../../util/topicUtil';
 
 const NUM_TO_SHOW = 20;
 
@@ -57,19 +58,8 @@ const mapStateToProps = state => ({
 });
 
 const fetchAsyncData = (dispatch, { query }) => {
-  const infoForQuery = {
-    q: query.solr_seed_query,
-    start_date: query.start_date,
-    end_date: query.end_date,
-    limit: NUM_TO_SHOW,
-  };
-  infoForQuery['collections[]'] = [];
-  infoForQuery['sources[]'] = [];
-
-  if ('sourcesAndCollections' in query) { // in FieldArrays on the form
-    infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
-    infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
-  }
+  const infoForQuery = formatTopicPreviewQuery(query);
+  infoForQuery.limit = NUM_TO_SHOW;
   dispatch(fetchStorySampleByQuery(infoForQuery));
 };
 

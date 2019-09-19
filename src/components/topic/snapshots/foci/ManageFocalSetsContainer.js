@@ -61,7 +61,7 @@ class ManageFocalSetsContainer extends React.Component {
     const { topicId, focalSetDefinitions, filters } = this.props;
     const { formatMessage } = this.props.intl;
     return (
-      <React.Fragment>
+      <>
         <BackLinkingControlBar
           message={localMessages.backToTopic}
           linkTo={filteredLinkTo(`/topics/${topicId}/summary`, filters)}
@@ -121,7 +121,7 @@ class ManageFocalSetsContainer extends React.Component {
             <FormattedHTMLMessage {...localMessages.removeFocalSetAbout} />
           </ConfirmationDialog>
         </div>
-      </React.Fragment>
+      </>
     );
   }
 }

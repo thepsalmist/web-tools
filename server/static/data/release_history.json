@@ -1,6 +1,63 @@
 {
   "releases": [
     {
+      "date": "2019-9-10",
+      "version": "v3.12.4",
+      "notes": [
+        {
+          "apps": [ "explorer", "tools"],
+          "type": "Fixed",
+          "note": "Login and agreed to the consent form works again"
+        }
+      ]
+    },{
+      "date": "2019-8-27",
+      "version": "v3.12.3",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Some csv downloads were not working"
+        }
+      ]
+    },{
+      "date": "2019-8-27",
+      "version": "v3.12.2",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Collection ids needed specific formatting in back end query."
+        }
+      ]
+    },{
+      "date": "2019-8-26",
+      "version": "v3.12.1",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Custom searches included with csvs. Non-logged-in users can run queries again."
+        }
+      ]
+    },{
+      "date": "2019-8-23",
+      "version": "v3.12.0",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Media Picker now enables you to create custom search collections",
+          "details": "Now you can search and save a set of custom searches containing a media keyword and a set of metadata tags. For example, search for sources with keyword 'mainstream' published in the US or Canada and in Massachusetts.' See our blog post for more information."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "More specific boolean query help under Enter Search Terms"
+        }
+      ]
+    },
+    {
       "date": "2019-7-5",
       "version": "v3.11.2",
       "notes": [

@@ -157,7 +157,7 @@ class TopicContainer extends React.Component {
       // pass a handler to all the children so the can set the control bar side content if they need to
       const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent: this.setSideBarContent }));
       content = (
-        <React.Fragment>
+        <>
           <TopicControlBar
             {...this.props}
             topicId={topicId}
@@ -166,7 +166,7 @@ class TopicContainer extends React.Component {
             // implements handleRenderFilters and evaluates showFilters
           />
           {childrenWithExtraProp}
-        </React.Fragment>
+        </>
       );
     }
     return (

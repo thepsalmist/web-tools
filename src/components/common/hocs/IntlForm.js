@@ -23,7 +23,7 @@ function withIntlForm(Component) {
     };
 
     intlCustomProps = (customProps) => {
-      const intlCustom = Object.assign({}, customProps);
+      const intlCustom = { ...customProps };
       ['label', 'helpertext', 'error', 'disabled'].forEach((prop) => {
         if ((prop in customProps)) {
           intlCustom[prop] = this.intlIfObject(customProps[prop]);
@@ -34,12 +34,9 @@ function withIntlForm(Component) {
 
     renderTextField = ({ input, meta: { touched, error, asyncValidating }, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
-      if (intlCustom && intlCustom.helpertext !== undefined) {
-        intlCustom.helpertext = intlCustom.helpertext;
-      }
       const intlError = this.intlIfObject(error);
       return (
-        <React.Fragment>
+        <>
           <TextField
             className={`form-field-text ${asyncValidating ? 'async-validating' : ''}`}
             {...input}
@@ -49,17 +46,14 @@ function withIntlForm(Component) {
             margin="normal"
           />
           {error ? <span className="error">{intlError}</span> : ''}
-        </React.Fragment>
+        </>
       );
     };
 
     renderTextFieldWithFocus = ({ input, saveRef, meta: { touched, error, warning }, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
-      if (intlCustom.helpertext !== undefined) {
-        intlCustom.helpertext = intlCustom.helpertext;
-      }
       return (
-        <React.Fragment>
+        <>
           <TextField
             className="form-field-text"
             error={error !== undefined}
@@ -71,12 +65,14 @@ function withIntlForm(Component) {
             helpertext={touched ? this.intlIfObject(error) : ''}
           />
           {warning && (<div className="textfield-warning">{warning}</div>)}
-        </React.Fragment>
+        </>
       );
     };
 
     renderCheckbox = ({ input, label, meta: { error }, disabled, initialValues }) => {
       const intlError = this.intlIfObject(error);
+      //  be extra safe about how the initialValues might have come in
+      const checked = input.value === true || input.value === 1 || initialValues === 'checked';
       return (
         <div>
           <FormControlLabel
@@ -85,8 +81,8 @@ function withIntlForm(Component) {
                 name={input.name}
                 className="form-field-checkbox"
                 label={this.intlIfObject(label)}
-                checked={input.value === true || input.value === 1 || initialValues === 'checked'}
-                onChange={() => input.onChange({ ...input, value: !input.value })}
+                checked={checked}
+                onChange={() => input.onChange(!checked)}
                 disabled={this.intlIfObject(disabled)}
               />
             )}
@@ -99,11 +95,8 @@ function withIntlForm(Component) {
 
     renderSelect = ({ input, label, name, meta: { touched, error }, children, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
-      if (intlCustom && intlCustom.helpertext !== undefined) {
-        intlCustom.helpertext = intlCustom.helpertext;
-      }
       return (
-        <React.Fragment>
+        <>
           {label && (<InputLabel htmlFor={name}>{this.intlIfObject(label)}</InputLabel>) }
           <Select
             className="form-field-select"
@@ -114,7 +107,7 @@ function withIntlForm(Component) {
           >
             {children}
           </Select>
-        </React.Fragment>
+        </>
       );
     }
 

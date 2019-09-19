@@ -64,7 +64,7 @@ class TopPeopleContainer extends React.Component {
       );
     }
     return (
-      <React.Fragment>
+      <>
         {content}
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
           <div className="actions">
@@ -79,7 +79,7 @@ class TopPeopleContainer extends React.Component {
             </ActionMenu>
           </div>
         </Permissioned>
-      </React.Fragment>
+      </>
     );
   }
 }

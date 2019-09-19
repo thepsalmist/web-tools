@@ -10,7 +10,7 @@ const collectionSearch = createAsyncReducer({
   initialState,
   action: FETCH_MEDIAPICKER_COLLECTION_SEARCH,
   handleSuccess: (payload, state, meta) => ({
-    args: Object.assign({}, meta.args[0], { selected: false }), // for adding/removing from selected list
+    args: { ...meta.args[0], selected: false }, // for adding/removing from selected list
     list: payload.list.map(c => ({
       ...c,
       name: `${c.label || c.tag}`,

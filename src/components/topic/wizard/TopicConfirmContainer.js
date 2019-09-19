@@ -17,6 +17,7 @@ import { TOPIC_FORM_MODE_CREATE, TOPIC_FORM_MODE_EDIT } from './TopicForm';
 import SeedQuerySummary from '../versions/SeedQuerySummary';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_ADMIN } from '../../../lib/auth';
+import { formatTopicPreviewQuery } from '../../util/topicUtil';
 
 const localMessages = {
   name: { id: 'topic.create.confirm.name', defaultMessage: 'Name' },
@@ -51,20 +52,17 @@ class TopicConfirmContainer extends React.Component {
   render() {
     const { formValues, onStepChange, handleSubmit, pristine, selectedSnapshot, storyCount, submitting, currentStepText, mode, topicInfo } = this.props;
     const { formatMessage } = this.props.intl;
-    let sourcesAndCollections = [];
-    sourcesAndCollections = formValues.sourcesAndCollections.filter(s => s.media_id).map(s => s.media_id);
-    sourcesAndCollections.concat(formValues.sourcesAndCollections.filter(s => s.tags_id).map(s => s.tags_id));
     let previousVersion = null;
     if (mode === TOPIC_FORM_MODE_EDIT) {
       previousVersion = (
-        <React.Fragment>
+        <>
           <Col lg={5}>
             <SeedQuerySummary topic={topicInfo} snapshot={selectedSnapshot} faded />
           </Col>
           <Col lg={2}>
             <span style={{ display: 'block', fontSize: '56px', marginTop: '120px', textAlign: 'center' }}>➡</span>
           </Col>
-        </React.Fragment>
+        </>
       );
     }
     const topicNewVersionContent = (
@@ -105,7 +103,8 @@ class TopicConfirmContainer extends React.Component {
             <Col lg={12}>
               <AppButton label={formatMessage(messages.previous)} onClick={() => onStepChange(mode, 2)} />
               &nbsp; &nbsp;
-              { // if creating and a admin, they can create an empty one to let them work on subtopics before generating
+              {
+                // if creating and a admin, they can create an empty one to let them work on subtopics before generating
                 (mode === TOPIC_FORM_MODE_CREATE) && (
                 <Permissioned onlyRole={PERMISSION_ADMIN}>
                   <AppButton
@@ -116,7 +115,8 @@ class TopicConfirmContainer extends React.Component {
                   />
                   &nbsp; &nbsp;
                 </Permissioned>
-                )}
+                )
+              }
               <AppButton
                 disabled={pristine || submitting}
                 label={currentStepText.saveTopic}
@@ -208,31 +208,28 @@ const fireNotices = (dispatch, storyCount, intl) => {
   return null;
 };
 
+const formValuesForSubmission = (values) => {
+  let queryInfo = formatTopicPreviewQuery(values);
+  queryInfo = {
+    ...queryInfo,
+    name: values.name,
+    description: values.description,
+    solr_seed_query: queryInfo.q,
+    max_iterations: values.max_iterations,
+    ch_monitor_id: values.ch_monitor_id === undefined ? '' : values.ch_monitor_id,
+    is_public: values.is_public ? 1 : 0,
+    is_logogram: values.is_logogram ? 1 : 0,
+    max_stories: values.max_topic_stories,
+  };
+  return queryInfo;
+};
+
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleCreateTopic: (storyCount, user, values) => {
     if (((storyCount > MIN_RECOMMENDED_STORIES) && (storyCount < MAX_RECOMMENDED_STORIES))
       || user.isAdmin) { // min/max limits dont apply to admin users
       // all good, so submit!
-      const queryInfo = {
-        name: values.name,
-        description: values.description,
-        start_date: values.start_date,
-        end_date: values.end_date,
-        solr_seed_query: values.solr_seed_query,
-        max_iterations: values.max_iterations,
-        ch_monitor_id: values.ch_monitor_id === undefined ? '' : values.ch_monitor_id,
-        is_public: values.is_public ? 1 : 0,
-        is_logogram: values.is_logogram ? 1 : 0,
-        max_stories: values.max_topic_stories,
-      };
-      queryInfo.is_public = queryInfo.is_public ? 1 : 0;
-      if ('sourcesAndCollections' in values) {
-        queryInfo['sources[]'] = values.sourcesAndCollections.filter(s => s.media_id).map(s => s.media_id);
-        queryInfo['collections[]'] = values.sourcesAndCollections.filter(s => s.tags_id).map(s => s.tags_id);
-      } else {
-        queryInfo['sources[]'] = '';
-        queryInfo['collections[]'] = '';
-      }
+      const queryInfo = formValuesForSubmission(values);
       return dispatch(createTopic(queryInfo))
         .then(results => finishTopic(results, dispatch, ownProps.intl, values.startSpidering));
     }
@@ -245,27 +242,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     if (((storyCount > MIN_RECOMMENDED_STORIES) && (storyCount < MAX_RECOMMENDED_STORIES))
       || user.isAdmin) { // min/max limits dont apply to admin users
       // figure out the new seed query values
-      const queryInfo = {
-        topics_id: values.topics_id,
-        name: values.name,
-        description: values.description,
-        start_date: values.start_date,
-        end_date: values.end_date,
-        solr_seed_query: values.solr_seed_query,
-        max_iterations: values.max_iterations,
-        ch_monitor_id: values.ch_monitor_id === undefined ? '' : values.ch_monitor_id,
-        is_public: values.is_public ? 1 : 0,
-        is_logogram: values.is_logogram ? 1 : 0,
-        max_stories: values.max_topic_stories,
-      };
-      queryInfo.is_public = queryInfo.is_public ? 1 : 0;
-      if ('sourcesAndCollections' in values) {
-        queryInfo['sources[]'] = values.sourcesAndCollections.filter(s => s.media_id).map(s => s.media_id);
-        queryInfo['collections[]'] = values.sourcesAndCollections.filter(s => s.tags_id).map(s => s.tags_id);
-      } else {
-        queryInfo['sources[]'] = '';
-        queryInfo['collections[]'] = '';
-      }
+      const queryInfo = formValuesForSubmission(values);
+      queryInfo.topic_id = values.topics_id; // this is an update, so add in existing topics_id
       return dispatch(updateTopicSeedQuery(queryInfo.topics_id, { ...queryInfo }))
         .then(results => finishTopic(results, dispatch, ownProps.intl, values.startSpidering));
     }

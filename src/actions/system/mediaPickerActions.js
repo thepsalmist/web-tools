@@ -35,5 +35,12 @@ export const toggleMedia = createAction(MEDIA_PICKER_TOGGLE_MEDIA_IN_LIST, media
 export const MEDIA_PICKER_SELECT_MEDIA = 'MEDIA_PICKER_SELECT_MEDIA';
 export const selectMedia = createAction(MEDIA_PICKER_SELECT_MEDIA, media => media);
 
+export const MEDIA_PICKER_SELECT_MEDIA_CUSTOM_COLL = 'MEDIA_PICKER_SELECT_MEDIA_CUSTOM_COLL';
+export const selectMediaCustomColl = createAction(MEDIA_PICKER_SELECT_MEDIA_CUSTOM_COLL, media => media);
+
+export const MEDIA_PICKER_UNSELECT_MEDIA = 'MEDIA_PICKER_UNSELECT_MEDIA';
+export const unselectMedia = createAction(MEDIA_PICKER_UNSELECT_MEDIA, media => media);
+
+
 export const MEDIA_PICKER_CLEAR_SELECTED_MEDIA = 'MEDIA_PICKER_CLEAR_SELECTED_MEDIA';
 export const clearSelectedMedia = createAction(MEDIA_PICKER_CLEAR_SELECTED_MEDIA, media => media);

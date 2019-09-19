@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+// import { hot } from 'react-hot-loader/root';
 import Snackbar from '@material-ui/core/Snackbar';
 import intl from 'intl';  // eslint-disable-line
 import intlEn from 'intl/locale-data/jsonp/en.js';  // eslint-disable-line
@@ -115,7 +116,6 @@ AppContainer.propTypes = {
 
 AppContainer.contextTypes = {
   router: PropTypes.object.isRequired,
-  store: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -123,6 +123,7 @@ const mapStateToProps = state => ({
 });
 
 export default
+// hot(
 injectIntl(
   connect(mapStateToProps)(
     AppContainer

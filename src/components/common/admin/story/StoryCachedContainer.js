@@ -25,7 +25,7 @@ const StoryCachedContainer = ({ story, location }) => (
     <h2><FormattedHTMLMessage {...localMessages.storyText} /></h2>
     <Row>
       <Col lg={12}>
-        <HighlightedText text={story.story_text} search={location.query.search.split(',')} />
+        <HighlightedText text={story.story_text} search={location.query.search ? location.query.search.split(',') : null} />
       </Col>
     </Row>
   </Grid>

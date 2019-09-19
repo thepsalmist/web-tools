@@ -12,6 +12,7 @@ import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import AppButton from '../../common/AppButton';
 import StoryFeedbackRow from './StoryFeedbackRow';
 import { goToTopicStep, fetchStorySampleByQuery } from '../../../actions/topicActions';
+import { formatTopicPreviewQuery } from '../../util/topicUtil';
 
 const NUM_TO_SHOW = 30;
 const VALIDATION_CUTOFF = 0.9;
@@ -180,18 +181,9 @@ const mapDispatchToProps = dispatch => ({
 
 const fetchAsyncData = (dispatch, { formData }) => {
   const infoForQuery = {
-    q: formData.solr_seed_query,
-    start_date: formData.start_date,
-    end_date: formData.end_date,
+    ...formatTopicPreviewQuery(formData),
     rows: NUM_TO_SHOW,
   };
-  infoForQuery['collections[]'] = [];
-  infoForQuery['sources[]'] = [];
-
-  if ('sourcesAndCollections' in formData) { // in FieldArrays on the form
-    infoForQuery['collections[]'] = formData.sourcesAndCollections.map(s => s.tags_id);
-    infoForQuery['sources[]'] = formData.sourcesAndCollections.map(s => s.media_id);
-  }
   dispatch(fetchStorySampleByQuery(infoForQuery));
 };
 

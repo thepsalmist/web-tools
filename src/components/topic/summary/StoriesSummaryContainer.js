@@ -43,7 +43,7 @@ class StoriesSummaryContainer extends React.Component {
     const { stories, sort, topicId, handleFocusSelected, user, showTweetCounts, showTopicStoryDownloadDialog } = this.props;
     const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
     return (
-      <React.Fragment>
+      <>
         <TopicStoryTable
           stories={stories}
           showTweetCounts={showTweetCounts}
@@ -79,7 +79,7 @@ class StoriesSummaryContainer extends React.Component {
             </ActionMenu>
           </div>
         </Permissioned>
-      </React.Fragment>
+      </>
     );
   }
 }

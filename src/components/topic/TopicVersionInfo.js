@@ -14,7 +14,7 @@ const TopicVersionInfo = (props) => {
   sourcesAndCollections = topicInfo.media_tags ? [...sourcesAndCollections, ...topicInfo.media_tags] : sourcesAndCollections;
 
   return (
-    <React.Fragment>
+    <>
       <p>
         <b><FormattedMessage {...messages.topicPublicProp} /></b>: { topicInfo.is_public ? formatMessage(messages.yes) : formatMessage(messages.no) }
         <br />
@@ -33,7 +33,7 @@ const TopicVersionInfo = (props) => {
       {sourcesAndCollections.map(object => (
         <SourceOrCollectionChip key={object.tags_id || object.media_id} object={object} />
       ))}
-    </React.Fragment>
+    </>
   );
 };
 

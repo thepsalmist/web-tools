@@ -10,12 +10,12 @@ const localMessages = {
 const NytThemeSummary = (props) => {
   const { counts } = props;
   return (
-    <React.Fragment>
+    <>
       <p><FormattedMessage {...localMessages.intro} /></p>
       <ul>
         {counts.map(ctry => <li>{ctry.label}</li>)}
       </ul>
-    </React.Fragment>
+    </>
   );
 };
 

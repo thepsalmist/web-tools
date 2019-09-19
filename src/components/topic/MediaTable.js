@@ -59,13 +59,13 @@ class MediaTable extends React.Component {
               <th className="numeric">{this.sortableHeader('facebook', messages.facebookShares)}</th>
               {tweetHeader}
               {(includeMetadata !== false) && (
-                <React.Fragment>
+                <>
                   <th><FormattedMessage {...messages.mediaType} /></th>
                   <th><FormattedMessage {...messages.primaryLanguage} /></th>
                   <th><FormattedMessage {...messages.pubCountry} /></th>
                   <th><FormattedMessage {...messages.pubState} /></th>
                   <th><FormattedMessage {...messages.countryOfFocus} /></th>
-                </React.Fragment>
+                </>
               )}
             </tr>
             {media.map((m, idx) => (
@@ -86,13 +86,13 @@ class MediaTable extends React.Component {
                   <td className="numeric"><SafelyFormattedNumber value={m.simple_tweet_count} /></td>
                 )}
                 {(includeMetadata !== false) && (
-                  <React.Fragment>
+                  <>
                     <td>{m.metadata.media_type ? m.metadata.media_type.label : '?'}</td>
                     <td>{m.metadata.language ? m.metadata.language.label : '?'}</td>
                     <td>{m.metadata.pub_country ? m.metadata.pub_country.label : '?'}</td>
                     <td>{m.metadata.pub_state ? m.metadata.pub_state.label : '?'}</td>
                     <td>{m.metadata.about_country ? m.metadata.about_country.label : '?'}</td>
-                  </React.Fragment>
+                  </>
                 )}
               </tr>
             ))}

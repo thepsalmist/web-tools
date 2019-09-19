@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import { selectMediaPickerQueryArgs, selectMedia } from '../../../actions/systemActions';
+import { selectMediaPickerQueryArgs, unselectMedia } from '../../../actions/systemActions';
 import { PICK_SOURCE_AND_COLLECTION, PICK_FEATURED } from '../../../lib/explorerUtil';
-import SourceOrCollectionWidget from '../SourceOrCollectionWidget';
+import OpenWebMediaItem from '../OpenWebMediaItem';
 // import SelectedMediaContainer from './SelectedMediaContainer';
 
 const localMessages = {
@@ -15,12 +15,13 @@ const localMessages = {
 
 class PickedMediaContainer extends React.Component {
   updateMediaType = (menuSelection) => {
-    const { updateMediaSelection } = this.props;
-    updateMediaSelection({ type: menuSelection });
+    const { updateMediaQueryArgsSelection } = this.props;
+    updateMediaQueryArgsSelection({ type: menuSelection });
   };
 
   render() {
     const { selectedMediaQueryType, selectedMedia, handleUnselectMedia } = this.props;
+    const { formatMessage } = this.props.intl;
     const options = [
       { label: localMessages.pickFeatured, value: PICK_FEATURED },
       { label: localMessages.pickSAndC, value: PICK_SOURCE_AND_COLLECTION },
@@ -49,10 +50,11 @@ class PickedMediaContainer extends React.Component {
         <div className="select-media-selected-list">
           <h3><FormattedMessage {...localMessages.selectedMedia} /></h3>
           {selectedMedia.map(obj => (
-            <SourceOrCollectionWidget
-              key={obj.id || obj.tags_id || obj.media_id}
+            <OpenWebMediaItem
+              key={obj.id || obj.tags_id || obj.media_id || obj.tag_sets_id || obj.tags.name}
               object={obj}
               onDelete={() => handleUnselectMedia(obj)}
+              formatMessage={formatMessage}
             />
           ))}
         </div>
@@ -67,7 +69,7 @@ PickedMediaContainer.propTypes = {
   // from parent
   selectedMedia: PropTypes.array,
   selectedMediaQueryType: PropTypes.number,
-  updateMediaSelection: PropTypes.func.isRequired,
+  updateMediaQueryArgsSelection: PropTypes.func.isRequired,
   handleUnselectMedia: PropTypes.func.isRequired,
 };
 
@@ -80,15 +82,22 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  updateMediaSelection: (type) => {
+  updateMediaQueryArgsSelection: (type) => {
     if (type.type >= 0) {
       dispatch(selectMediaPickerQueryArgs(type));
     }
   },
   handleUnselectMedia: (selectedMedia) => {
     if (selectedMedia) {
-      const unselectecMedia = Object.assign({}, selectedMedia, { selected: false });
-      dispatch(selectMedia(unselectecMedia)); // disable button too
+      let unselectedMedia = {};
+      if (selectedMedia.id) { // if this is a source or collection
+        unselectedMedia = { ...selectedMedia, selected: false };
+      } else { // if this is a search composite
+        unselectedMedia.tags = {};
+        unselectedMedia.addAllSearch = false;
+        unselectedMedia.selected = false;
+      }
+      dispatch(unselectMedia(unselectedMedia));
     }
   },
 });

@@ -1,29 +1,39 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
-import { selectMediaPickerQueryArgs, fetchMediaPickerSources } from '../../../../actions/systemActions';
+import { Col } from 'react-flexbox-grid/lib';
+import { selectMediaPickerQueryArgs, fetchMediaPickerSources, selectMediaCustomColl } from '../../../../actions/systemActions';
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
+import withHelp from '../../hocs/HelpfulContainer';
 import SourceResultsTable from './SourceResultsTable';
 import AdvancedMediaPickerSearchForm from '../AdvancedMediaPickerSearchForm';
 import LoadingSpinner from '../../LoadingSpinner';
-// import { ALL_MEDIA } from '../../../../lib/mediaUtil';
+import AppButton from '../../AppButton';
+import { metadataQueryFields, stringifyTags } from '../../../../lib/explorerUtil';
+import { notEmptyString } from '../../../../lib/formValidators';
 
 const localMessages = {
-  title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching "{name}"' },
+  fullTitle: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching<br /> "{keyword}" and {tags}' },
+  title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching<br />{tags}' },
   hintText: { id: 'system.mediaPicker.sources.hint', defaultMessage: 'Search sources by name or url' },
   noResults: { id: 'system.mediaPicker.sources.noResults', defaultMessage: 'No results. Try searching for the name or URL of a specific source to see if we cover it, like Washington Post, Hindustan Times, or guardian.co.uk.' },
   showAdvancedOptions: { id: 'system.mediaPicker.sources.showAdvancedOptions', defaultMessage: 'Show Advanced Options' },
   hideAdvancedOptions: { id: 'system.mediaPicker.sources.hideAdvancedOptions', defaultMessage: 'Hide Advanced Options' },
   allMedia: { id: 'system.mediaPicker.sources.allMedia', defaultMessage: 'All Media (not advised)' },
+  customColl: { id: 'system.mediaPicker.sources.customColl', defaultMessage: 'Add As Custom Collection' },
+  customCollTitle: { id: 'system.mediaPicker.sources.customCollTitle', defaultMessage: 'Add As Custom Collection' },
+  customCollDef: { id: 'system.mediaPicker.sources.customCollDef', defaultMessage: 'Click this button to store your custom search as your own collection of sources that match the selected metadata query above.' },
 };
 
 const formSelector = formValueSelector('advanced-media-picker-search');
 
 class SourceSearchResultsContainer extends React.Component {
   componentWillMount() {
+    const { selectedMediaQueryType, updateMediaQuerySelection } = this.props;
     this.correlateSelection(this.props);
+    updateMediaQuerySelection({ type: selectedMediaQueryType, tags: {} }); // clear out previous selections
   }
 
   componentWillReceiveProps(nextProps) {
@@ -34,34 +44,46 @@ class SourceSearchResultsContainer extends React.Component {
     }
   }
 
+  // values may contain mediaKeyword, tags, allMedia, customColl
   processQuery = (values) => {
-    const { selectedMediaQueryType, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
+    const { formQuery, selectedMediaQueryType, selectedMediaQueryKeyword, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
     // essentially reselect all values that are currently selected, plus the newly clicked/entered ones
-    // TODO: redundant assignment w values since we add them below?
-    const updatedQueryObj = Object.assign({}, { type: selectedMediaQueryType, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags }, values);
+    // any updates to MediaQuery need to be in the right form { type, tags, allMedia || customColl || null }
+    // initialize with previously selected query args
+    const updatedQueryObj = {
+      mediaKeyword: selectedMediaQueryKeyword,
+      type: selectedMediaQueryType,
+      tags: selectedMediaQueryTags,
+      allMedia: selectedMediaQueryAllTags,
+    };
 
     if (updatedQueryObj.tags === undefined) {
       updatedQueryObj.tags = []; // if first metadata selection
     }
 
-    const metadataQueryFields = ['publicationCountry', 'publicationState', 'primaryLanguage', 'countryOfFocus', 'mediaType'];
-
+    // ignore/remove any non metadata args (like search etc)
     metadataQueryFields.forEach((key) => {
       if (updatedQueryObj.tags[key] === undefined) {
         updatedQueryObj.tags[key] = [];
       }
+      // update tags with information we need to keep in query args
       Object.values(values).forEach((obj) => {
-        if (obj !== undefined
-          && values.name === key) {
+        if (obj !== undefined && obj !== null
+          && obj.name
+          && obj.name === key) {
           const modifiedObjIndex = updatedQueryObj.tags[key].findIndex(o => obj.tags_id === o.tags_id);
           if (modifiedObjIndex > -1) {
             updatedQueryObj.tags[key][modifiedObjIndex].value = obj.value; // update
             updatedQueryObj.tags[key][modifiedObjIndex].selected = obj.value; // update
+            updatedQueryObj.tags[key][modifiedObjIndex].tag_sets_id = obj.tag_sets_id;
+            updatedQueryObj.tags[key][modifiedObjIndex].tag_set_label = obj.tag_set_label;
           } else if (obj.tags_id) {
             const updatedWithSelection = obj;
             if (updatedWithSelection.value !== false && updatedWithSelection.value !== undefined) { // user has selected a new entry and we set the selected flag acc to the value
               updatedWithSelection.selected = true;
             }
+            updatedQueryObj.tags[key].tag_sets_id = obj.tag_sets_id;
+            updatedQueryObj.tags[key].tag_set_label = obj.tag_set_label;
             updatedQueryObj.tags[key].push(updatedWithSelection); // or insert ? Or do in reducer?
           }
         }
@@ -71,15 +93,30 @@ class SourceSearchResultsContainer extends React.Component {
 
     if (typeof values === 'object' && 'allMedia' in values) {
       updatedQueryObj.allMedia = values.allMedia;
+    } else if (typeof values === 'object' && 'customColl' in values) {
+      updatedQueryObj.tags.name = 'search';
+      updatedQueryObj.tags.label = 'search';
+      updatedQueryObj.customColl = values.customColl;
+      updatedQueryObj.id = Math.random(0, 100000);
     }
+    updatedQueryObj.mediaKeyword = formQuery.advancedSearchQueryString;
     return updatedQueryObj;
   }
 
   updateQuerySelection = (metadataType, values) => {
+    // triggered when a singular metadata is un/checked
     const { updateMediaQuerySelection } = this.props;
-    const updatedQueryObj = this.processQuery(values);
+    const updatedQueryObj = this.processQuery([values]);
 
     updateMediaQuerySelection(updatedQueryObj);
+  }
+
+  addCustomSelection = (values) => {
+    const { handleSelectMediaCustomColl } = this.props;
+    // get current selected tags and current selected media
+    const updatedQueryObj = this.processQuery(values);
+
+    handleSelectMediaCustomColl(updatedQueryObj);
   }
 
   updateAndSearchWithSelection = (values) => {
@@ -110,30 +147,69 @@ class SourceSearchResultsContainer extends React.Component {
   }
 
   render() {
-    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
+    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags, selectedMediaQueryAllTags, helpButton } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     let resultContent = null;
     content = (
       <div>
         <AdvancedMediaPickerSearchForm
-          initialValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword }, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags }}
-          onMetadataSelection={(metadataType, values) => this.updateQuerySelection(metadataType, values)}
+          initialValues={{ mediaKeyword: selectedMediaQueryKeyword, advancedSearchQueryString: selectedMediaQueryKeyword, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags }}
+          onQueryUpdateSelection={(metadataType, values) => this.updateQuerySelection(metadataType, values)}
           onSearch={val => this.updateAndSearchWithSelection(val)}
           hintText={formatMessage(localMessages.hintText)}
+          keepDirtyOnReinitialize
         />
       </div>
     );
 
+    const addAllButton = (
+      <Col lg={12}>
+        { helpButton }
+        <AppButton
+          style={{ marginTop: -30, float: 'right' }}
+          label={formatMessage(localMessages.customColl)}
+          onClick={() => this.addCustomSelection({ customColl: true })}
+          color="primary"
+          disabled={!selectedMediaQueryTags || Object.keys(selectedMediaQueryTags).length === 0 || sourceResults === undefined || sourceResults.list.length === 0}
+        />
+      </Col>
+    );
+
     if (fetchStatus === FETCH_ONGOING) {
       resultContent = <LoadingSpinner />;
-    } else if (sourceResults && (sourceResults.list && (sourceResults.list.length > 0 || (sourceResults.args && sourceResults.args.media_keyword)))) {
+    } else if (sourceResults && (sourceResults.list && (sourceResults.list.length > 0 || (sourceResults.args && sourceResults.args.media_keyword) || (sourceResults.args && sourceResults.args.tags)))) {
+      const previouslySearchedTags = {};
+      const tagNames = Object.keys(selectedMediaQueryTags)
+        .filter(t => metadataQueryFields.has(t) > 0 && Array.isArray(selectedMediaQueryTags[t]) && selectedMediaQueryTags[t].length > 0)
+        .map((i) => {
+          const obj = selectedMediaQueryTags[i];
+          if (sourceResults.args.tags) { // correlate searched tag ids with objects so we can display the labels
+            if (!previouslySearchedTags[i]) previouslySearchedTags[i] = [];
+            previouslySearchedTags[i] = obj.map(t => ( // if in tags, it is selected, so reflect this
+              sourceResults.args.tags.indexOf(t.tags_id) > -1 ? ({ ...t, selected: true }) : ''
+            ));
+          }
+          return obj.map(a => a.tag_set_name).reduce(l => l);
+        });
+      let conditionalTitle = '';
+      if (tagNames.length > 0) {
+        const stringifiedTags = stringifyTags(previouslySearchedTags, formatMessage);
+        if (notEmptyString(selectedMediaQueryKeyword)) {
+          conditionalTitle = <FormattedHTMLMessage {...localMessages.fullTitle} values={{ keyword: selectedMediaQueryKeyword, tags: stringifiedTags }} />;
+        } else {
+          conditionalTitle = <FormattedHTMLMessage {...localMessages.title} values={{ tags: stringifiedTags }} />;
+        }
+      }
       resultContent = (
-        <SourceResultsTable
-          title={formatMessage(localMessages.title, { name: selectedMediaQueryKeyword })}
-          sources={sourceResults.list}
-          onToggleSelected={onToggleSelected}
-        />
+        <div className="source-search-results">
+          <h2>{ conditionalTitle }</h2>
+          { addAllButton }
+          <SourceResultsTable
+            sources={sourceResults.list}
+            onToggleSelected={onToggleSelected}
+          />
+        </div>
       );
     } else {
       resultContent = <FormattedMessage {...localMessages.noResults} />;
@@ -166,9 +242,11 @@ SourceSearchResultsContainer.propTypes = {
   sourceResults: PropTypes.object,
   formQuery: PropTypes.object,
   mediaQuery: PropTypes.array,
+  helpButton: PropTypes.node.isRequired,
   // from dispatch
   // updateAdvancedMediaQuerySelection: PropTypes.func.isRequired,
   handleUpdateAndSearchWithSelection: PropTypes.func.isRequired,
+  handleSelectMediaCustomColl: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -187,16 +265,18 @@ const mapStateToProps = state => ({
     'countryOfFocus',
     'mediaType',
     'allMedia',
+    'advancedSearchQueryString',
   ),
 });
 
+// tags holds metadata search tags
 const mapDispatchToProps = (dispatch, ownProps) => ({
   updateMediaQuerySelection: (values) => {
-    if (values && values.tags && Object.values(values.tags).length > 0) {
+    if (values && values.tags) {
       if (values.allMedia) { // handle the "all media" placeholder selection
         ownProps.updateMediaQuerySelection({ media_keyword: values.mediaKeyword, type: values.type, allMedia: true });
       } else {
-        dispatch(selectMediaPickerQueryArgs({ type: values.type, tags: { ...values.tags } }));
+        dispatch(selectMediaPickerQueryArgs({ media_keyword: values.mediaKeyword, type: values.type, tags: { ...values.tags } }));
       }
     }
   },
@@ -207,19 +287,27 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         dispatch(selectMediaPickerQueryArgs(values));
         tags = Object.values(values.tags).filter(t => t.length > 0);
         const selectedTags = [];
+        // parsing and/or in backend
         tags.forEach((t) => {
-          selectedTags.push(t.filter(m => m.value).reduce((a, b) => a.concat(b), []).map(i => i.tags_id));
+          if (Array.isArray(t)) {
+            selectedTags.push(t.filter(m => m.value).reduce((a, b) => a.concat(b), []).map(i => i.tags_id));
+          }
         });
-        tags = selectedTags.join(',');
+        tags = selectedTags.filter(t => t.length > 0).join(',');
       }
       dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: (values.allMedia ? -1 : tags) }));
     }
+  },
+  handleSelectMediaCustomColl: (values) => {
+    dispatch(selectMediaCustomColl(values));
   },
 });
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    SourceSearchResultsContainer
+    withHelp(localMessages.customCollTitle, localMessages.customCollDef)(
+      SourceSearchResultsContainer
+    )
   )
 );

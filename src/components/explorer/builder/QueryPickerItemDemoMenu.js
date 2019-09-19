@@ -84,7 +84,7 @@ class QueryPickerItemDemoMenu extends React.Component {
               {colorPickerContent}
               <TextField
                 className="query-picker-editable-name"
-                id={`query-${query.index}-q`}
+                id={`query-${query.uid}-q`}
                 name="q"
                 defaultValue={query.q}
                 placeholder={formatMessage(localMessages.searchHint)}

@@ -1,32 +1,29 @@
 import { parseId } from '../../lib/numberUtil';
 
 export function pagedAndSortedLocation(location, linkId, sort, newFilters) {
-  return Object.assign({}, location, {
+  return { ...location,
     query: {
       ...location.query,
       linkId,
       sort,
       ...newFilters,
-    },
-  });
+    } };
 }
 
 export function pagedLocation(location, linkId) {
-  return Object.assign({}, location, {
+  return { ...location,
     query: {
       ...location.query,
       linkId,
-    },
-  });
+    } };
 }
 
 export function filteredLocation(location, filters) {
-  return Object.assign({}, location, {
+  return { ...location,
     query: {
       ...location.query,
       ...filters,
-    },
-  });
+    } };
 }
 
 export function filteredLinkTo(to, filters, baseQuery) {

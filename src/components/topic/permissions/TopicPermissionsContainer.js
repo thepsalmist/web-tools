@@ -78,7 +78,7 @@ const HocPermissionsList = injectIntl(withIntlForm(PermissionsList));
 const TopicPermissionsContainer = (props) => {
   const { handleUpdate, topicId, handleSubmit, pristine, submitting } = props;
   return (
-    <React.Fragment>
+    <>
       <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
       <Grid>
         <Row>
@@ -110,7 +110,7 @@ const TopicPermissionsContainer = (props) => {
           </form>
         </Permissioned>
       </Grid>
-    </React.Fragment>
+    </>
   );
 };
 

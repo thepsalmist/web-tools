@@ -135,9 +135,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    handleDone: (topicId, formValues) => dispatchProps.submitDone(topicId, formValues, stateProps),
-  });
+  return { ...stateProps, ...dispatchProps, ...ownProps, handleDone: (topicId, formValues) => dispatchProps.submitDone(topicId, formValues, stateProps) };
 }
 
 export default

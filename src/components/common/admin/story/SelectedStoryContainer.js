@@ -57,7 +57,7 @@ class SelectedStoryContainer extends React.Component {
     let content = null;
     if (selectedStoryId) {
       content = (
-        <React.Fragment>
+        <>
           <Row>
             <Col lg={12}>
               <ActionMenu actionTextMsg={messages.options}>
@@ -149,7 +149,7 @@ class SelectedStoryContainer extends React.Component {
               <StoryImages storyId={selectedStory.stories_id} />
             </Col>
           </Row>
-        </React.Fragment>
+        </>
       );
     }
     return content;

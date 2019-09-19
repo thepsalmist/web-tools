@@ -5,6 +5,8 @@ const publicationState = createAsyncReducer({
   initialState: {
     tags: [],
     label: null,
+    selected: false,
+    value: false,
   },
   action: SELECT_METADATA_QUERY_ARGS,
 });

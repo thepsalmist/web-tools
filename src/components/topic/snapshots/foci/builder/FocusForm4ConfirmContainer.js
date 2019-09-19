@@ -122,9 +122,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    finishStep: values => dispatchProps.saveFocus(ownProps.topicId, values),
-  });
+  return { ...stateProps, ...dispatchProps, ...ownProps, finishStep: values => dispatchProps.saveFocus(ownProps.topicId, values) };
 }
 
 function validate(values, ownProps) {

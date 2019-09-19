@@ -8,7 +8,7 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import TopicCreateForm from './TopicCreateForm';
 import TopicSeedDetailsForm from './TopicSeedDetailsForm';
 import MediaPickerDialog from '../../common/mediaPicker/MediaPickerDialog';
-import SourceCollectionsMediaForm from '../../common/form/SourceCollectionsMediaForm';
+import OpenWebMediaFieldArray from '../../common/form/OpenWebMediaFieldArray';
 import { emptyString, invalidDate, validDate } from '../../../lib/formValidators';
 import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil';
 import { fetchTopicWithNameExists } from '../../../actions/topicActions';
@@ -43,6 +43,7 @@ class TopicForm extends React.Component {
     const { formatMessage } = this.props.intl;
     const selectedMedia = initialValues.sourcesAndCollections ? initialValues.sourcesAndCollections : [];
     let mediaPicker = null;
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
     let mediaLabel = <label htmlFor="media"><FormattedMessage {...localMessages.SandC} /></label>;
     mediaPicker = (
       <MediaPickerDialog
@@ -50,6 +51,7 @@ class TopicForm extends React.Component {
         onConfirmSelection={selections => onMediaChange(selections)}
       />
     );
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
     mediaLabel = <label htmlFor="media"><FormattedMessage {...localMessages.selectSandC} /></label>;
     let useForm = (
       <TopicCreateForm
@@ -93,14 +95,15 @@ class TopicForm extends React.Component {
           <Col lg={6}>
             <div className="media-field-wrapper">
               {mediaLabel}
-              <SourceCollectionsMediaForm
+              <OpenWebMediaFieldArray
+                formatMessage={formatMessage}
                 title={title}
                 intro={intro}
                 className="query-field"
                 form="topicForm"
                 destroyOnUnmount={false}
-                name="sourcesAndCollections"
-                defaultValue={initialValues.sourcesAndCollections} // to and from MediaPicker
+                fieldName="sourcesAndCollections"
+                initialValues={initialValues.sourcesAndCollections} // to and from MediaPicker
                 allowRemoval
               />
               {mediaPicker}

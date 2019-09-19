@@ -82,14 +82,15 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return { ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     handleWordCloudClick: (word) => {
-      // imoprtant to pick term with the OR clause for other languages that we don't stem well
+    // imoprtant to pick term with the OR clause for other languages that we don't stem well
       const params = generateParamStr({ ...stateProps.filters, stem: word.stem, term: word.term || word.stem });
       const url = `/topics/${ownProps.topicId}/words/${word.stem}*?${params}`;
       dispatchProps.pushToUrl(url);
-    },
-  });
+    } };
 }
 
 const fetchAysncData = (dispatch, props) => dispatch(fetchTopicTopWords(props.topicId, props.filters));

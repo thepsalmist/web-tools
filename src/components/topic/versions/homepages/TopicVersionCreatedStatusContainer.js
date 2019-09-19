@@ -18,7 +18,7 @@ const localMessages = {
 };
 
 const TopicVersionCreatedStatusContainer = ({ topic, onSnapshotGenerate, snapshot, intl }) => (
-  <React.Fragment>
+  <>
     <TopicVersionStatus
       subtitle={localMessages.title}
       topic={topic}
@@ -32,7 +32,7 @@ const TopicVersionCreatedStatusContainer = ({ topic, onSnapshotGenerate, snapsho
       { /* only admins can add subtopics while the topic is waiting to start generating, and not on old versions  */ }
       <Permissioned onlyTopic={PERMISSION_ADMIN}>
         { snapshot.isLatest && (
-          <React.Fragment>
+          <>
             <h2><FormattedMessage {...localMessages.whatNowTitle} /></h2>
             <p><FormattedMessage {...localMessages.whatNowText} /></p>
             <LinkWithFilters to={`/topics/${topic.topics_id}/snapshot/foci`}>
@@ -47,17 +47,17 @@ const TopicVersionCreatedStatusContainer = ({ topic, onSnapshotGenerate, snapsho
               type="submit"
               primary
             />
-          </React.Fragment>
+          </>
         )}
         { !snapshot.isLatest && (
-          <React.Fragment>
+          <>
             <h2><FormattedMessage {...localMessages.whatNowTitle} /></h2>
             <p><FormattedMessage {...localMessages.whatNowOldText} /></p>
-          </React.Fragment>
+          </>
         )}
       </Permissioned>
     </TopicVersionStatus>
-  </React.Fragment>
+  </>
 );
 
 TopicVersionCreatedStatusContainer.propTypes = {

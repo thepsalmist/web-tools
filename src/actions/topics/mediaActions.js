@@ -59,9 +59,5 @@ export const fetchMediaOutlinks = createAsyncAction(FETCH_MEDIA_OUTLINKS, api.me
 
 export const fetchAllMediaOutlinks = createAsyncAction(FETCH_ALL_MEDIA_OUTLINKS, api.allMediaOutlinks);
 
-
 // pass in sort
 export const sortMediaOutlinks = createAction(SORT_MEDIA_OUTLINKS, sort => sort);
-
-// pass in topic id, media id, snapshot id, timespan id
-export const fetchMediaWords = createAsyncAction(FETCH_MEDIA_WORDS, api.mediaWords);

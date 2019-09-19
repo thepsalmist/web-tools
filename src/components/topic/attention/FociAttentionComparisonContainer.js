@@ -121,7 +121,7 @@ class FociAttentionComparisonContainer extends React.Component {
       series = setColorsByUsPartisanship(series, 'name', 'color');
     }
     return (
-      <React.Fragment>
+      <>
         <Row>
           <Col lg={12}>
             <DataCard>
@@ -160,7 +160,7 @@ class FociAttentionComparisonContainer extends React.Component {
             </DataCard>
           </Col>
         </Row>
-      </React.Fragment>
+      </>
     );
   }
 }

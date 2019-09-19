@@ -8,8 +8,8 @@ import server.util.csv as csv
 import server.util.pushshift as pushshift
 from server.util.request import api_error_handler
 from server.views.explorer import parse_as_sample,\
-    parse_query_with_keywords, load_sample_searches, file_name_for_download, concatenate_query_for_solr,\
-    DEFAULT_COLLECTION_IDS, only_queries_reddit, parse_query_dates
+    parse_query_with_keywords, load_sample_searches, file_name_for_download, DEFAULT_COLLECTION_IDS, only_queries_reddit, parse_query_dates
+from server.views.media_picker import concatenate_query_for_solr
 import server.views.explorer.apicache as apicache
 
 SAMPLE_SEARCHES = load_sample_searches()
@@ -69,7 +69,8 @@ def api_explorer_story_split_count():
         # get all the stories (no keyword) so we can support normalization
         solr_open_query = concatenate_query_for_solr(solr_seed_query='*',
                                                      media_ids=request.args['sources'],
-                                                     tags_ids=request.args['collections'])
+                                                     tags_ids=request.args['collections'],
+                                                     custom_ids=request.args['searches'])
         results = apicache.normalized_and_story_split_count(solr_q, solr_open_query, start_date, end_date)
     return jsonify({'results': results})
 
@@ -114,8 +115,10 @@ def api_explorer_story_split_count_csv():
                                                                                     subreddits=pushshift.NEWS_SUBREDDITS)
     else:
         solr_q, solr_fq = parse_query_with_keywords(q)
-        solr_open_query = concatenate_query_for_solr(solr_seed_query='*', media_ids=q['sources'],
-                                                     tags_ids=q['collections'])
+        solr_open_query = concatenate_query_for_solr(solr_seed_query='*',
+                                                     media_ids=q['sources'],
+                                                     tags_ids=q['collections'],
+                                                     custom_ids=q['searches'])
         story_counts = apicache.normalized_and_story_split_count(solr_q, solr_open_query, start_date, end_date)
     props = ['date', 'count', 'total_count', 'ratio']
     return csv.stream_response(story_counts['counts'], props, filename)
@@ -145,7 +148,8 @@ def api_explorer_combined_story_split_count_csv():
         else:
             solr_q, solr_fq = parse_query_with_keywords(q)
             solr_open_query = concatenate_query_for_solr(solr_seed_query='*', media_ids=q['sources'],
-                                                         tags_ids=q['collections'])
+                                                         tags_ids=q['collections'],
+                                                     custom_ids=q['searches'])
             story_counts = apicache.normalized_and_story_split_count(solr_q, solr_open_query, start_date, end_date)
         story_count_results.append({
             'label': q['label'],

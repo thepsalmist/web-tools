@@ -361,7 +361,7 @@ export function topicSnapshotStoryCounts(topicId) {
 
 const topicCreateOrUpdateParams = ['name', 'description', 'solr_seed_query', 'is_public',
   'max_stories', 'max_iterations', 'ch_monitor_id', 'start_date', 'end_date', 'spidered',
-  'sources[]', 'collections[]', 'is_logogram', 'startSpidering'];
+  'sources[]', 'collections[]', 'searches[]', 'is_logogram', 'startSpidering'];
 
 export function createTopic(params) {
   const acceptedParams = acceptParams(params, topicCreateOrUpdateParams);

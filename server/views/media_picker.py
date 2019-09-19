@@ -178,22 +178,7 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids=
 
         # grab any custom collections and turn it into a boolean tags_id_media phrase
         if len(custom_ids) > 0:
-            custom_ids_dict = json.loads(custom_ids)
-            query_custom_ids = ''
-            for sets_of_tags in custom_ids_dict:  # for each custom collections
-                custom_tag_groups = json.loads(sets_of_tags['tags_id_media'])  # expect tags in format [[x, ...], ...]
-                custom_sets = []
-                for tag_grp in custom_tag_groups:
-                    if len(tag_grp) > 1:  # handle singular [] vs groups of tags [x, y,z]
-                        custom_id_set_string = " OR ".join(str(tag) for tag in tag_grp)  # OR tags in same set
-                        custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
-                        custom_sets.append(custom_id_set_string)
-                    elif len(tag_grp) == 1:
-                        custom_id_set_string = re.sub('\[*\]*', '', str(tag_grp))
-                        custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
-                        custom_sets.append(custom_id_set_string)
-                query_custom_ids = " AND ".join(custom_sets)  # AND the metadata sets together
-                query_custom_ids = "({})".format(query_custom_ids)
+            query_custom_ids = custom_collection_as_solr_query(custom_ids)
             if len(tags_ids) > 0:
                 query = "{} OR {} )".format(query, query_custom_ids)  # OR all the sets with the other Collection ids
             else:
@@ -201,3 +186,23 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids=
         query += ')'
 
     return query
+
+
+def custom_collection_as_solr_query(custom_ids_str):
+    custom_ids_dict = json.loads(custom_ids_str)
+    query_custom_ids = ''
+    for sets_of_tags in custom_ids_dict:  # for each custom collections
+        custom_tag_groups = json.loads(sets_of_tags['tags_id_media'])  # expect tags in format [[x, ...], ...]
+        custom_sets = []
+        for tag_grp in custom_tag_groups:
+            if len(tag_grp) > 1:  # handle singular [] vs groups of tags [x, y,z]
+                custom_id_set_string = " OR ".join(str(tag) for tag in tag_grp)  # OR tags in same set
+                custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
+                custom_sets.append(custom_id_set_string)
+            elif len(tag_grp) == 1:
+                custom_id_set_string = re.sub('\[*\]*', '', str(tag_grp))
+                custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
+                custom_sets.append(custom_id_set_string)
+        query_custom_ids = " AND ".join(custom_sets)  # AND the metadata sets together
+        query_custom_ids = "({})".format(query_custom_ids)
+    return query_custom_ids

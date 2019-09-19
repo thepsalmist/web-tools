@@ -9,7 +9,7 @@ from server.util.request import form_fields_required, api_error_handler, json_er
 from server.util.stringutil import ids_from_comma_separated_str
 from server.util.tags import US_COLLECTIONS
 from server.views.topics import concatenate_solr_dates
-from server.views.media_picker import concatenate_query_for_solr
+from server.views.media_picker import concatenate_query_for_solr, custom_collection_as_solr_query
 from server.views.topics.foci.retweetpartisanship import add_retweet_partisanship_to_topic
 from server.views.topics.topic import topic_summary
 
@@ -99,9 +99,12 @@ def topic_create():
         'max_stories': request.form['max_stories'] if 'max_stories' in request.form and request.form['max_stories'] != 'null' else flask_login.current_user.profile['max_topic_stories'],
     }
 
-    # parse out any sources and collections to add
+    # parse out any sources and collections, or custom collections to add
     media_ids_to_add = ids_from_comma_separated_str(request.form['sources[]'])
     tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]'])
+    custom_collections_clause = custom_collection_as_solr_query(request.form['searches[]'])
+    if len(custom_collections_clause) > 0:
+        solr_seed_query = '{} OR {}'.format(solr_seed_query, custom_collections_clause)
 
     try:
         topic_result = user_mc.topicCreate(name=name, description=description, solr_seed_query=solr_seed_query,

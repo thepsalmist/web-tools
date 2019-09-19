@@ -23,16 +23,16 @@ const FeedRecentStoriesContainer = ({ stories }) => (
         <StoryTable
           stories={stories}
           extraHeaderColumns={(
-            <React.Fragment>
+            <>
               <th><FormattedMessage {...localMessages.collectedDate} /></th>
               <th><FormattedMessage {...localMessages.fullTextRss} /></th>
-            </React.Fragment>
+            </>
           )}
           extraColumns={story => (
-            <React.Fragment>
+            <>
               <td className="numeric"><FormattedDate value={parseSolrShortDate(story.collect_date)} /></td>
               <td className="numeric">{story.full_text_rss}</td>
-            </React.Fragment>
+            </>
           )}
         />
       </DataCard>

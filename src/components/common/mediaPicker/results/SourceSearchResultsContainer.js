@@ -50,7 +50,12 @@ class SourceSearchResultsContainer extends React.Component {
     // essentially reselect all values that are currently selected, plus the newly clicked/entered ones
     // any updates to MediaQuery need to be in the right form { type, tags, allMedia || customColl || null }
     // initialize with previously selected query args
-    const updatedQueryObj = Object.assign({}, { mediaKeyword: selectedMediaQueryKeyword, type: selectedMediaQueryType, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags });
+    const updatedQueryObj = {
+      mediaKeyword: selectedMediaQueryKeyword,
+      type: selectedMediaQueryType,
+      tags: selectedMediaQueryTags,
+      allMedia: selectedMediaQueryAllTags,
+    };
 
     if (updatedQueryObj.tags === undefined) {
       updatedQueryObj.tags = []; // if first metadata selection
@@ -182,7 +187,7 @@ class SourceSearchResultsContainer extends React.Component {
           if (sourceResults.args.tags) { // correlate searched tag ids with objects so we can display the labels
             if (!previouslySearchedTags[i]) previouslySearchedTags[i] = [];
             previouslySearchedTags[i] = obj.map(t => ( // if in tags, it is selected, so reflect this
-              sourceResults.args.tags.indexOf(t.tags_id) > -1 ? Object.assign({}, t, { selected: true }) : ''
+              sourceResults.args.tags.indexOf(t.tags_id) > -1 ? ({ ...t, selected: true }) : ''
             ));
           }
           return obj.map(a => a.tag_set_name).reduce(l => l);
@@ -271,7 +276,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       if (values.allMedia) { // handle the "all media" placeholder selection
         ownProps.updateMediaQuerySelection({ media_keyword: values.mediaKeyword, type: values.type, allMedia: true });
       } else {
-        dispatch(selectMediaPickerQueryArgs({ media_keyword: values.mediaKeyword, type: values.type, tags: Object.assign({}, { ...values.tags }) }));
+        dispatch(selectMediaPickerQueryArgs({ media_keyword: values.mediaKeyword, type: values.type, tags: { ...values.tags } }));
       }
     }
   },

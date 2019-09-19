@@ -101,11 +101,14 @@ const mapDispatchToProps = dispatch => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return {
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     handleSearch: () => {
       dispatchProps.reallyHandleSearch(stateProps.queries);
     },
-  });
+  };
 }
 
 export default

@@ -36,7 +36,7 @@ class SplitStoryCountSummaryContainer extends React.Component {
   render() {
     const { total, counts, selectedTimePeriod, attentionAggregationMenuItems } = this.props;
     return (
-      <React.Fragment>
+      <>
         <AttentionOverTimeChart
           total={total}
           data={counts}
@@ -61,7 +61,7 @@ class SplitStoryCountSummaryContainer extends React.Component {
             </ActionMenu>
           </div>
         </Permissioned>
-      </React.Fragment>
+      </>
     );
   }
 }

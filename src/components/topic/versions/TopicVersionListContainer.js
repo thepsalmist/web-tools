@@ -82,7 +82,7 @@ const TopicVersionListContainer = ({ topicId, topic, storyCounts, versions, sele
   }
   const cannotCreate = false; // TODO: if any snapshot is building
   return (
-    <React.Fragment>
+    <>
       <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
       <NeedsNewVersionWarning />
       <Grid>
@@ -132,7 +132,7 @@ const TopicVersionListContainer = ({ topicId, topic, storyCounts, versions, sele
           </Row>
         </Permissioned>
       </Grid>
-    </React.Fragment>
+    </>
   );
 };
 

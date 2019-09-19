@@ -30,7 +30,7 @@ const WORD_SPACE_DOM_ID = 'topic-summary-word-space';
 const TopicWordSpaceContainer = (props) => {
   const { words, topicName, filters } = props;
   return (
-    <React.Fragment>
+    <>
       <WordSpace
         words={words.slice(0, 50)}
         domId={WORD_SPACE_DOM_ID}
@@ -53,7 +53,7 @@ const TopicWordSpaceContainer = (props) => {
           </div>
         </Permissioned>
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

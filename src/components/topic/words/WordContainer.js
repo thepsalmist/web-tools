@@ -110,11 +110,12 @@ const mapDispatchToProps = dispatch => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return { ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     saveParamsToStore: () => {
       dispatchProps.selectNewWord(stateProps.stem, stateProps.term);
-    },
-  });
+    } };
 }
 
 export default

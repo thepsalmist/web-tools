@@ -16,7 +16,7 @@ const localMessages = {
 };
 
 const TopicVersionErrorStatusContainer = ({ topic, goToCreateNewVersion, snapshot, intl }) => (
-  <React.Fragment>
+  <>
     <TopicVersionStatus
       subtitle={localMessages.title}
       topic={topic}
@@ -39,7 +39,7 @@ const TopicVersionErrorStatusContainer = ({ topic, goToCreateNewVersion, snapsho
         </div>
       </Permissioned>
     </TopicVersionStatus>
-  </React.Fragment>
+  </>
 );
 
 TopicVersionErrorStatusContainer.propTypes = {

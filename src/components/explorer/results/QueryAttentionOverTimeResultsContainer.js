@@ -103,7 +103,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
         }),
       ];
       return (
-        <React.Fragment>
+        <>
           <AttentionOverTimeChart
             series={series}
             height={300}
@@ -164,7 +164,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
               {this.props.attentionAggregationMenuItems}
             </ActionMenu>
           </div>
-        </React.Fragment>
+        </>
       );
     }
     return <div>Error</div>;
@@ -207,12 +207,13 @@ const mapDispatchToProps = dispatch => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return { ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
       const { selectedTimePeriod } = stateProps;
       return nextProps.selectedTimePeriod !== selectedTimePeriod;
-    },
-  });
+    } };
 }
 
 export default

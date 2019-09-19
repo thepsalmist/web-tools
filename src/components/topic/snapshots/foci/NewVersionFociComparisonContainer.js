@@ -39,7 +39,7 @@ class NewVersionFociComparisonContainer extends React.Component {
     const submitting = this.state.submittingVersion;
     if (needsNewVersion(usingLatest, newDefinitions, latestVersionRunning)) {
       return (
-        <React.Fragment>
+        <>
           <Row>
             <Col lg={12}>
               <h2><FormattedMessage {...localMessages.versionDiffTitle} /></h2>
@@ -70,7 +70,7 @@ class NewVersionFociComparisonContainer extends React.Component {
               </Permissioned>
             </Col>
           </Row>
-        </React.Fragment>
+        </>
       );
     }
     return '';

@@ -53,7 +53,7 @@ class MediaSummaryContainer extends React.Component {
     const { media, sort, topicId, user, showTweetCounts } = this.props;
     const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
     return (
-      <React.Fragment>
+      <>
         <MediaTable
           media={media}
           onChangeSort={isLoggedIn ? this.onChangeSort : null}
@@ -80,7 +80,7 @@ class MediaSummaryContainer extends React.Component {
             </MenuItem>
           </ActionMenu>
         </Permissioned>
-      </React.Fragment>
+      </>
     );
   }
 }

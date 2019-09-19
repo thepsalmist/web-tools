@@ -17,27 +17,25 @@ const localMessages = {
 class CountryCollectionSearchResultsContainer extends React.Component {
   updateMediaQuery(values) {
     const { updateMediaQuerySelection, selectedMediaQueryType } = this.props;
-    const updatedQueryObj = Object.assign({}, values, { type: selectedMediaQueryType });
+    const updatedQueryObj = { ...values, type: selectedMediaQueryType };
     updateMediaQuerySelection(updatedQueryObj);
   }
 
   render() {
     const { selectedMediaQueryType, selectedMediaQueryKeyword, collectionResults, onToggleSelected, fetchCountryStatus } = this.props;
     return (
-      <div>
-        <CollectionSearchResultsContainer
-          fetchStatus={fetchCountryStatus}
-          whichTagSet={TAG_SET_ABYZ_GEO_COLLECTIONS}
-          onToggleSelected={onToggleSelected}
-          selectedMediaQueryType={selectedMediaQueryType}
-          selectedMediaQueryKeyword={selectedMediaQueryKeyword}
-          collectionResults={collectionResults}
-          initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
-          onSearch={val => this.updateMediaQuery(val)}
-          hintTextMsg={localMessages.countrySearchHintText}
-          handleMediaConcurrency={this.props.handleMediaConcurrency}
-        />
-      </div>
+      <CollectionSearchResultsContainer
+        fetchStatus={fetchCountryStatus}
+        whichTagSet={TAG_SET_ABYZ_GEO_COLLECTIONS}
+        onToggleSelected={onToggleSelected}
+        selectedMediaQueryType={selectedMediaQueryType}
+        selectedMediaQueryKeyword={selectedMediaQueryKeyword}
+        collectionResults={collectionResults}
+        initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
+        onSearch={val => this.updateMediaQuery(val)}
+        hintTextMsg={localMessages.countrySearchHintText}
+        handleMediaConcurrency={this.props.handleMediaConcurrency}
+      />
     );
   }
 }

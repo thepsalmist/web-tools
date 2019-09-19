@@ -9,14 +9,14 @@ import RecentNewsMenu from './RecentNewsMenu';
 const MAX_ITEMS = 8;
 
 const RecentNewsMenuContainer = ({ recentNews }) => (
-  <React.Fragment>
+  <>
     {recentNews && (
       <RecentNewsMenu
         newsItems={recentNews[0].notes.slice(0, MAX_ITEMS)}
         subTitle={moment(recentNews[0].date, 'YYYY-M-DD').fromNow()}
       />
     )}
-  </React.Fragment>
+  </>
 );
 
 RecentNewsMenuContainer.propTypes = {

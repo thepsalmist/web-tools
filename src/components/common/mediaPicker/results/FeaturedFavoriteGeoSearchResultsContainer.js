@@ -63,7 +63,7 @@ class FeaturedFavoriteGeoSearchResultsContainer extends React.Component {
 
   updateMediaQuery(values) {
     const { updateMediaQuerySelection, selectedMediaQueryType } = this.props;
-    const updatedQueryObj = Object.assign({}, values, { type: selectedMediaQueryType });
+    const updatedQueryObj = { ...values, type: selectedMediaQueryType };
     updateMediaQuerySelection(updatedQueryObj);
   }
 

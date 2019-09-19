@@ -111,12 +111,15 @@ const mapDispatchToProps = dispatch => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return {
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
       const { internalItemSelected } = stateProps;
       return nextProps.internalItemSelected !== internalItemSelected;
     },
-  });
+  };
 }
 
 export default

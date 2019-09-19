@@ -24,7 +24,7 @@ const FocusSetSelectorContainer = (props) => {
   let content = null;
   if (focalSets.length > 0) {
     content = (
-      <React.Fragment>
+      <>
         <Select
           value={selectedFocalSetId !== NO_FOCAL_SET_SELECTED ? selectedFocalSetId : focalSets[0].focal_sets_id}
           onChange={onFocalSetSelected}
@@ -33,7 +33,7 @@ const FocusSetSelectorContainer = (props) => {
           {focalSets.map(fs => <MenuItem key={fs.focal_sets_id} value={fs.focal_sets_id}>{fs.name}</MenuItem>)}
           {noneOption}
         </Select>
-      </React.Fragment>
+      </>
     );
   } else {
     content = (

@@ -53,7 +53,7 @@ const CreateTopicContainer = ({ allowedToRun, intl }) => {
     },
   ];
   return (
-    <React.Fragment>
+    <>
       <PageTitle value={localMessages.pageTitle} />
       {!allowedToRun && (
         <WarningNotice><FormattedHTMLMessage {...localMessages.cannotCreateTopic} /></WarningNotice>
@@ -65,7 +65,7 @@ const CreateTopicContainer = ({ allowedToRun, intl }) => {
         currentStepTexts={stepTexts}
         disabled={!allowedToRun}
       />
-    </React.Fragment>
+    </>
   );
 };
 

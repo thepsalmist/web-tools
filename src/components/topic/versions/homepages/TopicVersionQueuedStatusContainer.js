@@ -11,16 +11,17 @@ const localMessages = {
   whatNowText: { id: 'version.queued.explanation2.text', defaultMessage: 'Does that query on the right look wrong? Did you not need this version of the topic anymore?  You can cancel it.' },
 };
 
-const TopicVersionQueuedStatusContainer = ({ topic, snapshot, job }) => (
-  <React.Fragment>
+const TopicVersionQueuedStatusContainer = ({ topic, snapshot, intl }) => (
+  <>
     <TopicVersionStatus
       subtitle={localMessages.title}
       topic={topic}
       snapshot={snapshot}
-      job={job}
     >
       <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
       <p><FormattedMessage {...localMessages.explanationText} /></p>
+
+      <img alt={intl.formatMessage(localMessages.title)} src="/static/img/kittens/kittens-queued.gif" />
 
       {/*
       <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
@@ -33,7 +34,7 @@ const TopicVersionQueuedStatusContainer = ({ topic, snapshot, job }) => (
       </Permissioned>
       */}
     </TopicVersionStatus>
-  </React.Fragment>
+  </>
 );
 
 TopicVersionQueuedStatusContainer.propTypes = {
@@ -41,7 +42,6 @@ TopicVersionQueuedStatusContainer.propTypes = {
   topic: PropTypes.object,
   filters: PropTypes.object,
   snapshot: PropTypes.object,
-  job: PropTypes.object,
   goToCreateNewVersion: PropTypes.func,
   // from context
   intl: PropTypes.object.isRequired,

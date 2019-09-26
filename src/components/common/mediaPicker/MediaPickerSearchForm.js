@@ -16,7 +16,7 @@ const localMessages = {
 class MediaPickerSearchForm extends React.Component {
   shouldComponentUpdate = () => false;
 
-  focusUsernameInputField = (input) => {
+  focusQueryInputField = (input) => {
     if (input) {
       setTimeout(() => { input.focus(); }, 100);
     }
@@ -57,6 +57,7 @@ class MediaPickerSearchForm extends React.Component {
             onKeyPress={this.handleMenuItemKeyDown}
             fullWidth
             label={hintText}
+            inputRef={this.focusQueryInputField}
           />
         </Col>
         <Col lg={2}>

@@ -64,6 +64,8 @@ VALID_METADATA_IDS = [
     {METADATA_MEDIA_TYPE: TAG_SETS_ID_MEDIA_TYPE},
 ]
 
+TAG_SPIDERED_STORY = 8875452
+
 
 def processed_for_themes_query_clause():
     """

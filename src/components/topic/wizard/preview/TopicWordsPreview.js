@@ -8,6 +8,7 @@ import OrderedWordCloud from '../../../vis/OrderedWordCloud';
 import DataCard from '../../../common/DataCard';
 import { fetchWordsByQuery } from '../../../../actions/topicActions';
 import messages from '../../../../resources/messages';
+import { formatTopicPreviewQuery } from '../../../util/topicUtil';
 
 const localMessages = {
   descriptionIntro: { id: 'topic.summary.words.help.into',
@@ -55,18 +56,7 @@ const mapStateToProps = state => ({
 });
 
 const fetchAsyncData = (dispatch, { query }) => {
-  const infoForQuery = {
-    q: query.solr_seed_query,
-    start_date: query.start_date,
-    end_date: query.end_date,
-  };
-  infoForQuery['collections[]'] = [];
-  infoForQuery['sources[]'] = [];
-
-  if ('sourcesAndCollections' in query) { // in FieldArrays on the form
-    infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
-    infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
-  }
+  const infoForQuery = formatTopicPreviewQuery(query);
   dispatch(fetchWordsByQuery(infoForQuery));
 };
 

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { selectMedia, toggleMedia, selectMediaPickerQueryArgs, resetMediaPickerQueryArgs, resetMediaPickerSources, resetMediaPickerCollections } from '../../../actions/systemActions';
+import { toggleMedia, selectMedia, selectMediaPickerQueryArgs, resetMediaPickerQueryArgs, resetMediaPickerSources, resetMediaPickerCollections, resetMetadataShortlist } from '../../../actions/systemActions';
 import { PICK_SOURCE_AND_COLLECTION, PICK_FEATURED } from '../../../lib/explorerUtil';
 import * as fetchConstants from '../../../lib/fetchConstants';
 import AllMediaSearchResultsContainer from './results/AllMediaSearchResultsContainer';
@@ -17,7 +17,7 @@ class MediaPickerResultsContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
     // const { handleMediaConcurrency } = this.props;
     if (nextProps.selectedMediaQueryType !== this.props.selectedMediaQueryType) {
-      this.updateMediaQuery({ type: nextProps.selectedMediaQueryType });
+      this.updateMediaQuery({ type: nextProps.selectedMediaQueryType, tags: {}, keyword: '' });
     }
     if (nextProps.selectedMedia !== this.props.selectedMedia
       // if the results have changed from a keyword entry, we need to update the UI
@@ -31,9 +31,14 @@ class MediaPickerResultsContainer extends React.Component {
     resetComponents();
   }
 
+  updateMediaQuery(values) {
+    const { updateMediaQuerySelection } = this.props;
+    updateMediaQuerySelection(values);
+  }
+
   correlateSelection(whichProps) {
     let whichList = {};
-
+    if (!whichProps.selectedMediaQueryType) return 0;
     switch (whichProps.selectedMediaQueryType) {
       /* case PICK_COUNTRY:
         whichList = whichProps.collectionResults;
@@ -59,16 +64,18 @@ class MediaPickerResultsContainer extends React.Component {
         return m;
       });
     }
+    // if selected metadata has changed, update here
+    // selected metadata search settings has to be handled
+    if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0) {
+      // sync up incoming selectedMedia and push to result sets.
+      // for each *metadata search item*, push it into query args
+      // whichProps.selectedMedia.filter(m => m.customColl).map(s => this.updateMediaQuery({ ...s, type: this.props.selectedMediaQueryType }));
+    }
     return 0;
   }
 
-  updateMediaQuery(values) {
-    const { updateMediaQuerySelection } = this.props;
-    updateMediaQuerySelection(values);
-  }
-
   render() {
-    const { selectedMediaQueryType, toggleConcurrency, handleToggleSelected } = this.props;
+    const { selectedMediaQueryType, toggleConcurrency, updateMediaQuerySelection, handleToggleSelected } = this.props;
     let content = null;
     const whichMedia = {};
     whichMedia.fetchStatus = null;
@@ -86,6 +93,8 @@ class MediaPickerResultsContainer extends React.Component {
           <AllMediaSearchResultsContainer
             whichTagSet={VALID_COLLECTION_IDS}
             onToggleSelected={handleToggleSelected}
+            handleMediaConcurrency={toggleConcurrency}
+            updateMediaQuerySelection={updateMediaQuerySelection}
           />
         );
         break;
@@ -127,8 +136,7 @@ MediaPickerResultsContainer.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: (state.system.mediaPicker.sourceQueryResults.fetchStatus === fetchConstants.FETCH_SUCCEEDED || state.system.mediaPicker.collectionQueryResults.fetchStatus === fetchConstants.FETCH_SUCCEEDED || state.system.mediaPicker.favoritedCollections.fetchStatus === fetchConstants.FETCH_SUCCEEDED) ? fetchConstants.FETCH_SUCCEEDED : fetchConstants.FETCH_INVALID,
   selectedMedia: state.system.mediaPicker.selectMedia.list,
-  selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : 0,
-  timestamp: state.system.mediaPicker.featured ? state.system.mediaPicker.featured.timestamp : null,
+  selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : null,
   collectionResults: state.system.mediaPicker.collectionQueryResults,
   featured: state.system.mediaPicker.featured ? state.system.mediaPicker.featured : null,
   sourceResults: state.system.mediaPicker.sourceQueryResults,
@@ -149,7 +157,6 @@ const mapDispatchToProps = dispatch => ({
   },
   handleToggleSelected: (selectedMedia) => {
     if (selectedMedia) {
-      // dispatch(toggleMedia(selectedMedia));
       dispatch(selectMedia(selectedMedia)); // disable button too
     }
   },
@@ -157,6 +164,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(resetMediaPickerQueryArgs());
     dispatch(resetMediaPickerSources());
     dispatch(resetMediaPickerCollections());
+    dispatch(resetMetadataShortlist());
   },
 });
 

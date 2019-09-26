@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedHTMLMessage, injectIntl } from 'react-intl';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import Select from '@material-ui/core/Select';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import InputLabel from '@material-ui/core/InputLabel';
 import Autocomplete, { AsyncAutocomplete } from '../form/Autocomplete';
 
 /**
@@ -16,13 +17,13 @@ function withIntlForm(Component) {
   class IntlFormForm extends React.Component {
     intlIfObject = (value) => {
       if (typeof value === 'object') {
-        return <FormattedMessage {...value} />;
+        return <FormattedHTMLMessage {...value} />;
       }
       return value;
     };
 
     intlCustomProps = (customProps) => {
-      const intlCustom = Object.assign({}, customProps);
+      const intlCustom = { ...customProps };
       ['label', 'helpertext', 'error', 'disabled'].forEach((prop) => {
         if ((prop in customProps)) {
           intlCustom[prop] = this.intlIfObject(customProps[prop]);
@@ -33,72 +34,80 @@ function withIntlForm(Component) {
 
     renderTextField = ({ input, meta: { touched, error, asyncValidating }, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
-      if (intlCustom && intlCustom.helpertext !== undefined) {
-        intlCustom.helpertext = intlCustom.helpertext;
-      }
+      const intlError = this.intlIfObject(error);
       return (
-        <TextField
-          className={`form-field-text ${asyncValidating ? 'async-validating' : ''}`}
-          {...input}
-          {...intlCustom}
-          error={Boolean(touched && error)}
-          helpertext={touched ? this.intlIfObject(error) : ''}
-          margin="normal"
-        />
+        <>
+          <TextField
+            className={`form-field-text ${asyncValidating ? 'async-validating' : ''}`}
+            {...input}
+            {...intlCustom}
+            error={Boolean(touched && intlError)}
+            helpertext={touched ? intlError : ''}
+            margin="normal"
+          />
+          {error ? <span className="error">{intlError}</span> : ''}
+        </>
       );
     };
 
     renderTextFieldWithFocus = ({ input, saveRef, meta: { touched, error, warning }, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
-      if (intlCustom.helpertext !== undefined) {
-        intlCustom.helpertext = intlCustom.helpertext;
-      }
       return (
-        <React.Fragment>
+        <>
           <TextField
             className="form-field-text"
             error={error !== undefined}
-            ref={saveRef}
+            ref={() => saveRef(input)}
+            inputRef={saveRef}
+            autoFocus
             {...input}
             {...intlCustom}
             helpertext={touched ? this.intlIfObject(error) : ''}
           />
           {warning && (<div className="textfield-warning">{warning}</div>)}
-        </React.Fragment>
+        </>
       );
     };
 
-    renderCheckbox = ({ input, label, disabled, initialValues }) => (
-      <FormControlLabel
-        control={(
-          <Checkbox
-            name={input.name}
-            className="form-field-checkbox"
-            label={this.intlIfObject(label)}
-            checked={input.value === true || input.value === 1 || initialValues === 'checked'}
-            onChange={input.onChange}
-            disabled={this.intlIfObject(disabled)}
-          />
-        )}
-        label={this.intlIfObject(label)}
-      />
-    );
-
-    renderSelect = ({ input, meta: { touched, error }, children, ...custom }) => {
-      const intlCustom = this.intlCustomProps(custom);
-      if (intlCustom && intlCustom.helpertext !== undefined) {
-        intlCustom.helpertext = intlCustom.helpertext;
-      }
+    renderCheckbox = ({ input, label, meta: { error }, disabled, initialValues }) => {
+      const intlError = this.intlIfObject(error);
+      //  be extra safe about how the initialValues might have come in
+      const checked = input.value === true || input.value === 1 || initialValues === 'checked';
       return (
-        <Select
-          className="form-field-select"
-          error={touched && (error ? this.intlIfObject(error) : null)}
-          {...input}
-          onChange={event => input.onChange(event.target.value)}
-          {...intlCustom}
-        >
-          {children}
-        </Select>
+        <div>
+          <FormControlLabel
+            control={(
+              <Checkbox
+                name={input.name}
+                className="form-field-checkbox"
+                label={this.intlIfObject(label)}
+                checked={checked}
+                onChange={() => input.onChange(!checked)}
+                disabled={this.intlIfObject(disabled)}
+              />
+            )}
+            label={this.intlIfObject(label)}
+          />
+          {error ? <span className="error">{intlError}</span> : ''}
+        </div>
+      );
+    };
+
+    renderSelect = ({ input, label, name, meta: { touched, error }, children, ...custom }) => {
+      const intlCustom = this.intlCustomProps(custom);
+      return (
+        <>
+          {label && (<InputLabel htmlFor={name}>{this.intlIfObject(label)}</InputLabel>) }
+          <Select
+            className="form-field-select"
+            error={touched && (error ? this.intlIfObject(error) : null)}
+            {...input}
+            onChange={event => input.onChange(event.target.value)}
+            {...intlCustom}
+          >
+            {children}
+          </Select>
+        </>
       );
     }
 

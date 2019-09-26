@@ -7,6 +7,7 @@ import featured from './featured';
 import selectMedia from './selectMedia';
 import favoritedCollections from './favoritedCollections';
 import favoritedSources from './favoritedSources';
+import metadataSelections from './metadataSelections/metadata';
 
 /* all reducers here have to add in a selected = true/false handling */
 const media = combineReducers({
@@ -18,6 +19,7 @@ const media = combineReducers({
   selectMedia,
   favoritedCollections,
   favoritedSources,
+  metadataSelections,
 });
 
 export default media;

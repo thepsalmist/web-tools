@@ -9,19 +9,26 @@ import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import messages from '../../../resources/messages';
 import BackLinkingControlBar from '../BackLinkingControlBar';
 import Permissioned from '../../common/Permissioned';
-import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
+import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../../lib/auth';
 import { fetchSnapshotStoryCounts } from '../../../actions/topicActions';
+import JobList from './homepages/JobList';
 import TopicVersionListItem from './TopicVersionListItem';
 import NeedsNewVersionWarning from './NeedsNewVersionWarning';
+import { createNewSpideredVersion } from '../wizard/TopicConfirmContainer';
 
 const localMessages = {
-  title: { id: 'topic.versionList.title', defaultMessage: 'Your Topic Has {count} Versions' },
+  title: { id: 'topic.versionList.title', defaultMessage: 'Topic Versions' },
+  subtitle: { id: 'topic.versionList.subtitle', defaultMessage: 'Refine your seed query and manage subtopics.' },
+  description: { id: 'topic.versionList.description', defaultMessage: 'Media Cloud topics contain one or more versions. If you want to change your seed query parameters or add/remove subtopics, you have to make a new version. Each version is a non-changing corpus of stories; older versions cannot be changed (this is intended to support our academic research mission).' },
   versionNumber: { id: 'topic.versionNumber', defaultMessage: 'Version {number}' },
   versionState: { id: 'topic.versionState', defaultMessage: '{state}' },
   versionDate: { id: 'topic.versionDate', defaultMessage: '{date}' },
   versionStatus: { id: 'topic.versionStatus', defaultMessage: 'Job status: {status}' },
   createdBy: { id: 'topic.createdBy', defaultMessage: 'Created by: ' },
-  createButton: { id: 'topic.create', defaultMessage: 'Create A New Version ' },
+  createButton: { id: 'topic.create', defaultMessage: 'Create A New Version' },
+  createButtonWhy: { id: 'topic.create.why', defaultMessage: 'Change your seed query or manage subtopics by creating a new version.' },
+  quickCreateButton: { id: 'topic.create.quick', defaultMessage: 'Quick Create & Spider' },
+  quickCreateButtonWhy: { id: 'topic.create.quick.why', defaultMessage: 'Admins Only: Create a new version and spider it (with no changes)' },
   viewButton: { id: 'topic.viewBy', defaultMessage: 'Find Out More ' },
   hasAnError: { id: 'topic.hasError', defaultMessage: 'Sorry, this topic has an error!' },
   otherError: { id: 'topic.otherError', defaultMessage: 'Sorry, this topic has an error!' },
@@ -35,7 +42,7 @@ const localMessages = {
   notUsingLatestSnapshot: { id: 'topic.notUsingLatestSnapshot', defaultMessage: 'You are not using the latest snapshot!  If you are not doing this on purpose, <a href="{url}">switch to the latest snapshot</a> to get the best data.' },
 };
 
-const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, selectedSnapshot, intl }) => {
+const TopicVersionListContainer = ({ topicId, topic, storyCounts, versions, selectedSnapshot, intl, isAdmin, handleQuickCreate }) => {
   const { formatMessage } = intl;
   let versionListContent;
   if (versions.length > 0) {
@@ -52,6 +59,7 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
         number={versions.length - idx}
         version={snapshot}
         storyCounts={storyCounts[snapshot.snapshots_id]}
+        isAdmin={isAdmin}
       />
     ));
   } else {
@@ -62,41 +70,69 @@ const TopicVersionListContainer = ({ topicId, topicInfo, storyCounts, versions, 
         number={1}
         topicId={topicId}
         version={{
-          state: topicInfo.state,
+          state: topic.state,
           snapshots_id: -1,
           snapshot_date: '?',
           status: '?',
         }}
         storyCounts={{}}
+        isAdmin={isAdmin}
       />
     );
   }
   const cannotCreate = false; // TODO: if any snapshot is building
   return (
-    <div className="topic-version-list">
+    <>
       <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
       <NeedsNewVersionWarning />
       <Grid>
         <Row>
           <Col lg={12}>
-            <h1><FormattedMessage {...localMessages.title} values={{ count: Math.max(1, versions ? versions.length : 0) }} /></h1>
+            <h1><FormattedMessage {...localMessages.title} /></h1>
+            <h2><FormattedMessage {...localMessages.subtitle} /></h2>
+            <p><FormattedMessage {...localMessages.description} /></p>
           </Col>
         </Row>
         <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
+          <Row>
+            <Col lg={12}>
+              <LinkWithFilters to={`/topics/${topicId}/new-version`}>
+                <AppButton
+                  style={{ marginRight: 15, marginBottom: 15 }}
+                  disabled={cannotCreate}
+                  label={formatMessage(localMessages.createButton)}
+                  primary
+                />
+              </LinkWithFilters>
+              <FormattedMessage {...localMessages.createButtonWhy} />
+            </Col>
+          </Row>
+        </Permissioned>
+        <Permissioned onlyRole={PERMISSION_ADMIN}>
+          <Row>
+            <Col lg={12}>
+              <AppButton
+                style={{ marginRight: 15 }}
+                disabled={cannotCreate}
+                label={formatMessage(localMessages.quickCreateButton)}
+                onClick={() => handleQuickCreate(topicId)}
+              />
+              <FormattedMessage {...localMessages.quickCreateButtonWhy} />
+            </Col>
+          </Row>
+        </Permissioned>
+        <div className="topic-version-list">
           {versionListContent}
-          <LinkWithFilters to={`/topics/${topicId}/new-version`}>
-            <AppButton
-              style={{ marginTop: 30 }}
-              type="submit"
-              disabled={cannotCreate}
-              label={formatMessage(localMessages.createButton)}
-              primary
-            />
-          </LinkWithFilters>
+        </div>
+        <Permissioned onlyRole={PERMISSION_ADMIN}>
+          <Row>
+            <Col lg={10}>
+              <JobList jobs={[...topic.job_states]} highlightSnapshotId={selectedSnapshot.snapshots_id} />
+            </Col>
+          </Row>
         </Permissioned>
       </Grid>
-
-    </div>
+    </>
   );
 };
 
@@ -104,20 +140,30 @@ TopicVersionListContainer.propTypes = {
   // from state
   versions: PropTypes.array.isRequired,
   topicId: PropTypes.number.isRequired,
-  topicInfo: PropTypes.object.isRequired,
+  topic: PropTypes.object.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   storyCounts: PropTypes.object,
   selectedSnapshot: PropTypes.object,
   // from compositional chain
   intl: PropTypes.object.isRequired,
+  // from dispatch
+  handleQuickCreate: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
-  topicInfo: state.topics.selected.info,
+  topic: state.topics.selected.info,
   versions: state.topics.selected.snapshots.list,
   storyCounts: state.topics.selected.snapshotStoryCounts,
   fetchStatus: state.topics.selected.snapshotStoryCounts.fetchStatus,
   selectedSnapshot: state.topics.selected.snapshots.selected,
+  isAdmin: state.user.isAdmin,
+});
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  handleQuickCreate: (topicId) => {
+    createNewSpideredVersion(topicId, dispatch, ownProps.intl.formatMessage);
+  },
 });
 
 const fetchAsyncData = (dispatch, { topicId }) => {
@@ -126,7 +172,7 @@ const fetchAsyncData = (dispatch, { topicId }) => {
 
 export default
 injectIntl(
-  connect(mapStateToProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withAsyncData(fetchAsyncData)(
       TopicVersionListContainer
     )

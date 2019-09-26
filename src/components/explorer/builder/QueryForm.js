@@ -8,7 +8,7 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import CopyAllComponent from '../../common/CopyAllComponent';
-import SourceCollectionsMediaForm from '../../common/form/SourceCollectionsMediaForm';
+import OpenWebMediaFieldArray from '../../common/form/OpenWebMediaFieldArray';
 import MediaPickerDialog from '../../common/mediaPicker/MediaPickerDialog';
 import QueryHelpDialog from '../../common/help/QueryHelpDialog';
 import MediaHelpDialog from '../../common/help/MediaHelpDialog';
@@ -33,7 +33,7 @@ const localMessages = {
   SandC: { id: 'explorer.queryBuilder.sAndC', defaultMessage: 'Media' },
   color: { id: 'explorer.queryBuilder.color', defaultMessage: 'Choose a color' },
   dates: { id: 'explorer.queryBuilder.dates', defaultMessage: 'Enter dates' },
-  datesDesc: { id: 'explorer.queryBuilder.datesDesc', defaultMessage: 'Our database goes back to 2011, however the start date for different sources and collections can vary. Click on a source or collecton to learn more about when we added it.' },
+  datesDesc: { id: 'explorer.queryBuilder.datesDesc', defaultMessage: 'Enter your inclusive date range. Our database goes back to 2011, however the start date for different sources and collections can vary. Click on a source or collecton to learn more about when we added it.' },
   dateTo: { id: 'explorer.queryBuilder.dateTo', defaultMessage: 'to' },
   queryHelpTitle: { id: 'explorer.queryBuilder.queryHelp.title', defaultMessage: 'Building Query Strings' },
   queryHelpContent: { id: 'explorer.queryBuilder.queryHelp.content', defaultMessage: '<p>You can write boolean queries to search against out database. To search for a single word, just enter that word:</p><code>gender</code><p>You can also use boolean and phrase searches like this:</p><code>"gender equality" OR "gender equity"</code>' },
@@ -51,8 +51,19 @@ const localMessages = {
 };
 
 class QueryForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.textInputRef = React.createRef();
+  }
+
   state = { // do not focus on primary textfield if we have a dialog open
     childDialogOpen: false,
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selected !== this.props.selected) {
+      this.textInputRef.saveRef();
+    }
   }
 
   getAllActiveQueries = queries => (queries.filter(q => q.deleted !== true));
@@ -64,37 +75,71 @@ class QueryForm extends React.Component {
   evalAllQueriesForValidMedia = () => {
     const { queries, mediaUpdates } = this.props;
     const anyQueriesNoMedia = this.getAllActiveQueries(queries).filter(q => (q.uid !== mediaUpdates.uid) && q.media && q.media.length === 0).length; // if any query is missing media
-    const thisCurrentQueryFormNoMedia = mediaUpdates && (mediaUpdates.media === undefined || mediaUpdates.media.length === 0) && mediaUpdates.sources.length === 0 && mediaUpdates.collections.length === 0;
+    const thisCurrentQueryFormNoMedia = mediaUpdates && (mediaUpdates.media === undefined || mediaUpdates.media.length === 0) && (mediaUpdates.sources === undefined || mediaUpdates.sources.length === 0) && (mediaUpdates.collections === undefined || mediaUpdates.collections.length === 0) && (mediaUpdates.searches === undefined || mediaUpdates.searches.length === 0);
     return anyQueriesNoMedia || thisCurrentQueryFormNoMedia;
   }
 
+  focusQueryInputField = () => {
+    // commented out because this is throwing a JS error on the console
+    /*
+    if (input) {
+      setTimeout(() => {
+        // input.focus();
+      }, 100);
+    }
+    */
+  };
+
   render() {
-    const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, handleLoadSearches, handleDeleteSearch, handleLoadSelectedSearch, savedSearches, searchNickname, handleSaveSearch,
-      submitting, handleSubmit, onSave, onMediaChange, renderTextField, renderTextFieldWithFocus, handleCopyAll } = this.props;
+    const { initialValues, onWillSearch, renderTextFieldWithFocus, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, onLoadSearches, onDeleteSearch, savedSearches, searchNickname, onSaveSearch,
+      submitting, handleSubmit, onSave, onMediaChange, renderTextField, onCopyAll } = this.props;
     const { formatMessage } = this.props.intl;
-    const cleanedInitialValues = initialValues ? { ...initialValues } : {};
+    const cleanedInitialValues = JSON.parse(JSON.stringify(initialValues));
     if (cleanedInitialValues.disabled === undefined) {
       cleanedInitialValues.disabled = false;
     }
     if (initialValues.collections && initialValues.collections.length && initialValues.collections[0].tags_id === ALL_MEDIA) {
       cleanedInitialValues.media = [{ id: ALL_MEDIA, label: formatMessage(messages.allMedia) }];
     } else {
-      cleanedInitialValues.media = [ // merge intial sources and collections into one list for display with `renderFields`
-        ...initialValues.sources,
-        ...initialValues.collections,
-      ];
+      cleanedInitialValues.media = [];
+      if (initialValues.collections && initialValues.collections.length) {
+        cleanedInitialValues.media = cleanedInitialValues.media.concat( // merge intial sources and collections into one list for display with `renderFields`
+          initialValues.collections,
+        );
+      }
+      if (initialValues.sources && initialValues.sources.length) {
+        cleanedInitialValues.media = cleanedInitialValues.media.concat( // merge intial sources and collections into one list for display with `renderFields`
+          initialValues.sources,
+        );
+      }
+      // initial values, searches is an object
+      if (initialValues.searches && initialValues.searches.tags && Object.keys(initialValues.searches.tags).length > 0) {
+        cleanedInitialValues.media = cleanedInitialValues.media.concat(initialValues.searches);
+      }
     }
-    selected.media = [ // merge sources and collections into one list for display with `renderFields`
-      ...selected.sources,
-      ...selected.collections,
-    ];
-    const currentQ = selected.q;
+    const selectedCopy = JSON.parse(JSON.stringify(selected));
+    selectedCopy.media = [];
+    if (selectedCopy.collections && selectedCopy.collections.length) {
+      selectedCopy.media = selectedCopy.media.concat(selectedCopy.collections);
+    }
+    if (selectedCopy.sources && selectedCopy.sources.length) {
+      selectedCopy.media = selectedCopy.media.concat(selectedCopy.sources);
+    } // searches is an array
+
+    if (selectedCopy.searches && selectedCopy.searches.tags && Object.keys(selectedCopy.searches.tags).length > 0) {
+      selectedCopy.media = selectedCopy.media.concat(selectedCopy.searches);
+    } else if (selectedCopy.searches && selectedCopy.searches.length) {
+      if (selectedCopy.searches[0].tags && Object.keys(selectedCopy.searches[0].tags).length > 0) {
+        selectedCopy.media = selectedCopy.media.concat(selectedCopy.searches);
+      }
+    }
+    const currentQ = selectedCopy.q;
     let mediaLabel = formatMessage(localMessages.SandC);
     if (isEditable) {
       mediaLabel = formatMessage(localMessages.selectSandC);
     }
     const queriesMissingMedia = this.evalAllQueriesForValidMedia();
-    if (!selected) { return null; }
+    if (!selectedCopy) { return null; }
 
     return (
       <form className="app-form query-form" name="queryForm" onSubmit={handleSubmit(onSave)}>
@@ -109,7 +154,7 @@ class QueryForm extends React.Component {
                       label={formatMessage(localMessages.query)}
                       title={formatMessage(localMessages.copyQueryKeywordTitle)}
                       msg={formatMessage(localMessages.copyQueryKeywordMsg)}
-                      onOk={() => handleCopyAll(KEYWORD)}
+                      onOk={() => onCopyAll(KEYWORD)}
                     />
                   </div>
                   <Field
@@ -121,7 +166,9 @@ class QueryForm extends React.Component {
                     rows={3}
                     rowsMax={4}
                     fullWidth
-                    onChange={this.focusSelect}
+                    ref={(input) => { this.textInputRef = input; }}
+                    inputRef={this.focusQueryInputField}
+                    saveRef={this.focusQueryInputField}
                     component={renderTextFieldWithFocus}
                   />
                 </div>
@@ -139,25 +186,28 @@ class QueryForm extends React.Component {
                       label={mediaLabel}
                       title={formatMessage(localMessages.copyQueryMediaTitle)}
                       msg={formatMessage(localMessages.copyQueryMediaMsg)}
-                      onOk={() => handleCopyAll(MEDIA)}
+                      onOk={() => onCopyAll(MEDIA)}
                     />
                   </div>
-                  <SourceCollectionsMediaForm
+                  <OpenWebMediaFieldArray
                     className="query-field"
                     form="queryForm"
+                    fieldName="media"
+                    enableReinitialize
+                    keepDirtyOnReinitialize
                     destroyOnUnmount={false}
                     onDelete={onMediaDelete}
-                    initialValues={cleanedInitialValues.media}
                     allowRemoval={isEditable}
-                    name="media"
+                    initialValues={selectedCopy || cleanedInitialValues}
                     title="title"
                     intro="intro"
+                    formatMessage={formatMessage}
                   />
                   <div>
                     {isEditable
                     && (
                       <MediaPickerDialog
-                        initMedia={selected.media ? selected.media : cleanedInitialValues.media}
+                        initMedia={selectedCopy.media ? selectedCopy.media : cleanedInitialValues.media}
                         onConfirmSelection={selections => onMediaChange(selections)}
                         setQueryFormChildDialogOpen={this.setQueryFormChildDialogOpen}
                       />
@@ -177,7 +227,7 @@ class QueryForm extends React.Component {
                     label={formatMessage(localMessages.dates)}
                     title={formatMessage(localMessages.copyQueryDatesTitle)}
                     msg={formatMessage(localMessages.copyQueryDatesMsg)}
-                    onOk={() => handleCopyAll(DATES)}
+                    onOk={() => onCopyAll(DATES)}
                   />
                 </div>
                 <div className="dates-field-wrapper">
@@ -217,10 +267,9 @@ class QueryForm extends React.Component {
                   <SavedSearchControls
                     searchNickname={searchNickname}
                     savedSearches={savedSearches}
-                    handleLoadSearches={handleLoadSearches}
-                    handleLoadSelectedSearch={handleLoadSelectedSearch}
-                    handleSaveSearch={l => handleSaveSearch(l)}
-                    handleDeleteSearch={handleDeleteSearch}
+                    onLoadSearches={onLoadSearches}
+                    onSaveSearch={l => onSaveSearch(l)}
+                    onDeleteSearch={onDeleteSearch}
                     submitting={submitting}
                     setQueryFormChildDialogOpen={this.setQueryFormChildDialogOpen}
                   />
@@ -258,14 +307,13 @@ QueryForm.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
   initialValues: PropTypes.object,
   onWillSearch: PropTypes.func,
-  handleLoadSearches: PropTypes.func.isRequired,
-  handleLoadSelectedSearch: PropTypes.func.isRequired,
-  handleSaveSearch: PropTypes.func.isRequired,
-  handleDeleteSearch: PropTypes.func.isRequired,
-  handleCopyAll: PropTypes.func.isRequired,
+  onLoadSearches: PropTypes.func.isRequired,
+  onSaveSearch: PropTypes.func.isRequired,
+  onDeleteSearch: PropTypes.func.isRequired,
+  onCopyAll: PropTypes.func.isRequired,
   onMediaDelete: PropTypes.func.isRequired,
   onDateChange: PropTypes.func.isRequired,
-  // from state
+  // from setState
   queries: PropTypes.array,
   // from form helper
   updateQuery: PropTypes.func,
@@ -273,13 +321,13 @@ QueryForm.propTypes = {
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   isEditable: PropTypes.bool.isRequired,
-  focusRequested: PropTypes.func.isRequired,
+  focusRequested: PropTypes.func,
   mediaUpdates: PropTypes.object,
 };
 
 
 const mapStateToProps = state => ({
-  mediaUpdates: formSelector(state, 'uid', 'media', 'sources', 'collections'),
+  mediaUpdates: formSelector(state, 'uid', 'media', 'sources', 'collections', 'searches'),
   queries: state.explorer.queries.queries ? state.explorer.queries.queries : null,
 });
 

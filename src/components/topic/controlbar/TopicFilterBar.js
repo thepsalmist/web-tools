@@ -20,7 +20,6 @@ const localMessages = {
   startedSpider: { id: 'topic.startedSpider', defaultMessage: 'Started a new spidering job for this topic' },
   summaryMessage: { id: 'snapshot.required', defaultMessage: 'You have made some changes that you can only see if you generate a new Snapshot. <a href="{url}">Generate one now</a>.' },
   topicHomepage: { id: 'topic.homepage', defaultMessage: 'Topic Summary' },
-  jumpToExplorer: { id: 'topic.controlBar.jumpToExplorer', defaultMessage: 'Query on Explorer' },
 };
 
 class TopicFilterBar extends React.Component {
@@ -29,13 +28,13 @@ class TopicFilterBar extends React.Component {
     const { formatMessage } = this.props.intl;
 
     const content = (
-      <React.Fragment>
+      <>
         <FilterButton onClick={handleFilterToggle} tooltip={formatMessage(localMessages.filterTopic)} />
         <ActiveFiltersContainer
           onRemoveFocus={() => handleFocusSelected(REMOVE_FOCUS)}
           onRemoveQuery={() => handleQuerySelected(null)}
         />
-      </React.Fragment>
+      </>
     );
     if (setSideBarContent) {
       setSideBarContent(content);

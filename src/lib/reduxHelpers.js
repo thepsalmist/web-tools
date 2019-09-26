@@ -74,10 +74,9 @@ export function createReducer(handlers) {
       // run the reducer and if it returns new things, change the state
       const reducerResults = actionLookup[action.type](action.payload, state);
       if (reducerResults) {
-        return Object.assign({}, state, {
+        return { ...state,
           ...state,
-          ...reducerResults,
-        });
+          ...reducerResults };
       }
       // otherwise return the state as is so the object itself doesn't change and trigger a dumb re-render
       return state;
@@ -145,41 +144,37 @@ export function createAsyncReducer(handlers) {
     }
     switch (action.type) {
       case handlers.action:
-        return Object.assign({}, state, {
+        return { ...state,
           ...state,
           fetchStatus: fetchConstants.FETCH_ONGOING,
           lastFetchSuccess: null,
           fetchUid: action.payload.uid,
-          ...reducers.handleFetch(action.payload, state, action.meta),
-        });
+          ...reducers.handleFetch(action.payload, state, action.meta) };
       case resolve(handlers.action):
         if (isValid) {
-          return Object.assign({}, state, {
+          return { ...state,
             ...state,
             fetchStatus: fetchConstants.FETCH_SUCCEEDED,
             lastFetchSuccess: new Date(),
-            ...reducers.handleSuccess(action.payload, state, action.meta),
-          });
+            ...reducers.handleSuccess(action.payload, state, action.meta) };
         }
         // another request happened after this one, so don't do anything!
         return state;
       case reject(handlers.action):
         if (isValid) {
-          return Object.assign({}, state, {
+          return { ...state,
             ...state,
             fetchStatus: fetchConstants.FETCH_FAILED,
             lastFetchSuccess: null,
-            ...reducers.handleFailure(action.payload, state, action.meta),
-          });
+            ...reducers.handleFailure(action.payload, state, action.meta) };
         }
         // another request happened after this one, so don't do anything!
         return state;
       default:
         if (action.type in extraActionLookup) {
-          return Object.assign({}, state, {
+          return { ...state,
             ...state,
-            ...extraActionLookup[action.type](action.payload, state, action.meta),
-          });
+            ...extraActionLookup[action.type](action.payload, state, action.meta) };
         }
         return state;
     }
@@ -236,7 +231,7 @@ export function createIndexedAsyncReducer(handlers) {
     desiredInitialState = handlers.initialState;
   }
   const initialState = {
-    results: {},
+    results: [],
     fetchStatus: fetchConstants.FETCH_INVALID,
     fetchStatuses: {}, // array of fetchStatus
     fetchUids: {}, // array of unique ids for each fetch in the list
@@ -252,38 +247,43 @@ export function createIndexedAsyncReducer(handlers) {
       }
       const updatedFetchStatuses = { ...state.fetchStatuses };
       updatedFetchStatuses[uid] = fetchConstants.FETCH_ONGOING;
-      return Object.assign({}, state, {
+      return { ...state,
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
         fetchStatuses: updatedFetchStatuses,
-        fetchUids: state.fetchUids,
-      });
+        fetchUids: state.fetchUids };
     },
     handleSuccess: (payload, state, args) => {
       const { uid } = args[0];
       // const { uid } = meta;
-      const updatedResults = [...state.results];
       const updatedFetchStatuses = { ...state.fetchStatuses };
       updatedFetchStatuses[uid] = fetchConstants.FETCH_SUCCEEDED;
+      // if results already exist (by uid), we need to replace them, otherwise add them as new results
+      const updatedResults = Array.isArray(state.results) ? [...state.results] : [];
+      let resultsToSave;
       if ('handleSuccess' in handlers) {
         const results = handlers.handleSuccess(payload, state, args, uid);
-        updatedResults.push({ uid, results });
+        resultsToSave = { uid, results };
       } else {
-        updatedResults.push({ uid, ...payload });
+        resultsToSave = { uid, ...payload };
       }
-      return Object.assign({}, state, {
+      const itemIndex = updatedResults.findIndex(item => item.uid === uid); // does this UID exist?
+      if (itemIndex === -1) {
+        updatedResults.push(resultsToSave);
+      } else {
+        updatedResults[itemIndex] = resultsToSave;
+      }
+      return { ...state,
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
         fetchStatuses: updatedFetchStatuses,
-        results: updatedResults,
-      });
+        results: updatedResults };
     },
     handleFailure: (payload, state, args) => {
       const { uid } = args[0];
       const updatedFetchStatuses = { ...state.fetchStatuses };
       updatedFetchStatuses[uid] = fetchConstants.FETCH_FAILED;
-      return Object.assign({}, state, {
+      return { ...state,
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
-        fetchStatuses: updatedFetchStatuses,
-      });
+        fetchStatuses: updatedFetchStatuses };
     },
   };
   // set up a lookup table for any other things the user passed in
@@ -309,10 +309,9 @@ export function createIndexedAsyncReducer(handlers) {
         return reducers.handleFailure(action.payload, state, action.meta.args);
       default:
         if (action.type in extraActionLookup) {
-          return Object.assign({}, state, {
+          return { ...state,
             ...state,
-            ...extraActionLookup[action.type](action.payload, state, action.args),
-          });
+            ...extraActionLookup[action.type](action.payload, state, action.args) };
         }
         return state;
     }

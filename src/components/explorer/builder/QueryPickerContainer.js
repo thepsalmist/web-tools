@@ -16,8 +16,8 @@ import QueryHelpDialog from '../../common/help/QueryHelpDialog';
 import { selectQuery, updateQuery, addCustomQuery, loadUserSearches, saveUserSearch, deleteUserSearch, markAsDeletedQuery, copyAndReplaceQueryField, swapSortQueries } from '../../../actions/explorerActions';
 import { AddQueryButton } from '../../common/IconButton';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
-import { autoMagicQueryLabel, generateQueryParamString, KEYWORD, DATES, MEDIA,
-  DEFAULT_COLLECTION_OBJECT_ARRAY, replaceCurlyQuotes, uniqueQueryId, LEFT } from '../../../lib/explorerUtil';
+import { autoMagicQueryLabel, KEYWORD, DATES, MEDIA,
+  DEFAULT_COLLECTION_OBJECT_ARRAY, replaceCurlyQuotes, uniqueQueryId, LEFT, prepSearches } from '../../../lib/explorerUtil';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
 const localMessages = {
@@ -57,6 +57,8 @@ class QueryPickerContainer extends React.Component {
     const updatedCollections = formQuery.media.filter(m => m.id !== toBeDeletedObj.id && (m.type === 'collection' || m.tags_id));
     updatedMedia.collections = updatedCollections;
     updatedMedia.sources = updatedSources;
+    updatedMedia.searches = formQuery.media.filter(m => (((m.tags === undefined && m.tags === toBeDeletedObj.tags && m.customColl) || (m.tags !== undefined && m.tags !== toBeDeletedObj.tags && m.customColl))));
+    updatedMedia.media = [];
     updateCurrentQuery(updatedMedia, null);
   }
 
@@ -70,8 +72,10 @@ class QueryPickerContainer extends React.Component {
     if (sourceAndCollections.filter(m => m.id === ALL_MEDIA).length === 0) {
       const updatedSources = sourceAndCollections.filter(m => m.type === 'source' || m.media_id);
       const updatedCollections = sourceAndCollections.filter(m => m.type === 'collection' || m.tags_id);
+      const updatedSearches = sourceAndCollections.filter(m => m.customColl);
       updatedQuery.collections = updatedCollections;
       updatedQuery.sources = updatedSources;
+      updatedQuery.searches = updatedSearches;
       updateCurrentQueryThenReselect(updatedQuery);
     } else {
       updatedQuery.collections = sourceAndCollections; // push ALL_MEDIA selection into query so it shows up
@@ -106,16 +110,22 @@ class QueryPickerContainer extends React.Component {
   saveThisSearch = (queryName) => {
     const { queries, sendAndSaveUserSearch } = this.props; // formQuery same as selected
     // filter out removed ids...
-    const searchstr = generateQueryParamString(queries.map(q => ({
+
+    const queriesToSave = queries.map(q => ({
       label: q.label,
       q: replaceCurlyQuotes(q.q),
       color: q.color,
       startDate: q.startDate,
       endDate: q.endDate,
-      sources: q.sources,
-      collections: q.collections,
-    })));
-    const userSearch = Object.assign({}, queryName, { timestamp: Date.now(), queryParams: searchstr });
+      sources: q.sources.map(m => m.media_id),
+      collections: q.collections.map(c => c.tags_id),
+      searches: prepSearches(q.searches),
+    }));
+    const userSearch = {
+      ...queryName,
+      timestamp: Date.now(),
+      queries: JSON.stringify(queriesToSave),
+    };
     sendAndSaveUserSearch(userSearch);
   }
 
@@ -138,7 +148,11 @@ class QueryPickerContainer extends React.Component {
 
   saveChangesToSelectedQuery = () => {
     const { selected, formQuery, updateCurrentQuery } = this.props;
-    const updatedQuery = Object.assign({}, selected, formQuery);
+    const updatedQuery = {
+      ...selected,
+      ...formQuery,
+      color: selected.color,
+    };
     updatedQuery.q = replaceCurlyQuotes(updatedQuery.q);
     updateCurrentQuery(updatedQuery, 'label');
   }
@@ -184,7 +198,7 @@ class QueryPickerContainer extends React.Component {
 
   render() {
     const { isLoggedIn, selected, queries, isEditable, addAQuery, handleLoadUserSearches, formQuery,
-      handleLoadSelectedSearch, handleDeleteUserSearch, savedSearches, handleCopyAll, handleDuplicateQuery, handleMoveAndSwap } = this.props;
+      handleDeleteUserSearch, savedSearches, handleCopyAll, handleDuplicateQuery, handleMoveAndSwap } = this.props;
     const { formatMessage } = this.props.intl;
     let queryPickerContent; // editable if demo mode
     let queryFormContent; // hidden if demo mode
@@ -236,7 +250,7 @@ class QueryPickerContainer extends React.Component {
         const newQueryLabel = `Query ${String.fromCharCode('A'.charCodeAt(0) + newPosition)}`;
         const defaultQueryField = '';
         const defaultDemoQuery = { uid: newUid, sortPosition: newPosition, new: true, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: DEFAULT_COLLECTION_OBJECT_ARRAY, sources: [], color: genDefColor, autoNaming: true };
-        const defaultQuery = { uid: newUid, sortPosition: newPosition, new: true, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, collections: [], sources: [], color: genDefColor, autoNaming: true };
+        const defaultQuery = { uid: newUid, sortPosition: newPosition, new: true, label: newQueryLabel, q: defaultQueryField, description: 'new', startDate: dateObj.start, endDate: dateObj.end, searches: [], collections: [], sources: [], color: genDefColor, autoNaming: true };
 
         const emptyQuerySlide = (
           <div key={fixedQuerySlides.length}>
@@ -313,14 +327,11 @@ class QueryPickerContainer extends React.Component {
             onMediaChange={this.handleMediaChange}
             onMediaDelete={this.handleMediaDelete}
             onDateChange={(dateObject, newValue) => this.updateQueryProperty(selected, dateObject.currentTarget.name, newValue)}
-            handleLoadSearches={handleLoadUserSearches}
-            handleLoadSelectedSearch={handleLoadSelectedSearch}
-            handleSaveSearch={l => this.saveThisSearch(l)}
-            handleDeleteSearch={l => handleDeleteUserSearch(l)}
-            handleCopyAll={property => handleCopyAll(property, selected.uid, queries, formQuery)}
+            onLoadSearches={handleLoadUserSearches}
+            onSaveSearch={l => this.saveThisSearch(l)}
+            onDeleteSearch={l => handleDeleteUserSearch(l)}
+            onCopyAll={property => handleCopyAll(property, selected.uid, queries, formQuery)}
             isEditable={canSelectMedia}
-            focusRequested={field => field.focus()}
-            // TODO change to on
           />
         );
       }
@@ -353,7 +364,6 @@ QueryPickerContainer.propTypes = {
   updateCurrentQueryThenReselect: PropTypes.func.isRequired,
   addAQuery: PropTypes.func.isRequired,
   handleLoadUserSearches: PropTypes.func.isRequired,
-  handleLoadSelectedSearch: PropTypes.func.isRequired,
   handleDuplicateQuery: PropTypes.func.isRequired,
   savedSearches: PropTypes.array.isRequired,
   sendAndSaveUserSearch: PropTypes.func.isRequired,
@@ -412,6 +422,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       newValues = {
         collections: currentFormValues.media.filter(obj => obj.tags_id),
         sources: currentFormValues.media.filter(obj => obj.media_id),
+        searches: currentFormValues.media.filter(obj => obj.tags),
       };
     }
     queries.map((query) => {
@@ -423,11 +434,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   handleLoadUserSearches: () => {
     dispatch(loadUserSearches());
-  },
-  handleLoadSelectedSearch: (selectedSearch) => {
-    if (selectedSearch && selectedSearch.queryParams) {
-      window.location = `https://explorer.mediacloud.org/#/queries/search?q=${selectedSearch.queryParams}`;
-    }
   },
   handleDeleteUserSearch: (selectedSearch) => {
     if (selectedSearch && selectedSearch.queryName) {

@@ -18,7 +18,7 @@ class JobDate extends React.Component {
     const { snapshot, job } = this.props;
     if (job && snapshot && snapshot.snapshotDate) {
       return (
-        <React.Fragment>
+        <>
           <p>
             <i>
               <FormattedMessage
@@ -38,18 +38,18 @@ class JobDate extends React.Component {
             </i>
           </p>
           { this.state.showDetails && (
-            <React.Fragment>
+            <>
               {snapshot.snapshotDate && (
                 <p>
                   <FormattedTime value={snapshot.snapshotDate} />
                   &nbsp;
-                  <FormattedDate value={snapshot.snapshotDate} />
+                  <FormattedDate value={snapshot.snapshotDate} month="short" year="numeric" day="numeric" />
                 </p>
               )}
               <code>{trimToMaxLength(snapshot.message || job.message, 600)}</code>
-            </React.Fragment>
+            </>
           ) }
-        </React.Fragment>
+        </>
       );
     }
     return null;

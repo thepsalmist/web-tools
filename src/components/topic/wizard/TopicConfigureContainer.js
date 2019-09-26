@@ -43,8 +43,8 @@ const TopicConfigureContainer = (props) => {
     <Grid>
       <Row>
         <Col lg={10}>
-          <h1>{currentStepText.title}</h1>
-          <p>{currentStepText.description}</p>
+          <h1 dangerouslySetInnerHTML={{ __html: currentStepText.title }} />
+          <p dangerouslySetInnerHTML={{ __html: currentStepText.description }} />
         </Col>
       </Row>
       <TopicForm
@@ -94,11 +94,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleMediaChange: (sourceAndCollections) => {
     // take selections from mediaPicker and push them back into topicForm
-    const updatedSources = sourceAndCollections.filter(m => m.type === 'source' || m.media_id);
-    const updatedCollections = sourceAndCollections.filter(m => m.type === 'collection' || m.tags_id);
-    const selectedMedia = updatedCollections.concat(updatedSources);
-
-    ownProps.change('sourcesAndCollections', selectedMedia); // redux-form change action
+    ownProps.change('sourcesAndCollections', sourceAndCollections); // redux-form change action
   },
   handleMediaDelete: () => null, // in create mode we don't need to update the values
 });

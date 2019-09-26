@@ -1,54 +1,70 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
+import { FormattedHTMLMessage, injectIntl } from 'react-intl';
 import messages from '../../../resources/messages';
-import SourceOrCollectionWidget from '../../common/SourceOrCollectionWidget';
+import OpenWebMediaItem from '../../common/OpenWebMediaItem';
 import { urlToCollection, urlToSource } from '../../../lib/urlUtil';
 
 const localMessages = {
   title: { id: 'topic.info.title', defaultMessage: 'Version {versionNumber}: Seed Query' },
-  seedQueryCount: { id: 'topic.info.seedQueryCount', defaultMessage: 'Your seed query matches {storyCount} stories already in our database.' },
+  newTitle: { id: 'topic.info.newTitle', defaultMessage: 'New Version: Seed Query' },
+  seedQueryCount: { id: 'topic.info.seedQueryCount', defaultMessage: 'Matches {storyCount} stories already in our database (including duplicates).' },
+  willSpider: { id: 'topic.info.willSpider', defaultMessage: 'Links will be followed to find more stories ({rounds} rounds).' },
+  willNotSpider: { id: 'topic.info.willNotSpider', defaultMessage: 'Links will <em>not</em> be followed to find more stories.' },
   dates: { id: 'topic.info.dates', defaultMessage: 'Dates:' },
   datesData: { id: 'topic.info.datesData', defaultMessage: '{startDate} to {endDate}' },
 };
 
 const SeedQuerySummary = ({ seedQueryCount, topic, snapshot, intl, faded }) => {
-  let sourcesAndCollections = topic.media ? [...topic.media] : [];
+  // the form has them grouped together, but the topic object has them separate
+  let sourcesAndCollections = topic.media ? topic.media : topic.sourcesAndCollections;
   sourcesAndCollections = topic.media_tags ? [...sourcesAndCollections, ...topic.media_tags] : sourcesAndCollections;
   return (
     <div className={`topic-info-sidebar ${faded ? 'faded' : ''}`}>
       <h2>
-        <FormattedMessage
-          {...localMessages.title}
-          values={{ versionNumber: snapshot ? snapshot.note : '' }}
-        />
+        {snapshot && <FormattedHTMLMessage {...localMessages.title} values={{ versionNumber: snapshot.note }} />}
+        {((snapshot === null) || (snapshot === undefined)) && <FormattedHTMLMessage {...localMessages.newTitle} />}
       </h2>
       <p>
-        <FormattedMessage
+        <FormattedHTMLMessage
           {...localMessages.seedQueryCount}
           values={{ storyCount: intl.formatNumber(seedQueryCount || topic.seed_query_story_count) }}
         />
+        <br />
+        {(topic.max_iterations === 0) && <FormattedHTMLMessage {...localMessages.willNotSpider} />}
+        {(topic.max_iterations > 0) && <FormattedHTMLMessage {...localMessages.willSpider} values={{ rounds: topic.max_iterations }} />}
       </p>
       <p>
         <b><FormattedHTMLMessage {...messages.topicQueryProp} /></b>
         <code>{topic.solr_seed_query}</code>
       </p>
       <p>
-        <b><FormattedMessage {...localMessages.dates} /></b>
-        <FormattedMessage
+        <b><FormattedHTMLMessage {...localMessages.dates} /></b>
+        <FormattedHTMLMessage
           {...localMessages.datesData}
           values={{ startDate: topic.start_date, endDate: topic.end_date }}
         />
       </p>
       <p>
         <b><FormattedHTMLMessage {...messages.topicSourceCollectionsProp} /></b>
-        {sourcesAndCollections.map(o => (
-          <SourceOrCollectionWidget
-            key={o.id || o.tags_id || o.media_id}
-            object={o}
-            link={o.tags_id ? urlToCollection(o.tags_id) : urlToSource(o.media_id)}
-          />
-        ))}
+        {sourcesAndCollections.map((o, idx) => {
+          let link = null;
+          if (o.tags_id) {
+            link = urlToCollection(o.tags_id);
+          } else if (o.media_id) {
+            link = urlToSource(o.media_id);
+          } else { // it is a search, no link for now (TODO: link to saved search in sources advanced search results
+            link = null;
+          }
+          return (
+            <OpenWebMediaItem
+              key={o.id || o.tags_id || o.media_id || idx}
+              object={o}
+              link={link}
+              formatMessage={intl.formatMessage}
+            />
+          );
+        })}
       </p>
     </div>
   );

@@ -15,7 +15,7 @@ import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTim
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import { oneDayLater, solrFormat } from '../../../lib/dateUtil';
-import { postToDownloadUrl, postToCombinedDownloadUrl, ACTION_MENU_ITEM_CLASS, ensureSafeResults } from '../../../lib/explorerUtil';
+import { postToDownloadUrl, postToCombinedDownloadUrl, ACTION_MENU_ITEM_CLASS, ensureSafeResults, serializeSearchTags } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
@@ -25,9 +25,9 @@ const localMessages = {
   descriptionIntro: { id: 'explorer.attention.lineChart.intro', defaultMessage: '<p>Compare the attention paid to your queries over time to understand how they are covered. This chart shows the number of stories that match each of your queries. Spikes in attention can reveal key events. Plateaus can reveal stable, "normal", attention levels. Click a point to see words and headlines for those dates. Use the "view options" menu to switch between story counts and a percentage.</p>' },
   descriptionDetail: { id: 'explorer.attention.lineChart.detail', defaultMessage: '<p>This chart includes one line for each query in your search. Each line charts the number of stories that matched your query per day in the sources and collections you have specified.</p><p>Roll over the line chart to see the stories per day in that period of time. Click the download button in the top right to download the raw counts in a CSV spreadsheet. Click the three lines in the top right of the chart to export the chart as an image file.</p>' },
   withKeywords: { id: 'explorer.attention.mode.withkeywords', defaultMessage: 'View Story Count (default)' },
-  withoutKeywords: { id: 'explorer.attention.mode.withoutkeywords', defaultMessage: 'View Story Percentage' },
-  downloadCsv: { id: 'explorer.attention.downloadCsv', defaultMessage: 'Download { name } stories over time CSV' },
-  downloadAllCsv: { id: 'explorer.attention.downloadAllCsv', defaultMessage: 'Download all stories over time CSV' },
+  withoutKeywords: { id: 'explorer.attention.mode.withoutkeywords', defaultMessage: 'View Normalized Story Percentage' },
+  downloadCsv: { id: 'explorer.attention.downloadCsv', defaultMessage: 'Download { name } story count over time CSV' },
+  downloadAllCsv: { id: 'explorer.attention.downloadAllCsv', defaultMessage: 'Download all story counts over time CSV' },
 };
 
 const VIEW_NORMALIZED = 'VIEW_NORMALIZED';
@@ -56,6 +56,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
         dayGap,
         sources: currentQueryOfInterest.sources.map(s => s.media_id),
         collections: currentQueryOfInterest.collections.map(c => c.tags_id),
+        searches: serializeSearchTags(currentQueryOfInterest.searches), // for each query, go prep searches
       };
       clickedQuery.end_date = solrFormat(oneDayLater(date1), true);
       selectDataPoint(clickedQuery);
@@ -102,7 +103,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
         }),
       ];
       return (
-        <React.Fragment>
+        <>
           <AttentionOverTimeChart
             series={series}
             height={300}
@@ -163,7 +164,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
               {this.props.attentionAggregationMenuItems}
             </ActionMenu>
           </div>
-        </React.Fragment>
+        </>
       );
     }
     return <div>Error</div>;
@@ -206,12 +207,13 @@ const mapDispatchToProps = dispatch => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return { ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
       const { selectedTimePeriod } = stateProps;
       return nextProps.selectedTimePeriod !== selectedTimePeriod;
-    },
-  });
+    } };
 }
 
 export default

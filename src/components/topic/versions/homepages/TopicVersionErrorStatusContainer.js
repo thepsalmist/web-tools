@@ -15,16 +15,18 @@ const localMessages = {
   whatNowText: { id: 'version.error.explanation2.text', defaultMessage: 'Nothing! We\'ve been notified, and will take a look at it.  If you don\'t hear from us soon, do drop us a line at support@mediacloud.org.' },
 };
 
-const TopicVersionErrorStatusContainer = ({ topic, goToCreateNewVersion, snapshot, job, intl }) => (
-  <React.Fragment>
+const TopicVersionErrorStatusContainer = ({ topic, goToCreateNewVersion, snapshot, intl }) => (
+  <>
     <TopicVersionStatus
       subtitle={localMessages.title}
       topic={topic}
       snapshot={snapshot}
-      job={job}
     >
       <h2><FormattedMessage {...localMessages.explanationTitle} /></h2>
       <p><FormattedMessage {...localMessages.explanationText} /></p>
+
+      <img alt={intl.formatMessage(messages.error)} src="/static/img/kittens/kittens-error.gif" />
+
       <h2><FormattedMessage {...localMessages.whatNowTitle} /></h2>
       <p><FormattedMessage {...localMessages.whatNowText} /></p>
 
@@ -37,7 +39,7 @@ const TopicVersionErrorStatusContainer = ({ topic, goToCreateNewVersion, snapsho
         </div>
       </Permissioned>
     </TopicVersionStatus>
-  </React.Fragment>
+  </>
 );
 
 TopicVersionErrorStatusContainer.propTypes = {
@@ -45,7 +47,6 @@ TopicVersionErrorStatusContainer.propTypes = {
   topic: PropTypes.object,
   filters: PropTypes.object,
   snapshot: PropTypes.object,
-  job: PropTypes.object,
   goToCreateNewVersion: PropTypes.func,
   // from context
   intl: PropTypes.object.isRequired,

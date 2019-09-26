@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import messages from '../../resources/messages';
-import { TOPICS_URL, EXPLORER_URL, SOURCES_URL } from '../common/header/NavToolbar';
+import { urlToExplorer, urlToTopicMapper, urlToSourceManager } from '../../lib/urlUtil';
 import ToolDescription from './ToolDescription';
 import Faq from './faq/ToolsFaq';
 import SystemStatsContainer from '../common/statbar/SystemStatsContainer';
@@ -59,7 +59,7 @@ const ToolsHomeContainer = (props) => {
               className="tool-explorer"
               description={messages.explorerToolDescription}
               screenshotUrl={assetUrl('/static/img/preview-explorer.png')}
-              url={EXPLORER_URL}
+              url={urlToExplorer('home')}
             />
           </Col>
           <Col lg={4}>
@@ -68,7 +68,7 @@ const ToolsHomeContainer = (props) => {
               className="tool-topics"
               description={messages.topicsToolDescription}
               screenshotUrl={assetUrl('/static/img/preview-topics.png')}
-              url={TOPICS_URL}
+              url={urlToTopicMapper('home')}
             />
           </Col>
           <Col lg={4}>
@@ -77,7 +77,7 @@ const ToolsHomeContainer = (props) => {
               className="tool-sources"
               description={messages.sourcesToolDescription}
               screenshotUrl={assetUrl('/static/img/preview-sources.png')}
-              url={SOURCES_URL}
+              url={urlToSourceManager('home')}
             />
           </Col>
         </Row>

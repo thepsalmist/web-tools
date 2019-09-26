@@ -15,7 +15,7 @@ const localMessages = {
 };
 
 const CountryCollectionListContainer = ({ collectionsByCountry, user }) => (
-  <React.Fragment>
+  <>
     <PageTitle value={localMessages.title} />
     <Grid>
       <Row>
@@ -42,7 +42,7 @@ const CountryCollectionListContainer = ({ collectionsByCountry, user }) => (
         </Row>
       ))}
     </Grid>
-  </React.Fragment>
+  </>
 );
 
 CountryCollectionListContainer.propTypes = {

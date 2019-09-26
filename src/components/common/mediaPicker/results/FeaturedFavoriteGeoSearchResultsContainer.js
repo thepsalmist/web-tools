@@ -63,7 +63,7 @@ class FeaturedFavoriteGeoSearchResultsContainer extends React.Component {
 
   updateMediaQuery(values) {
     const { updateMediaQuerySelection, selectedMediaQueryType } = this.props;
-    const updatedQueryObj = Object.assign({}, values, { type: selectedMediaQueryType });
+    const updatedQueryObj = { ...values, type: selectedMediaQueryType };
     updateMediaQuerySelection(updatedQueryObj);
   }
 
@@ -86,6 +86,7 @@ class FeaturedFavoriteGeoSearchResultsContainer extends React.Component {
           initValues={{ storedKeyword: { mediaKeyword: '' } }}
           onSearch={val => this.updateMediaQuery(val)}
           hintTextMsg={localMessages.hintText}
+          handleMediaConcurrency={this.props.handleMediaConcurrency}
         />
       </div>
     );
@@ -138,7 +139,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const fetchAsyncData = (dispatch) => {
-  dispatch(selectMediaPickerQueryArgs(0));
+  dispatch(selectMediaPickerQueryArgs({ type: 0 }));
   dispatch(fetchMediaPickerFeaturedCollections(TAG_SET_MC_ID));
   dispatch(fetchFavoriteCollections());
   dispatch(fetchFavoriteSources());

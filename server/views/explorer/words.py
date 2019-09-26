@@ -88,7 +88,7 @@ def api_explorer_demo_compare_words():
         compared_queries = request.args['compared_queries[]'].split(',')
         results = []
         for cq in compared_queries:
-            dictq = {x[0]:x[1] for x in [x.split("=") for x in cq[1:].split("&")]}
+            dictq = {x[0]: x[1] for x in [x.split("=") for x in cq[1:].split("&")]}
             solr_q, solr_fq = parse_query_with_keywords(dictq)
             word_count_result = query_wordcount(solr_q, solr_fq)
             results.append(word_count_result)

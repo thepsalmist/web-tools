@@ -14,13 +14,22 @@ export const TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED = 'created but not queued';
 
 export const snapshotIsUsable = s => (s.state === TOPIC_SNAPSHOT_STATE_COMPLETED) && (s.searchable === true);
 
+const snapshotsByDateDesc = list => list.sort((f1, f2) => {
+  if (f1.snapshot_date < f2.snapshot_date) {
+    return 1;
+  }
+  return -1;
+});
+
+const jobsByDateDesc = list => list.sort((f1, f2) => {
+  if (f1.last_updated < f2.last_updated) {
+    return 1;
+  }
+  return -1;
+});
+
 export function latestUsableSnapshot(snapshots) {
-  const usableSnapshots = snapshots.filter(s => snapshotIsUsable(s)).sort((f1, f2) => {
-    if (f1.snapshot_date < f2.snapshot_date) {
-      return 1;
-    }
-    return -1;
-  });
+  const usableSnapshots = snapshotsByDateDesc(snapshots).filter(s => snapshotIsUsable(s));
   if (usableSnapshots.length > 0) {
     return usableSnapshots[0];
   }
@@ -33,29 +42,14 @@ function getSnapshotFromListById(list, id) {
 }
 
 function cleanUpSnapshotList(rawList, jobList) {
-  return rawList.map(s => ({
+  return snapshotsByDateDesc(rawList).map((s, idx) => ({
     ...s,
     job_states: jobList.filter(job => s.snapshots_id === job.snapshots_id),
     snapshotDate: snapshotDateToMoment(s.snapshot_date),
     isUsable: snapshotIsUsable(s),
+    isLatest: idx === 0,
   }));
 }
-
-function isLatestVersionRunning(rawList) {
-  if (rawList.length === 0) {
-    return false;
-  }
-  const latestSnapshot = rawList[0];
-  return (latestSnapshot.state === 'running')
-    || ((latestSnapshot.state === 'completed') && (latestSnapshot.searchable === 0));
-}
-
-const snapshotsByDateDesc = list => list.sort((f1, f2) => {
-  if (f1.snapshot_date < f2.snapshot_date) {
-    return 1;
-  }
-  return -1;
-});
 
 const latestByDate = (list) => {
   const orderedList = snapshotsByDateDesc(list);
@@ -64,6 +58,31 @@ const latestByDate = (list) => {
   }
   return null;
 };
+
+const latestJobByDate = (list) => {
+  const orderedList = jobsByDateDesc(list);
+  if (orderedList && orderedList.length > 0) {
+    return orderedList[0];
+  }
+  return null;
+};
+
+function isLatestVersionRunning(snapshotList, jobList) {
+  if (snapshotList.length === 0) {
+    return false;
+  }
+  const latestSnapshot = snapshotList[0];
+  // check Job statuses also
+  const latestJob = latestJobByDate(jobList);
+  if (latestJob === null) {
+    return false;
+  }
+  return (latestSnapshot.state === TOPIC_SNAPSHOT_STATE_RUNNING
+  || latestJob.state === TOPIC_SNAPSHOT_STATE_RUNNING
+  || latestSnapshot.state === TOPIC_SNAPSHOT_STATE_QUEUED
+  || latestJob.state === TOPIC_SNAPSHOT_STATE_QUEUED
+  || (((latestJob.state === TOPIC_SNAPSHOT_STATE_COMPLETED) || (latestSnapshot.state === TOPIC_SNAPSHOT_STATE_COMPLETED)) && (latestSnapshot.searchable === 0)));
+}
 
 const usingLatestSnapshot = (list, selectedId) => {
   const latest = latestByDate(list);
@@ -101,7 +120,7 @@ const snapshots = createAsyncReducer({
       usingLatest: usingLatestSnapshot(payload.snapshots.list, state.selectedId),
       latestIsUsable: latestSnaphostIsUsable(payload.snapshots.list),
       latestUsableSnapshot: latestUsableSnapshot(snapshotList),
-      latestVersionRunning: isLatestVersionRunning(payload.snapshots.list),
+      latestVersionRunning: isLatestVersionRunning(payload.snapshots.list, payload.job_states),
       selected: getSnapshotFromListById(snapshotList, state.selectedId),
     };
   },
@@ -111,7 +130,7 @@ const snapshots = createAsyncReducer({
     usingLatest: usingLatestSnapshot(payload.snapshots.list, state.selectedId),
     latestIsUsable: latestSnaphostIsUsable(payload.snapshots.list),
     latestUsableSnapshot: latestUsableSnapshot(payload.snapshots.list),
-    latestVersionRunning: isLatestVersionRunning(payload.snapshots.list),
+    latestVersionRunning: isLatestVersionRunning(payload.snapshots.list, payload.job_states),
   }),
   [TOPIC_FILTER_BY_SNAPSHOT]: (payload, state) => ({
     selectedId: parseId(payload),

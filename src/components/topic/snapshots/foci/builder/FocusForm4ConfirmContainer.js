@@ -59,7 +59,7 @@ const FocusForm4ConfirmContainer = (props) => {
       content = <FormattedMessage {...messages.unimplemented} />;
   }
   return (
-    <form className="focus-confirm" name="snapshotFocusFormConfirm" onSubmit={handleSubmit(finishStep.bind(this))}>
+    <form className="focus-confirm" name="snapshotFocusConfirm" onSubmit={handleSubmit(finishStep.bind(this))}>
       <Grid>
         <Row>
           <Col lg={12}>
@@ -122,9 +122,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
-    finishStep: values => dispatchProps.saveFocus(ownProps.topicId, values),
-  });
+  return { ...stateProps, ...dispatchProps, ...ownProps, finishStep: values => dispatchProps.saveFocus(ownProps.topicId, values) };
 }
 
 function validate(values, ownProps) {

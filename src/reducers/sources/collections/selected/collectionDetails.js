@@ -11,10 +11,9 @@ const collectionDetails = createAsyncReducer({
     object: payload.results,
   }),
   [SET_FAVORITE_COLLECTION]: (payload, state) => ({
-    object: Object.assign({}, state.object, {
+    object: { ...state.object,
       ...state.object,
-      isFavorite: payload.args[1],
-    }),
+      isFavorite: payload.args[1] },
   }),
 });
 

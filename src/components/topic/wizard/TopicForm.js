@@ -8,7 +8,7 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import TopicCreateForm from './TopicCreateForm';
 import TopicSeedDetailsForm from './TopicSeedDetailsForm';
 import MediaPickerDialog from '../../common/mediaPicker/MediaPickerDialog';
-import SourceCollectionsMediaForm from '../../common/form/SourceCollectionsMediaForm';
+import OpenWebMediaFieldArray from '../../common/form/OpenWebMediaFieldArray';
 import { emptyString, invalidDate, validDate } from '../../../lib/formValidators';
 import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil';
 import { fetchTopicWithNameExists } from '../../../actions/topicActions';
@@ -21,7 +21,7 @@ const localMessages = {
   nameError: { id: 'topic.form.detail.name.error', defaultMessage: 'Your topic needs a name.' },
   nameInUseError: { id: 'topic.form.detail.name.errorInUse', defaultMessage: 'That topic name is already taken. Please use a different one.' },
   descriptionError: { id: 'topic.form.detail.desciption.error', defaultMessage: 'Your topic need a description.' },
-  seedQueryError: { id: 'topic.form.detail.seedQuery.error', defaultMessage: 'You must give us a seed query to start this topic from.' },
+  seedQueryError: { id: 'topic.form.detail.seedQuery.error', defaultMessage: 'You must give us a seed query to start this topic form.' },
   createTopic: { id: 'topic.form.detail.create', defaultMessage: 'Create' },
   dateError: { id: 'topic.form.detail.date.error', defaultMessage: 'Please provide a date in YYYY-MM-DD format.' },
   startDateWarning: { id: 'explorer.queryBuilder.warning.startDate', defaultMessage: 'Start Date must be before End Date' },
@@ -43,6 +43,7 @@ class TopicForm extends React.Component {
     const { formatMessage } = this.props.intl;
     const selectedMedia = initialValues.sourcesAndCollections ? initialValues.sourcesAndCollections : [];
     let mediaPicker = null;
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
     let mediaLabel = <label htmlFor="media"><FormattedMessage {...localMessages.SandC} /></label>;
     mediaPicker = (
       <MediaPickerDialog
@@ -50,6 +51,7 @@ class TopicForm extends React.Component {
         onConfirmSelection={selections => onMediaChange(selections)}
       />
     );
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
     mediaLabel = <label htmlFor="media"><FormattedMessage {...localMessages.selectSandC} /></label>;
     let useForm = (
       <TopicCreateForm
@@ -93,14 +95,15 @@ class TopicForm extends React.Component {
           <Col lg={6}>
             <div className="media-field-wrapper">
               {mediaLabel}
-              <SourceCollectionsMediaForm
+              <OpenWebMediaFieldArray
+                formatMessage={formatMessage}
                 title={title}
                 intro={intro}
                 className="query-field"
                 form="topicForm"
                 destroyOnUnmount={false}
-                name="sourcesAndCollections"
-                defaultValue={initialValues.sourcesAndCollections} // to and from MediaPicker
+                fieldName="sourcesAndCollections"
+                initialValues={initialValues.sourcesAndCollections} // to and from MediaPicker
                 allowRemoval
               />
               {mediaPicker}
@@ -159,7 +162,7 @@ function validate(values, props) {
     errors.description = localMessages.descriptionError;
   }
   if (emptyString(values.solr_seed_query)) {
-    errors.solr_seed_query = formatMessage(localMessages.seedQueryError);
+    errors.solr_seed_query = localMessages.seedQueryError;
   }
   if (invalidDate(values.start_date) || !isValidSolrDate(values.start_date)) {
     errors.start_date = localMessages.dateError;
@@ -179,23 +182,23 @@ function validate(values, props) {
   return errors;
 }
 
-const asyncValidate = (values, dispatch, props) => {
-  const { formatMessage } = props.intl;
+const asyncValidate = (values, dispatch) => (
   // verify topic name is unique
-  return dispatch(fetchTopicWithNameExists(values.name, values.topics_id))
+  dispatch(fetchTopicWithNameExists(values.name, values.topics_id))
     .then((results) => {
       if (results.nameInUse === true) {
-        const error = { name: formatMessage(localMessages.nameInUseError) }; // object
+        const error = { name: localMessages.nameInUseError }; // object
         throw error;
       }
-    });
-};
+    })
+);
 
 const reduxFormConfig = {
   form: 'topicForm',
   validate,
   asyncValidate,
   asyncBlurFields: ['name'],
+  asyncChangeFields: ['name'],
   // so the create wizard works
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true,

@@ -3,7 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import Link from 'react-router/lib/Link';
 import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
@@ -16,6 +15,8 @@ import BackLinkingControlBar from '../../BackLinkingControlBar';
 import FocusIcon from '../../../common/icons/FocusIcon';
 import NewVersionFociComparisonContainer from './NewVersionFociComparisonContainer';
 import NeedsNewVersionWarning from '../../versions/NeedsNewVersionWarning';
+import LinkWithFilters from '../../LinkWithFilters';
+import { filteredLinkTo } from '../../../util/location';
 
 const localMessages = {
   listTitle: { id: 'focalSets.list.title', defaultMessage: 'Subtopic Details' },
@@ -57,11 +58,14 @@ class ManageFocalSetsContainer extends React.Component {
   }
 
   render() {
-    const { topicId, focalSetDefinitions } = this.props;
+    const { topicId, focalSetDefinitions, filters } = this.props;
     const { formatMessage } = this.props.intl;
     return (
-      <React.Fragment>
-        <BackLinkingControlBar message={localMessages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
+      <>
+        <BackLinkingControlBar
+          message={localMessages.backToTopic}
+          linkTo={filteredLinkTo(`/topics/${topicId}/summary`, filters)}
+        />
         <NeedsNewVersionWarning />
         <div className="manage-focal-sets">
           <Grid>
@@ -90,6 +94,7 @@ class ManageFocalSetsContainer extends React.Component {
                         onDelete={this.handleDelete}
                         onFocusDefinitionDelete={this.onFocusDefinitionDelete}
                         topicId={topicId}
+                        filters={filters}
                       />
                     ))}
                   </div>
@@ -99,9 +104,9 @@ class ManageFocalSetsContainer extends React.Component {
             <Row>
               <Col lg={6}>
                 <div id="create-foci-button">
-                  <Link to={`/topics/${topicId}/snapshot/foci/create`}>
-                    <AppButton primary label={formatMessage(messages.addFocus)}>{formatMessage(messages.addFocus)}</AppButton>
-                  </Link>
+                  <LinkWithFilters to={`/topics/${topicId}/snapshot/foci/create`}>
+                    <AppButton primary label={messages.addFocus} />
+                  </LinkWithFilters>
                 </div>
               </Col>
             </Row>
@@ -116,7 +121,7 @@ class ManageFocalSetsContainer extends React.Component {
             <FormattedHTMLMessage {...localMessages.removeFocalSetAbout} />
           </ConfirmationDialog>
         </div>
-      </React.Fragment>
+      </>
     );
   }
 }
@@ -128,6 +133,7 @@ ManageFocalSetsContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
   focalSetDefinitions: PropTypes.array.isRequired,
+  filters: PropTypes.object.isRequired,
   // from dispatch
   handleDeleteFocalSetDefinition: PropTypes.func.isRequired,
   handleDeleteFocusDefinition: PropTypes.func.isRequired,
@@ -138,6 +144,7 @@ const mapStateToProps = state => ({
   topicInfo: state.topics.selected.info,
   focalSetDefinitions: state.topics.selected.focalSets.definitions.list,
   fetchStatus: state.topics.selected.focalSets.definitions.fetchStatus,
+  filters: state.topics.selected.filters,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

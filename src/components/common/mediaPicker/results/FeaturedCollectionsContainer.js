@@ -6,7 +6,7 @@ import withAsyncData from '../../hocs/AsyncDataContainer';
 import { fetchMediaPickerFeaturedCollections } from '../../../../actions/systemActions';
 import CollectionResultsTable from './CollectionResultsTable';
 import * as fetchConstants from '../../../../lib/fetchConstants';
-import TAG_SET_MC_ID from '../../../../lib/tagUtil';
+import { TAG_SET_MC_ID } from '../../../../lib/tagUtil';
 import LoadingSpinner from '../../LoadingSpinner';
 
 const localMessages = {
@@ -14,7 +14,7 @@ const localMessages = {
 };
 
 const FeaturedCollectionsContainer = (props) => {
-  const { fetchStatus, collections, onToggleSelected } = props;
+  const { fetchStatus, collections, onToggleSelected, selectedMediaQueryType } = props;
   const { formatMessage } = props.intl;
   if (fetchStatus !== fetchConstants.FETCH_SUCCEEDED) {
     return <LoadingSpinner />;
@@ -24,6 +24,7 @@ const FeaturedCollectionsContainer = (props) => {
       title={formatMessage(localMessages.title)}
       collections={collections}
       onToggleSelected={onToggleSelected}
+      selectedMediaQueryType={selectedMediaQueryType}
     />
   );
 };
@@ -32,6 +33,7 @@ FeaturedCollectionsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
+  selectedMediaQueryType: PropTypes.number,
   // from store
   fetchStatus: PropTypes.string,
   collections: PropTypes.array,
@@ -39,6 +41,7 @@ FeaturedCollectionsContainer.propTypes = {
 
 const mapStateToProps = state => ({
   fetchStatus: state.system.mediaPicker.featured.fetchStatus,
+  selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : 0,
   collections: state.system.mediaPicker.featured ? state.system.mediaPicker.featured.list : null,
 });
 

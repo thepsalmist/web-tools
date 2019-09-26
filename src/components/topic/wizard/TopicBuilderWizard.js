@@ -124,7 +124,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return { ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     handleStepChange: (mode, step) => {
       let topicPhrase = '';
       if (mode === TOPIC_FORM_MODE_EDIT) {
@@ -132,8 +134,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
       }
       dispatchProps.goToUrl(filteredLinkTo(`/topics${topicPhrase}/${mode}`, stateProps.filters, { step }));
       dispatchProps.updateCurrentStep(step);
-    },
-  });
+    } };
 }
 
 const reduxFormConfig = {

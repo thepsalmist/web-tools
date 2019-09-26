@@ -59,7 +59,7 @@ const StoryTotalsSummaryContainer = (props) => {
     );
   }
   return (
-    <React.Fragment>
+    <>
       {content}
       <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
         <div className="actions">
@@ -74,7 +74,7 @@ const StoryTotalsSummaryContainer = (props) => {
           </ActionMenu>
         </div>
       </Permissioned>
-    </React.Fragment>
+    </>
   );
 };
 

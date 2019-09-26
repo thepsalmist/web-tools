@@ -81,7 +81,7 @@ class MediaContainer extends React.Component {
       ];
     }
     return (
-      <React.Fragment>
+      <>
         <TopicPageTitle value={media.name} />
         <Grid>
           <Row>
@@ -161,7 +161,7 @@ class MediaContainer extends React.Component {
             </Col>
           </Row>
         </Grid>
-      </React.Fragment>
+      </>
     );
   }
 }

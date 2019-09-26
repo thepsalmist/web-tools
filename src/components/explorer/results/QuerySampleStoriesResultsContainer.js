@@ -55,7 +55,7 @@ class QuerySampleStoriesResultsContainer extends React.Component {
     if (results && results.length > 0) {
       const safeResults = results[selectedTabIndex].results ? results[selectedTabIndex].results.slice(0, 10) : [];
       return (
-        <div>
+        <>
           {tabSelector}
           <StoryTable
             className="story-table"
@@ -81,7 +81,7 @@ class QuerySampleStoriesResultsContainer extends React.Component {
               </MenuItem>
             </ActionMenu>
           </div>
-        </div>
+        </>
       );
     }
     return <div>Error</div>;
@@ -118,18 +118,21 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   handleStorySelection: (query, story) => {
     // we should select and fetch since that's the pattern, even if we have the story info
-    dispatch(selectStory(story.stories_id));
+    dispatch(selectStory({ id: story.stories_id, search: query.q }));
     dispatch(fetchStory(story.stories_id));
   },
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return {
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
       const { internalItemSelected } = stateProps;
       return nextProps.internalItemSelected !== internalItemSelected;
     },
-  });
+  };
 }
 
 export default

@@ -5,17 +5,20 @@ import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchCollectionSplitStoryCount } from '../../../actions/sourceActions';
 import DataCard from '../../common/DataCard';
-import AttentionOverTimeChart from '../../vis/AttentionOverTimeChart';
+import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTimeChart';
 import { getBrandDarkColor } from '../../../styles/colors';
 import messages from '../../../resources/messages';
 import ActionMenu from '../../common/ActionMenu';
+import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import { DownloadButton } from '../../common/IconButton';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 import { VIEW_REGULARLY_COLLECTED, VIEW_ALL_STORIES } from '../../../lib/mediaUtil';
+import { PAST_WEEK } from '../../../lib/dateUtil';
 
 const localMessages = {
   partialTitle: { id: 'sentenceCount.title', defaultMessage: 'Last Year of Coverage (regularly collected stories)' },
@@ -27,8 +30,8 @@ const localMessages = {
   introText: { id: 'chart.storiesOverTime.totalCount',
     defaultMessage: 'We have collected {total, plural, =0 {No stories} one {One story} other {{formattedTotal} stories}} from sources in the "{collectionName}" collection in the last year.',
   },
-  regularlyCollectedStories: { id: 'explorer.attention.series.regular', defaultMessage: 'Regularly Collected Stories over the last year (default)' },
-  allStories: { id: 'explorer.attention.series.allstories', defaultMessage: 'All Stories' },
+  regularlyCollectedStories: { id: 'explorer.attention.series.regular', defaultMessage: 'Regularly collected stories over the last year (default)' },
+  allStories: { id: 'explorer.attention.series.allstories', defaultMessage: 'All stories over the last year' },
 };
 
 class CollectionSplitStoryCountContainer extends React.Component {
@@ -56,7 +59,8 @@ class CollectionSplitStoryCountContainer extends React.Component {
   }
 
   render() {
-    const { allStories, partialStories, intl, filename, helpButton, collectionName } = this.props;
+    const { allStories, partialStories, intl, filename, helpButton, collectionName,
+      attentionAggregationMenuItems, selectedTimePeriod } = this.props;
     const { formatMessage, formatNumber } = intl;
     let stories = partialStories;
     let title = localMessages.partialTitle;
@@ -67,7 +71,7 @@ class CollectionSplitStoryCountContainer extends React.Component {
     return (
       <DataCard>
         <div className="actions">
-          <ActionMenu>
+          <ActionMenu actionTextMsg={messages.downloadOptions}>
             <MenuItem
               className="action-icon-menu-item"
               onClick={this.downloadCsv}
@@ -75,20 +79,24 @@ class CollectionSplitStoryCountContainer extends React.Component {
               <ListItemText><FormattedMessage {...messages.downloadCSV} /></ListItemText>
               <ListItemIcon><DownloadButton /></ListItemIcon>
             </MenuItem>
+          </ActionMenu>
+          <ActionMenu actionTextMsg={messages.viewOptions}>
             <MenuItem
               className="action-icon-menu-item"
-              disabled={this.state.storyCollection === VIEW_REGULARLY_COLLECTED}
+              disabled={this.state.storyMode === VIEW_REGULARLY_COLLECTED}
               onClick={() => this.onIncludeSpidered(VIEW_REGULARLY_COLLECTED)}
             >
               <FormattedMessage {...localMessages.regularlyCollectedStories} />
             </MenuItem>
             <MenuItem
               className="action-icon-menu-item"
-              disabled={this.state.storyCollection === VIEW_ALL_STORIES}
+              disabled={this.state.storyMode === VIEW_ALL_STORIES}
               onClick={() => this.onIncludeSpidered(VIEW_ALL_STORIES)}
             >
               <FormattedMessage {...localMessages.allStories} />
             </MenuItem>
+            <Divider />
+            {attentionAggregationMenuItems}
           </ActionMenu>
         </div>
         <h2>
@@ -98,10 +106,10 @@ class CollectionSplitStoryCountContainer extends React.Component {
         <AttentionOverTimeChart
           total={stories.total}
           series={[{
+            ...dataAsSeries(stories.list),
             id: 0,
             name: collectionName,
             color: getBrandDarkColor(),
-            data: stories.list.map(c => [c.date, c.count]),
             showInLegend: false,
           }]}
           introText={formatMessage(localMessages.introText, {
@@ -112,6 +120,7 @@ class CollectionSplitStoryCountContainer extends React.Component {
           height={250}
           filename={filename}
           onDataPointClick={this.handleDataPointClick}
+          interval={selectedTimePeriod}
         />
       </DataCard>
     );
@@ -131,6 +140,8 @@ CollectionSplitStoryCountContainer.propTypes = {
   // from composition
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
+  attentionAggregationMenuItems: PropTypes.array.isRequired,
+  selectedTimePeriod: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -146,10 +157,13 @@ const fetchAsyncData = (dispatch, { collectionId }) => dispatch(
 export default
 injectIntl(
   connect(mapStateToProps)(
-    withHelp(localMessages.helpTitle, [localMessages.helpText, messages.attentionChartHelpText])(
-      withAsyncData(fetchAsyncData)(
-        CollectionSplitStoryCountContainer
-      )
+    withAttentionAggregation(
+      withHelp(localMessages.helpTitle, [localMessages.helpText, messages.attentionChartHelpText])(
+        withAsyncData(fetchAsyncData)(
+          CollectionSplitStoryCountContainer
+        ),
+      ),
+      PAST_WEEK,
     )
   )
 );

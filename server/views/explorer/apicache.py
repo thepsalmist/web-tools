@@ -1,14 +1,13 @@
-from operator import itemgetter
-
-import server.util.wordembeddings as wordembeddings
-import server.views.apicache as base_cache
 from server import mc, TOOL_API_KEY
-from server.auth import user_mediacloud_client, user_admin_mediacloud_client
 from server.cache import cache
-from server.util.stringutil import trimSolrDate
+from server.auth import user_mediacloud_client, user_admin_mediacloud_client
+from server.views.explorer import dates_as_filter_query
+import server.util.wordembeddings as wordembeddings
+from server.util.api_helper import combined_split_and_normalized_counts, add_missing_dates_to_split_story_counts
 from server.util.tags import processed_for_entities_query_clause, processed_for_themes_query_clause, is_bad_theme, \
     NYT_LABELS_TAG_SET_ID, CLIFF_ORGS, CLIFF_PEOPLE, GEO_TAG_SET
-from server.views import TAG_SAMPLE_SIZE
+import server.views.apicache as base_cache
+from server.views import TAG_SAMPLE_SIZE, TAG_COUNT_SAMPLE_SIZE
 
 
 def normalized_and_story_count(q, fq, open_q):
@@ -19,30 +18,17 @@ def normalized_and_story_count(q, fq, open_q):
     return results
 
 
-def normalized_and_story_split_count(q, fq, open_q):
+def normalized_and_story_split_count(q, open_q, start_date, end_date):
     results = {}
-    counts = []
+    fq = dates_as_filter_query(start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
     mc_api_key = base_cache.api_key()
-    data = cached_story_split_count(mc_api_key, q, fq)
-    all_stories = cached_story_split_count(mc_api_key, open_q, fq)
-    for day in all_stories['counts']:
-        day_info = {
-            'date': trimSolrDate(day['date']),
-            'total_count': day['count']
-        }
-        matching = [d for d in data['counts'] if d['date'] == day['date']]
-        if len(matching) == 0:
-            day_info['count'] = 0
-        else:
-            day_info['count'] = matching[0]['count']
-        if day_info['count'] == 0 or day['count'] == 0:
-            day_info['ratio'] = 0
-        else:
-            day_info['ratio'] = float(day_info['count']) / float(day['count'])
-        counts.append(day_info)
-    results['counts'] = sorted(counts, key=itemgetter('date'))
-    results['total'] = sum([day['count'] for day in data['counts']])
-    results['normalized_total'] = sum([day['count'] for day in all_stories['counts']])
+    matching = cached_story_split_count(mc_api_key, q, fq)
+    matching = add_missing_dates_to_split_story_counts(matching['counts'], start_date, end_date)
+    total = cached_story_split_count(mc_api_key, open_q, fq)
+    total = add_missing_dates_to_split_story_counts(total['counts'], start_date, end_date)
+    results['counts'] = combined_split_and_normalized_counts(matching, total)
+    results['total'] = sum([day['count'] for day in matching])
+    results['normalized_total'] = sum([day['count'] for day in total])
     return results
 
 
@@ -62,7 +48,7 @@ def sentence_list(q, fq=None, rows=1000, include_stories=True):
 def _cached_sentence_list(mc_api_key, q, fq, rows, include_stories=True):
     # need to get an admin client with the tool key so they have sentence read permissions
     tool_mc = user_admin_mediacloud_client(mc_api_key)
-    sentences = tool_mc.sentenceList(q, fq)[:rows]
+    sentences = tool_mc.sentenceList(q, fq, sort=mc.SORT_RANDOM)[:rows]
     stories_id_list = [str(s['stories_id']) for s in sentences]
     if (len(stories_id_list) > 0) and include_stories:
         # this is the fastest way to get a list of stories by id
@@ -93,7 +79,7 @@ def top_tags_with_coverage(q, fq, tag_sets_id, limit=TAG_SAMPLE_SIZE):
 def _most_used_tags(q, fq, tag_sets_id):
     # top tags used in stories matching query (pass in None for no limit)
     api_key = base_cache.api_key()
-    tags = _cached_most_used_tags(api_key, q, fq, tag_sets_id, 1000)
+    tags = _cached_most_used_tags(api_key, q, fq, tag_sets_id, TAG_COUNT_SAMPLE_SIZE)
     # extract bogus NYT tags
     for t in tags:
         if is_bad_theme(t['tags_id']):

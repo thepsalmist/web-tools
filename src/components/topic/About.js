@@ -33,7 +33,7 @@ const About = () => (
       <Row>
         <Col lg={10} md={10} sm={10} />
         <Col m={2} lg={2}>
-          <AppButton color="primary" primary onClick={() => { window.location = urlToTopicMapper('home'); }}>
+          <AppButton primary onClick={() => { window.location = urlToTopicMapper('home'); }}>
             <FormattedMessage {...messages.tryItNow} />
           </AppButton>
         </Col>

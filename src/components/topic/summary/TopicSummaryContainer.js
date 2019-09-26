@@ -66,7 +66,7 @@ class TopicSummaryContainer extends React.Component {
         case 0:
           // influence
           viewContent = (
-            <React.Fragment>
+            <>
               <Row>
                 <Col lg={12}>
                   <StoriesSummaryContainer topicId={topic.topics_id} filters={filters} location={location} />
@@ -84,25 +84,25 @@ class TopicSummaryContainer extends React.Component {
                   </Col>
                 </Row>
               </Permissioned>
-            </React.Fragment>
+            </>
           );
           break;
         case 1:
           // attention
           viewContent = (
-            <React.Fragment>
+            <>
               <Row>
                 <Col lg={12}>
                   <SplitStoryCountSummaryContainer topicId={topic.topics_id} filters={filters} />
                 </Col>
               </Row>
-            </React.Fragment>
+            </>
           );
           break;
         case 2:
           // language
           viewContent = (
-            <React.Fragment>
+            <>
               <Row>
                 <Col lg={12}>
                   <WordsSummaryContainer topicId={topic.topics_id} topicName={topic.name} filters={filters} width={720} />
@@ -119,13 +119,13 @@ class TopicSummaryContainer extends React.Component {
                   </Col>
                 </Row>
               </Permissioned>
-            </React.Fragment>
+            </>
           );
           break;
         case 3:
           // representation
           viewContent = (
-            <React.Fragment>
+            <>
               <Row>
                 <Col lg={12}>
                   <TopPeopleContainer topicId={topic.topics_id} filters={filters} location={location} />
@@ -143,13 +143,13 @@ class TopicSummaryContainer extends React.Component {
                   </Col>
                 </Row>
               </Permissioned>
-            </React.Fragment>
+            </>
           );
           break;
         case 4:
           // stats
           viewContent = (
-            <React.Fragment>
+            <>
               <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
                 <Row>
                   <Col lg={12}>
@@ -167,14 +167,14 @@ class TopicSummaryContainer extends React.Component {
                   </Col>
                 </Row>
               </Permissioned>
-            </React.Fragment>
+            </>
           );
           break;
         default:
           break;
       }
       content = (
-        <React.Fragment>
+        <>
           <Grid>
             <Row>
               <Col lg={12}>
@@ -204,7 +204,7 @@ class TopicSummaryContainer extends React.Component {
               {viewContent}
             </Grid>
           </div>
-        </React.Fragment>
+        </>
       );
     } else {
       content = <LoadingSpinner />;

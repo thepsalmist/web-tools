@@ -35,7 +35,7 @@ function withLoginRequired(ComposedContainer) {
       const { details } = this.props;
       const { formatMessage } = this.props.intl;
       return (
-        <React.Fragment>
+        <>
           <ComposedContainer {...this.props} onShowLoginDialog={this.handleShowLoginDialog} />
           <Dialog
             open={this.state.open}
@@ -56,7 +56,7 @@ function withLoginRequired(ComposedContainer) {
               </AppButton>
             </DialogActions>
           </Dialog>
-        </React.Fragment>
+        </>
       );
     }
   }

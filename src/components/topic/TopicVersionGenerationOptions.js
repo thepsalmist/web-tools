@@ -8,14 +8,13 @@ const localMessages = {
   createVersion: { id: 'topics.versions.generation.newVersion', defaultMessage: 'Create New Version' },
   createVersionAndGenerate: { id: 'topics.versions.generation.generate', defaultMessage: 'Generate New Version, don\'t Spider' },
   createVersionGenerateAndStartSpider: { id: 'topics.versions.generation.generate', defaultMessage: 'Generate New Version and Spider' },
-  // startSpidering: { id: 'focalSets.manage.about', defaultMessage: 'Spider after generating new version.' },
 };
 const TopicVersionGenerationOptions = (props) => {
   const { topicInfo, handleCreateVersionAndStartSpider } = props;
   const { formatMessage } = props.intl;
   const topicId = topicInfo.topics_id;
   return (
-    <React.Fragment>
+    <>
       <h3>Placeholder: Your topic has new updates - you can do the following</h3>
       <Link to={`/topics/${topicId}/snapshot/foci/create`}>
         <AppButton
@@ -38,7 +37,7 @@ const TopicVersionGenerationOptions = (props) => {
           onClick={() => handleCreateVersionAndStartSpider(topicId, topicInfo)}
         />
       </Link>
-    </React.Fragment>
+    </>
   );
 };
 

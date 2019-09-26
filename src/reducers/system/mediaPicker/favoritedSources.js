@@ -7,7 +7,7 @@ const favoritedSources = createAsyncReducer({
   },
   action: FETCH_FAVORITE_SOURCES,
   handleSuccess: (payload, state, meta) => ({
-    args: Object.assign({}, meta.args[0], { selected: false }),
+    args: { ...meta.args[0], selected: false },
     list: payload.list.map(c => ({
       ...c,
       name: `${c.name}`,

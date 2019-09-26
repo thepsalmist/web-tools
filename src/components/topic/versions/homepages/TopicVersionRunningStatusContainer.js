@@ -15,18 +15,19 @@ const localMessages = {
   seeOtherVersionsDetails: { id: 'version.running.seeOtherVersions.details', defaultMessage: 'While you wait for this version to finish generating, you can browse any previous versions of your topic.' },
 };
 
-const TopicVersionRunningStatusContainer = ({ topic, snapshot, job, intl }) => (
-  <React.Fragment>
+const TopicVersionRunningStatusContainer = ({ subtitle, topic, snapshot, intl }) => (
+  <>
     <TopicVersionStatus
-      subtitle={localMessages.title}
+      subtitle={subtitle || localMessages.title}
       topic={topic}
       snapshot={snapshot}
-      job={job}
     >
       <h2>
         <FormattedMessage {...localMessages.explanationTitle} />
       </h2>
       <p><FormattedMessage {...localMessages.explanationText} values={{ seedStoryCount: intl.formatNumber(topic.seed_query_story_count) }} /></p>
+
+      <img alt={intl.formatMessage(localMessages.title)} src="/static/img/kittens/kittens-running.gif" />
 
       <LinkWithFilters to={`/topics/${topic.topics_id}/versions`}>
         <AppButton label={intl.formatMessage(localMessages.seeOtherVersions)} primary />
@@ -38,14 +39,14 @@ const TopicVersionRunningStatusContainer = ({ topic, snapshot, job, intl }) => (
       <p><FormattedMessage {...localMessages.cancelDetails} /></p>
       */ }
     </TopicVersionStatus>
-  </React.Fragment>
+  </>
 );
 
 TopicVersionRunningStatusContainer.propTypes = {
   // from state
   topic: PropTypes.object.isRequired,
   snapshot: PropTypes.object,
-  job: PropTypes.object,
+  subtitle: PropTypes.object,
   // from context
   intl: PropTypes.object.isRequired,
 };

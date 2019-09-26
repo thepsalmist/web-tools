@@ -1,6 +1,7 @@
 import logging
 from flask import request, jsonify, send_from_directory
 import os
+import datetime as dt
 import flask_login
 import json
 import datetime
@@ -9,12 +10,12 @@ from slugify import slugify
 from server import mc, app, analytics_db
 from server.auth import is_user_logged_in
 from server.util.request import api_error_handler
+from server.views.media_picker import concatenate_query_for_solr
 
 logger = logging.getLogger(__name__)
 
 SORT_SOCIAL = 'social'
 SORT_INLINK = 'inlink'
-ALL_MEDIA = '-1'
 DEFAULT_COLLECTION_IDS = [9139487]
 
 
@@ -38,38 +39,7 @@ def access_public_topic(topics_id):
     return False
 
 
-# helper for preview queries
-# tags_id is either a string or a list, which is handled in either case by the len() test. ALL_MEDIA is the exception
-def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
-    query = '({})'.format(solr_seed_query)
-
-    if len(media_ids) > 0 or len(tags_ids) > 0:
-        if tags_ids == [ALL_MEDIA] or tags_ids == ALL_MEDIA:
-            return query
-        query += " AND ("
-        # add in the media sources they specified
-        if len(media_ids) > 0:
-            media_ids = media_ids.split(',') if isinstance(media_ids, str) else media_ids
-            query_media_ids = " ".join([str(m) for m in media_ids])
-            query_media_ids = " media_id:({})".format(query_media_ids)
-            query += '('+query_media_ids+')'
-
-        # conjunction
-        if len(media_ids) > 0 and len(tags_ids) > 0:
-            query += " OR "
-
-        # add in the collections they specified
-        if len(tags_ids) > 0:
-            tags_ids = tags_ids.split(',') if isinstance(tags_ids, str) else tags_ids
-            query_tags_ids = " ".join([str(t) for t in tags_ids])
-            query_tags_ids = " tags_id_media:({})".format(query_tags_ids)
-            query += '('+query_tags_ids+')'
-        query += ')'
-
-    return query
-
-
-def concatenate_query_and_dates(start_date, end_date):
+def dates_as_filter_query(start_date, end_date):
     date_query = ""
     if start_date:
         testa = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
@@ -78,60 +48,86 @@ def concatenate_query_and_dates(start_date, end_date):
     return date_query
 
 
+def _default_query_dates():
+    one_month_before_now = datetime.datetime.now() - datetime.timedelta(days=30)
+    default_start_date = one_month_before_now
+    default_end_date = datetime.datetime.now()
+    return default_start_date, default_end_date
+
+
+def parse_query_dates(args):
+    default_start_date, default_end_date = _default_query_dates()
+    if 'startDate' in args:
+        start_date = dt.datetime.strptime(args['startDate'], "%Y-%m-%d")
+    elif 'start_date' in args:
+        start_date = dt.datetime.strptime(args['start_date'], "%Y-%m-%d")
+    else:
+        start_date = default_start_date
+    if 'endDate' in args:
+        end_date = dt.datetime.strptime(args['endDate'], "%Y-%m-%d")
+    elif 'end_date' in args:
+        end_date = dt.datetime.strptime(args['end_date'], "%Y-%m-%d")
+    else:
+        end_date = default_end_date
+    return start_date, end_date
+
+
+def _parse_media_ids(args):
+    media_ids = []
+    if 'sources' in args:
+        if isinstance(args['sources'], str):
+            media_ids = args['sources'].split(',') if 'sources' in args and len(args['sources']) > 0 else []
+        else:
+            media_ids = args['sources']
+    return media_ids
+
+
+def _parse_collection_ids(args):
+    if 'collections' in args:
+        if isinstance(args['collections'], str):
+            if len(args['collections']) == 0:
+                tags_ids = []
+            else:
+                tags_ids = args['collections'].split(',')  # make a list
+        else:
+            tags_ids = args['collections']
+    else:
+        tags_ids = DEFAULT_COLLECTION_IDS
+    return tags_ids
+
+
+REDDIT_SOURCE = 1254159  # a placeholder source to mark searching Reddit's biggest news-related subs
+
+
+def only_queries_reddit(args):
+    if isinstance(args, list):
+        return (len(args) == 1) and (int(args[0]) == REDDIT_SOURCE)
+    media_ids = _parse_media_ids(args)
+    collection_ids = _parse_collection_ids(args)
+    return (len(collection_ids) == 0) and (len(media_ids) == 1) and (int(media_ids[0]) == REDDIT_SOURCE)
+
+
 def parse_query_with_keywords(args):
     solr_q = ''
     solr_fq = None
-    # default dates
-    one_month_before_now = datetime.datetime.now() - datetime.timedelta(days=30)
-    default_start_date = one_month_before_now.strftime("%Y-%m-%d")
-    default_end_date = datetime.datetime.now().strftime("%Y-%m-%d")
     # should I break this out into just a demo routine where we add in the start/end date without relying that the
     # try statement will fail?
     try:    # if user arguments are present and allowed by the client endpoint, use them, otherwise use defaults
         current_query = args['q']
         if current_query == '':
             current_query = "*"
-        if 'startDate' in args:
-            start_date = args['startDate']
-        elif 'start_date' in args:
-            start_date = args['start_date']
-        else:
-            start_date = default_start_date
-        if 'endDate' in args:
-            end_date = args['endDate']
-        elif 'end_date' in args:
-            end_date = args['end_date']
-        else:
-            end_date = default_end_date
-        media_ids = []
-
-        if 'sources' in args:
-            if isinstance(args['sources'], str):
-                media_ids = args['sources'].split(',') if 'sources' in args and len(args['sources']) > 0 else []
-            else:
-                media_ids = args['sources']
-
-        if 'collections' in args:
-            if isinstance(args['collections'], str):
-                if len(args['collections']) == 0:
-                    tags_ids = []
-                else:
-                    tags_ids = args['collections'].split(',')  # make a list
-            else:
-                tags_ids = args['collections']
-        else:
-            tags_ids = DEFAULT_COLLECTION_IDS
-
+        start_date, end_date = parse_query_dates(args)
+        media_ids = _parse_media_ids(args)
+        collections = _parse_collection_ids(args)
+        searches = args['searches'] if 'searches' in args else []
         solr_q = concatenate_query_for_solr(solr_seed_query=current_query,
                                             media_ids=media_ids,
-                                            tags_ids=tags_ids)
-        solr_fq = concatenate_query_and_dates(start_date, end_date)
-
+                                            tags_ids=collections,
+                                            custom_ids=searches)
+        solr_fq = dates_as_filter_query(start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
     # otherwise, default
     except Exception as e:
-        # tags_ids = args['collections'] if 'collections' in args and len(args['collections']) > 0 else []
         logger.warning("user custom query failed, there's a problem with the arguments " + str(e))
-
     return solr_q, solr_fq
 
 
@@ -141,7 +137,7 @@ def _parse_query_for_sample_search(sample_search_id, query_id):
     solr_q = concatenate_query_for_solr(solr_seed_query=current_query_info['q'],
                                         media_ids=current_query_info['sources'],
                                         tags_ids=current_query_info['collections'])
-    solr_fq = concatenate_query_and_dates(current_query_info['startDate'], current_query_info['endDate'])
+    solr_fq = dates_as_filter_query(current_query_info['startDate'], current_query_info['endDate'])
     return solr_q, solr_fq
 
 

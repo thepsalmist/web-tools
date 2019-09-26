@@ -14,12 +14,12 @@ const localMessages = {
 class AllMediaSearchResultsContainer extends React.Component {
   updateMediaQuery(values) {
     const { updateMediaQuerySelection, selectedMediaQueryType } = this.props;
-    const updatedQueryObj = Object.assign({}, values, { type: selectedMediaQueryType });
+    const updatedQueryObj = { ...values, type: selectedMediaQueryType, tags: {} };
     updateMediaQuerySelection(updatedQueryObj);
   }
 
   render() {
-    const { selectedMediaQueryType, selectedMediaQueryKeyword, whichTagSet, collectionResults, sourceResults, onToggleSelected, fetchStatus } = this.props;
+    const { selectedMediaQueryType, selectedMediaQueryKeyword, updateMediaQuerySelection, handleMediaConcurrency, whichTagSet, collectionResults, sourceResults, onToggleSelected, fetchStatus } = this.props;
     const queryResults = {
       collections: collectionResults.list,
       sources: sourceResults.list,
@@ -35,6 +35,8 @@ class AllMediaSearchResultsContainer extends React.Component {
           initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword } }}
           onSearch={val => this.updateMediaQuery(val)}
           hintTextMsg={localMessages.hintText}
+          handleMediaConcurrency={handleMediaConcurrency}
+          updateMediaQuerySelection={updateMediaQuerySelection}
         />
       </div>
     );
@@ -46,9 +48,10 @@ AllMediaSearchResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
+  handleMediaConcurrency: PropTypes.func.isRequired,
+  updateMediaQuerySelection: PropTypes.func.isRequired,
   whichTagSet: PropTypes.array,
   // from state
-  updateMediaQuerySelection: PropTypes.func,
   selectedMediaQueryKeyword: PropTypes.string,
   selectedMediaQueryType: PropTypes.number,
   collectionResults: PropTypes.object,

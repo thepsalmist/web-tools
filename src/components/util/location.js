@@ -1,32 +1,29 @@
 import { parseId } from '../../lib/numberUtil';
 
 export function pagedAndSortedLocation(location, linkId, sort, newFilters) {
-  return Object.assign({}, location, {
+  return { ...location,
     query: {
       ...location.query,
       linkId,
       sort,
       ...newFilters,
-    },
-  });
+    } };
 }
 
 export function pagedLocation(location, linkId) {
-  return Object.assign({}, location, {
+  return { ...location,
     query: {
       ...location.query,
       linkId,
-    },
-  });
+    } };
 }
 
 export function filteredLocation(location, filters) {
-  return Object.assign({}, location, {
+  return { ...location,
     query: {
       ...location.query,
       ...filters,
-    },
-  });
+    } };
 }
 
 export function filteredLinkTo(to, filters, baseQuery) {
@@ -51,8 +48,20 @@ export function combineQueryParams(filterQ, query) {
   return query;
 }
 
+export function formatAsUrlParams(params) {
+  // https://stackoverflow.com/questions/7045065/how-do-i-turn-a-javascript-dictionary-into-an-encoded-url-string
+  return Object.entries(params).map(([k, v]) => `${encodeURIComponent(k)}=${(v === null || v === undefined) ? '' : encodeURIComponent(v)}`).join('&');
+}
+
+
 export function filtersAsUrlParams(filters) {
-  return `snapshotId=${filters.snapshotId}&timespanId=${filters.timespanId || ''}&focusId=${filters.focusId || ''}&q=${filters.q || ''}`;
+  const cleanedFilters = {
+    snapshotId: filters.snapshotId,
+    timespanId: filters.timespanId || '',
+    focusId: filters.focusId || '',
+    q: filters.q || '',
+  };
+  return formatAsUrlParams(cleanedFilters);
 }
 
 export function urlWithFilters(to, filters) {

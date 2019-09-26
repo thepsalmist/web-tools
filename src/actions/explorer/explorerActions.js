@@ -44,6 +44,9 @@ export const updateQueryCollectionLookupInfo = createAction(UPDATE_QUERY_COLLECT
 export const UPDATE_QUERY_SOURCE_LOOKUP_INFO = 'UPDATE_QUERY_SOURCE_LOOKUP_INFO';
 export const updateQuerySourceLookupInfo = createAction(UPDATE_QUERY_SOURCE_LOOKUP_INFO, query => query);
 
+export const UPDATE_QUERY_SEARCH_LOOKUP_INFO = 'UPDATE_QUERY_SEARCH_LOOKUP_INFO';
+export const updateQuerySearchLookupInfo = createAction(UPDATE_QUERY_SEARCH_LOOKUP_INFO, query => query);
+
 
 export const FETCH_TOP_ENTITIES_PEOPLE = 'FETCH_TOP_ENTITIES_PEOPLE';
 export const FETCH_TOP_ENTITIES_ORGS = 'FETCH_TOP_ENTITIES_ORGS';
@@ -113,6 +116,9 @@ export const demoQuerySourcesByIds = createAsyncAction(FETCH_QUERY_SOURCES, api.
 export const FETCH_QUERY_COLLECTIONS = 'FETCH_QUERY_COLLECTIONS';
 export const fetchQueryCollectionsByIds = createAsyncAction(FETCH_QUERY_COLLECTIONS, api.fetchQueryCollectionsByIds, props => props);
 export const demoQueryCollectionsByIds = createAsyncAction(FETCH_QUERY_COLLECTIONS, api.demoQueryCollectionsByIds, props => props);
+
+export const FETCH_QUERY_SEARCHES = 'FETCH_QUERY_SEARCHES';
+export const fetchQuerySearchesByIds = createAsyncAction(FETCH_QUERY_SEARCHES, api.fetchQuerySearchesByIds, props => props);
 
 export const SAVE_USER_SEARCH = 'SAVE_USER_SEARCH';
 export const saveUserSearch = createAsyncAction(SAVE_USER_SEARCH, api.saveUserSearch, props => props);

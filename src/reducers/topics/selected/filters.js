@@ -25,7 +25,8 @@ const info = createReducer({
   },
   [TOPIC_FILTER_BY_SNAPSHOT]: (payload, state) => {
     const newSnapshotId = parseId(payload);
-    if (state.snapshotId !== newSnapshotId) {
+    // be extra safe here to proteect against topics in weird states with pseudo snapshots that don't have real ids
+    if ((newSnapshotId > 0) && (state.snapshotId !== newSnapshotId)) {
       return { snapshotId: newSnapshotId, focusId: null, timespanId: null };
     }
     return null;

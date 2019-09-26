@@ -29,7 +29,7 @@ def media_type_story_counts(topics_id):
             'label': tag['label'],
             'tags_id': tag['tags_id'],
             'count': tagged_story_count,
-            'pct': float(tagged_story_count)/float(total_stories)
+            'pct': float(tagged_story_count)/float(total_stories) if total_stories > 0 else 0, # protect against div by zero
         })
 
     return jsonify({'story_counts': tag_story_counts})

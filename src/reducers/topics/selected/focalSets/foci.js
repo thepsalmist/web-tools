@@ -17,9 +17,9 @@ const list = createAsyncReducer({
   handleSuccess: (payload, state) => {
     const foci = [];
     payload.forEach((fs) => {
-      const focalSet = Object.assign({}, fs, { });
+      const focalSet = { ...fs };
       delete focalSet.foci;
-      foci.push(...fs.foci.map(focus => Object.assign({}, focus, { focalSet })));
+      foci.push(...fs.foci.map(focus => ({ ...focus, focalSet })));
     });
     // since the selectedId might have been from the url before we had the list, make sure to update the selected object
     let selected = null;

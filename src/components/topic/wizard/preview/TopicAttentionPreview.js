@@ -8,6 +8,7 @@ import { fetchAttentionByQuery } from '../../../../actions/topicActions';
 import withDescription from '../../../common/hocs/DescribedDataCard';
 import DataCard from '../../../common/DataCard';
 import { getBrandDarkColor } from '../../../../styles/colors';
+import { formatTopicPreviewQuery } from '../../../util/topicUtil';
 
 const localMessages = {
   title: { id: 'topic.create.preview.attention.title', defaultMessage: 'Matching Stories' },
@@ -58,18 +59,7 @@ const mapStateToProps = state => ({
 });
 
 const fetchAsyncData = (dispatch, { query }) => {
-  const infoForQuery = {
-    q: query.solr_seed_query,
-    start_date: query.start_date,
-    end_date: query.end_date,
-  };
-  infoForQuery['collections[]'] = [];
-  infoForQuery['sources[]'] = [];
-
-  if ('sourcesAndCollections' in query) { // in FieldArrays on the form
-    infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
-    infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
-  }
+  const infoForQuery = formatTopicPreviewQuery(query);
   dispatch(fetchAttentionByQuery(infoForQuery));
 };
 

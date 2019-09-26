@@ -1,6 +1,436 @@
 {
   "releases": [
     {
+      "date": "2019-9-10",
+      "version": "v3.12.4",
+      "notes": [
+        {
+          "apps": [ "explorer", "tools"],
+          "type": "Fixed",
+          "note": "Login and agreed to the consent form works again"
+        }
+      ]
+    },{
+      "date": "2019-8-27",
+      "version": "v3.12.3",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Some csv downloads were not working"
+        }
+      ]
+    },{
+      "date": "2019-8-27",
+      "version": "v3.12.2",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Collection ids needed specific formatting in back end query."
+        }
+      ]
+    },{
+      "date": "2019-8-26",
+      "version": "v3.12.1",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Custom searches included with csvs. Non-logged-in users can run queries again."
+        }
+      ]
+    },{
+      "date": "2019-8-23",
+      "version": "v3.12.0",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Media Picker now enables you to create custom search collections",
+          "details": "Now you can search and save a set of custom searches containing a media keyword and a set of metadata tags. For example, search for sources with keyword 'mainstream' published in the US or Canada and in Massachusetts.' See our blog post for more information."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "More specific boolean query help under Enter Search Terms"
+        }
+      ]
+    },
+    {
+      "date": "2019-7-5",
+      "version": "v3.11.2",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Downloading topic story lists works again, with new options",
+          "details": "Now you can specify the size of the download, the sort order, and anny optional metadata you want to add.  The basic download with nothing is faster now too."
+        }
+      ]
+    },
+    {
+      "date": "2019-6-27",
+      "version": "v3.11.1",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics" ],
+          "type": "Fixed",
+          "note": "Web app version numbers fixed"
+        }
+      ]
+    },
+    {
+      "date": "2019-6-27",
+      "version": "v3.11.0",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics" ],
+          "type": "New",
+          "note": "Highlight words matching queries (admin only)"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic created-not-queued now properly rendering"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Kitten GIFS have returned!"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic status dashboard now properly appearing"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Link to manage stories is correct"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Story stats for selected subtopic now appear in Stats tab"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic Queued date now properly formatted"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Document and increase explorer tag count size on Entity tab"
+        }
+      ]
+    },
+    {
+      "date": "2019-6-7",
+      "version": "v3.10.10.1",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics", "sources", "tools" ],
+          "type": "Fixed",
+          "note": "Consent form was broken"
+        }
+      ]
+    },
+    {
+      "date": "2019-6-6",
+      "version": "v3.10.10",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics", "sources", "tools" ],
+          "type": "Fixed",
+          "note": "Inclusive start and end dates",
+          "details": "Across queries, we include the entire day's worth of stories encompassing 12 AM on the start date through 11:59:59 PM on the end date"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "See subtopic information in version list"
+        },
+        {
+          "apps": [ "topics"],
+          "type": "Fixed",
+          "note": "Better error feedback in create topic, including duplicate topic name"
+        },
+        {
+          "apps": [ "topics"],
+          "type": "Fixed",
+          "note": "Better visual feedback that a user has started a topic version"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Copy All works correctly for query terms, media and dates"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Total Attention has a new download all story URLs button"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-24",
+      "version": "v3.10.9",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics", "sources", "tools" ],
+          "type": "Fixed",
+          "note": "Double login was occurring",
+          "details": "We updated the user cache with the new consent information"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-24",
+      "version": "v3.10.8",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "See top images for Topic stories",
+          "details": "We now parse images out of a story you look at in Topic Mapper and show you the top image, with links to all of them (using the <a href=\"https://newspaper.readthedocs.io/en/latest/\">Newspaper3k library</a>)"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Don't show login form when logged in already"
+        },
+        {
+          "apps": [ "explorer", "topics", "sources", "tools" ],
+          "type": "Fixed",
+          "note": "Show error message if your password is wrong"
+        },
+        {
+          "apps": [ "topics"],
+          "type": "Fixed",
+          "note": "More fixes to subtopic editing"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-24",
+      "version": "v3.10.7",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Generate New Version update",
+          "details": "Provide more visual feedback for user after Generate New Version button is clicked"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-23",
+      "version": "v3.10.6",
+      "notes": [
+        {
+          "apps": [ "topics", "explorer", "tools", "sources" ],
+          "type": "New",
+          "note": "Consent Policy"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Cannot rename subtopics",
+          "details": "Renaming subtopics now correctly works and should notify the need to generate another new version."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Total Attention download",
+          "details": "Now you can download all stories per query"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Attention Download All",
+          "details": "Now you can download all stories in a merged format by date"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-17",
+      "version": "v3.10.5",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Viewing historical collection attention works again"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-15",
+      "version": "v3.10.4",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic story CSV download works again"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Better version indications & admin management shortcuts"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-14",
+      "version": "v3.10.3",
+      "notes": [
+        {
+          "apps": [ "topics", "explorer", "tools", "sources" ],
+          "type": "Fixed",
+          "note": "About pages work again"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Improvements to multi-query Explorer searches",
+          "details": "When you add a new query, the tabs up and the date shows up."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Sources & collections on an Explorer search are clickable again"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-13",
+      "version": "v3.10.2",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Topics now have different Versions",
+          "details": "See our blog post for details, there are many workflow changes related to creating and changing topics."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Animated Word Space over time chart for a Topic works again"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Quickly download the top stories within your Topic"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "See basic Reddit stats for stories within your Topic",
+          "details": "Including total submissions, submissions by subreddit, and submission counts for the quick top stories download"
+        }
+      ]
+    },
+    {
+      "date": "2019-5-06",
+      "version": "v3.10.1",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Better URL support for explorer queries",
+          "details": "If you search against 'all media' now you can reload your query correctly from the URL."
+        }
+      ]
+    },
+    {
+      "date": "2019-5-03",
+      "version": "v3.10.0",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics", "sources", "tools" ],
+          "type": "New",
+          "note": "Download personal data",
+          "details": "You can now download all the data we have associated with your account directly from your profile page."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Explorer saved searches work better",
+          "details": "Fixed a few bugs related to saving and loading searches in Explorer."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Better explorer attention charts for sources with little data",
+          "details": "If you queried these before the dates might look weird if we had missing days; now we fill in the zeros."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Exploreer Attention chart downloads work again",
+          "details": "The combined download wasn't working before, now it does."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Query attention on Reddit",
+          "details": "Now in Explorer, if you pick the 'Reddit News Subs' source, you'll get attention data from Reddit (via PushShift.io)"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Explorer language tag refreshes when you run a new search"
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "New",
+          "note": "Sources manager now shows full history of story volume for collections & sources"
+        }
+      ]
+    },
+    {
+      "date": "2019-4-30",
+      "version": "v3.9.3",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Manage topics by version",
+          "details": "A major change to how you manage topics. Make new versions and track their status better."
+        }
+      ]
+    },
+    {
+      "date": "2019-4-10",
+      "version": "v3.9.2",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Show media-level tweet counts for Topics"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Prototype support for querying Reddis News Subs",
+          "details": "Select the 'Reddit News Subs' source as your only one and the Attention tab results work."
+        }
+      ]
+    },
+    {
+      "date": "2019-4-9",
+      "version": "v3.9.1",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Users can now upload a spreadsheet of sources",
+          "details": "Spreadsheet uploaded enables collection curators to upload new sources into a collection or update ones in place."
+        }
+      ]
+    },
+    {
       "date": "2019-4-1",
       "version": "v3.9.0",
       "notes": [
@@ -60,7 +490,9 @@
       "version": "v3.8.5",
       "notes": [
         {
+          "apps": [ "sources" ],
           "note": "Collection spreadsheet upload works",
+          "type": "Fixed",
           "details": "Removed older string handling, removed pooling for now"
         }
       ]

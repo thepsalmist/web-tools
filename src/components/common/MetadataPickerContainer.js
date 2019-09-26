@@ -13,12 +13,12 @@ import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY
 const MAX_SUGGESTIONS = 15;
 
 const localMessages = {
-  hintText: { id: 'metadata.pick.hint', defaultMessage: 'Pick a {label}' },
+  hintText: { id: 'metadata.pick.hint', defaultMessage: 'search for a {label}' },
 };
 
 const MetadataPickerContainer = (props) => {
   const { initialValues, label, name, tags, onChange, handleLoadOptions, renderAsyncAutocomplete, renderAutocomplete,
-    async, disabled } = props;
+    async, disabled, hideLabel } = props;
   const { formatMessage } = props.intl;
   let properties;
   // set up default
@@ -43,8 +43,8 @@ const MetadataPickerContainer = (props) => {
   }
   return (
     <div className={`metadata-picker metadata-picker-${name}`}>
-      <React.Fragment>
-        <label>{label}</label>
+      <>
+        {(hideLabel !== true) && <label htmlFor={name}>{label}</label>}
         <Field
           name={name}
           fullWidth
@@ -55,7 +55,7 @@ const MetadataPickerContainer = (props) => {
           onChange={onChange}
           {...properties}
         />
-      </React.Fragment>
+      </>
     </div>
   );
 };
@@ -68,6 +68,7 @@ MetadataPickerContainer.propTypes = {
   disabled: PropTypes.bool,
   async: PropTypes.bool,
   onChange: PropTypes.func,
+  hideLabel: PropTypes.bool,
   // from compositional chain
   intl: PropTypes.object.isRequired,
   renderAutocomplete: PropTypes.func.isRequired,

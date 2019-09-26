@@ -4,9 +4,10 @@ import { FETCH_QUERY_SAMPLE_STORIES, RESET_SAMPLE_STORIES } from '../../actions/
 // import * as fetchConstants from '../../lib/fetchConstants';
 
 const stories = createIndexedAsyncReducer({
-  initialState: ({
-    fetchStatus: '', fetchStatuses: {}, fetchUids: {}, results: {}, selectedStory: {},
-  }),
+  initialState: {
+    selectedStory: {},
+    results: [],
+  },
   action: FETCH_QUERY_SAMPLE_STORIES,
   [RESET_SAMPLE_STORIES]: () => ({
     fetchStatus: '', fetchStatuses: {}, fetchUids: {}, results: {},

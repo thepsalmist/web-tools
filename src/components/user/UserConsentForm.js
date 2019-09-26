@@ -73,7 +73,7 @@ UserConsentForm.propTypes = {
 // in-browser validation callback
 function validate(values) {
   const errors = {};
-  if (!values.has_consented || !values.has_consented.value) {
+  if (!values.has_consented) {
     errors.has_consented = localMessages.noConsent;
   }
   return errors;

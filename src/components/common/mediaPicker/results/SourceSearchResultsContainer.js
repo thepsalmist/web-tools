@@ -193,7 +193,7 @@ class SourceSearchResultsContainer extends React.Component {
           return obj.map(a => a.tag_set_name).reduce(l => l);
         });
       let conditionalTitle = '';
-      if (tagNames.length > 0) {
+      if (tagNames.length > 0 && notEmptyString(selectedMediaQueryKeyword)) {
         const stringifiedTags = stringifyTags(previouslySearchedTags, formatMessage);
         if (notEmptyString(selectedMediaQueryKeyword)) {
           conditionalTitle = <FormattedHTMLMessage {...localMessages.fullTitle} values={{ keyword: selectedMediaQueryKeyword, tags: stringifiedTags }} />;

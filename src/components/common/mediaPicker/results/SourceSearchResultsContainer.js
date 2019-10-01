@@ -50,7 +50,7 @@ class SourceSearchResultsContainer extends React.Component {
     const { formQuery, selectedMediaQueryType, selectedMediaQueryKeyword, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
     // essentially reselect all values that are currently selected, plus the newly clicked/entered ones
     // any updates to MediaQuery need to be in the right form { type, tags, allMedia || customColl || null }
-    // initialize with previously selected query args
+    //  initialize with previously selected query args
     const updatedQueryObj = {
       mediaKeyword: selectedMediaQueryKeyword,
       type: selectedMediaQueryType,

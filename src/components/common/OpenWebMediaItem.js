@@ -27,7 +27,7 @@ const OpenWebMediaItem = ({ object, onDelete, onClick, link, formatMessage }) =>
     name = (object.name || object.label || object.tag);
   } else if (isSearch) {
     typeClass = 'search';
-    objectId = 'custom'; // maybe create a unique id
+    objectId = 'custom'; //  maybe create a unique id
     metadataSearch = stringifyTags(object.tags, formatMessage);
     if (metadataSearch.length > 0 && object.mediaKeyword) {
       metadataSearch = <FormattedHTMLMessage {...localMessages.searchFull} values={{ keyword: object.mediaKeyword, values: metadataSearch }} />;

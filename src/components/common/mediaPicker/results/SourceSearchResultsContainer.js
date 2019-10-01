@@ -16,7 +16,8 @@ import { notEmptyString } from '../../../../lib/formValidators';
 
 const localMessages = {
   fullTitle: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching<br /> "{keyword}" and {tags}' },
-  title: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching<br />{tags}' },
+  mTitle: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching<br />"{keyword}"' },
+  tTitle: { id: 'system.mediaPicker.sources.title', defaultMessage: 'Sources matching<br />{tags}' },
   hintText: { id: 'system.mediaPicker.sources.hint', defaultMessage: 'Search sources by name or url' },
   noResults: { id: 'system.mediaPicker.sources.noResults', defaultMessage: 'No results. Try searching for the name or URL of a specific source to see if we cover it, like Washington Post, Hindustan Times, or guardian.co.uk.' },
   showAdvancedOptions: { id: 'system.mediaPicker.sources.showAdvancedOptions', defaultMessage: 'Show Advanced Options' },
@@ -193,13 +194,16 @@ class SourceSearchResultsContainer extends React.Component {
           return obj.map(a => a.tag_set_name).reduce(l => l);
         });
       let conditionalTitle = '';
-      if (tagNames.length > 0 && notEmptyString(selectedMediaQueryKeyword)) {
-        const stringifiedTags = stringifyTags(previouslySearchedTags, formatMessage);
-        if (notEmptyString(selectedMediaQueryKeyword)) {
-          conditionalTitle = <FormattedHTMLMessage {...localMessages.fullTitle} values={{ keyword: selectedMediaQueryKeyword, tags: stringifiedTags }} />;
-        } else {
-          conditionalTitle = <FormattedHTMLMessage {...localMessages.title} values={{ tags: stringifiedTags }} />;
-        }
+      let stringifiedTags = '';
+      if (tagNames.length > 0) {
+        stringifiedTags = stringifyTags(previouslySearchedTags, formatMessage);
+      }
+      if (notEmptyString(selectedMediaQueryKeyword) && stringifiedTags) {
+        conditionalTitle = <FormattedHTMLMessage {...localMessages.fullTitle} values={{ keyword: selectedMediaQueryKeyword, tags: stringifiedTags }} />;
+      } else if (notEmptyString(selectedMediaQueryKeyword)) {
+        conditionalTitle = <FormattedHTMLMessage {...localMessages.mTitle} values={{ keyword: selectedMediaQueryKeyword }} />;
+      } else {
+        conditionalTitle = <FormattedHTMLMessage {...localMessages.tTitle} values={{ tags: stringifiedTags }} />;
       }
       resultContent = (
         <div className="source-search-results">

@@ -6,8 +6,9 @@ import { stringifyTags } from '../../lib/explorerUtil';
 import { emptyString } from '../../lib/formValidators';
 
 const localMessages = {
-  searchWithKeyword: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection<br /> &nbsp;Name: "{keyword}" <br /> {values}' },
-  search: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection: <br /> {values} ' },
+  searchFull: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection<br /> &nbsp;Name: "{keyword}" <br /> {values}' },
+  searchWithKeyword: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection<br /> &nbsp;Name: "{keyword}"' },
+  searchWithTags: { id: 'explorer.mediaPicker.search', defaultMessage: 'Custom Collection: <br /> {values} ' },
 
 };
 
@@ -28,12 +29,12 @@ const OpenWebMediaItem = ({ object, onDelete, onClick, link, formatMessage }) =>
     typeClass = 'search';
     objectId = 'custom'; // maybe create a unique id
     metadataSearch = stringifyTags(object.tags, formatMessage);
-    if (metadataSearch.length > 0) {
-      if (emptyString(object.mediaKeyword) || object.mediaKeyword === '*') {
-        metadataSearch = <FormattedHTMLMessage {...localMessages.search} values={{ values: metadataSearch }} />;
-      } else {
-        metadataSearch = <FormattedHTMLMessage {...localMessages.searchWithKeyword} values={{ keyword: object.mediaKeyword, values: metadataSearch }} />;
-      }
+    if (metadataSearch.length > 0 && object.mediaKeyword) {
+      metadataSearch = <FormattedHTMLMessage {...localMessages.searchFull} values={{ keyword: object.mediaKeyword, values: metadataSearch }} />;
+    } else if (emptyString(object.mediaKeyword) || object.mediaKeyword === '*') {
+      metadataSearch = <FormattedHTMLMessage {...localMessages.searchWithTags} values={{ values: metadataSearch }} />;
+    } else {
+      metadataSearch = <FormattedHTMLMessage {...localMessages.searchWithKeyword} values={{ keyword: object.mediaKeyword }} />;
     }
   }
   // link the text if there is a click handler defined

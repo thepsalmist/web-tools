@@ -62,7 +62,7 @@ class QueryForm extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.selected !== this.props.selected) {
-      this.textInputRef.saveRef();
+      // this.textInputRef.saveRef(); comment out b/c this was only a focus setting anyway (that wasn't working very well)
     }
   }
 

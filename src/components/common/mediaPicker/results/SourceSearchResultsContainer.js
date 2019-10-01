@@ -187,7 +187,7 @@ class SourceSearchResultsContainer extends React.Component {
           const obj = selectedMediaQueryTags[i];
           if (sourceResults.args.tags) { // correlate searched tag ids with objects so we can display the labels
             if (!previouslySearchedTags[i]) previouslySearchedTags[i] = [];
-            previouslySearchedTags[i] = obj.map(t => ( // if in  tags, it is selected, so reflect this
+            previouslySearchedTags[i] = obj.map(t => ( // if in tags, it is selected, so reflect this
               sourceResults.args.tags.indexOf(t.tags_id) > -1 ? ({ ...t, selected: true }) : ''
             ));
           }

@@ -11,8 +11,9 @@ SOURCE_FEED_LIST_CSV_PROPS = ['media_id', 'url', 'name'] + \
 
 # hand-made whitelist of collections to show up as "featured" on source mgr homepage and in the media picker
 FEATURED_COLLECTION_LIST = [
-    58722749,  # US top 50 PEW 2017
-    57078150,  # US digital native 2016 PEW
+    186572515, # Pew 2018 sets
+    186572435,
+    186572516,
     34412118,  # India national
     34412232,  # Russia national
     38379799,  # France - State & Local

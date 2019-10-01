@@ -6,6 +6,7 @@ import ExplorerMarketingFeatureList from './home/ExplorerMarketingFeatureList';
 import messages from '../../resources/messages';
 import AppButton from '../common/AppButton';
 import { urlToExplorerQuery } from '../../lib/urlUtil';
+import { DEFAULT_COLLECTION } from '../../lib/explorerUtil';
 import PageTitle from '../common/PageTitle';
 
 const localMessages = {
@@ -40,7 +41,7 @@ const About = () => (
                 'election news',
                 'election*',
                 [],
-                [58722749],
+                [DEFAULT_COLLECTION],
                 '2019-01-01',
                 '2020-01-01',
               );

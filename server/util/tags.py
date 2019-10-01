@@ -39,7 +39,11 @@ TAG_SET_ABYZ_GEO_COLLECTIONS = 15765102  # for geographic collections we are imp
 VALID_COLLECTION_TAG_SETS_IDS = [TAG_SETS_ID_COLLECTIONS, TAG_SET_ID_PARTISAN_RETWEETS,
                                  TAG_SET_ABYZ_GEO_COLLECTIONS]
 
-US_COLLECTIONS = [58722749, 57078150, 9360520, 9360521, 9360522, 9360523, 9360524]
+US_COLLECTIONS = [58722749,  # top online 2017
+                  57078150,  # pew 2016 digital
+                  9360520, 9360521, 9360522, 9360523, 9360524,  # 2016 partisanship quintiles
+                  186572515, 186572435, 186572516  # pew 2018
+                  ]
 # Source metadata tag sets
 TAG_SETS_ID_PUBLICATION_COUNTRY = 1935  # holds the country of publication of a source
 TAG_SETS_ID_PUBLICATION_STATE = 1962  # holds the state of publication of a source (only US and India right now)
@@ -94,7 +98,7 @@ def processed_for_entities_tag_ids():
 def is_metadata_tag_set(tag_sets_id):
     """
     Find out if a tag set is one used to hold metadata on a Source.
-    :param tag_sets_id: the id of tag set 
+    :param tag_sets_id: the id of tag set
     :return: True if it is a valid metadata tag set, False if it is not
     """
     for name_to_tags_sets_id in VALID_METADATA_IDS:

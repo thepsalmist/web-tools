@@ -81,7 +81,7 @@ class QueryForm extends React.Component {
 
   focusQueryInputField = () => {
     // commented out because this is throwing a JS error on the console
-    /* 
+    /*
     if (input) {
       setTimeout(() => {
         // input.focus();

@@ -163,8 +163,7 @@ class SourceSearchResultsContainer extends React.Component {
         />
       </div>
     );
-
-    const addAllButton = (
+    const addCustomButton = (
       <Col lg={12}>
         { helpButton }
         <AppButton
@@ -208,7 +207,7 @@ class SourceSearchResultsContainer extends React.Component {
       resultContent = (
         <div className="source-search-results">
           <h2>{ conditionalTitle }</h2>
-          { addAllButton }
+          { addCustomButton }
           <SourceResultsTable
             sources={sourceResults.list}
             onToggleSelected={onToggleSelected}

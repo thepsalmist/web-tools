@@ -10,13 +10,14 @@ import NavToolbar from './common/header/NavToolbar';
 import ErrorBoundary from './common/ErrorBoundary';
 import messages from '../resources/messages';
 import { getVersion } from '../config';
-import { ErrorNotice } from './common/Notice';
+import { ErrorNotice, WarningNotice } from './common/Notice';
 import { assetUrl } from '../lib/assetUtil';
 import AppNoticesContainer from './common/header/AppNoticesContainer';
 
 const localMessages = {
   privacyPolicy: { id: 'app.privacyPolicy', defaultMessage: 'Read our privacy policy.' },
   maintenance: { id: 'app.maintenance', defaultMessage: 'Sorry, we have taken our system down right now for maintenance' },
+  construction: { id: 'app.construction', defaultMessage: 'Notice, we will be performing system level maintenance Oct 7-8 2019' },
 };
 
 class AppContainer extends React.Component {
@@ -39,6 +40,15 @@ class AppContainer extends React.Component {
     const { children, feedback, name } = this.props;
 
     let content = children;
+    const construction = (
+      <div style={{ 'textAlign': 'center' }}>
+        <WarningNotice>
+          <br />
+          <FormattedMessage {...localMessages.construction} /><br />
+          <img alt="under-constrction" src={assetUrl('/static/img/under-construction.gif')} />
+        </WarningNotice>
+      </div>
+    );
     if (document.appConfig.online === false) {
       content = (
         <div className="maintenance">
@@ -62,6 +72,7 @@ class AppContainer extends React.Component {
           <NavToolbar />
         </header>
         <ErrorBoundary>
+          {construction}
           <div id="content">
             {content}
           </div>

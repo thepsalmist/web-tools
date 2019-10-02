@@ -17,7 +17,7 @@ import AppNoticesContainer from './common/header/AppNoticesContainer';
 const localMessages = {
   privacyPolicy: { id: 'app.privacyPolicy', defaultMessage: 'Read our privacy policy.' },
   maintenance: { id: 'app.maintenance', defaultMessage: 'Sorry, we have taken our system down right now for maintenance' },
-  construction: { id: 'app.construction', defaultMessage: 'Notice, we will be performing system level maintenance Oct 7-8 2019' },
+  construction: { id: 'app.construction', defaultMessage: 'Notice, we will be performing system-level maintenance Oct 7-8 2019. Expect interruptions in service.' },
 };
 
 class AppContainer extends React.Component {
@@ -41,7 +41,7 @@ class AppContainer extends React.Component {
 
     let content = children;
     const construction = (
-      <div style={{ 'textAlign': 'center' }}>
+      <div style={{ textAlign: 'center' }}>
         <WarningNotice>
           <br />
           <FormattedMessage {...localMessages.construction} /><br />

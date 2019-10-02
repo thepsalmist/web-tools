@@ -1,14 +1,19 @@
 {
   "releases": [
     {
-      "date": "2019-10-01",
+      "date": "2019-10-02",
       "version": "v3.12.5",
       "notes": [
         {
           "apps": [ "explorer"],
           "type": "New",
           "note": "Explorer searches now default to the 2018 Pew Top Sources collection"
-        }
+        },
+        {
+          "apps": [ "explorer", "topics", "sources", "tools" ],
+          "type": "New",
+          "note": "System-level maintenance warning for week of Oct 7"
+        },
       ]
     },{
       "date": "2019-9-10",

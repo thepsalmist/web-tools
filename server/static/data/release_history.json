@@ -13,7 +13,7 @@
           "apps": [ "explorer", "topics", "sources", "tools" ],
           "type": "New",
           "note": "System-level maintenance warning for week of Oct 7"
-        },
+        }
       ]
     },{
       "date": "2019-9-10",

@@ -6,7 +6,6 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { selectMediaPickerQueryArgs, selectMedia, unselectMedia, clearSelectedMedia } from '../../../actions/systemActions';
 import { PICK_SOURCE_AND_COLLECTION, PICK_FEATURED } from '../../../lib/explorerUtil';
-import AppButton from '../AppButton';
 import OpenWebMediaItem from '../OpenWebMediaItem';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 import messages from '../../../resources/messages';
@@ -75,6 +74,7 @@ class PickedMediaContainer extends React.Component {
                 this.updateMediaType(option.value);
               }}
             >
+
               <div
                 key={idx}
                 className={`select-media-option ${(selectedMediaQueryType === option.value) ? 'selected' : ''}`}
@@ -85,7 +85,15 @@ class PickedMediaContainer extends React.Component {
           ))}
         </div>
         <div className="select-media-selected-list">
-          <AppButton onClick={this.handleClick}><FormattedMessage {...localMessages.selectedMedia} /></AppButton>
+          <a
+            href="#"
+            role="button"
+            title={formatMessage(localMessages.selectedMedia)}
+            tabIndex="0"
+            onClick={this.handleClick}
+          >
+            <h3><FormattedMessage {...localMessages.selectedMedia} />&nbsp;&#x00BB;</h3>
+          </a>
           { allMedia }
           {selectedMedia.map(obj => (
             <OpenWebMediaItem

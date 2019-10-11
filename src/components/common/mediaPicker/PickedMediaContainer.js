@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Menu from '@material-ui/core/Menu';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import MenuItem from '@material-ui/core/MenuItem';
+import IconButton from '@material-ui/core/IconButton';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { selectMediaPickerQueryArgs, selectMedia, unselectMedia, clearSelectedMedia } from '../../../actions/systemActions';
@@ -15,6 +17,7 @@ const localMessages = {
   selectedMedia: { id: 'system.mediaPicker.selected.title', defaultMessage: 'Selected Media' },
   pickFeatured: { id: 'system.mediaPicker.select.pickFeatured', defaultMessage: 'Browse Featured & Starred' },
   searchAllMedia: { id: 'system.mediaPicker.selected.allMedia', defaultMessage: 'Search All Media' },
+  clear: { id: 'system.mediaPicker.selected.clear', defaultMessage: 'Clear All' },
 };
 
 class PickedMediaContainer extends React.Component {
@@ -38,11 +41,11 @@ class PickedMediaContainer extends React.Component {
   setAllMedia = () => {
     const { updateMediaQueryArgsSelection, selectedMediaQueryArgs } = this.props;
     const { formatMessage } = this.props.intl;
-    updateMediaQueryArgsSelection({ ...selectedMediaQueryArgs, allMedia: true, label: formatMessage(messages.allMedia) });
+    updateMediaQueryArgsSelection({ ...selectedMediaQueryArgs, allMedia: true, label: formatMessage(messages.allMediaNotAdvised) });
   };
 
   render() {
-    const { selectedMediaQueryType, selectedMedia, handleUnselectMedia } = this.props;
+    const { selectedMediaQueryType, selectedMedia, handleUnselectMedia, handleClearAll } = this.props;
     const { formatMessage } = this.props.intl;
     const options = [
       { label: localMessages.pickFeatured, value: PICK_FEATURED },
@@ -59,6 +62,9 @@ class PickedMediaContainer extends React.Component {
         <MenuItem onClick={() => { this.handleClose(); this.setAllMedia(); }}>
           <FormattedMessage {...localMessages.searchAllMedia} />
         </MenuItem>
+        <MenuItem onClick={() => { this.handleClose(); handleClearAll(); }}>
+          <FormattedMessage {...localMessages.clear} />
+        </MenuItem>
       </Menu>
     );
 
@@ -74,7 +80,6 @@ class PickedMediaContainer extends React.Component {
                 this.updateMediaType(option.value);
               }}
             >
-
               <div
                 key={idx}
                 className={`select-media-option ${(selectedMediaQueryType === option.value) ? 'selected' : ''}`}
@@ -85,15 +90,8 @@ class PickedMediaContainer extends React.Component {
           ))}
         </div>
         <div className="select-media-selected-list">
-          <a
-            href="#"
-            role="button"
-            title={formatMessage(localMessages.selectedMedia)}
-            tabIndex="0"
-            onClick={this.handleClick}
-          >
-            <h3><FormattedMessage {...localMessages.selectedMedia} />&nbsp;&#x00BB;</h3>
-          </a>
+          <FormattedMessage {...localMessages.selectedMedia} />
+          <IconButton onClick={this.handleClick} aria-haspopup="true" aria-owns="logged-in-header-menu"><MoreVertIcon /></IconButton>
           { allMedia }
           {selectedMedia.map(obj => (
             <OpenWebMediaItem
@@ -118,6 +116,7 @@ PickedMediaContainer.propTypes = {
   selectedMediaQueryArgs: PropTypes.object,
   updateMediaQueryArgsSelection: PropTypes.func.isRequired,
   handleUnselectMedia: PropTypes.func.isRequired,
+  handleClearAll: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -154,6 +153,9 @@ const mapDispatchToProps = dispatch => ({
       }
       dispatch(unselectMedia(unselectedMedia));
     }
+  },
+  handleClearAll: () => {
+    dispatch(clearSelectedMedia());
   },
 });
 

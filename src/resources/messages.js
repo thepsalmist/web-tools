@@ -115,6 +115,7 @@ const messages = {
 
   mediaPickerHelpText: { id: 'mediaPicker', defaultMessage: 'Media Picker Help' },
   allMedia: { id: 'allMedia', defaultMessage: 'All Media' },
+  allMediaNotAdvised: { id: 'allMediaNA', defaultMessage: 'All Media (Not Advised)' },
 
   focus: { id: 'focus', defaultMessage: 'Subtopic' },
   focusHeader: { id: 'focus', defaultMessage: 'Subtopics' },

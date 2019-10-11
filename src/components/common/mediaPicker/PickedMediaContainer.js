@@ -67,6 +67,14 @@ class PickedMediaContainer extends React.Component {
         </MenuItem>
       </Menu>
     );
+    let warningInfo = null;
+    if (selectedMedia.length === 0) {
+      warningInfo = (
+        <div className="media-picker-no-media-warning">
+          <FormattedMessage {...messages.noMedia} />
+        </div>
+      );
+    }
 
     return (
       <div>
@@ -91,7 +99,7 @@ class PickedMediaContainer extends React.Component {
         </div>
         <div className="select-media-selected-list">
           <FormattedMessage {...localMessages.selectedMedia} />
-          <IconButton onClick={this.handleClick} aria-haspopup="true" aria-owns="logged-in-header-menu"><MoreVertIcon /></IconButton>
+          <IconButton className="select-media-options" onClick={this.handleClick} aria-haspopup="true" aria-owns="logged-in-header-menu"><MoreVertIcon /></IconButton>
           { allMedia }
           {selectedMedia.map(obj => (
             <OpenWebMediaItem
@@ -101,6 +109,7 @@ class PickedMediaContainer extends React.Component {
               formatMessage={formatMessage}
             />
           ))}
+          { warningInfo }
         </div>
       </div>
     );

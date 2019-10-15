@@ -2,7 +2,7 @@ import datetime
 import logging
 import flask_login
 from flask_login import current_user
-import mediacloud
+import mediacloud.api
 
 from server import user_db, login_manager
 
@@ -78,7 +78,7 @@ def load_user(userid):
 
 
 def is_user_logged_in():
-    if current_user == None:
+    if current_user is None:
         return False
     return current_user.is_authenticated
 
@@ -100,7 +100,7 @@ def user_is_admin():
 def create_and_cache_user(profile):
     user = User(profile)
     user.create_in_db_if_needed()
-    #User.cached[user.id] = user
+    # User.cached[user.id] = user
     logger.debug("  added to user cache %s", user.id)
     return user
 

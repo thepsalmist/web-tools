@@ -15,7 +15,7 @@ const localMessages = {
 const OpenWebMediaItem = ({ object, onDelete, onClick, link, formatMessage }) => {
   const isSearch = object.customColl === true;
   const isCollection = object.tags_id !== undefined;
-  if (!isSearch && !object.selected) return null;
+  // if (!isSearch && !object.selected) return null;
 
   let typeClass = 'source';
   let objectId = object.media_id;

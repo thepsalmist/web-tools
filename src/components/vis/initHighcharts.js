@@ -2,6 +2,7 @@ import Highcharts from 'highcharts';
 import HighchartsTreemap from 'highcharts/modules/treemap';
 import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsAnnotations from 'highcharts/modules/annotations';
+import HighchartsMap from 'highcharts/modules/map';
 
 let hasBeenInitialized = false;
 
@@ -11,6 +12,7 @@ function initHighcharts() {
     HighchartsTreemap(Highcharts);
     HighchartsExporting(Highcharts);
     HighchartsAnnotations(Highcharts);
+    HighchartsMap(Highcharts);
     hasBeenInitialized = true;
   }
 }

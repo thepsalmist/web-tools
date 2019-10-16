@@ -4,11 +4,12 @@ import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import FocusSelector from './FocusSelector';
+import messages from '../../../resources/messages';
 
 const localMessages = {
-  set: { id: 'focus.set', defaultMessage: '<b>Set</b>: {set}' },
-  type: { id: 'focus.type', defaultMessage: '<b>Set Description</b>: {type}' },
-  name: { id: 'focus.name', defaultMessage: '<b>Definition Name</b>: {name}' },
+  title: { id: 'title', defaultMessage: 'About this Subtopic' },
+  set: { id: 'focus.set', defaultMessage: '<b>Subtopic Set</b>: {set}' },
+  type: { id: 'focus.type', defaultMessage: '<b>Subtopic Set Description</b>: {type}' },
   description: { id: 'focus.description', defaultMessage: '<b>Description</b>: {description}' },
 };
 
@@ -18,13 +19,17 @@ class FocusSelectorContainer extends React.Component {
     if (setCustomContent && selectedFocus) {
       setCustomContent(
         <div>
+          <b><FormattedHTMLMessage {...messages.focus} /></b>: {selectedFocus.name}
+          <br />
+          <FormattedHTMLMessage {...localMessages.description} values={{ description: selectedFocus.description }} />
+          <br />
+          <b><FormattedHTMLMessage {...messages.query} /></b>: <code>{selectedFocus.query}</code>
+          <br />
+          <br />
           <FormattedHTMLMessage {...localMessages.set} values={{ set: selectedFocus.focalSet.name }} />
           <br />
           <FormattedHTMLMessage {...localMessages.type} values={{ type: selectedFocus.focalSet.description }} />
-          <br />
-          <FormattedHTMLMessage {...localMessages.name} values={{ name: selectedFocus.name }} />
-          <br />
-          <FormattedHTMLMessage {...localMessages.description} values={{ description: selectedFocus.description }} />
+          <br /><br />
         </div>
       );
     }
@@ -69,7 +74,7 @@ const mapStateToProps = state => ({
 export default
 connect(mapStateToProps)(
   injectIntl(
-    withHelp()(
+    withHelp(localMessages.title)(
       FocusSelectorContainer
     )
   )

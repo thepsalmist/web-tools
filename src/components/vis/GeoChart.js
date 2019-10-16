@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactHighmaps from 'react-highcharts/dist/ReactHighmaps';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import initHighcharts from './initHighcharts';
 import { getBrandDarkColor } from '../../styles/colors';
@@ -131,7 +132,7 @@ class GeoChart extends React.Component {
           },
         };
       }
-      content = React.createElement(ReactHighmaps, { config });
+      content = <HighchartsReact options={config} highcharts={Highcharts} constructorType="mapChart" />;
     }
     return content;
   }

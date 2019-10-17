@@ -388,6 +388,6 @@ export function topicSnapshotCreate(topicId) {
 }
 
 export function topicTopStoriesOnDates(topicId, params) {
-  const acceptedParams = acceptParams(params, ['dates', 'snapshotId', 'timespanId', 'focusId', 'sort', 'limit', 'q']);
+  const acceptedParams = acceptParams(params, ['startTimestamp', 'endTimestamp', 'snapshotId', 'timespanId', 'focusId', 'sort', 'limit', 'q']);
   return createApiPromise(`/api/topics/${topicId}/stories/top-on-dates`, acceptedParams);
 }

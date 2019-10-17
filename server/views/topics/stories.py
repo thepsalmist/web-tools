@@ -385,16 +385,16 @@ def story_counts_by_snapshot(topics_id):
 @flask_login.login_required
 @api_error_handler
 def top_by_date(topics_id):
-    peak_dates = request.args['dates'].split(',')   # these come in as unix timestamps (ms)
-    results = []
-    for d in peak_dates:
-        day = dates.unixToSolrDate(int(d)/1000)
-        # this will read all filters, and limit and sort from request automatically (!)
-        top_stories = apicache.topic_story_list(user_mediacloud_key(), topics_id,
-                                                fq="publish_day:[{}T00:00:00Z TO {}T00:00:00Z]".format(day, day))
-        results.append({
-            'date': int(d),
-            'day': day,
-            'stories': top_stories['stories']
-        })
-    return jsonify({"peaks": results})
+    start_timestamp = request.args['startTimestamp']
+    end_timestamp = request.args['endTimestamp']
+    start_day = dates.unixToSolrDate(int(start_timestamp)/1000)
+    end_day = dates.unixToSolrDate(int(end_timestamp) / 1000)
+    # this will read all filters, and limit and sort from request automatically (!)
+    top_stories = apicache.topic_story_list(user_mediacloud_key(), topics_id,
+                                            fq="publish_day:[{}T00:00:00Z TO {}T00:00:00Z]".format(start_day, end_day))
+    results = {
+        'startDay': start_day,
+        'endDay': end_day,
+        'stories': top_stories['stories']
+    }
+    return jsonify({"peak": results})

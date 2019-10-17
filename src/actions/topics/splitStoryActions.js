@@ -1,3 +1,4 @@
+import { createAction } from 'redux-actions';
 import { createAsyncAction } from '../../lib/reduxHelpers';
 import * as api from '../../lib/serverApi/topics';
 
@@ -11,3 +12,6 @@ export const fetchTopicFocalSetSplitStoryCounts = createAsyncAction(FETCH_TOPIC_
 
 export const FETCH_TOPIC_TOP_STORIES_ON_DATES = 'FETCH_TOPIC_TOP_STORIES_ON_DATES';
 export const fetchTopicTopStoriesOnDates = createAsyncAction(FETCH_TOPIC_TOP_STORIES_ON_DATES, api.topicTopStoriesOnDates);
+
+export const CLEAR_TOPIC_TOP_STORIES_PEAKS = 'CLEAR_TOPIC_TOP_STORIES_PEAKS';
+export const clearTopicTopStoriesPeaks = createAction(CLEAR_TOPIC_TOP_STORIES_PEAKS);

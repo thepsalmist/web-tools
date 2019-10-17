@@ -15,8 +15,18 @@ const splitStoryCount = createAsyncReducer({
     total: payload.results.total_story_count,
     counts: cleanDateCounts(payload.results.counts),
   }),
-  [resolve(FETCH_TOPIC_TOP_STORIES_ON_DATES)]: payload => ({
-    peaks: payload.peaks,
+  // add information about peaks here
+  [resolve(FETCH_TOPIC_TOP_STORIES_ON_DATES)]: (payload, state, meta) => ({
+    peaks: [...state.peaks, {
+      ...payload.peak,
+      startTimestamp: meta.args[1].startTimestamp,
+      endTimestamp: meta.args[1].endTimestamp,
+      storyCount: meta.args[1].storyCount,
+    }],
+  }),
+  // when time period changes we need to clear the peaks info, because the graph has changed
+  CLEAR_TOPIC_TOP_STORIES_PEAKS: () => ({
+    peaks: [],
   }),
 });
 

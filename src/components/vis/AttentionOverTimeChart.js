@@ -130,7 +130,7 @@ class AttentionOverTimeChart extends React.Component {
   }
 
   render() {
-    const { total, data, series, height, interval, display, onDataPointClick, lineColor,
+    const { total, data, annotations, series, height, interval, display, onDataPointClick, lineColor,
       health, filename, showLegend, introText, normalizeYAxis } = this.props;
     const { formatMessage } = this.props.intl;
     // setup up custom chart configuration
@@ -191,6 +191,7 @@ class AttentionOverTimeChart extends React.Component {
       };
       classNameForPath = 'sentences-over-time-chart-with-node-info';
     }
+    config.annotations = annotations;
     let allSeries = null;
     if (data !== undefined) {
       config.plotOptions.series.marker.enabled = (data.length < SERIES_MARKER_THRESHOLD);
@@ -265,6 +266,7 @@ class AttentionOverTimeChart extends React.Component {
 AttentionOverTimeChart.propTypes = {
   // from parent
   data: PropTypes.array,
+  annotations: PropTypes.array,
   series: PropTypes.array,
   height: PropTypes.number.isRequired,
   lineColor: PropTypes.string,

@@ -21,6 +21,8 @@ const localMessages = {
   addNewSubtopics: { id: 'topics.addNewSubtopics', defaultMessage: 'Add or Modify Subtopics' },
   addNewSubtopicsDesc: { id: 'topics.addNewSubtopics.desc', defaultMessage: 'Slice and dice your topic into subtopics to support comparative analysis. You can create subtopics with a growing list of techniques; allowing you to group stories by simple boolean queries, the country of focus, the themes included, and more.' },
   cannotUpdateTopic: { id: 'topic.modify.cannotUpdate', defaultMessage: 'Another topic of your\'s is Generating. You can only run one at a time, so you can\'t change this topic until that one finished.' },
+  addNewPlatform: { id: 'topics.addNewPlatform', defaultMessage: 'Add or Modify Platforms' },
+  addNewPlatformDesc: { id: 'topics.addNewPlatform.desc', defaultMessage: 'Add New Platforms' },
 };
 
 const TopicNewVersionContainer = props => (
@@ -51,6 +53,19 @@ const TopicNewVersionContainer = props => (
           <LinkWithFilters to={`/topics/${props.topicId}/snapshot/foci`}>
             <AppButton
               label={props.intl.formatMessage(localMessages.addNewSubtopics)}
+              primary
+              disabled={!props.allowedToRun}
+            />
+          </LinkWithFilters>
+        </Col>
+      </Row>
+      <Row>
+        <Col lg={5}>
+          <h2><FormattedMessage {...localMessages.addNewPlatform} /></h2>
+          <p><FormattedMessage {...localMessages.addNewPlatformDesc} /></p>
+          <LinkWithFilters to={`/topics/${props.topicId}/platforms/manage`}>
+            <AppButton
+              label={props.intl.formatMessage(localMessages.addNewPlatform)}
               primary
               disabled={!props.allowedToRun}
             />

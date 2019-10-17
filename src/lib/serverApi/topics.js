@@ -386,3 +386,25 @@ export function topicUpdateSeedQuery(topicId, params) {
 export function topicSnapshotCreate(topicId) {
   return createPostingApiPromise(`/api/topics/${topicId}/snapshots/create`);
 }
+
+export function topicCreateOpenWebPlatform() {
+
+}
+export function topicCreateTwitterPlatform() {
+
+}
+export function topicCreateRedditPlatform() {
+
+}
+
+export function topicEditPlatform() {
+
+}
+
+export function topicDeletePlatform() {
+
+}
+
+export function topicPlatformList(topicId) {
+  return createApiPromise(`/api/topics/${topicId}/platforms/list`);
+}

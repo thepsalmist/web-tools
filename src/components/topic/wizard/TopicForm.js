@@ -7,8 +7,6 @@ import AppButton from '../../common/AppButton';
 import withIntlForm from '../../common/hocs/IntlForm';
 import TopicCreateForm from './TopicCreateForm';
 import TopicSeedDetailsForm from './TopicSeedDetailsForm';
-import MediaPickerDialog from '../../common/mediaPicker/MediaPickerDialog';
-import OpenWebMediaFieldArray from '../../common/form/OpenWebMediaFieldArray';
 import { emptyString, invalidDate, validDate } from '../../../lib/formValidators';
 import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil';
 import { fetchTopicWithNameExists } from '../../../actions/topicActions';
@@ -39,20 +37,8 @@ class TopicForm extends React.Component {
   }
 
   render() {
-    const { initialValues, topicId, onSubmit, handleSubmit, pristine, submitting, asyncValidating, title, intro, mode, onMediaChange } = this.props;
+    const { initialValues, topicId, onSubmit, handleSubmit, pristine, submitting, asyncValidating, mode } = this.props;
     const { formatMessage } = this.props.intl;
-    const selectedMedia = initialValues.sourcesAndCollections ? initialValues.sourcesAndCollections : [];
-    let mediaPicker = null;
-    // eslint-disable-next-line jsx-a11y/label-has-associated-control
-    let mediaLabel = <label htmlFor="media"><FormattedMessage {...localMessages.SandC} /></label>;
-    mediaPicker = (
-      <MediaPickerDialog
-        initMedia={selectedMedia} // {selected.media ? selected.media : cleanedInitialValues.media}
-        onConfirmSelection={selections => onMediaChange(selections)}
-      />
-    );
-    // eslint-disable-next-line jsx-a11y/label-has-associated-control
-    mediaLabel = <label htmlFor="media"><FormattedMessage {...localMessages.selectSandC} /></label>;
     let useForm = (
       <TopicCreateForm
         defaultValue={initialValues}
@@ -88,26 +74,6 @@ class TopicForm extends React.Component {
                 <figcaption><FormattedMessage {...localMessages.downloadUserGuide} /></figcaption>
               </figure>
             </a>
-          </Col>
-        </Row>
-        <Row><Col lg={12}><hr /></Col></Row>
-        <Row>
-          <Col lg={6}>
-            <div className="media-field-wrapper">
-              {mediaLabel}
-              <OpenWebMediaFieldArray
-                formatMessage={formatMessage}
-                title={title}
-                intro={intro}
-                className="query-field"
-                form="topicForm"
-                destroyOnUnmount={false}
-                fieldName="sourcesAndCollections"
-                initialValues={initialValues.sourcesAndCollections} // to and from MediaPicker
-                allowRemoval
-              />
-              {mediaPicker}
-            </div>
           </Col>
         </Row>
         <Row><Col lg={12}><hr /></Col></Row>

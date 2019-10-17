@@ -21,6 +21,9 @@ import LinkMapContainer from '../components/topic/maps/LinkMapContainer';
 import CreateFocusContainer from '../components/topic/snapshots/foci/CreateFocusContainer';
 import EditFocusContainer from '../components/topic/snapshots/foci/EditFocusContainer';
 import ManageFocalSetsContainer from '../components/topic/snapshots/foci/ManageFocalSetsContainer';
+import ManagePlatformsContainer from '../components/topic/platforms/ManagePlatformsContainer';
+import EditPlatformContainer from '../components/topic/platforms/EditPlatformContainer';
+import CreatePlatformContainer from '../components/topic/platforms/CreatePlatformContainer';
 import { requireAuth } from './routes';
 import systemRoutes from './systemRoutes';
 import TopicsApp from '../components/topic/TopicsApp';
@@ -83,6 +86,11 @@ const topicRoutes = (
         <Route path="foci" component={ManageFocalSetsContainer} />
         <Route path="foci/create" component={CreateFocusContainer} />
         <Route path="foci/:focusDefId/edit" component={EditFocusContainer} />
+      </Route>
+      <Route path="/topics/:topicId/platforms" component={ManagePlatformsContainer}>
+        <Route path="/manage" component={ManagePlatformsContainer} />
+        <Route path="/create" component={CreatePlatformContainer} />
+        <Route path="/:platformId/edit" component={EditPlatformContainer} />
       </Route>
 
     </Route>

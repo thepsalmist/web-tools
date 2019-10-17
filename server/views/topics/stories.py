@@ -1,5 +1,4 @@
 import logging
-from multiprocessing import Pool
 import flask_login
 from flask import jsonify, request, Response
 import mediacloud
@@ -10,11 +9,11 @@ import server.util.tags as tag_util
 import server.views.topics.apicache as apicache
 import server.views.apicache as base_apicache
 import server.util.pushshift as pushshift
+import server.util.dates as dates
 from server import app, cliff, TOOL_API_KEY
-from server.auth import is_user_logged_in
-from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
+from server.auth import is_user_logged_in, user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
 from server.cache import cache
-from server.util.request import api_error_handler
+from server.util.request import api_error_handler, filters_from_args
 from server.views.topics import access_public_topic
 from server.util.tags import TAG_SPIDERED_STORY
 
@@ -116,12 +115,12 @@ def stream_story_list_csv(user_key, topic, **kwargs):
     include_fb_date = kwargs['fb_data'] if 'fb_data' in kwargs else False
     all_stories = []
     params = kwargs.copy()
-
+    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     merged_args = {
-        'snapshots_id': request.args['snapshotId'],
-        'timespans_id': request.args['timespanId'],
-        'foci_id': request.args['focusId'] if 'focusId' in request.args else None,
-        'q': request.args['q'] if 'q' in request.args else None,
+        'snapshots_id': snapshots_id,
+        'timespans_id': timespans_id,
+        'foci_id': foci_id,
+        'q': q,
         'sort': request.args['sort'] if 'sort' in request.args else None,
     }
     params.update(merged_args)
@@ -195,10 +194,11 @@ def get_topic_story_links_csv(topics_id):
 
 def stream_story_link_list_csv(user_key, filename, topics_id, **kwargs):
     params = kwargs.copy()
+    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     merged_args = {
-        'snapshots_id': request.args['snapshotId'],
-        'timespans_id': request.args['timespanId'],
-        'foci_id': request.args['focusId'] if 'foci_id' in request.args else None,
+        'snapshots_id': snapshots_id,
+        'timespans_id': timespans_id,
+        'foci_id': foci_id
     }
     params.update(merged_args)
     if 'q' in params:
@@ -379,3 +379,22 @@ def story_counts_by_snapshot(topics_id):
         seeded = total - spidered
         counts[s['snapshots_id']] = {'total': total, 'spidered': spidered, 'seeded': seeded}
     return jsonify(counts)
+
+
+@app.route('/api/topics/<topics_id>/stories/top-on-dates', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def top_by_date(topics_id):
+    peak_dates = request.args['dates'].split(',')   # these come in as unix timestamps (ms)
+    results = []
+    for d in peak_dates:
+        day = dates.unixToSolrDate(int(d)/1000)
+        # this will read all filters, and limit and sort from request automatically (!)
+        top_stories = apicache.topic_story_list(user_mediacloud_key(), topics_id,
+                                                fq="publish_day:[{}T00:00:00Z TO {}T00:00:00Z]".format(day, day))
+        results.append({
+            'date': int(d),
+            'day': day,
+            'stories': top_stories['stories']
+        })
+    return jsonify({"peaks": results})

@@ -8,3 +8,6 @@ export const fetchTopicSplitStoryCounts = createAsyncAction(FETCH_TOPIC_SPLIT_ST
 // pass in topicId, focalSetId, filters
 export const FETCH_TOPIC_FOCAL_SET_SPLIT_STORY_COUNTS = 'FETCH_TOPIC_FOCAL_SET_SPLIT_STORY_COUNTS';
 export const fetchTopicFocalSetSplitStoryCounts = createAsyncAction(FETCH_TOPIC_FOCAL_SET_SPLIT_STORY_COUNTS, api.topicFocalSetSplitStoryCounts);
+
+export const FETCH_TOPIC_TOP_STORIES_ON_DATES = 'FETCH_TOPIC_TOP_STORIES_ON_DATES';
+export const fetchTopicTopStoriesOnDates = createAsyncAction(FETCH_TOPIC_TOP_STORIES_ON_DATES, api.topicTopStoriesOnDates);

@@ -55,25 +55,25 @@ class ManagePlatformsContainer extends React.Component {
   }
 
   render() {
-    const { topicId, platforms } = this.props;
+    const { topicId } = this.props;
     const { formatMessage } = this.props.intl;
     return (
-      <>
+      <div>
         <NeedsNewVersionWarning />
         <div className="manage-focal-sets">
           <Grid>
             <Row>
               <Col lg={10} xs={12}>
                 <p>
-                  <FormattedMessage {...localMessages.platformManageAbout} />
+                  <FormattedMessage {...messages.managePlatforms} />
                 </p>
               </Col>
             </Row>
             <Row>
               <Col lg={6}>
-                <div id="create-foci-button">
-                  <LinkWithFilters to={`/topics/${topicId}/snapshot/foci/create`}>
-                    <AppButton primary label={messages.addFocus} />
+                <div id="create-platform-button">
+                  <LinkWithFilters to={`/topics/${topicId}/platform/create`}>
+                    <AppButton primary label={messages.addPlatform} />
                   </LinkWithFilters>
                 </div>
               </Col>
@@ -89,7 +89,7 @@ class ManagePlatformsContainer extends React.Component {
             <FormattedHTMLMessage {...localMessages.removePlatform} />
           </ConfirmationDialog>
         </div>
-      </>
+      </div>
     );
   }
 }

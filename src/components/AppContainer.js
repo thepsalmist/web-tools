@@ -40,7 +40,7 @@ class AppContainer extends React.Component {
     const { children, feedback, name } = this.props;
 
     let content = children;
-    const construction = (
+    /* const construction = (
       <div style={{ textAlign: 'center' }}>
         <WarningNotice>
           <br />
@@ -49,6 +49,7 @@ class AppContainer extends React.Component {
         </WarningNotice>
       </div>
     );
+    */
     if (document.appConfig.online === false) {
       content = (
         <div className="maintenance">
@@ -72,7 +73,6 @@ class AppContainer extends React.Component {
           <NavToolbar />
         </header>
         <ErrorBoundary>
-          {construction}
           <div id="content">
             {content}
           </div>

@@ -10,7 +10,7 @@ import NavToolbar from './common/header/NavToolbar';
 import ErrorBoundary from './common/ErrorBoundary';
 import messages from '../resources/messages';
 import { getVersion } from '../config';
-import { ErrorNotice, WarningNotice } from './common/Notice';
+import { ErrorNotice } from './common/Notice';
 import { assetUrl } from '../lib/assetUtil';
 import AppNoticesContainer from './common/header/AppNoticesContainer';
 

@@ -49,9 +49,9 @@ CreatePlatformContainer.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
-  topCountries: state.topics.selected.focalSets.create.topCountriesStoryCounts.story_counts,
-  topThemes: state.topics.selected.focalSets.create.nytThemeStoryCounts.story_counts,
-  mediaType: state.topics.selected.focalSets.create.mediaTypeStoryCounts.story_counts,
+  // twitter: state.topics.selected.focalSets.create.topCountriesStoryCounts.story_counts,
+  // reddit: state.topics.selected.focalSets.create.nytThemeStoryCounts.story_counts,
+  openWeb: state.topics.selected.platforms.create.openWebStoryCounts.counts,
 });
 
 const mapDispatchToProps = (/* dispatch, ownProps */) => ({

@@ -87,10 +87,9 @@ const topicRoutes = (
         <Route path="foci/create" component={CreateFocusContainer} />
         <Route path="foci/:focusDefId/edit" component={EditFocusContainer} />
       </Route>
-      <Route path="/topics/:topicId/platforms" component={ManagePlatformsContainer}>
-        <Route path="/manage" component={ManagePlatformsContainer} />
-        <Route path="/create" component={CreatePlatformContainer} />
-        <Route path="/:platformId/edit" component={EditPlatformContainer} />
+      <Route path="/topics/:topicId/platforms" component={ManagePlatformsContainer} onEnter={requireAuth}>
+        <Route path="/create" component={CreatePlatformContainer} onEnter={requireAuth} />
+        <Route path="/:platformId/edit" component={EditPlatformContainer} onEnter={requireAuth} />
       </Route>
 
     </Route>

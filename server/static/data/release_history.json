@@ -2,6 +2,16 @@
   "releases": [
     {
       "date": "2019-10-02",
+      "version": "v3.12.6",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics", "sources", "tools" ],
+          "type": "New",
+          "note": "Remove system-level maintenance warning for week of Oct 7"
+        }
+      ]
+    },{
+      "date": "2019-10-02",
       "version": "v3.12.5",
       "notes": [
         {

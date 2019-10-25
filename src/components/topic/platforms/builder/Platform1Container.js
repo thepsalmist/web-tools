@@ -7,7 +7,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../../common/hocs/IntlForm';
 import PlatformSelector from './PlatformSelector';
 import AppButton from '../../../common/AppButton';
-import { goToCreateFocusStep } from '../../../../actions/topicActions';
+import { goToCreatePlatformStep } from '../../../../actions/topicActions';
 import messages from '../../../../resources/messages';
 
 const localMessages = {
@@ -50,7 +50,7 @@ const Platform1Container = (props) => {
   );
 };
 
-FocusForm1TechniqueContainer.propTypes = {
+Platform1Container.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   location: PropTypes.object.isRequired,
@@ -75,7 +75,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   goToStep: (step) => {
-    dispatch(goToCreateFocusStep(step));
+    dispatch(goToCreatePlatformStep(step));
   },
 });
 
@@ -96,7 +96,7 @@ function validate() {
 }
 
 const reduxFormConfig = {
-  form: 'snapshotFocus', // make sure this matches the sub-components and other wizard steps
+  form: 'platform', // make sure this matches the sub-components and other wizard steps
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
   enableReinitialize: true,

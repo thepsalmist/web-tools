@@ -387,9 +387,14 @@ export function topicSnapshotCreate(topicId) {
   return createPostingApiPromise(`/api/topics/${topicId}/snapshots/create`);
 }
 
-export function topicCreateOpenWebPlatform() {
+export function topicCreateOpenWebCoverage() {
 
 }
+
+export function topicCreateOpenWebPlatform(topicId) {
+  return createPostingApiPromise(`/api/topics/${topicId}/platforms/open-web/create`);
+}
+
 export function topicCreateTwitterPlatform() {
 
 }
@@ -403,6 +408,14 @@ export function topicEditPlatform() {
 
 export function topicDeletePlatform() {
 
+}
+
+export function topicCreatePlatformOpenWebStoryCounts(topicId) {
+  return createApiPromise(`/api/topics/${topicId}/platforms/open-web/story-counts`);
+}
+
+export function topicCreatePlatformOpenWebStoryCoverage(topicId) {
+  return createApiPromise(`/api/topics/${topicId}/platforms/open-web/coverage`);
 }
 
 export function topicPlatformList(topicId) {

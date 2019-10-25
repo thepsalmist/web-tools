@@ -7,7 +7,7 @@ import EditOpenWebContainer from './openWeb/EditOpenWebContainer';
 // import EditRedditContainer from './retweetPartisanship/EditRetweetPartisanshipContainer';
 // import EditTwitterContainer from './topCountries/EditTopCountriesContainer';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
-import { PLATFORM_OPEN_WEB /*, PLATFORM_REDDIT, PLATFORM_TWITTER */ } from '../../../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB /* , PLATFORM_REDDIT, PLATFORM_TWITTER */ } from '../../../../lib/platformTypes';
 import messages from '../../../../resources/messages';
 
 const formSelector = formValueSelector('platform');
@@ -15,7 +15,7 @@ const formSelector = formValueSelector('platform');
 const Platform2ConfigureContainer = (props) => {
   const { topicId, initialValues, handleNextStep, currentPlatform, handlePreviousStep, location } = props;
   let content = null;
-  switch (currentFocalTechnique) {
+  switch (currentPlatform) {
     case PLATFORM_OPEN_WEB:
       content = (
         <EditOpenWebContainer
@@ -59,7 +59,7 @@ const Platform2ConfigureContainer = (props) => {
   );
 };
 
-FocusForm2ConfigureContainer.propTypes = {
+Platform2ConfigureContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   initialValues: PropTypes.object,

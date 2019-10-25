@@ -24,6 +24,7 @@ import ManageFocalSetsContainer from '../components/topic/snapshots/foci/ManageF
 import ManagePlatformsContainer from '../components/topic/platforms/ManagePlatformsContainer';
 import EditPlatformContainer from '../components/topic/platforms/EditPlatformContainer';
 import CreatePlatformContainer from '../components/topic/platforms/CreatePlatformContainer';
+import PlatformBuilder from '../components/topic/platforms/PlatformBuilder';
 import { requireAuth } from './routes';
 import systemRoutes from './systemRoutes';
 import TopicsApp from '../components/topic/TopicsApp';
@@ -87,9 +88,10 @@ const topicRoutes = (
         <Route path="foci/create" component={CreateFocusContainer} />
         <Route path="foci/:focusDefId/edit" component={EditFocusContainer} />
       </Route>
-      <Route path="/topics/:topicId/platforms" component={ManagePlatformsContainer} onEnter={requireAuth}>
-        <Route path="/create" component={CreatePlatformContainer} onEnter={requireAuth} />
-        <Route path="/:platformId/edit" component={EditPlatformContainer} onEnter={requireAuth} />
+      <Route path="/topics/:topicId/platforms" component={PlatformBuilder} onEnter={requireAuth}>
+        <Route path="manage" component={ManagePlatformsContainer} onEnter={requireAuth} />
+        <Route path="create" component={CreatePlatformContainer} onEnter={requireAuth} />
+        <Route path=":platformId/edit" component={EditPlatformContainer} onEnter={requireAuth} />
       </Route>
 
     </Route>

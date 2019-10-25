@@ -6,7 +6,7 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import BackLinkingControlBar from '../../BackLinkingControlBar';
-import Platform1TechniqueContainer from './Platform1TechniqueContainer';
+import Platform1Container from './Platform1Container';
 import Platform2ConfigureContainer from './Platform2ConfigureContainer';
 import Platform3DescribeContainer from './Platform3DescribeContainer';
 import Platform4ConfirmContainer from './Platform4ConfirmContainer';
@@ -26,6 +26,11 @@ class PlatformWizard extends React.Component {
     goToStep(startStep || 0);
   }
 
+  componentDidMount() {
+    const { startStep, goToStep } = this.props;
+    goToStep(startStep || 0);
+  }
+
   shouldComponentUpdate = (nextProps) => {
     const { currentStep } = this.props;
     return currentStep !== nextProps.currentStep;
@@ -39,7 +44,7 @@ class PlatformWizard extends React.Component {
   render() {
     const { topicId, currentStep, location, initialValues, onDone } = this.props;
     const steps = [
-      Platform1TechniqueContainer,
+      Platform1Container,
       Platform2ConfigureContainer,
       Platform3DescribeContainer,
       Platform4ConfirmContainer,
@@ -47,7 +52,7 @@ class PlatformWizard extends React.Component {
     const CurrentStepComponent = steps[currentStep];
     return (
       <div className="focus-builder-wizard">
-        <BackLinkingControlBar message={localMessages.backToFociManager} linkTo={`/topics/${topicId}/snapshot/foci`}>
+        <BackLinkingControlBar message={localMessages.backToPlatformManager} linkTo={`/topics/${topicId}/snapshot/foci`}>
           <Stepper activeStep={currentStep}>
             <Step>
               <StepLabel><FormattedMessage {...localMessages.step0Name} /></StepLabel>
@@ -63,7 +68,7 @@ class PlatformWizard extends React.Component {
             </Step>
           </Stepper>
         </BackLinkingControlBar>
-        <CurrentStepComponent topicId={topicId} location={location} initialValues={initialValues} onDone={onDone} />
+        <CurrentStepComponent topicId={topicId} location={location} initialValues={initialValues} onDone={onDone} currentStep={currentStep} />
       </div>
     );
   }
@@ -84,7 +89,7 @@ PlatformWizard.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  currentStep: state.topics.selected.platforms.create.workflow.currentStep,
+  currentStep: state.topics.selected.platforms.create ? state.topics.selected.platforms.create.workflow.currentStep : 0,
 });
 
 const mapDispatchToProps = dispatch => ({

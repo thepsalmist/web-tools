@@ -10,7 +10,7 @@ import messages from '../../../../../resources/messages';
 import OpenWebPreview from './OpenWebPreview';
 import { notEmptyString } from '../../../../../lib/formValidators';
 
-const formSelector = formValueSelector('snapshotFocus');
+const formSelector = formValueSelector('platform');
 
 const localMessages = {
   title: { id: 'platform.create.edit.title', defaultMessage: 'Step 2: Configure Your {technique} platform' },
@@ -25,12 +25,12 @@ class EditOpenWebContainer extends React.Component {
     // We can't read out of the form state becase we need to know when they click "search",
     // but that is updated live as they type.
     super(props);
-    this.state = { keywords: null };
+    this.state = { query: null };
   }
 
-  updateKeywords = () => {
+  updateQuery = () => {
     const { currentQuery } = this.props;
-    this.setState({ keywords: currentQuery });
+    this.setState({ query: currentQuery });
   }
 
   handleKeyDown = (event) => {
@@ -45,15 +45,15 @@ class EditOpenWebContainer extends React.Component {
   }
 
   render() {
-    const { topicId, renderTextField, currentPlatform, currentKeywords, handleSubmit, onPreviousStep, finishStep, location } = this.props;
+    const { topicId, renderTextField, currentPlatform, handleSubmit, onPreviousStep, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
-    if ((this.state.keywords !== null) && (this.state.keywords !== undefined) && (this.state.keywords.length > 0)) {
+    if ((this.state.query !== null) && (this.state.query !== undefined) && (this.state.query.length > 0)) {
       nextButtonDisabled = false;
       previewContent = (
         <div>
-          <OpenWebPreview topicId={topicId} keywords={this.state.keywords} location={location} />
+          <OpenWebPreview topicId={topicId} query={this.state.query} location={location} />
         </div>
       );
     }
@@ -71,7 +71,7 @@ class EditOpenWebContainer extends React.Component {
           <Row>
             <Col lg={8} xs={12}>
               <Field
-                name="keywords"
+                name="query"
                 component={renderTextField}
                 label={messages.searchByKeywords}
                 fullWidth
@@ -83,7 +83,7 @@ class EditOpenWebContainer extends React.Component {
                 id="open-web-preview-button"
                 label={formatMessage(messages.search)}
                 style={{ marginTop: 33 }}
-                onClick={this.updateKeywords}
+                onClick={this.updateQuery}
               />
             </Col>
           </Row>
@@ -102,7 +102,7 @@ class EditOpenWebContainer extends React.Component {
   }
 }
 
-EditKeywordSearchContainer.propTypes = {
+EditOpenWebContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   initialValues: PropTypes.object,
@@ -123,14 +123,14 @@ EditKeywordSearchContainer.propTypes = {
 
 const mapStateToProps = state => ({
   formData: state.form.snapshotFocus,
-  currentKeywords: formSelector(state, 'keywords'),
-  currentFocalTechnique: formSelector(state, 'focalTechnique'),
+  currentQuery: formSelector(state, 'query'),
+  currentPlatform: formSelector(state, 'platform'),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   finishStep: (values) => {
     const customProps = {
-      keywords: values.keywords,
+      query: values.query,
     };
     ownProps.onNextStep(customProps);
   },
@@ -138,8 +138,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 function validate(values) {
   const errors = {};
-  if (!notEmptyString(values.keywords)) {
-    errors.keywords = true; // localMessages.errorNoKeywords;
+  if (!notEmptyString(values.query)) {
+    errors.query = true; // localMessages.errorNoKeywords;
   }
   return errors;
 }

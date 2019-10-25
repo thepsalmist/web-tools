@@ -1,5 +1,5 @@
-import { FETCH_CREATE_OPEN_WEB_COVERAGE } from '../../../../../../actions/topicActions';
-import { createAsyncReducer } from '../../../../../../lib/reduxHelpers';
+import { FETCH_CREATE_OPEN_WEB_COVERAGE } from '../../../../../actions/topicActions';
+import { createAsyncReducer } from '../../../../../lib/reduxHelpers';
 
 const matchingStories = createAsyncReducer({
   initialState: {

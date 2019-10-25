@@ -6,28 +6,23 @@ import { reduxForm } from 'redux-form';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../../common/hocs/IntlForm';
 import OpenWebSummary from './openWeb/OpenWebSummary';
-// import RetweetPartisanshipSummary from './retweetPartisanship/RetweetPartisanshipSummary';
-// import TopCountriesSummary from './topCountries/TopCountriesSummary';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
 import { PLATFORM_OPEN_WEB /* PLATFORM_REDDIT, PLATFORM_TWITTER */ } from '../../../../lib/platformTypes';
 import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
 
 const localMessages = {
-  title: { id: 'focus.create.confirm.title', defaultMessage: 'Step 4: Confirm Your Subtopic Changes' },
-  focalTechnique: { id: 'focus.create.confirm.focalTechnique', defaultMessage: '<b>Technique</b>: {name}' },
-  addAnotherFocus: { id: 'focus.create.generateSnapshot', defaultMessage: 'Save and Add More' },
-  focalSetSaved: { id: 'focalSet.saved', defaultMessage: 'We saved your new Set.' },
-  focalSetNotSaved: { id: 'focus.notSaved', defaultMessage: 'Sorry, we couldn\'t save your new Set' },
-  focusSaved: { id: 'focus.create.saved', defaultMessage: 'We saved your new Subtopic.' },
-  focusNotSaved: { id: 'focus.create.notSaved', defaultMessage: 'That didn\'t work! Make sure you have a unique Subtopic name?' },
+  title: { id: 'platform.create.confirm.title', defaultMessage: 'Step 4: Confirm Your Platform Changes' },
+  addAnotherPlatform: { id: 'platform.create.new', defaultMessage: 'Save and Add More' },
+  platformSaved: { id: 'platform.create.saved', defaultMessage: 'We saved your new platform.' },
+  platformNotSaved: { id: 'platform.create.notSaved', defaultMessage: 'That didn\'t work! Make sure you have a unique platform name?' },
 };
 
 const Platform4ConfirmContainer = (props) => {
   const { topicId, formValues, initialValues, handlePreviousStep, handleSubmit, finishStep, submitting } = props;
   const { formatMessage } = props.intl;
   let content = null;
-  switch (formValues.focalTechnique) {
+  switch (formValues.platform) {
     case PLATFORM_OPEN_WEB:
       content = (
         <OpenWebSummary topicId={topicId} formValues={formValues} initialValues={initialValues} />
@@ -48,7 +43,7 @@ const Platform4ConfirmContainer = (props) => {
       content = <FormattedMessage {...messages.unimplemented} />;
   }
   return (
-    <form className="focus-confirm" name="snapshotFocusConfirm" onSubmit={handleSubmit(finishStep.bind(this))}>
+    <form className="platform-confirm" name="snapshotFocusConfirm" onSubmit={handleSubmit(finishStep.bind(this))}>
       <Grid>
         <Row>
           <Col lg={12}>

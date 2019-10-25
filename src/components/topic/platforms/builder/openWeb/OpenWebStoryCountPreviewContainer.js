@@ -66,7 +66,7 @@ OpenWebStoryCountPreviewContainer.propTypes = {
   helpButton: PropTypes.node.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
-  keywords: PropTypes.string.isRequired,
+  query: PropTypes.string.isRequired,
   // from state
   counts: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
@@ -83,7 +83,7 @@ export default
 injectIntl(
   connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, localMessages.helpText)(
-      withAsyncData(fetchAsyncData, ['keywords'])(
+      withAsyncData(fetchAsyncData, ['query'])(
         OpenWebStoryCountPreviewContainer
       )
     )

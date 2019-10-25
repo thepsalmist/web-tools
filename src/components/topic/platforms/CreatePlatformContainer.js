@@ -2,15 +2,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-// import { push } from 'react-router-redux';
-// import { reset } from 'redux-form';
-// import { submitFocusUpdateOrCreate, setTopicNeedsNewSnapshot, createRetweetFocalSet, createTopCountriesFocalSet, createNytThemeFocalSet, createMediaTypeFocalSet } from '../../../../actions/topicActions';
-// import { LEVEL_ERROR } from '../../../common/Notice';
-// import { updateFeedback, addNotice } from '../../../../actions/appActions';
+import { push } from 'react-router-redux';
+import PlatformWizard from './builder/PlatformWizard';
+import { fetchCreateOpenWebPlatform, setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
+import { LEVEL_ERROR } from '../../common/Notice';
+import { updateFeedback, addNotice } from '../../../actions/appActions';
+import { PLATFORM_OPEN_WEB /* , PLATFORM_REDDIT, PLATFORM_TWITTER */ } from '../../../lib/platformTypes';
 
 const DEFAULT_SELECTED_NUMBER = 5;
 
-/*
+
 const localMessages = {
   platformNotSaved: { id: 'platform.create.notSaved', defaultMessage: 'That didn\'t work for some reason!' },
   duplicateName: { id: 'platform.create.invalid', defaultMessage: 'Duplicate name. Choose a unique platform name.' },
@@ -18,16 +19,17 @@ const localMessages = {
   twitterSaved: { id: 'platform.create.twitterSaved', defaultMessage: 'We created a new Twitter platform' },
   redditSaved: { id: 'platform.create.reddit.saved', defaultMessage: 'We created a new Reddit platform' },
 };
-*/
+
 
 const CreatePlatformContainer = (props) => {
   const { topicId, location, handleDone } = props;
   const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER };
 
   return (
-    <div // FocusBuilderWizard
+    <PlatformWizard
       topicId={topicId}
-      // startStep={platformTechnique ? 1 : 0}
+      startStep={0}
+      currentStep={0}
       initialValues={initialValues}
       location={location}
       onDone={handleDone}
@@ -51,60 +53,33 @@ const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   // twitter: state.topics.selected.focalSets.create.topCountriesStoryCounts.story_counts,
   // reddit: state.topics.selected.focalSets.create.nytThemeStoryCounts.story_counts,
-  openWeb: state.topics.selected.platforms.create.openWebStoryCounts.counts,
+  // openWeb: state.topics.selected.platforms.create.openWebStoryCounts.counts,
 });
 
-const mapDispatchToProps = (/* dispatch, ownProps */) => ({
-  submitDone: (/* topicId, formValues, queryData */) => {
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  submitDone: (topicId, formValues) => {
     // let saveData = null;
     // const nameAlreadyExists = queryData.focalSetDefinitions.filter(fc => fc.name === formValues.focalSetName);
     /* if (nameAlreadyExists.length > 0) {
       return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.duplicateName) }));
     }
-    switch (formValues.focalTechnique) {
-      case FOCAL_TECHNIQUE_BOOLEAN_QUERY:
-        return dispatch(submitFocusUpdateOrCreate(topicId, formValues))
+    */
+    switch (formValues.platform) {
+      case PLATFORM_OPEN_WEB:
+        return dispatch(fetchCreateOpenWebPlatform(topicId, formValues))
           .then((results) => {
             if (results.length === 1) {
               const focusSavedMessage = ownProps.intl.formatMessage(localMessages.booleanFocusSaved);
               dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
               dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage })); // user feedback
-              dispatch(push(`/topics/${topicId}/snapshot/foci`)); // go back to focus management page
-              dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
+              dispatch(push(`/topics/${topicId}/platforms/manage`));
+              // dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
             } else {
-              const focusNoteSavedMessage = ownProps.intl.formatMessage(localMessages.focusNotSaved);
-              dispatch(updateFeedback({ open: true, message: focusNoteSavedMessage })); // user feedback
+              const platformNotSavedMessage = ownProps.intl.formatMessage(localMessages.platformNotSavedMessage);
+              dispatch(updateFeedback({ open: true, message: platformNotSavedMessage })); // user feedback
             }
           });
-      case FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP:
-        return dispatch(createRetweetFocalSet(topicId, formValues))
-          .then(() => {
-            const focusSavedMessage = ownProps.intl.formatMessage(localMessages.retweetFocusSaved);
-            dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
-            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage })); // user feedback
-            dispatch(push(`/topics/${topicId}/snapshot/foci`)); // go back to focus management page
-            dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
-          });
-      case FOCAL_TECHNIQUE_TOP_COUNTRIES:
-        saveData = { ...formValues, data: queryData.topCountries.map(c => ({ tags_id: c.tags_id, label: c.label })) };
-        return dispatch(createTopCountriesFocalSet(topicId, saveData))
-          .then(() => {
-            const focusSavedMessage = ownProps.intl.formatMessage(localMessages.topCountriesFocusSaved);
-            dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
-            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage })); // user feedback
-            dispatch(push(`/topics/${topicId}/snapshot/foci`)); // go back to focus management page
-            dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
-          });
-      case FOCAL_TECHNIQUE_NYT_THEME:
-        saveData = { ...formValues, data: queryData.topThemes.map(c => ({ tags_id: c.tags_id, label: c.label })) };
-        return dispatch(createNytThemeFocalSet(topicId, saveData))
-          .then(() => {
-            const focusSavedMessage = ownProps.intl.formatMessage(localMessages.nytFocusSaved);
-            dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
-            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage })); // user feedback
-            dispatch(push(`/topics/${topicId}/snapshot/foci`)); // go back to focus management page
-            dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
-          });
+      /*
       case FOCAL_TECHNIQUE_MEDIA_TYPE:
         saveData = { ...formValues };
         return dispatch(createMediaTypeFocalSet(topicId, saveData))
@@ -115,10 +90,10 @@ const mapDispatchToProps = (/* dispatch, ownProps */) => ({
             dispatch(push(`/topics/${topicId}/snapshot/foci`)); // go back to focus management page
             dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
           });
+      */
       default:
         return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.invalid) }));
     }
-    */
   },
 });
 

@@ -19,7 +19,7 @@ const localMessages = {
     defaultMessage: 'Reddit description' },
   twitterName: { id: 'platform.twitter.name', defaultMessage: 'Twitter' },
   twitterDescription: { id: 'platform.twitter.description', defaultMessage: 'Twitter description.' },
-    automagicName: { id: 'platform.automagic.name', defaultMessage: 'Auto-Magic' },
+  automagicName: { id: 'platform.automagic.name', defaultMessage: 'Auto-Magic' },
   automagicDescription: { id: 'platform.automagic.description',
     defaultMessage: 'When you aren\'t sure what is going on, we can use an algorithm to detect communities of sub-conversations within the Topic for you, creating a Subtopic for each.' },
 };
@@ -27,7 +27,7 @@ const localMessages = {
 const formSelector = formValueSelector('platform');
 
 class PlatformSelector extends React.Component {
-  handleSelection = (focalTechniqueName) => {
+  handleSelection = (platformName) => {
     const { change } = this.props;
     change('platform', platformName);
   }
@@ -39,10 +39,9 @@ class PlatformSelector extends React.Component {
         <Row>
           <Col lg={3}>
             <PlatformDescription
-              onClick={() => this.handleSelection(PLATFORM_OPEN_WEB}
+              onClick={() => this.handleSelection(PLATFORM_OPEN_WEB)}
               selected={currentPlatform === PLATFORM_OPEN_WEB}
               id="openWeb"
-              icon={KeywordSearchIcon}
               nameMsg={localMessages.keywordName}
               descriptionMsg={localMessages.keywordDescription}
             />
@@ -52,7 +51,6 @@ class PlatformSelector extends React.Component {
               onClick={() => this.handleSelection(PLATFORM_REDDIT)}
               selected={currentPlatform === PLATFORM_REDDIT}
               id="Reddit"
-              icon={KeywordSearchIcon}
               nameMsg={localMessages.redditName}
               descriptionMsg={localMessages.redditDescription}
             />
@@ -62,7 +60,6 @@ class PlatformSelector extends React.Component {
               onClick={() => this.handleSelection(PLATFORM_TWITTER)}
               selected={currentPlatform === PLATFORM_TWITTER}
               id="twitter"
-              icon={KeywordSearchIcon}
               nameMsg={localMessages.twitterName}
               descriptionMsg={localMessages.twitterDescription}
             />

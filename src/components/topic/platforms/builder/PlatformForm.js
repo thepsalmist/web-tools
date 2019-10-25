@@ -12,14 +12,14 @@ const localMessages = {
   platformWhy: { id: 'platform.why', defaultMessage: 'Give your new Set a name and description so others can recognize what it is for.' },
   errorNoName: { id: 'platform.name.error', defaultMessage: 'You need to name this.' },
   errorNoDescription: { id: 'platform.description.error', defaultMessage: 'You need a description.' },
-  defaultSetName: { id: 'platform.default.setName', defaultMessage: 'Conversations' },
-  defaultSetDescription: { id: 'platform.default.setDescription', defaultMessage: 'A set of different conversations within this topic.' },
-  defaultSetNameOpenWeb: { id: 'platform.default.setName.openWeb', defaultMessage: 'OpenWeb Partisanship' },
-  defaultSetDescriptionOpenWeb: { id: 'platform.default.setDescription.openWeb', defaultMessage: 'Subtopics driven by our analysis of Twitter followers of Trump and Clinton during the 2016 election season.  Each media soure is scored based on the ratio of openWebs of their stories in those two groups.' },
-  defaultSetNameReddit: { id: 'platform.default.setName.openWeb', defaultMessage: 'Top Countries' },
-  defaultSetDescriptionReddit: { id: 'platform.default.setDescription.openWeb', defaultMessage: 'Subtopics for the countries stories are most often about.' },
-  defaultSetNameTwitter: { id: 'platform.default.setName.nyt', defaultMessage: 'Nyt Theme' },
-  defaultSetDescriptionTwitter: { id: 'platform.default.setDescription.nyt', defaultMessage: 'Subtopics for the themes stories are most often related to.' },
+  defaultSetName: { id: 'platform.default.platformName', defaultMessage: 'Conversations' },
+  defaultSetDescription: { id: 'platform.default.platformDescription', defaultMessage: 'A set of different conversations within this topic.' },
+  defaultSetNameOpenWeb: { id: 'platform.default.platformName.openWeb', defaultMessage: 'OpenWeb Partisanship' },
+  defaultSetDescriptionOpenWeb: { id: 'platform.default.platformDescription.openWeb', defaultMessage: 'Subtopics driven by our analysis of Twitter followers of Trump and Clinton during the 2016 election season.  Each media soure is scored based on the ratio of openWebs of their stories in those two groups.' },
+  defaultSetNameReddit: { id: 'platform.default.platformName.openWeb', defaultMessage: 'Top Countries' },
+  defaultSetDescriptionReddit: { id: 'platform.default.platformDescription.openWeb', defaultMessage: 'Subtopics for the countries stories are most often about.' },
+  defaultSetNameTwitter: { id: 'platform.default.platformName.nyt', defaultMessage: 'Nyt Theme' },
+  defaultSetDescriptionTwitter: { id: 'platform.default.platformDescription.nyt', defaultMessage: 'Subtopics for the themes stories are most often related to.' },
 };
 
 class PlatformForm extends React.Component {
@@ -27,28 +27,28 @@ class PlatformForm extends React.Component {
     const { change, platform } = this.props;
     const { formatMessage } = this.props.intl;
     // set smart-looking default set name/description based on the focal technique currently selected
-    let setName;
-    let setDescription;
+    let platformName;
+    let platformDescription;
     switch (platform) {
       case PLATFORM_OPEN_WEB:
-        setName = formatMessage(localMessages.defaultSetNameOpenWeb);
-        setDescription = formatMessage(localMessages.defaultSetDescriptionOpenWeb);
+        platformName = formatMessage(localMessages.defaultSetNameOpenWeb);
+        platformDescription = formatMessage(localMessages.defaultSetDescriptionOpenWeb);
         break;
       case PLATFORM_REDDIT:
-        setName = formatMessage(localMessages.defaultSetNameReddit);
-        setDescription = formatMessage(localMessages.defaultSetDescriptionReddit);
+        platformName = formatMessage(localMessages.defaultSetNameReddit);
+        platformDescription = formatMessage(localMessages.defaultSetDescriptionReddit);
         break;
       case PLATFORM_TWITTER:
-        setName = formatMessage(localMessages.defaultSetNameTwitter);
-        setDescription = formatMessage(localMessages.defaultSetDescriptionTwitter);
+        platformName = formatMessage(localMessages.defaultSetNameTwitter);
+        platformDescription = formatMessage(localMessages.defaultSetDescriptionTwitter);
         break;
       default:
-        setName = formatMessage(localMessages.defaultSetName);
-        setDescription = formatMessage(localMessages.defaultSetDescription);
+        platformName = formatMessage(localMessages.defaultSetName);
+        platformDescription = formatMessage(localMessages.defaultSetDescription);
         break;
     }
-    change('platformSetName', setName);
-    change('platformSetDescription', setDescription);
+    change('platformName', platformName);
+    change('platformDescription', platformDescription);
   }
 
   render() {
@@ -60,13 +60,13 @@ class PlatformForm extends React.Component {
       <div className="new-focal-set">
         {intro}
         <Field
-          name="platformSetName"
+          name="platformName"
           component={renderTextField}
           fullWidth={fullWidthFields}
         />
         <br />
         <Field
-          name="platformSetDescription"
+          name="platformDescription"
           component={renderTextField}
           fullWidth={fullWidthFields}
         />
@@ -99,7 +99,7 @@ function validate(values) {
 }
 
 const reduxFormConfig = {
-  form: 'snapshotFocus', // make sure this matches the sub-components and other wizard steps
+  form: 'platform', // make sure this matches the sub-components and other wizard steps
   destroyOnUnmount: false, // so the wizard works
   validate,
 };

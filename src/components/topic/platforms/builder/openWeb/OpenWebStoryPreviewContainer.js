@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import withAsyncData from '../../../../common/hocs/AsyncDataContainer';
 import withHelp from '../../../../common/hocs/HelpfulContainer';
-import { fetchCreateOpenWebStories } from '../../../../../actions/topicActions';
+import { fetchCreateOpenWebCoverage } from '../../../../../actions/topicActions';
 import DataCard from '../../../../common/DataCard';
 import TopicStoryTable from '../../../TopicStoryTable';
 import messages from '../../../../../resources/messages';
@@ -35,7 +35,7 @@ OpenWebStoryPreviewContainer.propTypes = {
   helpButton: PropTypes.node.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
-  keywords: PropTypes.string.isRequired,
+  query: PropTypes.string.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   stories: PropTypes.array,
@@ -47,7 +47,7 @@ const mapStateToProps = state => ({
   stories: state.topics.selected.platforms.create.openWebStories.stories,
 });
 
-const fetchAsyncData = (dispatch, { topicId, keywords }) => dispatch(fetchCreateOpenWebStories(topicId, { q: keywords, limit: NUM_TO_SHOW }));
+const fetchAsyncData = (dispatch, { topicId, query }) => dispatch(fetchCreateOpenWebCoverage(topicId, { q: query, limit: NUM_TO_SHOW }));
 
 export default
 injectIntl(

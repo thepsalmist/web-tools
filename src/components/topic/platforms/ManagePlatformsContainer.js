@@ -72,7 +72,7 @@ class ManagePlatformsContainer extends React.Component {
             <Row>
               <Col lg={6}>
                 <div id="create-platform-button">
-                  <LinkWithFilters to={`/topics/${topicId}/platform/create`}>
+                  <LinkWithFilters to={`/topics/${topicId}/platforms/create`}>
                     <AppButton primary label={messages.addPlatform} />
                   </LinkWithFilters>
                 </div>

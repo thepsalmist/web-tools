@@ -23,7 +23,7 @@ const Platform1Container = (props) => {
   const { formatMessage } = props.intl;
   return (
     <Grid>
-      <form className="platform-create-setup" name="snapshotFocus" onSubmit={handleSubmit(finishStep.bind(this))}>
+      <form className="platform-create-setup" name="platform" onSubmit={handleSubmit(finishStep.bind(this))}>
         <Row>
           <Col lg={10} md={10} sm={10}>
             <h1><FormattedMessage {...localMessages.title} /></h1>
@@ -32,7 +32,7 @@ const Platform1Container = (props) => {
             </p>
           </Col>
         </Row>
-        <PlatformSelector />
+        <PlatformSelector currentPlatform={0} />
         <Row>
           <Col lg={12} md={12} sm={12}>
             <AppButton
@@ -70,7 +70,7 @@ Platform1Container.propTypes = {
 
 const mapStateToProps = state => ({
   // pull the focal set id out of the form so we know when to show the focal set create sub form
-  currentPlatform: formSelector(state, 'platform'),
+  currentPlatform: formSelector(state, 'currentPlatform'),
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -10,7 +10,7 @@ import messages from '../../../../../resources/messages';
 import OpenWebPreview from './OpenWebPreview';
 import { notEmptyString } from '../../../../../lib/formValidators';
 
-const formSelector = formValueSelector('platform');
+const formSelector = formValueSelector('platformEditKeywordForm');
 
 const localMessages = {
   title: { id: 'platform.create.edit.title', defaultMessage: 'Step 2: Configure Your {technique} platform' },
@@ -121,10 +121,10 @@ EditOpenWebContainer.propTypes = {
   renderTextField: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
-  formData: state.form.snapshotFocus,
+const mapStateToProps = (state, ownProps) => ({
+  formData: state.form.platformEditKeywordForm,
   currentQuery: formSelector(state, 'query'),
-  currentPlatform: formSelector(state, 'platform'),
+  currentPlatform: ownProps.currentPlatform,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -145,7 +145,7 @@ function validate(values) {
 }
 
 const reduxFormConfig = {
-  form: 'snapshotFocus', // make sure this matches the sub-components and other wizard steps
+  form: 'platformEditKeywordForm', // make sure this matches the sub-components and other wizard steps
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
   validate,

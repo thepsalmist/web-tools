@@ -74,7 +74,7 @@ Platform2ConfigureContainer.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  currentPlatform: formSelector(state, 'focalTechnique'),
+  currentPlatform: formSelector(state, 'currentPlatform'),
   params: ownProps.params,
 });
 

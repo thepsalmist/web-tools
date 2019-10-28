@@ -26,7 +26,7 @@ const Platform3DescribeContainer = (props) => {
   let introContent;
 
   let content;
-  switch (formData.platform) {
+  switch (formData.currentPlatform) {
     case PLATFORM_OPEN_WEB:
       content = (
         <PlatformForm

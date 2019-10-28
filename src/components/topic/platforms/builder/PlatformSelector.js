@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import PlatformDescription from './PlatformDescription';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../../lib/platformTypes';
-// import { assetUrl } from '../../../../../lib/assetUtil';
+import KeywordSearchIcon from '../../../common/icons/KeywordSearchIcon';
 
 const localMessages = {
   about: { id: 'platformPicker.about',
@@ -29,7 +29,7 @@ const formSelector = formValueSelector('platform');
 class PlatformSelector extends React.Component {
   handleSelection = (platformName) => {
     const { change } = this.props;
-    change('platform', platformName);
+    change('currentPlatform', platformName);
   }
 
   render() {
@@ -42,6 +42,7 @@ class PlatformSelector extends React.Component {
               onClick={() => this.handleSelection(PLATFORM_OPEN_WEB)}
               selected={currentPlatform === PLATFORM_OPEN_WEB}
               id="openWeb"
+              icon={KeywordSearchIcon}
               nameMsg={localMessages.keywordName}
               descriptionMsg={localMessages.keywordDescription}
             />
@@ -51,6 +52,7 @@ class PlatformSelector extends React.Component {
               onClick={() => this.handleSelection(PLATFORM_REDDIT)}
               selected={currentPlatform === PLATFORM_REDDIT}
               id="Reddit"
+              icon={KeywordSearchIcon}
               nameMsg={localMessages.redditName}
               descriptionMsg={localMessages.redditDescription}
             />
@@ -60,6 +62,7 @@ class PlatformSelector extends React.Component {
               onClick={() => this.handleSelection(PLATFORM_TWITTER)}
               selected={currentPlatform === PLATFORM_TWITTER}
               id="twitter"
+              icon={KeywordSearchIcon}
               nameMsg={localMessages.twitterName}
               descriptionMsg={localMessages.twitterDescription}
             />
@@ -83,7 +86,7 @@ PlatformSelector.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  // pull the focal set id out of the form so we know when to show the focal set create sub form
+  // platform from form so we know when to show the platform sub form
   currentPlatform: formSelector(state, 'platform'),
 });
 
@@ -93,7 +96,7 @@ function validate() {
 }
 
 const reduxFormConfig = {
-  form: 'snapshotFocus', // make sure this matches the sub-components and other wizard steps
+  form: 'platform', // make sure this matches the sub-components and other wizard steps
   destroyOnUnmount: false, // so the wizard works
   validate,
 };

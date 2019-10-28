@@ -61,6 +61,6 @@ def create_open_web_platform(topics_id):
 
 @app.route('/api/platforms/list', methods=['GET'])
 @flask_login.login_required
-def get_media_types():
+def get_platform_types():
     # media_type_tags = tags_in_tag_set(TOOL_API_KEY, TAG_SETS_ID_MEDIA_TYPE)
     return jsonify({'results': [{type: 'open web'}, {type: 'reddit'}, {type: 'twitter'}]})

@@ -28,16 +28,16 @@ export const FETCH_CREATE_OPEN_WEB_STORY_COUNTS = 'FETCH_CREATE_OPEN_WEB_STORY_C
 export const fetchCreateOpenWebStoryCounts = createAsyncAction(FETCH_CREATE_OPEN_WEB_STORY_COUNTS, api.topicCreatePlatformOpenWebStoryCounts);
 
 export const FETCH_CREATE_TWITTER_STORY_COUNTS = 'FETCH_CREATE_TWITTER_STORY_COUNTS';
-export const fetchCreateTwitterStoryCounts = createAsyncAction(FETCH_CREATE_TWITTER_STORY_COUNTS, api.topicCreateTwitterPlatform);
+export const fetchCreateTwitterStoryCounts = createAsyncAction(FETCH_CREATE_TWITTER_STORY_COUNTS, api.topicCreatePlatformTwitterStoryCounts);
 
 export const FETCH_CREATE_REDDIT_STORY_COUNTS = 'FETCH_CREATE_REDDIT_STORY_COUNTS';
-export const fetchCreateRedditStoryCounts = createAsyncAction(FETCH_CREATE_REDDIT_STORY_COUNTS, api.topicCreateRedditPlatform);
+export const fetchCreateRedditStoryCounts = createAsyncAction(FETCH_CREATE_REDDIT_STORY_COUNTS, api.topicCreatePlatformRedditStoryCounts);
 
 export const FETCH_CREATE_OPEN_WEB_COVERAGE = 'FETCH_CREATE_OPEN_WEB_COVERAGE';
-export const fetchCreateOpenWebCoverage = createAsyncAction(FETCH_CREATE_OPEN_WEB_COVERAGE, api.topicCreateOpenWebCoverage);
+export const fetchCreateOpenWebCoverage = createAsyncAction(FETCH_CREATE_OPEN_WEB_COVERAGE, api.topicCreatePlatformOpenWebStoryCoverage);
 
 export const FETCH_CREATE_TWITTER_COVERAGE = 'FETCH_CREATE_TWITTER_COVERAGE';
-export const fetchCreateTwitterCoverage = createAsyncAction(FETCH_CREATE_TWITTER_COVERAGE, api.topicCreateTwitterPlatform);
+export const fetchCreateTwitterCoverage = createAsyncAction(FETCH_CREATE_TWITTER_COVERAGE, api.topicCreatePlatformTwitterStoryCoverage);
 
 export const FETCH_CREATE_REDDIT_COVERAGE = 'FETCH_CREATE_REDDIT_COVERAGE';
-export const fetchCreateRedditCoverage = createAsyncAction(FETCH_CREATE_REDDIT_COVERAGE, api.topicCreateRedditPlatform);
+export const fetchCreateRedditCoverage = createAsyncAction(FETCH_CREATE_REDDIT_COVERAGE, api.topicCreatePlatformRedditStoryCoverage);

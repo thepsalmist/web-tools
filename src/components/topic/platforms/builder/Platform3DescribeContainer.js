@@ -11,7 +11,8 @@ import { goToCreatePlatformStep } from '../../../../actions/topicActions';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../../lib/platformTypes';
 import messages from '../../../../resources/messages';
 
-const formSelector = formValueSelector('snapshotFocus');
+const formPSelector = formValueSelector('platform');
+const formPESelector = formValueSelector('platformEditKeywordForm');
 
 const localMessages = {
   title: { id: 'platform.create.setup3.title', defaultMessage: 'Step 3: Describe Your Platform' },
@@ -21,19 +22,19 @@ const localMessages = {
 };
 
 const Platform3DescribeContainer = (props) => {
-  const { topicId, handleSubmit, finishStep, goToStep, initialValues, formData } = props;
+  const { topicId, handleSubmit, finishStep, goToStep, initialValues, currentPlatform, currentQuery } = props;
   const { formatMessage } = props.intl;
   let introContent;
 
   let content;
-  switch (formData.currentPlatform) {
+  switch (currentPlatform) {
     case PLATFORM_OPEN_WEB:
       content = (
         <PlatformForm
           topicId={topicId}
           initialValues={initialValues}
-          platform={formData.platform}
-          query={formData.query}
+          platform={currentPlatform}
+          query={currentQuery}
         />
       );
       break;
@@ -46,7 +47,7 @@ const Platform3DescribeContainer = (props) => {
           <Col lg={10}>
             <PlatformForm
               introContent={introContent}
-              platform={formData.platform}
+              platform={currentPlatform}
               fullWidth
             />
           </Col>
@@ -62,7 +63,7 @@ const Platform3DescribeContainer = (props) => {
           <Col lg={10}>
             <PlatformForm
               introContent={introContent}
-              platform={formData.platform}
+              platform={currentPlatform}
               fullWidth
             />
           </Col>
@@ -105,16 +106,18 @@ Platform3DescribeContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
   platforms: PropTypes.array.isRequired,
-  formData: PropTypes.object,
+  currentPlatform: PropTypes.object,
+  currentQuery: PropTypes.object,
   // from dispatch
   goToStep: PropTypes.func.isRequired,
   finishStep: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  platforms: state.topics.selected.platforms.list,
-  fetchStatus: state.topics.selected.focalSets.definitions.fetchStatus,
-  formData: formSelector(state, 'platforms'),
+  platforms: state.topics.selected.platforms.all.list || {},
+  currentPlatform: formPSelector(state, 'currentPlatform'),
+  fetchStatus: state.topics.selected.platforms.all.fetchStatus,
+  currentQuery: formPESelector(state, 'currentQuery'),
 });
 
 const mapDispatchToProps = dispatch => ({

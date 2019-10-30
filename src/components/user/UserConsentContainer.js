@@ -31,7 +31,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleUserConsent: (values, user) => {
-    dispatch(updateProfile({ ...user, ...values }))
+    const newObj = Object.assign(...user, { has_consented: (values.has_consented === true || values.has_consented.value === true) || false });
+    dispatch(updateProfile(newObj))
       .then((response) => { // go to home page
         if (response.profile) {
           // redirect to destination if there is one

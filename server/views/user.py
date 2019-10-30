@@ -202,7 +202,9 @@ def api_user_delete():
 @api_error_handler
 @flask_login.login_required
 def api_user_update():
-    has_consented = request.form['has_consented'] == 'true'
+    has_consented = request.form['has_consented'] if 'has_consented' in request.form else False
+    if (has_consented == 'null'):
+        has_consented = False
     valid_params = {
         'full_name': request.form['full_name'],
         'notes': request.form['notes'],

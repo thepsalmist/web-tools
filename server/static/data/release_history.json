@@ -1,6 +1,16 @@
 {
   "releases": [
     {
+      "date": "2019-10-31",
+      "version": "v3.12.8",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "MediaPicker metadata checkboxes fixed"
+        }
+      ]
+    },{
       "date": "2019-10-29",
       "version": "v3.12.7",
       "notes": [

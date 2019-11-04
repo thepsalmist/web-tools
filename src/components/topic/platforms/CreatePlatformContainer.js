@@ -2,12 +2,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import { push } from 'react-router-redux';
+import { push, reset } from 'react-router-redux';
 import PlatformWizard from './builder/PlatformWizard';
-import { fetchCreateOpenWebPlatform, setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
-import { LEVEL_ERROR } from '../../common/Notice';
-import { updateFeedback, addNotice } from '../../../actions/appActions';
-import { PLATFORM_OPEN_WEB /* , PLATFORM_REDDIT, PLATFORM_TWITTER */ } from '../../../lib/platformTypes';
+import { topicCreatePlatform, setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
+// import { LEVEL_ERROR } from '../../common/Notice';
+import { updateFeedback } from '../../../actions/appActions';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../lib/platformTypes';
 
 const DEFAULT_SELECTED_NUMBER = 5;
 
@@ -64,36 +64,43 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.duplicateName) }));
     }
     */
+    let platform = PLATFORM_OPEN_WEB;
+    let platformQuery = null;
+    let source = null;
     switch (formValues.platform) {
       case PLATFORM_OPEN_WEB:
-        return dispatch(fetchCreateOpenWebPlatform(topicId, formValues))
-          .then((results) => {
-            if (results.length === 1) {
-              const focusSavedMessage = ownProps.intl.formatMessage(localMessages.booleanFocusSaved);
-              dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
-              dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage })); // user feedback
-              dispatch(push(`/topics/${topicId}/platforms/manage`));
-              // dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
-            } else {
-              const platformNotSavedMessage = ownProps.intl.formatMessage(localMessages.platformNotSavedMessage);
-              dispatch(updateFeedback({ open: true, message: platformNotSavedMessage })); // user feedback
-            }
-          });
-      /*
-      case FOCAL_TECHNIQUE_MEDIA_TYPE:
-        saveData = { ...formValues };
-        return dispatch(createMediaTypeFocalSet(topicId, saveData))
-          .then(() => {
-            const focusSavedMessage = ownProps.intl.formatMessage(localMessages.mediaTypeFocusSaved);
-            dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
-            dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage })); // user feedback
-            dispatch(push(`/topics/${topicId}/snapshot/foci`)); // go back to focus management page
-            dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
-          });
-      */
+        // check values values if necessary
+        platform = formValues.platform;
+        platformQuery = formValues.query;
+        break;
+      case PLATFORM_TWITTER:
+        // check values values if necessary
+        platform = formValues.platform;
+        source = formValues.source; // crimson hexagon
+        platformQuery = formValues.query;
+        break;
+      case PLATFORM_REDDIT:
+        // check values values if necessary
+        platform = formValues.platform;
+        source = formValues.source; // crimson hexagon
+        platformQuery = formValues.query;
+        break;
       default:
-        return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.invalid) }));
+        return null;
     }
+    return dispatch(topicCreatePlatform(topicId, { platform, platform_query: platformQuery, source }))
+      .then((results) => {
+        if (results.length === 1) {
+          const focusSavedMessage = ownProps.intl.formatMessage(localMessages.booleanFocusSaved);
+          dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage })); // user feedback
+          dispatch(push(`/topics/${topicId}/platforms/manage`));
+          dispatch(reset('platform')); // it is a wizard so we have to do this by hand
+        } else {
+          const platformNotSavedMessage = ownProps.intl.formatMessage(localMessages.platformNotSavedMessage);
+          dispatch(updateFeedback({ open: true, message: platformNotSavedMessage })); // user feedback
+        }
+      });
   },
 });
 

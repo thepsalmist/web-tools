@@ -387,19 +387,9 @@ export function topicSnapshotCreate(topicId) {
   return createPostingApiPromise(`/api/topics/${topicId}/snapshots/create`);
 }
 
-export function topicCreateOpenWebCoverage() {
-
-}
-
-export function topicCreateOpenWebPlatform(topicId) {
-  return createPostingApiPromise(`/api/topics/${topicId}/platforms/open-web/create`);
-}
-
-export function topicCreateTwitterPlatform() {
-
-}
-export function topicCreateRedditPlatform() {
-
+export function topicCreatePlatform(topicId, params) {
+  const acceptedParams = acceptParams(params, ['platform', 'platform_query', 'source']);
+  return createPostingApiPromise(`/api/topics/${topicId}/platforms/add`, acceptedParams);
 }
 
 export function topicEditPlatform() {
@@ -416,6 +406,22 @@ export function topicCreatePlatformOpenWebStoryCounts(topicId) {
 
 export function topicCreatePlatformOpenWebStoryCoverage(topicId) {
   return createApiPromise(`/api/topics/${topicId}/platforms/open-web/coverage`);
+}
+
+export function topicCreatePlatformTwitterStoryCounts(topicId) {
+  return createApiPromise(`/api/topics/${topicId}/platforms/twitter/story-counts`);
+}
+
+export function topicCreatePlatformTwitterStoryCoverage(topicId) {
+  return createApiPromise(`/api/topics/${topicId}/platforms/twitter/coverage`);
+}
+
+export function topicCreatePlatformRedditStoryCounts(topicId) {
+  return createApiPromise(`/api/topics/${topicId}/platforms/reddit/story-counts`);
+}
+
+export function topicCreatePlatformRedditStoryCoverage(topicId) {
+  return createApiPromise(`/api/topics/${topicId}/platforms/reddit/coverage`);
 }
 
 export function topicPlatformList(topicId) {

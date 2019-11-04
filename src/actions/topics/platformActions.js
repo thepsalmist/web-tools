@@ -15,14 +15,8 @@ export const editTopicPlatform = createAsyncAction(EDIT_PLATFORM, api.topicEditP
 export const DELETE_PLATFORM = 'DELETE_PLATFORM';
 export const deleteTopicPlatform = createAsyncAction(DELETE_PLATFORM, api.topicDeletePlatform);
 
-export const FETCH_CREATE_OPEN_WEB_PLATFORM = 'FETCH_CREATE_OPEN_WEB_PLATFORM';
-export const fetchCreateOpenWebPlatform = createAsyncAction(FETCH_CREATE_OPEN_WEB_PLATFORM, api.topicCreateOpenWebPlatform);
-
-export const FETCH_CREATE_TWITTER_PLATFORM = 'FETCH_CREATE_TWITTER_PLATFORM';
-export const fetchCreateTwitterPlatform = createAsyncAction(FETCH_CREATE_TWITTER_PLATFORM, api.topicCreateTwitterPlatform);
-
-export const FETCH_CREATE_REDDIT_PLATFORM = 'FETCH_CREATE_REDDIT_PLATFORM';
-export const fetchCreateRedditPlatform = createAsyncAction(FETCH_CREATE_REDDIT_PLATFORM, api.topicCreateRedditPlatform);
+export const TOPIC_CREATE_PLATFORM = 'TOPIC_CREATE_PLATFORM';
+export const topicCreatePlatform = createAsyncAction(TOPIC_CREATE_PLATFORM, api.topicCreatePlatform, params => params);
 
 export const FETCH_CREATE_OPEN_WEB_STORY_COUNTS = 'FETCH_CREATE_OPEN_WEB_STORY_COUNTS';
 export const fetchCreateOpenWebStoryCounts = createAsyncAction(FETCH_CREATE_OPEN_WEB_STORY_COUNTS, api.topicCreatePlatformOpenWebStoryCounts);

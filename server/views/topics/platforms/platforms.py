@@ -17,3 +17,23 @@ OPEN_WEB = 1
 @api_error_handler
 def topic_platform_list(topics_id):
     return jsonify({"results": [{"id": OPEN_WEB, "name": "open web"}]})
+
+
+@app.route('/api/topics/<topics_id>/platforms/add', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def topic_add_platform(topics_id):
+    user_mc = user_mediacloud_client()
+    platform = request.form['platform']
+    query = request.form['platform_query']
+    source = request.form['source'] if 'source' in request.form else None
+    result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
+    return jsonify({"results": result}) #topic_seed_queries_id
+
+@app.route('/api/topics/<topics_id>/platforms/remove', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def topic_remove_platform(topics_id, platform_id):
+    user_mc = user_mediacloud_client()
+    result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id = platform_id)
+    return jsonify({"results": result})

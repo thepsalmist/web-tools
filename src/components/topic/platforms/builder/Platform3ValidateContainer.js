@@ -11,7 +11,7 @@ import withIntlForm from '../../../common/hocs/IntlForm';
 import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AppButton from '../../../common/AppButton';
 import StoryFeedbackRow from '../../../common/StoryFeedbackRow';
-import { goToTopicStep, fetchStoriesByPlatformQuery } from '../../../../actions/topicActions';
+import { goToCreatePlatformStep, fetchStoriesByPlatformQuery } from '../../../../actions/topicActions';
 import { formatTopicPlatformPreviewQuery } from '../../../util/topicUtil';
 
 const NUM_TO_SHOW = 30;
@@ -42,8 +42,8 @@ class Platform3ValidateContainer extends React.Component {
   }
 
   handleWarningIgnore = () => {
-    const { onStepChange, mode } = this.props;
-    onStepChange(mode, 3);
+    const { handleNextStep } = this.props;
+    handleNextStep();
   }
 
   handleYesClick = (options, prevSelection) => {
@@ -61,16 +61,16 @@ class Platform3ValidateContainer extends React.Component {
   }
 
   handleConfirm = () => {
-    const { onStepChange, total, mode } = this.props;
+    const { handleNextStep, total } = this.props;
     if (this.state.matchCount >= (VALIDATION_CUTOFF * total)) {
-      onStepChange(mode, 3);
+      handleNextStep();
     } else {
       this.setState({ warningOpen: true });
     }
   }
 
   render = () => {
-    const { onStepChange, stories, mode, currentPlatform } = this.props;
+    const { handlePreviousStep, stories, mode, currentPlatform } = this.props;
     const { formatMessage } = this.props.intl;
 
     return (
@@ -107,7 +107,7 @@ class Platform3ValidateContainer extends React.Component {
         <br />
         <Row>
           <Col lg={12} md={12} sm={12}>
-            <AppButton label={formatMessage(localMessages.prev)} onClick={() => onStepChange(mode, 1)} />
+            <AppButton label={formatMessage(localMessages.prev)} onClick={() => handlePreviousStep()} />
             &nbsp; &nbsp;
             <AppButton
               type="submit"
@@ -151,16 +151,19 @@ Platform3ValidateContainer.propTypes = {
   location: PropTypes.object.isRequired,
   currentStepText: PropTypes.object,
   mode: PropTypes.string, // .isRequired,
-  onStepChange: PropTypes.func, // .isRequired,
+  handlePreviousStep: PropTypes.func,
+  handleNextStep: PropTypes.func, // .isRequired,
   // form composition
   intl: PropTypes.object.isRequired,
   // from state
   // platforms: PropTypes.array.isRequired,
+  topicId: PropTypes.number.isRequired,
+  currentTopicQuery: PropTypes.object,
   currentPlatform: PropTypes.string,
   currentQuery: PropTypes.string,
   fetchStatus: PropTypes.string.isRequired,
-  total: PropTypes.number, // .isRequired,
-  stories: PropTypes.array, // .isRequired,
+  total: PropTypes.number.isRequired,
+  stories: PropTypes.array.isRequired,
   // from dispatch
   handleEditSeedQueryRequest: PropTypes.func.isRequired,
   // from form
@@ -168,26 +171,33 @@ Platform3ValidateContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  currentStep: state.topics.modify.preview.workflow.currentStep,
-  fetchStatus: state.topics.modify.preview.matchingStories.fetchStatus,
-  total: state.topics.modify.preview.matchingStories.total,
-  stories: state.topics.modify.preview.matchingStories.list,
+  currentStep: state.topics.selected.platforms.preview.workflow.currentStep,
+  fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
+  total: state.topics.selected.platforms.preview.matchingStories.total,
+  stories: state.topics.selected.platforms.preview.matchingStories.list,
+  currentTopicQuery: state.topics.selected.info,
   currentPlatform: state.form.platform.values.currentPlatform,
   currentQuery: state.form.platformEditKeywordForm.values.query,
 });
 
 const mapDispatchToProps = dispatch => ({
   handleEditSeedQueryRequest: () => {
-    dispatch(goToTopicStep(0));
+    dispatch(goToCreatePlatformStep(0));
+  },
+  handlePreviousStep: () => {
+    dispatch(goToCreatePlatformStep(2));
+  },
+  handleNextStep: () => {
+    dispatch(goToCreatePlatformStep(4));
   },
 });
 
-const fetchAsyncData = (dispatch, { currentPlatform, currentQuery }) => {
+const fetchAsyncData = (dispatch, { topicId, currentTopicQuery, currentPlatform, currentQuery }) => {
   const infoForQuery = {
-    ...formatTopicPlatformPreviewQuery(currentPlatform, currentQuery),
-    rows: NUM_TO_SHOW,
+    ...formatTopicPlatformPreviewQuery(currentTopicQuery, currentPlatform, currentQuery),
+    limit: NUM_TO_SHOW,
   };
-  dispatch(fetchStoriesByPlatformQuery(infoForQuery));
+  dispatch(fetchStoriesByPlatformQuery(topicId, { ...infoForQuery }));
 };
 
 export default

@@ -406,7 +406,7 @@ export function topicStoryCountsByPlatformQuery(topicId, params) {
 }
 
 export function topicStoriesByPlatformQuery(topicId, params) {
-  const acceptedParams = acceptParams(params, ['current_platform', 'platform_query', 'limit']);
+  const acceptedParams = acceptParams(params, ['current_platform', 'platform_query', 'start_date', 'end_date', 'limit']);
   return createApiPromise(`/api/topics/${topicId}/platforms/preview/stories`, acceptedParams);
 }
 

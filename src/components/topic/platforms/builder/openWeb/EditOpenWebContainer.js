@@ -10,7 +10,8 @@ import messages from '../../../../../resources/messages';
 import OpenWebPreview from './OpenWebPreview';
 import { notEmptyString } from '../../../../../lib/formValidators';
 
-const formSelector = formValueSelector('platformEditKeywordForm');
+const formPSelector = formValueSelector('platform');
+const formPESelector = formValueSelector('platformEditKeywordForm');
 
 const localMessages = {
   title: { id: 'platform.create.edit.title', defaultMessage: 'Step 2: Configure Your {technique} platform' },
@@ -109,7 +110,6 @@ EditOpenWebContainer.propTypes = {
   onPreviousStep: PropTypes.func.isRequired,
   onNextStep: PropTypes.func.isRequired,
   // from state
-  formData: PropTypes.object,
   currentPlatform: PropTypes.string,
   currentQuery: PropTypes.string,
   // from dispatch
@@ -121,10 +121,9 @@ EditOpenWebContainer.propTypes = {
   renderTextField: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  formData: state.form.platformEditKeywordForm,
-  currentQuery: formSelector(state, 'query'),
-  currentPlatform: ownProps.currentPlatform,
+const mapStateToProps = state => ({
+  currentQuery: formPESelector(state, 'query'),
+  currentPlatform: formPSelector(state, 'currentPlatform'),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

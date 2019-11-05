@@ -400,28 +400,14 @@ export function topicDeletePlatform() {
 
 }
 
-export function topicCreatePlatformOpenWebStoryCounts(topicId) {
-  return createApiPromise(`/api/topics/${topicId}/platforms/open-web/story-counts`);
+export function topicStoryCountsByPlatformQuery(topicId, params) {
+  const acceptedParams = acceptParams(params, ['current_platform', 'platform_query']);
+  return createApiPromise(`/api/topics/${topicId}/platforms/preview/story-count`, acceptedParams);
 }
 
-export function topicCreatePlatformOpenWebStoryCoverage(topicId) {
-  return createApiPromise(`/api/topics/${topicId}/platforms/open-web/coverage`);
-}
-
-export function topicCreatePlatformTwitterStoryCounts(topicId) {
-  return createApiPromise(`/api/topics/${topicId}/platforms/twitter/story-counts`);
-}
-
-export function topicCreatePlatformTwitterStoryCoverage(topicId) {
-  return createApiPromise(`/api/topics/${topicId}/platforms/twitter/coverage`);
-}
-
-export function topicCreatePlatformRedditStoryCounts(topicId) {
-  return createApiPromise(`/api/topics/${topicId}/platforms/reddit/story-counts`);
-}
-
-export function topicCreatePlatformRedditStoryCoverage(topicId) {
-  return createApiPromise(`/api/topics/${topicId}/platforms/reddit/coverage`);
+export function topicStoriesByPlatformQuery(topicId, params) {
+  const acceptedParams = acceptParams(params, ['current_platform', 'platform_query', 'limit']);
+  return createApiPromise(`/api/topics/${topicId}/platforms/preview/stories`, acceptedParams);
 }
 
 export function topicPlatformList(topicId) {

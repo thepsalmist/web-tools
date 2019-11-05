@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import withAsyncData from '../../../../common/hocs/AsyncDataContainer';
 import withHelp from '../../../../common/hocs/HelpfulContainer';
-import { fetchCreateOpenWebCoverage } from '../../../../../actions/topicActions';
+import { fetchStoriesByPlatformQuery } from '../../../../../actions/topicActions';
 import DataCard from '../../../../common/DataCard';
 import TopicStoryTable from '../../../TopicStoryTable';
 import messages from '../../../../../resources/messages';
@@ -36,6 +36,7 @@ OpenWebStoryPreviewContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   query: PropTypes.string.isRequired,
+  currentPlatform: PropTypes.string.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   stories: PropTypes.array,
@@ -43,11 +44,12 @@ OpenWebStoryPreviewContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.selected.platforms.create.openWebStories.fetchStatus,
-  stories: state.topics.selected.platforms.create.openWebStories.stories,
+  fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
+  stories: state.topics.selected.platforms.preview.matchingStories.list,
+  currentPlatform: state.form.platform.values.currentPlatform,
 });
 
-const fetchAsyncData = (dispatch, { topicId, query }) => dispatch(fetchCreateOpenWebCoverage(topicId, { q: query, limit: NUM_TO_SHOW }));
+const fetchAsyncData = (dispatch, { topicId, currentPlatform, query }) => dispatch(fetchStoriesByPlatformQuery(topicId, { current_platform: currentPlatform, platform_query: query, limit: NUM_TO_SHOW }));
 
 export default
 injectIntl(

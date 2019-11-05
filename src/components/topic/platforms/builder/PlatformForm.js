@@ -12,14 +12,14 @@ const localMessages = {
   platformWhy: { id: 'platform.why', defaultMessage: 'Give your new Set a name and description so others can recognize what it is for.' },
   errorNoName: { id: 'platform.name.error', defaultMessage: 'You need to name this.' },
   errorNoDescription: { id: 'platform.description.error', defaultMessage: 'You need a description.' },
-  defaultSetName: { id: 'platform.default.platformName', defaultMessage: 'Conversations' },
-  defaultSetDescription: { id: 'platform.default.platformDescription', defaultMessage: 'A set of different conversations within this topic.' },
-  defaultSetNameOpenWeb: { id: 'platform.default.platformName.openWeb', defaultMessage: 'OpenWeb Partisanship' },
-  defaultSetDescriptionOpenWeb: { id: 'platform.default.platformDescription.openWeb', defaultMessage: 'Subtopics driven by our analysis of Twitter followers of Trump and Clinton during the 2016 election season.  Each media soure is scored based on the ratio of openWebs of their stories in those two groups.' },
-  defaultSetNameReddit: { id: 'platform.default.platformName.openWeb', defaultMessage: 'Top Countries' },
-  defaultSetDescriptionReddit: { id: 'platform.default.platformDescription.openWeb', defaultMessage: 'Subtopics for the countries stories are most often about.' },
-  defaultSetNameTwitter: { id: 'platform.default.platformName.nyt', defaultMessage: 'Nyt Theme' },
-  defaultSetDescriptionTwitter: { id: 'platform.default.platformDescription.nyt', defaultMessage: 'Subtopics for the themes stories are most often related to.' },
+  defaultName: { id: 'platform.default.platformName', defaultMessage: 'Conversations' },
+  defaultDescription: { id: 'platform.default.platformDescription', defaultMessage: 'A set of different conversations within this topic.' },
+  defaultNameOpenWeb: { id: 'platform.default.platformName.openWeb', defaultMessage: 'OpenWeb Partisanship' },
+  defaultDescriptionOpenWeb: { id: 'platform.default.platformDescription.openWeb', defaultMessage: 'Subtopics driven by our analysis of Twitter followers of Trump and Clinton during the 2016 election season.  Each media soure is scored based on the ratio of openWebs of their stories in those two groups.' },
+  defaultNameReddit: { id: 'platform.default.platformName.openWeb', defaultMessage: 'Top Countries' },
+  defaultDescriptionReddit: { id: 'platform.default.platformDescription.openWeb', defaultMessage: 'Subtopics for the countries stories are most often about.' },
+  defaultNameTwitter: { id: 'platform.default.platformName.nyt', defaultMessage: 'Nyt Theme' },
+  defaultDescriptionTwitter: { id: 'platform.default.platformDescription.nyt', defaultMessage: 'Subtopics for the themes stories are most often related to.' },
 };
 
 class PlatformForm extends React.Component {
@@ -31,20 +31,20 @@ class PlatformForm extends React.Component {
     let platformDescription;
     switch (platform) {
       case PLATFORM_OPEN_WEB:
-        platformName = formatMessage(localMessages.defaultSetNameOpenWeb);
-        platformDescription = formatMessage(localMessages.defaultSetDescriptionOpenWeb);
+        platformName = formatMessage(localMessages.defaultNameOpenWeb);
+        platformDescription = formatMessage(localMessages.defaultDescriptionOpenWeb);
         break;
       case PLATFORM_REDDIT:
-        platformName = formatMessage(localMessages.defaultSetNameReddit);
-        platformDescription = formatMessage(localMessages.defaultSetDescriptionReddit);
+        platformName = formatMessage(localMessages.defaultNameReddit);
+        platformDescription = formatMessage(localMessages.defaultDescriptionReddit);
         break;
       case PLATFORM_TWITTER:
-        platformName = formatMessage(localMessages.defaultSetNameTwitter);
-        platformDescription = formatMessage(localMessages.defaultSetDescriptionTwitter);
+        platformName = formatMessage(localMessages.defaultNameTwitter);
+        platformDescription = formatMessage(localMessages.defaultDescriptionTwitter);
         break;
       default:
-        platformName = formatMessage(localMessages.defaultSetName);
-        platformDescription = formatMessage(localMessages.defaultSetDescription);
+        platformName = formatMessage(localMessages.defaultName);
+        platformDescription = formatMessage(localMessages.defaultDescription);
         break;
     }
     change('platformName', platformName);
@@ -89,11 +89,11 @@ PlatformForm.propTypes = {
 
 function validate(values) {
   const errors = {};
-  if (!notEmptyString(values.platformSetName)) {
-    errors.platformSetName = localMessages.errorNoName;
+  if (!notEmptyString(values.platformName)) {
+    errors.platformName = localMessages.errorNoName;
   }
-  if (!notEmptyString(values.platformSetDescription)) {
-    errors.platformSetDescription = localMessages.errorNoDescription;
+  if (!notEmptyString(values.platformDescription)) {
+    errors.platformDescription = localMessages.errorNoDescription;
   }
   return errors;
 }

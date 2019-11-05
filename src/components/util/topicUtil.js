@@ -28,4 +28,10 @@ export const formatTopicPreviewQuery = (topicQuery) => ({
   ...formatTopicOpenWebSourcesForQuery(topicQuery.sourcesAndCollections),
 });
 
+// while creating a topic, this can format the under-construction topic params propertly for a preview request
+export const formatTopicPlatformPreviewQuery = (platform, query) => ({
+  platform_query: query,
+  // ...formatTopicOpenWebSourcesForQuery(query.sourcesAndCollections),
+});
+
 export const TEMP = 'temp';

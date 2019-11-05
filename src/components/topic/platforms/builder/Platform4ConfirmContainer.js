@@ -14,8 +14,7 @@ import messages from '../../../../resources/messages';
 const localMessages = {
   title: { id: 'platform.create.confirm.title', defaultMessage: 'Step 4: Confirm Your Platform Changes' },
   addAnotherPlatform: { id: 'platform.create.new', defaultMessage: 'Save and Add More' },
-  platformSaved: { id: 'platform.create.saved', defaultMessage: 'We saved your new platform.' },
-  platformNotSaved: { id: 'platform.create.notSaved', defaultMessage: 'That didn\'t work! Make sure you have a unique platform name?' },
+  platform: { id: 'platform.create', defaultMessage: 'Platform' },
 };
 
 const Platform4ConfirmContainer = (props) => {
@@ -102,7 +101,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   handlePreviousStep: () => {
     dispatch(goToCreatePlatformStep(2));
   },
-  saveFocus: (topicId, values) => ownProps.onDone(topicId, values),
+  savePlatform: (topicId, values) => ownProps.onDone(topicId, values),
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {

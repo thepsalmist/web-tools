@@ -8,7 +8,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import BackLinkingControlBar from '../../BackLinkingControlBar';
 import Platform1Container from './Platform1Container';
 import Platform2ConfigureContainer from './Platform2ConfigureContainer';
-import Platform3DescribeContainer from './Platform3DescribeContainer';
+import Platform3ValidateContainer from './Platform3ValidateContainer';
 import Platform4ConfirmContainer from './Platform4ConfirmContainer';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
 
@@ -16,7 +16,7 @@ const localMessages = {
   backToPlatformManager: { id: 'backToPlatformManager', defaultMessage: 'back to Platform Builder' },
   step0Name: { id: 'platform.create.step0Name', defaultMessage: 'Pick a Platform' },
   step1Name: { id: 'platform.create.step1Name', defaultMessage: 'Configure' },
-  step2Name: { id: 'platform.create.step2Name', defaultMessage: 'Describe' },
+  step2Name: { id: 'platform.create.step2Name', defaultMessage: 'Validate' },
   step3Name: { id: 'platform.create.step3Name', defaultMessage: 'Confirm' },
 };
 
@@ -46,7 +46,7 @@ class PlatformWizard extends React.Component {
     const steps = [
       Platform1Container,
       Platform2ConfigureContainer,
-      Platform3DescribeContainer,
+      Platform3ValidateContainer,
       Platform4ConfirmContainer,
     ];
     const CurrentStepComponent = steps[currentStep];

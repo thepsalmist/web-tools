@@ -18,20 +18,8 @@ export const deleteTopicPlatform = createAsyncAction(DELETE_PLATFORM, api.topicD
 export const TOPIC_CREATE_PLATFORM = 'TOPIC_CREATE_PLATFORM';
 export const topicCreatePlatform = createAsyncAction(TOPIC_CREATE_PLATFORM, api.topicCreatePlatform, params => params);
 
-export const FETCH_CREATE_OPEN_WEB_STORY_COUNTS = 'FETCH_CREATE_OPEN_WEB_STORY_COUNTS';
-export const fetchCreateOpenWebStoryCounts = createAsyncAction(FETCH_CREATE_OPEN_WEB_STORY_COUNTS, api.topicCreatePlatformOpenWebStoryCounts);
+export const FETCH_PLATFORM_PREVIEW_STORY_COUNTS = 'FETCH_PLATFORM_PREVIEW_STORY_COUNTS';
+export const fetchStoryCountsByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PREVIEW_STORY_COUNTS, api.topicStoryCountsByPlatformQuery);
 
-export const FETCH_CREATE_TWITTER_STORY_COUNTS = 'FETCH_CREATE_TWITTER_STORY_COUNTS';
-export const fetchCreateTwitterStoryCounts = createAsyncAction(FETCH_CREATE_TWITTER_STORY_COUNTS, api.topicCreatePlatformTwitterStoryCounts);
-
-export const FETCH_CREATE_REDDIT_STORY_COUNTS = 'FETCH_CREATE_REDDIT_STORY_COUNTS';
-export const fetchCreateRedditStoryCounts = createAsyncAction(FETCH_CREATE_REDDIT_STORY_COUNTS, api.topicCreatePlatformRedditStoryCounts);
-
-export const FETCH_CREATE_OPEN_WEB_COVERAGE = 'FETCH_CREATE_OPEN_WEB_COVERAGE';
-export const fetchCreateOpenWebCoverage = createAsyncAction(FETCH_CREATE_OPEN_WEB_COVERAGE, api.topicCreatePlatformOpenWebStoryCoverage);
-
-export const FETCH_CREATE_TWITTER_COVERAGE = 'FETCH_CREATE_TWITTER_COVERAGE';
-export const fetchCreateTwitterCoverage = createAsyncAction(FETCH_CREATE_TWITTER_COVERAGE, api.topicCreatePlatformTwitterStoryCoverage);
-
-export const FETCH_CREATE_REDDIT_COVERAGE = 'FETCH_CREATE_REDDIT_COVERAGE';
-export const fetchCreateRedditCoverage = createAsyncAction(FETCH_CREATE_REDDIT_COVERAGE, api.topicCreatePlatformRedditStoryCoverage);
+export const FETCH_PLATFORM_PREVIEW_STORIES = 'FETCH_PLATFORM_PREVIEW_STORIES';
+export const fetchStoriesByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PREVIEW_STORIES, api.topicStoriesByPlatformQuery);

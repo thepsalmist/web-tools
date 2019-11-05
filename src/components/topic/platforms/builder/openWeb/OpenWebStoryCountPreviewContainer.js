@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import withAsyncData from '../../../../common/hocs/AsyncDataContainer';
 import withHelp from '../../../../common/hocs/HelpfulContainer';
-import { fetchCreateOpenWebStoryCounts } from '../../../../../actions/topicActions';
+import { fetchStoryCountsByPlatformQuery } from '../../../../../actions/topicActions';
 import DataCard from '../../../../common/DataCard';
 import BubbleRowChart from '../../../../vis/BubbleRowChart';
 import { getBrandDarkColor } from '../../../../../styles/colors';
@@ -67,17 +67,19 @@ OpenWebStoryCountPreviewContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   query: PropTypes.string.isRequired,
+  currentPlatform: PropTypes.string.isRequired,
   // from state
   counts: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.selected.platforms.create.openWebStoryCounts.fetchStatus,
-  counts: state.topics.selected.platforms.create.openWebStoryCounts.counts,
+  fetchStatus: state.topics.selected.platforms.preview.matchingStoryCounts.fetchStatus,
+  counts: state.topics.selected.platforms.preview.matchingStoryCounts,
+  currentPlatform: state.form.platform.values.currentPlatform,
 });
 
-const fetchAsyncData = (dispatch, { topicId, keywords }) => dispatch(fetchCreateOpenWebStoryCounts(topicId, { q: keywords }));
+const fetchAsyncData = (dispatch, { topicId, currentPlatform, query }) => dispatch(fetchStoryCountsByPlatformQuery(topicId, { current_platform: currentPlatform, platform_query: query }));
 
 export default
 injectIntl(

@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, FormattedNumber, injectIntl } from 'react-intl';
-import ReactHighcharts from 'react-highcharts';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 import initHighcharts from './initHighcharts';
 import { getBrandDarkColor } from '../../styles/colors';
 import { getVisDate, PAST_DAY, PAST_WEEK, PAST_MONTH, groupDatesByWeek, groupDatesByMonth } from '../../lib/dateUtil';
@@ -255,7 +256,7 @@ class AttentionOverTimeChart extends React.Component {
     return (
       <div className={classNameForPath}>
         {totalInfo}
-        <ReactHighcharts config={config} />
+        <HighchartsReact highcharts={Highcharts} options={config} />
       </div>
     );
   }

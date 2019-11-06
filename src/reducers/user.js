@@ -33,7 +33,7 @@ export default function user(state = INITIAL_STATE, action) {
       return { ...state,
         fetchStatus: fetchConstants.FETCH_SUCCEEDED,
         isLoggedIn: passwordLoginWorked,
-        isAdmin: passwordLoginWorked ? action.payload.profile.roles.filter(r => r.role === 'admin').length > 0 : false,
+        isAdmin: passwordLoginWorked ? action.payload.profile.auth_roles.filter(r => r === 'admin').length > 0 : false,
         ...action.payload };
     case reject(LOGIN_WITH_PASSWORD):
       resetRavenUserContext();
@@ -52,7 +52,7 @@ export default function user(state = INITIAL_STATE, action) {
       return { ...state,
         fetchStatus: fetchConstants.FETCH_SUCCEEDED,
         isLoggedIn: keyLoginWorked,
-        isAdmin: keyLoginWorked ? action.payload.profile.roles.filter(r => r.role === 'admin').length > 0 : false,
+        isAdmin: keyLoginWorked ? action.payload.profile.auth_roles.filter(r => r === 'admin').length > 0 : false,
         ...action.payload };
     case reject(LOGIN_WITH_COOKIE):
       resetRavenUserContext();

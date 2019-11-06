@@ -97,10 +97,9 @@ def user_is_admin():
     return user_has_auth_role('admin')
 
 
-def create_and_cache_user(profile):
+def create_user(profile):
     user = User(profile)
     user.create_in_db_if_needed()
-    # User.cached[user.id] = user
     logger.debug("  added to user cache %s", user.id)
     return user
 

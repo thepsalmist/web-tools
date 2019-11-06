@@ -17,7 +17,7 @@ const OpenWebSummary = (props) => {
   let platformContent = null;
   switch (formValues.platform) {
     case NEW_PLATFORM_ID:
-      platformContent = <FormattedHTMLMessage {...localMessages.platformNew} values={{ name: formValues.platformName, description: formValues.platformDescription }} />;
+      platformContent = <FormattedHTMLMessage {...localMessages.platformNew} values={{ name: formValues.currentPlatform, description: formValues.currentPlatform }} />;
       break;
     default:
       platformContent = <FormattedHTMLMessage {...localMessages.platformExisting} />;
@@ -25,10 +25,10 @@ const OpenWebSummary = (props) => {
   return (
     <div className="focus-create-cofirm-boolean-query">
       <ul>
-        <li><FormattedHTMLMessage {...localMessages.name} values={{ name: formValues.focusName }} /></li>
-        <li><FormattedHTMLMessage {...localMessages.description} values={{ description: formValues.focusDescription }} /></li>
+        <li><FormattedHTMLMessage {...localMessages.name} values={{ name: formValues.currentPlatform }} /></li>
+        <li><FormattedHTMLMessage {...localMessages.description} values={{ description: formValues.query }} /></li>
         <li>{platformContent}</li>
-        <li><FormattedHTMLMessage {...localMessages.keywords} values={{ query: formValues.query }} /></li>
+        <li><FormattedHTMLMessage {...localMessages.query} values={{ query: formValues.query }} /></li>
       </ul>
     </div>
   );

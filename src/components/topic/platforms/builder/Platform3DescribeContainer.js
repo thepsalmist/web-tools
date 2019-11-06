@@ -144,7 +144,7 @@ function validate() {
 }
 
 const reduxFormConfig = {
-  form: 'platform', // make sure this matches the sub-components and other wizard steps
+  form: 'platformValidation', // make sure this matches the sub-components and other wizard steps
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
   validate,

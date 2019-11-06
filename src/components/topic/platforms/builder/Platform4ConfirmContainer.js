@@ -21,7 +21,7 @@ const Platform4ConfirmContainer = (props) => {
   const { topicId, formValues, initialValues, handlePreviousStep, handleSubmit, finishStep, submitting } = props;
   const { formatMessage } = props.intl;
   let content = null;
-  switch (formValues.platform) {
+  switch (formValues.currentPlatform) {
     case PLATFORM_OPEN_WEB:
       content = (
         <OpenWebSummary topicId={topicId} formValues={formValues} initialValues={initialValues} />
@@ -42,7 +42,7 @@ const Platform4ConfirmContainer = (props) => {
       content = <FormattedMessage {...messages.unimplemented} />;
   }
   return (
-    <form className="platform-confirm" name="snapshotFocusConfirm" onSubmit={handleSubmit(finishStep.bind(this))}>
+    <form className="platform-confirm" name="platformValidation" onSubmit={handleSubmit(finishStep.bind(this))}>
       <Grid>
         <Row>
           <Col lg={12}>
@@ -94,7 +94,7 @@ Platform4ConfirmContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  formValues: state.form.snapshotFocus.values,
+  formValues: state.form.platform.values,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -105,7 +105,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return { ...stateProps, ...dispatchProps, ...ownProps, finishStep: values => dispatchProps.saveFocus(ownProps.topicId, values) };
+  return { ...stateProps, ...dispatchProps, ...ownProps, finishStep: values => dispatchProps.savePlatform(ownProps.topicId, values) };
 }
 
 function validate() {
@@ -114,7 +114,7 @@ function validate() {
 }
 
 const reduxFormConfig = {
-  form: 'snapshotFocus', // make sure this matches the sub-components and other wizard steps
+  form: 'platform', // make sure this matches the sub-components and other wizard steps
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
   validate,

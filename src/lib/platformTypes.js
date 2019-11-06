@@ -1,6 +1,6 @@
 
 // Implemented
-export const PLATFORM_OPEN_WEB = 'Open Web';
+export const PLATFORM_OPEN_WEB = 'web';
 // Implemented
 export const PLATFORM_TWITTER = 'Twitter';
 // Implemented

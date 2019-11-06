@@ -8,12 +8,13 @@ import { topicCreatePlatform, setTopicNeedsNewSnapshot } from '../../../actions/
 // import { LEVEL_ERROR } from '../../common/Notice';
 import { updateFeedback } from '../../../actions/appActions';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../lib/platformTypes';
+import { formatTopicPlatformPreviewQuery } from '../../util/topicUtil';
 
 const DEFAULT_SELECTED_NUMBER = 5;
 
-
 const localMessages = {
   platformNotSaved: { id: 'platform.create.notSaved', defaultMessage: 'That didn\'t work for some reason!' },
+  platformSaved: { id: 'platform.create.saved', defaultMessage: 'That worked!' },
   duplicateName: { id: 'platform.create.invalid', defaultMessage: 'Duplicate name. Choose a unique platform name.' },
   openWebSaved: { id: 'platform.create.openWebSaved', defaultMessage: 'We created a new Open Web platform' },
   twitterSaved: { id: 'platform.create.twitterSaved', defaultMessage: 'We created a new Twitter platform' },
@@ -42,7 +43,7 @@ CreatePlatformContainer.propTypes = {
   submitDone: PropTypes.func.isRequired,
   handleDone: PropTypes.func.isRequired,
   // from state
-  formData: PropTypes.object,
+  values: PropTypes.object,
   // from context:
   topicId: PropTypes.number.isRequired,
   location: PropTypes.object.isRequired,
@@ -57,47 +58,44 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  submitDone: (topicId, formValues) => {
+  submitDone: (topicId, values) => {
     // let saveData = null;
     // const nameAlreadyExists = queryData.focalSetDefinitions.filter(fc => fc.name === formValues.focalSetName);
     /* if (nameAlreadyExists.length > 0) {
       return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.duplicateName) }));
     }
     */
-    let platform = PLATFORM_OPEN_WEB;
-    let platformQuery = null;
+
+    const currentQuery = values.query;
     let source = null;
-    switch (formValues.platform) {
+    switch (values.currentPlatform) {
       case PLATFORM_OPEN_WEB:
         // check values values if necessary
-        platform = formValues.platform;
-        platformQuery = formValues.query;
         break;
       case PLATFORM_TWITTER:
         // check values values if necessary
-        platform = formValues.platform;
-        source = formValues.source; // crimson hexagon
-        platformQuery = formValues.query;
+        source = values.source; // crimson hexagon
         break;
       case PLATFORM_REDDIT:
         // check values values if necessary
-        platform = formValues.platform;
-        source = formValues.source; // crimson hexagon
-        platformQuery = formValues.query;
+        source = values.source; // crimson hexagon
         break;
       default:
         return null;
     }
-    return dispatch(topicCreatePlatform(topicId, { platform, platform_query: platformQuery, source }))
+    const infoForQuery = {
+      ...formatTopicPlatformPreviewQuery(topicId, values.currentPlatform, currentQuery, source),
+    };
+    return dispatch(topicCreatePlatform(topicId, { ...infoForQuery }))
       .then((results) => {
         if (results.length === 1) {
-          const focusSavedMessage = ownProps.intl.formatMessage(localMessages.booleanFocusSaved);
+          const platformSavedMessage = ownProps.intl.formatMessage(localMessages.platformSavedMessage);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
-          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: focusSavedMessage })); // user feedback
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
           dispatch(push(`/topics/${topicId}/platforms/manage`));
           dispatch(reset('platform')); // it is a wizard so we have to do this by hand
         } else {
-          const platformNotSavedMessage = ownProps.intl.formatMessage(localMessages.platformNotSavedMessage);
+          const platformNotSavedMessage = ownProps.intl.formatMessage(localMessages.platformNotSaved);
           dispatch(updateFeedback({ open: true, message: platformNotSavedMessage })); // user feedback
         }
       });

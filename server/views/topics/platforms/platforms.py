@@ -19,15 +19,15 @@ def topic_platform_list(topics_id):
     return jsonify({"results": [{"id": OPEN_WEB, "name": "open web"}]})
 
 
-@app.route('/api/topics/<topics_id>/platforms/add', methods=['GET'])
+@app.route('/api/topics/<topics_id>/platforms/add', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
 def topic_add_platform(topics_id):
     user_mc = user_mediacloud_client()
-    platform = request.form['platform']
+    platform = request.form['current_platform']
     query = request.form['platform_query']
-    source = request.form['source'] if 'source' in request.form else None
-    result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
+    #source = request.form['source'] if 'source' in request.form else None
+    result = user_mc.topicAddSeedQuery(topics_id, platform, 'archive_org', query)
     return jsonify({"results": result}) #topic_seed_queries_id
 
 @app.route('/api/topics/<topics_id>/platforms/remove', methods=['GET'])

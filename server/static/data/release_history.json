@@ -8,6 +8,12 @@
           "apps": [ "tools", "explorer", "sources", "topics" ],
           "type": "Fixed",
           "note": "Registration fixes"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Revert back to Pew 2017 collection for default searches",
+          "details": "The Pew 2018 data has a lot of sources that cover entertainment and sports, and omits a lot of major news sources. For now we are reverting default searches back to the Pew 2017 data, while we investigate more."
         }
       ]
     },{

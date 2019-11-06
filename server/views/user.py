@@ -71,7 +71,6 @@ def signup():
                               request.form['password'],
                               request.form['fullName'],
                               request.form['notes'],
-                              False,
                               ACTIVATION_URL,
                               bool(request.form['has_consented'] == 'true') if 'has_consented' in request.form else False,
                               )

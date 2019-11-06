@@ -2,6 +2,16 @@
   "releases": [
     {
       "date": "2019-11-06",
+      "version": "v3.12.10",
+      "notes": [
+        {
+          "apps": [ "tools", "explorer", "sources", "topics" ],
+          "type": "Fixed",
+          "note": "Resolves some more registration and login issues"
+        }
+      ]
+    }, {
+      "date": "2019-11-06",
       "version": "v3.12.9",
       "notes": [
         {

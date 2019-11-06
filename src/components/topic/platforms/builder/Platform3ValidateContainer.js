@@ -177,7 +177,7 @@ const mapStateToProps = state => ({
   stories: state.topics.selected.platforms.preview.matchingStories.list,
   currentTopicQuery: state.topics.selected.info,
   currentPlatform: state.form.platform.values.currentPlatform,
-  currentQuery: state.form.platformEditKeywordForm.values.query,
+  currentQuery: state.form.platform.values.query,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -185,10 +185,10 @@ const mapDispatchToProps = dispatch => ({
     dispatch(goToCreatePlatformStep(0));
   },
   handlePreviousStep: () => {
-    dispatch(goToCreatePlatformStep(2));
+    dispatch(goToCreatePlatformStep(1));
   },
   handleNextStep: () => {
-    dispatch(goToCreatePlatformStep(4));
+    dispatch(goToCreatePlatformStep(3));
   },
 });
 

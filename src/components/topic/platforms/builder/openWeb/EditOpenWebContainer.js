@@ -10,8 +10,7 @@ import messages from '../../../../../resources/messages';
 import OpenWebPreview from './OpenWebPreview';
 import { notEmptyString } from '../../../../../lib/formValidators';
 
-const formPSelector = formValueSelector('platform');
-const formPESelector = formValueSelector('platformEditKeywordForm');
+const formSelector = formValueSelector('platform');
 
 const localMessages = {
   title: { id: 'platform.create.edit.title', defaultMessage: 'Step 2: Configure Your {technique} platform' },
@@ -60,7 +59,7 @@ class EditOpenWebContainer extends React.Component {
     }
     return (
       <Grid>
-        <form className="platform-create-edit-keyword" name="platformEditKeywordForm" onSubmit={handleSubmit(finishStep.bind(this))}>
+        <form className="platform-create-edit-keyword" name="platform" onSubmit={handleSubmit(finishStep.bind(this))}>
           <Row>
             <Col lg={10}>
               <h2><FormattedMessage {...localMessages.title} values={{ technique: currentPlatform }} /></h2>
@@ -122,8 +121,8 @@ EditOpenWebContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  currentQuery: formPESelector(state, 'query'),
-  currentPlatform: formPSelector(state, 'currentPlatform'),
+  currentQuery: formSelector(state, 'query'),
+  currentPlatform: formSelector(state, 'currentPlatform'),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -144,7 +143,7 @@ function validate(values) {
 }
 
 const reduxFormConfig = {
-  form: 'platformEditKeywordForm', // make sure this matches the sub-components and other wizard steps
+  form: 'platform', // make sure this matches the sub-components and other wizard steps
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
   validate,

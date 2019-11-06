@@ -388,7 +388,7 @@ export function topicSnapshotCreate(topicId) {
 }
 
 export function topicCreatePlatform(topicId, params) {
-  const acceptedParams = acceptParams(params, ['platform', 'platform_query', 'source']);
+  const acceptedParams = acceptParams(params, ['current_platform', 'platform_query', 'source']);
   return createPostingApiPromise(`/api/topics/${topicId}/platforms/add`, acceptedParams);
 }
 

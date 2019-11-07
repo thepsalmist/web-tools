@@ -148,7 +148,7 @@ def topic_story_link_list_by_page(user_mc_key, topics_id, link_id, **kwargs):
 @cache.cache_on_arguments()
 def _cached_topic_story_link_list_page(user_mc_key, topics_id, link_id, **kwargs):
     # api_key passed in just to make this a user-level cache
-    local_mc = base_cache.mc_client(user_mc_key)
+    local_mc = user_mediacloud_client(user_mc_key)
     return local_mc.topicStoryLinks(topics_id, link_id=link_id, **kwargs)
 
 
@@ -159,7 +159,7 @@ def topic_media_link_list_by_page(user_mc_key, topics_id, link_id, **kwargs):
 @cache.cache_on_arguments()
 def _cached_topic_media_link_list_page(user_mc_key, topics_id, link_id, **kwargs):
     # api_key passed in just to make this a user-level cache
-    local_mc = base_cache.mc_client(user_mc_key)
+    local_mc = user_mediacloud_client(user_mc_key)
     return local_mc.topicMediaLinks(topics_id, link_id=link_id, **kwargs)
 
 

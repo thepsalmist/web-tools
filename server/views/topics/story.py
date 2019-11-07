@@ -105,7 +105,7 @@ def story_words_csv(topics_id, stories_id):
 
 
 @app.route('/api/topics/<topics_id>/stories/<stories_id>/inlinks', methods=['GET'])
-#@flask_login.login_required
+@flask_login.login_required
 @api_error_handler
 def story_inlinks(topics_id, stories_id):
     inlinks = apicache.topic_story_list(TOOL_API_KEY, topics_id,

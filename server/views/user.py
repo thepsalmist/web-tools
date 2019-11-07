@@ -27,7 +27,9 @@ def _create_user_session(user_results):
 
     # HACK: the API used to return this as true/false, but not returns it as 1 or 0, so we change it to
     # boolean here so we don't have to change front-end JS logic
-    user_results['profile']['has_consented'] = user_results['profile']['has_consented'] is 1
+    user_results['profile']['has_consented'] = (user_results['profile']['has_consented'] is 1) or \
+                                               (user_results['profile']['has_consented'] is True)
+
     merged_user_info = user_results['profile'].copy()  # start with x's keys and values
 
     if 'error' in user_results:

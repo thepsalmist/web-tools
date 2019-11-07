@@ -1,5 +1,4 @@
 import logging
-from multiprocessing import Pool
 import flask_login
 from flask import jsonify, request, Response
 import mediacloud
@@ -126,7 +125,7 @@ def stream_story_list_csv(user_key, topic, **kwargs):
     }
     params.update(merged_args)
 
-    story_count = apicache.topic_story_count(user_mediacloud_key(), topic['topics_id'],
+    story_count = apicache.topic_story_count(user_key, topic['topics_id'],
                                              snapshots_id=params['snapshots_id'], timespans_id=params['timespans_id'],
                                              foci_id=params['foci_id'], q=params['q'])
     logger.info("Total stories to download: {}".format(story_count['count']))
@@ -160,7 +159,7 @@ def stream_story_list_csv(user_key, topic, **kwargs):
         all_fb_count = []
         more_fb_count = True
         link_id = 0
-        local_mc = user_admin_mediacloud_client()
+        local_mc = user_mediacloud_client(user_key)
         while more_fb_count:
             fb_page = local_mc.topicStoryListFacebookData(topic['topics_id'], limit=100, link_id=link_id)
 

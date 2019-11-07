@@ -252,7 +252,7 @@ def _stream_media_list_csv(user_mc_key, filename, topics_id, **kwargs):
     try:
 
         while more_media:
-            page = apicache.topic_media_list(user_mediacloud_key(), topics_id, **params)
+            page = apicache.topic_media_list(user_mc_key, topics_id, **params)
             media_list = page['media']
 
             all_media = all_media + media_list

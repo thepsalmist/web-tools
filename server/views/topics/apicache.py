@@ -137,7 +137,7 @@ def topic_story_list_by_page(user_mc_key, topics_id, link_id, **kwargs):
 def _cached_topic_story_list_page(user_mc_key, topics_id, link_id, **kwargs):
     # be user-specific in this cache to be careful about permissions on stories
     # api_key passed in just to make this a user-level cache
-    local_mc = base_cache.mc_client(user_mc_key)
+    local_mc = user_mediacloud_client(user_mc_key)
     return local_mc.topicStoryList(topics_id, link_id=link_id, **kwargs)
 
 

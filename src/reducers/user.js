@@ -20,6 +20,8 @@ function resetRavenUserContext() {
   Raven.setUserContext();
 }
 
+const isAdmin = profile => (((profile) && (profile.auth_roles) && Array.isArray(profile.auth_roles)) ? profile.auth_roles.filter(r => r === 'admin').length > 0 : false);
+
 export default function user(state = INITIAL_STATE, action) {
   switch (action.type) {
     case LOGIN_WITH_PASSWORD:
@@ -33,7 +35,7 @@ export default function user(state = INITIAL_STATE, action) {
       return { ...state,
         fetchStatus: fetchConstants.FETCH_SUCCEEDED,
         isLoggedIn: passwordLoginWorked,
-        isAdmin: (Array.isArray(action.payload.profile.auth_roles) && passwordLoginWorked) ? action.payload.profile.auth_roles.filter(r => r === 'admin').length > 0 : false,
+        isAdmin: passwordLoginWorked ? isAdmin(action.payload.profile) : false,
         ...action.payload };
     case reject(LOGIN_WITH_PASSWORD):
       resetRavenUserContext();
@@ -52,7 +54,7 @@ export default function user(state = INITIAL_STATE, action) {
       return { ...state,
         fetchStatus: fetchConstants.FETCH_SUCCEEDED,
         isLoggedIn: keyLoginWorked,
-        isAdmin: (Array.isArray(action.payload.profile.auth_roles) && keyLoginWorked) ? action.payload.profile.auth_roles.filter(r => r === 'admin').length > 0 : false,
+        isAdmin: keyLoginWorked ? isAdmin(action.payload.profile) : false,
         ...action.payload };
     case reject(LOGIN_WITH_COOKIE):
       resetRavenUserContext();

@@ -410,6 +410,10 @@ export function topicStoriesByPlatformQuery(topicId, params) {
   return createApiPromise(`/api/topics/${topicId}/platforms/preview/stories`, acceptedParams);
 }
 
-export function topicPlatformList(topicId) {
+export function topicPlatformList() {
+  return createApiPromise('/api/topics/platforms/all');
+}
+
+export function platformsInTopic(topicId) {
   return createApiPromise(`/api/topics/${topicId}/platforms/list`);
 }

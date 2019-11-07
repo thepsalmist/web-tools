@@ -12,12 +12,21 @@ logger = logging.getLogger(__name__)
 
 OPEN_WEB = 1
 
-@app.route('/api/topics/<topics_id>/platforms/list', methods=['GET'])
+@app.route('/api/topics/platforms/all', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
-def topic_platform_list(topics_id):
-    return jsonify({"results": [{"id": OPEN_WEB, "name": "open web"}]})
+def topic_platform_list():
+    return jsonify({'results': [{'platform': 'open web', 'platform_seed_query': 'dummy'}, {'platform': 'reddit', 'platform_seed_query': 'dummy'}, {'platform': 'twitter', 'platform_seed_query': 'dummy'}]})
 
+
+
+@app.route('/api/topics/<topics_id>/platforms/list', methods=['GET'])
+@flask_login.login_required
+def get_topic_platforms(topics_id):
+    # media_type_tags = tags_in_tag_set(TOOL_API_KEY, TAG_SETS_ID_MEDIA_TYPE)
+    # how do we get all the seed queries per topic ?
+    #merge what the topic has versus what the topic doens't by adding in the topic_seed_queries_id
+    return jsonify({'results': [{'id':1, 'platform': 'open web', 'platform_seed_query': 'dummy'}, {'platform': 'reddit', 'platform_seed_query': 'dummy'}, {'platform': 'twitter', 'platform_seed_query': 'dummy'}]})
 
 @app.route('/api/topics/<topics_id>/platforms/add', methods=['POST'])
 @flask_login.login_required
@@ -26,7 +35,9 @@ def topic_add_platform(topics_id):
     user_mc = user_mediacloud_client()
     platform = request.form['current_platform']
     query = request.form['platform_query']
+
     #source = request.form['source'] if 'source' in request.form else None
+    # do we need to add dates?
     result = user_mc.topicAddSeedQuery(topics_id, platform, 'archive_org', query)
     return jsonify({"results": result}) #topic_seed_queries_id
 

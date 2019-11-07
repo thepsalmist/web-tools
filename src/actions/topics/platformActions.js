@@ -2,12 +2,14 @@ import { createAction } from 'redux-actions';
 import { createAsyncAction } from '../../lib/reduxHelpers';
 import * as api from '../../lib/serverApi/topics';
 
-
 export const GO_TO_CREATE_PLATFORM_STEP = 'GO_TO_CREATE_PLATFORM_STEP';
 export const goToCreatePlatformStep = createAction(GO_TO_CREATE_PLATFORM_STEP, step => step);
 // pass in the topicId
-export const FETCH_PLATFORMS = 'FETCH_PLATFORMS';
-export const fetchTopicPlatforms = createAsyncAction(FETCH_PLATFORMS, api.topicPlatformList);
+export const FETCH_ALL_PLATFORMS = 'FETCH_ALL_PLATFORMS';
+export const fetchTopicPlatforms = createAsyncAction(FETCH_ALL_PLATFORMS, api.topicPlatformList);
+
+export const FETCH_PLATFORMS_IN_TOPIC = 'FETCH_PLATFORMS_IN_TOPIC';
+export const fetchPlatformsInTopicList = createAsyncAction(FETCH_PLATFORMS_IN_TOPIC, api.platformsInTopic);
 
 export const EDIT_PLATFORM = 'EDIT_PLATFORM';
 export const editTopicPlatform = createAsyncAction(EDIT_PLATFORM, api.topicEditPlatform);

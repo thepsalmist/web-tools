@@ -30,10 +30,6 @@ def _create_user_session(user_results):
     user_results['profile']['has_consented'] = user_results['profile']['has_consented'] is 1
     merged_user_info = user_results['profile'].copy()  # start with x's keys and values
 
-    # HACK for back-end bug where single-item lists are being flattened to strings
-    if isinstance(merged_user_info['auth_roles'], str):
-        merged_user_info['auth_roles'] = [merged_user_info['auth_roles']]
-
     if 'error' in user_results:
         return json_error_response(user_results['error'], 401)
     user = auth.create_user(merged_user_info)

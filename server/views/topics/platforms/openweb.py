@@ -50,15 +50,6 @@ def open_web_coverage(topics_id):
     return jsonify({'counts': {'count': 1, 'total': 1}})
 
 
-@app.route('/api/topics/<topics_id>/platforms/open-web/create', methods=['POST'])
-@form_fields_required('focalSetName', 'focalSetDescription')
-@flask_login.login_required
-def create_open_web_platform(topics_id):
-    user_mc = user_mediacloud_client()
-    # grab the focalSetName and focalSetDescription and then make one
-    # do somethings, but return dummy for now
-    return {'success': True}
-
 @app.route('/api/platforms/list', methods=['GET'])
 @flask_login.login_required
 def get_platform_types():

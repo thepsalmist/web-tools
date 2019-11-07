@@ -5,9 +5,10 @@ import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import AppButton from '../../common/AppButton';
+import PlatformTable from '../../common/PlatformTable';
 import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
-import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchTopicPlatforms } from '../../../actions/topicActions';
+import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 // import BackLinkingControlBar from '../BackLinkingControlBar';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
@@ -55,7 +56,7 @@ class ManagePlatformsContainer extends React.Component {
   }
 
   render() {
-    const { topicId } = this.props;
+    const { topicId, platforms } = this.props;
     const { formatMessage } = this.props.intl;
     return (
       <div>
@@ -69,6 +70,7 @@ class ManagePlatformsContainer extends React.Component {
                 </p>
               </Col>
             </Row>
+            <PlatformTable platforms={platforms} />
             <Row>
               <Col lg={6}>
                 <div id="create-platform-button">
@@ -100,7 +102,7 @@ ManagePlatformsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
-  platforms: PropTypes.object.isRequired,
+  platforms: PropTypes.array.isRequired,
   filters: PropTypes.object.isRequired,
   // from dispatch
   handleDeletePlatform: PropTypes.func.isRequired,
@@ -109,7 +111,7 @@ ManagePlatformsContainer.propTypes = {
 const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
   topicInfo: state.topics.selected.info,
-  platforms: state.topics.selected.platforms.all.list,
+  platforms: state.topics.selected.platforms.all.results,
   fetchStatus: state.topics.selected.platforms.all.fetchStatus,
   filters: state.topics.selected.filters,
 });
@@ -123,14 +125,14 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         } else {
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.removePlatformSucceeded) }));
           dispatch(setTopicNeedsNewSnapshot(true));
-          dispatch(fetchTopicPlatforms(topicId));
+          dispatch(fetchPlatformsInTopicList(topicId));
         }
       });
   },
 });
 
 const fetchAsyncData = (dispatch, { topicId }) => {
-  dispatch(fetchTopicPlatforms(topicId));
+  dispatch(fetchPlatformsInTopicList(topicId));
 };
 
 export default

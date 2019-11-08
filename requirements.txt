@@ -9,7 +9,7 @@ raven[flask]==6.9.0
 redis==2.10.6
 networkx==1.9
 Flask-Mail==0.9.1
-mediacloud-cliff==2.0.2
+mediacloud-cliff==2.6.0
 gunicorn==19.9.0
 dogpile.cache==0.7.1
 python-dateutil==2.7.3

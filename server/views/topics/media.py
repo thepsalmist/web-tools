@@ -2,7 +2,6 @@ import logging
 import json
 from flask import jsonify, request, Response
 import flask_login
-from multiprocessing import Pool
 
 from server import app, TOOL_API_KEY
 from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_DOWNLOAD_SAMPLE_SIZE
@@ -87,7 +86,9 @@ def media_stories(topics_id, media_id):
 @flask_login.login_required
 def media_stories_csv(topics_id, media_id):
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
-    return stream_story_list_csv(user_mediacloud_key(), 'media-'+media_id+'-stories', topics_id,
+    user_mc = user_mediacloud_client()
+    topic = user_mc.topic(topics_id)
+    return stream_story_list_csv(user_mediacloud_key(), 'media-'+media_id+'-stories', topic,
                                  media_id=media_id, timespans_id=timespans_id, q=q)
 
 
@@ -129,7 +130,9 @@ def all_media_inlinks(topics_id, media_id):
 @flask_login.login_required
 def media_inlinks_csv(topics_id, media_id):
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
-    return stream_story_list_csv(user_mediacloud_key(), 'media-'+media_id+'-inlinks', topics_id,
+    user_mc = user_mediacloud_client()
+    topic = user_mc.topic(topics_id)
+    return stream_story_list_csv(user_mediacloud_key(), 'media-'+media_id+'-inlinks', topic,
                                  link_to_media_id=media_id, timespans_id=timespans_id, q=q)
 
 
@@ -171,7 +174,9 @@ def all_media_outlinks(topics_id, media_id):
 @flask_login.login_required
 def media_outlinks_csv(topics_id, media_id):
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
-    return stream_story_list_csv(user_mediacloud_key(), 'media-'+media_id+'-outlinks', topics_id,
+    user_mc = user_mediacloud_client()
+    topic = user_mc.topic(topics_id)
+    return stream_story_list_csv(user_mediacloud_key(), 'media-'+media_id+'-outlinks', topic,
                                  link_from_media_id=media_id, timespans_id=timespans_id, q=q)
 
 

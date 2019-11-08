@@ -1,6 +1,16 @@
 {
   "releases": [
     {
+      "date": "2019-11-08",
+      "version": "v3.12.12",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic story inlink and outlink CSV files work again"
+        }
+      ]
+    }, {
       "date": "2019-11-07",
       "version": "v3.12.11",
       "notes": [

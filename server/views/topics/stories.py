@@ -1,8 +1,8 @@
 import logging
-from multiprocessing import Pool
 import flask_login
 from flask import jsonify, request, Response
 import mediacloud
+import mediacloud.error
 import concurrent.futures
 
 import server.util.csv as csv
@@ -14,7 +14,7 @@ from server import app, cliff, TOOL_API_KEY
 from server.auth import is_user_logged_in
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
 from server.cache import cache
-from server.util.request import api_error_handler
+from server.util.request import api_error_handler, filters_from_args
 from server.views.topics import access_public_topic
 from server.util.tags import TAG_SPIDERED_STORY
 
@@ -99,14 +99,14 @@ def topic_stories_csv(topics_id):
     media_metadata = (request.args['mediaMetadata'] == '1') if 'mediaMetadata' in request.args else False
     reddit_submissions = (request.args['redditData'] == '1') if 'redditData' in request.args else False
     include_fb_date = (request.args['fbData'] == '1') if 'fbData' in request.args else False
-    return stream_story_list_csv(user_mediacloud_key(), topic,
+    return stream_story_list_csv(user_mediacloud_key(), "stories", topic,
                                  story_limit=story_limit, reddit_submissions=reddit_submissions,
                                  story_tags=story_tags, include_fb_date=include_fb_date,
                                  media_metadata=media_metadata)
 
 
-def stream_story_list_csv(user_key, topic, **kwargs):
-    filename = topic['name']+'-stories'
+def stream_story_list_csv(user_key, filename, topic, **kwargs):
+    filename = topic['name'] + '-' + filename
     has_twitter_data = (topic['ch_monitor_id'] is not None) and (topic['ch_monitor_id'] != 0)
 
     # as_attachment = kwargs['as_attachment'] if 'as_attachment' in kwargs else True
@@ -117,16 +117,17 @@ def stream_story_list_csv(user_key, topic, **kwargs):
     all_stories = []
     params = kwargs.copy()
 
+    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     merged_args = {
-        'snapshots_id': request.args['snapshotId'],
-        'timespans_id': request.args['timespanId'],
-        'foci_id': request.args['focusId'] if 'focusId' in request.args else None,
-        'q': request.args['q'] if 'q' in request.args else None,
+        'timespans_id': timespans_id,
+        'snapshots_id': snapshots_id,
+        'foci_id': foci_id,
+        'q': q,
         'sort': request.args['sort'] if 'sort' in request.args else None,
     }
     params.update(merged_args)
 
-    story_count = apicache.topic_story_count(user_mediacloud_key(), topic['topics_id'],
+    story_count = apicache.topic_story_count(user_key, topic['topics_id'],
                                              snapshots_id=params['snapshots_id'], timespans_id=params['timespans_id'],
                                              foci_id=params['foci_id'], q=params['q'])
     logger.info("Total stories to download: {}".format(story_count['count']))
@@ -160,7 +161,7 @@ def stream_story_list_csv(user_key, topic, **kwargs):
         all_fb_count = []
         more_fb_count = True
         link_id = 0
-        local_mc = user_admin_mediacloud_client()
+        local_mc = user_mediacloud_client(user_key)
         while more_fb_count:
             fb_page = local_mc.topicStoryListFacebookData(topic['topics_id'], limit=100, link_id=link_id)
 

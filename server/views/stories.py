@@ -106,7 +106,7 @@ def entities_from_mc_or_cliff(stories_id):
     cliff_results = cached_story_raw_cliff_results(stories_id)[0]['cliff']
     if (cliff_results == 'story is not annotated') or (cliff_results == "story does not exist"):
         story = mc.story(stories_id, text=True)
-        cliff_results = cliff.parse_text(story['story_text'])
+        cliff_results = cliff.parse_text(story['story_text'], story['language'].upper())
     # clean up for reporting
     if 'results' in cliff_results:
         for org in cliff_results['results']['organizations']:
@@ -199,8 +199,18 @@ def story_top_image(stories_id):
     story_html = apicache.story_raw_1st_download(TOOL_API_KEY, stories_id)
     article = newspaper.Article(url=story['url'])
     article.set_html(story_html)
-    article.parse()
+    try:
+        article.parse()
+        return jsonify({
+            'top': article.top_image,
+            'all': list(article.images),
+        })
+    except TypeError:
+        # ignore for now as the next step will return an error
+        logger.warning("Couldn't parse story {} for images".format(stories_id))
+    # maybe an unhashable type problem?
     return jsonify({
-        'top': article.top_image,
-        'all': list(article.images),
+        'top': None,
+        'all': [],
     })
+

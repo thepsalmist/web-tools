@@ -1,4 +1,3 @@
-
 from server import mc, TOOL_API_KEY
 from server.cache import cache
 from server.auth import user_mediacloud_client, user_mediacloud_key, is_user_logged_in, user_admin_mediacloud_client
@@ -21,12 +20,22 @@ def media(media_id):
     return _cached_media(api_key(), media_id)
 
 
+def get_media_with_key(mc_api_key, media_id):
+    return _cached_get_media_with_key(mc_api_key, media_id)
+
+
+@cache.cache_on_arguments()
+def _cached_get_media_with_key(mc_api_key, media_id):
+    local_client = user_mediacloud_client(mc_api_key)
+    return local_client.media(media_id)
+
+
 def get_media(mc_api_key, media_id):
     return _cached_media(mc_api_key, media_id)
 
 
 @cache.cache_on_arguments()
-def _cached_media(api_key, media_id):
+def _cached_media(mc_api_key, media_id):
     # api_key passed in just to make this a user-level cache
     local_client = mc_client()
     return local_client.media(media_id)

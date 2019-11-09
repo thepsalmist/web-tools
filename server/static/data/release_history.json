@@ -1,6 +1,46 @@
 {
   "releases": [
     {
+      "date": "2019-11-08",
+      "version": "v3.12.12",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic story inlink and outlink CSV files work again"
+        }
+      ]
+    }, {
+      "date": "2019-11-07",
+      "version": "v3.12.11",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics" ],
+          "type": "Fixed",
+          "note": "CSV download of story URLs works again"
+        },
+        {
+          "apps": [ "tools", "explorer", "sources", "topics" ],
+          "type": "Fixed",
+          "note": "More work on login and page reloads"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Faster Explorer story URL CSV download (removed media metadata)"
+        }
+      ]
+    }, {
+      "date": "2019-11-06",
+      "version": "v3.12.10",
+      "notes": [
+        {
+          "apps": [ "tools", "explorer", "sources", "topics" ],
+          "type": "Fixed",
+          "note": "Resolves some more registration and login issues"
+        }
+      ]
+    }, {
       "date": "2019-11-06",
       "version": "v3.12.9",
       "notes": [

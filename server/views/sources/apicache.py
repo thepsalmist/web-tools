@@ -61,7 +61,7 @@ def _cached_collection_source_representation(mc_api_key, collection_id, sample_s
     return sorted(list(media_representation.values()), key=operator.itemgetter('stories'))
 
 
-def timeperiod_story_count(user_mc, query, time_period):
+def timeperiod_story_count(user_mc_key, query, time_period):
     return _cached_timeperiod_story_count(query, time_period)
 
 
@@ -73,6 +73,7 @@ def _cached_timeperiod_story_count(q='*', time_period=QUERY_LAST_MONTH):
     results = user_mc.storyCount(solr_query=q, solr_filter=time_period)
     return results
 
+
 YESTERDAY = datetime.datetime.now()-datetime.timedelta(1)  # yesterday
 MC_START_DATE = datetime.datetime(2010, 1, 1, 0, 0, 0)  # kind of when media cloud started
 
@@ -82,9 +83,8 @@ def split_story_count(user_mc_key, q='*', last_n_days=None):
     start_date = None
     end_date = None
     if last_n_days is not None:
-        start_date = datetime.datetime.today()-datetime.timedelta(last_n_days)
-        end_date = YESTERDAY
-        fq = mc.publish_date_query(start_date, end_date, True, True)
+        # query until one day ago so we don't have the dropoff assocatied with looking at today's stories
+        fq = "publish_date:[NOW-{}DAY TO NOW-1DAY]".format(last_n_days)
     else:
         fq = None
     results = _cached_split_story_counts(q, fq)

@@ -23,10 +23,10 @@ def json_error_response(message, status_code=400):
 
 
 def filters_from_args(request_args):
-    '''
+    """
     Helper to centralize reading filters from url params
-    '''
-    timespans_id = request_args['timespanId']
+    """
+    timespans_id = request_args['timespanId'] if 'timespanId' in request_args else None
     snapshots_id = request_args['snapshotId'] if 'snapshotId' in request_args else None
     foci_id = request_args['focusId'] if 'focusId' in request_args else None
     q = request_args['q'] if ('q' in request_args) and (request_args['q'] != 'undefined') else None

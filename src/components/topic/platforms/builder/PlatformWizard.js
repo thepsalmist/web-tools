@@ -51,8 +51,8 @@ class PlatformWizard extends React.Component {
     ];
     const CurrentStepComponent = steps[currentStep];
     return (
-      <div className="focus-builder-wizard">
-        <BackLinkingControlBar message={localMessages.backToPlatformManager} linkTo={`/topics/${topicId}/snapshot/foci`}>
+      <div className="platform-builder-wizard">
+        <BackLinkingControlBar message={localMessages.backToPlatformManager} linkTo={`/topics/${topicId}/platforms/manage`}>
           <Stepper activeStep={currentStep}>
             <Step>
               <StepLabel><FormattedMessage {...localMessages.step0Name} /></StepLabel>

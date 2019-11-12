@@ -70,10 +70,11 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     let source = null;
     switch (values.currentPlatform) {
       case PLATFORM_OPEN_WEB:
-        // check values values if necessary
+        source = 'mediacloud';
         break;
       case PLATFORM_TWITTER:
         // check values values if necessary
+        // source = internet archive or push_shift
         source = values.source; // crimson hexagon
         break;
       case PLATFORM_REDDIT:

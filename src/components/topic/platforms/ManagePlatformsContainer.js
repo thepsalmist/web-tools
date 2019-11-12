@@ -10,13 +10,13 @@ import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
 import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
-// import BackLinkingControlBar from '../BackLinkingControlBar';
+import NewVersionPlatformComparisonContainer from './NewVersionPlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
 import LinkWithFilters from '../LinkWithFilters';
 // import { filteredLinkTo } from '../../util/location';
 
 const localMessages = {
-  listTitle: { id: 'platform.list.title', defaultMessage: 'Subtopic Details' },
+  listTitle: { id: 'platform.list.title', defaultMessage: 'Platform Details' },
   platformManageAbout: { id: 'platform.manage.about',
     defaultMessage: 'empty' },
   removePlatform: { id: 'platform.manage.remove', defaultMessage: 'Remove Platform' },
@@ -81,6 +81,7 @@ class ManagePlatformsContainer extends React.Component {
               </Col>
             </Row>
           </Grid>
+          <NewVersionPlatformComparisonContainer />
           <ConfirmationDialog
             open={this.state.removeDialogOpen}
             title={formatMessage(localMessages.removePlatform)}

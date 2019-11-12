@@ -9,11 +9,14 @@ import withIntlForm from '../../../../common/hocs/IntlForm';
 import messages from '../../../../../resources/messages';
 import OpenWebPreview from './OpenWebPreview';
 import { notEmptyString } from '../../../../../lib/formValidators';
+import MediaPickerDialog from '../../../../common/mediaPicker/MediaPickerDialog';
+import OpenWebMediaFieldArray from '../../../../common/form/OpenWebMediaFieldArray';
 
 const formSelector = formValueSelector('platform');
 
 const localMessages = {
   title: { id: 'platform.create.edit.title', defaultMessage: 'Step 2: Configure Your {technique} platform' },
+  intro: { id: 'platform.create.edit.intro', defaultMessage: 'Step 2: intro' },
   about: { id: 'platform.create.edit.about',
     defaultMessage: 'This Platform is driven by an open web seed query.  Any stories that match the query you create will be included in the Platform.' },
   errorNoKeywords: { id: 'platform.error', defaultMessage: 'You need to specify a query.' },
@@ -45,8 +48,18 @@ class EditOpenWebContainer extends React.Component {
   }
 
   render() {
-    const { topicId, renderTextField, currentPlatform, handleSubmit, onPreviousStep, finishStep, location } = this.props;
+    const { topicId, initialValues, handleMediaDelete, renderTextField, currentPlatform, handleSubmit, onPreviousStep, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
+    const selectedMedia = initialValues.sourcesAndCollections ? initialValues.sourcesAndCollections : [];
+    let mediaPicker = null;
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control
+    const mediaLabel = <label htmlFor="media"><FormattedMessage {...localMessages.SandC} /></label>;
+    mediaPicker = (
+      <MediaPickerDialog
+        initMedia={selectedMedia} // {selected.media ? selected.media : cleanedInitialValues.media}
+        onConfirmSelection={selections => handleMediaDelete(selections)}
+      />
+    );
     let previewContent = null;
     let nextButtonDisabled = true;
     if ((this.state.query !== null) && (this.state.query !== undefined) && (this.state.query.length > 0)) {
@@ -87,6 +100,23 @@ class EditOpenWebContainer extends React.Component {
               />
             </Col>
           </Row>
+          <Row>
+            <Col lg={6}>
+              <div className="media-field-wrapper">
+                {mediaLabel}
+                <OpenWebMediaFieldArray
+                  formatMessage={formatMessage}
+                  className="query-field"
+                  form="platform"
+                  destroyOnUnmount={false}
+                  fieldName="sourcesAndCollections"
+                  initialValues={initialValues.sourcesAndCollections} // to and from MediaPicker
+                  allowRemoval
+                />
+                {mediaPicker}
+              </div>
+            </Col>
+          </Row>
           { previewContent }
           <Row>
             <Col lg={8} xs={12}>
@@ -108,6 +138,7 @@ EditOpenWebContainer.propTypes = {
   initialValues: PropTypes.object,
   onPreviousStep: PropTypes.func.isRequired,
   onNextStep: PropTypes.func.isRequired,
+  handleMediaDelete: PropTypes.func.isRequired,
   // from state
   currentPlatform: PropTypes.string,
   currentQuery: PropTypes.string,
@@ -126,6 +157,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
+  handleMediaChange: (sourceAndCollections) => {
+    // take selections from mediaPicker and push them back into topicForm
+    ownProps.change('sourcesAndCollections', sourceAndCollections); // redux-form change action
+  },
+  handleMediaDelete: () => null, // in create mode we don't need to update the values
   finishStep: (values) => {
     const customProps = {
       query: values.query,

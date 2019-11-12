@@ -1,6 +1,22 @@
 {
   "releases": [
     {
+      "date": "2019-11-12",
+      "version": "v3.12.13",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "The collection source represetation bubble chart works again"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "The topic version history page works again"
+        }
+      ]
+    },
+    {
       "date": "2019-11-08",
       "version": "v3.12.12",
       "notes": [

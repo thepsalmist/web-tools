@@ -31,8 +31,8 @@ def _cached_featured_collection_list():
     return [mc.tag(tags_id) for tags_id in FEATURED_COLLECTION_LIST]
 
 
-def collection_source_representation(mc_api_key, collection_id):
-    return _cached_collection_source_representation(mc_api_key, collection_id)
+def collection_source_representation(mc_api_key, collection_id, sample_size, fq):
+    return _cached_collection_source_representation(mc_api_key, collection_id, sample_size, fq)
 
 
 def invalidate_collection_source_representation_cache(mc_api_key, collection_id):
@@ -40,11 +40,10 @@ def invalidate_collection_source_representation_cache(mc_api_key, collection_id)
 
 
 @cache.cache_on_arguments()
-def _cached_collection_source_representation(mc_api_key, collection_id):
+def _cached_collection_source_representation(mc_api_key, collection_id, sample_size=1000, fq=''):
     # have to respect the api here here because only some folks can see private collections
     user_mc = user_mediacloud_client(mc_api_key)
-    sample_size = 1000
-    stories = user_mc.storyList('tags_id_media:{}'.format(collection_id), rows=sample_size, sort=mc.SORT_RANDOM)
+    stories = user_mc.storyList('tags_id_media:{}'.format(collection_id), fq, rows=sample_size, sort=mc.SORT_RANDOM)
     media_representation = {}
     for s in stories:
         if s['media_id'] not in media_representation:

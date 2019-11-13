@@ -191,7 +191,13 @@ executor = Executor(app)
 @app.route('/')
 def index():
     logger.debug("homepage request")
-    return render_template('index.html', cookie_domain=config.get('COOKIE_DOMAIN'))
+    try:
+        maintenance_mode = config.get('MAINTENANCE_MODE')
+    except ConfigException:
+        maintenance_mode = 0
+    return render_template('index.html',
+                           cookie_domain=config.get('COOKIE_DOMAIN'),
+                           maintenance_mode=maintenance_mode)
 
 
 # now load in the appropriate view endpoints, after the app has been initialized

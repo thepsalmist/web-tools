@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2019-11-13",
+      "version": "v3.12.15",
+      "notes": [
+        {
+          "apps": [ "topics", "tools", "explorer", "sources" ],
+          "type": "Fixed",
+          "note": "Better support for notifying users when we are in maintenance mode"
+        }
+      ]
+    },
+    {
       "date": "2019-11-12",
       "version": "v3.12.14",
       "notes": [

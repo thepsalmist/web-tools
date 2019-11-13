@@ -71,8 +71,8 @@ NewVersionPlatformComparisonContainer.propTypes = {
   // from state
   topicId: PropTypes.number.isRequired,
   usingLatest: PropTypes.bool.isRequired,
-  selectedSnapshot: PropTypes.number.isRequired,
-  currentPlatforms: PropTypes.bool.isRequired,
+  selectedSnapshot: PropTypes.object.isRequired,
+  currentPlatforms: PropTypes.bool, // .isRequired,
   newPlatforms: PropTypes.bool.isRequired,
   latestVersionRunning: PropTypes.bool.isRequired,
   // from dispatch
@@ -82,7 +82,7 @@ NewVersionPlatformComparisonContainer.propTypes = {
 const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
   usingLatest: state.topics.selected.snapshots.usingLatest,
-  newPlatfors: state.topics.selected.platform.all.list,
+  newPlatforms: state.topics.selected.platforms.all.results,
   latestVersionRunning: state.topics.selected.snapshots.latestVersionRunning,
   selectedSnapshot: state.topics.selected.snapshots.selected,
 });

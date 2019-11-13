@@ -39,6 +39,7 @@ def topic_add_platform(topics_id):
     source = request.form['source'] if 'source' in request.form else None
     # do we need to add dates?
     result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
+    result['success'] = result['topic_seed_query']['topic_seed_queries_id']
     return jsonify({"results": result}) #topic_seed_queries_id
 
 @app.route('/api/topics/<topics_id>/platforms/remove', methods=['GET'])

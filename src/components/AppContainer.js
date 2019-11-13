@@ -51,7 +51,7 @@ class AppContainer extends React.Component {
       </div>
     );
     */
-    if (document.appConfig.online === false) {
+    if (document.appConfig.maintenanceMode === 1) {
       content = (
         <div className="maintenance">
           <Row center="lg">

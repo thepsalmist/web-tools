@@ -2,6 +2,17 @@
   "releases": [
     {
       "date": "2019-11-12",
+      "version": "v3.12.14",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "More work on fixing various topic CSV download"
+        },
+      ]
+    },
+    {
+      "date": "2019-11-12",
       "version": "v3.12.13",
       "notes": [
         {

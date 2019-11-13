@@ -185,8 +185,7 @@ def media_outlinks_csv(topics_id, media_id):
 def get_topic_media_links_csv(topics_id):
     user_mc = user_mediacloud_client()
     topic = user_mc.topic(topics_id)
-    # page through results for timespand
-    return stream_media_link_list_csv(user_mediacloud_key(), topic['name'] + '-stories', topics_id)
+    return stream_media_link_list_csv(user_mediacloud_key(), topic['name'] + '-media-links', topics_id)
 
 
 def stream_media_link_list_csv(user_mc_key, filename, topics_id, **kwargs):
@@ -211,7 +210,7 @@ def stream_media_link_list_csv(user_mc_key, filename, topics_id, **kwargs):
 
 
 def _media_info_worker(info):
-    return base_apicache.media(info['key'], info['media_id'])
+    return base_apicache.get_media_with_key(info['key'], info['media_id'])
 
 
 # generator you can use to handle a long list of stories row by row (one row per story)

@@ -191,7 +191,7 @@ def stream_story_list_csv(user_key, filename, topic, **kwargs):
 def get_topic_story_links_csv(topics_id):
     user_mc = user_mediacloud_client()
     topic = user_mc.topic(topics_id)
-    return stream_story_link_list_csv(user_mediacloud_key(), topic['name'] + '-stories', topics_id)
+    return stream_story_link_list_csv(user_mediacloud_key(), topic['name'] + '-story-links', topics_id)
 
 
 def stream_story_link_list_csv(user_key, filename, topics_id, **kwargs):
@@ -226,37 +226,39 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
     spec_props = [
         'source_stories_id', 'source_publish_date', 'source_title', 'source_url', 'source_language',
         'source_ap_syndicated', 'source_inlink_count', 'source_outlink_count', 'ref_stories_id', 'ref_publish_date',
-        'ref_title', 'ref_url', 'ref_language', 'ref_ap_syndicated', 'ref_inlink_count', 'ref_outlink_count'
-        'media_pub_country', 'media_pub_state', 'media_language', 'media_about_country', 'media_media_type'
+        'ref_title', 'ref_url', 'ref_language', 'ref_ap_syndicated', 'ref_inlink_count', 'ref_outlink_count',
+        # 'media_pub_country', 'media_pub_state', 'media_language', 'media_about_country', 'media_media_type'
     ]
     yield ','.join(spec_props) + '\n'  # first send the column names
     link_id = 0
     more_pages = True
     while more_pages:
+        # fetch one page of the links, which only include story ids
         story_link_page = apicache.topic_story_link_list_by_page(user_key, topics_id, link_id=link_id, **kwargs)
-
+        # now get the full story info by combining the story ids into a one big list
         story_src_ids = [str(s['source_stories_id']) for s in story_link_page['links']]
         story_ref_ids = [str(s['ref_stories_id']) for s in story_link_page['links']]
-        story_src_ids = story_src_ids + story_ref_ids
-
-        stories_info_list = local_mc.topicStoryList(topics_id, stories_id=story_src_ids)
-
+        page_story_ids = story_src_ids + story_ref_ids
+        # note: ideally this would use the stories_id argument to pass them in, but that isn't working :-(
+        stories_info_list = local_mc.topicStoryList(topics_id, q="stories_id:({})".format(' '.join(page_story_ids)))
+        # now add in the story info to each row from the links results, so story info is there along with the stories_id
         for s in story_link_page['links']:
             for s_info in stories_info_list['stories']:
                 if s['source_stories_id'] == s_info['stories_id']:
                     s['source_info'] = s_info
                 if s['ref_stories_id'] == s_info['stories_id']:
                     s['ref_info'] = s_info
-
+        # now that we have all the story info, stream this page of info the user
+        for s in story_link_page['links']:
+            cleaned_source_info = csv.dict2row(props, s['source_info'])
+            cleaned_ref_info = csv.dict2row(props, s['ref_info'])
+            row_string = ','.join(cleaned_source_info) + ',' + ','.join(cleaned_ref_info) + '\n'
+            yield row_string
+        # figure out if we have more pages to process or not
         if 'next' in story_link_page['link_ids']:
             link_id = story_link_page['link_ids']['next']
         else:
             more_pages = False
-            for s in story_link_page['links']:
-                cleaned_source_info = csv.dict2row(props, s['source_info'])
-                cleaned_ref_info = csv.dict2row(props, s['ref_info'])
-                row_string = ','.join(cleaned_source_info) + ',' + ','.join(cleaned_ref_info) + '\n'
-                yield row_string
 
 
 # generator you can use to handle a long list of stories row by row (one row per story)

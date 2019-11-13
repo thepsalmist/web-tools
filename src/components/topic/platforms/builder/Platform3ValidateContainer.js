@@ -194,7 +194,7 @@ const mapDispatchToProps = dispatch => ({
 
 const fetchAsyncData = (dispatch, { topicId, currentTopicQuery, currentPlatform, currentQuery }) => {
   const infoForQuery = {
-    ...formatTopicPlatformPreviewQuery(currentTopicQuery, currentPlatform, currentQuery),
+    ...formatTopicPlatformPreviewQuery(currentTopicQuery, currentPlatform, currentQuery, 'medicloud'), // TODO
     limit: NUM_TO_SHOW,
   };
   dispatch(fetchStoriesByPlatformQuery(topicId, { ...infoForQuery }));

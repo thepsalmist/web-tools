@@ -20,6 +20,8 @@ const localMessages = {
   about: { id: 'platform.create.edit.about',
     defaultMessage: 'This Platform is driven by an open web seed query.  Any stories that match the query you create will be included in the Platform.' },
   errorNoKeywords: { id: 'platform.error', defaultMessage: 'You need to specify a query.' },
+  SandC: { id: 'platform.create.edit.sandC',
+    defaultMessage: 'Media' },
 };
 
 class EditOpenWebContainer extends React.Component {
@@ -48,7 +50,7 @@ class EditOpenWebContainer extends React.Component {
   }
 
   render() {
-    const { topicId, initialValues, handleMediaDelete, renderTextField, currentPlatform, handleSubmit, onPreviousStep, finishStep, location } = this.props;
+    const { topicId, initialValues, handleMediaChange, renderTextField, currentPlatform, handleSubmit, onPreviousStep, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     const selectedMedia = initialValues.sourcesAndCollections ? initialValues.sourcesAndCollections : [];
     let mediaPicker = null;
@@ -57,7 +59,7 @@ class EditOpenWebContainer extends React.Component {
     mediaPicker = (
       <MediaPickerDialog
         initMedia={selectedMedia} // {selected.media ? selected.media : cleanedInitialValues.media}
-        onConfirmSelection={selections => handleMediaDelete(selections)}
+        onConfirmSelection={selections => handleMediaChange(selections)}
       />
     );
     let previewContent = null;
@@ -138,7 +140,7 @@ EditOpenWebContainer.propTypes = {
   initialValues: PropTypes.object,
   onPreviousStep: PropTypes.func.isRequired,
   onNextStep: PropTypes.func.isRequired,
-  handleMediaDelete: PropTypes.func.isRequired,
+  handleMediaChange: PropTypes.func.isRequired,
   // from state
   currentPlatform: PropTypes.string,
   currentQuery: PropTypes.string,

@@ -8,7 +8,7 @@ import { topicCreatePlatform, setTopicNeedsNewSnapshot } from '../../../actions/
 // import { LEVEL_ERROR } from '../../common/Notice';
 import { updateFeedback } from '../../../actions/appActions';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../lib/platformTypes';
-import { formatTopicPlatformPreviewQuery } from '../../util/topicUtil';
+import { formatTopicPlatformPreviewQuery, formatTopicOpenWebSourcesForQuery } from '../../util/topicUtil';
 
 const DEFAULT_SELECTED_NUMBER = 5;
 
@@ -23,12 +23,12 @@ const localMessages = {
 
 
 const CreatePlatformContainer = (props) => {
-  const { topicId, location, handleDone } = props;
+  const { topicInfo, location, handleDone } = props;
   const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER };
 
   return (
     <PlatformWizard
-      topicId={topicId}
+      topicId={topicInfo.topics_id}
       startStep={0}
       currentStep={0}
       initialValues={initialValues}
@@ -45,7 +45,7 @@ CreatePlatformContainer.propTypes = {
   // from state
   values: PropTypes.object,
   // from context:
-  topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
 };
@@ -55,22 +55,25 @@ const mapStateToProps = (state, ownProps) => ({
   // twitter: state.topics.selected.focalSets.create.topCountriesStoryCounts.story_counts,
   // reddit: state.topics.selected.focalSets.create.nytThemeStoryCounts.story_counts,
   // openWeb: state.topics.selected.platforms.create.openWebStoryCounts.counts,
+  topicInfo: state.topics.selected.info,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  submitDone: (topicId, values) => {
+  submitDone: (topicInfo, values) => {
     // let saveData = null;
     // const nameAlreadyExists = queryData.focalSetDefinitions.filter(fc => fc.name === formValues.focalSetName);
     /* if (nameAlreadyExists.length > 0) {
       return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.duplicateName) }));
     }
     */
-
+    let infoForQuery = {};
     const currentQuery = values.query;
     let source = null;
     switch (values.currentPlatform) {
       case PLATFORM_OPEN_WEB:
         source = 'mediacloud';
+        // need media
+        infoForQuery = { ...formatTopicOpenWebSourcesForQuery(values.sourcesAndCollections) };
         break;
       case PLATFORM_TWITTER:
         // check values values if necessary
@@ -84,16 +87,17 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       default:
         return null;
     }
-    const infoForQuery = {
-      ...formatTopicPlatformPreviewQuery(topicId, values.currentPlatform, currentQuery, source),
+    infoForQuery = {
+      ...infoForQuery,
+      ...formatTopicPlatformPreviewQuery(topicInfo, values.currentPlatform, currentQuery, source),
     };
-    return dispatch(topicCreatePlatform(topicId, { ...infoForQuery }))
+    return dispatch(topicCreatePlatform(topicInfo.topics_id, { ...infoForQuery }))
       .then((results) => {
-        if (results.length === 1) {
+        if (results.success > -1) {
           const platformSavedMessage = ownProps.intl.formatMessage(localMessages.platformSavedMessage);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
-          dispatch(push(`/topics/${topicId}/platforms/manage`));
+          dispatch(push(`/topics/${topicInfo.topics_id}/platforms/manage`));
           dispatch(reset('platform')); // it is a wizard so we have to do this by hand
         } else {
           const platformNotSavedMessage = ownProps.intl.formatMessage(localMessages.platformNotSaved);
@@ -104,7 +108,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return { ...stateProps, ...dispatchProps, ...ownProps, handleDone: (topicId, formValues) => dispatchProps.submitDone(topicId, formValues, stateProps) };
+  return { ...stateProps, ...dispatchProps, ...ownProps, handleDone: (topicId, formValues) => dispatchProps.submitDone(stateProps.topicInfo, formValues, stateProps) };
 }
 
 export default

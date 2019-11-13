@@ -8,7 +8,7 @@
           "apps": [ "topics" ],
           "type": "Fixed",
           "note": "More work on fixing various topic CSV download"
-        },
+        }
       ]
     },
     {

@@ -238,7 +238,7 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
         # now get the full story info by combining the story ids into a one big list
         story_src_ids = [str(s['source_stories_id']) for s in story_link_page['links']]
         story_ref_ids = [str(s['ref_stories_id']) for s in story_link_page['links']]
-        page_story_ids = story_src_ids + story_ref_ids
+        page_story_ids = list(set(story_src_ids + story_ref_ids))
         # note: ideally this would use the stories_id argument to pass them in, but that isn't working :-(
         stories_info_list = local_mc.topicStoryList(topics_id, q="stories_id:({})".format(' '.join(page_story_ids)))
         # now add in the story info to each row from the links results, so story info is there along with the stories_id
@@ -250,10 +250,15 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
                     s['ref_info'] = s_info
         # now that we have all the story info, stream this page of info the user
         for s in story_link_page['links']:
-            cleaned_source_info = csv.dict2row(props, s['source_info'])
-            cleaned_ref_info = csv.dict2row(props, s['ref_info'])
-            row_string = ','.join(cleaned_source_info) + ',' + ','.join(cleaned_ref_info) + '\n'
-            yield row_string
+            try:
+                cleaned_source_info = csv.dict2row(props, s['source_info'])
+                cleaned_ref_info = csv.dict2row(props, s['ref_info'])
+                row_string = ','.join(cleaned_source_info) + ',' + ','.join(cleaned_ref_info) + '\n'
+                yield row_string
+            except KeyError as ke:
+                yield "error getting story info on link from {} to {}\n".format(s['ref_stories_id'],
+                                                                                s['source_stories_id'])
+                logger.exception(ke)
         # figure out if we have more pages to process or not
         if 'next' in story_link_page['link_ids']:
             link_id = story_link_page['link_ids']['next']

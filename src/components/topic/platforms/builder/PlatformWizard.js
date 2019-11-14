@@ -42,13 +42,14 @@ class PlatformWizard extends React.Component {
   }
 
   render() {
-    const { topicId, currentStep, location, initialValues, onDone } = this.props;
+    const { topicId, topicInfo, currentStep, location, initialValues, onDone } = this.props;
     const steps = [
       Platform1Container,
       Platform2ConfigureContainer,
       Platform3ValidateContainer,
       Platform4ConfirmContainer,
     ];
+    const initAndTopicInfoValues = { ...initialValues, ...topicInfo, query: topicInfo.solr_seed_query };
     const CurrentStepComponent = steps[currentStep];
     return (
       <div className="platform-builder-wizard">
@@ -68,7 +69,7 @@ class PlatformWizard extends React.Component {
             </Step>
           </Stepper>
         </BackLinkingControlBar>
-        <CurrentStepComponent topicId={topicId} location={location} initialValues={initialValues} onDone={onDone} currentStep={currentStep} />
+        <CurrentStepComponent topicId={topicId} location={location} initialValues={initAndTopicInfoValues} onDone={onDone} currentStep={currentStep} />
       </div>
     );
   }
@@ -77,6 +78,7 @@ class PlatformWizard extends React.Component {
 PlatformWizard.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object.isRequired,
   initialValues: PropTypes.object,
   startStep: PropTypes.number,
   location: PropTypes.object,
@@ -90,6 +92,7 @@ PlatformWizard.propTypes = {
 
 const mapStateToProps = state => ({
   currentStep: state.topics.selected.platforms.create ? state.topics.selected.platforms.create.workflow.currentStep : 0,
+  topicInfo: state.topics.selected.info,
 });
 
 const mapDispatchToProps = dispatch => ({

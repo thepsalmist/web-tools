@@ -36,7 +36,7 @@ OpenWebStoryPreviewContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   query: PropTypes.string.isRequired,
-  currentPlatform: PropTypes.string.isRequired,
+  currentPlatformType: PropTypes.string.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   stories: PropTypes.array,
@@ -46,10 +46,10 @@ OpenWebStoryPreviewContainer.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
-  currentPlatform: state.form.platform.values.currentPlatform,
+  currentPlatformType: state.form.platform.values.currentPlatformType,
 });
 
-const fetchAsyncData = (dispatch, { topicId, currentPlatform, query }) => dispatch(fetchStoriesByPlatformQuery(topicId, { current_platform: currentPlatform, platform_query: query, limit: NUM_TO_SHOW }));
+const fetchAsyncData = (dispatch, { topicId, currentPlatformType, query }) => dispatch(fetchStoriesByPlatformQuery(topicId, { current_platform_type: currentPlatformType, platform_query: query, limit: NUM_TO_SHOW }));
 
 export default
 injectIntl(

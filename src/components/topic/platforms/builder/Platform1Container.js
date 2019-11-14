@@ -19,7 +19,7 @@ const localMessages = {
 const formSelector = formValueSelector('platform');
 
 const Platform1Container = (props) => {
-  const { handleSubmit, finishStep, submitting, currentPlatform } = props;
+  const { handleSubmit, finishStep, submitting, currentPlatformType } = props;
   const { formatMessage } = props.intl;
   return (
     <Grid>
@@ -32,11 +32,11 @@ const Platform1Container = (props) => {
             </p>
           </Col>
         </Row>
-        <PlatformSelector currentPlatform={0} />
+        <PlatformSelector currentPlatformType={0} />
         <Row>
           <Col lg={12} md={12} sm={12}>
             <AppButton
-              disabled={(currentPlatform === undefined) || submitting}
+              disabled={(currentPlatformType === undefined) || submitting}
               type="submit"
               label={formatMessage(messages.next)}
               primary
@@ -63,14 +63,13 @@ Platform1Container.propTypes = {
   pristine: PropTypes.bool,
   submitting: PropTypes.bool,
   // from state
-  currentPlatform: PropTypes.string,
+  currentPlatformType: PropTypes.string,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  // pull the focal set id out of the form so we know when to show the focal set create sub form
-  currentPlatform: formSelector(state, 'currentPlatform'),
+  currentPlatformType: formSelector(state, 'currentPlatformType'),
 });
 
 const mapDispatchToProps = dispatch => ({

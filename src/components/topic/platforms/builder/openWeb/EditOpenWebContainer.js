@@ -50,7 +50,7 @@ class EditOpenWebContainer extends React.Component {
   }
 
   render() {
-    const { topicId, initialValues, handleMediaChange, renderTextField, currentPlatform, handleSubmit, onPreviousStep, finishStep, location } = this.props;
+    const { topicId, initialValues, handleMediaChange, renderTextField, currentPlatformType, handleSubmit, onPreviousStep, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     const selectedMedia = initialValues.sourcesAndCollections ? initialValues.sourcesAndCollections : [];
     let mediaPicker = null;
@@ -77,7 +77,7 @@ class EditOpenWebContainer extends React.Component {
         <form className="platform-create-edit-keyword" name="platform" onSubmit={handleSubmit(finishStep.bind(this))}>
           <Row>
             <Col lg={10}>
-              <h2><FormattedMessage {...localMessages.title} values={{ technique: currentPlatform }} /></h2>
+              <h2><FormattedMessage {...localMessages.title} values={{ technique: currentPlatformType }} /></h2>
               <p>
                 <FormattedMessage {...localMessages.about} />
               </p>
@@ -88,7 +88,7 @@ class EditOpenWebContainer extends React.Component {
               <Field
                 name="query"
                 component={renderTextField}
-                label={messages.searchByKeywords}
+                placeholder={messages.searchByKeywords}
                 fullWidth
                 onKeyDown={this.handleKeyDown}
               />
@@ -142,7 +142,7 @@ EditOpenWebContainer.propTypes = {
   onNextStep: PropTypes.func.isRequired,
   handleMediaChange: PropTypes.func.isRequired,
   // from state
-  currentPlatform: PropTypes.string,
+  currentPlatformType: PropTypes.string,
   currentQuery: PropTypes.string,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
@@ -155,7 +155,7 @@ EditOpenWebContainer.propTypes = {
 
 const mapStateToProps = state => ({
   currentQuery: formSelector(state, 'query'),
-  currentPlatform: formSelector(state, 'currentPlatform'),
+  currentPlatformType: formSelector(state, 'currentPlatformType'),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -184,6 +184,7 @@ const reduxFormConfig = {
   form: 'platform', // make sure this matches the sub-components and other wizard steps
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
+  enableReinitialize: true,
   validate,
 };
 

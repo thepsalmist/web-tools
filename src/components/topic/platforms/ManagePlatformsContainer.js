@@ -3,17 +3,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import { push } from 'react-router-redux';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import AppButton from '../../common/AppButton';
 import PlatformTable from '../../common/PlatformTable';
 import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
-import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList } from '../../../actions/topicActions';
+import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import NewVersionPlatformComparisonContainer from './NewVersionPlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
 import LinkWithFilters from '../LinkWithFilters';
-// import { filteredLinkTo } from '../../util/location';
+import { filteredLinkTo } from '../../util/location';
 
 const localMessages = {
   listTitle: { id: 'platform.list.title', defaultMessage: 'Platform Details' },
@@ -43,8 +44,11 @@ class ManagePlatformsContainer extends React.Component {
     this.setState({ removeDialogOpen: false, idToRemove: null });
   }
 
-  onEditPlatform = () => {
+  onEditPlatform = (platformId) => {
+    const { topicId, filters, handleSelectPlatform } = this.props;
     // filteredLinkTo link to edit wizard
+    // in edit, we will find latest topic_seed_query for this platform
+    handleSelectPlatform(platformId, filteredLinkTo(`/topics/${topicId}/platforms/${platformId}/edit`, filters));
   }
 
   onNewPlatform = () => {
@@ -70,7 +74,7 @@ class ManagePlatformsContainer extends React.Component {
                 </p>
               </Col>
             </Row>
-            <PlatformTable platforms={platforms} />
+            <PlatformTable platforms={platforms} onEditClicked={this.onEditPlatform} />
             <Row>
               <Col lg={6}>
                 <div id="create-platform-button">
@@ -107,6 +111,7 @@ ManagePlatformsContainer.propTypes = {
   filters: PropTypes.object.isRequired,
   // from dispatch
   handleDeletePlatform: PropTypes.func.isRequired,
+  handleSelectPlatform: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -129,6 +134,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
           dispatch(fetchPlatformsInTopicList(topicId));
         }
       });
+  },
+  handleSelectPlatform: (platformId, url) => {
+    selectPlatform(platformId);
+    dispatch(push(url));
   },
 });
 

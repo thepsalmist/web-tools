@@ -158,7 +158,7 @@ Platform3ValidateContainer.propTypes = {
   // from state
   // platforms: PropTypes.array.isRequired,
   topicId: PropTypes.number.isRequired,
-  currentTopicQuery: PropTypes.object,
+  currentTopicInfo: PropTypes.object,
   currentPlatform: PropTypes.string,
   currentQuery: PropTypes.string,
   fetchStatus: PropTypes.string.isRequired,
@@ -175,8 +175,8 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
   total: state.topics.selected.platforms.preview.matchingStories.total,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
-  currentTopicQuery: state.topics.selected.info,
-  currentPlatform: state.form.platform.values.currentPlatform,
+  currentTopicInfo: state.topics.selected.info,
+  currentPlatformType: state.form.platform.values.currentPlatformType,
   currentQuery: state.form.platform.values.query,
 });
 
@@ -192,9 +192,9 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-const fetchAsyncData = (dispatch, { topicId, currentTopicQuery, currentPlatform, currentQuery }) => {
+const fetchAsyncData = (dispatch, { topicId, currentTopicInfo, currentPlatformType, currentQuery }) => {
   const infoForQuery = {
-    ...formatTopicPlatformPreviewQuery(currentTopicQuery, currentPlatform, currentQuery, 'medicloud'), // TODO
+    ...formatTopicPlatformPreviewQuery(currentTopicInfo, currentPlatformType, currentQuery, 'medicloud'), // TODO
     limit: NUM_TO_SHOW,
   };
   dispatch(fetchStoriesByPlatformQuery(topicId, { ...infoForQuery }));

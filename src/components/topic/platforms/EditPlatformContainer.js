@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { push } from 'react-router-redux';
 import { reset } from 'redux-form';
-import FocusBuilderWizard from '../snapshots/foci/builder/FocusBuilderWizard';
+import PlatformWizard from './builder/PlatformWizard';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import { topicCreatePlatform, fetchTopicPlatforms, setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
+import { topicUpdatePlatform, fetchTopicPlatformById, setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 
 const localMessages = {
@@ -16,23 +16,24 @@ const localMessages = {
 
 class EditPlatformContainer extends React.Component {
   getInitialValues = () => {
-    const { topicId, platformInfo } = this.props;
+    const { topicId, currentPlatformId, platformDetails } = this.props;
     return {
       topicId,
-      platformInfo,
+      currentPlatformId,
+      platformDetails,
     };
   }
 
   render() {
-    const { topicId, location, handleDone } = this.props;
-    const intialValues = this.getInitialValues();
+    const { topicId, location, handleUpdatePlatform } = this.props;
+    const initialValues = this.getInitialValues();
     return (
-      <FocusBuilderWizard
+      <PlatformWizard
         topicId={topicId}
         startStep={1}
-        initialValues={intialValues}
+        initialValues={initialValues}
         location={location}
-        onDone={handleDone}
+        onDone={handleUpdatePlatform}
       />
     );
   }
@@ -43,25 +44,27 @@ EditPlatformContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   location: PropTypes.object.isRequired,
   // from state
-  platformInfo: PropTypes.object.isRequired,
+  currentPlatformId: PropTypes.object.isRequired,
+  platformDetails: PropTypes.object.isRequired,
   // from dispatch
   fetchStatus: PropTypes.string.isRequired,
-  handleDone: PropTypes.func.isRequired,
+  handleUpdatePlatform: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
-  fetchStatus: state.topics.selected.focalSets.definitions.fetchStatus,
-  platformId: parseInt(ownProps.params.platformId, 10),
+  fetchStatus: state.topics.selected.platforms.selected.platformDetails.fetchStatus,
+  currentPlatformId: parseInt(ownProps.params.platformId, 10),
+  platformDetails: state.topics.selected.platforms.selected.platformDetails.results,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleAddPlatform: (topicId, formValues) => {
+  handleUpdatePlatform: (topicId, formValues) => {
     const propsToSubmit = {
       platform_id: parseInt(ownProps.params.platformId, 10),
       ...formValues,
     };
-    return dispatch(topicCreatePlatform(topicId, propsToSubmit))
+    return dispatch(topicUpdatePlatform(topicId, propsToSubmit))
       .then((results) => {
         if (results.length === 1) {
           const platformSavedMessage = ownProps.intl.formatMessage(localMessages.platformSaved);
@@ -77,7 +80,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-const fetchAsyncData = (dispatch, { topicId }) => dispatch(fetchTopicPlatforms(topicId));
+const fetchAsyncData = (dispatch, { topicId, currentPlatformId }) => dispatch(fetchTopicPlatformById(topicId, currentPlatformId));
 
 export default
 injectIntl(

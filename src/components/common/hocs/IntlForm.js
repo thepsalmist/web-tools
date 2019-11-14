@@ -93,7 +93,7 @@ function withIntlForm(Component) {
       );
     };
 
-    renderSelect = ({ input, label, name, meta: { touched, error }, children, ...custom }) => {
+    renderSelect = ({ input, label, name, fullWidth, meta: { touched, error }, children, ...custom }) => {
       const intlCustom = this.intlCustomProps(custom);
       return (
         <>
@@ -104,6 +104,7 @@ function withIntlForm(Component) {
             {...input}
             onChange={event => input.onChange(event.target.value)}
             {...intlCustom}
+            fullWidth
           >
             {children}
           </Select>

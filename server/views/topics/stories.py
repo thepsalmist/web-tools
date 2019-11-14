@@ -286,7 +286,7 @@ def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
 
 
 def _media_info_worker(info):
-    return base_apicache.get_media(info['user_key'], info['media_id'])
+    return base_apicache.get_media_with_key(info['user_key'], info['media_id'])
 
 
 # generator you can use to do something for each page of story results

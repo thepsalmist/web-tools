@@ -15,7 +15,11 @@ const formSelector = formValueSelector('platform');
 const Platform2ConfigureContainer = (props) => {
   const { topicId, initialValues, handleNextStep, currentPlatformType, currentPlatformInfo, handlePreviousStep, location } = props;
   let content = null;
-  switch (currentPlatformType) {
+  let platformType = currentPlatformType;
+  if (platformType === undefined && currentPlatformInfo !== undefined) { // add vs edit
+    platformType = currentPlatformInfo.type;
+  }
+  switch (platformType) {
     case PLATFORM_OPEN_WEB:
       const previousPlatformDetails = { ...initialValues, ...currentPlatformInfo };
       content = (
@@ -71,8 +75,8 @@ Platform2ConfigureContainer.propTypes = {
   handlePreviousStep: PropTypes.func.isRequired,
   handleNextStep: PropTypes.func.isRequired,
   // from state:
-  currentPlatformType: PropTypes.string.isRequired,
-  currentPlatformInfo: PropTypes.object.isRequired,
+  currentPlatformType: PropTypes.string,
+  currentPlatformInfo: PropTypes.object,
   location: PropTypes.object,
 };
 

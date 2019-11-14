@@ -44,7 +44,7 @@ EditPlatformContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   location: PropTypes.object.isRequired,
   // from state
-  currentPlatformId: PropTypes.object.isRequired,
+  currentPlatformId: PropTypes.number.isRequired,
   platformDetails: PropTypes.object.isRequired,
   // from dispatch
   fetchStatus: PropTypes.string.isRequired,
@@ -55,7 +55,7 @@ const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   fetchStatus: state.topics.selected.platforms.selected.platformDetails.fetchStatus,
   currentPlatformId: parseInt(ownProps.params.platformId, 10),
-  platformDetails: state.topics.selected.platforms.selected.platformDetails.results,
+  platformDetails: state.topics.selected.platforms.selected.platformDetails,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

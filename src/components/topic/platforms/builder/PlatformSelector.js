@@ -29,18 +29,18 @@ const formSelector = formValueSelector('platform');
 class PlatformSelector extends React.Component {
   handleSelection = (platformName) => {
     const { change } = this.props;
-    change('currentPlatform', platformName);
+    change('currentPlatformType', platformName);
   }
 
   render() {
-    const { currentPlatform } = this.props;
+    const { currentPlatformType } = this.props;
     return (
       <div className="platform-selector">
         <Row>
           <Col lg={3}>
             <PlatformDescription
               onClick={() => this.handleSelection(PLATFORM_OPEN_WEB)}
-              selected={currentPlatform === PLATFORM_OPEN_WEB}
+              selected={currentPlatformType === PLATFORM_OPEN_WEB}
               id="openWeb"
               icon={KeywordSearchIcon}
               nameMsg={localMessages.keywordName}
@@ -50,7 +50,7 @@ class PlatformSelector extends React.Component {
           <Col lg={3}>
             <PlatformDescription
               onClick={() => this.handleSelection(PLATFORM_REDDIT)}
-              selected={currentPlatform === PLATFORM_REDDIT}
+              selected={currentPlatformType === PLATFORM_REDDIT}
               id="Reddit"
               icon={KeywordSearchIcon}
               nameMsg={localMessages.redditName}
@@ -60,7 +60,7 @@ class PlatformSelector extends React.Component {
           <Col lg={3}>
             <PlatformDescription
               onClick={() => this.handleSelection(PLATFORM_TWITTER)}
-              selected={currentPlatform === PLATFORM_TWITTER}
+              selected={currentPlatformType === PLATFORM_TWITTER}
               id="twitter"
               icon={KeywordSearchIcon}
               nameMsg={localMessages.twitterName}
@@ -82,12 +82,12 @@ PlatformSelector.propTypes = {
   intl: PropTypes.object.isRequired,
   change: PropTypes.func.isRequired,
   // from state
-  currentPlatform: PropTypes.string,
+  currentPlatformType: PropTypes.string,
 };
 
 const mapStateToProps = state => ({
   // platform from form so we know when to show the platform sub form
-  currentPlatform: formSelector(state, 'platform'),
+  currentPlatformType: formSelector(state, 'platform'),
 });
 
 function validate() {

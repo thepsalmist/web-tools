@@ -13,17 +13,18 @@ import messages from '../../../../resources/messages';
 const formSelector = formValueSelector('platform');
 
 const Platform2ConfigureContainer = (props) => {
-  const { topicId, initialValues, handleNextStep, currentPlatform, handlePreviousStep, location } = props;
+  const { topicId, initialValues, handleNextStep, currentPlatformType, currentPlatformInfo, handlePreviousStep, location } = props;
   let content = null;
-  switch (currentPlatform) {
+  switch (currentPlatformType) {
     case PLATFORM_OPEN_WEB:
+      const previousPlatformDetails = { ...initialValues, ...currentPlatformInfo };
       content = (
         <EditOpenWebContainer
           topicId={topicId}
-          initialValues={initialValues}
           onPreviousStep={handlePreviousStep}
           onNextStep={handleNextStep}
           location={location}
+          initialValues={previousPlatformDetails}
         />
       );
       break;
@@ -62,6 +63,7 @@ const Platform2ConfigureContainer = (props) => {
 Platform2ConfigureContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object.isRequired,
   initialValues: PropTypes.object,
   // form context
   intl: PropTypes.object.isRequired,
@@ -69,12 +71,15 @@ Platform2ConfigureContainer.propTypes = {
   handlePreviousStep: PropTypes.func.isRequired,
   handleNextStep: PropTypes.func.isRequired,
   // from state:
-  currentPlatform: PropTypes.string.isRequired,
+  currentPlatformType: PropTypes.string.isRequired,
+  currentPlatformInfo: PropTypes.object.isRequired,
   location: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  currentPlatform: formSelector(state, 'currentPlatform'),
+  currentPlatformType: formSelector(state, 'currentPlatformType'),
+  currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
+  topicInfo: state.topics.selected.info,
   params: ownProps.params,
 });
 

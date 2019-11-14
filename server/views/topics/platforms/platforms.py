@@ -26,21 +26,29 @@ def get_topic_platforms(topics_id):
     # media_type_tags = tags_in_tag_set(TOOL_API_KEY, TAG_SETS_ID_MEDIA_TYPE)
     # how do we get all the seed queries per topic ?
     #merge what the topic has versus what the topic doens't by adding in the topic_seed_queries_id
-    return jsonify({'results': [{'id':1, 'platform': 'open web', 'platform_seed_query': 'dummy'}, {'platform': 'reddit', 'platform_seed_query': 'dummy'}, {'platform': 'twitter', 'platform_seed_query': 'dummy'}]})
+    return jsonify({'results': [{'id':56, 'platform': 'open web', 'platform_seed_query': 'storytelling'}, {'platform': 'reddit', 'platform_seed_query': 'dummy'}, {'platform': 'twitter', 'platform_seed_query': 'dummy'}]})
+
+# maybe push this to js, we'll see
+@app.route('/api/topics/<topics_id>/platforms/<platform_id>', methods=['GET'])
+@flask_login.login_required
+def get_platform_by_id(topics_id, platform_id):
+    # iterate through topic seed queries array
+    return jsonify({'results': [{'id':56, 'platform': 'open web', 'platform_seed_query': 'storytelling'}]})
+
 
 @app.route('/api/topics/<topics_id>/platforms/add', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
 def topic_add_platform(topics_id):
     user_mc = user_mediacloud_client()
-    platform = request.form['current_platform']
+    platform = request.form['current_platform_type']
     query = request.form['platform_query']
 
     source = request.form['source'] if 'source' in request.form else None
     # do we need to add dates?
     result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
     result['success'] = result['topic_seed_query']['topic_seed_queries_id']
-    return jsonify({"results": result}) #topic_seed_queries_id
+    return jsonify(result) #topic_seed_queries_id
 
 @app.route('/api/topics/<topics_id>/platforms/remove', methods=['GET'])
 @flask_login.login_required
@@ -58,7 +66,7 @@ def api_topics_platform_preview_story_sample(topics_id):
     user_mc = user_mediacloud_client()
 
     #will do something conditional depending on platform
-    platform = request.args['current_platform']
+    platform = request.args['current_platform_type']
 
     platform_query = request.args['platform_query']
     num_stories = request.args['limit']
@@ -72,7 +80,7 @@ def api_topics_platform_preview_story_sample(topics_id):
 def api_topics_platform_preview_story_count(topics_id):
     user_mc = user_mediacloud_client()
     #will do something conditional depending on platform
-    platform = request.args['current_platform']
+    platform = request.args['current_platform_type']
 
     platform_query = request.args['platform_query']
     # get inherited topic dates and send them along w

@@ -24,14 +24,15 @@ const localMessages = {
 
 const CreatePlatformContainer = (props) => {
   const { topicInfo, location, handleDone } = props;
-  const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER };
+  const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, currentPlatformType: PLATFORM_OPEN_WEB };
+  const initAndTopicInfoValues = { ...initialValues, ...topicInfo, query: topicInfo.solr_seed_query };
 
   return (
     <PlatformWizard
       topicId={topicInfo.topics_id}
       startStep={0}
       currentStep={0}
-      initialValues={initialValues}
+      initialValues={initAndTopicInfoValues}
       location={location}
       onDone={handleDone}
     />
@@ -69,7 +70,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     let infoForQuery = {};
     const currentQuery = values.query;
     let source = null;
-    switch (values.currentPlatform) {
+    switch (values.currentPlatformType) {
       case PLATFORM_OPEN_WEB:
         source = 'mediacloud';
         // need media
@@ -89,12 +90,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
     infoForQuery = {
       ...infoForQuery,
-      ...formatTopicPlatformPreviewQuery(topicInfo, values.currentPlatform, currentQuery, source),
+      ...formatTopicPlatformPreviewQuery(topicInfo, values.currentPlatformType, currentQuery, source),
     };
     return dispatch(topicCreatePlatform(topicInfo.topics_id, { ...infoForQuery }))
       .then((results) => {
         if (results.success > -1) {
-          const platformSavedMessage = ownProps.intl.formatMessage(localMessages.platformSavedMessage);
+          const platformSavedMessage = ownProps.intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
           dispatch(push(`/topics/${topicInfo.topics_id}/platforms/manage`));

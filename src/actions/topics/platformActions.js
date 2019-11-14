@@ -11,14 +11,21 @@ export const fetchTopicPlatforms = createAsyncAction(FETCH_ALL_PLATFORMS, api.to
 export const FETCH_PLATFORMS_IN_TOPIC = 'FETCH_PLATFORMS_IN_TOPIC';
 export const fetchPlatformsInTopicList = createAsyncAction(FETCH_PLATFORMS_IN_TOPIC, api.platformsInTopic);
 
-export const EDIT_PLATFORM = 'EDIT_PLATFORM';
-export const editTopicPlatform = createAsyncAction(EDIT_PLATFORM, api.topicEditPlatform);
+export const FETCH_TOPIC_PLATFORM_BY_ID = 'FETCH_TOPIC_PLATFORM_BY_ID';
+export const fetchTopicPlatformById = createAsyncAction(FETCH_TOPIC_PLATFORM_BY_ID, api.topicFetchPlatformById);
+
 
 export const DELETE_PLATFORM = 'DELETE_PLATFORM';
 export const deleteTopicPlatform = createAsyncAction(DELETE_PLATFORM, api.topicDeletePlatform);
 
 export const TOPIC_CREATE_PLATFORM = 'TOPIC_CREATE_PLATFORM';
 export const topicCreatePlatform = createAsyncAction(TOPIC_CREATE_PLATFORM, api.topicCreatePlatform, params => params);
+
+export const TOPIC_UPDATE_PLATFORM = 'TOPIC_UPDATE_PLATFORM';
+export const topicUpdatePlatform = createAsyncAction(TOPIC_UPDATE_PLATFORM, api.topicUpdatePlatform, params => params);
+
+export const SELECT_PLATFORM = 'SELECT_PLATFORM';
+export const selectPlatform = createAsyncAction(SELECT_PLATFORM, platform => platform);
 
 export const FETCH_PLATFORM_PREVIEW_STORY_COUNTS = 'FETCH_PLATFORM_PREVIEW_STORY_COUNTS';
 export const fetchStoryCountsByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PREVIEW_STORY_COUNTS, api.topicStoryCountsByPlatformQuery);

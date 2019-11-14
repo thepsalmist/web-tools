@@ -16,7 +16,7 @@ OPEN_WEB = 1
 @flask_login.login_required
 @api_error_handler
 def topic_platform_list():
-    return jsonify({'results': [{'platform': 'open web', 'platform_seed_query': 'dummy'}, {'platform': 'reddit', 'platform_seed_query': 'dummy'}, {'platform': 'twitter', 'platform_seed_query': 'dummy'}]})
+    return jsonify({'results': [{'type': 'open web', 'platform_seed_query': 'dummy'}, {'type': 'reddit', 'platform_seed_query': 'dummy'}, {'type': 'twitter', 'platform_seed_query': 'dummy'}]})
 
 
 
@@ -26,14 +26,14 @@ def get_topic_platforms(topics_id):
     # media_type_tags = tags_in_tag_set(TOOL_API_KEY, TAG_SETS_ID_MEDIA_TYPE)
     # how do we get all the seed queries per topic ?
     #merge what the topic has versus what the topic doens't by adding in the topic_seed_queries_id
-    return jsonify({'results': [{'id':56, 'platform': 'open web', 'platform_seed_query': 'storytelling'}, {'platform': 'reddit', 'platform_seed_query': 'dummy'}, {'platform': 'twitter', 'platform_seed_query': 'dummy'}]})
+    return jsonify({'results': [{'id':56, 'type': 'open web', 'platform_seed_query': 'storytelling'}, {'type': 'reddit', 'platform_seed_query': 'dummy'}, {'type': 'twitter', 'platform_seed_query': 'dummy'}]})
 
 # maybe push this to js, we'll see
 @app.route('/api/topics/<topics_id>/platforms/<platform_id>', methods=['GET'])
 @flask_login.login_required
 def get_platform_by_id(topics_id, platform_id):
     # iterate through topic seed queries array
-    return jsonify({'results': [{'id':56, 'platform': 'open web', 'platform_seed_query': 'storytelling'}]})
+    return jsonify({'id':56, 'type': 'open web', 'platform_seed_query': 'storytelling'}) #need media_ids
 
 
 @app.route('/api/topics/<topics_id>/platforms/add', methods=['POST'])

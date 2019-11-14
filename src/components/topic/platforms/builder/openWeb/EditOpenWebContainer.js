@@ -15,7 +15,7 @@ import OpenWebMediaFieldArray from '../../../../common/form/OpenWebMediaFieldArr
 const formSelector = formValueSelector('platform');
 
 const localMessages = {
-  title: { id: 'platform.create.edit.title', defaultMessage: 'Step 2: Configure Your {technique} platform' },
+  title: { id: 'platform.create.edit.title', defaultMessage: 'Step 2: Configure Your Open Web platform' },
   intro: { id: 'platform.create.edit.intro', defaultMessage: 'Step 2: intro' },
   about: { id: 'platform.create.edit.about',
     defaultMessage: 'This Platform is driven by an open web seed query.  Any stories that match the query you create will be included in the Platform.' },
@@ -50,7 +50,7 @@ class EditOpenWebContainer extends React.Component {
   }
 
   render() {
-    const { topicId, initialValues, handleMediaChange, renderTextField, currentPlatformType, handleSubmit, onPreviousStep, finishStep, location } = this.props;
+    const { topicId, initialValues, handleMediaChange, renderTextField, handleSubmit, onPreviousStep, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     const selectedMedia = initialValues.sourcesAndCollections ? initialValues.sourcesAndCollections : [];
     let mediaPicker = null;
@@ -77,7 +77,7 @@ class EditOpenWebContainer extends React.Component {
         <form className="platform-create-edit-keyword" name="platform" onSubmit={handleSubmit(finishStep.bind(this))}>
           <Row>
             <Col lg={10}>
-              <h2><FormattedMessage {...localMessages.title} values={{ technique: currentPlatformType }} /></h2>
+              <h2><FormattedMessage {...localMessages.title} /></h2>
               <p>
                 <FormattedMessage {...localMessages.about} />
               </p>
@@ -143,6 +143,7 @@ EditOpenWebContainer.propTypes = {
   handleMediaChange: PropTypes.func.isRequired,
   // from state
   currentPlatformType: PropTypes.string,
+  currentPlatformInfo: PropTypes.object,
   currentQuery: PropTypes.string,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
@@ -156,6 +157,7 @@ EditOpenWebContainer.propTypes = {
 const mapStateToProps = state => ({
   currentQuery: formSelector(state, 'query'),
   currentPlatformType: formSelector(state, 'currentPlatformType'),
+  currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

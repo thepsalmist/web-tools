@@ -21,9 +21,9 @@ const PlatformTable = props => (
           <th><FormattedMessage {...localMessages.addOrEditOrRemove} /></th>
         </tr>
         {props.platforms.map((c, idx) => (
-          <tr key={c.platform} className={(idx % 2 === 0) ? 'even' : 'odd'}>
+          <tr key={c.type} className={(idx % 2 === 0) ? 'even' : 'odd'}>
             <td>
-              {c.platform}
+              {c.type}
             </td>
             <td>
               {c.platform_seed_query}

@@ -1,6 +1,27 @@
 {
   "releases": [
     {
+      "date": "2019-11-14",
+      "version": "v3.12.16",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic permissions page loads again"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "More fixes to Topic story list CSV download"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Better checks on running multiple Topics at same time"
+        }
+      ]
+    },
+    {
       "date": "2019-11-13",
       "version": "v3.12.15",
       "notes": [

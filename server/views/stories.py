@@ -2,6 +2,7 @@ from flask import jsonify
 import flask_login
 from operator import itemgetter
 import requests
+import json
 import logging
 import newspaper
 
@@ -106,7 +107,14 @@ def entities_from_mc_or_cliff(stories_id):
     cliff_results = cached_story_raw_cliff_results(stories_id)[0]['cliff']
     if (cliff_results == 'story is not annotated') or (cliff_results == "story does not exist"):
         story = mc.story(stories_id, text=True)
-        cliff_results = cliff.parse_text(story['story_text'], story['language'].upper())
+        try:
+            story_language = story['language'].upper()
+        except AttributeError:   # not all stories have a language set on them
+            story_language = None
+        try:
+            cliff_results = cliff.parse_text(story['story_text'], story_language)
+        except json.decoder.JSONDecodeError:    # maybe no story text?
+            cliff_results = {}
     # clean up for reporting
     if 'results' in cliff_results:
         for org in cliff_results['results']['organizations']:
@@ -149,7 +157,10 @@ def cached_story_raw_cliff_results(stories_id):
 @api_error_handler
 def story_nyt_themes(stories_id):
     results = nyt_themes_from_mc_or_labeller(stories_id)
-    themes = results['descriptors600']
+    try:
+        themes = results['descriptors600']
+    except KeyError:
+        themes = []
     return jsonify({'list': themes})
 
 
@@ -158,7 +169,10 @@ def story_nyt_themes(stories_id):
 @api_error_handler
 def story_nyt_themes_csv(stories_id):
     results = nyt_themes_from_mc_or_labeller(stories_id)
-    themes = results['descriptors600']
+    try:
+        themes = results['descriptors600']
+    except KeyError:
+        themes = []
     props = ['label', 'score']
     return csv.stream_response(themes, props, 'story-'+str(stories_id)+'-nyt-themes')
 
@@ -181,13 +195,15 @@ def cached_story_raw_theme_results(stories_id):
 
 
 def predict_news_labels(story_text):
+    if story_text is None:  # maybe we didn't parse any text out?
+        return {}
     url = "{}/predict.json".format(NYT_THEME_LABELLER_URL)
     try:
         r = requests.post(url, json={'text': story_text})
         return r.json()
     except requests.exceptions.RequestException as e:
         logger.exception(e)
-    return []
+    return {}
 
 
 @app.route('/api/stories/<stories_id>/images', methods=['GET'])

@@ -29,7 +29,7 @@ const PlatformTable = props => (
               {c.platform_seed_query}
             </td>
             <td>
-              {c.id ? <EditButton onClick={() => props.onEditClicked(c.id)} /> : <AddButton />}
+              {c.id ? <EditButton onClick={() => props.onEditClicked(c.id, c.type)} /> : <AddButton onClick={() => props.onAddClicked(c.type)} />}
             </td>
           </tr>
         ))}
@@ -42,6 +42,7 @@ PlatformTable.propTypes = {
   // from parent
   platforms: PropTypes.array.isRequired,
   onEditClicked: PropTypes.func.isRequired,
+  onAddClicked: PropTypes.func.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
 };

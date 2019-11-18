@@ -15,20 +15,17 @@ const formSelector = formValueSelector('platform');
 const Platform2ConfigureContainer = (props) => {
   const { topicId, initialValues, handleNextStep, currentPlatformType, currentPlatformInfo, handlePreviousStep, location } = props;
   let content = null;
-  let platformType = currentPlatformType;
-  if (platformType === undefined && currentPlatformInfo !== undefined) { // add vs edit
-    platformType = currentPlatformInfo.type;
-  }
-  switch (platformType) {
+
+  switch (currentPlatformType) {
     case PLATFORM_OPEN_WEB:
-      const previousPlatformDetails = { ...initialValues, ...currentPlatformInfo };
+      const platformDetails = { ...initialValues, ...currentPlatformInfo };
       content = (
         <EditOpenWebContainer
           topicId={topicId}
           onPreviousStep={handlePreviousStep}
           onNextStep={handleNextStep}
           location={location}
-          initialValues={previousPlatformDetails}
+          initialValues={platformDetails}
         />
       );
       break;
@@ -81,7 +78,7 @@ Platform2ConfigureContainer.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  currentPlatformType: formSelector(state, 'currentPlatformType'),
+  currentPlatformType: state.topics.selected.platforms.selected.select.type,
   currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
   topicInfo: state.topics.selected.info,
   params: ownProps.params,

@@ -16,10 +16,11 @@ const localMessages = {
 
 class EditPlatformContainer extends React.Component {
   getInitialValues = () => {
-    const { topicId, currentPlatformId, platformDetails } = this.props;
+    const { topicId, currentPlatformId, currentPlatformType, platformDetails } = this.props;
     return {
       topicId,
       currentPlatformId,
+      currentPlatformType,
       platformDetails,
     };
   }
@@ -30,7 +31,7 @@ class EditPlatformContainer extends React.Component {
     return (
       <PlatformWizard
         topicId={topicId}
-        startStep={1}
+        startStep={0}
         initialValues={initialValues}
         location={location}
         onDone={handleUpdatePlatform}
@@ -45,6 +46,7 @@ EditPlatformContainer.propTypes = {
   location: PropTypes.object.isRequired,
   // from state
   currentPlatformId: PropTypes.number.isRequired,
+  currentPlatformType: PropTypes.string.isRequired,
   platformDetails: PropTypes.object.isRequired,
   // from dispatch
   fetchStatus: PropTypes.string.isRequired,
@@ -55,6 +57,7 @@ const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   fetchStatus: state.topics.selected.platforms.selected.platformDetails.fetchStatus,
   currentPlatformId: parseInt(ownProps.params.platformId, 10),
+  currentPlatformType: state.topics.selected.platforms.selected.select.type,
   platformDetails: state.topics.selected.platforms.selected.platformDetails,
 });
 

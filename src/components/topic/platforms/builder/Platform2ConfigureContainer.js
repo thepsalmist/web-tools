@@ -10,7 +10,7 @@ import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT /* , PLATFORM_TWITTER */ } from '../
 import messages from '../../../../resources/messages';
 
 const Platform2ConfigureContainer = (props) => {
-  const { topicId, initialValues, handleNextStep, currentPlatformType, currentPlatformInfo, handlePreviousStep, location } = props;
+  const { topicId, initialValues, handleNextStep, currentPlatformType, currentPlatformInfo, location } = props;
   let content = null;
 
   switch (currentPlatformType) {
@@ -19,7 +19,7 @@ const Platform2ConfigureContainer = (props) => {
       content = (
         <EditOpenWebContainer
           topicId={topicId}
-          onPreviousStep={handlePreviousStep}
+          // onPreviousStep={handlePreviousStep}
           onNextStep={handleNextStep}
           location={location}
           initialValues={platformDetails}
@@ -31,7 +31,7 @@ const Platform2ConfigureContainer = (props) => {
         <EditRedditContainer
           topicId={topicId}
           initialValues={initialValues}
-          onPreviousStep={handlePreviousStep}
+          // onPreviousStep={handlePreviousStep}
           onNextStep={handleNextStep}
           location={location}
         />
@@ -83,9 +83,6 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  handlePreviousStep: () => {
-    // dispatch(goToCreatePlatformStep(0));
-  },
   handleNextStep: () => {
     dispatch(goToCreatePlatformStep(1));
   },

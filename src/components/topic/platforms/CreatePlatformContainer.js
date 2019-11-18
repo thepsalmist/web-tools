@@ -82,6 +82,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         break;
       case PLATFORM_REDDIT:
         source = 'pushshift';
+        // grab subreddits?
         // check values values if necessary
         break;
       default:

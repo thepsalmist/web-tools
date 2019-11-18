@@ -13,8 +13,8 @@ import { notEmptyString } from '../../../../../lib/formValidators';
 const formSelector = formValueSelector('platform');
 
 const localMessages = {
-  title: { id: 'platform.create.edit.title', defaultMessage: 'Step 2: Configure Your Reddit platform' },
-  intro: { id: 'platform.create.edit.intro', defaultMessage: 'Step 2: intro' },
+  title: { id: 'platform.create.edit.title', defaultMessage: 'Step 1: Configure Your Reddit platform' },
+  intro: { id: 'platform.create.edit.intro', defaultMessage: 'Step 1: intro' },
   about: { id: 'platform.create.edit.about',
     defaultMessage: 'This Platform is driven by an open web seed query.  Any stories that match the query you create will be included in the Platform.' },
   errorNoKeywords: { id: 'platform.error', defaultMessage: 'You need to specify a query.' },
@@ -46,7 +46,7 @@ class EditRedditContainer extends React.Component {
   }
 
   render() {
-    const { topicId, initialValues, /* handleMediaChange */ renderTextField, handleSubmit, onPreviousStep, finishStep, location } = this.props;
+    const { topicId, initialValues, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     const subRedditPicker = initialValues.subRedditSelections;
     // eslint-disable-next-line jsx-a11y/label-has-associated-control
@@ -100,9 +100,6 @@ class EditRedditContainer extends React.Component {
           { previewContent }
           <Row>
             <Col lg={8} xs={12}>
-              <br />
-              <AppButton color="secondary" variant="outlined" onClick={onPreviousStep} label={formatMessage(messages.previous)} />
-              &nbsp; &nbsp;
               <AppButton disabled={nextButtonDisabled} type="submit" label={formatMessage(messages.next)} primary />
             </Col>
           </Row>
@@ -116,7 +113,6 @@ EditRedditContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   initialValues: PropTypes.object,
-  onPreviousStep: PropTypes.func.isRequired,
   onNextStep: PropTypes.func.isRequired,
   handleMediaChange: PropTypes.func.isRequired,
   // from state
@@ -134,7 +130,7 @@ EditRedditContainer.propTypes = {
 
 const mapStateToProps = state => ({
   currentQuery: formSelector(state, 'query'),
-  currentPlatformType: formSelector(state, 'currentPlatformType'),
+  currentPlatformType: state.topics.selected.platforms.selected.select.type,
   currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
 });
 

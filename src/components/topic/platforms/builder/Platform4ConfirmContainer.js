@@ -99,7 +99,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handlePreviousStep: () => {
-    dispatch(goToCreatePlatformStep(2));
+    dispatch(goToCreatePlatformStep(1));
   },
   savePlatform: (topicId, values) => ownProps.onDone(topicId, values),
 });

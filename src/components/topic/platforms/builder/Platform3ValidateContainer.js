@@ -185,10 +185,10 @@ const mapDispatchToProps = dispatch => ({
     dispatch(goToCreatePlatformStep(0));
   },
   handlePreviousStep: () => {
-    dispatch(goToCreatePlatformStep(1));
+    dispatch(goToCreatePlatformStep(0));
   },
   handleNextStep: () => {
-    dispatch(goToCreatePlatformStep(3));
+    dispatch(goToCreatePlatformStep(2));
   },
 });
 

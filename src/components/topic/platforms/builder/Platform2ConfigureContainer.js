@@ -84,10 +84,10 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => ({
   handlePreviousStep: () => {
-    dispatch(goToCreatePlatformStep(0));
+    // dispatch(goToCreatePlatformStep(0));
   },
   handleNextStep: () => {
-    dispatch(goToCreatePlatformStep(2));
+    dispatch(goToCreatePlatformStep(1));
   },
 });
 

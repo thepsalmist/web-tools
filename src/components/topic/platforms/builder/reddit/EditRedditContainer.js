@@ -13,13 +13,11 @@ import { notEmptyString } from '../../../../../lib/formValidators';
 const formSelector = formValueSelector('platform');
 
 const localMessages = {
-  title: { id: 'platform.create.edit.title', defaultMessage: 'Step 2: Configure Your Open Web platform' },
+  title: { id: 'platform.create.edit.title', defaultMessage: 'Step 2: Configure Your Reddit platform' },
   intro: { id: 'platform.create.edit.intro', defaultMessage: 'Step 2: intro' },
   about: { id: 'platform.create.edit.about',
     defaultMessage: 'This Platform is driven by an open web seed query.  Any stories that match the query you create will be included in the Platform.' },
   errorNoKeywords: { id: 'platform.error', defaultMessage: 'You need to specify a query.' },
-  SandC: { id: 'platform.create.edit.sandC',
-    defaultMessage: 'Media' },
 };
 
 class EditRedditContainer extends React.Component {

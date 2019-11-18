@@ -5,7 +5,6 @@ import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import AppButton from '../../common/AppButton';
 import PlatformTable from '../../common/PlatformTable';
 import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
@@ -13,7 +12,6 @@ import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicLis
 import { updateFeedback } from '../../../actions/appActions';
 import NewVersionPlatformComparisonContainer from './NewVersionPlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
-import LinkWithFilters from '../LinkWithFilters';
 import { filteredLinkTo } from '../../util/location';
 
 const localMessages = {
@@ -48,7 +46,7 @@ class ManagePlatformsContainer extends React.Component {
     const { topicId, filters, handleSelectPlatform } = this.props;
     // filteredLinkTo link to edit wizard
     // in edit, we will find latest topic_seed_query for this platform
-    handleSelectPlatform({ platformId, platformType }, filteredLinkTo(`/topics/${topicId}/platforms/${platformId}/edit`, filters));
+    handleSelectPlatform({ id: platformId, type: platformType }, filteredLinkTo(`/topics/${topicId}/platforms/${platformId}/edit`, filters));
   }
 
   onNewPlatform = (platformType) => {
@@ -61,7 +59,7 @@ class ManagePlatformsContainer extends React.Component {
   }
 
   render() {
-    const { topicId, platforms } = this.props;
+    const { platforms } = this.props;
     const { formatMessage } = this.props.intl;
     /* TODO get the latest platform info of each category if exists, relevantPlatforms = platform.map... */
     /* and, compare previous version with current to see if new platforms and if so, offer spider and generate */
@@ -78,15 +76,6 @@ class ManagePlatformsContainer extends React.Component {
               </Col>
             </Row>
             <PlatformTable platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} />
-            <Row>
-              <Col lg={6}>
-                <div id="create-platform-button">
-                  <LinkWithFilters to={`/topics/${topicId}/platforms/create`}>
-                    <AppButton primary label={messages.addPlatform} />
-                  </LinkWithFilters>
-                </div>
-              </Col>
-            </Row>
           </Grid>
           <NewVersionPlatformComparisonContainer />
           <ConfirmationDialog

@@ -1,16 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { formValueSelector } from 'redux-form';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import EditOpenWebContainer from './openWeb/EditOpenWebContainer';
-// import EditRedditContainer from './retweetPartisanship/EditRetweetPartisanshipContainer';
+import EditRedditContainer from './reddit/EditRedditContainer';
 // import EditTwitterContainer from './topCountries/EditTopCountriesContainer';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
-import { PLATFORM_OPEN_WEB /* , PLATFORM_REDDIT, PLATFORM_TWITTER */ } from '../../../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT /* , PLATFORM_TWITTER */ } from '../../../../lib/platformTypes';
 import messages from '../../../../resources/messages';
-
-const formSelector = formValueSelector('platform');
 
 const Platform2ConfigureContainer = (props) => {
   const { topicId, initialValues, handleNextStep, currentPlatformType, currentPlatformInfo, handlePreviousStep, location } = props;
@@ -29,7 +26,7 @@ const Platform2ConfigureContainer = (props) => {
         />
       );
       break;
-    /* case PLATFORM_REDDIT:
+    case PLATFORM_REDDIT:
       content = (
         <EditRedditContainer
           topicId={topicId}
@@ -40,6 +37,7 @@ const Platform2ConfigureContainer = (props) => {
         />
       );
       break;
+    /*
     case PLATFORM_TWITTER:
       content = (
         <EditTwitterContainer

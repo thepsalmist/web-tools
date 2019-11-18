@@ -24,7 +24,7 @@ const localMessages = {
 
 const CreatePlatformContainer = (props) => {
   const { topicInfo, location, handleDone, selectedPlatform } = props;
-  const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, currentPlatformType: PLATFORM_OPEN_WEB };
+  const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, currentPlatformType: selectedPlatform.type };
   const initAndTopicInfoValues = { ...initialValues, ...topicInfo, query: topicInfo.solr_seed_query };
 
   return (
@@ -81,8 +81,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         source = values.source; // crimson hexagon
         break;
       case PLATFORM_REDDIT:
+        source = 'pushshift';
         // check values values if necessary
-        source = values.source; // crimson hexagon
         break;
       default:
         return null;

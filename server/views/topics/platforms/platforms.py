@@ -50,6 +50,23 @@ def topic_add_platform(topics_id):
     result['success'] = result['topic_seed_query']['topic_seed_queries_id']
     return jsonify(result) #topic_seed_queries_id
 
+
+@app.route('/api/topics/<topics_id>/platforms/<platform_id>/update', methods=['POST'])
+@flask_login.login_required
+@api_error_handler
+def topic_update_platform(topics_id, platform_id):
+    user_mc = user_mediacloud_client()
+    platform = request.form['current_platform_type']
+    query = request.form['platform_query']
+
+    source = request.form['source'] if 'source' in request.form else None
+    #TODO update or remove/add?
+    # remove id, add new, return new id
+    result = user_mc.topicUpdateSeedQuery(topics_id, platform_id, source, query)
+    result['success'] = result['topic_seed_query']['topic_seed_queries_id']
+    return jsonify(result) #topic_seed_queries_id
+
+
 @app.route('/api/topics/<topics_id>/platforms/remove', methods=['GET'])
 @flask_login.login_required
 @api_error_handler

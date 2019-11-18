@@ -9,7 +9,7 @@ import AppButton from '../../common/AppButton';
 import PlatformTable from '../../common/PlatformTable';
 import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
-import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform } from '../../../actions/topicActions';
+import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, selectPlatformType } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import NewVersionPlatformComparisonContainer from './NewVersionPlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
@@ -44,15 +44,16 @@ class ManagePlatformsContainer extends React.Component {
     this.setState({ removeDialogOpen: false, idToRemove: null });
   }
 
-  onEditPlatform = (platformId) => {
+  onEditPlatform = (platformId, platformType) => {
     const { topicId, filters, handleSelectPlatform } = this.props;
     // filteredLinkTo link to edit wizard
     // in edit, we will find latest topic_seed_query for this platform
-    handleSelectPlatform(platformId, filteredLinkTo(`/topics/${topicId}/platforms/${platformId}/edit`, filters));
+    handleSelectPlatform({ platformId, platformType }, filteredLinkTo(`/topics/${topicId}/platforms/${platformId}/edit`, filters));
   }
 
-  onNewPlatform = () => {
-    // filteredLinkTo link to edit wizard
+  onNewPlatform = (platformType) => {
+    const { topicId, filters, handleSelectNewPlatform } = this.props;
+    handleSelectNewPlatform({ type: platformType }, filteredLinkTo(`/topics/${topicId}/platforms/create`, filters));
   }
 
   handleDelete = (platformId) => {
@@ -62,6 +63,8 @@ class ManagePlatformsContainer extends React.Component {
   render() {
     const { topicId, platforms } = this.props;
     const { formatMessage } = this.props.intl;
+    /* TODO get the latest platform info of each category if exists, relevantPlatforms = platform.map... */
+    /* and, compare previous version with current to see if new platforms and if so, offer spider and generate */
     return (
       <div>
         <NeedsNewVersionWarning />
@@ -74,7 +77,7 @@ class ManagePlatformsContainer extends React.Component {
                 </p>
               </Col>
             </Row>
-            <PlatformTable platforms={platforms} onEditClicked={this.onEditPlatform} />
+            <PlatformTable platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} />
             <Row>
               <Col lg={6}>
                 <div id="create-platform-button">
@@ -112,6 +115,7 @@ ManagePlatformsContainer.propTypes = {
   // from dispatch
   handleDeletePlatform: PropTypes.func.isRequired,
   handleSelectPlatform: PropTypes.func.isRequired,
+  handleSelectNewPlatform: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -135,8 +139,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         }
       });
   },
-  handleSelectPlatform: (platformId, url) => {
-    selectPlatform(platformId);
+  handleSelectPlatform: (args, url) => {
+    dispatch(selectPlatform(args));
+    dispatch(push(url));
+  },
+  handleSelectNewPlatform: (args, url) => {
+    dispatch(selectPlatformType(args));
     dispatch(push(url));
   },
 });

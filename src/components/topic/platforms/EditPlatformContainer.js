@@ -61,12 +61,13 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleUpdatePlatform: (topicId, formValues) => {
     const propsToSubmit = {
-      platform_id: parseInt(ownProps.params.platformId, 10),
       ...formValues,
     };
-    return dispatch(topicUpdatePlatform(topicId, propsToSubmit))
+    // NOTE, this may be a remove/add vs an update on the back end
+    return dispatch(topicUpdatePlatform(topicId, ownProps.params.platformId, propsToSubmit))
       .then((results) => {
         if (results.length === 1) {
+          // TODO get topicId from return const newOrSameId = results.id
           const platformSavedMessage = ownProps.intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback

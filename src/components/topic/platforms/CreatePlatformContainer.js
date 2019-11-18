@@ -23,15 +23,15 @@ const localMessages = {
 
 
 const CreatePlatformContainer = (props) => {
-  const { topicInfo, location, handleDone } = props;
+  const { topicInfo, location, handleDone, selectedPlatform } = props;
   const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, currentPlatformType: PLATFORM_OPEN_WEB };
   const initAndTopicInfoValues = { ...initialValues, ...topicInfo, query: topicInfo.solr_seed_query };
 
   return (
     <PlatformWizard
       topicId={topicInfo.topics_id}
-      startStep={0}
-      currentStep={0}
+      startStep={selectedPlatform.type ? 1 : 0}
+      currentStep={selectedPlatform.type ? 1 : 0}
       initialValues={initAndTopicInfoValues}
       location={location}
       onDone={handleDone}
@@ -45,6 +45,7 @@ CreatePlatformContainer.propTypes = {
   handleDone: PropTypes.func.isRequired,
   // from state
   values: PropTypes.object,
+  selectedPlatform: PropTypes.object.isRequired,
   // from context:
   topicInfo: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
@@ -53,10 +54,8 @@ CreatePlatformContainer.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
-  // twitter: state.topics.selected.focalSets.create.topCountriesStoryCounts.story_counts,
-  // reddit: state.topics.selected.focalSets.create.nytThemeStoryCounts.story_counts,
-  // openWeb: state.topics.selected.platforms.create.openWebStoryCounts.counts,
   topicInfo: state.topics.selected.info,
+  selectedPlatform: state.topics.selected.platforms.selected.select,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

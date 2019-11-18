@@ -103,7 +103,7 @@ def _reddit_submission_to_row(item):
         'publish_date': dt.datetime.fromtimestamp(item.created_utc).strftime(DB_TIME_STRING),
         'url': item.url,
         'score': item.score,
-        'last_updated': dt.datetime.fromtimestamp(item.updated_utc).strftime(DB_TIME_STRING),
+        'last_updated': dt.datetime.fromtimestamp(item.updated_utc).strftime(DB_TIME_STRING) if 'updated_utc' in item else None,
         'author': item.author,
         'subreddit': item.subreddit
     }

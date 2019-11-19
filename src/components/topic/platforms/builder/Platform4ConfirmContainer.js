@@ -33,13 +33,11 @@ const Platform4ConfirmContainer = (props) => {
         <RedditSummary topicId={topicId} formValues={formValues} initialValues={initialValues} />
       );
       break;
-    /*
     case PLATFORM_TWITTER:
       content = (
         <TwitterSummary topicId={topicId} formValues={formValues} initialValues={initialValues} />
       );
       break;
-    */
     default:
       content = <FormattedMessage {...messages.unimplemented} />;
   }

@@ -70,12 +70,12 @@ class Platform3ValidateContainer extends React.Component {
   }
 
   render = () => {
-    const { handlePreviousStep, stories, mode, currentPlatform } = this.props;
+    const { handlePreviousStep, stories, mode, currentPlatformType } = this.props;
     const { formatMessage } = this.props.intl;
 
     return (
       <Grid>
-        <h1>{currentPlatform}</h1>
+        <h1>{currentPlatformType}</h1>
         <br />
         <Row start="lg" className="topic-modify-sample-story-table">
           <Col lg={12}>
@@ -159,7 +159,7 @@ Platform3ValidateContainer.propTypes = {
   // platforms: PropTypes.array.isRequired,
   topicId: PropTypes.number.isRequired,
   currentTopicInfo: PropTypes.object,
-  currentPlatform: PropTypes.string,
+  currentPlatformType: PropTypes.object,
   currentQuery: PropTypes.string,
   fetchStatus: PropTypes.string.isRequired,
   total: PropTypes.number.isRequired,
@@ -176,7 +176,6 @@ const mapStateToProps = state => ({
   total: state.topics.selected.platforms.preview.matchingStories.total,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
   currentTopicInfo: state.topics.selected.info,
-  currentPlatformType: state.form.platform.values.currentPlatformType,
   currentQuery: state.form.platform.values.query,
 });
 

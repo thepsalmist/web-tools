@@ -4,9 +4,9 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import EditOpenWebContainer from './openWeb/EditOpenWebContainer';
 import EditRedditContainer from './reddit/EditRedditContainer';
-// import EditTwitterContainer from './topCountries/EditTopCountriesContainer';
+import EditTwitterContainer from './twitter/EditTwitterContainer';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT /* , PLATFORM_TWITTER */ } from '../../../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../../lib/platformTypes';
 import messages from '../../../../resources/messages';
 
 const Platform2ConfigureContainer = (props) => {
@@ -37,18 +37,16 @@ const Platform2ConfigureContainer = (props) => {
         />
       );
       break;
-    /*
     case PLATFORM_TWITTER:
       content = (
         <EditTwitterContainer
           topicId={topicId}
           initialValues={initialValues}
-          onPreviousStep={handlePreviousStep}
           onNextStep={handleNextStep}
           location={location}
         />
       );
-      break; */
+      break;
     default:
       content = <FormattedMessage {...messages.unimplemented} />;
   }
@@ -69,13 +67,12 @@ Platform2ConfigureContainer.propTypes = {
   // from dipatch
   handleNextStep: PropTypes.func.isRequired,
   // from state:
-  currentPlatformType: PropTypes.string,
+  currentPlatformType: PropTypes.string.isRequired,
   currentPlatformInfo: PropTypes.object,
   location: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  currentPlatformType: state.topics.selected.platforms.selected.select.type,
   currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
   topicInfo: state.topics.selected.info,
   params: ownProps.params,

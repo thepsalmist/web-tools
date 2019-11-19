@@ -57,7 +57,7 @@ const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   fetchStatus: state.topics.selected.platforms.selected.platformDetails.fetchStatus,
   currentPlatformId: parseInt(ownProps.params.platformId, 10),
-  currentPlatformType: state.topics.selected.platforms.selected.select.type,
+  currentPlatformType: state.topics.selected.platforms.selected.platformDetails.currentPlatformType,
   platformDetails: state.topics.selected.platforms.selected.platformDetails,
 });
 
@@ -84,9 +84,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-const fetchAsyncData = (dispatch, { topicId, currentPlatformId }) => {
-  dispatch(selectPlatform({ id: currentPlatformId }));
-  dispatch(fetchTopicPlatformById(topicId, currentPlatformId));
+const fetchAsyncData = (dispatch, { topicId, platformDetails }) => {
+  dispatch(selectPlatform({ ...platformDetails }));
+  dispatch(fetchTopicPlatformById(topicId, platformDetails.topics_id));
 };
 
 export default

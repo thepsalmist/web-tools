@@ -41,6 +41,7 @@ const messages = {
   toicSkipSolrQueryProp: { id: 'topic.prop.public', defaultMessage: 'Skip SOLR Query' },
   topicPublicProp: { id: 'topic.prop.public', defaultMessage: 'Public' },
   searchByRedditChannel: { id: 'topic.prop.reddit.channel', defaultMessage: 'Search By Reddit Channel' },
+  searchByTwitterChannel: { id: 'topic.prop.twitter.source', defaultMessage: 'Search By Twitter Source' },
 
 
   entityName: { id: 'entity.title.default', defaultMessage: 'Entity' },

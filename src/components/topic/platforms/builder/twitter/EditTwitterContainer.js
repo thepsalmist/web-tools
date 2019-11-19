@@ -35,6 +35,7 @@ class EditTwitterContainer extends React.Component {
 
   updateQuery = () => {
     const { currentQuery } = this.props;
+    // TODO: add in twitter sources/feeds
     this.setState({ query: currentQuery });
   }
 
@@ -150,9 +151,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleMediaChange: (sourceAndCollections) => {
+  handleMediaChange: (sources) => {
     // take selections from mediaPicker and push them back into topicForm
-    ownProps.change('sourcesAndCollections', sourceAndCollections); // redux-form change action
+    ownProps.change('source', sources); // redux-form change action
   },
   handleMediaDelete: () => null, // in create mode we don't need to update the values
   finishStep: (values) => {

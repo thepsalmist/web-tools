@@ -8,7 +8,7 @@ import withIntlForm from '../../../common/hocs/IntlForm';
 import OpenWebSummary from './openWeb/OpenWebSummary';
 import RedditSummary from './reddit/RedditSummary';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT /* , PLATFORM_TWITTER */ } from '../../../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../../lib/platformTypes';
 import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
 

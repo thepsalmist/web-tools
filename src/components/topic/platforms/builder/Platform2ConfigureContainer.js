@@ -67,7 +67,6 @@ Platform2ConfigureContainer.propTypes = {
   // form context
   intl: PropTypes.object.isRequired,
   // from dipatch
-  handlePreviousStep: PropTypes.func.isRequired,
   handleNextStep: PropTypes.func.isRequired,
   // from state:
   currentPlatformType: PropTypes.string,

@@ -6,7 +6,7 @@ import { push } from 'react-router-redux';
 import { reset } from 'redux-form';
 import PlatformWizard from './builder/PlatformWizard';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import { topicUpdatePlatform, fetchTopicPlatformById, setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
+import { topicUpdatePlatform, fetchTopicPlatformById, setTopicNeedsNewSnapshot, selectPlatform } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 
 const localMessages = {
@@ -84,7 +84,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-const fetchAsyncData = (dispatch, { topicId, currentPlatformId }) => dispatch(fetchTopicPlatformById(topicId, currentPlatformId));
+const fetchAsyncData = (dispatch, { topicId, currentPlatformId }) => {
+  dispatch(selectPlatform({ id: currentPlatformId }));
+  dispatch(fetchTopicPlatformById(topicId, currentPlatformId));
+};
 
 export default
 injectIntl(

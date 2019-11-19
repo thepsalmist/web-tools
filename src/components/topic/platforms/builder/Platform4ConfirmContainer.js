@@ -6,8 +6,9 @@ import { reduxForm } from 'redux-form';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../../common/hocs/IntlForm';
 import OpenWebSummary from './openWeb/OpenWebSummary';
+import RedditSummary from './reddit/RedditSummary';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
-import { PLATFORM_OPEN_WEB /* PLATFORM_REDDIT, PLATFORM_TWITTER */ } from '../../../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT /* , PLATFORM_TWITTER */ } from '../../../../lib/platformTypes';
 import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
 
@@ -21,17 +22,18 @@ const Platform4ConfirmContainer = (props) => {
   const { topicId, formValues, initialValues, handlePreviousStep, handleSubmit, finishStep, submitting } = props;
   const { formatMessage } = props.intl;
   let content = null;
-  switch (formValues.currentPlatform) {
+  switch (formValues.currentPlatformType) {
     case PLATFORM_OPEN_WEB:
       content = (
         <OpenWebSummary topicId={topicId} formValues={formValues} initialValues={initialValues} />
       );
       break;
-    /* case PLATFORM_REDDIT:
+    case PLATFORM_REDDIT:
       content = (
         <RedditSummary topicId={topicId} formValues={formValues} initialValues={initialValues} />
       );
       break;
+    /*
     case PLATFORM_TWITTER:
       content = (
         <TwitterSummary topicId={topicId} formValues={formValues} initialValues={initialValues} />

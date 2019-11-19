@@ -33,7 +33,7 @@ def get_topic_platforms(topics_id):
 @flask_login.login_required
 def get_platform_by_id(topics_id, platform_id):
     # iterate through topic seed queries array
-    return jsonify({'id':56, 'type': 'open web', 'platform_seed_query': 'storytelling'}) #need media_ids
+    return jsonify({'id':56, 'type': 'web', 'platform_seed_query': 'storytelling'}) #need media_ids
 
 
 @app.route('/api/topics/<topics_id>/platforms/add', methods=['POST'])

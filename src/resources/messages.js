@@ -40,6 +40,8 @@ const messages = {
   topicIterationsProp: { id: 'topic.prop.iteration', defaultMessage: 'Iterations' },
   toicSkipSolrQueryProp: { id: 'topic.prop.public', defaultMessage: 'Skip SOLR Query' },
   topicPublicProp: { id: 'topic.prop.public', defaultMessage: 'Public' },
+  searchByRedditChannel: { id: 'topic.prop.reddit.channel', defaultMessage: 'Search By Reddit Channel' },
+
 
   entityName: { id: 'entity.title.default', defaultMessage: 'Entity' },
   entityPerson: { id: 'entity.title.person', defaultMessage: 'Person' },

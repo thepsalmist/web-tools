@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2019-11-19",
+      "version": "v3.12.17",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "You can create topics again"
+        }
+      ]
+    },
+    {
       "date": "2019-11-14",
       "version": "v3.12.16",
       "notes": [

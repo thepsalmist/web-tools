@@ -189,6 +189,8 @@ def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids, custom_ids=
 
 
 def custom_collection_as_solr_query(custom_ids_str):
+    if (custom_ids_str is None) or (len(custom_ids_str) is 0):
+        return ''
     custom_ids_dict = json.loads(custom_ids_str)
     query_custom_ids = ''
     for sets_of_tags in custom_ids_dict:  # for each custom collections

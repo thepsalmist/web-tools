@@ -46,10 +46,8 @@ class EditRedditContainer extends React.Component {
   }
 
   render() {
-    const { topicId, initialValues, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
+    const { topicId, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
-    const subRedditPicker = initialValues.subRedditSelections;
-    // eslint-disable-next-line jsx-a11y/label-has-associated-control
     let previewContent = null;
     let nextButtonDisabled = true;
     if ((this.state.query !== null) && (this.state.query !== undefined) && (this.state.query.length > 0)) {
@@ -91,13 +89,23 @@ class EditRedditContainer extends React.Component {
             </Col>
           </Row>
           <Row>
+            <Col lg={8} xs={12}>
+              <Field
+                name="channel"
+                placeholder={formatMessage(messages.searchByRedditChannel)}
+                component={renderTextField}
+                fullWidth
+                onKeyDown={this.handleKeyDown}
+              />
+            </Col>
+          </Row>
+          <Row>
             <Col lg={6}>
               <div className="media-field-wrapper">
-                {subRedditPicker}
+                {previewContent}
               </div>
             </Col>
           </Row>
-          { previewContent }
           <Row>
             <Col lg={8} xs={12}>
               <AppButton disabled={nextButtonDisabled} type="submit" label={formatMessage(messages.next)} primary />

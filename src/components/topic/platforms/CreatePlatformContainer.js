@@ -76,12 +76,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         infoForQuery = { ...formatTopicOpenWebSourcesForQuery(values.sourcesAndCollections) };
         break;
       case PLATFORM_TWITTER:
-        // check values values if necessary
         // source = internet archive or push_shift
-        source = values.source; // crimson hexagon
+        source = values.source; // crimson hexagon or ...
         break;
       case PLATFORM_REDDIT:
         source = 'pushshift';
+        // channel = a list of subreddits
         // grab subreddits?
         // check values values if necessary
         break;

@@ -3,6 +3,7 @@ import React from 'react';
 import { Field, reduxForm, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import MenuItem from '@material-ui/core/MenuItem';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../../../common/AppButton';
 import withIntlForm from '../../../../common/hocs/IntlForm';
@@ -18,6 +19,9 @@ const localMessages = {
   about: { id: 'platform.create.edit.about',
     defaultMessage: 'This Platform is driven by an open web seed query.  Any stories that match the query you create will be included in the Platform.' },
   errorNoKeywords: { id: 'platform.error', defaultMessage: 'You need to specify a query.' },
+  typeCrimson: { id: 'platform.create.edit.crimson', defaultMessage: 'Crimson Hexagon' },
+  typeElite: { id: 'platform.create.edit.elite', defaultMessage: 'Elite' },
+  typeOther: { id: 'platform.create.edit.other', defaultMessage: 'Other' },
 };
 
 class EditTwitterContainer extends React.Component {
@@ -46,7 +50,7 @@ class EditTwitterContainer extends React.Component {
   }
 
   render() {
-    const { topicId, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
+    const { topicId, /* handleMediaChange */ renderTextField, renderSelect, handleSubmit, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
@@ -93,10 +97,12 @@ class EditTwitterContainer extends React.Component {
               <Field
                 name="source"
                 placeholder={formatMessage(messages.searchByTwitterChannel)}
-                component={renderTextField}
-                fullWidth
-                onKeyDown={this.handleKeyDown}
-              />
+                component={renderSelect}
+              >
+                <MenuItem key="crimson" value="crimson"><FormattedMessage {...localMessages.typeCrimson} /></MenuItem>
+                <MenuItem key="elite" value="elite"><FormattedMessage {...localMessages.typeElite} /></MenuItem>
+                <MenuItem key="other" value="other"><FormattedMessage {...localMessages.typeOther} /></MenuItem>
+              </Field>
             </Col>
           </Row>
           <Row>
@@ -134,6 +140,7 @@ EditTwitterContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,
+  renderSelect: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({

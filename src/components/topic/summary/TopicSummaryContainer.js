@@ -42,7 +42,7 @@ class TopicSummaryContainer extends React.Component {
   }
 
   render() {
-    const { filters, topic, selectedTimespan, user, location, selectedSnapshot } = this.props;
+    const { filters, topic, selectedTimespan, user, location, selectedSnapshot, timespans } = this.props;
     const { formatMessage } = this.props.intl;
     let content = <div />;
     let intro = null;
@@ -93,7 +93,7 @@ class TopicSummaryContainer extends React.Component {
             <>
               <Row>
                 <Col lg={12}>
-                  <SplitStoryCountSummaryContainer topicId={topic.topics_id} filters={filters} />
+                  <SplitStoryCountSummaryContainer topicId={topic.topics_id} filters={filters} timespans={timespans} />
                 </Col>
               </Row>
             </>
@@ -226,6 +226,7 @@ TopicSummaryContainer.propTypes = {
   filters: PropTypes.object.isRequired,
   topic: PropTypes.object,
   selectedTimespan: PropTypes.object,
+  timespans: PropTypes.array,
   selectedSnapshot: PropTypes.object,
   user: PropTypes.object.isRequired,
 };
@@ -236,6 +237,7 @@ const mapStateToProps = state => ({
   selectedTimespan: state.topics.selected.timespans.selected,
   selectedSnapshot: state.topics.selected.snapshots.selected,
   user: state.user,
+  timespans: state.topics.selected.timespans.list,
 });
 
 export default

@@ -398,12 +398,14 @@ def top_by_date(topics_id):
     end_timestamp = request.args['endTimestamp']
     start_day = dates.unixToSolrDate(int(start_timestamp)/1000)
     end_day = dates.unixToSolrDate(int(end_timestamp) / 1000)
-    # this will read all filters, and limit and sort from request automatically (!)
-    top_stories = apicache.topic_story_list(user_mediacloud_key(), topics_id,
-                                            fq="publish_day:[{}T00:00:00Z TO {}T00:00:00Z]".format(start_day, end_day))
+    # we have to query by timespan instead of date, because topicStoryList doesn't support the `fq` param
+    weekly_timespans_id = request.args['selectedTimespanId']
+    # this will read all filters, and limit and sort from request automatically, so we have to override the timespans_id
+    top_stories = apicache.topic_story_list(user_mediacloud_key(), topics_id, timespans_id=weekly_timespans_id)
     results = {
         'startDay': start_day,
         'endDay': end_day,
+        'selectedTimespanId': weekly_timespans_id,
         'stories': top_stories['stories']
     }
     return jsonify({"peak": results})

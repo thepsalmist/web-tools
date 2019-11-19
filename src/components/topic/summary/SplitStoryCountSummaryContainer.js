@@ -3,6 +3,7 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
+import Divider from '@material-ui/core/Divider';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -17,13 +18,15 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { DownloadButton } from '../../common/IconButton';
 import { getBrandDarkColor } from '../../../styles/colors';
-import { filteredLinkTo, filtersAsUrlParams } from '../../util/location';
+import { filteredLinkTo, urlWithFilters } from '../../util/location';
 import { trimToMaxLength } from '../../../lib/stringUtil';
+import { timespanForDate } from '../../util/topicUtil';
 
 const localMessages = {
   title: { id: 'topic.summary.splitStoryCount.title', defaultMessage: 'Attention Over Time' },
-  descriptionIntro: { id: 'topic.summary.splitStoryCount.help.title', defaultMessage: '<p>Analyze attention to this topic over time to understand how it is covered. This chart shows the total number of stories that matched your topic query. Spikes in attention can reveal key events.  Plateaus can reveal stable, "normal", attention levels.</p>' },
+  descriptionIntro: { id: 'topic.summary.splitStoryCount.help.title', defaultMessage: '<p>Analyze attention to this topic over time to understand how it is covered. This chart shows the total number of stories that matched your topic query. Spikes in attention can reveal key events.  Plateaus can reveal stable, "normal", attention levels. <b>Click a point to label it with the top inlinked story in that week.</b></p>' },
   downloadCsv: { id: 'topic.summary.splitStoryCount.download', defaultMessage: 'Download daily story count CSV' },
+  clearAllLabels: { id: 'topic.summary.splitStoryCount.clearAllLablels', defaultMessage: 'Remove all labels' },
 };
 
 /*
@@ -45,13 +48,13 @@ class SplitStoryCountSummaryContainer extends React.Component {
 
   downloadCsv = () => {
     const { topicId, filters } = this.props;
-    const url = `/api/topics/${topicId}/split-story/count.csv?${filtersAsUrlParams(filters)}`;
+    const url = urlWithFilters(`/api/topics/${topicId}/split-story/count.csv`, filters);
     window.location = url;
   }
 
   render() {
-    const { total, counts, peaks, selectedTimePeriod, attentionAggregationMenuItems,
-      handleDataPointClick } = this.props;
+    const { total, topicId, filters, counts, peaks, selectedTimePeriod, attentionAggregationMenuItems,
+      handleDataPointClick, handleClearAllLabels } = this.props;
     let annotations = [];
     if (peaks.length > 0) {
       annotations = [{
@@ -81,7 +84,7 @@ class SplitStoryCountSummaryContainer extends React.Component {
           total={total}
           data={counts}
           annotations={annotations}
-          height={200}
+          height={300}
           lineColor={getBrandDarkColor()}
           backgroundColor="#f5f5f5"
           interval={selectedTimePeriod}
@@ -100,6 +103,13 @@ class SplitStoryCountSummaryContainer extends React.Component {
             </ActionMenu>
             <ActionMenu actionTextMsg={messages.viewOptions}>
               {attentionAggregationMenuItems}
+              <Divider />
+              <MenuItem
+                className="action-icon-menu-item"
+                onClick={handleClearAllLabels}
+              >
+                <ListItemText><FormattedMessage {...localMessages.clearAllLabels} /></ListItemText>
+              </MenuItem>
             </ActionMenu>
           </div>
         </Permissioned>
@@ -121,10 +131,12 @@ SplitStoryCountSummaryContainer.propTypes = {
   total: PropTypes.number,
   counts: PropTypes.array, // array of {date: epochMS, count: int]
   peaks: PropTypes.array,
+  timespans: PropTypes.array,
   // from dispath
   handleExplore: PropTypes.func.isRequired,
   handleDataPointClick: PropTypes.func.isRequired,
   handleTimePeriodChange: PropTypes.func.isRequired,
+  handleClearAllLabels: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -147,8 +159,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       startTimestamp: point0x,
       endTimestamp: point1x,
       storyCount: pointValue,
+      selectedTimespanId: timespanForDate(startDate, ownProps.timespans, 'weekly').timespans_id,
     }));
   },
+  handleClearAllLabels: () => dispatch(clearTopicTopStoriesPeaks()),
   // when time period changes we need to clear the peaks we've annotated, because they aren't there anymore
   handleTimePeriodChange: () => dispatch(clearTopicTopStoriesPeaks()),
 });
@@ -160,7 +174,7 @@ const fetchAsyncData = (dispatch, props) => {
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withSummary(localMessages.title, localMessages.descriptionIntro, [messages.doesNotIncludeUndateable, messages.attentionChartHelpText])(
+    withSummary(localMessages.title, localMessages.descriptionIntro, [messages.doesNotIncludeUndateable, messages.attentionChartHelpText], true)(
       withAttentionAggregation(
         withFilteredAsyncData(fetchAsyncData)(
           SplitStoryCountSummaryContainer

@@ -11,12 +11,12 @@ const localMessages = {
 };
 
 const OpenWebPreview = (props) => {
-  const { topicId, query } = props;
+  const { topicId, topicInfo, query } = props;
   return (
     <div className="platform-create-open-web-preview">
       <Row>
         <Col lg={10}>
-          <OpenWebStoryCountPreviewContainer topicId={topicId} query={query} />
+          <OpenWebStoryCountPreviewContainer topicId={topicId} topicInfo={topicInfo} query={query} />
         </Col>
         <Col lg={2}>
           <p className="light"><i><FormattedMessage {...localMessages.about} /></i></p>
@@ -37,6 +37,7 @@ OpenWebPreview.propTypes = {
   // from parent
   query: PropTypes.string.isRequired,
   topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object.isRequired,
 };
 
 export default injectIntl(OpenWebPreview);

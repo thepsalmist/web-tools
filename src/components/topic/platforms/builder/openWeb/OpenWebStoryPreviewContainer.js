@@ -8,6 +8,7 @@ import { fetchStoriesByPlatformQuery } from '../../../../../actions/topicActions
 import DataCard from '../../../../common/DataCard';
 import TopicStoryTable from '../../../TopicStoryTable';
 import messages from '../../../../../resources/messages';
+import { formatTopicOpenWebPreviewQuery } from '../../../../util/topicUtil';
 
 const NUM_TO_SHOW = 20;
 
@@ -35,6 +36,7 @@ OpenWebStoryPreviewContainer.propTypes = {
   helpButton: PropTypes.node.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object.isRequired,
   query: PropTypes.string.isRequired,
   currentPlatformType: PropTypes.string.isRequired,
   // from state
@@ -46,10 +48,15 @@ OpenWebStoryPreviewContainer.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
-  currentPlatformType: state.form.platform.values.currentPlatformType,
+  media: state.form.platform.values.sourcesAndCollections,
 });
 
-const fetchAsyncData = (dispatch, { topicId, currentPlatformType, query }) => dispatch(fetchStoriesByPlatformQuery(topicId, { current_platform_type: currentPlatformType, platform_query: query, limit: NUM_TO_SHOW }));
+const fetchAsyncData = (dispatch, { topicInfo, media }) => {
+  const infoForQuery = {
+    ...formatTopicOpenWebPreviewQuery({ ...topicInfo, media }),
+  };
+  dispatch(fetchStoriesByPlatformQuery(infoForQuery.topicsId, { ...infoForQuery }));
+};
 
 export default
 injectIntl(

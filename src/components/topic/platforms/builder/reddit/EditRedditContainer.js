@@ -31,6 +31,7 @@ class EditRedditContainer extends React.Component {
 
   updateQuery = () => {
     const { currentQuery } = this.props;
+    // TODO add in subreddits
     this.setState({ query: currentQuery });
   }
 
@@ -100,7 +101,7 @@ class EditRedditContainer extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col lg={6}>
+            <Col lg={12}>
               <div className="media-field-wrapper">
                 {previewContent}
               </div>
@@ -143,9 +144,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleMediaChange: (sourceAndCollections) => {
+  handleMediaChange: (subreddits) => {
     // take selections from mediaPicker and push them back into topicForm
-    ownProps.change('sourcesAndCollections', sourceAndCollections); // redux-form change action
+    ownProps.change('subreddits', subreddits); // redux-form change action
   },
   handleMediaDelete: () => null, // in create mode we don't need to update the values
   finishStep: (values) => {

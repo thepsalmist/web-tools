@@ -8,6 +8,7 @@ import { fetchStoryCountsByPlatformQuery } from '../../../../../actions/topicAct
 import DataCard from '../../../../common/DataCard';
 import BubbleRowChart from '../../../../vis/BubbleRowChart';
 import { getBrandDarkColor } from '../../../../../styles/colors';
+import { formatTopicOpenWebPreviewQuery } from '../../../../util/topicUtil';
 
 const BUBBLE_CHART_DOM_ID = 'bubble-chart-keyword-preview-story-total';
 
@@ -65,7 +66,7 @@ OpenWebStoryCountPreviewContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
   // from parent
-  topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object.isRequired,
   query: PropTypes.string.isRequired,
   currentPlatformType: PropTypes.string.isRequired,
   // from state
@@ -76,10 +77,15 @@ OpenWebStoryCountPreviewContainer.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.platforms.preview.matchingStoryCounts.fetchStatus,
   counts: state.topics.selected.platforms.preview.matchingStoryCounts,
-  currentPlatformType: state.form.platform.values.currentPlatformType,
+  media: state.form.platform.values.sourcesAndCollections,
 });
 
-const fetchAsyncData = (dispatch, { topicId, currentPlatformType, query }) => dispatch(fetchStoryCountsByPlatformQuery(topicId, { current_platform_type: currentPlatformType, platform_query: query }));
+const fetchAsyncData = (dispatch, { topicInfo, media }) => {
+  const infoForQuery = {
+    ...formatTopicOpenWebPreviewQuery({ ...topicInfo, media }),
+  };
+  dispatch(fetchStoryCountsByPlatformQuery(infoForQuery.topicsId, { ...infoForQuery }));
+};
 
 export default
 injectIntl(

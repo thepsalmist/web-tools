@@ -68,7 +68,7 @@ class EditOpenWebContainer extends React.Component {
       nextButtonDisabled = false;
       previewContent = (
         <div>
-          <OpenWebPreview topicId={topicId} query={this.state.query} location={location} />
+          <OpenWebPreview topicId={topicId} topicInfo={initialValues.topicInfo} query={this.state.query} location={location} />
         </div>
       );
     }

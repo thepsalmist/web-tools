@@ -1,5 +1,6 @@
 import slugify from 'slugify';
 import { serializeSearchTags } from '../../lib/explorerUtil';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../lib/platformTypes';
 
 export const topicDownloadFilename = (topicName, filters) => (
   `${slugify(topicName)}-${filters.snapshotId}-${filters.timespanId}-${filters.focusId}`
@@ -20,7 +21,6 @@ export const formatTopicOpenWebSourcesForQuery = (topicSourcesAndCollections) =>
   };
 };
 
-// while creating a topic, this can format the under-construction topic params propertly for a preview request
 export const formatTopicPreviewQuery = (topicQuery) => ({
   q: topicQuery.solr_seed_query,
   start_date: topicQuery.start_date,
@@ -29,12 +29,31 @@ export const formatTopicPreviewQuery = (topicQuery) => ({
 });
 
 // while creating a topic, this can format the under-construction topic params propertly for a preview request
-export const formatTopicPlatformPreviewQuery = (topicQuery, platform, query, source) => ({
+
+// while creating a topic, this can format the under-construction topic params propertly for a preview request
+export const formatTopicPlatformPreviewQuery = (topicQuery, platform, query) => ({
   current_platform_type: platform,
   platform_query: query,
   start_date: topicQuery.start_date,
   end_date: topicQuery.end_date,
-  source,
+});
+
+export const formatTopicOpenWebPreviewQuery = (topicQuery, query) => ({
+  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_OPEN_WEB, query),
+  source: 'mediacloud',
+  channel: { ...formatTopicOpenWebSourcesForQuery(topicQuery.sourcesAndCollections) },
+});
+
+export const formatTopicRedditPreviewForQuery = (topicQuery, query, channel) => ({
+  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_REDDIT, query),
+  source: 'reddit',
+  channel,
+});
+
+export const formatTopicTwitterPreviewForQuery = (topicQuery, query, channel) => ({
+  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_TWITTER, query),
+  source: 'reddit',
+  channel,
 });
 
 export const TEMP = 'temp';

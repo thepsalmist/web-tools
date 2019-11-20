@@ -8,6 +8,7 @@ import { fetchStoryCountsByPlatformQuery } from '../../../../../actions/topicAct
 import DataCard from '../../../../common/DataCard';
 import BubbleRowChart from '../../../../vis/BubbleRowChart';
 import { getBrandDarkColor } from '../../../../../styles/colors';
+import { formatTopicRedditPreviewForQuery } from '../../../../util/topicUtil';
 
 const BUBBLE_CHART_DOM_ID = 'bubble-chart-keyword-preview-story-total';
 
@@ -77,9 +78,15 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.platforms.preview.matchingStoryCounts.fetchStatus,
   counts: state.topics.selected.platforms.preview.matchingStoryCounts,
   currentPlatformType: state.form.platform.values.currentPlatformType,
+  channel: state.form.platform.values.channel,
 });
 
-const fetchAsyncData = (dispatch, { topicId, currentPlatformType, query }) => dispatch(fetchStoryCountsByPlatformQuery(topicId, { current_platform_type: currentPlatformType, platform_query: query }));
+const fetchAsyncData = (dispatch, { topicInfo, channel }) => {
+  const infoForQuery = {
+    ...formatTopicRedditPreviewForQuery({ ...topicInfo, channel }),
+  };
+  dispatch(fetchStoryCountsByPlatformQuery(infoForQuery.topicsId, { ...infoForQuery }));
+};
 
 export default
 injectIntl(

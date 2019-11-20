@@ -8,7 +8,7 @@ import { topicCreatePlatform, setTopicNeedsNewSnapshot } from '../../../actions/
 // import { LEVEL_ERROR } from '../../common/Notice';
 import { updateFeedback } from '../../../actions/appActions';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../lib/platformTypes';
-import { formatTopicPlatformPreviewQuery, formatTopicOpenWebSourcesForQuery } from '../../util/topicUtil';
+import { formatTopicPlatformPreviewQuery, formatTopicOpenWebSourcesForQuery, formatTopicRedditPreviewForQuery } from '../../util/topicUtil';
 
 const DEFAULT_SELECTED_NUMBER = 5;
 
@@ -81,8 +81,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         break;
       case PLATFORM_REDDIT:
         source = 'pushshift';
-        // channel = a list of subreddits
-        // grab subreddits?
+        infoForQuery = { ...formatTopicRedditPreviewForQuery(values.subreddits) };
         // check values values if necessary
         break;
       default:

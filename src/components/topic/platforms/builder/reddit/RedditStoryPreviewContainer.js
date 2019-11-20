@@ -8,6 +8,7 @@ import { fetchStoriesByPlatformQuery } from '../../../../../actions/topicActions
 import DataCard from '../../../../common/DataCard';
 import TopicStoryTable from '../../../TopicStoryTable';
 import messages from '../../../../../resources/messages';
+import { formatTopicRedditPreviewForQuery } from '../../../../util/topicUtil';
 
 const NUM_TO_SHOW = 20;
 
@@ -47,9 +48,15 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
   currentPlatformType: state.form.platform.values.currentPlatformType,
+  channel: state.form.platform.values.channel,
 });
 
-const fetchAsyncData = (dispatch, { topicId, currentPlatformType, query }) => dispatch(fetchStoriesByPlatformQuery(topicId, { current_platform_type: currentPlatformType, platform_query: query, limit: NUM_TO_SHOW }));
+const fetchAsyncData = (dispatch, { topicInfo, channel }) => {
+  const infoForQuery = {
+    ...formatTopicRedditPreviewForQuery({ ...topicInfo, channel }),
+  };
+  dispatch(fetchStoriesByPlatformQuery(infoForQuery.topicsId, { ...infoForQuery }));
+};
 
 export default
 injectIntl(

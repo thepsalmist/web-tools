@@ -406,13 +406,18 @@ export function topicDeletePlatform() {
 }
 
 export function topicStoryCountsByPlatformQuery(topicId, params) {
-  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query']);
+  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel']);
   return createApiPromise(`/api/topics/${topicId}/platforms/preview/story-count`, acceptedParams);
 }
 
 export function topicStoriesByPlatformQuery(topicId, params) {
-  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'start_date', 'end_date', 'limit']);
+  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel', 'start_date', 'end_date', 'limit']);
   return createApiPromise(`/api/topics/${topicId}/platforms/preview/stories`, acceptedParams);
+}
+
+export function topicAttentionByPlatformQuery(topicId, params) {
+  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel', 'start_date', 'end_date', 'limit']);
+  return createApiPromise(`/api/topics/${topicId}/platforms/preview/attention`, acceptedParams);
 }
 
 export function topicPlatformList() {

@@ -47,7 +47,7 @@ class EditRedditContainer extends React.Component {
   }
 
   render() {
-    const { topicId, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
+    const { topicId, topicInfo, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
@@ -55,7 +55,7 @@ class EditRedditContainer extends React.Component {
       nextButtonDisabled = false;
       previewContent = (
         <div>
-          <RedditPreview topicId={topicId} query={this.state.query} location={location} />
+          <RedditPreview topicId={topicId} topicInfo={topicInfo} query={this.state.query} location={location} />
         </div>
       );
     }
@@ -121,6 +121,7 @@ class EditRedditContainer extends React.Component {
 EditRedditContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object.isRequired,
   initialValues: PropTypes.object,
   onNextStep: PropTypes.func.isRequired,
   handleMediaChange: PropTypes.func.isRequired,
@@ -144,9 +145,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleMediaChange: (subreddits) => {
+  handleMediaChange: (channel) => {
     // take selections from mediaPicker and push them back into topicForm
-    ownProps.change('subreddits', subreddits); // redux-form change action
+    ownProps.change('channel', channel); // redux-form change action
   },
   handleMediaDelete: () => null, // in create mode we don't need to update the values
   finishStep: (values) => {

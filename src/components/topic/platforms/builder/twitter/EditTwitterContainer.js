@@ -96,7 +96,7 @@ class EditTwitterContainer extends React.Component {
           <Row>
             <Col lg={8} xs={12}>
               <Field
-                name="source"
+                name="channel"
                 placeholder={formatMessage(messages.searchByTwitterChannel)}
                 component={renderSelect}
               >
@@ -151,9 +151,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleMediaChange: (sources) => {
+  handleMediaChange: (channel) => {
     // take selections from mediaPicker and push them back into topicForm
-    ownProps.change('source', sources); // redux-form change action
+    ownProps.change('channel', channel); // redux-form change action
   },
   handleMediaDelete: () => null, // in create mode we don't need to update the values
   finishStep: (values) => {

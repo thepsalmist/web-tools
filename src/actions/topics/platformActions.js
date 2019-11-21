@@ -37,4 +37,4 @@ export const FETCH_PLATFORM_PREVIEW_STORIES = 'FETCH_PLATFORM_PREVIEW_STORIES';
 export const fetchStoriesByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PREVIEW_STORIES, api.topicStoriesByPlatformQuery);
 
 export const FETCH_PLATFORM_PREVIEW_ATTENTION = 'FETCH_PLATFORM_PREVIEW_ATTENTION';
-export const fetchAttentionByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PREVIEW_ATTENTION, api.topicAttentionByPlatformQuery);
+export const fetchAttentionByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PREVIEW_ATTENTION, api.topicSplitStoryCountsByPlatformQuery);

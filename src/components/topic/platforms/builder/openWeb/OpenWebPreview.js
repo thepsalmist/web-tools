@@ -10,34 +10,28 @@ const localMessages = {
     defaultMessage: 'Here is a preview of total number of stories we have found that match your query within the overall topic.' },
 };
 
-const OpenWebPreview = (props) => {
-  const { topicId, topicInfo, query } = props;
-  return (
-    <div className="platform-create-open-web-preview">
-      <Row>
-        <Col lg={10}>
-          <OpenWebStoryCountPreviewContainer topicId={topicId} topicInfo={topicInfo} query={query} />
-        </Col>
-        <Col lg={2}>
-          <p className="light"><i><FormattedMessage {...localMessages.about} /></i></p>
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={10} md={10} xs={12}>
-          <OpenWebStoryPreviewContainer topicId={topicId} query={query} />
-        </Col>
-      </Row>
-    </div>
-  );
-};
+const OpenWebPreview = () => (
+  <div className="platform-create-open-web-preview">
+    <Row>
+      <Col lg={10}>
+        <OpenWebStoryCountPreviewContainer />
+      </Col>
+      <Col lg={2}>
+        <p className="light"><i><FormattedMessage {...localMessages.about} /></i></p>
+      </Col>
+    </Row>
+    <Row>
+      <Col lg={10} md={10} xs={12}>
+        <OpenWebStoryPreviewContainer />
+      </Col>
+    </Row>
+  </div>
+);
 
 OpenWebPreview.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
   // from parent
-  query: PropTypes.string.isRequired,
-  topicId: PropTypes.number.isRequired,
-  topicInfo: PropTypes.object.isRequired,
 };
 
 export default injectIntl(OpenWebPreview);

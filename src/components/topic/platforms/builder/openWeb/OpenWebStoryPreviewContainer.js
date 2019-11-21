@@ -46,6 +46,8 @@ OpenWebStoryPreviewContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  topicId: state.topics.selected.id,
+  topicInfo: state.topics.selected.info,
   fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
   media: state.form.platform.values.sourcesAndCollections,
@@ -55,7 +57,7 @@ const fetchAsyncData = (dispatch, { topicInfo, media }) => {
   const infoForQuery = {
     ...formatTopicOpenWebPreviewQuery({ ...topicInfo, media }),
   };
-  dispatch(fetchStoriesByPlatformQuery(infoForQuery.topicsId, { ...infoForQuery }));
+  dispatch(fetchStoriesByPlatformQuery(infoForQuery.topics_id,, { ...infoForQuery }));
 };
 
 export default

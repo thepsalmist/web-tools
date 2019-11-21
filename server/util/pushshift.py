@@ -129,3 +129,37 @@ def reddit_top_submissions(query, start_date, end_date, subreddits=None, limit=2
                                       after=int(start_date.timestamp()), before=int(end_date.timestamp()),
                                       limit=limit, sort='desc', sort_type='score')
     return data
+
+def _twitter_search(**kwargs):
+    gen = [] #ps_api.search_twitter(**kwargs)
+    return gen
+
+
+def _cached_twitter_search(**kwargs):
+    data = _twitter_search(**kwargs)
+    cleaned_data = []
+    try:
+        for row in range(0, kwargs['limit']):
+            item = next(data)
+            item_data = _reddit_submission_to_row(item)
+            cleaned_data.append(item_data)
+    except StopIteration:
+        # not really a problem, just an indication that we have less than kwargs['limit'] results
+        pass
+    return cleaned_data
+
+# filter params: description, location, name, screen_name, followers_count
+# description:aaaANDlocation:bbbbAND...followers_count:[0+TO+1000]
+#only finds users with description/location/...
+def twitter_user_search(query, filter, max_followers=100, limit=100, sort='ascending'):
+    #query would apply to one or all of the filters...
+    data = _cached_twitter_search(q=query, filter=filter)
+    return data
+
+#index = full_text
+#description, location, name filter so user can drill down on users in particular?
+#also would probably want retweet info along with urls
+def twitter_search_tweets(query, filter, limit=100, sort='ascending'):
+    #query applies to full_text (ElasticSearch index)...
+    data = _cached_twitter_search(q=query, filter=filter)
+    return data

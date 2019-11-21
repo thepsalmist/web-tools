@@ -8,6 +8,7 @@ import { fetchStoryCountsByPlatformQuery } from '../../../../../actions/topicAct
 import DataCard from '../../../../common/DataCard';
 import BubbleRowChart from '../../../../vis/BubbleRowChart';
 import { getBrandDarkColor } from '../../../../../styles/colors';
+import { formatTopicTwitterPreviewForQuery } from '../../../../util/topicUtil';
 
 const BUBBLE_CHART_DOM_ID = 'bubble-chart-keyword-preview-story-total';
 
@@ -21,7 +22,7 @@ const localMessages = {
   totalLabel: { id: 'topic.platforms.openWeb.storyCount.total', defaultMessage: 'All Stories' },
 };
 
-const RedditStoryCountPreviewContainer = (props) => {
+const TwitterStoryCountPreviewContainer = (props) => {
   const { counts, helpButton } = props;
   const { formatMessage, formatNumber } = props.intl;
   let content = null;
@@ -60,33 +61,42 @@ const RedditStoryCountPreviewContainer = (props) => {
   );
 };
 
-RedditStoryCountPreviewContainer.propTypes = {
+TwitterStoryCountPreviewContainer.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
   helpButton: PropTypes.node.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object.isRequired,
   query: PropTypes.string.isRequired,
-  currentPlatformType: PropTypes.string.isRequired,
+  currentQuery: PropTypes.string.isRequired,
   // from state
   counts: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => ({
+  topicId: state.topics.selected.id,
+  topicInfo: state.topics.selected.info,
   fetchStatus: state.topics.selected.platforms.preview.matchingStoryCounts.fetchStatus,
   counts: state.topics.selected.platforms.preview.matchingStoryCounts,
-  currentPlatformType: state.form.platform.values.currentPlatformType,
+  currentQuery: state.form.platform.values.query,
+  channel: state.form.platform.values.channel,
 });
 
-const fetchAsyncData = (dispatch, { topicId, currentPlatformType, query }) => dispatch(fetchStoryCountsByPlatformQuery(topicId, { current_platform_type: currentPlatformType, platform_query: query }));
+const fetchAsyncData = (dispatch, { topicInfo, currentQuery, channel }) => {
+  const infoForQuery = {
+    ...formatTopicTwitterPreviewForQuery({ ...topicInfo, currentQuery, channel }),
+  };
+  dispatch(fetchStoryCountsByPlatformQuery(infoForQuery.topics_id, { ...infoForQuery }));
+};
 
 export default
 injectIntl(
   connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, localMessages.helpText)(
       withAsyncData(fetchAsyncData, ['query'])(
-        RedditStoryCountPreviewContainer
+        TwitterStoryCountPreviewContainer
       )
     )
   )

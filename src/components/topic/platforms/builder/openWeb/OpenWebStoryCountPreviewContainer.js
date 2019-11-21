@@ -75,6 +75,7 @@ OpenWebStoryCountPreviewContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  topicInfo: state.topics.selected.info,
   fetchStatus: state.topics.selected.platforms.preview.matchingStoryCounts.fetchStatus,
   counts: state.topics.selected.platforms.preview.matchingStoryCounts,
   media: state.form.platform.values.sourcesAndCollections,
@@ -84,7 +85,7 @@ const fetchAsyncData = (dispatch, { topicInfo, media }) => {
   const infoForQuery = {
     ...formatTopicOpenWebPreviewQuery({ ...topicInfo, media }),
   };
-  dispatch(fetchStoryCountsByPlatformQuery(infoForQuery.topicsId, { ...infoForQuery }));
+  dispatch(fetchStoryCountsByPlatformQuery(infoForQuery.topics_id, { ...infoForQuery }));
 };
 
 export default

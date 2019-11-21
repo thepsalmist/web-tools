@@ -8,6 +8,7 @@ import { fetchStoriesByPlatformQuery } from '../../../../../actions/topicActions
 import DataCard from '../../../../common/DataCard';
 import TopicStoryTable from '../../../TopicStoryTable';
 import messages from '../../../../../resources/messages';
+import { formatTopicTwitterPreviewForQuery } from '../../../../util/topicUtil';
 
 const NUM_TO_SHOW = 20;
 
@@ -35,8 +36,9 @@ TwitterStoryPreviewContainer.propTypes = {
   helpButton: PropTypes.node.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object.isRequired,
   query: PropTypes.string.isRequired,
-  currentPlatformType: PropTypes.string.isRequired,
+  currentQuery: PropTypes.string.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   stories: PropTypes.array,
@@ -44,12 +46,20 @@ TwitterStoryPreviewContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  topicId: state.topics.selected.id,
+  topicInfo: state.topics.selected.info,
   fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
-  currentPlatformType: state.form.platform.values.currentPlatformType,
+  currentQuery: state.form.platform.values.query,
+  channel: state.form.platform.values.channel,
 });
 
-const fetchAsyncData = (dispatch, { topicId, currentPlatformType, query }) => dispatch(fetchStoriesByPlatformQuery(topicId, { current_platform_type: currentPlatformType, platform_query: query, limit: NUM_TO_SHOW }));
+const fetchAsyncData = (dispatch, { topicInfo, currentQuery, channel }) => {
+  const infoForQuery = {
+    ...formatTopicTwitterPreviewForQuery({ ...topicInfo, currentQuery, channel }),
+  };
+  dispatch(fetchStoriesByPlatformQuery(infoForQuery.topics_id, { ...infoForQuery }));
+};
 
 export default
 injectIntl(

@@ -44,16 +44,16 @@ export const formatTopicOpenWebPreviewQuery = (topicQuery, query) => ({
   channel: { ...formatTopicOpenWebSourcesForQuery(topicQuery.sourcesAndCollections) },
 });
 
-export const formatTopicRedditPreviewForQuery = (topicQuery, query, channel) => ({
-  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_REDDIT, query),
-  source: 'reddit',
-  channel,
+export const formatTopicRedditPreviewForQuery = (topicQuery) => ({
+  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_REDDIT, topicQuery.currentQuery),
+  source: PLATFORM_REDDIT, // TODO change
+  channel: topicQuery.channel,
 });
 
-export const formatTopicTwitterPreviewForQuery = (topicQuery, query, channel) => ({
-  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_TWITTER, query),
-  source: 'reddit',
-  channel,
+export const formatTopicTwitterPreviewForQuery = (topicQuery) => ({
+  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_TWITTER, topicQuery.currentQuery),
+  source: PLATFORM_TWITTER, // TODO change
+  channel: topicQuery.channel,
 });
 
 export const TEMP = 'temp';

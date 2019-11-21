@@ -36,8 +36,9 @@ RedditStoryPreviewContainer.propTypes = {
   helpButton: PropTypes.node.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object.isRequired,
   query: PropTypes.string.isRequired,
-  currentPlatformType: PropTypes.string.isRequired,
+  currentQuery: PropTypes.string.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   stories: PropTypes.array,
@@ -45,17 +46,18 @@ RedditStoryPreviewContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  topicInfo: state.topics.selected.info,
   fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
-  currentPlatformType: state.form.platform.values.currentPlatformType,
+  currentQuery: state.form.platform.values.query,
   channel: state.form.platform.values.channel,
 });
 
-const fetchAsyncData = (dispatch, { topicInfo, channel }) => {
+const fetchAsyncData = (dispatch, { topicInfo, currentQuery, channel }) => {
   const infoForQuery = {
-    ...formatTopicRedditPreviewForQuery({ ...topicInfo, channel }),
+    ...formatTopicRedditPreviewForQuery({ ...topicInfo, currentQuery, channel }),
   };
-  dispatch(fetchStoriesByPlatformQuery(infoForQuery.topicsId, { ...infoForQuery }));
+  dispatch(fetchStoriesByPlatformQuery(infoForQuery.topics_id, { ...infoForQuery }));
 };
 
 export default

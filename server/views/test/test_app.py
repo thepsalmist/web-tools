@@ -7,7 +7,7 @@ class HomepageTest(BaseAppTest):
 
     def test_home_age(self):
         response = self.app.get('/', follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
 
 if __name__ == "__main__":

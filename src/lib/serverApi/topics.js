@@ -406,12 +406,12 @@ export function topicDeletePlatform() {
 }
 
 export function topicStoryCountsByPlatformQuery(topicId, params) {
-  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel']);
+  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel', 'start_date', 'end_date', 'limit']);
   return createApiPromise(`/api/topics/${topicId}/platforms/preview/story-count`, acceptedParams);
 }
 
 export function topicSplitStoryCountsByPlatformQuery(topicId, params) {
-  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel']);
+  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel', 'start_date', 'end_date', 'limit']);
   return createApiPromise(`api/topics/${topicId}/platforms/preview/split-story-count`, acceptedParams);
 }
 
@@ -423,6 +423,11 @@ export function topicStoriesByPlatformQuery(topicId, params) {
 export function topicAttentionByPlatformQuery(topicId, params) {
   const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel', 'start_date', 'end_date', 'limit']);
   return createApiPromise(`/api/topics/${topicId}/platforms/preview/attention`, acceptedParams);
+}
+
+export function fetchTopWordsByPlatformQuery(topicId, params) {
+  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel', 'start_date', 'end_date', 'limit', 'snapshotId', 'timespanId', 'focusId', 'q', 'withTotals', 'sample_size']);
+  return createApiPromise(`/api/topics/${topicId}/platforms/preview/words`, acceptedParams);
 }
 
 export function topicPlatformList() {

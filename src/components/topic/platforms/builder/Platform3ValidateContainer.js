@@ -12,9 +12,9 @@ import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AppButton from '../../../common/AppButton';
 import StoryFeedbackRow from '../../../common/StoryFeedbackRow';
 import { goToCreatePlatformStep, fetchStoriesByPlatformQuery } from '../../../../actions/topicActions';
-import { formatTopicPlatformPreviewQuery } from '../../../util/topicUtil';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../../lib/platformTypes';
+import { formatTopicOpenWebPreviewQuery, formatTopicRedditPreviewForQuery, formatTopicTwitterPreviewForQuery } from '../../../util/topicUtil';
 
-const NUM_TO_SHOW = 30;
 const VALIDATION_CUTOFF = 0.9;
 
 const localMessages = {
@@ -159,7 +159,7 @@ Platform3ValidateContainer.propTypes = {
   // platforms: PropTypes.array.isRequired,
   topicId: PropTypes.number.isRequired,
   currentTopicInfo: PropTypes.object,
-  currentPlatformType: PropTypes.object,
+  currentPlatformType: PropTypes.string,
   currentQuery: PropTypes.string,
   fetchStatus: PropTypes.string.isRequired,
   total: PropTypes.number.isRequired,
@@ -177,6 +177,7 @@ const mapStateToProps = state => ({
   stories: state.topics.selected.platforms.preview.matchingStories.list,
   currentTopicInfo: state.topics.selected.info,
   currentQuery: state.form.platform.values.query,
+  channel: state.form.platform.values.channel || state.form.platform.values.sourcesAndCollections,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -191,12 +192,31 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-const fetchAsyncData = (dispatch, { topicId, currentTopicInfo, currentPlatformType, currentQuery }) => {
-  const infoForQuery = {
-    ...formatTopicPlatformPreviewQuery(currentTopicInfo, currentPlatformType, currentQuery, 'medicloud'), // TODO
-    limit: NUM_TO_SHOW,
-  };
-  dispatch(fetchStoriesByPlatformQuery(topicId, { ...infoForQuery }));
+const fetchAsyncData = (dispatch, { topicId, currentTopicInfo, currentPlatformType, currentQuery, channel }) => {
+  let infoForQuery = {};
+
+  switch (currentPlatformType) {
+    case PLATFORM_OPEN_WEB:
+      // need media
+      infoForQuery = {
+        ...formatTopicOpenWebPreviewQuery({ ...currentTopicInfo, currentPlatformType, currentQuery, channel }),
+      };
+      break;
+    case PLATFORM_TWITTER:
+      // source = internet archive or push_shift
+      infoForQuery = {
+        ...formatTopicTwitterPreviewForQuery({ ...currentTopicInfo, currentPlatformType, currentQuery, channel }),
+      };
+      break;
+    case PLATFORM_REDDIT:
+      infoForQuery = {
+        ...formatTopicRedditPreviewForQuery({ ...currentTopicInfo, currentPlatformType, currentQuery, channel }),
+      };
+      break;
+    default:
+      return null;
+  }
+  return dispatch(fetchStoriesByPlatformQuery(topicId, { ...infoForQuery }));
 };
 
 export default

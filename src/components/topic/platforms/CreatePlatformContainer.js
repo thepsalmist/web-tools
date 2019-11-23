@@ -8,7 +8,7 @@ import { topicCreatePlatform, setTopicNeedsNewSnapshot } from '../../../actions/
 // import { LEVEL_ERROR } from '../../common/Notice';
 import { updateFeedback } from '../../../actions/appActions';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../lib/platformTypes';
-import { formatTopicPlatformPreviewQuery, formatTopicOpenWebSourcesForQuery, formatTopicRedditPreviewForQuery } from '../../util/topicUtil';
+import { formatTopicOpenWebPreviewQuery, formatTopicRedditPreviewForQuery, formatTopicTwitterPreviewForQuery } from '../../util/topicUtil';
 
 const DEFAULT_SELECTED_NUMBER = 5;
 
@@ -67,30 +67,28 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
     */
     let infoForQuery = {};
-    const currentQuery = values.query;
-    let source = null;
+
     switch (values.currentPlatformType) {
       case PLATFORM_OPEN_WEB:
-        source = 'mediacloud';
         // need media
-        infoForQuery = { ...formatTopicOpenWebSourcesForQuery(values.sourcesAndCollections) };
+        infoForQuery = {
+          ...formatTopicOpenWebPreviewQuery({ ...topicInfo, ...values }),
+        };
         break;
       case PLATFORM_TWITTER:
         // source = internet archive or push_shift
-        source = values.source; // crimson hexagon or ...
+        infoForQuery = {
+          ...formatTopicTwitterPreviewForQuery({ ...topicInfo, ...values }),
+        };
         break;
       case PLATFORM_REDDIT:
-        source = 'pushshift';
-        infoForQuery = { ...formatTopicRedditPreviewForQuery(values.subreddits) };
-        // check values values if necessary
+        infoForQuery = {
+          ...formatTopicRedditPreviewForQuery({ ...topicInfo, ...values }),
+        };
         break;
       default:
         return null;
     }
-    infoForQuery = {
-      ...infoForQuery,
-      ...formatTopicPlatformPreviewQuery(topicInfo, values.currentPlatformType, currentQuery, source),
-    };
     return dispatch(topicCreatePlatform(topicInfo.topics_id, { ...infoForQuery }))
       .then((results) => {
         if (results.success > -1) {

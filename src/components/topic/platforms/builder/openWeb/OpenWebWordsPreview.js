@@ -39,7 +39,8 @@ OpenWebWordsPreview.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
   // passed in
-  query: PropTypes.object.isRequired,
+  topicInfo: PropTypes.object.isRequired,
+  currentQuery: PropTypes.object.isRequired,
   // from parent
   width: PropTypes.number,
   height: PropTypes.number,
@@ -51,6 +52,7 @@ OpenWebWordsPreview.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  topicInfo: state.topics.selected.info,
   fetchStatus: state.topics.selected.platforms.preview.matchingWords.fetchStatus,
   words: state.topics.selected.platforms.preview.matchingWords.list,
   currentQuery: state.form.platform.values.query,

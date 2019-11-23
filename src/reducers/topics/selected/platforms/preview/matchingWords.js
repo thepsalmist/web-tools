@@ -1,5 +1,5 @@
-import { FETCH_MODIFY_TOPIC_QUERY_WORDS } from '../../../../actions/topicActions';
-import { createAsyncReducer } from '../../../../lib/reduxHelpers';
+import { FETCH_MODIFY_TOPIC_QUERY_WORDS } from '../../../../../actions/topicActions';
+import { createAsyncReducer } from '../../../../../lib/reduxHelpers';
 
 const matchingWords = createAsyncReducer({
   initialState: {

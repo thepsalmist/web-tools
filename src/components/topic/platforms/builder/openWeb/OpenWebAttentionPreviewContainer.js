@@ -50,11 +50,11 @@ OpenWebAttentionPreview.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
   total: PropTypes.number,
-  counts: PropTypes.object,
+  counts: PropTypes.array,
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.selected.platforms.preview.matchingStoryCounts.fetchStatus,
+  fetchStatus: state.topics.selected.platforms.preview.matchingAttention.fetchStatus,
   topicInfo: state.topics.selected.info,
   total: state.topics.selected.platforms.preview.matchingAttention.total,
   counts: state.topics.selected.platforms.preview.matchingAttention.counts,

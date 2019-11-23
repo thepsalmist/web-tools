@@ -37,7 +37,6 @@ OpenWebStoryPreviewContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
-  query: PropTypes.string.isRequired,
   currentPlatformType: PropTypes.string.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
@@ -50,14 +49,15 @@ const mapStateToProps = state => ({
   topicInfo: state.topics.selected.info,
   fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
+  currentQuery: state.form.platform.values.query,
   media: state.form.platform.values.sourcesAndCollections,
 });
 
-const fetchAsyncData = (dispatch, { topicInfo, media }) => {
+const fetchAsyncData = (dispatch, { topicInfo, currentQuery, media }) => {
   const infoForQuery = {
-    ...formatTopicOpenWebPreviewQuery({ ...topicInfo, media }),
+    ...formatTopicOpenWebPreviewQuery({ ...topicInfo, query: currentQuery, channel: media }),
   };
-  dispatch(fetchStoriesByPlatformQuery(infoForQuery.topics_id,, { ...infoForQuery }));
+  dispatch(fetchStoriesByPlatformQuery(infoForQuery.topics_id, { ...infoForQuery }));
 };
 
 export default

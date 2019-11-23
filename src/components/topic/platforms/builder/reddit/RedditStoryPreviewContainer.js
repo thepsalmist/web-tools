@@ -55,7 +55,7 @@ const mapStateToProps = state => ({
 
 const fetchAsyncData = (dispatch, { topicInfo, currentQuery, channel }) => {
   const infoForQuery = {
-    ...formatTopicRedditPreviewForQuery({ ...topicInfo, currentQuery, channel }),
+    ...formatTopicRedditPreviewForQuery({ ...topicInfo, query: currentQuery, channel }),
   };
   dispatch(fetchStoriesByPlatformQuery(infoForQuery.topics_id, { ...infoForQuery }));
 };

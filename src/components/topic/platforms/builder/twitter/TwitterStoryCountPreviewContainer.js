@@ -86,7 +86,7 @@ const mapStateToProps = state => ({
 
 const fetchAsyncData = (dispatch, { topicInfo, currentQuery, channel }) => {
   const infoForQuery = {
-    ...formatTopicTwitterPreviewForQuery({ ...topicInfo, currentQuery, channel }),
+    ...formatTopicTwitterPreviewForQuery({ ...topicInfo, query: currentQuery, channel }),
   };
   dispatch(fetchStoryCountsByPlatformQuery(infoForQuery.topics_id, { ...infoForQuery }));
 };

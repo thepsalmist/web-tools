@@ -9,15 +9,19 @@ export const topicDownloadFilename = (topicName, filters) => (
 export const formatTopicOpenWebSourcesForQuery = (topicSourcesAndCollections) => {
   if (topicSourcesAndCollections) {
     return {
-      'collections[]': topicSourcesAndCollections.map(s => s.tags_id),
-      'sources[]': topicSourcesAndCollections.map(s => s.media_id),
-      'searches[]': serializeSearchTags(topicSourcesAndCollections.filter(s => s.customColl === true)),
+      channel: {
+        'collections[]': topicSourcesAndCollections.map(s => s.tags_id),
+        'sources[]': topicSourcesAndCollections.map(s => s.media_id),
+        'searches[]': serializeSearchTags(topicSourcesAndCollections.filter(s => s.customColl === true)),
+      },
     };
   }
   return {
-    'collections[]': [],
-    'sources[]': [],
-    'searches[]': [],
+    channel: {
+      'collections[]': [],
+      'sources[]': [],
+      'searches[]': [],
+    },
   };
 };
 
@@ -32,28 +36,30 @@ export const formatTopicPreviewQuery = (topicQuery) => ({
 
 // while creating a topic, this can format the under-construction topic params propertly for a preview request
 export const formatTopicPlatformPreviewQuery = (topicQuery, platform, query) => ({
+  topics_id: topicQuery.topics_id,
   current_platform_type: platform,
   platform_query: query,
   start_date: topicQuery.start_date,
   end_date: topicQuery.end_date,
 });
 
-export const formatTopicOpenWebPreviewQuery = (topicQuery, query) => ({
-  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_OPEN_WEB, query),
-  source: 'mediacloud',
-  channel: { ...formatTopicOpenWebSourcesForQuery(topicQuery.sourcesAndCollections) },
-});
+export const formatTopicOpenWebPreviewQuery = (topicQuery) => {
+  const channel = JSON.stringify(formatTopicOpenWebSourcesForQuery(topicQuery.channel));
+  return {
+    channel,
+    ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_OPEN_WEB, topicQuery.query),
+    source: 'mediacloud',
+  };
+};
 
 export const formatTopicRedditPreviewForQuery = (topicQuery) => ({
-  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_REDDIT, topicQuery.currentQuery),
-  source: PLATFORM_REDDIT, // TODO change
-  channel: topicQuery.channel,
+  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_REDDIT, topicQuery.query),
+  source: 'pushshift', // TODO change - not sure what it should be
 });
 
 export const formatTopicTwitterPreviewForQuery = (topicQuery) => ({
-  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_TWITTER, topicQuery.currentQuery),
-  source: PLATFORM_TWITTER, // TODO change
-  channel: topicQuery.channel,
+  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_TWITTER, topicQuery.query),
+  source: 'internet_archive', // or crimson hex or pushshift
 });
 
 export const TEMP = 'temp';

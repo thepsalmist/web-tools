@@ -19,7 +19,7 @@ const localMessages = {
 };
 
 const OpenWebAttentionPreview = (props) => {
-  const { total, counts, query } = props;
+  const { total, counts, currentQuery } = props;
   return (
     <DataCard>
       <h2>
@@ -30,7 +30,7 @@ const OpenWebAttentionPreview = (props) => {
         total={total}
         series={[{
           id: 0,
-          name: query.name,
+          name: currentQuery.name,
           color: getBrandDarkColor(),
           data: counts.map(c => [c.date, c.count]),
           showInLegend: false,
@@ -45,25 +45,27 @@ OpenWebAttentionPreview.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
   // passed in
-  query: PropTypes.object.isRequired,
+  topicInfo: PropTypes.object.isRequired,
+  currentQuery: PropTypes.string.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   total: PropTypes.number,
-  counts: PropTypes.array,
+  counts: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.platforms.preview.matchingStoryCounts.fetchStatus,
   counts: state.topics.selected.platforms.preview.matchingStoryCounts,
   currentPlatformType: state.form.platform.values.currentPlatformType,
+  currentQuery: state.form.platform.values.query,
   media: state.form.platform.values.sourcesAndCollections,
 });
 
-const fetchAsyncData = (dispatch, { topicInfo, media }) => {
+const fetchAsyncData = (dispatch, { topicInfo, currentQuery, media }) => {
   const infoForQuery = {
-    ...formatTopicOpenWebPreviewQuery({ ...topicInfo, media }),
+    ...formatTopicOpenWebPreviewQuery({ ...topicInfo, query: currentQuery, channel: media }),
   };
-  dispatch(fetchAttentionByPlatformQuery(infoForQuery.topicsId, { ...infoForQuery }));
+  dispatch(fetchAttentionByPlatformQuery(infoForQuery.topics_id, { ...infoForQuery }));
 };
 
 export default

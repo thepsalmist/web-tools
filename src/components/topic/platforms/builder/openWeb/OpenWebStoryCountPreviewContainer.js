@@ -67,8 +67,7 @@ OpenWebStoryCountPreviewContainer.propTypes = {
   helpButton: PropTypes.node.isRequired,
   // from parent
   topicInfo: PropTypes.object.isRequired,
-  query: PropTypes.string.isRequired,
-  currentPlatformType: PropTypes.string.isRequired,
+  currentQuery: PropTypes.string.isRequired,
   // from state
   counts: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
@@ -78,12 +77,13 @@ const mapStateToProps = state => ({
   topicInfo: state.topics.selected.info,
   fetchStatus: state.topics.selected.platforms.preview.matchingStoryCounts.fetchStatus,
   counts: state.topics.selected.platforms.preview.matchingStoryCounts,
+  currentQuery: state.form.platform.values.query,
   media: state.form.platform.values.sourcesAndCollections,
 });
 
-const fetchAsyncData = (dispatch, { topicInfo, media }) => {
+const fetchAsyncData = (dispatch, { topicInfo, currentQuery, media }) => {
   const infoForQuery = {
-    ...formatTopicOpenWebPreviewQuery({ ...topicInfo, media }),
+    ...formatTopicOpenWebPreviewQuery({ ...topicInfo, query: currentQuery, channel: media }),
   };
   dispatch(fetchStoryCountsByPlatformQuery(infoForQuery.topics_id, { ...infoForQuery }));
 };

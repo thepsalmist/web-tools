@@ -4,6 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import OpenWebStoryCountPreviewContainer from './OpenWebStoryCountPreviewContainer';
 import OpenWebAttentionPreviewContainer from './OpenWebAttentionPreviewContainer';
+import OpenWebWordsPreview from './OpenWebWordsPreview';
 
 const localMessages = {
   about: { id: 'focus.create.keyword.results.about',
@@ -23,6 +24,11 @@ const OpenWebPreview = () => (
     <Row>
       <Col lg={10} md={10} xs={12}>
         <OpenWebAttentionPreviewContainer />
+      </Col>
+    </Row>
+    <Row>
+      <Col lg={10} md={10} xs={12}>
+        <OpenWebWordsPreview />
       </Col>
     </Row>
   </div>

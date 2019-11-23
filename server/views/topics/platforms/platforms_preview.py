@@ -2,6 +2,7 @@ import logging
 from flask import jsonify, request
 import flask_login
 import datetime as dt
+import json
 
 from server import app
 from server.auth import user_mediacloud_client, user_mediacloud_key
@@ -18,15 +19,18 @@ OPEN_WEB = 1
 
 def _topic_query_from_request():
     # TODO - adjust for preview and channel
+    media = json.loads(request.args['channel'])
+    media = media['channel']
+    sources = media['sources[]'] if 'sources[]' in media and not [None, ''] else ''
+    collections = media['collections[]'] if 'collections[]' in media else ''
+    searches = media['searches[]'] if 'searches[]' in media else ''
     # channel contains sources, collections and searches
     q = concatenate_query_for_solr(solr_seed_query=request.args['platform_query'],
-                                   media_ids=ids_from_comma_separated_str(request.args['sources[]'])
-                                   if 'sources[]' in request.form else None,
-                                   tags_ids=ids_from_comma_separated_str(request.args['collections[]'])
-                                   if 'collections[]' in request.form else None,
-                                   custom_ids=request.form['searches[]'])
-    fq = concatenate_solr_dates(start_date=request.form['start_date'],
-                                end_date=request.form['end_date'])
+                                   media_ids=sources,
+                                   tags_ids=collections,
+                                   custom_ids=searches)
+    fq = concatenate_solr_dates(start_date=request.args['start_date'],
+                                end_date=request.args['end_date'])
     return q, fq
 
 @app.route('/api/topics/<topics_id>/platforms/preview/stories', methods=['GET'])
@@ -100,7 +104,7 @@ def api_topics_platform_preview_story_count(topics_id):
     return jsonify(story_count_result)
 
 
-@app.route('/api/topics/<topics_id>/platforms/preview/split-story-count', methods=['GET'])
+@app.route('/api/topics/<topics_id>/platforms/preview/attention', methods=['GET'])
 @api_error_handler
 def api_topics_platform_preview_split_story_count(topics_id):
     user_mc = user_mediacloud_client()
@@ -125,13 +129,7 @@ def api_topics_platform_preview_split_story_count(topics_id):
 def api_topics_platform_preview_top_words(topics_id):
     user_mc = user_mediacloud_client()
     platform_query = request.args['platform_query']
-    topic = user_mc.topic(topics_id)
 
-    start_date, end_date = parse_query_dates(topic)
-    #only for the web platform
-    media = request.args['channel'] if 'channel' in request.args else '*'
-
-    # TODO prep solr_query with media, dates etc probably should push up into utils explorer._init. parse_query_with_keywords
-
-    response = apicache.topic_word_counts(user_mediacloud_key(), topics_id, q=platform_query)[:100]
+    solr_query, fq = _topic_query_from_request()
+    response = apicache.topic_word_counts(user_mediacloud_key(), topics_id, q=solr_query)[:100]
     return jsonify(response)

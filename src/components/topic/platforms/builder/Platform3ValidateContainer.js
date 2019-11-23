@@ -199,18 +199,18 @@ const fetchAsyncData = (dispatch, { topicId, currentTopicInfo, currentPlatformTy
     case PLATFORM_OPEN_WEB:
       // need media
       infoForQuery = {
-        ...formatTopicOpenWebPreviewQuery({ ...currentTopicInfo, currentPlatformType, currentQuery, channel }),
+        ...formatTopicOpenWebPreviewQuery({ ...currentTopicInfo, currentPlatformType, query: currentQuery, channel }),
       };
       break;
     case PLATFORM_TWITTER:
       // source = internet archive or push_shift
       infoForQuery = {
-        ...formatTopicTwitterPreviewForQuery({ ...currentTopicInfo, currentPlatformType, currentQuery, channel }),
+        ...formatTopicTwitterPreviewForQuery({ ...currentTopicInfo, currentPlatformType, query: currentQuery, channel }),
       };
       break;
     case PLATFORM_REDDIT:
       infoForQuery = {
-        ...formatTopicRedditPreviewForQuery({ ...currentTopicInfo, currentPlatformType, currentQuery, channel }),
+        ...formatTopicRedditPreviewForQuery({ ...currentTopicInfo, currentPlatformType, query: currentQuery, channel }),
       };
       break;
     default:

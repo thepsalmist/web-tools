@@ -425,7 +425,7 @@ export function topicAttentionByPlatformQuery(topicId, params) {
   return createApiPromise(`/api/topics/${topicId}/platforms/preview/attention`, acceptedParams);
 }
 
-export function fetchTopWordsByPlatformQuery(topicId, params) {
+export function topicTopWordsByPlatformQuery(topicId, params) {
   const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel', 'start_date', 'end_date', 'limit', 'snapshotId', 'timespanId', 'focusId', 'q', 'withTotals', 'sample_size']);
   return createApiPromise(`/api/topics/${topicId}/platforms/preview/words`, acceptedParams);
 }

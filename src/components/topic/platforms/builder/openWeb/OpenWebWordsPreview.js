@@ -6,7 +6,7 @@ import withAsyncData from '../../../../common/hocs/AsyncDataContainer';
 import withDescription from '../../../../common/hocs/DescribedDataCard';
 import OrderedWordCloud from '../../../../vis/OrderedWordCloud';
 import DataCard from '../../../../common/DataCard';
-import { fetchWordsByQuery } from '../../../../../actions/topicActions';
+import { fetchWordsByPlatformQuery } from '../../../../../actions/topicActions';
 import messages from '../../../../../resources/messages';
 import { formatTopicOpenWebPreviewQuery } from '../../../../util/topicUtil';
 
@@ -51,8 +51,8 @@ OpenWebWordsPreview.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.modify.preview.matchingWords.fetchStatus,
-  words: state.topics.modify.preview.matchingWords.list,
+  fetchStatus: state.topics.selected.platforms.preview.matchingWords.fetchStatus,
+  words: state.topics.selected.platforms.preview.matchingWords.list,
   currentQuery: state.form.platform.values.query,
   media: state.form.platform.values.sourcesAndCollections,
 });
@@ -61,7 +61,7 @@ const fetchAsyncData = (dispatch, { topicInfo, currentQuery, media }) => {
   const infoForQuery = {
     ...formatTopicOpenWebPreviewQuery({ ...topicInfo, query: currentQuery, channel: media }),
   };
-  dispatch(fetchStoriesByPlatformQuery(infoForQuery.topics_id, { ...infoForQuery }));
+  dispatch(fetchWordsByPlatformQuery(infoForQuery.topics_id, { ...infoForQuery }));
 };
 
 export default

@@ -55,7 +55,9 @@ OpenWebAttentionPreview.propTypes = {
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.platforms.preview.matchingStoryCounts.fetchStatus,
-  counts: state.topics.selected.platforms.preview.matchingStoryCounts,
+  topicInfo: state.topics.selected.info,
+  total: state.topics.selected.platforms.preview.matchingAttention.total,
+  counts: state.topics.selected.platforms.preview.matchingAttention.counts,
   currentPlatformType: state.form.platform.values.currentPlatformType,
   currentQuery: state.form.platform.values.query,
   media: state.form.platform.values.sourcesAndCollections,

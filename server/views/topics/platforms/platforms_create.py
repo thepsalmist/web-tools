@@ -62,8 +62,9 @@ def topic_update_platform(topics_id, platform_id):
     source = request.form['source'] if 'source' in request.form else None
     #TODO update or remove/add?
     # remove id, add new, return new id
-    result = user_mc.topicUpdateSeedQuery(topics_id, platform_id, source, query)
-    result['success'] = result['topic_seed_query']['topic_seed_queries_id']
+    #result = user_mc.topicUpdateSeedQuery(topics_id, platform_id, source, query)
+    #result['success'] = result['topic_seed_query']['topic_seed_queries_id']
+    result = {"nothing"}
     return jsonify(result) #topic_seed_queries_id
 
 

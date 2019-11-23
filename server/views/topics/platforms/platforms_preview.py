@@ -96,25 +96,21 @@ def api_topics_platform_preview_story_count(topics_id):
     elif platform =='twitter':
         story_count_result = twitter_search_tweets(query=platform_query, filter=filter,
                                                start_date=start_date, end_date=end_date)
-    # get inherited topic dates and send them along w
-    else:
+
+    else: # web
         media = request.args['channel'] if 'channel' in request.args else '*'
-        # TODO prep solr_query with _topic_query_from_request
+        # prep solr_query with _topic_query_from_request
+        solr_query, fq = _topic_query_from_request()
         story_count_result = user_mc.storyCount(solr_query=platform_query)
     return jsonify(story_count_result)
 
-
+# for web attention preview
 @app.route('/api/topics/<topics_id>/platforms/preview/attention', methods=['GET'])
 @api_error_handler
 def api_topics_platform_preview_split_story_count(topics_id):
     user_mc = user_mediacloud_client()
-    platform_query = request.args['platform_query']
     topic = user_mc.topic(topics_id)
-    start_date, end_date = parse_query_dates(topic)
-    #only for web platform
-    media = request.args['channel'] if 'channel' in request.args else '*'
-
-    # TODO prep solr_query with _topic_query_from_request
+    # prep solr_query with _topic_query_from_request
     solr_query, fq = _topic_query_from_request()
     results = user_mc.storyCount(solr_query=solr_query, solr_filter=fq, split=True)
     total_stories = 0
@@ -124,6 +120,7 @@ def api_topics_platform_preview_split_story_count(topics_id):
 
     return jsonify({'results': results})
 
+#for web words (if applicable)
 @app.route('/api/topics/<topics_id>/platforms/preview/words', methods=['GET'])
 @api_error_handler
 def api_topics_platform_preview_top_words(topics_id):

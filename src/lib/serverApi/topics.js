@@ -398,7 +398,7 @@ export function topicFetchPlatformById(topicId, platformId) {
 
 export function topicUpdatePlatform(topicId, platformId, params) {
   const acceptedParams = acceptParams(params, ['current_platform_id', 'platform_query', 'source', 'sources[]', 'collections[]', 'searches[]']);
-  return createPostingApiPromise(`/api/topics/${topicId}/platforms/${platformId}update`, acceptedParams);
+  return createPostingApiPromise(`/api/topics/${topicId}/platforms/${platformId}/update`, acceptedParams);
 }
 
 export function topicDeletePlatform() {

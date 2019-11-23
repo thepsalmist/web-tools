@@ -13,5 +13,8 @@ export const fetchTopicFocalSetSplitStoryCounts = createAsyncAction(FETCH_TOPIC_
 export const FETCH_TOPIC_TOP_STORIES_ON_DATES = 'FETCH_TOPIC_TOP_STORIES_ON_DATES';
 export const fetchTopicTopStoriesOnDates = createAsyncAction(FETCH_TOPIC_TOP_STORIES_ON_DATES, api.topicTopStoriesOnDates);
 
-export const CLEAR_TOPIC_TOP_STORIES_PEAKS = 'CLEAR_TOPIC_TOP_STORIES_PEAKS';
-export const clearTopicTopStoriesPeaks = createAction(CLEAR_TOPIC_TOP_STORIES_PEAKS);
+export const RESET_TOPIC_ATTENTION_DRILL_DOWN = 'RESET_TOPIC_ATTENTION_DRILL_DOWN';
+export const resetTopicTopStoriesDrillDown = createAction(RESET_TOPIC_ATTENTION_DRILL_DOWN);
+
+export const SET_TOPIC_ATTENTION_DRILL_DOWN = 'SET_TOPIC_ATTENTION_DRILL_DOWN';
+export const setTopicTopStoriesDrillDown = createAction(SET_TOPIC_ATTENTION_DRILL_DOWN);

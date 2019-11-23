@@ -23,6 +23,7 @@ import TopicWordSpaceContainer from './TopicWordSpaceContainer';
 import TabSelector from '../../common/TabSelector';
 import messages from '../../../resources/messages';
 import SeedQuerySummary from '../versions/SeedQuerySummary';
+import TopicAttentionDrillDownContainer from './drilldowns/TopicAttentionDrillDownContainer';
 
 const localMessages = {
   title: { id: 'topic.summary.summary.title', defaultMessage: 'Topic: {name}' },
@@ -94,6 +95,9 @@ class TopicSummaryContainer extends React.Component {
               <Row>
                 <Col lg={12}>
                   <SplitStoryCountSummaryContainer topicId={topic.topics_id} filters={filters} timespans={timespans} />
+                </Col>
+                <Col lg={12}>
+                  <TopicAttentionDrillDownContainer topicId={topic.topics_id} filters={filters} />
                 </Col>
               </Row>
             </>

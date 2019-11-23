@@ -394,18 +394,11 @@ def story_counts_by_snapshot(topics_id):
 @flask_login.login_required
 @api_error_handler
 def top_by_date(topics_id):
-    start_timestamp = request.args['startTimestamp']
-    end_timestamp = request.args['endTimestamp']
-    start_day = dates.unixToSolrDate(int(start_timestamp)/1000)
-    end_day = dates.unixToSolrDate(int(end_timestamp) / 1000)
     # we have to query by timespan instead of date, because topicStoryList doesn't support the `fq` param
     weekly_timespans_id = request.args['selectedTimespanId']
     # this will read all filters, and limit and sort from request automatically, so we have to override the timespans_id
     top_stories = apicache.topic_story_list(user_mediacloud_key(), topics_id, timespans_id=weekly_timespans_id)
     results = {
-        'startDay': start_day,
-        'endDay': end_day,
-        'selectedTimespanId': weekly_timespans_id,
         'stories': top_stories['stories']
     }
-    return jsonify({"peak": results})
+    return jsonify(results)

@@ -1,4 +1,5 @@
 import unittest
+import time
 
 from server.views.test import BaseAppTest, TEST_USER_EMAIL
 
@@ -16,6 +17,7 @@ class UserLoginTest(BaseAppTest):
             headers={"Content-Type": "application/x-www-form-urlencoded"}
         )
         assert response.status_code == 500
+        time.sleep(1)  # need to sleep here after a failed attempt to avoid backend error about login frequency
 
     def testCanLogin(self):
         response = self.loginAsTestUser()

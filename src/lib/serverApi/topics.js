@@ -386,3 +386,8 @@ export function topicUpdateSeedQuery(topicId, params) {
 export function topicSnapshotCreate(topicId) {
   return createPostingApiPromise(`/api/topics/${topicId}/snapshots/create`);
 }
+
+export function topicTopStoriesOnDates(topicId, params) {
+  const acceptedParams = acceptParams(params, ['startTimestamp', 'endTimestamp', 'snapshotId', 'timespanId', 'focusId', 'sort', 'limit', 'q', 'selectedTimespanId']);
+  return createApiPromise(`/api/topics/${topicId}/stories/top-on-dates`, acceptedParams);
+}

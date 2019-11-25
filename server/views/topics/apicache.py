@@ -437,7 +437,6 @@ def add_to_user_query(query_to_add):
     return "({}) AND ({})".format(q_from_request, query_to_add)
 
 
-
 '''
 For cross-subtopic analysis within a subtopic set, we need to identify the timespan that has the same date
 range in each subtopic within the set.  This helper does that annoying work for you. 

@@ -8,6 +8,8 @@ const splitStoryCount = createAsyncReducer({
     counts: [],
     selectedTimePeriod: PAST_DAY,
     drillDownTimespan: null,
+    selectedStartTimestamp: null,
+    selectedStoryCount: null,
   },
   action: FETCH_TOPIC_SPLIT_STORY_COUNT,
   handleSuccess: payload => ({
@@ -16,12 +18,14 @@ const splitStoryCount = createAsyncReducer({
   }),
   // when clicked item changes we need to clear it all
   [SET_TOPIC_ATTENTION_DRILL_DOWN]: (payload) => ({
-    drillDownStories: [],
-    drillDownTimespan: { ...payload },
+    selectedStartTimestamp: payload.point0x,
+    selectedStoryCount: payload.pointValue,
+    drillDownTimespan: payload.selectedTimespan,
   }),
   // when clicked item changes we need to clear it all
   [RESET_TOPIC_ATTENTION_DRILL_DOWN]: () => ({
-    drillDownStories: [],
+    selectedStartTimestamp: null,
+    selectedStoryCount: null,
     drillDownTimespan: null,
   }),
 });

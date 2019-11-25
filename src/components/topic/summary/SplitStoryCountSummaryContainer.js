@@ -20,6 +20,7 @@ import { getBrandDarkColor } from '../../../styles/colors';
 import { filteredLinkTo, urlWithFilters } from '../../util/location';
 import { timespanForDate } from '../../util/topicUtil';
 import TopicPropTypes from '../TopicPropTypes';
+import { trimToMaxLength } from '../../../lib/stringUtil';
 
 const localMessages = {
   title: { id: 'topic.summary.splitStoryCount.title', defaultMessage: 'Attention Over Time' },
@@ -42,7 +43,32 @@ class SplitStoryCountSummaryContainer extends React.Component {
   }
 
   render() {
-    const { total, counts, selectedTimePeriod, attentionAggregationMenuItems, handleDataPointClick } = this.props;
+    const { total, stories, counts, selectedTimePeriod, attentionAggregationMenuItems, handleDataPointClick,
+      selectedStartTimestamp, selectedStoryCount } = this.props;
+    // if they have clicked, label the peak with the top one
+    let annotations = [];
+    if (stories && stories.length > 0) {
+      annotations = [{
+        labelOptions: {
+          shape: 'connector',
+          align: 'right',
+          justify: false,
+          style: {
+            fontSize: '1em',
+            textOutline: '1px white',
+          },
+        },
+        labels: [{
+          point: {
+            xAxis: 0,
+            yAxis: 0,
+            x: selectedStartTimestamp,
+            y: selectedStoryCount,
+          },
+          text: trimToMaxLength(stories[0].title, 60),
+        }],
+      }];
+    }
     return (
       <>
         <AttentionOverTimeChart
@@ -53,6 +79,7 @@ class SplitStoryCountSummaryContainer extends React.Component {
           backgroundColor="#f5f5f5"
           interval={selectedTimePeriod}
           onDataPointClick={handleDataPointClick}
+          annotations={annotations}
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
           <div className="actions">
@@ -88,6 +115,9 @@ SplitStoryCountSummaryContainer.propTypes = {
   total: PropTypes.number,
   counts: PropTypes.array, // array of {date: epochMS, count: int]
   timespans: PropTypes.array,
+  selectedStartTimestamp: PropTypes.number,
+  selectedStoryCount: PropTypes.number,
+  stories: PropTypes.array,
   // from dispath
   handleExplore: PropTypes.func.isRequired,
   handleDataPointClick: PropTypes.func.isRequired,
@@ -98,6 +128,9 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.summary.splitStoryCount.fetchStatus,
   total: state.topics.selected.summary.splitStoryCount.total,
   counts: state.topics.selected.summary.splitStoryCount.counts,
+  stories: state.topics.selected.summary.attentionDrillDownStories.stories,
+  selectedStartTimestamp: state.topics.selected.summary.splitStoryCount.selectedStartTimestamp,
+  selectedStoryCount: state.topics.selected.summary.splitStoryCount.selectedStoryCount,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -105,20 +138,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     const exploreUrl = filteredLinkTo(`/topics/${ownProps.topicId}/attention`, ownProps.filters);
     dispatch(push(exploreUrl));
   },
-  handleDataPointClick: (startDate /* , endDate, evt, chartObj, point0x, point1x, pointValue */) => {
+  handleDataPointClick: (startDate, endDate, evt, chartObj, point0x, point1x, pointValue) => {
     const selectedTimespan = timespanForDate(startDate, ownProps.timespans, 'weekly');
-    dispatch(setTopicTopStoriesDrillDown(selectedTimespan));
-    /*
-    dispatch(fetchTopicTopStoriesOnDates(ownProps.topicId, {
-      ...ownProps.filters,
-      sort: 'inlink',
-      limit: 10,
-      startTimestamp: point0x,
-      endTimestamp: point1x,
-      storyCount: pointValue,
-      selectedTimespanId: selectedTimespan.timespans_id,
-    }));
-    */
+    dispatch(setTopicTopStoriesDrillDown({ selectedTimespan, point0x, pointValue }));
   },
   // when time period changes we need to clear the peaks we've annotated, because they aren't there anymore
   handleTimePeriodChange: () => dispatch(resetTopicTopStoriesDrillDown()),

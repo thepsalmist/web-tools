@@ -24,8 +24,8 @@
     ]
   },
   "dependencies": {
-    "@material-ui/core": "^4.2.1",
-    "@material-ui/icons": "^4.2.1",
+    "@material-ui/core": "^4.7.0",
+    "@material-ui/icons": "^4.7.0",
     "acorn": "^6.2.0",
     "airbnb-js-shims": "^2.2.0",
     "core-js": "^3.1.4",
@@ -69,7 +69,7 @@
     "react-slick": "^0.24.0",
     "redux": "^4.0.4",
     "redux-actions": "^2.6.5",
-    "redux-form": "^8.2.4",
+    "redux-form": "^8.2.6",
     "redux-logger": "^3.0.6",
     "redux-simple-promise": "^2.0.2",
     "redux-thunk": "^2.3.0",

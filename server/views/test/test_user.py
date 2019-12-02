@@ -59,6 +59,14 @@ class UserConsentTest(BaseAppTest):
         assert 'profile' in content
         assert 'has_consented' in content['profile']
         assert content['profile']['has_consented'] is False
+        # make sure cached profile says consent is false
+        content = self.jsonFrom(self.app.get(
+            '/api/login-with-cookie',
+            follow_redirects=True,
+        ))
+        assert 'profile' in content
+        assert 'has_consented' in content['profile']
+        assert content['profile']['has_consented'] is False
         # now accept consent
         self.app.post(
             '/api/user/update',
@@ -66,12 +74,21 @@ class UserConsentTest(BaseAppTest):
             follow_redirects=True,
             headers={"Content-Type": "application/x-www-form-urlencoded"}
         )
+        # make sure cached profile object says consent is true now
+        content = self.jsonFrom(self.app.get(
+            '/api/login-with-cookie',
+            follow_redirects=True,
+        ))
+        assert 'profile' in content
+        assert 'has_consented' in content['profile']
+        assert content['profile']['has_consented'] is True
         # verify consent has changed to true
         response = self.loginAsTestUser()
         content = self.jsonFrom(response)
         assert 'profile' in content
         assert 'has_consented' in content['profile']
         assert content['profile']['has_consented'] is True
+
 
 
 if __name__ == "__main__":

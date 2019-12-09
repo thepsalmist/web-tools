@@ -7,7 +7,7 @@ import logging
 import newspaper
 
 from flask import request
-import server.util.pushshift as pushshift
+import server.util.pushshift.reddit as ps_reddit
 from server import app, cliff, NYT_THEME_LABELLER_URL, mc, TOOL_API_KEY
 from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_mediacloud_key
 from server.util.request import api_error_handler
@@ -61,7 +61,7 @@ def story_entities(stories_id):
 @app.route('/api/stories/<stories_id>/reddit-attention', methods=['GET'])
 def story_subreddit_shares(stories_id):
     story = mc.story(stories_id)
-    submissions_by_sub = pushshift.reddit_url_submissions_by_subreddit(story['url'])
+    submissions_by_sub = ps_reddit.reddit_url_submissions_by_subreddit(story['url'])
     return jsonify({
         'total': sum([r['value'] for r in submissions_by_sub]) if submissions_by_sub is not None else 0,
         'subreddits': submissions_by_sub
@@ -71,7 +71,7 @@ def story_subreddit_shares(stories_id):
 @app.route('/api/stories/<stories_id>/reddit-attention.csv', methods=['GET'])
 def story_subreddit_shares_csv(stories_id):
     story = mc.story(stories_id)
-    submissions_by_sub = pushshift.reddit_url_submissions_by_subreddit(story['url'])
+    submissions_by_sub = ps_reddit.reddit_url_submissions_by_subreddit(story['url'])
     props = ['name', 'value']
     column_names = ['subreddit', 'submissions']
     return csv.stream_response(submissions_by_sub, props, 'story-' + str(stories_id) + '-subreddit',

@@ -1,23 +1,21 @@
 import logging
 from flask import jsonify, request
 import flask_login
-import datetime as dt
 
 from server import app
-from server.util.request import api_error_handler, form_fields_required
-from server.auth import user_mediacloud_client, user_mediacloud_key
-from server.util.pushshift import reddit_submission_normalized_and_split_story_count, reddit_top_submissions, NEWS_SUBREDDITS
+from server.util.request import api_error_handler
+from server.auth import user_mediacloud_client
 
 logger = logging.getLogger(__name__)
 
 OPEN_WEB = 1
+
 
 @app.route('/api/topics/platforms/all', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
 def topic_platform_list():
     return jsonify({'results': [{'type': 'web', 'platform_seed_query': 'dummy'}, {'type': 'reddit', 'platform_seed_query': 'dummy'}, {'type': 'twitter', 'platform_seed_query': 'dummy'}]})
-
 
 
 @app.route('/api/topics/<topics_id>/platforms/list', methods=['GET'])
@@ -27,6 +25,7 @@ def get_topic_platforms(topics_id):
     # how do we get all the seed queries per topic ?
     #merge what the topic has versus what the topic doens't by adding in the topic_seed_queries_id
     return jsonify({'results': [{'id':56, 'type': 'web', 'platform_seed_query': 'storytelling'}, {'type': 'reddit', 'platform_seed_query': 'dummy'}, {'type': 'twitter', 'platform_seed_query': 'dummy'}]})
+
 
 # maybe push this to js, we'll see
 @app.route('/api/topics/<topics_id>/platforms/<platform_id>', methods=['GET'])

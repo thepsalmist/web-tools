@@ -59,7 +59,7 @@ def _reddit_submission_search(**kwargs):
 
 def reddit_submissions_count(query: str, start_date: dt.datetime, end_date: dt.datetime, subreddits=None):
     data = _cached_reddit_submission_search(q=query, subreddit=subreddits,
-                                            after=int(start_date).timestamp(), before=int(end_date).timestamp(),
+                                            after=int(start_date.timestamp()), before=int(end_date.timestamp()),
                                             aggs='created_utc', frequency='10y')
     if len(data['created_utc']) == 0:
         return 0
@@ -109,7 +109,7 @@ def _reddit_submission_to_row(item):
     }
 
 
-#@cache.cache_on_arguments()
+@cache.cache_on_arguments()
 def _cached_reddit_submissions(**kwargs):
     data = _reddit_submission_search(**kwargs)
     cleaned_data = []
@@ -128,39 +128,4 @@ def reddit_top_submissions(query, start_date, end_date, subreddits=None, limit=2
     data = _cached_reddit_submissions(q=query, subreddit=subreddits,
                                       after=int(start_date.timestamp()), before=int(end_date.timestamp()),
                                       limit=limit, sort='desc', sort_type='score')
-    return data
-
-def _twitter_search(**kwargs):
-    gen = [{"stories_id": "story1", "media_id": "media1", "inlinks":"inlinks1", "tweet_count": 1, "publish_date":"00:00:00"}, {"stories_id": "story2", "media_id": "media2", "inlinks":"inlinks3", "tweet_count": 1, "publish_date":"00:00:00"}] #ps_api.search_twitter(**kwargs)
-    return gen
-
-# TODO not cached yet
-def _cached_twitter_search(**kwargs):
-    data = _twitter_search(**kwargs)
-    cleaned_data = []
-    try:
-        for row in range(0, kwargs['limit']):
-            #item = next(data)
-            item_data = {"stub": "data"} # TODO, replace with twitter search
-            cleaned_data.append(item_data)
-    except StopIteration:
-        # not really a problem, just an indication that we have less than kwargs['limit'] results
-        pass
-    return cleaned_data
-
-# filter params: description, location, name, screen_name, followers_count
-# description:aaaANDlocation:bbbbAND...followers_count:[0+TO+1000]
-#only finds users with description/location/...
-def twitter_user_search(query, filter, max_followers=100, limit=100, sort='ascending'):
-    #query would apply to one or all of the filters...
-    data = _cached_twitter_search(q=query, filter=filter)
-    return data
-
-#index = full_text
-#description, location, name filter so user can drill down on users in particular?
-#also would probably want retweet info along with urls
-# TODO differentiate ElasticSearch/pushshift vs elite vs ..
-def twitter_search_tweets(query, filter, start_date, end_date, limit=100, sort='ascending'):
-    #query applies to full_text (ElasticSearch index)...
-    data = _cached_twitter_search(q=query, filter=filter, limit=limit)
     return data

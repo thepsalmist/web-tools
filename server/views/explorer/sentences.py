@@ -4,7 +4,7 @@ import flask_login
 from server import app
 from server.util.request import api_error_handler
 import server.views.explorer.apicache as apicache
-import server.util.pushshift as pushshift
+import server.util.pushshift.reddit as ps_reddit
 from server.views.explorer import parse_query_with_keywords, only_queries_reddit, parse_query_dates
 
 logger = logging.getLogger(__name__)
@@ -19,9 +19,9 @@ def api_explorer_sentences_list():
     around_word = 'word' in request.args
     if only_queries_reddit(request.args):
         start_date, end_date = parse_query_dates(request.args)
-        results = pushshift.reddit_top_submissions(query=request.args['q'],
+        results = ps_reddit.reddit_top_submissions(query=request.args['q'],
                                                    start_date=start_date, end_date=end_date,
-                                                   subreddits=pushshift.NEWS_SUBREDDITS)
+                                                   subreddits=ps_reddit.NEWS_SUBREDDITS)
         results = [{
             'sentence': r['title'],
             'publish_date': r['publish_date'],

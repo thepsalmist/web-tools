@@ -9,7 +9,7 @@ import server.util.csv as csv
 import server.util.tags as tag_util
 import server.views.topics.apicache as apicache
 import server.views.apicache as base_apicache
-import server.util.pushshift as pushshift
+import server.util.pushshift.reddit as ps_reddit
 from server import app, cliff, TOOL_API_KEY
 from server.auth import is_user_logged_in
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
@@ -349,7 +349,7 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
 
         # now add in reddit share data if requested
         if include_reddit_submissions:
-            story_reddit_submissions = pushshift.reddit_url_submission_counts(story_page['stories'])
+            story_reddit_submissions = ps_reddit.reddit_url_submission_counts(story_page['stories'])
             for s in story_page['stories']:
                 s['reddit_submissions'] = story_reddit_submissions[s['stories_id']]
 

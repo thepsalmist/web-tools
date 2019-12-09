@@ -7,15 +7,16 @@ import json
 from server import app
 from server.auth import user_mediacloud_client, user_mediacloud_key
 from server.util.request import api_error_handler
-from server.util.pushshift import reddit_submission_normalized_and_split_story_count, reddit_top_submissions, NEWS_SUBREDDITS, twitter_search_tweets
-from server.util.stringutil import ids_from_comma_separated_str
+import server.util.pushshift.reddit as ps_reddit
+import server.util.pushshift.twitter as ps_twitter
 import server.views.topics.apicache as apicache
-from server.views.media_picker import concatenate_query_for_solr, custom_collection_as_solr_query
+from server.views.media_picker import concatenate_query_for_solr
 from server.views.topics import concatenate_solr_dates
 
 logger = logging.getLogger(__name__)
 
 OPEN_WEB = 1
+
 
 def _topic_query_from_request():
     # TODO - adjust for preview and channel
@@ -33,13 +34,13 @@ def _topic_query_from_request():
                                 end_date=request.args['end_date'])
     return q, fq
 
+
 @app.route('/api/topics/<topics_id>/platforms/preview/stories', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
 def api_topics_platform_preview_story_sample(topics_id):
     user_mc = user_mediacloud_client()
-
-    #will do something conditional depending on platform
+    # will do something conditional depending on platform
     platform = request.args['current_platform_type']
     topic = user_mc.topic(topics_id)
     platform_query = request.args['platform_query']
@@ -48,18 +49,18 @@ def api_topics_platform_preview_story_sample(topics_id):
     start_date, end_date = parse_query_dates(topic)
     filter='description:MIT'
     if platform == 'reddit':
-
-        story_count_result = reddit_top_submissions(query=platform_query,
+        subreddits = ps_reddit.NEWS_SUBREDDITS  # TODO: add subreddits from requests in here
+        story_count_result = ps_reddit.reddit_top_submissions(query=platform_query,
                                                    start_date=start_date, end_date=end_date,
-                                                   subreddits=NEWS_SUBREDDITS)
+                                                   subreddits=subreddits)
     elif platform == 'web':
         # TODO _topic_query_from_request
         story_count_result = user_mc.storyList(solr_query=platform_query, sort=user_mc.SORT_RANDOM, rows=num_stories)
     elif platform == 'twitter':
         # if source == 'crimson'
         #elif source == pushshift/elasticsearch
-        story_count_result = twitter_search_tweets(query=platform_query, filter=filter,
-                                                   start_date=start_date, end_date=end_date)
+        story_count_result = ps_twitter.search(query=platform_query, filter=filter,
+                                               start_date=start_date, end_date=end_date)
 
     return jsonify(story_count_result)
 
@@ -78,6 +79,7 @@ def parse_query_dates(args):
 
     return start_date, end_date
 
+
 @app.route('/api/topics/<topics_id>/platforms/preview/story-count', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
@@ -90,12 +92,13 @@ def api_topics_platform_preview_story_count(topics_id):
     start_date, end_date = parse_query_dates(topic)
     if platform == 'reddit':
         subreddits = request.args['channel'] if 'channel' in request.args else NEWS_SUBREDDITS
-        story_count_result = reddit_submission_normalized_and_split_story_count(query=platform_query,
-                                                                               start_date = start_date, end_date=end_date,
-                                                                               subreddits=subreddits)
+        story_count_result = ps_reddit.reddit_submission_normalized_and_split_story_count(query=platform_query,
+                                                                                          start_date=start_date,
+                                                                                          end_date=end_date,
+                                                                                          subreddits=subreddits)
     elif platform =='twitter':
-        story_count_result = twitter_search_tweets(query=platform_query, filter=filter,
-                                               start_date=start_date, end_date=end_date)
+        story_count_result = ps_twitter.count(query=platform_query, filter=filter,
+                                              start_date=start_date, end_date=end_date)
 
     else: # web
         media = request.args['channel'] if 'channel' in request.args else '*'
@@ -103,6 +106,7 @@ def api_topics_platform_preview_story_count(topics_id):
         solr_query, fq = _topic_query_from_request()
         story_count_result = user_mc.storyCount(solr_query=platform_query)
     return jsonify(story_count_result)
+
 
 # for web attention preview
 @app.route('/api/topics/<topics_id>/platforms/preview/attention', methods=['GET'])
@@ -119,6 +123,7 @@ def api_topics_platform_preview_split_story_count(topics_id):
     results['total_story_count'] = total_stories
 
     return jsonify({'results': results})
+
 
 #for web words (if applicable)
 @app.route('/api/topics/<topics_id>/platforms/preview/words', methods=['GET'])

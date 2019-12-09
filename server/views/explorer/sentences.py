@@ -19,9 +19,9 @@ def api_explorer_sentences_list():
     around_word = 'word' in request.args
     if only_queries_reddit(request.args):
         start_date, end_date = parse_query_dates(request.args)
-        results = ps_reddit.reddit_top_submissions(query=request.args['q'],
-                                                   start_date=start_date, end_date=end_date,
-                                                   subreddits=ps_reddit.NEWS_SUBREDDITS)
+        results = ps_reddit.top_submissions(query=request.args['q'],
+                                            start_date=start_date, end_date=end_date,
+                                            subreddits=ps_reddit.NEWS_SUBREDDITS)
         results = [{
             'sentence': r['title'],
             'publish_date': r['publish_date'],

@@ -50,17 +50,17 @@ def api_topics_platform_preview_story_sample(topics_id):
     filter='description:MIT'
     if platform == 'reddit':
         subreddits = ps_reddit.NEWS_SUBREDDITS  # TODO: add subreddits from requests in here
-        story_count_result = ps_reddit.reddit_top_submissions(query=platform_query,
-                                                   start_date=start_date, end_date=end_date,
-                                                   subreddits=subreddits)
+        story_count_result = ps_reddit.top_submissions(query=platform_query,
+                                                       start_date=start_date, end_date=end_date,
+                                                       subreddits=subreddits)
     elif platform == 'web':
         # TODO _topic_query_from_request
         story_count_result = user_mc.storyList(solr_query=platform_query, sort=user_mc.SORT_RANDOM, rows=num_stories)
     elif platform == 'twitter':
         # if source == 'crimson'
         #elif source == pushshift/elasticsearch
-        story_count_result = ps_twitter.search(query=platform_query, filter=filter,
-                                               start_date=start_date, end_date=end_date)
+        story_count_result = ps_twitter.matching_tweets(query=platform_query, filter=filter,
+                                                        start_date=start_date, end_date=end_date)
 
     return jsonify(story_count_result)
 
@@ -91,14 +91,14 @@ def api_topics_platform_preview_story_count(topics_id):
 
     start_date, end_date = parse_query_dates(topic)
     if platform == 'reddit':
-        subreddits = request.args['channel'] if 'channel' in request.args else NEWS_SUBREDDITS
-        story_count_result = ps_reddit.reddit_submission_normalized_and_split_story_count(query=platform_query,
-                                                                                          start_date=start_date,
-                                                                                          end_date=end_date,
-                                                                                          subreddits=subreddits)
+        subreddits = request.args['channel'] if 'channel' in request.args else ps_reddit.NEWS_SUBREDDITS
+        story_count_result = ps_reddit.submission_normalized_and_split_story_count(query=platform_query,
+                                                                                   start_date=start_date,
+                                                                                   end_date=end_date,
+                                                                                   subreddits=subreddits)
     elif platform =='twitter':
-        story_count_result = ps_twitter.count(query=platform_query, filter=filter,
-                                              start_date=start_date, end_date=end_date)
+        story_count_result = ps_twitter.tweet_count(query=platform_query, filter=filter,
+                                                    start_date=start_date, end_date=end_date)
 
     else: # web
         media = request.args['channel'] if 'channel' in request.args else '*'

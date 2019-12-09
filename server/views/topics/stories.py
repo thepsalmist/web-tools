@@ -349,7 +349,7 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
 
         # now add in reddit share data if requested
         if include_reddit_submissions:
-            story_reddit_submissions = ps_reddit.reddit_url_submission_counts(story_page['stories'])
+            story_reddit_submissions = ps_reddit.url_submission_counts(story_page['stories'])
             for s in story_page['stories']:
                 s['reddit_submissions'] = story_reddit_submissions[s['stories_id']]
 

@@ -61,7 +61,7 @@ def story_entities(stories_id):
 @app.route('/api/stories/<stories_id>/reddit-attention', methods=['GET'])
 def story_subreddit_shares(stories_id):
     story = mc.story(stories_id)
-    submissions_by_sub = ps_reddit.reddit_url_submissions_by_subreddit(story['url'])
+    submissions_by_sub = ps_reddit.url_submissions_by_subreddit(story['url'])
     return jsonify({
         'total': sum([r['value'] for r in submissions_by_sub]) if submissions_by_sub is not None else 0,
         'subreddits': submissions_by_sub
@@ -71,7 +71,7 @@ def story_subreddit_shares(stories_id):
 @app.route('/api/stories/<stories_id>/reddit-attention.csv', methods=['GET'])
 def story_subreddit_shares_csv(stories_id):
     story = mc.story(stories_id)
-    submissions_by_sub = ps_reddit.reddit_url_submissions_by_subreddit(story['url'])
+    submissions_by_sub = ps_reddit.url_submissions_by_subreddit(story['url'])
     props = ['name', 'value']
     column_names = ['subreddit', 'submissions']
     return csv.stream_response(submissions_by_sub, props, 'story-' + str(stories_id) + '-subreddit',

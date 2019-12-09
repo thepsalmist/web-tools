@@ -324,9 +324,7 @@ def cached_topic_timespan_list(user_mc_key, topics_id, snapshots_id=None, foci_i
 
 
 def topic_tag_coverage(topics_id, tags_id):
-    '''
-    Useful for seeing how many stories in the topic are tagged with a specific tag
-    '''
+    # Useful for seeing how many stories in the topic are tagged with a specific tag
     if isinstance(tags_id, list):   # doesn't repect duck-typing, but quick fix
         tags_id_str = "({})".format(" ".join([str(tid) for tid in tags_id]))
     else:

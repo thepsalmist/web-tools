@@ -212,8 +212,11 @@ def api_user_update():
         'has_consented': has_consented
     }
     cached_user = flask_login.current_user
-    # need to do this with the tool admin client, because user doesn't have permission to do this
+    # need to update user with the tool admin client, because user doesn't have permission to do this themselves
     results = mc.userUpdate(cached_user.profile['auth_users_id'], **valid_params)
+    user_mc = user_mediacloud_client()
+    updated_user = user_mc.userProfile()
+    cached_user.profile = updated_user
     user = _create_user_session(cached_user)
     return jsonify(user.get_properties())
 

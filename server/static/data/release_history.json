@@ -1,6 +1,44 @@
 {
   "releases": [
     {
+      "date": "2019-12-09",
+      "version": "v3.12.20",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Entities in Explorer show up again"
+        }
+      ]
+    },
+    {
+      "date": "2019-12-06",
+      "version": "v3.12.19",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Explorer sample story download button works again"
+        }
+      ]
+    },
+    {
+      "date": "2019-12-02",
+      "version": "v3.12.18",
+      "notes": [
+        {
+          "apps": [ "topics", "tools", "sources", "explorer" ],
+          "type": "Fixed",
+          "note": "The consent form works more consistently now"
+        },
+        {
+          "apps": [ "topics", "tools", "sources", "explorer" ],
+          "type": "New",
+          "note": "Added some basic automated testing for better platform robustness"
+        }
+      ]
+    },
+    {
       "date": "2019-11-19",
       "version": "v3.12.17",
       "notes": [

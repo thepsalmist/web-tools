@@ -59,7 +59,7 @@ def api_topics_platform_preview_story_sample(topics_id):
     elif platform == 'twitter':
         # if source == 'crimson'
         #elif source == pushshift/elasticsearch
-        story_count_result = ps_twitter.matching_tweets(query=platform_query, filter=filter,
+        story_count_result = ps_twitter.matching_tweets(query=platform_query,
                                                         start_date=start_date, end_date=end_date)
 
     return jsonify(story_count_result)
@@ -97,7 +97,7 @@ def api_topics_platform_preview_story_count(topics_id):
                                                                                    end_date=end_date,
                                                                                    subreddits=subreddits)
     elif platform =='twitter':
-        story_count_result = ps_twitter.tweet_count(query=platform_query, filter=filter,
+        story_count_result = ps_twitter.tweet_count(query=platform_query,
                                                     start_date=start_date, end_date=end_date)
 
     else: # web

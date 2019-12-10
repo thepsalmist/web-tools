@@ -15,16 +15,23 @@ OPEN_WEB = 1
 @flask_login.login_required
 @api_error_handler
 def topic_platform_list():
-    return jsonify({'results': [{'type': 'web', 'platform_seed_query': 'dummy'}, {'type': 'reddit', 'platform_seed_query': 'dummy'}, {'type': 'twitter', 'platform_seed_query': 'dummy'}]})
+    return jsonify({'results': [{'type': 'web', 'platform': 'dummy'}, {'type': 'reddit', 'platform': 'dummy'}, {'type': 'twitter', 'platform': 'dummy'}]})
 
 
 @app.route('/api/topics/<topics_id>/platforms/list', methods=['GET'])
 @flask_login.login_required
 def get_topic_platforms(topics_id):
+    user_mc = user_mediacloud_client()
     # media_type_tags = tags_in_tag_set(TOOL_API_KEY, TAG_SETS_ID_MEDIA_TYPE)
     # how do we get all the seed queries per topic ?
     #merge what the topic has versus what the topic doens't by adding in the topic_seed_queries_id
-    return jsonify({'results': [{'id':56, 'type': 'web', 'platform_seed_query': 'storytelling'}, {'type': 'reddit', 'platform_seed_query': 'dummy'}, {'type': 'twitter', 'platform_seed_query': 'dummy'}]})
+    # TODO fetch platforms from topic
+    dummy_dict = [{'platform': 'web', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform': 'reddit', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform': 'twitter', 'query': 'dummy', 'topic_seed_queries_id': -1}]
+
+    topic = user_mc.topic(topics_id)
+    seed_queries = topic['topic_seed_queries']
+    seed_queries.extend(dummy_dict)
+    return jsonify({'results': seed_queries})
 
 
 # maybe push this to js, we'll see
@@ -32,6 +39,8 @@ def get_topic_platforms(topics_id):
 @flask_login.login_required
 def get_platform_by_id(topics_id, platform_id):
     # iterate through topic seed queries array
+    user_mc = user_mediacloud_client()
+
     return jsonify({'id':56, 'type': 'web', 'platform_seed_query': 'storytelling'}) #need media_ids
 
 

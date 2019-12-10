@@ -59,7 +59,7 @@ export const formatTopicRedditPreviewForQuery = (topicQuery) => ({
 
 export const formatTopicTwitterPreviewForQuery = (topicQuery) => ({
   ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_TWITTER, topicQuery.query),
-  source: 'internet_archive', // or crimson hex or pushshift
+  source: 'archive_org', // TODO crimson hex or pushshift
 });
 
 export const TEMP = 'temp';

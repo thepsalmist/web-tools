@@ -11,32 +11,38 @@ const localMessages = {
     defaultMessage: 'Add or Edit or Remove (TBD)' },
 };
 
-const PlatformTable = props => (
-  <div className="platform-table">
-    <table width="100%">
-      <tbody>
-        <tr>
-          <th><FormattedMessage {...localMessages.platform} /></th>
-          <th><FormattedMessage {...localMessages.seedQueryDescription} /></th>
-          <th><FormattedMessage {...localMessages.addOrEditOrRemove} /></th>
-        </tr>
-        {props.platforms.map((c, idx) => (
-          <tr key={c.type} className={(idx % 2 === 0) ? 'even' : 'odd'}>
-            <td>
-              {c.type}
-            </td>
-            <td>
-              {c.platform_seed_query}
-            </td>
-            <td>
-              {c.id ? <EditButton onClick={() => props.onEditClicked(c.id, c.type)} /> : <AddButton onClick={() => props.onAddClicked(c.type)} />}
-            </td>
+const PlatformTable = props => {
+  const latestWeb = props.platforms.filter(s => s.platform === 'web').reduce((a, b) => (a.topic_seed_queries_id > b.topic_seed_queries_id ? a : b));
+  const latestTwitter = props.platforms.filter(s => s.platform === 'twitter').reduce((a, b) => (a.topic_seed_queries_id > b.topic_seed_queries_id ? a : b));
+  const latestReddit = props.platforms.filter(s => s.platform === 'reddit').reduce((a, b) => (a.topic_seed_queries_id > b.topic_seed_queries_id ? a : b));
+  const latestPlatforms = [latestWeb, latestTwitter, latestReddit];
+  return (
+    <div className="platform-table">
+      <table width="100%">
+        <tbody>
+          <tr>
+            <th><FormattedMessage {...localMessages.platform} /></th>
+            <th><FormattedMessage {...localMessages.seedQueryDescription} /></th>
+            <th><FormattedMessage {...localMessages.addOrEditOrRemove} /></th>
           </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);
+          {latestPlatforms.map((c, idx) => (
+            <tr key={c.type} className={(idx % 2 === 0) ? 'even' : 'odd'}>
+              <td>
+                {c.platform}
+              </td>
+              <td>
+                {c.query}
+              </td>
+              <td>
+                {c.topic_seed_queries_id > -1 ? <EditButton onClick={() => props.onEditClicked(c.topic_seed_queries_id, c.type)} /> : <AddButton onClick={() => props.onAddClicked(c.type)} />}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
 PlatformTable.propTypes = {
   // from parent

@@ -46,12 +46,12 @@ class ManagePlatformsContainer extends React.Component {
     const { topicId, filters, handleSelectPlatform } = this.props;
     // filteredLinkTo link to edit wizard
     // in edit, we will find latest topic_seed_query for this platform
-    handleSelectPlatform({ id: platformId, type: platformType }, filteredLinkTo(`/topics/${topicId}/platforms/${platformId}/edit`, filters));
+    handleSelectPlatform({ topic_seed_queries_id: platformId, platform: platformType }, filteredLinkTo(`/topics/${topicId}/platforms/${platformId}/edit`, filters));
   }
 
   onNewPlatform = (platformType) => {
     const { topicId, filters, handleSelectNewPlatform } = this.props;
-    handleSelectNewPlatform({ type: platformType }, filteredLinkTo(`/topics/${topicId}/platforms/create`, filters));
+    handleSelectNewPlatform({ platform: platformType }, filteredLinkTo(`/topics/${topicId}/platforms/create`, filters));
   }
 
   handleDelete = (platformId) => {

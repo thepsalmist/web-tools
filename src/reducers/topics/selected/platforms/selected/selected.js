@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { SELECT_PLATFORM, SELECT_PLATFORM_TYPE } from '../../../../../actions/topicActions';
 import platformDetails from './platformDetails';
 
-const INITIAL_STATE = { id: -1, type: '' };
+const INITIAL_STATE = { topic_seed_queries_id: -1, platform: '' };
 
 function select(state = INITIAL_STATE, action) {
   let updatedState = null;

@@ -57,7 +57,7 @@ const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   fetchStatus: state.topics.selected.platforms.selected.platformDetails.fetchStatus,
   currentPlatformId: parseInt(ownProps.params.platformId, 10),
-  currentPlatformType: state.topics.selected.platforms.selected.platformDetails.currentPlatformType,
+  currentPlatformType: state.topics.selected.platforms.selected.select.platform,
   platformDetails: state.topics.selected.platforms.selected.platformDetails,
 });
 

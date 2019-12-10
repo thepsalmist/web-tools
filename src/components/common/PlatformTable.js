@@ -26,7 +26,7 @@ const PlatformTable = props => {
             <th><FormattedMessage {...localMessages.addOrEditOrRemove} /></th>
           </tr>
           {latestPlatforms.map((c, idx) => (
-            <tr key={c.type} className={(idx % 2 === 0) ? 'even' : 'odd'}>
+            <tr key={c.platform} className={(idx % 2 === 0) ? 'even' : 'odd'}>
               <td>
                 {c.platform}
               </td>
@@ -34,7 +34,7 @@ const PlatformTable = props => {
                 {c.query}
               </td>
               <td>
-                {c.topic_seed_queries_id > -1 ? <EditButton onClick={() => props.onEditClicked(c.topic_seed_queries_id, c.type)} /> : <AddButton onClick={() => props.onAddClicked(c.type)} />}
+                {c.topic_seed_queries_id > -1 ? <EditButton onClick={() => props.onEditClicked(c.topic_seed_queries_id, c.platform)} /> : <AddButton onClick={() => props.onAddClicked(c.platform)} />}
               </td>
             </tr>
           ))}

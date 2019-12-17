@@ -56,7 +56,7 @@ def api_topics_platform_preview_story_sample(topics_id):
                                                        subreddits=subreddits)
     elif platform == 'web':
         solr_query, fq = _topic_query_from_request()
-        story_count_result = user_mc.storyCount(solr_query=platform_query, sort=user_mc.SORT_RANDOM, rows=num_stories)
+        story_count_result = user_mc.storyCount(solr_query=platform_query)
     elif platform == 'twitter':
         # TODO, handle multiple twitter choices
         # if source == 'crimson'
@@ -130,10 +130,17 @@ def api_topics_platform_preview_split_story_count(topics_id):
 #for web words (if applicable)
 @app.route('/api/topics/<topics_id>/platforms/preview/words', methods=['GET'])
 @api_error_handler
-def api_topics_platform_preview_top_words(topics_id):
+def api_topics_platform_preview_top_words(topics_id, **kwargs):
     user_mc = user_mediacloud_client()
     platform_query = request.args['platform_query']
 
+    params = kwargs.copy()
     solr_query, fq = _topic_query_from_request()
-    response = apicache.topic_word_counts(user_mediacloud_key(), topics_id, q=solr_query)[:100]
-    return jsonify(response)
+    merged_args = {
+        'q': solr_query
+    }
+    params.update(merged_args)
+
+
+    response = apicache.topic_word_counts(user_mediacloud_key(), topics_id, **params)[:100]
+    return jsonify({'results': response})

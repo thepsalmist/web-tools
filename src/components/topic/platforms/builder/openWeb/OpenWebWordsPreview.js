@@ -40,7 +40,7 @@ OpenWebWordsPreview.propTypes = {
   intl: PropTypes.object.isRequired,
   // passed in
   topicInfo: PropTypes.object.isRequired,
-  currentQuery: PropTypes.object.isRequired,
+  currentQuery: PropTypes.string.isRequired,
   // from parent
   width: PropTypes.number,
   height: PropTypes.number,

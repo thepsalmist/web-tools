@@ -50,16 +50,6 @@ const TopicAdvancedForm = (props) => {
               <Typography><small><FormattedMessage {...localMessages.maxSeedStoriesHelp} /></small></Typography>
             </ExpansionPanelDetails>
           </Permissioned>
-          <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
-            <ExpansionPanelDetails>
-              <Field
-                name="ch_monitor_id"
-                component={renderTextField}
-                fullWidth
-              />
-              <Typography><small><FormattedMessage {...localMessages.crimsonHexagonHelp} /></small></Typography>
-            </ExpansionPanelDetails>
-          </Permissioned>
           <ExpansionPanelDetails>
             <Field
               name="max_iterations"

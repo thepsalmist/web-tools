@@ -12,6 +12,7 @@ const localMessages = {
 
 const TwitterPreview = (props) => {
   const { topicId, query } = props;
+  // TODO, handle multiple twitter choices
   return (
     <div className="platform-create-open-web-preview">
       <Row>

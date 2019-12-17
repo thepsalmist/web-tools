@@ -20,7 +20,7 @@ const localMessages = {
     defaultMessage: 'This Platform is driven by an open web seed query.  Any stories that match the query you create will be included in the Platform.' },
   errorNoKeywords: { id: 'platform.error', defaultMessage: 'You need to specify a query.' },
   typeCrimson: { id: 'platform.create.edit.crimson', defaultMessage: 'Crimson Hexagon' },
-  typeElite: { id: 'platform.create.edit.elite', defaultMessage: 'Elite' },
+  typeElite: { id: 'platform.create.edit.elite', defaultMessage: 'Verified Accounts (via Pushshift.io)' },
   typeOther: { id: 'platform.create.edit.other', defaultMessage: 'Other' },
 };
 
@@ -34,8 +34,9 @@ class EditTwitterContainer extends React.Component {
   }
 
   updateQuery = () => {
-    const { currentQuery } = this.props;
+    const { change, currentQuery, currentPlatformType } = this.props;
     // TODO: add in twitter sources/feeds
+    change('currentPlatformType', currentPlatformType);
     this.setState({ query: currentQuery });
   }
 
@@ -55,6 +56,7 @@ class EditTwitterContainer extends React.Component {
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
+    // TODO, handle multiple twitter choices
     if ((this.state.query !== null) && (this.state.query !== undefined) && (this.state.query.length > 0)) {
       nextButtonDisabled = false;
       previewContent = (
@@ -134,6 +136,7 @@ EditTwitterContainer.propTypes = {
   currentPlatformType: PropTypes.string,
   currentPlatformInfo: PropTypes.object,
   currentQuery: PropTypes.string,
+  change: PropTypes.func.isRequired,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
   // from compositional helper
@@ -146,7 +149,7 @@ EditTwitterContainer.propTypes = {
 
 const mapStateToProps = state => ({
   currentQuery: formSelector(state, 'query'),
-  currentPlatformType: state.topics.selected.platforms.selected.select.type,
+  currentPlatformType: state.topics.selected.platforms.selected.select.platform,
   currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
 });
 

@@ -30,8 +30,9 @@ class EditRedditContainer extends React.Component {
   }
 
   updateQuery = () => {
-    const { currentQuery } = this.props;
+    const { change, currentQuery, currentPlatformType } = this.props;
     // TODO add in subreddits
+    change('currentPlatformType', currentPlatformType);
     this.setState({ query: currentQuery });
   }
 
@@ -47,7 +48,7 @@ class EditRedditContainer extends React.Component {
   }
 
   render() {
-    const { topicId, topicInfo, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
+    const { topicId, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
@@ -55,7 +56,7 @@ class EditRedditContainer extends React.Component {
       nextButtonDisabled = false;
       previewContent = (
         <div>
-          <RedditPreview topicId={topicId} topicInfo={topicInfo} query={this.state.query} location={location} />
+          <RedditPreview topicId={topicId} query={this.state.query} location={location} />
         </div>
       );
     }
@@ -121,7 +122,6 @@ class EditRedditContainer extends React.Component {
 EditRedditContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
-  topicInfo: PropTypes.object.isRequired,
   initialValues: PropTypes.object,
   onNextStep: PropTypes.func.isRequired,
   handleMediaChange: PropTypes.func.isRequired,
@@ -129,6 +129,7 @@ EditRedditContainer.propTypes = {
   currentPlatformType: PropTypes.string,
   currentPlatformInfo: PropTypes.object,
   currentQuery: PropTypes.string,
+  change: PropTypes.func.isRequired,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
   // from compositional helper
@@ -140,7 +141,7 @@ EditRedditContainer.propTypes = {
 
 const mapStateToProps = state => ({
   currentQuery: formSelector(state, 'query'),
-  currentPlatformType: state.topics.selected.platforms.selected.select.type,
+  currentPlatformType: state.topics.selected.platforms.selected.select.platform,
   currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
 });
 

@@ -45,7 +45,7 @@ CreatePlatformContainer.propTypes = {
   handleDone: PropTypes.func.isRequired,
   // from state
   values: PropTypes.object,
-  selectedPlatform: PropTypes.object.isRequired,
+  selectedPlatform: PropTypes.string.isRequired,
   // from context:
   topicInfo: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
@@ -55,7 +55,7 @@ CreatePlatformContainer.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   topicInfo: state.topics.selected.info,
-  selectedPlatform: state.topics.selected.platforms.selected.select,
+  selectedPlatform: state.topics.selected.platforms.selected.select.platform,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

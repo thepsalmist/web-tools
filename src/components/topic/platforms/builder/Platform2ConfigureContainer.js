@@ -12,7 +12,6 @@ import messages from '../../../../resources/messages';
 const Platform2ConfigureContainer = (props) => {
   const { topicId, initialValues, handleNextStep, currentPlatformType, currentPlatformInfo, location } = props;
   let content = null;
-
   switch (currentPlatformType) {
     case PLATFORM_OPEN_WEB:
       const platformDetails = { ...initialValues, ...currentPlatformInfo };
@@ -74,6 +73,7 @@ Platform2ConfigureContainer.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
+  currentPlatformType: state.topics.selected.platforms.selected.select.platform,
   topicInfo: state.topics.selected.info,
   params: ownProps.params,
 });

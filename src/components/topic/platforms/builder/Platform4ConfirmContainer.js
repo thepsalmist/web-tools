@@ -20,10 +20,10 @@ const localMessages = {
 };
 
 const Platform4ConfirmContainer = (props) => {
-  const { topicId, formValues, initialValues, handlePreviousStep, handleSubmit, finishStep, submitting } = props;
+  const { topicId, formValues, currentPlatform, initialValues, handlePreviousStep, handleSubmit, finishStep, submitting } = props;
   const { formatMessage } = props.intl;
   let content = null;
-  switch (formValues.currentPlatformType) {
+  switch (currentPlatform) {
     case PLATFORM_OPEN_WEB:
       content = (
         <OpenWebSummary topicId={topicId} formValues={formValues} initialValues={initialValues} />
@@ -83,6 +83,7 @@ Platform4ConfirmContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   initialValues: PropTypes.object,
   onDone: PropTypes.func.isRequired,
+  currentPlatform: PropTypes.string.isRequired,
   // form context
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
@@ -96,6 +97,7 @@ Platform4ConfirmContainer.propTypes = {
 
 const mapStateToProps = state => ({
   formValues: state.form.platform.values,
+  currentPlatform: state.topics.selected.platforms.selected.select.platform,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

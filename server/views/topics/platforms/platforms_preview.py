@@ -49,14 +49,16 @@ def api_topics_platform_preview_story_sample(topics_id):
     start_date, end_date = parse_query_dates(topic)
     filter='description:MIT'
     if platform == 'reddit':
-        subreddits = ps_reddit.NEWS_SUBREDDITS  # TODO: add subreddits from requests in here
+        #channel or source or platform_query?
+        subreddits = request.args['channel'] if 'channel' in request.args else ps_reddit.NEWS_SUBREDDITS
         story_count_result = ps_reddit.top_submissions(query=platform_query,
                                                        start_date=start_date, end_date=end_date,
                                                        subreddits=subreddits)
     elif platform == 'web':
-        # TODO _topic_query_from_request
-        story_count_result = user_mc.storyList(solr_query=platform_query, sort=user_mc.SORT_RANDOM, rows=num_stories)
+        solr_query, fq = _topic_query_from_request()
+        story_count_result = user_mc.storyCount(solr_query=platform_query, sort=user_mc.SORT_RANDOM, rows=num_stories)
     elif platform == 'twitter':
+        # TODO, handle multiple twitter choices
         # if source == 'crimson'
         #elif source == pushshift/elasticsearch
         story_count_result = ps_twitter.matching_tweets(query=platform_query,

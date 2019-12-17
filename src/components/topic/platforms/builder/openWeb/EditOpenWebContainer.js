@@ -34,7 +34,8 @@ class EditOpenWebContainer extends React.Component {
   }
 
   updateQuery = () => {
-    const { currentQuery } = this.props;
+    const { change, currentQuery, currentPlatformType } = this.props;
+    change('currentPlatformType', currentPlatformType);
     this.setState({ query: currentQuery });
   }
 
@@ -141,6 +142,7 @@ EditOpenWebContainer.propTypes = {
   currentPlatformType: PropTypes.string,
   currentPlatformInfo: PropTypes.object,
   currentQuery: PropTypes.string,
+  change: PropTypes.func.isRequired,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
   // from compositional helper

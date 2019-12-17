@@ -6,7 +6,7 @@ import withAsyncData from '../../../../common/hocs/AsyncDataContainer';
 import withHelp from '../../../../common/hocs/HelpfulContainer';
 import { fetchStoriesByPlatformQuery } from '../../../../../actions/topicActions';
 import DataCard from '../../../../common/DataCard';
-import TopicStoryTable from '../../../TopicStoryTable';
+import StoryTable from '../../../../common/StoryTable';
 import messages from '../../../../../resources/messages';
 import { formatTopicTwitterPreviewForQuery } from '../../../../util/topicUtil';
 
@@ -25,7 +25,7 @@ const TwitterStoryPreviewContainer = (props) => {
         <FormattedMessage {...localMessages.title} />
         {helpButton}
       </h2>
-      <TopicStoryTable stories={stories.slice(0, NUM_TO_SHOW)} showTweetCounts={showTweetCounts} topicId={topicId} />
+      <StoryTable stories={stories.slice(0, NUM_TO_SHOW)} showTweetCounts={showTweetCounts} topicId={topicId} />
     </DataCard>
   );
 };

@@ -52,6 +52,9 @@ def topic_add_platform(topics_id):
     platform = request.form['current_platform_type']
     query = request.form['platform_query']
 
+    channel = request.form['channel'] if 'channel' in request.form else None
+    #channel has open web sources in it
+    #so, if source is mediacloud, do something with the channel
     source = request.form['source'] if 'source' in request.form else None
     # do we need to add dates?
     result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
@@ -64,10 +67,14 @@ def topic_add_platform(topics_id):
 @api_error_handler
 def topic_update_platform(topics_id, platform_id):
     user_mc = user_mediacloud_client()
-    platform = request.form['current_platform_type']
+    #platform = request.form['current_platform_type']
     query = request.form['platform_query']
 
+    channel = request.form['channel'] if 'channel' in request.form else None
     source = request.form['source'] if 'source' in request.form else None
+    #channel has open web sources in it
+    #so, if source is mediacloud, do something with the channel
+
     #TODO update or remove/add?
     # remove id, add new, return new id
     #result = user_mc.topicUpdateSeedQuery(topics_id, platform_id, source, query)

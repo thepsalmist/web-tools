@@ -204,7 +204,7 @@ def stream_story_link_list_csv(user_key, filename, topics_id, **kwargs):
     params.update(merged_args)
     if 'q' in params:
         params['q'] = params['q'] if 'q' not in [None, '', 'null', 'undefined'] else None
-    params['limit'] = 100  # an arbitrary value to let us page through with big topics
+    params['limit'] = 500  # an arbitrary value based on testing to let us page through with big topics
 
     props = [
         'stories_id', 'media_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',
@@ -241,9 +241,8 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
         story_ref_ids = [str(s['ref_stories_id']) for s in story_link_page['links']]
         page_story_ids = list(set(story_src_ids + story_ref_ids))
         # note: ideally this would use the stories_id argument to pass them in, but that isn't working :-(
-        stories_info_list = apicache.topic_story_list_by_page(user_key, topics_id, link_id=None, limit=kwargs['limit'],
-                                                              q="stories_id:({})".format(' '.join(page_story_ids)))
-        # stories_info_list = local_mc.topicStoryList(topics_id, q="stories_id:({})".format(' '.join(page_story_ids)))
+        stories_info_list = apicache.topic_story_list_by_page(user_key, topics_id, stories_id=page_story_ids,
+                                                              link_id=None, limit=kwargs['limit'])
         # now add in the story info to each row from the links results, so story info is there along with the stories_id
         for s in story_link_page['links']:
             for s_info in stories_info_list['stories']:

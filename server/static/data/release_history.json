@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2019-12-16",
+      "version": "v3.12.21",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Topic story links CSV now includes media_id"
+        }
+      ]
+    },
+    {
       "date": "2019-12-09",
       "version": "v3.12.20",
       "notes": [

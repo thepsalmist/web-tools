@@ -56,7 +56,8 @@ def api_topics_platform_preview_story_sample(topics_id):
                                                        subreddits=subreddits)
     elif platform == 'web':
         solr_query, fq = _topic_query_from_request()
-        story_count_result = user_mc.storyCount(solr_query=platform_query)
+        # replicating create preview flow (not using apicache.topicStoryList b/c we haven't spidered the topic/platform version yet
+        story_count_result = user_mc.storyList(solr_query=platform_query)
     elif platform == 'twitter':
         # TODO, handle multiple twitter choices
         # if source == 'crimson'

@@ -67,8 +67,6 @@ def topic_add_platform(topics_id):
 @api_error_handler
 def topic_update_platform(topics_id, platform_id):
     user_mc = user_mediacloud_client()
-    #platform = request.form['current_platform_type']
-    query = request.form['platform_query']
 
     channel = request.form['channel'] if 'channel' in request.form else None
     source = request.form['source'] if 'source' in request.form else None
@@ -77,10 +75,10 @@ def topic_update_platform(topics_id, platform_id):
 
     #TODO update or remove/add?
     # remove id, add new, return new id
-    #result = user_mc.topicUpdateSeedQuery(topics_id, platform_id, source, query)
+    #result = user_mc.topicUpdateSeedQuery(topics_id, platform_id, source)
     #result['success'] = result['topic_seed_query']['topic_seed_queries_id']
-    result = {"nothing"}
-    return jsonify(result) #topic_seed_queries_id
+    result = {"not implemented"}
+    return jsonify({"results": result}) #topic_seed_queries_id
 
 
 @app.route('/api/topics/<topics_id>/platforms/remove', methods=['GET'])

@@ -98,9 +98,7 @@ def _cached_story_list(user_mc_key, q, rows):
 
 
 def topic_story_list(user_mc_key, topics_id, **kwargs):
-    '''
-    Return sorted story list based on filters.
-    '''
+    # Return sorted story list based on filters.
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     merged_args = {
         'snapshots_id': snapshots_id,

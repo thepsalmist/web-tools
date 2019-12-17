@@ -207,7 +207,7 @@ def stream_story_link_list_csv(user_key, filename, topics_id, **kwargs):
     params['limit'] = 100  # an arbitrary value to let us page through with big topics
 
     props = [
-        'stories_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',
+        'stories_id', 'media_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated',
         'inlink_count', 'outlink_count'
         # 'media_pub_country', 'media_pub_state', 'media_language', 'media_about_country', 'media_media_type'
     ]
@@ -224,9 +224,10 @@ def stream_story_link_list_csv(user_key, filename, topics_id, **kwargs):
 def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
     local_mc = user_admin_mediacloud_client(user_key)
     spec_props = [
-        'source_stories_id', 'source_publish_date', 'source_title', 'source_url', 'source_language',
-        'source_ap_syndicated', 'source_inlink_count', 'source_outlink_count', 'ref_stories_id', 'ref_publish_date',
-        'ref_title', 'ref_url', 'ref_language', 'ref_ap_syndicated', 'ref_inlink_count', 'ref_outlink_count',
+        'source_stories_id', 'source_media_id', 'source_publish_date', 'source_title', 'source_url', 'source_language',
+        'source_ap_syndicated', 'source_inlink_count', 'source_outlink_count',
+        'ref_stories_id', 'ref_media_id', 'ref_publish_date', 'ref_title', 'ref_url', 'ref_language',
+        'ref_ap_syndicated', 'ref_inlink_count', 'ref_outlink_count',
         # 'media_pub_country', 'media_pub_state', 'media_language', 'media_about_country', 'media_media_type'
     ]
     yield ','.join(spec_props) + '\n'  # first send the column names
@@ -240,7 +241,9 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
         story_ref_ids = [str(s['ref_stories_id']) for s in story_link_page['links']]
         page_story_ids = list(set(story_src_ids + story_ref_ids))
         # note: ideally this would use the stories_id argument to pass them in, but that isn't working :-(
-        stories_info_list = local_mc.topicStoryList(topics_id, q="stories_id:({})".format(' '.join(page_story_ids)))
+        stories_info_list = apicache.topic_story_list_by_page(user_key, topics_id, link_id=None, limit=kwargs['limit'],
+                                                              q="stories_id:({})".format(' '.join(page_story_ids)))
+        # stories_info_list = local_mc.topicStoryList(topics_id, q="stories_id:({})".format(' '.join(page_story_ids)))
         # now add in the story info to each row from the links results, so story info is there along with the stories_id
         for s in story_link_page['links']:
             for s_info in stories_info_list['stories']:

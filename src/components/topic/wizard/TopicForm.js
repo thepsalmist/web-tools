@@ -32,8 +32,7 @@ const localMessages = {
 class TopicForm extends React.Component {
   shouldComponentUpdate = (nextProps) => {
     const { initialValues } = this.props;
-    return (initialValues.sourcesAndCollections !== nextProps.initialValues.sourcesAndCollections
-      || initialValues !== nextProps.initialValues);
+    return (initialValues !== nextProps.initialValues);
   }
 
   render() {
@@ -110,11 +109,10 @@ TopicForm.propTypes = {
   ]).isRequired,
   submitting: PropTypes.bool.isRequired,
   title: PropTypes.string.isRequired,
-  intro: PropTypes.string.isRequired,
+  intro: PropTypes.string,
   validate: PropTypes.func.isRequired,
   topicNameSearch: PropTypes.object,
-  mode: PropTypes.string.isRequired,
-  onMediaChange: PropTypes.func.isRequired,
+  mode: PropTypes.string,
   meta: PropTypes.object,
 };
 

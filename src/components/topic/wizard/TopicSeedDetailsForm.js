@@ -9,7 +9,7 @@ import TopicAdvancedForm from './TopicAdvancedForm';
 import messages from '../../../resources/messages';
 
 const localMessages = {
-  basics: { id: 'topic.form.section.basics', defaultMessage: 'Relevance Query Details' },
+  basics: { id: 'topic.form.section.basics', defaultMessage: 'Create Topic Details' },
   name: { id: 'topic.form.detail.name', defaultMessage: 'Topic Name (what is this about?)' },
   seedQuery: { id: 'topic.form.detail.seedQuery', defaultMessage: 'Relevance Query' },
   seedQueryDescription: { id: 'topic.form.detail.seedQuery.about', defaultMessage: 'Enter a boolean query to select stories that will seed the Topic.  Links in stories already in our database that match this query will be followed to find more stories that might not be in our database already.' },

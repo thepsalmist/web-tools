@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { Grid } from 'react-flexbox-grid/lib';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { reset } from 'redux-form';
@@ -8,7 +9,7 @@ import { fetchUserQueuedAndRunningTopics } from '../../../actions/topicActions';
 import { WarningNotice } from '../../common/Notice';
 import { FETCH_SUCCEEDED } from '../../../lib/fetchConstants';
 import PageTitle from '../../common/PageTitle';
-import TopicSeedDetailsForm from './TopicSeedDetailsForm';
+import TopicForm from './TopicForm';
 
 const localMessages = {
   pageTitle: { id: 'topic.modify.pageTitle', defaultMessage: 'Create a Topic' },
@@ -19,21 +20,25 @@ const localMessages = {
   creatingDesc: { id: 'topic.creating.detail', defaultMessage: 'We are creating your topic now.  This can take a minute or so, just to make sure everyting is in order.  Once it is created, you\'ll be shown a page telling you we are gathering the stories.' },
 };
 
-const CreateTopicContainer = (props) => (
-  <>
-    <PageTitle value={localMessages.pageTitle} />
-    {!props.allowedToRun && (
-      <WarningNotice><FormattedHTMLMessage {...localMessages.cannotCreateTopic} /></WarningNotice>
-    )}
-    <TopicSeedDetailsForm
-      destroyOnUnmount={false}
-      form="topicForm"
-      forceUnregisterOnUnmount
-      // defaultValue={initialValues}
-      // mode={mode}
-    />
-  </>
-);
+const CreateTopicContainer = (props) => {
+  const initialValues = { buttonLabel: 'Create' };
+  return (
+    <Grid>
+      <PageTitle value={localMessages.pageTitle} />
+      {!props.allowedToRun && (
+        <WarningNotice><FormattedHTMLMessage {...localMessages.cannotCreateTopic} /></WarningNotice>
+      )}
+      <TopicForm
+        destroyOnUnmount={false}
+        form="topicForm"
+        forceUnregisterOnUnmount
+        initialValues={initialValues}
+        onSubmit={props.handleCreateEmptyTopic}
+        title={props.intl.formatMessage(localMessages.pageTitle)}
+      />
+    </Grid>
+  );
+};
 
 CreateTopicContainer.propTypes = {
   // from compositional chain
@@ -42,6 +47,7 @@ CreateTopicContainer.propTypes = {
   // from store
   allowedToRun: PropTypes.bool.isRequired,
   isAdmin: PropTypes.bool.isRequired,
+  handleCreateEmptyTopic: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -50,6 +56,11 @@ const mapStateToProps = state => ({
   isAdmin: state.user.isAdmin,
 });
 
+const mapDispatchToProps = dispatch => ({
+  handleCreateEmptyTopic: (values, filters) => {
+    dispatch(fetchUserQueuedAndRunningTopics(values, filters));
+  },
+});
 const fetchAsyncData = (dispatch, { isAdmin }) => {
   reset(); // reset form
   // non-admin users can only run one topic at a time
@@ -60,7 +71,7 @@ const fetchAsyncData = (dispatch, { isAdmin }) => {
 
 export default
 injectIntl(
-  connect(mapStateToProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withAsyncData(fetchAsyncData)(
       CreateTopicContainer
     )

@@ -19,6 +19,7 @@ const localMessages = {
     defaultMessage: 'This Platform is driven by an open web seed query.  Any stories that match the query you create will be included in the Platform.' },
   errorNoKeywords: { id: 'platform.error', defaultMessage: 'You need to specify a query.' },
   typeCrimson: { id: 'platform.create.edit.crimson', defaultMessage: 'Crimson Hexagon' },
+  typeCrimsonId: { id: 'platform.create.edit.crimson.id', defaultMessage: 'Crimson Hexagon ID' },
   typeElite: { id: 'platform.create.edit.elite', defaultMessage: 'Verified Accounts (via Pushshift.io)' },
   typeOther: { id: 'platform.create.edit.other', defaultMessage: 'Other' },
 };
@@ -102,16 +103,22 @@ class EditTwitterContainer extends React.Component {
                 component={renderCheckbox}
                 label="elite"
               />
-              <Field
-                name="crimson_hexagon"
-                component={renderCheckbox}
-                label="crimson"
-              />
-              <Field // TODO maybe admin only...
-                name="crimson_hexagon_id"
-                component={renderTextField}
-                label="crimson"
-              />
+              <Row>
+                <Col lg={2}>
+                  <Field
+                    name="crimson_hexagon"
+                    component={renderCheckbox}
+                    label={formatMessage(localMessages.typeCrimson)}
+                  />
+                </Col>
+                <Col lg={2}>
+                  <Field // TODO maybe admin only...
+                    name="crimson_hexagon_id"
+                    component={renderTextField}
+                    label={formatMessage(localMessages.typeCrimson)}
+                  />
+                </Col>
+              </Row>
               <Field
                 name="other"
                 component={renderCheckbox}

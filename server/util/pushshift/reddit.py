@@ -46,7 +46,7 @@ def url_submissions_by_subreddit(url):
     return results
 
 
-@cache.cache_on_arguments()
+#@cache.cache_on_arguments()
 def _cached_submission_search(**kwargs):
     gen = ps_api.search_submissions(**kwargs)
     return next(gen)
@@ -110,7 +110,7 @@ def _submission_to_row(item):
     }
 
 
-@cache.cache_on_arguments()
+#@cache.cache_on_arguments()
 def _cached_top_submissions(**kwargs):
     data = _submission_search(**kwargs)
     cleaned_data = []

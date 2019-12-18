@@ -41,6 +41,7 @@ export const formatTopicPlatformPreviewQuery = (topicQuery, platform, query) => 
   platform_query: query,
   start_date: topicQuery.start_date,
   end_date: topicQuery.end_date,
+  channel: topicQuery.channel,
 });
 
 export const formatTopicOpenWebPreviewQuery = (topicQuery) => {

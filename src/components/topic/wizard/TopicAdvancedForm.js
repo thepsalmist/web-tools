@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import withIntlForm from '../../common/hocs/IntlForm';
 import Permissioned from '../../common/Permissioned';
-import { PERMISSION_MEDIA_EDIT, PERMISSION_ADMIN } from '../../../lib/auth';
+import { PERMISSION_ADMIN } from '../../../lib/auth';
 import { ADMIN_MAX_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 
 const localMessages = {

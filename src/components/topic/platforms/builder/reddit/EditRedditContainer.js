@@ -30,9 +30,10 @@ class EditRedditContainer extends React.Component {
   }
 
   updateQuery = () => {
-    const { change, currentQuery, currentPlatformType } = this.props;
+    const { change, currentQuery, currentPlatformType, channel } = this.props;
     // TODO add in subreddits
     change('currentPlatformType', currentPlatformType);
+    change('channel', channel); // redux-form change action
     this.setState({ query: currentQuery });
   }
 
@@ -124,11 +125,11 @@ EditRedditContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   initialValues: PropTypes.object,
   onNextStep: PropTypes.func.isRequired,
-  handleMediaChange: PropTypes.func.isRequired,
   // from state
   currentPlatformType: PropTypes.string,
   currentPlatformInfo: PropTypes.object,
   currentQuery: PropTypes.string,
+  channel: PropTypes.string.isRequired,
   change: PropTypes.func.isRequired,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
@@ -141,16 +142,12 @@ EditRedditContainer.propTypes = {
 
 const mapStateToProps = state => ({
   currentQuery: formSelector(state, 'query'),
+  channel: formSelector(state, 'channel'),
   currentPlatformType: state.topics.selected.platforms.selected.select.platform,
   currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleMediaChange: (channel) => {
-    // take selections from mediaPicker and push them back into topicForm
-    ownProps.change('channel', channel); // redux-form change action
-  },
-  handleMediaDelete: () => null, // in create mode we don't need to update the values
   finishStep: (values) => {
     const customProps = {
       query: values.query,

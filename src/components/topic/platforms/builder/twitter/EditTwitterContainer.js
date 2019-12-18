@@ -36,6 +36,7 @@ class EditTwitterContainer extends React.Component {
   updateQuery = () => {
     const { change, currentQuery, currentPlatformType } = this.props;
     // TODO: add in twitter sources/feeds
+    // change('channel', channel); // redux-form change action
     change('currentPlatformType', currentPlatformType);
     this.setState({ query: currentQuery });
   }
@@ -52,7 +53,7 @@ class EditTwitterContainer extends React.Component {
   }
 
   render() {
-    const { topicId, /* handleMediaChange */ renderTextField, renderSelect, handleSubmit, finishStep, location } = this.props;
+    const { topicId, /* handleMediaChange */ renderTextField, renderCheckbox, handleSubmit, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
@@ -100,7 +101,7 @@ class EditTwitterContainer extends React.Component {
               <Field
                 name="channel"
                 placeholder={formatMessage(messages.searchByTwitterChannel)}
-                component={renderSelect}
+                component={renderCheckbox}
               >
                 <MenuItem key="crimson" value="crimson"><FormattedMessage {...localMessages.typeCrimson} /></MenuItem>
                 <MenuItem key="elite" value="elite"><FormattedMessage {...localMessages.typeElite} /></MenuItem>
@@ -144,7 +145,7 @@ EditTwitterContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,
-  renderSelect: PropTypes.func.isRequired,
+  renderCheckbox: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({

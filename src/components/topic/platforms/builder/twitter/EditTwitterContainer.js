@@ -3,7 +3,6 @@ import React from 'react';
 import { Field, reduxForm, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import MenuItem from '@material-ui/core/MenuItem';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../../../common/AppButton';
 import withIntlForm from '../../../../common/hocs/IntlForm';
@@ -99,14 +98,25 @@ class EditTwitterContainer extends React.Component {
           <Row>
             <Col lg={8} xs={12}>
               <Field
-                name="channel"
-                placeholder={formatMessage(messages.searchByTwitterChannel)}
+                name="elite"
                 component={renderCheckbox}
-              >
-                <MenuItem key="crimson" value="crimson"><FormattedMessage {...localMessages.typeCrimson} /></MenuItem>
-                <MenuItem key="elite" value="elite"><FormattedMessage {...localMessages.typeElite} /></MenuItem>
-                <MenuItem key="other" value="other"><FormattedMessage {...localMessages.typeOther} /></MenuItem>
-              </Field>
+                label="elite"
+              />
+              <Field
+                name="crimson_hexagon"
+                component={renderCheckbox}
+                label="crimson"
+              />
+              <Field // TODO maybe admin only...
+                name="crimson_hexagon_id"
+                component={renderTextField}
+                label="crimson"
+              />
+              <Field
+                name="other"
+                component={renderCheckbox}
+                label="other"
+              />
             </Col>
           </Row>
           <Row>
@@ -150,6 +160,7 @@ EditTwitterContainer.propTypes = {
 
 const mapStateToProps = state => ({
   currentQuery: formSelector(state, 'query'),
+  channel: formSelector(state, 'channel'),
   currentPlatformType: state.topics.selected.platforms.selected.select.platform,
   currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
 });

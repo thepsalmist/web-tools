@@ -81,12 +81,12 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.platforms.preview.matchingStoryCounts.fetchStatus,
   counts: state.topics.selected.platforms.preview.matchingStoryCounts,
   currentQuery: state.form.platform.values.query,
-  channel: state.form.platform.values.channel,
+  channel: [state.form.platform.values.crimson_hexagon ? { crimson_hexagon: state.form.platform.values.crimson_hexagon_id } : '', state.form.platform.values.elite ? { elite: 'true' } : ''],
 });
 
 const fetchAsyncData = (dispatch, { topicInfo, currentQuery, channel }) => {
   const infoForQuery = {
-    ...formatTopicTwitterPreviewForQuery({ ...topicInfo, query: currentQuery, channel }),
+    ...formatTopicTwitterPreviewForQuery({ ...topicInfo, query: currentQuery, channel: JSON.stringify(channel) }),
   };
   dispatch(fetchStoryCountsByPlatformQuery(infoForQuery.topics_id, { ...infoForQuery }));
 };

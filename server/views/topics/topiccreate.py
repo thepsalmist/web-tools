@@ -92,33 +92,18 @@ def topic_create():
     start_date = request.form['start_date']
     end_date = request.form['end_date']
     optional_args = {
-        'is_public': request.form['is_public'] if 'is_public' in request.form else None,
-        'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
-        'ch_monitor_id': request.form['ch_monitor_id'] if len(request.form['ch_monitor_id']) > 0 and request.form['ch_monitor_id'] != 'null' else None,
         'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
-        'max_stories': request.form['max_stories'] if 'max_stories' in request.form and request.form['max_stories'] != 'null' else flask_login.current_user.profile['max_topic_stories'],
+        'max_stories': request.form['max_stories'] if 'max_stories' in request.form and request.form['max_stories'] != 'null' else flask_login.current_user.profile['limits']['max_topic_stories'],
     }
-
-    # parse out any sources and collections, or custom collections to add
-    media_ids_to_add = ids_from_comma_separated_str(request.form['sources[]'])
-    tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]'])
-    custom_collections_clause = custom_collection_as_solr_query(request.form['searches[]'])
-    if len(custom_collections_clause) > 0:
-        solr_seed_query = '{} OR {}'.format(solr_seed_query, custom_collections_clause)
 
     try:
         topic_result = user_mc.topicCreate(name=name, description=description, solr_seed_query=solr_seed_query,
-                                           start_date=start_date, end_date=end_date, media_ids=media_ids_to_add,
-                                           media_tags_ids=tag_ids_to_add, **optional_args)['topics'][0]
+                                           start_date=start_date, end_date=end_date, **optional_args)['topics'][0]
 
         topics_id = topic_result['topics_id']
         logger.info("Created new topic \"{}\" as {}".format(name, topics_id))
         # if this includes any of the US-centric collections, add the retweet partisanship subtopic by default
-        if set(tag_ids_to_add).intersection(US_COLLECTIONS):
-            add_retweet_partisanship_to_topic(topic_result['topics_id'],
-                                              'Retweet Partisanship',
-                                              'Subtopics driven by our analysis of Twitter followers of Trump and Clinton during the 2016 election season.  Each media soure is scored based on the ratio of retweets of their stories in those two groups.')
-        # client will either make a empty snapshot, or a spidering one
+                # client will either make a empty snapshot, or a spidering one
         return topic_summary(topics_id)
     except Exception as e:
         logging.error("Topic creation failed {}".format(name))

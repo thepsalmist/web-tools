@@ -173,6 +173,7 @@ const messages = {
   save: { id: 'save', defaultMessage: 'Save' },
   done: { id: 'done', defaultMessage: 'Done' },
   preview: { id: 'preview', defaultMessage: 'Preview' },
+  create: { id: 'create', defaultMessage: 'Create' },
   confirm: { id: 'confirm', defaultMessage: 'Confirm' },
   remove: { id: 'remove', defaultMessage: 'Remove' },
   add: { id: 'add', defaultMessage: 'Add' },

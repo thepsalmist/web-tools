@@ -4,15 +4,11 @@ import { FormattedMessage } from 'react-intl';
 import { reduxForm, Field, propTypes } from 'redux-form';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
-import QueryHelpDialog from '../../common/help/QueryHelpDialog';
 import TopicAdvancedForm from './TopicAdvancedForm';
-import messages from '../../../resources/messages';
 
 const localMessages = {
   basics: { id: 'topic.form.section.basics', defaultMessage: 'Create Topic Details' },
   name: { id: 'topic.form.detail.name', defaultMessage: 'Topic Name (what is this about?)' },
-  seedQuery: { id: 'topic.form.detail.seedQuery', defaultMessage: 'Relevance Query' },
-  seedQueryDescription: { id: 'topic.form.detail.seedQuery.about', defaultMessage: 'Enter a boolean query to select stories that will seed the Topic.  Links in stories already in our database that match this query will be followed to find more stories that might not be in our database already.' },
   startDate: { id: 'topic.form.detail.startDate', defaultMessage: 'Start Date (inclusive)' },
   endDate: { id: 'topic.form.detail.endDate', defaultMessage: 'End Date (inclusive)' },
 };
@@ -46,23 +42,6 @@ const TopicSeedDetailsForm = (props) => {
             label={formatMessage(localMessages.endDate)}
             helpertext={formatMessage(localMessages.endDate)}
           />
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={12}>
-          <Field
-            name="solr_seed_query"
-            component={renderTextField}
-            multiline
-            rows={2}
-            rowsMax={4}
-            fullWidth
-            label={formatMessage(localMessages.seedQuery)}
-          />
-          <small>
-            <b><QueryHelpDialog trigger={formatMessage(messages.queryHelpLink)} /></b>
-            <FormattedMessage {...localMessages.seedQueryDescription} />
-          </small>
         </Col>
       </Row>
       <TopicAdvancedForm

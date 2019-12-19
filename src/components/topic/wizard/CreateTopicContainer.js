@@ -3,13 +3,16 @@ import React from 'react';
 import { Grid } from 'react-flexbox-grid/lib';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import { reset } from 'redux-form';
+import { reset, reduxForm } from 'redux-form';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import { fetchUserQueuedAndRunningTopics } from '../../../actions/topicActions';
+import { fetchUserQueuedAndRunningTopics, createTopic } from '../../../actions/topicActions';
 import { WarningNotice } from '../../common/Notice';
 import { FETCH_SUCCEEDED } from '../../../lib/fetchConstants';
 import PageTitle from '../../common/PageTitle';
 import TopicForm from './TopicForm';
+import { formatTopicPreviewQuery } from '../../util/topicUtil';
+import messages from '../../../resources/messages';
+import { getCurrentDate, getMomentDateSubtraction } from '../../../lib/dateUtil';
 
 const localMessages = {
   pageTitle: { id: 'topic.modify.pageTitle', defaultMessage: 'Create a Topic' },
@@ -21,7 +24,9 @@ const localMessages = {
 };
 
 const CreateTopicContainer = (props) => {
-  const initialValues = { buttonLabel: 'Create' };
+  const endDate = getCurrentDate();
+  const startDate = getMomentDateSubtraction(endDate, 3, 'months');
+  const initialValues = { start_date: startDate, end_date: endDate, buttonLabel: props.intl.formatMessage(messages.create) };
   return (
     <Grid>
       <PageTitle value={localMessages.pageTitle} />
@@ -57,8 +62,24 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  handleCreateEmptyTopic: (values, filters) => {
-    dispatch(fetchUserQueuedAndRunningTopics(values, filters));
+  handleCreateEmptyTopic: (values) => {
+    const formValuesForSubmission = () => {
+      let queryInfo = formatTopicPreviewQuery(values);
+      queryInfo = {
+        ...queryInfo,
+        name: values.name,
+        description: values.description,
+        solr_seed_query: queryInfo.q,
+        max_iterations: values.max_iterations,
+        ch_monitor_id: values.ch_monitor_id === undefined ? '' : values.ch_monitor_id,
+        is_public: values.is_public ? 1 : 0,
+        is_logogram: values.is_logogram ? 1 : 0,
+        max_stories: values.max_topic_stories,
+      };
+      return queryInfo;
+    };
+    const queryInfo = formValuesForSubmission(values);
+    return dispatch(createTopic(queryInfo));
   },
 });
 const fetchAsyncData = (dispatch, { isAdmin }) => {
@@ -69,11 +90,19 @@ const fetchAsyncData = (dispatch, { isAdmin }) => {
   }
 };
 
+const reduxFormConfig = {
+  form: 'topicForm',
+  // destroyOnUnmount: false, // so the wizard works
+  forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
+};
+
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncData(fetchAsyncData)(
-      CreateTopicContainer
+  reduxForm(reduxFormConfig)(
+    connect(mapStateToProps, mapDispatchToProps)(
+      withAsyncData(fetchAsyncData)(
+        CreateTopicContainer
+      )
     )
   )
 );

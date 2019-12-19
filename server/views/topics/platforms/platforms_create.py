@@ -61,6 +61,19 @@ def topic_add_platform(topics_id):
     result['success'] = result['topic_seed_query']['topic_seed_queries_id']
     return jsonify(result) #topic_seed_queries_id
 
+#if this is an open web platform, do we need to do any of this (from topic creation):
+    # parse out any sources and collections, or custom collections to add
+    #media_ids_to_add = ids_from_comma_separated_str(request.form['sources[]'])
+    #tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]'])
+    #custom_collections_clause = custom_collection_as_solr_query(request.form['searches[]'])
+    #if len(custom_collections_clause) > 0:
+    #    solr_seed_query = '{} OR {}'.format(solr_seed_query, custom_collections_clause)
+
+#if set(tag_ids_to_add).intersection(US_COLLECTIONS):
+#    add_retweet_partisanship_to_topic(topic_result['topics_id'],
+#                                      'Retweet Partisanship',
+#                                      'Subtopics driven by our analysis of Twitter followers of Trump and Clinton during the 2016 election season.  Each media soure is scored based on the ratio of retweets of their stories in those two groups.')
+
 
 @app.route('/api/topics/<topics_id>/platforms/<platform_id>/update', methods=['POST'])
 @flask_login.login_required

@@ -125,9 +125,6 @@ function validate(values, props) {
   if (emptyString(values.description)) {
     errors.description = localMessages.descriptionError;
   }
-  if (emptyString(values.solr_seed_query)) {
-    errors.solr_seed_query = localMessages.seedQueryError;
-  }
   if (invalidDate(values.start_date) || !isValidSolrDate(values.start_date)) {
     errors.start_date = localMessages.dateError;
   }
@@ -136,12 +133,6 @@ function validate(values, props) {
   }
   if (validDate(values.start_date) && validDate(values.end_date) && isStartDateAfterEndDate(values.start_date, values.end_date)) {
     errors.start_date = { _error: formatMessage(localMessages.startDateWarning) };
-  }
-  // not triggered if empty so we have to force a check
-  if ((values.name && values.solr_seed_query && !values.sourcesAndCollections) || (values.sourcesAndCollections && values.sourcesAndCollections.length < 1)) {
-    // errors.sourcesAndCollections = localMessages.sourceCollectionsError;
-    const msg = formatMessage(localMessages.sourceCollectionsError);
-    errors.sourcesAndCollections = { _error: msg };
   }
   return errors;
 }

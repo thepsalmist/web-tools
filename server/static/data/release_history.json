@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2019-12-19",
+      "version": "v3.12.22",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Removing sources from collections works again"
+        }
+      ]
+    },
+    {
       "date": "2019-12-16",
       "version": "v3.12.21",
       "notes": [

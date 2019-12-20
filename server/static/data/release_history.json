@@ -1,6 +1,33 @@
 {
   "releases": [
     {
+      "date": "2019-12-19",
+      "version": "v3.12.22",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Removing sources from collections works again"
+        }
+      ]
+    },
+    {
+      "date": "2019-12-16",
+      "version": "v3.12.21",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Topic story links CSV now includes media_id"
+        },
+        {
+          "apps": [ "topics", "tools", "sources", "explorer" ],
+          "type": "Fixed",
+          "note": "The API test console works again"
+        }
+      ]
+    },
+    {
       "date": "2019-12-09",
       "version": "v3.12.20",
       "notes": [

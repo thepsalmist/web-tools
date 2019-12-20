@@ -31,7 +31,7 @@ class NewVersionPlatformComparisonContainer extends React.Component {
   }
 
   render() {
-    const { topicId, usingLatest, newPlatforms, currentPlatforms, latestVersionRunning } = this.props;
+    const { topicId, usingLatest, newPlatforms, platforms, latestVersionRunning } = this.props;
     const submitting = this.state.submittingVersion;
     if (needsNewVersion(usingLatest, newPlatforms, latestVersionRunning)) {
       return (
@@ -43,7 +43,7 @@ class NewVersionPlatformComparisonContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={5}>
-              <PlatformTable platforms={currentPlatforms} faded />
+              <PlatformTable platforms={platforms} faded />
             </Col>
             <Col lg={2}>
               <span style={{ display: 'block', fontSize: '56px', marginTop: '120px', textAlign: 'center' }}>➡</span>
@@ -72,8 +72,8 @@ NewVersionPlatformComparisonContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   usingLatest: PropTypes.bool.isRequired,
   selectedSnapshot: PropTypes.object.isRequired,
-  currentPlatforms: PropTypes.bool, // .isRequired,
-  newPlatforms: PropTypes.bool.isRequired,
+  platforms: PropTypes.array, // .isRequired,
+  newPlatforms: PropTypes.array,
   latestVersionRunning: PropTypes.bool.isRequired,
   // from dispatch
   handleNewVersionAndSpider: PropTypes.func.isRequired,

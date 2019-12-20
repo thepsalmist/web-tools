@@ -4,7 +4,7 @@ import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import LoadingSpinner from '../../common/LoadingSpinner';
-// import ManagePlatformsContainer from './platforms/ManagePlatformsContainer';
+import ManagePlatformsContainer from '../platforms/ManagePlatformsContainer';
 import { TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_QUEUED, TOPIC_SNAPSHOT_STATE_RUNNING,
   TOPIC_SNAPSHOT_STATE_ERROR, TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED } from '../../../reducers/topics/selected/snapshots';
 import TopicVersionQueuedStatusContainer from './homepages/TopicVersionQueuedStatusContainer';
@@ -53,10 +53,11 @@ const TopicVersionContainer = (props) => {
     };
   }
   let contentToShow;
+  // empty, newly created topic with no platforms, force to platforms
+  if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED && topic.topic_seed_queries.length === 0) {
+    contentToShow = <ManagePlatformsContainer />;
   // handle case where there isn't a snapshot object yet (legacy)
-  if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
-    // TODO - no platforms? send to platform page
-    // if snapshotToUse.noPlatforms... <ManagePlatformsContainer />
+  } else if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
     contentToShow = (
       <TopicVersionCreatedStatusContainer
         topic={topic}

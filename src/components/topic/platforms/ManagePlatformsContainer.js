@@ -77,7 +77,7 @@ class ManagePlatformsContainer extends React.Component {
             </Row>
             <PlatformTable platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} />
           </Grid>
-          <NewVersionPlatformComparisonContainer />
+          { platforms.length > 0 ? <NewVersionPlatformComparisonContainer platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} /> : '' }
           <ConfirmationDialog
             open={this.state.removeDialogOpen}
             title={formatMessage(localMessages.removePlatform)}

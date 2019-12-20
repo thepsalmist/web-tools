@@ -80,6 +80,12 @@ const mapDispatchToProps = dispatch => ({
     };
     const queryInfo = formValuesForSubmission(values);
     return dispatch(createTopic(queryInfo));
+    // TODO push to summary or version page where the lack of platforms will push the user to the Manage Platform screen
+    /* if (createResults && createResults.topics_id) {
+        dispatch(updateFeedback({ classes: 'info-notice', open: true, message: intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
+        return dispatch(push(`/topics/${results.topics_id}/versions`)); summary
+      }
+    */
   },
 });
 const fetchAsyncData = (dispatch, { isAdmin }) => {

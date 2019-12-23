@@ -53,8 +53,8 @@ class EditOpenWebContainer extends React.Component {
   render() {
     const { topicId, initialValues, handleMediaChange, renderTextField, handleSubmit, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
-    const selectedMedia = initialValues.sourcesAndCollections ? initialValues.sourcesAndCollections : [];
     let mediaPicker = null;
+    const selectedMedia = initialValues.media ? initialValues.media : [];
     // eslint-disable-next-line jsx-a11y/label-has-associated-control
     const mediaLabel = <label htmlFor="media"><FormattedMessage {...localMessages.SandC} /></label>;
     mediaPicker = (

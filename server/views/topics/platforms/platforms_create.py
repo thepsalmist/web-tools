@@ -14,8 +14,8 @@ OPEN_WEB = 1
 @app.route('/api/topics/platforms/all', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
-def topic_platform_list():
-    return jsonify({'results': [{'type': 'web', 'platform': 'dummy'}, {'type': 'reddit', 'platform': 'dummy'}, {'type': 'twitter', 'platform': 'dummy'}]})
+def topic_platform_list(): #everything 1.0 platform but web, probably
+    return jsonify({'results': [{'platform_type': '1.0', 'platform': 'reddit', 'query': 'dummy'}, {'platform_type': '1.0', 'platform': 'twitter', 'query': 'dummy'}]})
 
 
 @app.route('/api/topics/<topics_id>/platforms/list', methods=['GET'])
@@ -26,12 +26,13 @@ def get_topic_platforms(topics_id):
     # how do we get all the seed queries per topic ?
     #merge what the topic has versus what the topic doens't by adding in the topic_seed_queries_id
     # TODO fetch platforms from topic
-    dummy_dict = [{'platform': 'web', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform': 'reddit', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform': 'twitter', 'query': 'dummy', 'topic_seed_queries_id': -1}]
+    dummy_dict = [{'platform_type': 'web_ui_shim', 'platform': 'web', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform_type': '1.0','platform': 'reddit', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform_type': '1.0','platform': 'twitter', 'query': 'dummy', 'topic_seed_queries_id': -1}]
 
     topic = user_mc.topic(topics_id)
     non_web_seed_queries = topic['topic_seed_queries']
     if topic['solr_seed_query'] not in [None, '']:
-        web_seed_query = [{'platform': 'web', 'query': topic['solr_seed_query'], 'topic_seed_queries_id': -1}]
+        #channel - the media ids sources, collections
+        web_seed_query = [{'platform_type': 'web_ui_shim', 'platform': 'web', 'query': topic['solr_seed_query'], 'media': topic['media_tags'], 'topic_seed_queries_id': 9999}] #TODO, assuming seed query ids are 0-10 or so
         non_web_seed_queries.extend(web_seed_query)
     seed_queries = dummy_dict
     seed_queries.extend(non_web_seed_queries)
@@ -44,8 +45,8 @@ def get_topic_platforms(topics_id):
 def get_platform_by_id(topics_id, platform_id):
     # iterate through topic seed queries array
     user_mc = user_mediacloud_client()
+    return 'nothing yet'
 
-    return jsonify({'id':56, 'type': 'web', 'platform_seed_query': 'storytelling'}) #need media_ids
 
 
 @app.route('/api/topics/<topics_id>/platforms/add', methods=['POST'])
@@ -98,17 +99,21 @@ def topic_update_platform(topics_id, platform_id):
 
     #TODO update or remove/add?
     # remove id, add new, return new id
-    #result = user_mc.topicUpdateSeedQuery(topics_id, platform_id, source)
+
+    #if platform == 'web':
+    #    result = topic_update(topics_id)  # and the request.form info
+    #else:
+    #   result = user_mc.topicUpdateSeedQuery(topics_id, platform_id, source)
     #result['success'] = result['topic_seed_query']['topic_seed_queries_id']
     result = {"not implemented"}
     return jsonify({"results": result}) #topic_seed_queries_id
 
 
-@app.route('/api/topics/<topics_id>/platforms/remove', methods=['GET'])
+@app.route('/api/topics/<topics_id>/platforms/<platform_id>/remove', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
 def topic_remove_platform(topics_id, platform_id):
     user_mc = user_mediacloud_client()
-    query = request.form['platform_query']
+    #query = request.form['platform_query']
     result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id = platform_id)
     return jsonify({"results": result})

@@ -10,7 +10,7 @@ import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
 import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, selectPlatformType } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
-import NewVersionPlatformComparisonContainer from './NewVersionPlatformComparisonContainer';
+// import NewVersionPlatformComparisonContainer from './NewVersionPlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
 import { filteredLinkTo } from '../../util/location';
 
@@ -63,6 +63,8 @@ class ManagePlatformsContainer extends React.Component {
     const { formatMessage } = this.props.intl;
     /* TODO get the latest platform info of each category if exists, relevantPlatforms = platform.map... */
     /* and, compare previous version with current to see if new platforms and if so, offer spider and generate */
+    /* { new vs old platforms are different ? <NewVersionPlatformComparisonContainer platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} /> : '' }
+    */
     return (
       <div>
         <NeedsNewVersionWarning />
@@ -75,9 +77,8 @@ class ManagePlatformsContainer extends React.Component {
                 </p>
               </Col>
             </Row>
-            <PlatformTable platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} />
+            <PlatformTable platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} onDeleteClicked={this.handleDelete} />
           </Grid>
-          { platforms.length > 0 ? <NewVersionPlatformComparisonContainer platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} /> : '' }
           <ConfirmationDialog
             open={this.state.removeDialogOpen}
             title={formatMessage(localMessages.removePlatform)}

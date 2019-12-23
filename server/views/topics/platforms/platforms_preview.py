@@ -10,29 +10,12 @@ from server.util.request import api_error_handler
 import server.util.pushshift.reddit as ps_reddit
 import server.util.pushshift.twitter as ps_twitter
 import server.views.topics.apicache as apicache
-from server.views.media_picker import concatenate_query_for_solr
-from server.views.topics import concatenate_solr_dates
+from server.views.topics.platforms import _topic_query_from_request
+
 
 logger = logging.getLogger(__name__)
 
 OPEN_WEB = 1
-
-
-def _topic_query_from_request():
-    # TODO - adjust for preview and channel
-    media = json.loads(request.args['channel'])
-    media = media['channel']
-    sources = media['sources[]'] if 'sources[]' in media and not [None, ''] else ''
-    collections = media['collections[]'] if 'collections[]' in media else ''
-    searches = media['searches[]'] if 'searches[]' in media else ''
-    # channel contains sources, collections and searches
-    q = concatenate_query_for_solr(solr_seed_query=request.args['platform_query'],
-                                   media_ids=sources,
-                                   tags_ids=collections,
-                                   custom_ids=searches)
-    fq = concatenate_solr_dates(start_date=request.args['start_date'],
-                                end_date=request.args['end_date'])
-    return q, fq
 
 
 @app.route('/api/topics/<topics_id>/platforms/preview/stories', methods=['GET'])

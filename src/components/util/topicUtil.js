@@ -47,8 +47,8 @@ export const formatTopicPlatformPreviewQuery = (topicQuery, platform, query) => 
 export const formatTopicOpenWebPreviewQuery = (topicQuery) => {
   const channel = JSON.stringify(formatTopicOpenWebSourcesForQuery(topicQuery.channel));
   return {
-    channel,
     ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_OPEN_WEB, topicQuery.query),
+    channel,
     source: 'mediacloud',
   };
 };

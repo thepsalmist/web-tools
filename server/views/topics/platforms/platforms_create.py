@@ -5,7 +5,7 @@ import flask_login
 from server import app
 from server.util.request import api_error_handler
 from server.auth import user_mediacloud_client
-
+from server.views.topics.topicsnapshot import topic_update
 logger = logging.getLogger(__name__)
 
 OPEN_WEB = 1
@@ -29,8 +29,12 @@ def get_topic_platforms(topics_id):
     dummy_dict = [{'platform': 'web', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform': 'reddit', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform': 'twitter', 'query': 'dummy', 'topic_seed_queries_id': -1}]
 
     topic = user_mc.topic(topics_id)
-    seed_queries = topic['topic_seed_queries']
-    seed_queries.extend(dummy_dict)
+    non_web_seed_queries = topic['topic_seed_queries']
+    if topic['solr_seed_query'] not in [None, '']:
+        web_seed_query = [{'platform': 'web', 'query': topic['solr_seed_query'], 'topic_seed_queries_id': -1}]
+        non_web_seed_queries.extend(web_seed_query)
+    seed_queries = dummy_dict
+    seed_queries.extend(non_web_seed_queries)
     return jsonify({'results': seed_queries})
 
 
@@ -56,8 +60,14 @@ def topic_add_platform(topics_id):
     #channel has open web sources in it
     #so, if source is mediacloud, do something with the channel
     source = request.form['source'] if 'source' in request.form else None
+
+    if platform == 'web':
+        #update topic as previously
+        result = topic_update(topics_id) #and the request.form info
+    else:
     # do we need to add dates?
-    result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
+        result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
+
     result['success'] = result['topic_seed_query']['topic_seed_queries_id']
     return jsonify(result) #topic_seed_queries_id
 

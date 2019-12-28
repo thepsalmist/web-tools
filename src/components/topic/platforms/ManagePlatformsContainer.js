@@ -30,6 +30,7 @@ class ManagePlatformsContainer extends React.Component {
     removeDialogOpen: false,
     // idToEdit: null,
     idToRemove: null,
+    typeToRemove: null,
   };
 
   onCancelDeletePlatform = () => {
@@ -38,7 +39,7 @@ class ManagePlatformsContainer extends React.Component {
 
   onDeletePlatform = () => {
     const { topicId, handleDeletePlatform } = this.props;
-    handleDeletePlatform(topicId, this.state.idToRemove);
+    handleDeletePlatform(topicId, this.state.idToRemove, this.state.typeToRemove);
     this.setState({ removeDialogOpen: false, idToRemove: null });
   }
 
@@ -54,8 +55,9 @@ class ManagePlatformsContainer extends React.Component {
     handleSelectNewPlatform({ platform: platformType }, filteredLinkTo(`/topics/${topicId}/platforms/create`, filters));
   }
 
-  handleDelete = (platformId) => {
+  handleDelete = (platformId, platformType) => {
     this.setState({ removeDialogOpen: true, idToRemove: platformId });
+    this.setState({ typeToRemove: platformType });
   }
 
   render() {
@@ -117,10 +119,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleDeletePlatform: (topicId, platformId) => {
-    dispatch(deleteTopicPlatform(topicId, platformId))
-      .then((results) => {
-        if (results.success === 0) {
+  handleDeletePlatform: (topicId, platformId, platformType) => {
+    dispatch(selectPlatform({ topic_seed_queries_id: platformId, platformType }));
+    dispatch(deleteTopicPlatform(topicId, platformId, { current_platform_type: platformType }))
+      .then((res) => {
+        if (res.success === 0) {
           dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.removePlatformFailed) }));
         } else {
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.removePlatformSucceeded) }));

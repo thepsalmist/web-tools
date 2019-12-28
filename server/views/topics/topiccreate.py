@@ -97,6 +97,7 @@ def topic_create():
     }
 
     try:
+
         topic_result = user_mc.topicCreate(name=name, description=description, solr_seed_query=solr_seed_query,
                                            start_date=start_date, end_date=end_date, **optional_args)['topics'][0]
 

@@ -10,9 +10,6 @@ import StepLabel from '@material-ui/core/StepLabel';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import BackLinkingControlBar from '../BackLinkingControlBar';
 import TopicConfigureContainer from './TopicConfigureContainer';
-import TopicPreviewContainer from './TopicPreviewContainer';
-import TopicValidateContainer from './TopicValidateContainer';
-import TopicConfirmContainer from './TopicConfirmContainer';
 import { goToTopicStep } from '../../../actions/topicActions';
 import { TOPIC_FORM_MODE_EDIT } from './TopicForm';
 import { filteredLinkTo } from '../../util/location';
@@ -41,9 +38,10 @@ class TopicBuilderWizard extends React.Component {
     const { currentStep, location, initialValues, currentStepTexts, mode, topic, handleStepChange } = this.props;
     const steps = [
       TopicConfigureContainer,
-      TopicPreviewContainer,
+      /* TopicPreviewContainer,
       TopicValidateContainer,
       TopicConfirmContainer,
+      */
     ];
     const CurrentStepComponent = steps[currentStep];
     const stepTexts = currentStepTexts[currentStep];

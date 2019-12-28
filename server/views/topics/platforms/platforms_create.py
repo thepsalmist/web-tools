@@ -94,18 +94,21 @@ def topic_update_platform(topics_id, platform_id):
 
     channel = request.form['channel'] if 'channel' in request.form else None
     source = request.form['source'] if 'source' in request.form else None
+    query = request.form['query'] if 'query' in request.form else None
+    platform = request.form['current_platform_type']
     #channel has open web sources in it
     #so, if source is mediacloud, do something with the channel
 
     #TODO update or remove/add?
     # remove id, add new, return new id
 
-    #if platform == 'web':
-    #    result = topic_update(topics_id)  # and the request.form info
-    #else:
+    if platform == 'web':
+        result = topic_update(topics_id)  # and the request.form info
+    else:
     #   result = user_mc.topicUpdateSeedQuery(topics_id, platform_id, source)
+        result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id =platform_id)
+        result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
     #result['success'] = result['topic_seed_query']['topic_seed_queries_id']
-    result = {"not implemented"}
     return jsonify({"results": result}) #topic_seed_queries_id
 
 
@@ -114,6 +117,9 @@ def topic_update_platform(topics_id, platform_id):
 @api_error_handler
 def topic_remove_platform(topics_id, platform_id):
     user_mc = user_mediacloud_client()
-    #query = request.form['platform_query']
-    result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id = platform_id)
+    platform = request.form['current_platform_type']
+    if platform == 'web': # web_ui_shim that is
+        result = user_mc.topicUpdate(topics_id, solr_seed_query=None, media_ids=None, media_tags_ids=None)
+    else:
+        result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id = platform_id)
     return jsonify({"results": result})

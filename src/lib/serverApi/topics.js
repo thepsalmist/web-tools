@@ -401,8 +401,9 @@ export function topicUpdatePlatform(topicId, platformId, params) {
   return createPostingApiPromise(`/api/topics/${topicId}/platforms/${platformId}/update`, acceptedParams);
 }
 
-export function topicDeletePlatform() {
-
+export function topicDeletePlatform(topicId, platformId, params) {
+  const acceptedParams = acceptParams(params, ['current_platform_type']);
+  return createPostingApiPromise(`/api/topics/${topicId}/platforms/${platformId}/remove`, acceptedParams);
 }
 
 export function topicStoryCountsByPlatformQuery(topicId, params) {

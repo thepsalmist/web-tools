@@ -168,7 +168,7 @@ EditTwitterContainer.propTypes = {
 const mapStateToProps = state => ({
   currentQuery: formSelector(state, 'query'),
   channel: formSelector(state, 'channel'),
-  currentPlatformType: state.topics.selected.platforms.selected.select.platform,
+  currentPlatformType: state.topics.selected.platforms.selected.select.currentPlatformType,
   currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
 });
 

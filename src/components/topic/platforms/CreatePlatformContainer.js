@@ -23,8 +23,8 @@ const localMessages = {
 
 
 const CreatePlatformContainer = (props) => {
-  const { topicInfo, location, handleDone, selectedPlatform } = props;
-  const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, currentPlatformType: selectedPlatform.type };
+  const { topicInfo, location, handleDone, currentPlatformType } = props;
+  const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, currentPlatformType };
   const initAndTopicInfoValues = { ...initialValues, ...topicInfo, query: topicInfo.solr_seed_query };
 
   return (
@@ -34,7 +34,7 @@ const CreatePlatformContainer = (props) => {
       currentStep={0}
       initialValues={initAndTopicInfoValues}
       location={location}
-      onDone={handleDone}
+      onDone={() => handleDone(currentPlatformType)}
     />
   );
 };
@@ -45,7 +45,7 @@ CreatePlatformContainer.propTypes = {
   handleDone: PropTypes.func.isRequired,
   // from state
   values: PropTypes.object,
-  selectedPlatform: PropTypes.string.isRequired,
+  currentPlatformType: PropTypes.string.isRequired,
   // from context:
   topicInfo: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
@@ -55,11 +55,11 @@ CreatePlatformContainer.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   topicInfo: state.topics.selected.info,
-  selectedPlatform: state.topics.selected.platforms.selected.select.platform,
+  currentPlatformType: state.topics.selected.platforms.selected.select.currentPlatformType,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  submitDone: (topicInfo, values) => {
+  submitDone: (currentTopicInfo, currentPlatformType, values) => {
     // let saveData = null;
     // const nameAlreadyExists = queryData.focalSetDefinitions.filter(fc => fc.name === formValues.focalSetName);
     /* if (nameAlreadyExists.length > 0) {
@@ -72,30 +72,30 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       case PLATFORM_OPEN_WEB:
         // need media
         infoForQuery = {
-          ...formatTopicOpenWebPreviewQuery({ ...topicInfo, ...values }),
+          ...formatTopicOpenWebPreviewQuery({ ...currentTopicInfo, currentPlatformType, query: values.currentQuery, channel: values.media }),
         };
         break;
       case PLATFORM_TWITTER:
         // source = internet archive or push_shift
         infoForQuery = {
-          ...formatTopicTwitterPreviewForQuery({ ...topicInfo, ...values }),
+          ...formatTopicTwitterPreviewForQuery({ ...currentTopicInfo, currentPlatformType, query: values.currentQuery, channel: values.media }),
         };
         break;
       case PLATFORM_REDDIT:
         infoForQuery = {
-          ...formatTopicRedditPreviewForQuery({ ...topicInfo, ...values }),
+          ...formatTopicRedditPreviewForQuery({ ...currentTopicInfo, currentPlatformType, query: values.currentQuery, channel: values.media }),
         };
         break;
       default:
         return null;
     }
-    return dispatch(topicCreatePlatform(topicInfo.topics_id, { ...infoForQuery }))
+    return dispatch(topicCreatePlatform(currentTopicInfo.topics_id, { ...infoForQuery }))
       .then((results) => {
         if (results.success > -1) {
           const platformSavedMessage = ownProps.intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
-          dispatch(push(`/topics/${topicInfo.topics_id}/platforms/manage`));
+          dispatch(push(`/topics/${currentTopicInfo.topics_id}/platforms/manage`));
           dispatch(reset('platform')); // it is a wizard so we have to do this by hand
         } else {
           const platformNotSavedMessage = ownProps.intl.formatMessage(localMessages.platformNotSaved);

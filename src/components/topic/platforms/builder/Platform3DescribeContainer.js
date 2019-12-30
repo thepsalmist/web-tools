@@ -11,7 +11,7 @@ import { goToCreatePlatformStep } from '../../../../actions/topicActions';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../../lib/platformTypes';
 import messages from '../../../../resources/messages';
 
-const formPSelector = formValueSelector('platform');
+const formPSelector = formValueSelector('currentPlatformType');
 const formPESelector = formValueSelector('platformEditKeywordForm');
 
 const localMessages = {

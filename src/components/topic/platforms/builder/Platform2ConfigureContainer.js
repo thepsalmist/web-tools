@@ -73,7 +73,7 @@ Platform2ConfigureContainer.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
-  currentPlatformType: state.topics.selected.platforms.selected.select.platform,
+  currentPlatformType: state.topics.selected.platforms.selected.select.currentPlatformType,
   topicInfo: state.topics.selected.info,
   params: ownProps.params,
 });

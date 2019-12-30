@@ -28,7 +28,7 @@ class EditPlatformContainer extends React.Component {
   }
 
   render() {
-    const { topicId, location, handleUpdatePlatform } = this.props;
+    const { topicId, location, currentPlatformType, handleUpdatePlatform } = this.props;
     const initialValues = this.getInitialValues();
     return (
       <PlatformWizard
@@ -36,7 +36,7 @@ class EditPlatformContainer extends React.Component {
         startStep={0}
         initialValues={initialValues}
         location={location}
-        onDone={handleUpdatePlatform}
+        onDone={() => handleUpdatePlatform(initialValues)}
       />
     );
   }
@@ -59,43 +59,43 @@ const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   fetchStatus: state.topics.selected.platforms.selected.platformDetails.fetchStatus,
   currentPlatformId: parseInt(ownProps.params.platformId, 10),
-  currentPlatformType: state.topics.selected.platforms.selected.select.platform,
+  currentPlatformType: state.topics.selected.platforms.selected.select.currentPlatformType,
   platformDetails: state.topics.selected.platforms.selected.platformDetails,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleUpdatePlatform: (topicInfo, formValues) => {
+  handleUpdatePlatform: (currentTopicInfo, currentPlatformType, formValues) => {
     let infoForQuery = {};
-    switch (formValues.platform) {
+    switch (formValues.currentPlatformType) {
       case PLATFORM_OPEN_WEB:
         // need media
         infoForQuery = {
-          ...formatTopicOpenWebPreviewQuery({ ...topicInfo, ...formValues }),
+          ...formatTopicOpenWebPreviewQuery({ ...currentTopicInfo, currentPlatformType, query: formValues.currentQuery, channel: formValues.media }),
         };
         break;
       case PLATFORM_TWITTER:
         // source = internet archive or push_shift
         infoForQuery = {
-          ...formatTopicTwitterPreviewForQuery({ ...topicInfo, ...formValues }),
+          ...formatTopicTwitterPreviewForQuery({ ...currentTopicInfo, currentPlatformType, query: formValues.currentQuery, channel: formValues.media }),
         };
         break;
       case PLATFORM_REDDIT:
         infoForQuery = {
-          ...formatTopicRedditPreviewForQuery({ ...topicInfo, ...formValues }),
+          ...formatTopicRedditPreviewForQuery({ ...currentTopicInfo, currentPlatformType, query: formValues.currentQuery, channel: formValues.media }),
         };
         break;
       default:
         return null;
     }
     // NOTE, this may be a remove/add vs an update on the back end
-    return dispatch(topicUpdatePlatform(topicInfo.topics_id, ownProps.params.platformId, infoForQuery))
+    return dispatch(topicUpdatePlatform(currentTopicInfo.topics_id, ownProps.params.platformId, infoForQuery))
       .then((results) => {
         if (results.length === 1) {
           // TODO get topicId from return const newOrSameId = results.id
           const platformSavedMessage = ownProps.intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
-          dispatch(push(`/topics/${topicInfo.topics_id}/platforms/manage`)); // go back to focus management page
+          dispatch(push(`/topics/${currentTopicInfo.topics_id}/platforms/manage`)); // go back to focus management page
           // dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
         } else {
           const platformNotSavedMessage = ownProps.intl.formatMessage(localMessages.platformNotSaved);
@@ -107,7 +107,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 // platformDetails will be empty if
 const fetchAsyncData = (dispatch, { topicId, platformDetails, currentPlatformType, currentPlatformId }) => {
-  dispatch(selectPlatform({ ...platformDetails, platform: currentPlatformType }));
+  dispatch(selectPlatform({ ...platformDetails, currentPlatformType }));
   dispatch(fetchTopicPlatformById(topicId, currentPlatformId));
 };
 

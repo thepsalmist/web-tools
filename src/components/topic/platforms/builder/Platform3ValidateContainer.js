@@ -177,7 +177,7 @@ const mapStateToProps = state => ({
   stories: state.topics.selected.platforms.preview.matchingStories.list,
   currentTopicInfo: state.topics.selected.info,
   currentQuery: state.form.platform.values.query,
-  currentPlatformType: state.topics.selected.platforms.selected.select.platform,
+  currentPlatformType: state.topics.selected.platforms.selected.select.currentPlatformType,
   channel: state.form.platform.values.channel || state.form.platform.values.sourcesAndCollections,
 });
 

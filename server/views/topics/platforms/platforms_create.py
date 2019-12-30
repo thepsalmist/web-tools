@@ -111,9 +111,7 @@ def topic_update_platform(topics_id, platform_id):
     #channel has open web sources in it
     #so, if source is mediacloud, do something with the channel
 
-    #TODO update or remove/add?
-    # remove id, add new, return new id
-
+    # NOTE: dates are not modified - they are set at the topic level. TODO: confirm user can change dates in topic settings
     if platform == 'web':
         result = topic_update(topics_id)  # and the request.form info
     else:

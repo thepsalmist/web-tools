@@ -34,7 +34,7 @@ const CreatePlatformContainer = (props) => {
       currentStep={0}
       initialValues={initAndTopicInfoValues}
       location={location}
-      onDone={() => handleDone(currentPlatformType)}
+      onDone={() => handleDone(initAndTopicInfoValues)}
     />
   );
 };
@@ -59,7 +59,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  submitDone: (currentTopicInfo, currentPlatformType, values) => {
+  submitDone: (originalValues, values) => {
     // let saveData = null;
     // const nameAlreadyExists = queryData.focalSetDefinitions.filter(fc => fc.name === formValues.focalSetName);
     /* if (nameAlreadyExists.length > 0) {
@@ -68,34 +68,34 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     */
     let infoForQuery = {};
 
-    switch (values.currentPlatformType) {
+    switch (originalValues.currentPlatformType) {
       case PLATFORM_OPEN_WEB:
         // need media
         infoForQuery = {
-          ...formatTopicOpenWebPreviewQuery({ ...currentTopicInfo, currentPlatformType, query: values.currentQuery, channel: values.media }),
+          ...formatTopicOpenWebPreviewQuery({ ...originalValues, query: values.query, channel: values.media }),
         };
         break;
       case PLATFORM_TWITTER:
         // source = internet archive or push_shift
         infoForQuery = {
-          ...formatTopicTwitterPreviewForQuery({ ...currentTopicInfo, currentPlatformType, query: values.currentQuery, channel: values.media }),
+          ...formatTopicTwitterPreviewForQuery({ ...originalValues, query: values.query, channel: values.media }),
         };
         break;
       case PLATFORM_REDDIT:
         infoForQuery = {
-          ...formatTopicRedditPreviewForQuery({ ...currentTopicInfo, currentPlatformType, query: values.currentQuery, channel: values.media }),
+          ...formatTopicRedditPreviewForQuery({ ...originalValues, query: values.query, channel: values.media }),
         };
         break;
       default:
         return null;
     }
-    return dispatch(topicCreatePlatform(currentTopicInfo.topics_id, { ...infoForQuery }))
+    return dispatch(topicCreatePlatform(originalValues.topicId, { ...infoForQuery }))
       .then((results) => {
         if (results.success > -1) {
           const platformSavedMessage = ownProps.intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
-          dispatch(push(`/topics/${currentTopicInfo.topics_id}/platforms/manage`));
+          dispatch(push(`/topics/${originalValues.topics_id}/platforms/manage`));
           dispatch(reset('platform')); // it is a wizard so we have to do this by hand
         } else {
           const platformNotSavedMessage = ownProps.intl.formatMessage(localMessages.platformNotSaved);

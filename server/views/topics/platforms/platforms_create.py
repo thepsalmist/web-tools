@@ -1,11 +1,14 @@
 import logging
 from flask import jsonify, request
 import flask_login
-
+from flask_login import current_user
+import json
 from server import app
 from server.util.request import api_error_handler
 from server.auth import user_mediacloud_client
 from server.views.topics.topicsnapshot import topic_update
+from server.util.stringutil import ids_from_comma_separated_str
+from server.views.topics.topic import topic_summary
 logger = logging.getLogger(__name__)
 
 OPEN_WEB = 1
@@ -61,6 +64,39 @@ def get_platform_by_id(topics_id, platform_id):
     return jsonify({'results': web_seed_query})
 
 
+@app.route('/api/topics/<topics_id>/snapshots/update-seed-query', methods=['PUT'])
+@flask_login.login_required
+@api_error_handler
+def topic_update_by_web_platform(topics_id):
+    # update the seed query first 5 MUST be filled in)
+    args = {
+        'solr_seed_query': request.form['platform_query'] if 'platform_query' in request.form else None,
+        'is_public': request.form['is_public'] if 'is_public' in request.form else None,
+        'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
+        'ch_monitor_id': request.form['ch_monitor_id'] if 'ch_monitor_id' in request.form
+                                                          and request.form['ch_monitor_id'] is not None
+                                                          and request.form['ch_monitor_id'] != 'null'
+                                                          and len(request.form['ch_monitor_id']) > 0 else None,
+        'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
+        'max_stories': request.form['max_stories'] if 'max_stories' in request.form and request.form['max_stories'] != 'null' else current_user.profile['limits']['max_topic_stories'],
+        'twitter_topics_id': request.form['twitter_topics_id'] if 'twitter_topics_id' in request.form else None
+    }
+    # parse out any sources and collections to add
+    media = json.loads(request.form['channel'])
+    media = media['channel']
+    sources = media['sources[]'] if 'sources[]' in media and not [None, ''] else ''
+    collections = media['collections[]'] if 'collections[]' in media else ''
+
+    # hack to support twitter-only topics
+    if (len(sources) is 0) and (len(collections) is 0):
+        sources = None
+        collections = None
+    # update the seed query (the client will start the spider themselves
+    user_mc = user_mediacloud_client()
+    result = user_mc.topicUpdate(topics_id, media_ids=sources, media_tags_ids=collections, **args)
+    return topic_summary(topics_id)  # give them back new data, so they can update the client
+
+
 @app.route('/api/topics/<topics_id>/platforms/add', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
@@ -70,13 +106,13 @@ def topic_add_platform(topics_id):
     query = request.form['platform_query']
 
     channel = request.form['channel'] if 'channel' in request.form else None
-    #channel has open web sources in it
-    #so,    if source is mediacloud, do something with the channel
+
     source = request.form['source'] if 'source' in request.form else None
 
     if platform == 'web':
-        #update topic as previously
-        result = topic_update(topics_id) #and the request.form info
+        # channel has open web sources in it
+        result = topic_update_by_web_platform(topics_id) #and the request.form info
+        # TODO - add retweet partisanship? or will that be handled in the back end
     else:
     # do we need to add dates?
         result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
@@ -84,18 +120,6 @@ def topic_add_platform(topics_id):
     result['success'] = result['topic_seed_query']['topic_seed_queries_id']
     return jsonify(result) #topic_seed_queries_id
 
-#if this is an open web platform, do we need to do any of this (from topic creation):
-    # parse out any sources and collections, or custom collections to add
-    #media_ids_to_add = ids_from_comma_separated_str(request.form['sources[]'])
-    #tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]'])
-    #custom_collections_clause = custom_collection_as_solr_query(request.form['searches[]'])
-    #if len(custom_collections_clause) > 0:
-    #    solr_seed_query = '{} OR {}'.format(solr_seed_query, custom_collections_clause)
-
-#if set(tag_ids_to_add).intersection(US_COLLECTIONS):
-#    add_retweet_partisanship_to_topic(topic_result['topics_id'],
-#                                      'Retweet Partisanship',
-#                                      'Subtopics driven by our analysis of Twitter followers of Trump and Clinton during the 2016 election season.  Each media soure is scored based on the ratio of retweets of their stories in those two groups.')
 
 
 @app.route('/api/topics/<topics_id>/platforms/<platform_id>/update', methods=['POST'])
@@ -110,16 +134,15 @@ def topic_update_platform(topics_id, platform_id):
     platform = request.form['current_platform_type']
     #channel has open web sources in it
     #so, if source is mediacloud, do something with the channel
-
     # NOTE: dates are not modified - they are set at the topic level. TODO: confirm user can change dates in topic settings
     if platform == 'web':
-        result = topic_update(topics_id)  # and the request.form info
+        result = topic_update_by_web_platform(topics_id)  # and the request.form info
     else:
     #   result = user_mc.topicUpdateSeedQuery(topics_id, platform_id, source)
         result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id =platform_id)
         result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
     #result['success'] = result['topic_seed_query']['topic_seed_queries_id']
-    return jsonify({"results": result}) #topic_seed_queries_id
+    return result #topic_seed_queries_id
 
 
 @app.route('/api/topics/<topics_id>/platforms/<platform_id>/remove', methods=['POST'])
@@ -132,4 +155,4 @@ def topic_remove_platform(topics_id, platform_id):
         result = user_mc.topicUpdate(topics_id, solr_seed_query='', media_ids=[], media_tags_ids=[])
     else:
         result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id = platform_id)
-    return jsonify({"results": result})
+    return jsonify(result)

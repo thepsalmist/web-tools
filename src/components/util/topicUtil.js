@@ -39,7 +39,7 @@ export const formatTopicPlatformPreviewQuery = (topicQuery, platform, query) => 
   topics_id: topicQuery.topics_id,
   current_platform_type: platform,
   platform_query: query,
-  start_date: topicQuery.start_date,
+  start_date: topicQuery.start_date, // for querying purposes
   end_date: topicQuery.end_date,
   channel: topicQuery.channel,
 });

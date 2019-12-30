@@ -28,7 +28,7 @@ class EditPlatformContainer extends React.Component {
   }
 
   render() {
-    const { topicId, location, currentPlatformType, handleUpdatePlatform } = this.props;
+    const { topicId, location, handleUpdatePlatform } = this.props;
     const initialValues = this.getInitialValues();
     return (
       <PlatformWizard
@@ -36,7 +36,7 @@ class EditPlatformContainer extends React.Component {
         startStep={0}
         initialValues={initialValues}
         location={location}
-        onDone={() => handleUpdatePlatform(initialValues)}
+        onDone={(tId, values) => handleUpdatePlatform(initialValues, values)}
       />
     );
   }
@@ -64,38 +64,38 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleUpdatePlatform: (currentTopicInfo, currentPlatformType, formValues) => {
+  handleUpdatePlatform: (originalValues, formValues) => {
     let infoForQuery = {};
-    switch (formValues.currentPlatformType) {
+    switch (originalValues.currentPlatformType) {
       case PLATFORM_OPEN_WEB:
         // need media
         infoForQuery = {
-          ...formatTopicOpenWebPreviewQuery({ ...currentTopicInfo, currentPlatformType, query: formValues.currentQuery, channel: formValues.media }),
+          ...formatTopicOpenWebPreviewQuery({ ...originalValues, query: formValues.query, channel: formValues.media }),
         };
         break;
       case PLATFORM_TWITTER:
         // source = internet archive or push_shift
         infoForQuery = {
-          ...formatTopicTwitterPreviewForQuery({ ...currentTopicInfo, currentPlatformType, query: formValues.currentQuery, channel: formValues.media }),
+          ...formatTopicTwitterPreviewForQuery({ ...originalValues, query: formValues.query, channel: formValues.media }),
         };
         break;
       case PLATFORM_REDDIT:
         infoForQuery = {
-          ...formatTopicRedditPreviewForQuery({ ...currentTopicInfo, currentPlatformType, query: formValues.currentQuery, channel: formValues.media }),
+          ...formatTopicRedditPreviewForQuery({ ...originalValues, query: formValues.currentQuery, channel: formValues.media }),
         };
         break;
       default:
         return null;
     }
     // NOTE, this may be a remove/add vs an update on the back end
-    return dispatch(topicUpdatePlatform(currentTopicInfo.topics_id, ownProps.params.platformId, infoForQuery))
+    return dispatch(topicUpdatePlatform(originalValues.topicId, ownProps.params.platformId, infoForQuery))
       .then((results) => {
         if (results.length === 1) {
           // TODO get topicId from return const newOrSameId = results.id
           const platformSavedMessage = ownProps.intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
-          dispatch(push(`/topics/${currentTopicInfo.topics_id}/platforms/manage`)); // go back to focus management page
+          dispatch(push(`/topics/${originalValues.topics_id}/platforms/manage`)); // go back to focus management page
           // dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
         } else {
           const platformNotSavedMessage = ownProps.intl.formatMessage(localMessages.platformNotSaved);

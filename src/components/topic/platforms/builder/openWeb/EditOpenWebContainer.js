@@ -114,6 +114,8 @@ class EditOpenWebContainer extends React.Component {
                   formatMessage={formatMessage}
                   className="query-field"
                   form="platform"
+                  enableReinitialize
+                  keepDirtyOnReinitialize
                   destroyOnUnmount={false}
                   fieldName="media"
                   initialValues={cleanedInitialValues} // to and from MediaPicker

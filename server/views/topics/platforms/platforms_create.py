@@ -52,7 +52,7 @@ def get_platform_by_id(topics_id, platform_id):
     results = "not implemented for all platforms"
     topic = user_mc.topic(topics_id)
     if int(platform_id) == 9999: #web shim
-        logger.log("shim platform retrieved")
+        logger.info("shim platform retrieved")
         web_seed_query = WEB_SEED_SHIM
         web_seed_query['query'] = topic['solr_seed_query']
         web_seed_query['media'] = topic['media_tags']

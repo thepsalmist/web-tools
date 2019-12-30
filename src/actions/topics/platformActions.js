@@ -8,6 +8,10 @@ export const goToCreatePlatformStep = createAction(GO_TO_CREATE_PLATFORM_STEP, s
 export const FETCH_ALL_PLATFORMS = 'FETCH_ALL_PLATFORMS';
 export const fetchTopicPlatforms = createAsyncAction(FETCH_ALL_PLATFORMS, api.topicPlatformList);
 
+export const RESET_PLATFORMS = 'RESET_PLATFORMS';
+export const resetTopicPlatforms = createAction(RESET_PLATFORMS);
+
+
 export const FETCH_PLATFORMS_IN_TOPIC = 'FETCH_PLATFORMS_IN_TOPIC';
 export const fetchPlatformsInTopicList = createAsyncAction(FETCH_PLATFORMS_IN_TOPIC, api.platformsInTopic);
 

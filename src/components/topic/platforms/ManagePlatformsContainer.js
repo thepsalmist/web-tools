@@ -8,7 +8,7 @@ import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import PlatformTable from '../../common/PlatformTable';
 import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
-import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, selectPlatformType } from '../../../actions/topicActions';
+import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, selectPlatformType, resetTopicPlatforms } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 // import NewVersionPlatformComparisonContainer from './NewVersionPlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
@@ -143,6 +143,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 const fetchAsyncData = (dispatch, { topicId }) => {
+  dispatch(resetTopicPlatforms(topicId));
   dispatch(fetchPlatformsInTopicList(topicId));
 };
 

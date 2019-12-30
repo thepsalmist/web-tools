@@ -1,4 +1,4 @@
-import { FETCH_PLATFORMS_IN_TOPIC /* FETCH_ALL_PLATFORMS */ }
+import { FETCH_PLATFORMS_IN_TOPIC, RESET_PLATFORMS/* FETCH_ALL_PLATFORMS */ }
   from '../../../../actions/topicActions';
 import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 
@@ -6,7 +6,8 @@ const all = createAsyncReducer({
   initialState: {
     results: [],
   },
-  action: FETCH_PLATFORMS_IN_TOPIC, // TODO which reducer
+  action: FETCH_PLATFORMS_IN_TOPIC,
+  [RESET_PLATFORMS]: () => ({ results: [] }),
 });
 
 export default all;

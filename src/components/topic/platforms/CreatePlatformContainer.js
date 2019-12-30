@@ -34,7 +34,7 @@ const CreatePlatformContainer = (props) => {
       currentStep={0}
       initialValues={initAndTopicInfoValues}
       location={location}
-      onDone={() => handleDone(initAndTopicInfoValues)}
+      onDone={(id, values) => handleDone(initAndTopicInfoValues, values)}
     />
   );
 };
@@ -68,7 +68,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     */
     let infoForQuery = {};
 
-    switch (originalValues.currentPlatformType) {
+    switch (values.currentPlatformType) {
       case PLATFORM_OPEN_WEB:
         // need media
         infoForQuery = {
@@ -89,7 +89,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       default:
         return null;
     }
-    return dispatch(topicCreatePlatform(originalValues.topicId, { ...infoForQuery }))
+    return dispatch(topicCreatePlatform(originalValues.topics_id, { ...infoForQuery }))
       .then((results) => {
         if (results.success > -1) {
           const platformSavedMessage = ownProps.intl.formatMessage(localMessages.platformSaved);

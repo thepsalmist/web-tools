@@ -40,7 +40,8 @@ def api_topics_platform_preview_story_sample(topics_id):
     elif platform == 'web':
         solr_query, fq = _topic_query_from_request()
         # replicating create preview flow (not using apicache.topicStoryList b/c we haven't spidered the topic/platform version yet
-        story_count_result = user_mc.storyList(solr_query=platform_query)
+        solr_query, fq = _topic_query_from_request()
+        story_count_result = user_mc.storyList(solr_query=solr_query, solr_filter=fq)
     elif platform == 'twitter':
         # TODO, handle multiple twitter choices
         channel = request.args['channel'] if 'channel' in request.args else None
@@ -91,7 +92,7 @@ def api_topics_platform_preview_story_count(topics_id):
         media = request.args['channel'] if 'channel' in request.args else '*'
         # prep solr_query with _topic_query_from_request
         solr_query, fq = _topic_query_from_request()
-        story_count_result = user_mc.storyCount(solr_query=platform_query)
+        story_count_result = user_mc.storyCount(solr_query=platform_query, solr_filter=fq)
     return jsonify(story_count_result)
 
 
@@ -125,7 +126,7 @@ def api_topics_platform_preview_top_words(topics_id, **kwargs):
         'q': solr_query
     }
     params.update(merged_args)
-
+    # TODO doesn't appear to take solr_filter
 
     response = apicache.topic_word_counts(user_mediacloud_key(), topics_id, **params)[:100]
     return jsonify({'results': response})

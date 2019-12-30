@@ -9,6 +9,8 @@ from server.views.topics.topicsnapshot import topic_update
 logger = logging.getLogger(__name__)
 
 OPEN_WEB = 1
+WEB_SEED_SHIM = {'platform_type': 'web_ui_shim', 'platform': 'web',
+     'topic_seed_queries_id': 9999}  # TODO, assuming seed query ids are 0-10 or so
 
 
 @app.route('/api/topics/platforms/all', methods=['GET'])
@@ -32,8 +34,10 @@ def get_topic_platforms(topics_id):
     non_web_seed_queries = topic['topic_seed_queries']
     if topic['solr_seed_query'] not in [None, '']:
         #channel - the media ids sources, collections
-        web_seed_query = [{'platform_type': 'web_ui_shim', 'platform': 'web', 'query': topic['solr_seed_query'], 'media': topic['media_tags'], 'topic_seed_queries_id': 9999}] #TODO, assuming seed query ids are 0-10 or so
-        non_web_seed_queries.extend(web_seed_query)
+        web_seed_query = WEB_SEED_SHIM
+        web_seed_query['query'] = topic['solr_seed_query']
+        web_seed_query['media'] = topic['media_tags']
+        non_web_seed_queries.extend([web_seed_query])
     seed_queries = dummy_dict
     seed_queries.extend(non_web_seed_queries)
     return jsonify({'results': seed_queries})
@@ -45,8 +49,16 @@ def get_topic_platforms(topics_id):
 def get_platform_by_id(topics_id, platform_id):
     # iterate through topic seed queries array
     user_mc = user_mediacloud_client()
-    return 'nothing yet'
-
+    results = "not implemented for all platforms"
+    topic = user_mc.topic(topics_id)
+    if int(platform_id) == 9999: #web shim
+        logger.log("shim platform retrieved")
+        web_seed_query = WEB_SEED_SHIM
+        web_seed_query['query'] = topic['solr_seed_query']
+        web_seed_query['media'] = topic['media_tags']
+    else:
+        web_seed_query = {s for s in topic['topic_seed_queries'] if s['topic_seed_query_id']== platform_id}
+    return jsonify({'results': web_seed_query})
 
 
 @app.route('/api/topics/<topics_id>/platforms/add', methods=['POST'])
@@ -59,7 +71,7 @@ def topic_add_platform(topics_id):
 
     channel = request.form['channel'] if 'channel' in request.form else None
     #channel has open web sources in it
-    #so, if source is mediacloud, do something with the channel
+    #so,    if source is mediacloud, do something with the channel
     source = request.form['source'] if 'source' in request.form else None
 
     if platform == 'web':
@@ -112,14 +124,14 @@ def topic_update_platform(topics_id, platform_id):
     return jsonify({"results": result}) #topic_seed_queries_id
 
 
-@app.route('/api/topics/<topics_id>/platforms/<platform_id>/remove', methods=['GET'])
+@app.route('/api/topics/<topics_id>/platforms/<platform_id>/remove', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
 def topic_remove_platform(topics_id, platform_id):
     user_mc = user_mediacloud_client()
     platform = request.form['current_platform_type']
     if platform == 'web': # web_ui_shim that is
-        result = user_mc.topicUpdate(topics_id, solr_seed_query=None, media_ids=None, media_tags_ids=None)
+        result = user_mc.topicUpdate(topics_id, solr_seed_query='', media_ids=[], media_tags_ids=[])
     else:
         result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id = platform_id)
     return jsonify({"results": result})

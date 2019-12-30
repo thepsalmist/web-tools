@@ -54,12 +54,15 @@ class EditOpenWebContainer extends React.Component {
     const { topicId, initialValues, handleMediaChange, renderTextField, handleSubmit, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     let mediaPicker = null;
-    const selectedMedia = initialValues.media ? initialValues.media : [];
-    // eslint-disable-next-line jsx-a11y/label-has-associated-control
+    const sourcesAndCollections = initialValues.media_tags;
+    const cleanedInitialValues = {};
+    cleanedInitialValues.media = sourcesAndCollections;
+    // infoForQuery['collections[]'] = topic.media_tags.map(s => s.tags_id);
+    // infoForQuery['sources[]'] = topic.media_tags.map(s => s.media_id);
     const mediaLabel = <label htmlFor="media"><FormattedMessage {...localMessages.SandC} /></label>;
     mediaPicker = (
       <MediaPickerDialog
-        initMedia={selectedMedia} // {selected.media ? selected.media : cleanedInitialValues.media}
+        initMedia={cleanedInitialValues.media} // {selected.media ? selected.media : cleanedInitialValues.media}
         onConfirmSelection={selections => handleMediaChange(selections)}
       />
     );
@@ -112,8 +115,8 @@ class EditOpenWebContainer extends React.Component {
                   className="query-field"
                   form="platform"
                   destroyOnUnmount={false}
-                  fieldName="sourcesAndCollections"
-                  initialValues={initialValues.sourcesAndCollections} // to and from MediaPicker
+                  fieldName="media"
+                  initialValues={cleanedInitialValues} // to and from MediaPicker
                   allowRemoval
                 />
                 {mediaPicker}

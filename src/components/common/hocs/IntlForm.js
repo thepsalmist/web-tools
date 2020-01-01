@@ -36,6 +36,7 @@ function withIntlForm(Component) {
     renderSolrTextField = ({ input, ...custom }) => {
       const codeMirrorOptions = {
         mode: 'solr',
+        lineWrapping: true,
       };
       const intlCustom = this.intlCustomProps(custom);
       if (intlCustom && intlCustom.helpertext !== undefined) {

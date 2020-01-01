@@ -18,7 +18,7 @@ const localMessages = {
 function classNameFromPackage(packagePath) { return (packagePath) ? packagePath.split('::').pop() : '?'; }
 
 const JobList = ({ jobs, highlightSnapshotId }) => (
-  <React.Fragment>
+  <>
     <h2><FormattedMessage {...localMessages.title} /></h2>
     { jobs.length === 0 && (<p><FormattedMessage {...localMessages.noJobs} /></p>)}
     { jobs.length > 0 && (
@@ -56,7 +56,7 @@ const JobList = ({ jobs, highlightSnapshotId }) => (
         </tbody>
       </table>
     )}
-  </React.Fragment>
+  </>
 );
 
 JobList.propTypes = {

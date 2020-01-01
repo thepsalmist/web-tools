@@ -1,7 +1,8 @@
 import { resolve } from 'redux-simple-promise';
 import { FETCH_TOPIC_FOCAL_SETS_LIST, TOPIC_FILTER_BY_SNAPSHOT, FETCH_FOCAL_SET_DEFINITIONS,
-  CREATE_FOCAL_SET_DEFINITION, DELETE_FOCAL_SET_DEFINITION, CREATE_FOCUS_DEFINITION, DELETE_FOCUS_DEFINITION,
-  CREATE_RETWEET_FOCUS_SET, CREATE_TOP_COUNTRIES_FOCUS_SET, CREATE_NYT_THEME_FOCUS_SET, CREATE_MEDIA_TYPE_FOCUS_SET }
+  DELETE_FOCAL_SET_DEFINITION, CREATE_FOCUS_DEFINITION, DELETE_FOCUS_DEFINITION,
+  CREATE_RETWEET_FOCUS_SET, CREATE_TOP_COUNTRIES_FOCUS_SET, CREATE_NYT_THEME_FOCUS_SET,
+  CREATE_MEDIA_TYPE_FOCUS_SET }
   from '../../../../actions/topicActions';
 import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 
@@ -50,7 +51,6 @@ const all = createAsyncReducer({
   [resolve(FETCH_FOCAL_SET_DEFINITIONS)]: (listOfFocalSetDefs, state) => ({
     newDefinitions: pendingFocalSetDefinitions(listOfFocalSetDefs, state.list),
   }),
-  [resolve(CREATE_FOCAL_SET_DEFINITION)]: markAsHavingNewDefinitions,
   [resolve(DELETE_FOCAL_SET_DEFINITION)]: markAsHavingNewDefinitions,
   [resolve(CREATE_FOCUS_DEFINITION)]: markAsHavingNewDefinitions,
   [resolve(DELETE_FOCUS_DEFINITION)]: markAsHavingNewDefinitions,

@@ -1,12 +1,10 @@
-import 'babel-polyfill';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import 'intl';
-import 'core-js/es6/map';
-import 'core-js/es6/set';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactGA from 'react-ga';
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import Router from 'react-router/lib/Router';
@@ -93,7 +91,7 @@ function reallyInitializeApp(routes) {
 
   const renderApp = () => {
     ReactDOM.render(
-      <MuiThemeProvider theme={muiTheme}>
+      <ThemeProvider theme={muiTheme}>
         <Provider store={store}>
           <IntlProvider locale={DEFAULT_LOCALE}>
             <Router history={history} onUpdate={logPageView}>
@@ -101,7 +99,7 @@ function reallyInitializeApp(routes) {
             </Router>
           </IntlProvider>
         </Provider>
-      </MuiThemeProvider>,
+      </ThemeProvider>,
       document.getElementById(APP_DOM_ELEMENT_ID)
     );
   };

@@ -53,7 +53,7 @@ Stat.propTypes = {
   ]),
   // from context
   intl: PropTypes.object.isRequired,
-  helpButton: PropTypes.node.isRequired,
+  helpButton: PropTypes.node,
   setHelpTitleMsg: PropTypes.func.isRequired,
   setHelpContentMsg: PropTypes.func.isRequired,
 };

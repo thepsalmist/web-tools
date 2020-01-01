@@ -18,6 +18,8 @@ const localMessages = {
   emptyMedia: { id: 'explorer.querypicker.emptyMedia', defaultMessage: 'No media selected' },
   sourcesSummary: { id: 'explorer.querypicker.sources', defaultMessage: '{sourceCount, plural, \n =0 {``} \n =1 {# source} \n other {# sources }\n}' },
   collectionsSummary: { id: 'explorer.querypicker.coll', defaultMessage: '{collectionCount, plural, \n =0 {``} \n =1 {# collection} \n other {# collections }\n}' },
+  customCollSummary: { id: 'explorer.querypicker.customColl', defaultMessage: '{customCollCount, plural, \n =0 {``} \n =1 {# custom collection} \n other {# custom collections }\n}' },
+  totalCollectionsSummary: { id: 'explorer.querypicker.coll', defaultMessage: '{totalCollCount} collections, ({customCollCount} custom)' },
   searchHint: { id: 'explorer.querypicker.searchHint', defaultMessage: 'keywords' },
   queryDialog: { id: 'explorer.querypicker.queryDialog', defaultMessage: 'The query label shows up on the legend of the various charts and graphs below. We autogenerate it for you based on your query, but you can also set your own short name to make the charts easier to read.' },
   title: { id: 'explorer.querypicker.title', defaultMessage: 'Rename Query' },
@@ -123,12 +125,15 @@ class QueryPickerItem extends React.Component {
 
       const collectionCount = query.collections ? query.collections.length : 0;
       const sourceCount = query.sources ? query.sources.length : 0;
+      const customCollCount = query.searches ? query.searches.length : 0;
       // const srcDesc = query.media;
-      const totalMediaCount = collectionCount + sourceCount;
+      const totalMediaCount = collectionCount + sourceCount + customCollCount;
       if (totalMediaCount > 0) {
         let oneSourceLabel = query.sources && query.sources[0] && query.sources[0].name ? query.sources[0].name : '';
         const oneCollLabelOrNumber = query.collections[0] && query.collections[0].label ? query.collections[0].label : '';
         const oneCollLabel = collectionCount === 1 ? oneCollLabelOrNumber : '';
+        const oneCustomCollLabelOrNumber = query.searches && query.searches[0] ? `${query.searches[0].mediaKeyword || ''} (custom)` : '';
+        const oneCustomCollLabel = customCollCount === 1 ? oneCustomCollLabelOrNumber : '';
         oneSourceLabel = sourceCount === 1 ? oneSourceLabel : '';
 
         const oneCollStatus = oneCollLabel;
@@ -138,8 +143,8 @@ class QueryPickerItem extends React.Component {
             <br />{query.startDate ? getShortDate(query.startDate) : ''} to {query.endDate ? getShortDate(query.endDate) : ''}
           </div>
         );
-
-        if (sourceCount === 0 && collectionCount === 1) {
+        /* if there is just one media, we can show label info */
+        if (sourceCount === 0 && collectionCount === 1 && customCollCount === 0) {
           subT = (
             <div className="query-info">
               {displayLabel ? query.label : ''}
@@ -147,7 +152,7 @@ class QueryPickerItem extends React.Component {
               {query.startDate ? getShortDate(query.startDate) : ''} to {query.endDate ? getShortDate(query.endDate) : ''}
             </div>
           );
-        } else if (collectionCount === 0 && sourceCount === 1) {
+        } else if (collectionCount === 0 && sourceCount === 1 && customCollCount === 0) {
           subT = (
             <div className="query-info">
               {displayLabel ? query.label : ''}
@@ -155,11 +160,20 @@ class QueryPickerItem extends React.Component {
               {query.startDate ? getShortDate(query.startDate) : ''} to {query.endDate ? getShortDate(query.endDate) : ''}
             </div>
           );
-        } else if (totalMediaCount > 0) {
+        } else if (customCollCount === 1 && sourceCount === 0 && collectionCount === 0) {
           subT = (
             <div className="query-info">
               {displayLabel ? query.label : ''}
-              {collectionCount > 0 ? <div><FormattedMessage {...localMessages.collectionsSummary} values={{ collectionCount, label: queryLabel }} /><br /></div> : ''}
+              {oneCustomCollLabel.length >= QUERY_LABEL_CHARACTER_LIMIT - 1 ? oneCustomCollLabel.slice(0, QUERY_LABEL_CHARACTER_LIMIT).concat('...') : oneCustomCollLabel}<br />
+              {query.startDate ? getShortDate(query.startDate) : ''} to {query.endDate ? getShortDate(query.endDate) : ''}
+            </div>
+          );
+        } else if (totalMediaCount > 0) { // otherwise, show the counts per source/collections. Merge collectiosn with custom search collections for brevity
+          const totalCollCount = collectionCount + customCollCount;
+          subT = (
+            <div className="query-info">
+              {displayLabel ? query.label : ''}
+              {collectionCount > 0 || customCollCount > 0 ? <div><FormattedMessage {...localMessages.totalCollectionsSummary} values={{ totalCollCount, customCollCount, label: queryLabel }} /><br /></div> : ''}
               {sourceCount > 0 ? <div><FormattedMessage {...localMessages.sourcesSummary} values={{ sourceCount, label: queryLabel }} /><br /> </div> : ''}
               {query.startDate ? getShortDate(query.startDate) : ''} to {query.endDate ? getShortDate(query.endDate) : ''}
             </div>

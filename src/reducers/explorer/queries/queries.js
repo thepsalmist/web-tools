@@ -57,7 +57,7 @@ function queries(state = INITIAL_STATE, action) {
       if (action.payload.uid !== undefined && action.payload.field) {
         queryIndex = state.findIndex(q => q.uid !== null && q.uid === action.payload.uid);
         updatedState = [...state];
-        updatedState[queryIndex] = Object.assign({}, updatedState[queryIndex], action.payload.newValues);
+        updatedState[queryIndex] = { ...updatedState[queryIndex], ...action.payload.newValues };
         updatedState[queryIndex].label = action.payload.newValues.q ? action.payload.newValues.q : updatedState[queryIndex].label;
         return updatedState;
       }
@@ -72,7 +72,7 @@ function queries(state = INITIAL_STATE, action) {
           return state;
         }
         queryIndex = queryIndex > -1 ? queryIndex : action.payload.uid;
-        updatedState[queryIndex].sources = action.payload.sources.results.map(r => Object.assign({}, r, { selected: true }));
+        updatedState[queryIndex].sources = action.payload.sources.results.map(r => ({ ...r, selected: true }));
         return updatedState;
       }
       return null;
@@ -85,7 +85,7 @@ function queries(state = INITIAL_STATE, action) {
           // so swallow the error for now with no updates
           return state;
         }
-        updatedState[queryIndex].collections = action.payload.collections.results.map(r => Object.assign({}, r, { selected: true }));
+        updatedState[queryIndex].collections = action.payload.collections.results.map(r => ({ ...r, selected: true }));
         return updatedState;
       }
       return null;
@@ -109,7 +109,7 @@ function queries(state = INITIAL_STATE, action) {
               if (vals && vals.length > 0) {
                 const tagSet = Object.values(searchObj.tags[m]).map(a => a.tag_sets_id).reduce(ts => ts);
                 const readableName = lookupReadableMetadataName(tagSet);
-                updatedCustonObj.tags[readableName] = Object.values(searchObj.tags[m]).map(a => Object.assign({}, a, { selected: true }));
+                updatedCustonObj.tags[readableName] = Object.values(searchObj.tags[m]).map(a => ({ ...a, selected: true }));
               }
               return null;
             });
@@ -127,13 +127,13 @@ function queries(state = INITIAL_STATE, action) {
       return null;
     case SELECT_SEARCH_BY_ID:
       if (action.payload) { // make sure searchId is set if present in return results. use uid to differentiate queries.
-        const queryData = action.payload.queries.map(q => Object.assign({}, q, { searchId: action.payload.id, id: action.payload.uid, uid: action.payload.uid }));
+        const queryData = action.payload.queries.map(q => ({ ...q, searchId: action.payload.id, id: action.payload.uid, uid: action.payload.uid }));
         updatedState = queryData;
         return updatedState;
       }
       return state;
     case SAVE_PARSED_QUERIES: // select this set of queries as passed in by URL
-      updatedState = action.payload.map(q => Object.assign({}, q, { autoNaming: q.q === '*' || q.q === '' ? true : q.autoNaming }));
+      updatedState = action.payload.map(q => ({ ...q, autoNaming: q.q === '*' || q.q === '' ? true : q.autoNaming }));
       return updatedState;
     case MARK_AS_DELETED_QUERY:
       if (action.payload) {
@@ -146,7 +146,7 @@ function queries(state = INITIAL_STATE, action) {
       }
       return state;
     case REMOVE_NEW_STATUS:
-      const queryData = [...state.map(q => Object.assign({}, q, { new: false }))];
+      const queryData = [...state.map(q => ({ ...q, new: false }))];
       updatedState = queryData;
       return updatedState;
     case REMOVE_DELETED_QUERIES:

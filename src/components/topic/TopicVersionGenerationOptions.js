@@ -14,7 +14,7 @@ const TopicVersionGenerationOptions = (props) => {
   const { formatMessage } = props.intl;
   const topicId = topicInfo.topics_id;
   return (
-    <React.Fragment>
+    <>
       <h3>Placeholder: Your topic has new updates - you can do the following</h3>
       <Link to={`/topics/${topicId}/snapshot/foci/create`}>
         <AppButton
@@ -37,7 +37,7 @@ const TopicVersionGenerationOptions = (props) => {
           onClick={() => handleCreateVersionAndStartSpider(topicId, topicInfo)}
         />
       </Link>
-    </React.Fragment>
+    </>
   );
 };
 

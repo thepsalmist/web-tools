@@ -10,12 +10,12 @@ from slugify import slugify
 from server import mc, app, analytics_db
 from server.auth import is_user_logged_in
 from server.util.request import api_error_handler
+from server.views.media_picker import concatenate_query_for_solr
 
 logger = logging.getLogger(__name__)
 
 SORT_SOCIAL = 'social'
 SORT_INLINK = 'inlink'
-ALL_MEDIA = '-1'
 DEFAULT_COLLECTION_IDS = [9139487]
 
 
@@ -37,37 +37,6 @@ def access_public_topic(topics_id):
     if (not is_user_logged_in()) and (topic_is_public(topics_id)):
         return True
     return False
-
-
-# helper for preview queries
-# tags_id is either a string or a list, which is handled in either case by the len() test. ALL_MEDIA is the exception
-def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
-    query = '({})'.format(solr_seed_query)
-
-    if len(media_ids) > 0 or len(tags_ids) > 0:
-        if tags_ids == [ALL_MEDIA] or tags_ids == ALL_MEDIA:
-            return query
-        query += " AND ("
-        # add in the media sources they specified
-        if len(media_ids) > 0:
-            media_ids = media_ids.split(',') if isinstance(media_ids, str) else media_ids
-            query_media_ids = " ".join([str(m) for m in media_ids])
-            query_media_ids = " media_id:({})".format(query_media_ids)
-            query += '('+query_media_ids+')'
-
-        # conjunction
-        if len(media_ids) > 0 and len(tags_ids) > 0:
-            query += " OR "
-
-        # add in the collections they specified
-        if len(tags_ids) > 0:
-            tags_ids = tags_ids.split(',') if isinstance(tags_ids, str) else tags_ids
-            query_tags_ids = " ".join([str(t) for t in tags_ids])
-            query_tags_ids = " tags_id_media:({})".format(query_tags_ids)
-            query += '('+query_tags_ids+')'
-        query += ')'
-
-    return query
 
 
 def dates_as_filter_query(start_date, end_date):
@@ -150,9 +119,11 @@ def parse_query_with_keywords(args):
         start_date, end_date = parse_query_dates(args)
         media_ids = _parse_media_ids(args)
         collections = _parse_collection_ids(args)
+        searches = args['searches'] if 'searches' in args else []
         solr_q = concatenate_query_for_solr(solr_seed_query=current_query,
                                             media_ids=media_ids,
-                                            tags_ids=collections)
+                                            tags_ids=collections,
+                                            custom_ids=searches)
         solr_fq = dates_as_filter_query(start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
     # otherwise, default
     except Exception as e:

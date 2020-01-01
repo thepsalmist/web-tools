@@ -58,19 +58,19 @@ const DownloadMapContainer = (props) => {
         break;
     }
     content = (
-      <React.Fragment>
+      <>
         <h3><FormattedMessage {...localMessages.linkMap} />:</h3>
         <p><LinkWithFilters to={`/topics/${topicId}/link-map`}><FormattedMessage {...localMessages.linkMapDownload} /></LinkWithFilters></p>
         <h3><FormattedMessage {...localMessages.wordMap} />:</h3>
         <p><FormattedMessage {...localMessages.wordMapDescription} /></p>
         {wordMapContent}
-      </React.Fragment>
+      </>
     );
   }
   return (
-    <React.Fragment>
+    <>
       {content}
-    </React.Fragment>
+    </>
   );
 };
 

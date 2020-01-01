@@ -34,6 +34,7 @@ const localMessages = {
 
 const VIEW_NORMALIZED = 'VIEW_NORMALIZED';
 const VIEW_REGULAR = 'VIEW_REGULAR';
+const DOWNLOAD_PATH = '/api/explorer/stories/all-story-urls.csv';
 
 class QueryTotalAttentionResultsContainer extends React.Component {
   state = {
@@ -51,7 +52,7 @@ class QueryTotalAttentionResultsContainer extends React.Component {
   }
 
   downloadCsv = (query) => {
-    postToDownloadUrl('/api/explorer/stories/samples.csv', query);
+    postToDownloadUrl(DOWNLOAD_PATH, query);
   }
 
   render() {
@@ -181,7 +182,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         <AppButton
           variant="text"
           className="action-menu-single-download"
-          onClick={() => postToDownloadUrl('/api/explorer/stories/samples.csv', q)}
+          onClick={() => postToDownloadUrl(DOWNLOAD_PATH, q)}
           aria-controls="action-menu"
           aria-haspopup="true"
           aria-owns="action-menu"
@@ -195,7 +196,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         {ownProps.queries.map(q => (
           <MenuItem
             className="action-icon-menu-item"
-            onClick={() => postToDownloadUrl('/api/explorer/stories/samples.csv', q)}
+            onClick={() => postToDownloadUrl(DOWNLOAD_PATH, q)}
           >
             <ListItemText>
               <FormattedMessage {...localMessages.downloadCsv} values={{ name: q.label }} />
@@ -212,12 +213,15 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return {
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
       const { selectedTimePeriod } = stateProps;
       return nextProps.selectedTimePeriod !== selectedTimePeriod;
     },
-  });
+  };
 }
 
 export default

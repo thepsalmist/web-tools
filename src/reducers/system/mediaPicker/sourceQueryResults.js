@@ -8,7 +8,7 @@ const sourceQueryResults = createAsyncReducer({
   },
   action: FETCH_MEDIAPICKER_SOURCE_SEARCH,
   handleSuccess: (payload, state, meta) => ({
-    args: Object.assign({}, meta.args[0], { selected: false }),
+    args: { ...meta.args[0], selected: false },
     list: payload.list.map(c => ({
       ...c,
       name: `${c.name}`,

@@ -105,8 +105,7 @@ const TopicControlBar = ({ sideBarContent, topic, intl, selectedSnapshot, latest
                   <TabbedChip message={localMessages.latestRunning} />
                 )}
                 {(selectedSnapshot) && (selectedSnapshot.snapshots_id !== latestSnapshot.snapshots_id) && (selectedSnapshot.snapshots_id !== latestUsableSnapshot.snapshots_id)
-                  && (<TabbedChip warning message={localMessages.newerData} />)
-                }
+                  && (<TabbedChip warning message={localMessages.newerData} />)}
               </LinkWithFilters>
             </div>
             { filters.timespanId && selectedTimespan && (

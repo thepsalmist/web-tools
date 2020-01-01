@@ -28,13 +28,13 @@ class TopicFilterBar extends React.Component {
     const { formatMessage } = this.props.intl;
 
     const content = (
-      <React.Fragment>
+      <>
         <FilterButton onClick={handleFilterToggle} tooltip={formatMessage(localMessages.filterTopic)} />
         <ActiveFiltersContainer
           onRemoveFocus={() => handleFocusSelected(REMOVE_FOCUS)}
           onRemoveQuery={() => handleQuerySelected(null)}
         />
-      </React.Fragment>
+      </>
     );
     if (setSideBarContent) {
       setSideBarContent(content);

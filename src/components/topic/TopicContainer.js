@@ -19,7 +19,6 @@ import LoadingSpinner from '../common/LoadingSpinner';
 import { parseId } from '../../lib/numberUtil';
 import withFilteredUrlMaintenance from './versions/FilteredUrlMaintainer';
 
-
 const pickDefaultTimespan = (dispatch, timespanList) => {
   // async handler after promise returns - pick the first timespan as the default (this is the overall one)
   let defaultTimespanId;
@@ -157,7 +156,7 @@ class TopicContainer extends React.Component {
       // pass a handler to all the children so the can set the control bar side content if they need to
       const childrenWithExtraProp = React.Children.map(children, child => React.cloneElement(child, { setSideBarContent: this.setSideBarContent }));
       content = (
-        <React.Fragment>
+        <>
           <TopicControlBar
             {...this.props}
             topicId={topicId}
@@ -166,7 +165,7 @@ class TopicContainer extends React.Component {
             // implements handleRenderFilters and evaluates showFilters
           />
           {childrenWithExtraProp}
-        </React.Fragment>
+        </>
       );
     }
     return (

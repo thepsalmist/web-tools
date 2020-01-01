@@ -158,7 +158,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return {
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     saveParamsToStore: () => {
       if (stateProps.prefillSrcIds || stateProps.prefillCollectionIds) {
         dispatchProps.dispatchMetadataSelections(stateProps.prefillSrcIds, stateProps.prefillCollectionIds);
@@ -166,7 +169,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
         dispatchProps.dispatchAddAllSourcesByString(stateProps.searchStr);
       }
     },
-  });
+  };
 }
 
 export default

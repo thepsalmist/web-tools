@@ -27,7 +27,7 @@ const localMessages = {
   notesHint: { id: 'user.notes.hint', defaultMessage: 'Tell us a little about what you want to use Media Cloud for' },
   userAlreadyExists: { id: 'user.signUp.error.alreadyExists', defaultMessage: 'Sorry, but a user with that email already exists! Did you <a href="/#/request-password-reset">need to reset your password</a>?' },
   signupSuccess: { id: 'user.signUp.success',
-    defaultMessage: '<h1>Clink the link we just emailed you</h1>'
+    defaultMessage: '<h1>Click the link we just emailed you</h1>'
     + '<p>To make sure your email is valid, we have sent you a message with a magic link for you to click.  Click the link in the email to confirm that we got your email right.<p>'
     + '<p><a href="post-to-recover-password">Click here to send the email again</a>.</p>.' },
 };

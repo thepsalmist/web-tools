@@ -15,7 +15,7 @@ const localMessages = {
 };
 
 const UserListContainer = ({ users, handleDeleteUser, previousButton, nextButton }) => (
-  <React.Fragment>
+  <>
     <Row>
       <Col lg={12}>
         <UserTable users={users} onDeleteUser={userId => handleDeleteUser(userId)} />
@@ -26,7 +26,7 @@ const UserListContainer = ({ users, handleDeleteUser, previousButton, nextButton
         {previousButton} {nextButton}
       </Col>
     </Row>
-  </React.Fragment>
+  </>
 );
 
 UserListContainer.propTypes = {

@@ -20,62 +20,55 @@ function resetRavenUserContext() {
   Raven.setUserContext();
 }
 
+const isAdmin = profile => (((profile) && (profile.auth_roles) && Array.isArray(profile.auth_roles)) ? profile.auth_roles.filter(r => r === 'admin').length > 0 : false);
+
 export default function user(state = INITIAL_STATE, action) {
   switch (action.type) {
     case LOGIN_WITH_PASSWORD:
-      return Object.assign({}, state, {
+      return { ...state,
         fetchStatus: fetchConstants.FETCH_ONGOING,
         isLoggedIn: false,
-        ...action.payload,
-      });
+        ...action.payload };
     case resolve(LOGIN_WITH_PASSWORD):
       setRavenUserContext(action.payload);
       const passwordLoginWorked = (action.payload.statusCode !== 500);
-      return Object.assign({}, state, {
+      return { ...state,
         fetchStatus: fetchConstants.FETCH_SUCCEEDED,
         isLoggedIn: passwordLoginWorked,
-        isAdmin: passwordLoginWorked ? action.payload.profile.roles.filter(r => r.role === 'admin').length > 0 : false,
-        ...action.payload,
-      });
+        isAdmin: passwordLoginWorked ? isAdmin(action.payload.profile) : false,
+        ...action.payload };
     case reject(LOGIN_WITH_PASSWORD):
       resetRavenUserContext();
-      return Object.assign({}, state, {
+      return { ...state,
         fetchStatus: fetchConstants.FETCH_FAILED,
-        isLoggedIn: false,
-      });
+        isLoggedIn: false };
 
     case LOGIN_WITH_COOKIE:
-      return Object.assign({}, state, {
+      return { ...state,
         fetchStatus: fetchConstants.FETCH_ONGOING,
         isLoggedIn: false,
-        ...action.payload,
-      });
+        ...action.payload };
     case resolve(LOGIN_WITH_COOKIE):
       setRavenUserContext(action.payload);
       const keyLoginWorked = (action.payload.statusCode !== 401);
-      return Object.assign({}, state, {
+      return { ...state,
         fetchStatus: fetchConstants.FETCH_SUCCEEDED,
         isLoggedIn: keyLoginWorked,
-        isAdmin: keyLoginWorked ? action.payload.profile.roles.filter(r => r.role === 'admin').length > 0 : false,
-        ...action.payload,
-      });
+        isAdmin: keyLoginWorked ? isAdmin(action.payload.profile) : false,
+        ...action.payload };
     case reject(LOGIN_WITH_COOKIE):
       resetRavenUserContext();
-      return Object.assign({}, state, {
+      return { ...state,
         fetchStatus: fetchConstants.FETCH_FAILED,
         isLoggedIn: false,
-        key: null,
-      });
+        key: null };
 
     case resolve(RESET_API_KEY):
-      return Object.assign({}, state, {
+      return { ...state,
         key: action.payload.profile.api_key,
-        profile: { ...state.profile, ...action.payload.profile },
-      });
+        profile: { ...state.profile, ...action.payload.profile } };
     case resolve(UPDATE_PROFILE):
-      return Object.assign({}, state, {
-        profile: { ...state.profile, ...action.payload.profile },
-      });
+      return { ...state, profile: { ...state.profile, ...action.payload.profile } };
     default:
       return state;
   }

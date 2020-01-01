@@ -25,7 +25,7 @@ const localMessages = {
 };
 
 const CollectionContentHistory = ({ collection, historicalCounts, intl, attentionAggregationMenuItems, selectedTimePeriod }) => (
-  <React.Fragment>
+  <>
     <PageTitle value={[localMessages.title, collection.label]} />
     <Grid>
       <Row>
@@ -82,7 +82,7 @@ const CollectionContentHistory = ({ collection, historicalCounts, intl, attentio
         </Row>
       ))}
     </Grid>
-  </React.Fragment>
+  </>
 );
 
 CollectionContentHistory.propTypes = {

@@ -8,7 +8,7 @@ import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import CopyAllComponent from '../../common/CopyAllComponent';
-import SourceCollectionsMediaForm from '../../common/form/SourceCollectionsMediaForm';
+import OpenWebMediaFieldArray from '../../common/form/OpenWebMediaFieldArray';
 import MediaPickerDialog from '../../common/mediaPicker/MediaPickerDialog';
 import QueryHelpDialog from '../../common/help/QueryHelpDialog';
 import MediaHelpDialog from '../../common/help/MediaHelpDialog';
@@ -62,7 +62,7 @@ class QueryForm extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.selected !== this.props.selected) {
-      this.textInputRef.saveRef();
+      // this.textInputRef.saveRef(); comment out b/c this was only a focus setting anyway (that wasn't working very well)
     }
   }
 
@@ -79,12 +79,15 @@ class QueryForm extends React.Component {
     return anyQueriesNoMedia || thisCurrentQueryFormNoMedia;
   }
 
-  focusQueryInputField = (input) => {
+  focusQueryInputField = () => {
+    // commented out because this is throwing a JS error on the console
+    /*
     if (input) {
       setTimeout(() => {
         // input.focus();
       }, 100);
     }
+    */
   };
 
   render() {
@@ -186,7 +189,7 @@ class QueryForm extends React.Component {
                       onOk={() => onCopyAll(MEDIA)}
                     />
                   </div>
-                  <SourceCollectionsMediaForm
+                  <OpenWebMediaFieldArray
                     className="query-field"
                     form="queryForm"
                     fieldName="media"
@@ -198,6 +201,7 @@ class QueryForm extends React.Component {
                     initialValues={selectedCopy || cleanedInitialValues}
                     title="title"
                     intro="intro"
+                    formatMessage={formatMessage}
                   />
                   <div>
                     {isEditable
@@ -317,6 +321,7 @@ QueryForm.propTypes = {
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   isEditable: PropTypes.bool.isRequired,
+  focusRequested: PropTypes.func,
   mediaUpdates: PropTypes.object,
 };
 

@@ -47,8 +47,8 @@ const StoryRedditAttention = ({ total, bySub, helpButton, storyId, intl }) => (
         title={localMessages.chartTitle}
         data={bySub}
         domId={`story${storyId}subreddits`}
-      />)
-    }
+      />
+    )}
   </DataCard>
 );
 

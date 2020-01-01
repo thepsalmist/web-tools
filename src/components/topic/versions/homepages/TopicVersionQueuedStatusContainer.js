@@ -12,7 +12,7 @@ const localMessages = {
 };
 
 const TopicVersionQueuedStatusContainer = ({ topic, snapshot, intl }) => (
-  <React.Fragment>
+  <>
     <TopicVersionStatus
       subtitle={localMessages.title}
       topic={topic}
@@ -34,7 +34,7 @@ const TopicVersionQueuedStatusContainer = ({ topic, snapshot, intl }) => (
       </Permissioned>
       */}
     </TopicVersionStatus>
-  </React.Fragment>
+  </>
 );
 
 TopicVersionQueuedStatusContainer.propTypes = {

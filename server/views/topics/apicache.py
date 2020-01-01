@@ -98,9 +98,7 @@ def _cached_story_list(user_mc_key, q, rows):
 
 
 def topic_story_list(user_mc_key, topics_id, **kwargs):
-    '''
-    Return sorted story list based on filters.
-    '''
+    # Return sorted story list based on filters.
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     merged_args = {
         'snapshots_id': snapshots_id,
@@ -137,7 +135,7 @@ def topic_story_list_by_page(user_mc_key, topics_id, link_id, **kwargs):
 def _cached_topic_story_list_page(user_mc_key, topics_id, link_id, **kwargs):
     # be user-specific in this cache to be careful about permissions on stories
     # api_key passed in just to make this a user-level cache
-    local_mc = base_cache.mc_client(user_mc_key)
+    local_mc = user_mediacloud_client(user_mc_key)
     return local_mc.topicStoryList(topics_id, link_id=link_id, **kwargs)
 
 
@@ -148,7 +146,7 @@ def topic_story_link_list_by_page(user_mc_key, topics_id, link_id, **kwargs):
 @cache.cache_on_arguments()
 def _cached_topic_story_link_list_page(user_mc_key, topics_id, link_id, **kwargs):
     # api_key passed in just to make this a user-level cache
-    local_mc = base_cache.mc_client(user_mc_key)
+    local_mc = user_mediacloud_client(user_mc_key)
     return local_mc.topicStoryLinks(topics_id, link_id=link_id, **kwargs)
 
 
@@ -159,7 +157,7 @@ def topic_media_link_list_by_page(user_mc_key, topics_id, link_id, **kwargs):
 @cache.cache_on_arguments()
 def _cached_topic_media_link_list_page(user_mc_key, topics_id, link_id, **kwargs):
     # api_key passed in just to make this a user-level cache
-    local_mc = base_cache.mc_client(user_mc_key)
+    local_mc = user_mediacloud_client(user_mc_key)
     return local_mc.topicMediaLinks(topics_id, link_id=link_id, **kwargs)
 
 
@@ -324,9 +322,7 @@ def cached_topic_timespan_list(user_mc_key, topics_id, snapshots_id=None, foci_i
 
 
 def topic_tag_coverage(topics_id, tags_id):
-    '''
-    Useful for seeing how many stories in the topic are tagged with a specific tag
-    '''
+    # Useful for seeing how many stories in the topic are tagged with a specific tag
     if isinstance(tags_id, list):   # doesn't repect duck-typing, but quick fix
         tags_id_str = "({})".format(" ".join([str(tid) for tid in tags_id]))
     else:
@@ -435,7 +431,6 @@ def add_to_user_query(query_to_add):
     if (q_from_request is None) or (len(q_from_request) == 0):
         return query_to_add
     return "({}) AND ({})".format(q_from_request, query_to_add)
-
 
 
 '''

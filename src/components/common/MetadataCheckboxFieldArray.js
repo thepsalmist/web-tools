@@ -18,43 +18,38 @@ const MetadataCheckboxSelector = ({ filter, initialValues, renderCheckbox, onCha
   <ul>
     {fields.map((name, index, thisFieldArray) => { // redux-form overrides map, and converts name to a string instead of an object!
       const fieldObject = thisFieldArray.get(index);
+      const content = (
+        <li key={index}>
+          <Field
+            initialValues={initialValues}
+            key={index}
+            name={`${name}.label`}
+            component={info => (
+              <div>
+                {renderCheckbox({
+                  ...info,
+                  label: formatMessage(localMessages.label, { label: fieldObject.label }),
+                  input: {
+                    ...info.input,
+                    ...fieldObject,
+                    value: fieldObject.selected,
+                    onChange: newValue => onChange({ ...info.input, ...fieldObject, value: newValue }),
+                  },
+                })}
+              </div>
+            )}
+            label={`${name}.label`}
+            placeholder={formatMessage(messages.ok)}
+          />
+        </li>
+      );
       if (filter === 'selected' && fieldObject.selected && fieldObject.description) {
         // render selected items that were *not* part of the frequently used suggestions
-        return (
-          <li key={index}>
-            <Field
-              initialValues={initialValues}
-              key={index}
-              name={`${name}.label`}
-              component={info => (
-                <div>
-                  {renderCheckbox({ ...info, label: formatMessage(localMessages.label, { label: fieldObject.label }), input: { ...info.input, ...fieldObject, value: fieldObject.selected, onChange } })}
-                </div>
-              )}
-              label={`${name}.label`}
-              placeholder={formatMessage(messages.ok)}
-            />
-          </li>
-        );
+        return content;
       }
       if (filter === 'defaults' && fieldObject.description === undefined) {
         // render the frequently used suggestions (regardless of if they are selected or not)
-        return (
-          <li key={index}>
-            <Field
-              initialValues={initialValues}
-              key={index}
-              name={`${name}.label`}
-              component={info => (
-                <div>
-                  {renderCheckbox({ ...info, label: formatMessage(localMessages.label, { label: fieldObject.label }), input: { ...info.input, ...fieldObject, value: fieldObject.selected, onChange } })}
-                </div>
-              )}
-              label={`${name}.label`}
-              placeholder={formatMessage(messages.ok)}
-            />
-          </li>
-        );
+        return content;
       }
       return null;
     })}

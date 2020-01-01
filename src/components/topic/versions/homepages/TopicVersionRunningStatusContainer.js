@@ -16,7 +16,7 @@ const localMessages = {
 };
 
 const TopicVersionRunningStatusContainer = ({ subtitle, topic, snapshot, intl }) => (
-  <React.Fragment>
+  <>
     <TopicVersionStatus
       subtitle={subtitle || localMessages.title}
       topic={topic}
@@ -39,7 +39,7 @@ const TopicVersionRunningStatusContainer = ({ subtitle, topic, snapshot, intl })
       <p><FormattedMessage {...localMessages.cancelDetails} /></p>
       */ }
     </TopicVersionStatus>
-  </React.Fragment>
+  </>
 );
 
 TopicVersionRunningStatusContainer.propTypes = {

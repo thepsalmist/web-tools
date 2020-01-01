@@ -38,7 +38,7 @@ class QuerySampleStoriesResultsContainer extends React.Component {
   }
 
   downloadCsv = (query) => {
-    postToDownloadUrl('/api/explorer/stories/samples.csv', query);
+    postToDownloadUrl('/api/explorer/stories/all-story-urls.csv', query);
   }
 
   render() {
@@ -55,7 +55,7 @@ class QuerySampleStoriesResultsContainer extends React.Component {
     if (results && results.length > 0) {
       const safeResults = results[selectedTabIndex].results ? results[selectedTabIndex].results.slice(0, 10) : [];
       return (
-        <div>
+        <>
           {tabSelector}
           <StoryTable
             className="story-table"
@@ -81,7 +81,7 @@ class QuerySampleStoriesResultsContainer extends React.Component {
               </MenuItem>
             </ActionMenu>
           </div>
-        </div>
+        </>
       );
     }
     return <div>Error</div>;
@@ -124,12 +124,15 @@ const mapDispatchToProps = dispatch => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return {
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     shouldUpdate: (nextProps) => { // QueryResultsSelector needs to ask the child for internal repainting
       const { internalItemSelected } = stateProps;
       return nextProps.internalItemSelected !== internalItemSelected;
     },
-  });
+  };
 }
 
 export default

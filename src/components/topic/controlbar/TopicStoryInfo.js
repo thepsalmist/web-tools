@@ -13,7 +13,7 @@ const localMessages = {
 const TopicStoryInfo = (props) => {
   const { seedQueryCount, spideredQueryCount } = props;
   return (
-    <React.Fragment>
+    <>
       <p>
         <b><FormattedMessage {...localMessages.seedQueryCount} /></b>
         <code>{seedQueryCount}</code>
@@ -21,7 +21,7 @@ const TopicStoryInfo = (props) => {
         <b><FormattedMessage {...localMessages.spideredQueryCount} /></b>
         <code>{spideredQueryCount}</code>
       </p>
-    </React.Fragment>
+    </>
   );
 };
 

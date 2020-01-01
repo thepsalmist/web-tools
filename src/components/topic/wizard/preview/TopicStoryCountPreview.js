@@ -13,6 +13,7 @@ import { updateFeedback } from '../../../../actions/appActions';
 import { WarningNotice } from '../../../common/Notice';
 import { MAX_RECOMMENDED_STORIES, WARNING_LIMIT_RECOMMENDED_STORIES, MIN_RECOMMENDED_STORIES } from '../../../../lib/formValidators';
 import { hasPermissions, getUserRoles, PERMISSION_ADMIN } from '../../../../lib/auth';
+import { formatTopicPreviewQuery } from '../../../util/topicUtil';
 
 const BUBBLE_CHART_DOM_ID = 'bubble-chart-keyword-preview-story-total';
 
@@ -109,18 +110,7 @@ const mapStateToProps = state => ({
 });
 
 const fetchAsyncData = (dispatch, { query, user, intl }) => {
-  const infoForQuery = {
-    q: query.solr_seed_query,
-    start_date: query.start_date,
-    end_date: query.end_date,
-  };
-  infoForQuery['collections[]'] = [];
-  infoForQuery['sources[]'] = [];
-
-  if ('sourcesAndCollections' in query) { // in FieldArrays on the form
-    infoForQuery['collections[]'] = query.sourcesAndCollections.map(s => s.tags_id);
-    infoForQuery['sources[]'] = query.sourcesAndCollections.map(s => s.media_id);
-  }
+  const infoForQuery = formatTopicPreviewQuery(query);
   dispatch(fetchStoryCountByQuery(infoForQuery))
     .then((result) => {
       if (!hasPermissions(getUserRoles(user), PERMISSION_ADMIN)) { // only apply checks to non-admins

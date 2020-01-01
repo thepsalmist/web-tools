@@ -28,7 +28,7 @@ const TopicInfo = (props) => {
   sourcesAndCollections = topic.media_tags ? [...sourcesAndCollections, ...topic.media_tags] : sourcesAndCollections;
   // TODO: change topic state to reflect status of current snapshot... waiting for info
   return (
-    <React.Fragment>
+    <>
       <div className="topic-info-sidebar">
         <p><FormattedMessage {...localMessages.viewingVersion} values={{ version: currentVersion }} /></p>
         <p><FormattedMessage {...localMessages.latestVersion} values={{ version: topic.latestVersion }} /></p>
@@ -59,7 +59,7 @@ const TopicInfo = (props) => {
         </p>
         <TopicOwnerList owners={topic.owners} />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

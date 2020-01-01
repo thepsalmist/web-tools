@@ -80,11 +80,12 @@ const mapDispatchToProps = dispatch => ({
 });
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-  return Object.assign({}, stateProps, dispatchProps, ownProps, {
+  return { ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
     finishStep: () => {
       dispatchProps.goToStep(1);
-    },
-  });
+    } };
 }
 
 function validate() {

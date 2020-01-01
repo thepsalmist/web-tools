@@ -24,7 +24,7 @@ const localMessages = {
   title: { id: 'topic.summary.stories.title', defaultMessage: 'Top Stories' },
   descriptionIntro: { id: 'topic.summary.stories.help.title', defaultMessage: '<p>The top stories within this topic can suggest the main ways it is talked about.  Sort by different measures to get a better picture of a story\'s influence.</p>' },
   downloadTopStories: { id: 'topic.summary.stories.download.top', defaultMessage: 'Download Top Stories...' },
-  handleStoryLinkCsvDownload: { id: 'topic.summary.stories.download.handleStoryLinkCsvDownload', defaultMessage: 'Download CSV of all story links' },
+  handleStoryLinkCsvDownload: { id: 'topic.summary.stories.download.handleStoryLinkCsvDownload', defaultMessage: 'Download CSV of all links between stories' },
 };
 
 class StoriesSummaryContainer extends React.Component {
@@ -43,7 +43,7 @@ class StoriesSummaryContainer extends React.Component {
     const { stories, sort, topicId, handleFocusSelected, user, showTweetCounts, showTopicStoryDownloadDialog } = this.props;
     const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
     return (
-      <React.Fragment>
+      <>
         <TopicStoryTable
           stories={stories}
           showTweetCounts={showTweetCounts}
@@ -79,7 +79,7 @@ class StoriesSummaryContainer extends React.Component {
             </ActionMenu>
           </div>
         </Permissioned>
-      </React.Fragment>
+      </>
     );
   }
 }

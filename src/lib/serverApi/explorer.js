@@ -9,7 +9,7 @@ export function fetchSavedSearches() {
 }
 
 export function fetchQueryTopWords(params) {
-  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections', 'sampleSize']);
+  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections', 'searches', 'sampleSize']);
   return createApiPromise('/api/explorer/words/count', acceptedParams);
 }
 
@@ -19,12 +19,12 @@ export function fetchDemoQueryTopWords(params) {
 }
 
 export function fetchWordSampleSentences(params) {
-  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources', 'collections', 'rows', 'word']);
+  const acceptedParams = acceptParams(params, ['q', 'start_date', 'end_date', 'sources', 'collections', 'searches', 'rows', 'word']);
   return createApiPromise('/api/explorer/sentences/list', acceptedParams);
 }
 
 export function fetchQueryPerDateTopWords(params) {
-  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections']);
+  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections', 'searches']);
   return createApiPromise('/api/explorer/words/count', acceptedParams);
 }
 
@@ -56,8 +56,8 @@ export function fetchDemoQueryTopWordsComparison(queryA, queryB) {
 
 export function fetchQueryTopWordsComparison(queryA, queryB) {
   const acceptedParams = [];
-  const acceptedParamsA = acceptParams(queryA, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections']);
-  const acceptedParamsB = acceptParams(queryB, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections']);
+  const acceptedParamsA = acceptParams(queryA, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections', 'searches']);
+  const acceptedParamsB = acceptParams(queryB, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections', 'searches']);
   acceptedParams['compared_queries[]'] = [generateParamStr(acceptedParamsA)];
   if (queryB) {
     acceptedParams['compared_queries[]'] = acceptedParams['compared_queries[]'].concat(generateParamStr(acceptedParamsB));
@@ -102,17 +102,17 @@ export function demoQueryCollectionsByIds(params) {
   return createApiPromise('api/explorer/demo/collections/list', acceptedParams);
 }
 export function fetchQueryTopEntitiesPeople(params) {
-  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections']);
+  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections', 'searches']);
   return createApiPromise('/api/explorer/entities/people', acceptedParams);
 }
 
 export function fetchQueryTopEntitiesOrgs(params) {
-  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections']);
+  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections', 'searches']);
   return createApiPromise('/api/explorer/entities/organizations', acceptedParams);
 }
 
 export function fetchQuerySplitStoryCount(params) {
-  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections']);
+  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections', 'searches']);
   return createApiPromise('/api/explorer/stories/split-count', acceptedParams);
 }
 
@@ -122,22 +122,22 @@ export function fetchDemoQuerySplitStoryCount(params) {
 }
 
 export function fetchQuerySampleStories(params) {
-  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections']);
+  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections', 'searches']);
   return createApiPromise('/api/explorer/stories/sample', acceptedParams);
 }
 
 export function fetchQueryPerDateSampleStories(params) {
-  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections']);
+  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections', 'searches']);
   return createApiPromise('/api/explorer/sentences/list', acceptedParams);
 }
 
 export function fetchQueryStoryCount(params) {
-  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections']);
+  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections', 'searches']);
   return createApiPromise('/api/explorer/story/count', acceptedParams);
 }
 
 export function fetchQueryGeo(params) {
-  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections']);
+  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections', 'searches']);
   return createApiPromise('api/explorer/geo-tags/counts', acceptedParams);
 }
 
@@ -177,7 +177,7 @@ export function deleteUserSearch(params) {
 }
 
 export function fetchQueryTopThemes(params) {
-  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections']);
+  const acceptedParams = acceptParams(params, ['uid', 'q', 'start_date', 'end_date', 'sources', 'collections', 'searches']);
   return createApiPromise('/api/explorer/themes', acceptedParams);
 }
 

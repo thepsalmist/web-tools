@@ -49,7 +49,7 @@ const EditWizardTopicContainer = ({ topic, location, intl }) => {
     },
   ];
   return (
-    <React.Fragment>
+    <>
       <PageTitle value={localMessages.pageTitle} />
       <TopicBuilderWizard
         startStep={0}
@@ -58,7 +58,7 @@ const EditWizardTopicContainer = ({ topic, location, intl }) => {
         currentStepTexts={stepTexts}
         topic={topic}
       />
-    </React.Fragment>
+    </>
   );
 };
 

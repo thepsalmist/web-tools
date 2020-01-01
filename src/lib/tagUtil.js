@@ -42,6 +42,12 @@ export const PRIMARY_LANGUAGE = 'primaryLanguage';
 export const COUNTRY_OF_FOCUS = 'countryOfFocus';
 export const MEDIA_TYPE = 'mediaType';
 
+export const PUB_COUNTRY_TAG_NAME = 'pub_country';
+export const PUB_STATE_TAG_NAME = 'pub_state';
+export const PRIMARY_LANGUAGE_TAG_NAME = 'primary_language';
+export const COUNTRY_OF_FOCUS_TAG_NAME = 'subject_country';
+export const MEDIA_TYPE_TAG_NAME = 'media_format';
+
 /**
  * Call this to verify a tag set id is one of the metadata options for a media source
  */

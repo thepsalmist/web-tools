@@ -2,13 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedHTMLMessage, injectIntl } from 'react-intl';
 import messages from '../../../resources/messages';
-import SourceOrCollectionWidget from '../../common/SourceOrCollectionWidget';
+import OpenWebMediaItem from '../../common/OpenWebMediaItem';
 import { urlToCollection, urlToSource } from '../../../lib/urlUtil';
 
 const localMessages = {
   title: { id: 'topic.info.title', defaultMessage: 'Version {versionNumber}: Seed Query' },
   newTitle: { id: 'topic.info.newTitle', defaultMessage: 'New Version: Seed Query' },
-  seedQueryCount: { id: 'topic.info.seedQueryCount', defaultMessage: 'Matches {storyCount} stories already in our database.' },
+  seedQueryCount: { id: 'topic.info.seedQueryCount', defaultMessage: 'Matches {storyCount} stories already in our database (including duplicates).' },
   willSpider: { id: 'topic.info.willSpider', defaultMessage: 'Links will be followed to find more stories ({rounds} rounds).' },
   willNotSpider: { id: 'topic.info.willNotSpider', defaultMessage: 'Links will <em>not</em> be followed to find more stories.' },
   dates: { id: 'topic.info.dates', defaultMessage: 'Dates:' },
@@ -47,13 +47,24 @@ const SeedQuerySummary = ({ seedQueryCount, topic, snapshot, intl, faded }) => {
       </p>
       <p>
         <b><FormattedHTMLMessage {...messages.topicSourceCollectionsProp} /></b>
-        {sourcesAndCollections.map(o => (
-          <SourceOrCollectionWidget
-            key={o.id || o.tags_id || o.media_id}
-            object={o}
-            link={o.tags_id ? urlToCollection(o.tags_id) : urlToSource(o.media_id)}
-          />
-        ))}
+        {sourcesAndCollections.map((o, idx) => {
+          let link = null;
+          if (o.tags_id) {
+            link = urlToCollection(o.tags_id);
+          } else if (o.media_id) {
+            link = urlToSource(o.media_id);
+          } else { // it is a search, no link for now (TODO: link to saved search in sources advanced search results
+            link = null;
+          }
+          return (
+            <OpenWebMediaItem
+              key={o.id || o.tags_id || o.media_id || idx}
+              object={o}
+              link={link}
+              formatMessage={intl.formatMessage}
+            />
+          );
+        })}
       </p>
     </div>
   );

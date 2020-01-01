@@ -47,7 +47,7 @@ const SourceResultsTable = (props) => {
   }
   return (
     <div>
-      <h2>{title}</h2>
+      <h2>{title || ''}</h2>
       {content}
     </div>
   );

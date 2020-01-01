@@ -146,11 +146,6 @@ class QueryPickerContainer extends React.Component {
     }
   }
 
-  handleKeywordsChange = (keywordObject, newValue) => {
-    console.log(keywordObject);
-    console.log(newValue);
-  }
-
   saveChangesToSelectedQuery = () => {
     const { selected, formQuery, updateCurrentQuery } = this.props;
     const updatedQuery = {
@@ -334,7 +329,6 @@ class QueryPickerContainer extends React.Component {
             onColorChange={this.handleColorChange}
             onMediaChange={this.handleMediaChange}
             onMediaDelete={this.handleMediaDelete}
-            onKeywordsChange={this.handleKeywordsChange}
             onDateChange={(dateObject, newValue) => this.updateQueryProperty(selected, dateObject.currentTarget.name, newValue)}
             onLoadSearches={handleLoadUserSearches}
             onSaveSearch={l => this.saveThisSearch(l)}

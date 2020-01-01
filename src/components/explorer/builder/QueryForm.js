@@ -63,12 +63,6 @@ class QueryForm extends React.Component {
     childDialogOpen: false,
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.selected !== this.props.selected) {
-      // this.textInputRef.saveRef(); comment out b/c this was only a focus setting anyway (that wasn't working very well)
-    }
-  }
-
   getAllActiveQueries = queries => (queries.filter(q => q.deleted !== true));
 
   setQueryFormChildDialogOpen = () => {
@@ -83,7 +77,7 @@ class QueryForm extends React.Component {
   }
 
   render() {
-    const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange, onKeywordsChange,
+    const { initialValues, onWillSearch, isEditable, selected, buttonLabel, onMediaDelete, onDateChange,
       onDeleteSearch, onLoadSearches, savedSearches, searchNickname, onSaveSearch,
       submitting, handleSubmit, onSave, onMediaChange, renderSolrTextField, renderTextField, /* renderTextFieldWithFocus, */
       onCopyAll } = this.props;
@@ -160,7 +154,6 @@ class QueryForm extends React.Component {
                     rows={3}
                     rowsMax={4}
                     fullWidth
-                    onChange={onKeywordsChange}
                     // onChange={this.focusSelect}
                     // component={renderTextFieldWithFocus}
                     component={renderSolrTextField}
@@ -309,7 +302,6 @@ QueryForm.propTypes = {
   onCopyAll: PropTypes.func.isRequired,
   onMediaDelete: PropTypes.func.isRequired,
   onDateChange: PropTypes.func.isRequired,
-  onKeywordsChange: PropTypes.func.isRequired,
   // from state
   queries: PropTypes.array,
   // from form helper
@@ -357,10 +349,12 @@ function warn(values, props) {
     warnings.media = { _warning: formatMessage(localMessages.noMediaSpecified) };
   }
   // first time through text is a form field, then a codemirror object
-  const queryText = (typeof values.q === 'string') ? values.q : values.q.getValue();
-  if (emptyString(queryText)) {
-    const errString = formatMessage(localMessages.queryStringError, { name: values.label });
-    warnings.q = { _warning: errString };
+  if (values.q) {
+    const queryText = (typeof values.q === 'string') ? values.q : values.q.getValue();
+    if (emptyString(queryText)) {
+      const errString = formatMessage(localMessages.queryStringError, { name: values.label });
+      warnings.q = { _warning: errString };
+    }
   }
   return warnings;
 }

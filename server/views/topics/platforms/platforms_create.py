@@ -115,6 +115,7 @@ def topic_add_platform(topics_id):
         # TODO - add retweet partisanship? or will that be handled in the back end
     else:
     # do we need to add dates?
+    # TODO format channel properly for twitter
         result = user_mc.topicAddSeedQuery(topics_id=topics_id, platform=platform, source=source, query=query)
 
     result['success'] = result['topic_seed_query']['topic_seed_queries_id']

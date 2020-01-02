@@ -43,8 +43,10 @@ def api_topics_platform_preview_story_sample(topics_id):
         solr_query, fq = _topic_query_from_request()
         story_count_result = user_mc.storyList(solr_query=solr_query, solr_filter=fq)
     elif platform == 'twitter':
-        # TODO, handle multiple twitter choices
         channel = request.args['channel'] if 'channel' in request.args else None
+        channel = json.loads(channel)
+        # TODO format channel properly for twitter, I suppose we will call different calls here for elite/crimson, etc apis
+
         # if 'crimson_hexagon' in channel
         #elif source == pushshift/elasticsearch
         story_count_result = ps_twitter.matching_tweets(query=platform_query,
@@ -85,6 +87,10 @@ def api_topics_platform_preview_story_count(topics_id):
                                                                                    end_date=end_date,
                                                                                    subreddits=subreddits)
     elif platform =='twitter':
+        channel = request.args['channel'] if 'channel' in request.args else None
+        channel = json.loads(channel)
+        # TODO format channel properly for twitter
+        
         story_count_result = ps_twitter.tweet_count(query=platform_query,
                                                     start_date=start_date, end_date=end_date)
 

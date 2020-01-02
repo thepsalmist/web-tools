@@ -97,14 +97,11 @@ TwitterCheckboxFieldArray.propTypes = {
     PropTypes.object,
     PropTypes.array,
   ]),
-  previouslySelected: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.array,
-  ]),
   onChange: PropTypes.func,
 };
 
 const mapStateToProps = (state, ownProps) => ({
+  // trick to get the values to update as we click the checkboxes
   initialValues: { channel: ownProps.initVal },
 });
 

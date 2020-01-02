@@ -51,7 +51,7 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
   currentQuery: state.form.platform.values.query,
-  channel: [state.form.platform.values.crimson_hexagon ? { crimson_hexagon: state.form.platform.values.crimson_hexagon_id } : '', state.form.platform.values.elite ? { elite: 'true' } : ''],
+  channel: state.form.platform.values.channel,
 });
 
 const fetchAsyncData = (dispatch, { topicInfo, currentQuery, channel }) => {

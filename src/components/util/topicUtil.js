@@ -60,6 +60,7 @@ export const formatTopicRedditPreviewForQuery = (topicQuery) => ({
 
 export const formatTopicTwitterPreviewForQuery = (topicQuery) => ({
   ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_TWITTER, topicQuery.query),
+  channel: JSON.stringify(topicQuery.channel),
   source: 'pushshift', // TODO crimson hex or pushshift
 });
 

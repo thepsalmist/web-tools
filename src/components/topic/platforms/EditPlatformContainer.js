@@ -90,7 +90,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     // NOTE, this may be a remove/add vs an update on the back end
     return dispatch(topicUpdatePlatform(originalValues.topicId, ownProps.params.platformId, infoForQuery))
       .then((results) => {
-        if (results.length === 1) {
+        if (results.status.indexOf('200 OK') > -1)) { // TODO will have to check results
           // TODO get topicId from return const newOrSameId = results.id
           const platformSavedMessage = ownProps.intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback

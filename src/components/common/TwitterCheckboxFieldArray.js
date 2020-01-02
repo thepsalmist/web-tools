@@ -72,7 +72,7 @@ const TwitterCheckboxList = injectIntl(withIntlForm(TwitterCheckboxSelector));
 
 const TwitterCheckboxFieldArray = (props) => {
   // merge w intialValues from previouslySelected
-  const twitterSelected = { ...props.initialValues.channel };
+  const twitterSelected = [...props.initialValues];
   if (props.previouslySelected) {
     props.previouslySelected.forEach((p) => {
       const toUpdate = twitterSelected.findIndex(t => t.id === p.id);

@@ -42,19 +42,23 @@ class EditTwitterContainer extends React.Component {
     this.setState({ query: currentQuery });
   }
 
-  handleKeyDown = (event) => {
-    switch (event.key) {
-      case 'Enter':
-        this.updateKeywords();
-        event.preventDefault();
-        break;
-      default:
-        break;
-    }
+  selectTwitterChannel = (args) => {
+    const { change, channel } = this.props;
+    // get the values from the channel, store so other components can access it (checkboxes)
+    // this is pushed in as previouslySelected into cbx components
+    const userSelected = [args];
+    const mergedChannel = (c, u) => (
+      c.map(itm => ({
+        ...u.find((item) => (item.id === itm.id)).value,
+        ...itm,
+      })));
+
+    change('channel', mergedChannel(channel, userSelected));
+    // handleChannelChange(...args);
   }
 
   render() {
-    const { topicId, initialValues, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
+    const { topicId, initialValues, channel, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
@@ -102,8 +106,9 @@ class EditTwitterContainer extends React.Component {
               <TwitterCheckboxFieldArray
                 name="channel"
                 form="platform"
-                initialValues={{ channel: initialValues.channel }}
-                previouslySelected={[]}
+                initialValues={initialValues.channel}
+                previouslySelected={channel}
+                onChange={(args) => this.selectTwitterChannel(args)}
               />
             </Col>
           </Row>
@@ -130,12 +135,13 @@ EditTwitterContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   initialValues: PropTypes.object,
   onNextStep: PropTypes.func.isRequired,
-  handleMediaChange: PropTypes.func.isRequired,
+  handleChannelChange: PropTypes.func.isRequired,
   // from state
   currentPlatformType: PropTypes.string,
   currentPlatformInfo: PropTypes.object,
   currentQuery: PropTypes.string,
   change: PropTypes.func.isRequired,
+  channel: PropTypes.array,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
   // from compositional helper
@@ -154,9 +160,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleMediaChange: (channel) => {
-    // take selections from mediaPicker and push them back into topicForm
-    ownProps.change('channel', channel); // redux-form change action
+  handleChannelChange: () => {
+    // what do we need to do here?
+    // if checkbox value is true, then set selected to true?
+    // but this is in the form, so do I need it
   },
   handleMediaDelete: () => null, // in create mode we don't need to update the values
   finishStep: (values) => {

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { reduxForm, FieldArray, Field, propTypes } from 'redux-form';
+import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import withIntlForm from './hocs/IntlForm';
 // import messages from '../../resources/messages';
@@ -10,11 +11,13 @@ const localMessages = {
   typeCrimson: { id: 'system.twitter.crimson', defaultMessage: 'Crimson Hexagon ID' },
 };
 
-const TwitterCheckboxSelector = ({ initialValues, renderCheckbox, renderTextField, onChange, intl: { formatMessage }, fields }) => (
+// const formSelector = formValueSelector('platform');
+
+const TwitterCheckboxSelector = ({ initialValues, renderCheckbox, onChange, intl: { formatMessage }, fields }) => (
   <ul>
     {fields.map((name, index, thisFieldArray) => { // redux-form overrides map, and converts name to a string instead of an object!
       const fieldObject = thisFieldArray.get(index);
-      let chIdField = null;
+      /* let chIdField = null;
       if (fieldObject.type === 'crimson') {
         chIdField = (
           <div>
@@ -25,7 +28,7 @@ const TwitterCheckboxSelector = ({ initialValues, renderCheckbox, renderTextFiel
             />
           </div>
         );
-      }
+      } */
       const content = (
         <li key={index}>
           <Field
@@ -40,11 +43,10 @@ const TwitterCheckboxSelector = ({ initialValues, renderCheckbox, renderTextFiel
                   input: {
                     ...info.input,
                     ...fieldObject,
-                    value: fieldObject.selected,
+                    value: fieldObject.selected || false,
                     onChange: newValue => onChange({ ...info.input, ...fieldObject, value: newValue }),
                   },
                 })}
-                { chIdField }
               </div>
             )}
             label={`${name}.label`}
@@ -70,30 +72,17 @@ TwitterCheckboxSelector.propTypes = {
 
 const TwitterCheckboxList = injectIntl(withIntlForm(TwitterCheckboxSelector));
 
-const TwitterCheckboxFieldArray = (props) => {
-  // merge w intialValues from previouslySelected
-  const twitterSelected = [...props.initialValues];
-  if (props.previouslySelected) {
-    props.previouslySelected.forEach((p) => {
-      const toUpdate = twitterSelected.findIndex(t => t.id === p.id);
-      if (toUpdate > -1) {
-        twitterSelected[toUpdate].selected = p.value;
-        twitterSelected[toUpdate].value = p.value;
-      }
-    });
-  }
-  return (
-    <div>
-      <FieldArray
-        name="channel"
-        form={propTypes.form}
-        component={TwitterCheckboxList}
-        initialValues={{ channel: twitterSelected }}
-        onChange={props.onChange}
-      />
-    </div>
-  );
-};
+const TwitterCheckboxFieldArray = (props) => (
+  <div>
+    <FieldArray
+      name="channel"
+      form={propTypes.form}
+      component={TwitterCheckboxList}
+      initialValues={props.initialValues}
+      onChange={props.onChange}
+    />
+  </div>
+);
 
 TwitterCheckboxFieldArray.propTypes = {
   // from parent
@@ -104,6 +93,10 @@ TwitterCheckboxFieldArray.propTypes = {
     PropTypes.object,
     PropTypes.array,
   ]),
+  initVal: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
   previouslySelected: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.array,
@@ -111,11 +104,17 @@ TwitterCheckboxFieldArray.propTypes = {
   onChange: PropTypes.func,
 };
 
+const mapStateToProps = (state, ownProps) => ({
+  initialValues: { channel: ownProps.initVal },
+});
+
 export default
 injectIntl(
   withIntlForm(
     reduxForm({ propTypes })(
-      TwitterCheckboxFieldArray
+      connect(mapStateToProps)(
+        TwitterCheckboxFieldArray
+      )
     )
   )
 );

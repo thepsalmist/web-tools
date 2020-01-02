@@ -43,22 +43,25 @@ class EditTwitterContainer extends React.Component {
   }
 
   selectTwitterChannel = (args) => {
-    const { change, channel } = this.props;
+    const { channel, handleChannelChange } = this.props;
     // get the values from the channel, store so other components can access it (checkboxes)
     // this is pushed in as previouslySelected into cbx components
     const userSelected = [args];
-    const mergedChannel = (c, u) => (
-      c.map(itm => ({
-        ...u.find((item) => (item.id === itm.id)).value,
-        ...itm,
-      })));
-
-    change('channel', mergedChannel(channel, userSelected));
-    // handleChannelChange(...args);
+    const updatedChannel = channel;
+    if (updatedChannel) {
+      updatedChannel.forEach((p, i) => {
+        const toUpdate = userSelected.findIndex(t => t.id === p.id);
+        if (toUpdate > -1) {
+          updatedChannel[i].selected = userSelected[toUpdate].value;
+          updatedChannel[i].value = userSelected[toUpdate].value;
+        }
+      });
+    }
+    handleChannelChange(updatedChannel);
   }
 
   render() {
-    const { topicId, initialValues, channel, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
+    const { topicId, initialValues, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
@@ -106,9 +109,9 @@ class EditTwitterContainer extends React.Component {
               <TwitterCheckboxFieldArray
                 name="channel"
                 form="platform"
-                initialValues={initialValues.channel}
-                previouslySelected={channel}
+                initVal={initialValues.channel}
                 onChange={(args) => this.selectTwitterChannel(args)}
+                enableReinitialize
               />
             </Col>
           </Row>
@@ -160,10 +163,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleChannelChange: () => {
-    // what do we need to do here?
-    // if checkbox value is true, then set selected to true?
-    // but this is in the form, so do I need it
+  handleChannelChange: (updatedChannel) => {
+    ownProps.change('channel', updatedChannel);
   },
   handleMediaDelete: () => null, // in create mode we don't need to update the values
   finishStep: (values) => {

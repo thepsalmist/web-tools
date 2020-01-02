@@ -27,8 +27,8 @@ const CreatePlatformContainer = (props) => {
   const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, currentPlatformType };
   if (currentPlatformType === 'twitter') {
     initialValues.channel = [
-      { type: 'elite', id: 0, label: 'Elite', selected: false },
-      { type: 'crimson', id: 1, label: 'Crimson Hexagon', selected: false },
+      { type: 'elite', id: 0, label: 'Elite', selected: false, value: false },
+      { type: 'crimson', id: 1, label: 'Crimson Hexagon', selected: false, value: false },
     ];
   }
   const initAndTopicInfoValues = { ...initialValues, ...topicInfo, query: topicInfo.solr_seed_query };

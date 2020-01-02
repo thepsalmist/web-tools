@@ -34,7 +34,7 @@ class InfluentialStoryExplorer extends React.Component {
     this.renderDC(selectedTimespan);
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { selectedTimespan } = this.props;
     if ((nextProps.selectedTimespan) && (nextProps.selectedTimespan !== selectedTimespan)) {
       // we need these dates to render the charts right, cause some dates are outside this range

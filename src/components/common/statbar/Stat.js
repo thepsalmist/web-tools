@@ -5,7 +5,7 @@ import DataCard from '../DataCard';
 import withHelp from '../hocs/HelpfulContainer';
 
 class Stat extends React.Component {
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const { helpTitleMsg, helpContentMsg, setHelpTitleMsg, setHelpContentMsg } = this.props;
     if (helpTitleMsg) {
       setHelpTitleMsg(helpTitleMsg);

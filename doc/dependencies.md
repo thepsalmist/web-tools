@@ -16,7 +16,7 @@ It is important to occasionally we upgrade to the latest version of the npm libr
 To do this:
 1. First make sure you have npm-check-updates installed: `npm install -g npm-check-updates`.
 2. Run `ncu` to see a report of modules with newer versions available.
-3. Run `ncu -u` to automatically update the dependencies in our `package.json`, or do it by hand based on the previous step's report.
-4. Do a regular `npm install` to test them all out.
-5. Run the code and fix any errors.
+3. Any minor version updates you can probably just make in the package.json file. For any major version updates you should go check the release notes for that project to see any breaking changes.
+4. Once you've updated any that seem safe, fo a regular `npm install` to install the updates.
+5. Run the code and fix any errors that are reported or you see while clicking around.
 6. Check in the updated `package.json`.

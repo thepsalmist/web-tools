@@ -22,8 +22,9 @@ const OpenWebSummary = (props) => {
     default:
       platformContent = <FormattedHTMLMessage {...localMessages.platformExisting} />;
   }
+  // TODO, show before/after platform?
   return (
-    <div className="focus-create-cofirm-boolean-query">
+    <div className="open-web-summary">
       <ul>
         <li><FormattedHTMLMessage {...localMessages.name} values={{ name: formValues.currentPlatform }} /></li>
         <li><FormattedHTMLMessage {...localMessages.description} values={{ description: formValues.query }} /></li>

@@ -74,9 +74,9 @@ class ManagePlatformsContainer extends React.Component {
           <Grid>
             <Row>
               <Col lg={10} xs={12}>
-                <p>
+                <h2>
                   <FormattedMessage {...messages.managePlatforms} />
-                </p>
+                </h2>
               </Col>
             </Row>
             <PlatformTable platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} onDeleteClicked={this.handleDelete} />

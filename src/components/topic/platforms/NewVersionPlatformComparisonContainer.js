@@ -5,7 +5,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
 import AppButton from '../../common/AppButton';
-import PlatformTable from '../../common/PlatformTable';
+import PlatformSummary from './PlatformSummary';
 import { needsNewVersion } from '../versions/NeedsNewVersionWarning';
 import { topicSnapshotSpider } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
@@ -43,13 +43,13 @@ class NewVersionPlatformComparisonContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={5}>
-              <PlatformTable platforms={platforms} faded />
+              <PlatformSummary platforms={platforms} version={latestVersionRunning} />
             </Col>
             <Col lg={2}>
               <span style={{ display: 'block', fontSize: '56px', marginTop: '120px', textAlign: 'center' }}>➡</span>
             </Col>
             <Col lg={5}>
-              <PlatformTable platforms={newPlatforms} />
+              <PlatformSummary platforms={newPlatforms} />
               <AppButton
                 label={localMessages.createVersionAndStartSpider}
                 onClick={() => this.onGenerateVersion(topicId, null)}

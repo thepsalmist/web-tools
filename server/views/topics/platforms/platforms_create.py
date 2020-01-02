@@ -31,6 +31,7 @@ def get_topic_platforms(topics_id):
     # how do we get all the seed queries per topic ?
     #merge what the topic has versus what the topic doens't by adding in the topic_seed_queries_id
     # TODO fetch platforms from topic
+    # TODO add in channel for display in UI
     dummy_dict = [{'platform_type': 'web_ui_shim', 'platform': 'web', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform_type': '1.0','platform': 'reddit', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform_type': '1.0','platform': 'twitter', 'query': 'dummy', 'topic_seed_queries_id': -1}]
 
     topic = user_mc.topic(topics_id)

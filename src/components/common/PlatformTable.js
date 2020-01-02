@@ -8,7 +8,7 @@ const localMessages = {
     defaultMessage: 'Platform' },
   seedQueryDescription: { id: 'platform.manage.seedQuery', defaultMessage: 'Seed Query' },
   addOrEditOrRemove: { id: 'platform.manage.whatToDo',
-    defaultMessage: 'Add or Edit or Remove (TBD)' },
+    defaultMessage: 'Add or Edit' },
   remove: { id: 'platform.manage.remove',
     defaultMessage: 'Remove' },
 };

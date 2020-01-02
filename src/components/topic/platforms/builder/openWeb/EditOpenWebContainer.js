@@ -92,6 +92,7 @@ class EditOpenWebContainer extends React.Component {
               <Field
                 name="query"
                 component={renderTextField}
+                // placeholder={formatMessage(messages.searchByKeywords)}
                 fullWidth
                 onKeyDown={this.handleKeyDown}
               />

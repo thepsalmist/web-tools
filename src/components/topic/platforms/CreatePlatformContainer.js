@@ -25,6 +25,12 @@ const localMessages = {
 const CreatePlatformContainer = (props) => {
   const { topicInfo, location, handleDone, currentPlatformType } = props;
   const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, currentPlatformType };
+  if (currentPlatformType === 'twitter') {
+    initialValues.channel = [
+      { type: 'elite', id: 0, label: 'Elite', selected: false },
+      { type: 'crimson', id: 1, label: 'Crimson Hexagon', selected: false },
+    ];
+  }
   const initAndTopicInfoValues = { ...initialValues, ...topicInfo, query: topicInfo.solr_seed_query };
 
   return (
@@ -78,12 +84,12 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       case PLATFORM_TWITTER:
         // source = internet archive or push_shift
         infoForQuery = {
-          ...formatTopicTwitterPreviewForQuery({ ...originalValues, query: values.query, channel: values.media }),
+          ...formatTopicTwitterPreviewForQuery({ ...originalValues, query: values.query, channel: values.channel }),
         };
         break;
       case PLATFORM_REDDIT:
         infoForQuery = {
-          ...formatTopicRedditPreviewForQuery({ ...originalValues, query: values.query, channel: values.media }),
+          ...formatTopicRedditPreviewForQuery({ ...originalValues, query: values.query, channel: values.channel }),
         };
         break;
       default:

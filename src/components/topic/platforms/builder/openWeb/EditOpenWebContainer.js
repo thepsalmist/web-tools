@@ -92,7 +92,6 @@ class EditOpenWebContainer extends React.Component {
               <Field
                 name="query"
                 component={renderTextField}
-                initialValues={initialValues}
                 fullWidth
                 onKeyDown={this.handleKeyDown}
               />
@@ -166,7 +165,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleMediaChange: (sourceAndCollections) => {
     // take selections from mediaPicker and push them back into topicForm
-    ownProps.change('media', sourceAndCollections); // redux-form change action
+    ownProps.change('sourcesAndCollections', sourceAndCollections); // redux-form change action
   },
   handleMediaDelete: () => null, // in create mode we don't need to update the values
   finishStep: (values) => {

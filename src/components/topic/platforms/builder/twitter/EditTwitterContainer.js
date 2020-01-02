@@ -8,6 +8,7 @@ import AppButton from '../../../../common/AppButton';
 import withIntlForm from '../../../../common/hocs/IntlForm';
 import messages from '../../../../../resources/messages';
 import TwitterPreview from './TwitterPreview';
+import TwitterCheckboxFieldArray from '../../../../common/TwitterCheckboxFieldArray';
 import { notEmptyString } from '../../../../../lib/formValidators';
 
 const formSelector = formValueSelector('platform');
@@ -53,7 +54,7 @@ class EditTwitterContainer extends React.Component {
   }
 
   render() {
-    const { topicId, /* handleMediaChange */ renderTextField, renderCheckbox, handleSubmit, finishStep, location } = this.props;
+    const { topicId, initialValues, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
@@ -98,31 +99,11 @@ class EditTwitterContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={8} xs={12}>
-              <Field
-                name="elite"
-                component={renderCheckbox}
-                label="elite"
-              />
-              <Row>
-                <Col lg={2}>
-                  <Field
-                    name="crimson_hexagon"
-                    component={renderCheckbox}
-                    label={formatMessage(localMessages.typeCrimson)}
-                  />
-                </Col>
-                <Col lg={2}>
-                  <Field // TODO maybe admin only...
-                    name="crimson_hexagon_id"
-                    component={renderTextField}
-                    label={formatMessage(localMessages.typeCrimson)}
-                  />
-                </Col>
-              </Row>
-              <Field
-                name="other"
-                component={renderCheckbox}
-                label="other"
+              <TwitterCheckboxFieldArray
+                name="channel"
+                form="platform"
+                initialValues={{ channel: initialValues.channel }}
+                previouslySelected={[]}
               />
             </Col>
           </Row>

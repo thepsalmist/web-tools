@@ -111,12 +111,13 @@ class EditTwitterContainer extends React.Component {
                 form="platform"
                 initVal={initialValues.channel}
                 onChange={(args) => this.selectTwitterChannel(args)}
-                enableReinitialize
+                keepDirtyOnReinitialize
+                destroyOnUnmount={false}
               />
             </Col>
           </Row>
           <Row>
-            <Col lg={6}>
+            <Col lg={10}>
               <div className="media-field-wrapper">
                 {previewContent}
               </div>

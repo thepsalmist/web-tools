@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { reduxForm } from 'redux-form';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import Dialog from '@material-ui/core/Dialog';
@@ -176,9 +177,9 @@ const mapStateToProps = state => ({
   total: state.topics.selected.platforms.preview.matchingStories.total,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
   currentTopicInfo: state.topics.selected.info,
-  currentQuery: state.form.platform.values.query,
+  currentQuery: state.form.platform.values.query || null,
   currentPlatformType: state.topics.selected.platforms.selected.select.currentPlatformType,
-  channel: state.form.platform.values.channel || state.form.platform.values.sourcesAndCollections,
+  channel: state.form.platform.values.channel || state.form.platform.values.sourcesAndCollections || [],
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -220,12 +221,20 @@ const fetchAsyncData = (dispatch, { topicId, currentTopicInfo, currentPlatformTy
   return dispatch(fetchStoriesByPlatformQuery(topicId, { ...infoForQuery }));
 };
 
+const reduxFormConfig = {
+  form: 'platform', // make sure this matches the sub-components and other wizard steps
+  destroyOnUnmount: false, // <------ preserve form data
+  forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
+};
+
 export default
 injectIntl(
   withIntlForm(
-    connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncData(fetchAsyncData)(
-        Platform3ValidateContainer
+    reduxForm(reduxFormConfig)(
+      connect(mapStateToProps, mapDispatchToProps)(
+        withAsyncData(fetchAsyncData)(
+          Platform3ValidateContainer
+        )
       )
     )
   )

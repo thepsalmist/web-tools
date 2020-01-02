@@ -6,7 +6,7 @@ import withAsyncData from '../../../../common/hocs/AsyncDataContainer';
 import withHelp from '../../../../common/hocs/HelpfulContainer';
 import { fetchStoriesByPlatformQuery } from '../../../../../actions/topicActions';
 import DataCard from '../../../../common/DataCard';
-import StoryTable from '../../../../common/StoryTable';
+import PlatformStoryTable from '../../../../common/PlatformStoryTable';
 import messages from '../../../../../resources/messages';
 import { formatTopicRedditPreviewForQuery } from '../../../../util/topicUtil';
 
@@ -25,7 +25,7 @@ const RedditStoryPreviewContainer = (props) => {
         <FormattedMessage {...localMessages.title} />
         {helpButton}
       </h2>
-      <StoryTable stories={stories.slice(0, NUM_TO_SHOW)} showTweetCounts={showTweetCounts} topicId={topicId} />
+      <PlatformStoryTable stories={stories.slice(0, NUM_TO_SHOW)} showTweetCounts={showTweetCounts} topicId={topicId} />
     </DataCard>
   );
 };

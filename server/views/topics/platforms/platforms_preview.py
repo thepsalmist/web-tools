@@ -32,7 +32,6 @@ def api_topics_platform_preview_story_sample(topics_id):
     start_date, end_date = parse_query_dates(topic)
     filter='description:MIT'
     if platform == 'reddit':
-        #channel or source or platform_query?
         subreddits = request.args['channel'] if 'channel' in request.args else ps_reddit.NEWS_SUBREDDITS
         story_count_result = ps_reddit.top_submissions(query=platform_query,
                                                        start_date=start_date, end_date=end_date,
@@ -90,7 +89,7 @@ def api_topics_platform_preview_story_count(topics_id):
         channel = request.args['channel'] if 'channel' in request.args else None
         channel = json.loads(channel)
         # TODO format channel properly for twitter
-        
+
         story_count_result = ps_twitter.tweet_count(query=platform_query,
                                                     start_date=start_date, end_date=end_date)
 

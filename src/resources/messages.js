@@ -132,6 +132,7 @@ const messages = {
   platformHeader: { id: 'platform.header', defaultMessage: 'Platforms' },
   addPlatform: { id: 'platform.add', defaultMessage: 'Add A New Platform' },
   managePlatforms: { id: 'platform.manage', defaultMessage: 'Manage Platforms' },
+  platformSource: { id: 'platform.source', defaultMessage: 'Source' },
 
   story: { id: 'story', defaultMessage: 'Story' },
   storyPlural: { id: 'stories', defaultMessage: 'Stories' },

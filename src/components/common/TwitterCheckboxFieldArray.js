@@ -13,12 +13,12 @@ const localMessages = {
 
 // const formSelector = formValueSelector('platform');
 
-const TwitterCheckboxSelector = ({ initialValues, renderCheckbox, onChange, intl: { formatMessage }, fields }) => (
+const TwitterCheckboxSelector = ({ initialValues, renderCheckbox, renderTextField, onChange, intl: { formatMessage }, fields }) => (
   <ul>
     {fields.map((name, index, thisFieldArray) => { // redux-form overrides map, and converts name to a string instead of an object!
       const fieldObject = thisFieldArray.get(index);
-      /* let chIdField = null;
-      if (fieldObject.type === 'crimson') {
+      let chIdField = null;
+      if (fieldObject.type === 'crimson' && fieldObject.selected) {
         chIdField = (
           <div>
             <Field // TODO maybe admin only...
@@ -28,7 +28,7 @@ const TwitterCheckboxSelector = ({ initialValues, renderCheckbox, onChange, intl
             />
           </div>
         );
-      } */
+      }
       const content = (
         <li key={index}>
           <Field
@@ -51,6 +51,7 @@ const TwitterCheckboxSelector = ({ initialValues, renderCheckbox, onChange, intl
             )}
             label={`${name}.label`}
           />
+          { chIdField }
         </li>
       );
       return content;

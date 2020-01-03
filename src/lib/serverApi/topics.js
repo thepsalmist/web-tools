@@ -392,10 +392,6 @@ export function topicCreatePlatform(topicId, params) {
   return createPostingApiPromise(`/api/topics/${topicId}/platforms/add`, acceptedParams);
 }
 
-export function topicFetchPlatformById(topicId, platformId) {
-  return createApiPromise(`/api/topics/${topicId}/platforms/${platformId}`);
-}
-
 export function topicUpdatePlatform(topicId, platformId, params) {
   const acceptedParams = acceptParams(params, ['current_platform_id', 'current_platform_type', 'platform_query', 'channel', 'source', 'sources[]', 'collections[]', 'searches[]']);
   return createPostingApiPromise(`/api/topics/${topicId}/platforms/${platformId}/update`, acceptedParams);

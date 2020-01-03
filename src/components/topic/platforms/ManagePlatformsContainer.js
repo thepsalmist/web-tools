@@ -43,11 +43,14 @@ class ManagePlatformsContainer extends React.Component {
     this.setState({ removeDialogOpen: false, idToRemove: null });
   }
 
-  onEditPlatform = (platformId, platformType) => {
+  onEditPlatform = (platform) => {
     const { topicId, filters, handleSelectPlatform } = this.props;
     // filteredLinkTo link to edit wizard
     // in edit, we will find latest topic_seed_query for this platform
-    handleSelectPlatform({ topic_seed_queries_id: platformId, platform: platformType }, filteredLinkTo(`/topics/${topicId}/platforms/${platformId}/edit`, filters));
+    handleSelectPlatform(
+      { topic_seed_queries_id: platform.topic_seed_queries_id, platform: platform.platform },
+      filteredLinkTo(`/topics/${topicId}/platforms/${platform.topic_seed_queries_id}/edit`, filters)
+    );
   }
 
   onNewPlatform = (platformType) => {
@@ -121,7 +124,6 @@ const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
   topicInfo: state.topics.selected.info,
   platforms: state.topics.selected.platforms.all.results,
-  fetchStatus: state.topics.selected.platforms.all.fetchStatus,
   filters: state.topics.selected.filters,
 });
 
@@ -151,7 +153,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 const fetchAsyncData = (dispatch, { topicId }) => {
   dispatch(resetTopicPlatforms(topicId));
-  dispatch(fetchPlatformsInTopicList(topicId));
 };
 
 export default

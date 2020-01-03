@@ -1,10 +1,8 @@
-import { combineReducers } from 'redux';
-import { SELECT_PLATFORM, SELECT_PLATFORM_TYPE } from '../../../../../actions/topicActions';
-import platformDetails from './platformDetails';
+import { SELECT_PLATFORM, SELECT_PLATFORM_TYPE } from '../../../../actions/topicActions';
 
 const INITIAL_STATE = { topic_seed_queries_id: -1, currentPlatformType: '' };
 
-function select(state = INITIAL_STATE, action) {
+function selected(state = INITIAL_STATE, action) {
   let updatedState = null;
   switch (action.type) {
     case SELECT_PLATFORM:
@@ -23,9 +21,5 @@ function select(state = INITIAL_STATE, action) {
       return state;
   }
 }
-const selected = combineReducers({
-  select,
-  platformDetails,
-});
 
 export default selected;

@@ -6,7 +6,7 @@ import { push } from 'react-router-redux';
 // import { reset } from 'redux-form';
 import PlatformWizard from './builder/PlatformWizard';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import { topicUpdatePlatform, fetchTopicPlatformById, setTopicNeedsNewSnapshot, selectPlatform } from '../../../actions/topicActions';
+import { topicUpdatePlatform, setTopicNeedsNewSnapshot, selectPlatform } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../lib/platformTypes';
 import { formatTopicOpenWebPreviewQuery, formatTopicRedditPreviewForQuery, formatTopicTwitterPreviewForQuery } from '../../util/topicUtil';
@@ -18,19 +18,19 @@ const localMessages = {
 
 class EditPlatformContainer extends React.Component {
   getInitialValues = () => {
-    const { topicId, currentPlatformId, currentPlatformType, platformDetails } = this.props;
+    const { topicId, selectedPlatform } = this.props;
     return {
       topicId,
-      currentPlatformId,
-      currentPlatformType,
-      platformDetails,
+      currentPlatformId: selectedPlatform.topic_seed_queries_id,
+      currentPlatformType: selectedPlatform.platform,
+      platformDetails: selectedPlatform,
     };
   }
 
   render() {
-    const { topicId, location, handleUpdatePlatform } = this.props;
+    const { topicId, location, handleUpdatePlatform, selectedPlatform } = this.props;
     const initialValues = this.getInitialValues();
-    return (
+    return (selectedPlatform.topic_seed_queries_id !== -1) && (
       <PlatformWizard
         topicId={topicId}
         startStep={0}
@@ -47,9 +47,9 @@ EditPlatformContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   location: PropTypes.object.isRequired,
   // from state
-  currentPlatformId: PropTypes.number.isRequired,
-  currentPlatformType: PropTypes.string.isRequired,
-  platformDetails: PropTypes.object.isRequired,
+  allPlatforms: PropTypes.array.isRequired,
+  selectedPlatformId: PropTypes.number.isRequired,
+  selectedPlatform: PropTypes.object.isRequired,
   // from dispatch
   fetchStatus: PropTypes.string.isRequired,
   handleUpdatePlatform: PropTypes.func.isRequired,
@@ -57,10 +57,10 @@ EditPlatformContainer.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
-  fetchStatus: state.topics.selected.platforms.selected.platformDetails.fetchStatus,
-  currentPlatformId: parseInt(ownProps.params.platformId, 10),
-  currentPlatformType: state.topics.selected.platforms.selected.select.currentPlatformType,
-  platformDetails: state.topics.selected.platforms.selected.platformDetails,
+  fetchStatus: state.topics.selected.platforms.all.fetchStatus, // the builder fetches this, so we don't need to
+  selectedPlatformId: parseInt(ownProps.params.platformId, 10),
+  allPlatforms: state.topics.selected.platforms.all.results,
+  selectedPlatform: state.topics.selected.platforms.selected,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -105,10 +105,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-// platformDetails will be empty if
-const fetchAsyncData = (dispatch, { topicId, platformDetails, currentPlatformType, currentPlatformId }) => {
-  dispatch(selectPlatform({ ...platformDetails, currentPlatformType }));
-  dispatch(fetchTopicPlatformById(topicId, currentPlatformId));
+const fetchAsyncData = (dispatch, { allPlatforms, selectedPlatformId }) => {
+  // already loaded by PlatformBuilder parent,so just select the one the user wants
+  const toSelect = allPlatforms.find(p => p.topic_seed_queries_id === selectedPlatformId);
+  dispatch(selectPlatform({ ...toSelect }));
 };
 
 export default

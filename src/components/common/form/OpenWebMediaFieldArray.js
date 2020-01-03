@@ -36,7 +36,6 @@ renderCollectionSelector.propTypes = {
   allowRemoval: PropTypes.bool,
   validate: PropTypes.func,
   onDelete: PropTypes.func,
-  formatMessage: PropTypes.func.isRequired,
 };
 
 const OpenWebMediaFieldArray = (props) => {

@@ -21,11 +21,6 @@ const localMessages = {
 };
 
 class PlatformWizard extends React.Component {
-  componentWillMount = () => {
-    const { startStep, goToStep } = this.props;
-    goToStep(startStep || 0);
-  }
-
   componentDidMount() {
     const { startStep, goToStep } = this.props;
     goToStep(startStep || 0);

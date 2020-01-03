@@ -48,21 +48,6 @@ def get_topic_platforms(topics_id):
     return jsonify({'results': available_platforms})
 
 
-# TODO: maybe push this to js, we'll see
-@app.route('/api/topics/<topics_id>/platforms/<topic_seed_queries_id>', methods=['GET'])
-@flask_login.login_required
-def get_platform_by_id(topics_id, topic_seed_queries_id):
-    user_mc = user_mediacloud_client()
-    topic = user_mc.topic(topics_id)
-    if int(topic_seed_queries_id) == WEB_SEED_QUERY_PLACEHOLDER_ID: #web shim
-        web_seed_query = WEB_SEED_QUERY_PLACEHOLDER
-        web_seed_query['query'] = topic['solr_seed_query']
-        web_seed_query['media'] = topic['media_tags']
-    else:
-        web_seed_query = [s for s in topic['topic_seed_queries'] if s['topic_seed_query_id']== topic_seed_queries_id]
-    return jsonify({'results': web_seed_query})
-
-
 @app.route('/api/topics/<topics_id>/snapshots/update-seed-query', methods=['PUT'])
 @flask_login.login_required
 @api_error_handler

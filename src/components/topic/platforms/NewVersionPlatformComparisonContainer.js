@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { Row, Col } from 'react-flexbox-grid/lib';
+import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
 import AppButton from '../../common/AppButton';
 import PlatformSummary from './PlatformSummary';
@@ -35,7 +35,7 @@ class NewVersionPlatformComparisonContainer extends React.Component {
     const submitting = this.state.submittingVersion;
     if (placeholderNewPlatformNeedsNewVersion(usingLatest, newPlatforms, latestVersionRunning)) {
       return (
-        <fragment>
+        <Grid>
           <Row>
             <Col lg={12}>
               <h2><FormattedMessage {...localMessages.versionDiffTitle} /></h2>
@@ -58,7 +58,7 @@ class NewVersionPlatformComparisonContainer extends React.Component {
               />
             </Col>
           </Row>
-        </fragment>
+        </Grid>
       );
     }
     return '';

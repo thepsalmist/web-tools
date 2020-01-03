@@ -23,8 +23,8 @@ const PlatformSummary = (props) => (
 
 PlatformSummary.propTypes = {
   // from parent
-  version: PropTypes.number.isRequired,
-  platforms: PropTypes.object.isRequired,
+  latestVersionRunning: PropTypes.bool.isRequired,
+  platforms: PropTypes.array.isRequired,
   // form context
   intl: PropTypes.object.isRequired,
 };

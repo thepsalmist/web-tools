@@ -12,9 +12,9 @@ import messages from '../../../../resources/messages';
 const Platform2ConfigureContainer = (props) => {
   const { topicId, initialValues, handleNextStep, currentPlatformType, currentPlatformInfo, location } = props;
   let content = null;
+  const platformDetails = { ...initialValues, ...currentPlatformInfo };
   switch (currentPlatformType) {
     case PLATFORM_OPEN_WEB:
-      const platformDetails = { ...initialValues, ...currentPlatformInfo };
       content = (
         <EditOpenWebContainer
           topicId={topicId}
@@ -29,7 +29,7 @@ const Platform2ConfigureContainer = (props) => {
       content = (
         <EditRedditContainer
           topicId={topicId}
-          initialValues={initialValues}
+          initialValues={platformDetails}
           // onPreviousStep={handlePreviousStep}
           onNextStep={handleNextStep}
           location={location}
@@ -40,7 +40,7 @@ const Platform2ConfigureContainer = (props) => {
       content = (
         <EditTwitterContainer
           topicId={topicId}
-          initialValues={initialValues}
+          initialValues={platformDetails}
           onNextStep={handleNextStep}
           location={location}
         />

@@ -15,6 +15,15 @@ OPEN_WEB = 1
 WEB_SEED_SHIM = {'platform_type': 'web_ui_shim', 'platform': 'web',
      'topic_seed_queries_id': 9999}  # TODO, assuming seed query ids are 0-10 or so
 
+TWITTER_SEED_SHIM = {'platform_type': 'twitter_ui_shim', 'platform': 'twitter',
+    'topic_seed_queries_id': 9998,
+    'channel': [
+        { 'type': 'elite', 'id': 0, 'label': 'Elite', 'selected': True, 'value': True },
+        { 'type': 'crimson', 'id': 1, 'label': 'Crimson Hexagon', 'selected': True, 'value': True },
+        { 'type': 'other', 'id': 2, 'label': 'Other', 'selected': False, 'value': False }
+    ]
+}  # TODO, assuming seed query ids are 0-10 or so
+
 
 @app.route('/api/topics/platforms/all', methods=['GET'])
 @flask_login.login_required
@@ -32,7 +41,7 @@ def get_topic_platforms(topics_id):
     #merge what the topic has versus what the topic doens't by adding in the topic_seed_queries_id
     # TODO fetch platforms from topic
     # TODO add in channel for display in UI
-    dummy_dict = [{'platform_type': 'web_ui_shim', 'platform': 'web', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform_type': '1.0','platform': 'reddit', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform_type': '1.0','platform': 'twitter', 'query': 'dummy', 'topic_seed_queries_id': -1}]
+    dummy_dict = [{'platform_type': 'web_ui_shim', 'platform': 'web', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform_type': '1.0','platform': 'reddit', 'query': 'dummy', 'topic_seed_queries_id': -1}, {'platform_type': 'twitter-ui-shim','platform': 'twitter', 'query': 'dummy', 'topic_seed_queries_id': 9998}]
 
     topic = user_mc.topic(topics_id)
     non_web_seed_queries = topic['topic_seed_queries']
@@ -55,14 +64,20 @@ def get_platform_by_id(topics_id, platform_id):
     user_mc = user_mediacloud_client()
     results = "not implemented for all platforms"
     topic = user_mc.topic(topics_id)
+    platform_info={}
     if int(platform_id) == 9999: #web shim
-        logger.info("shim platform retrieved")
-        web_seed_query = WEB_SEED_SHIM
-        web_seed_query['query'] = topic['solr_seed_query']
-        web_seed_query['media'] = topic['media_tags']
+        logger.info("web shim platform retrieved")
+        platform_info = WEB_SEED_SHIM
+        platform_info['query'] = topic['solr_seed_query']
+        platform_info['media'] = topic['media_tags']
+    elif int(platform_id) == 9998: #twitter shim
+        logger.info("twitter shim platform retrieved")
+        platform_info = TWITTER_SEED_SHIM
+        platform_info['query'] = topic['solr_seed_query']
+        #platform_info['channel'] = topic['channel']
     else:
-        web_seed_query = {s for s in topic['topic_seed_queries'] if s['topic_seed_query_id']== platform_id}
-    return jsonify({'results': web_seed_query})
+        platform_info = {s for s in topic['topic_seed_queries'] if s['topic_seed_query_id']== platform_id}
+    return jsonify({'results': platform_info})
 
 
 @app.route('/api/topics/<topics_id>/snapshots/update-seed-query', methods=['PUT'])

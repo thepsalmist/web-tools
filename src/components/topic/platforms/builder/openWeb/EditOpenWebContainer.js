@@ -77,7 +77,7 @@ class EditOpenWebContainer extends React.Component {
     }
     return (
       <Grid>
-        <form className="platform-create-edit-keyword" name="platform" onSubmit={handleSubmit(finishStep.bind(this))}>
+        <form className="platform-create-edit-keyword platform-edit-open-web" name="platform" onSubmit={handleSubmit(finishStep.bind(this))}>
           <Row>
             <Col lg={10}>
               <h2><FormattedMessage {...localMessages.title} /></h2>

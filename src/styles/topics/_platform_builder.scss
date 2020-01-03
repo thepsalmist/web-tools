@@ -8,8 +8,17 @@
     label {
       font-size: 16px;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
+      display: block;
     }
+  }
+
+  .platform-edit-open-web {
+
+    .media-field-wrapper {
+      margin-top: 0px;
+    }
+
   }
 
 }

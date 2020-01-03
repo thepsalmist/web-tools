@@ -1,0 +1,32 @@
+@import '../constants';
+
+.available-platform {
+
+  border: 1px solid $material-grey400;
+  padding: 30px;
+  margin-bottom: 15px;
+
+  h3 {
+    padding: 0px;
+    margin: 0px;
+    margin-bottom: 8px;
+
+    img {
+      display: inline-block;
+      margin-right: 5px;
+    }
+  }
+
+  &.inactive {
+    opacity: 0.4;
+    &:hover {
+      opacity: 1.0;
+    }
+  }
+
+  button {
+    margin: 0px;
+    margin-bottom: 15px;
+  }
+
+}

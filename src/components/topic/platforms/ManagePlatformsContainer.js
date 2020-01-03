@@ -4,11 +4,10 @@ import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
-import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import PlatformTable from '../../common/PlatformTable';
+import AvailablePlatformList from './AvailablePlatformList';
 import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
-import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, selectPlatformType, resetTopicPlatforms } from '../../../actions/topicActions';
+import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, selectPlatformType } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import NewVersionPlatformComparisonContainer from './NewVersionPlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
@@ -43,11 +42,14 @@ class ManagePlatformsContainer extends React.Component {
     this.setState({ removeDialogOpen: false, idToRemove: null });
   }
 
-  onEditPlatform = (platformId, platformType) => {
+  onEditPlatform = (platform) => {
     const { topicId, filters, handleSelectPlatform } = this.props;
     // filteredLinkTo link to edit wizard
     // in edit, we will find latest topic_seed_query for this platform
-    handleSelectPlatform({ topic_seed_queries_id: platformId, platform: platformType }, filteredLinkTo(`/topics/${topicId}/platforms/${platformId}/edit`, filters));
+    handleSelectPlatform(
+      { topic_seed_queries_id: platform.topic_seed_queries_id, platform: platform.platform },
+      filteredLinkTo(`/topics/${topicId}/platforms/${platform.topic_seed_queries_id}/edit`, filters)
+    );
   }
 
   onNewPlatform = (platformType) => {
@@ -71,16 +73,21 @@ class ManagePlatformsContainer extends React.Component {
       <div>
         <NeedsNewVersionWarning />
         <NewVersionPlatformComparisonContainer topicInfo={topicInfo} platforms={platforms} newPlatforms={platforms} latestVersionRunning={topicInfo.latestVersionRunning} />
-        <div className="manage-focal-sets">
+        <div className="manage-platforms">
           <Grid>
             <Row>
               <Col lg={10} xs={12}>
-                <h2>
+                <h1>
                   <FormattedMessage {...messages.managePlatforms} />
-                </h2>
+                </h1>
               </Col>
             </Row>
-            <PlatformTable platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} onDeleteClicked={this.handleDelete} />
+            <AvailablePlatformList
+              platforms={platforms}
+              onEdit={this.onEditPlatform}
+              onAdd={this.onNewPlatform}
+              onDelete={this.handleDelete}
+            />
           </Grid>
           <ConfirmationDialog
             open={this.state.removeDialogOpen}
@@ -103,7 +110,6 @@ ManagePlatformsContainer.propTypes = {
   topicInfo: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
   // from state
-  fetchStatus: PropTypes.string.isRequired,
   platforms: PropTypes.array.isRequired,
   filters: PropTypes.object.isRequired,
   // from dispatch
@@ -116,7 +122,6 @@ const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
   topicInfo: state.topics.selected.info,
   platforms: state.topics.selected.platforms.all.results,
-  fetchStatus: state.topics.selected.platforms.all.fetchStatus,
   filters: state.topics.selected.filters,
 });
 
@@ -144,16 +149,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-const fetchAsyncData = (dispatch, { topicId }) => {
-  dispatch(resetTopicPlatforms(topicId));
-  dispatch(fetchPlatformsInTopicList(topicId));
-};
-
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncData(fetchAsyncData)(
-      ManagePlatformsContainer
-    )
+    ManagePlatformsContainer
   )
 );

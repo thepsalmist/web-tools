@@ -20,7 +20,7 @@ const localMessages = {
   nameInUseError: { id: 'topic.form.detail.name.errorInUse', defaultMessage: 'That topic name is already taken. Please use a different one.' },
   descriptionError: { id: 'topic.form.detail.desciption.error', defaultMessage: 'Your topic need a description.' },
   seedQueryError: { id: 'topic.form.detail.seedQuery.error', defaultMessage: 'You must give us a seed query to start this topic form.' },
-  createTopic: { id: 'topic.form.detail.create', defaultMessage: 'Create' },
+  createTopic: { id: 'topic.form.detail.create', defaultMessage: 'Create a New Topic' },
   dateError: { id: 'topic.form.detail.date.error', defaultMessage: 'Please provide a date in YYYY-MM-DD format.' },
   startDateWarning: { id: 'explorer.queryBuilder.warning.startDate', defaultMessage: 'Start Date must be before End Date' },
   sourceCollectionsError: { id: 'topic.form.detail.sourcesCollections.error', defaultMessage: 'You must select at least one Source or one Collection to seed this topic.' },
@@ -29,69 +29,66 @@ const localMessages = {
   SandC: { id: 'topic.create.sAndC', defaultMessage: 'Media' },
 };
 
-class TopicForm extends React.Component {
-  shouldComponentUpdate = (nextProps) => {
-    const { initialValues } = this.props;
-    return (initialValues !== nextProps.initialValues);
-  }
-
-  render() {
-    const { initialValues, topicId, onSubmit, handleSubmit, pristine, submitting, asyncValidating, mode } = this.props;
-    const { formatMessage } = this.props.intl;
-    let useForm = (
-      <TopicCreateForm
-        defaultValue={initialValues}
+const TopicForm = (props) => {
+  const { initialValues, topicId, onSubmit, handleSubmit, pristine, submitting, asyncValidating, mode } = props;
+  const { formatMessage } = props.intl;
+  let formContent = (
+    <TopicCreateForm
+      defaultValue={initialValues}
+      destroyOnUnmount={false}
+      form="topicForm"
+      forceUnregisterOnUnmount
+      mode={mode}
+    />
+  );
+  if (mode === TOPIC_FORM_MODE_EDIT) {
+    // when editing a topic, you change the name and description in a different place (because they don't require a new version)
+    formContent = (
+      <TopicSeedDetailsForm
         destroyOnUnmount={false}
         form="topicForm"
         forceUnregisterOnUnmount
+        defaultValue={initialValues}
         mode={mode}
       />
     );
-    if (mode === TOPIC_FORM_MODE_EDIT) {
-      useForm = (
-        <TopicSeedDetailsForm
-          destroyOnUnmount={false}
-          form="topicForm"
-          forceUnregisterOnUnmount
-          defaultValue={initialValues}
-          mode={mode}
-        />
-      );
-    }
-    return (
-      <form className="create-topic" name="topicForm" onSubmit={handleSubmit(onSubmit.bind(this))}>
-        <input type="hidden" name="topicId" value={topicId} />
-        <Row><Col lg={12}><hr /></Col></Row>
-        <Row>
-          <Col lg={10}>
-            {useForm}
-          </Col>
-          <Col lg={2}>
-            <a target="_new" href="http://bit.ly/creating-topics-guide">
-              <figure className="document-download">
-                <img alt={formatMessage(localMessages.downloadUserGuide)} src={assetUrl('/static/img/topic-mapper-user-guide.png')} height="160" />
-                <figcaption><FormattedMessage {...localMessages.downloadUserGuide} /></figcaption>
-              </figure>
-            </a>
-          </Col>
-        </Row>
-        <Row><Col lg={12}><hr /></Col></Row>
-        <Row>
-          <Col lg={12}>
-            <AppButton
-              style={{ marginTop: 30 }}
-              type="submit"
-              disabled={pristine || submitting || asyncValidating === true}
-              label={initialValues.buttonLabel}
-              primary
-            />
-          </Col>
-        </Row>
-
-      </form>
-    );
   }
-}
+  return (
+    <form className="create-topic" name="topicForm" onSubmit={handleSubmit(onSubmit.bind(this))}>
+      <input type="hidden" name="topicId" value={topicId} />
+      <Row>
+        <Col lg={12}>
+          <h1><FormattedMessage {...localMessages.createTopic} /></h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col lg={10}>
+          {formContent}
+        </Col>
+        <Col lg={2}>
+          <a target="_new" href="http://bit.ly/creating-topics-guide">
+            <figure className="document-download">
+              <img alt={formatMessage(localMessages.downloadUserGuide)} src={assetUrl('/static/img/topic-mapper-user-guide.png')} height="160" />
+              <figcaption><FormattedMessage {...localMessages.downloadUserGuide} /></figcaption>
+            </figure>
+          </a>
+        </Col>
+      </Row>
+      <Row>
+        <Col lg={12}>
+          <AppButton
+            style={{ marginTop: 30 }}
+            type="submit"
+            disabled={pristine || submitting || asyncValidating === true}
+            label={initialValues.buttonLabel}
+            primary
+          />
+        </Col>
+      </Row>
+
+    </form>
+  );
+};
 
 TopicForm.propTypes = {
   // from compositional chain

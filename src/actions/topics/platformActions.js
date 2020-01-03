@@ -15,10 +15,6 @@ export const resetTopicPlatforms = createAction(RESET_PLATFORMS);
 export const FETCH_PLATFORMS_IN_TOPIC = 'FETCH_PLATFORMS_IN_TOPIC';
 export const fetchPlatformsInTopicList = createAsyncAction(FETCH_PLATFORMS_IN_TOPIC, api.platformsInTopic);
 
-export const FETCH_TOPIC_PLATFORM_BY_ID = 'FETCH_TOPIC_PLATFORM_BY_ID';
-export const fetchTopicPlatformById = createAsyncAction(FETCH_TOPIC_PLATFORM_BY_ID, api.topicFetchPlatformById);
-
-
 export const DELETE_PLATFORM = 'DELETE_PLATFORM';
 export const deleteTopicPlatform = createAsyncAction(DELETE_PLATFORM, api.topicDeletePlatform);
 

@@ -1,6 +1,22 @@
 {
   "releases": [
     {
+      "date": "2020-01-02",
+      "version": "v3.12.23",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "You can edit topic dates while creating a new version again"
+        },
+        {
+          "apps": [ "explorer", "topics" ],
+          "type": "Fixed",
+          "note": "Clicking on collection or source names works again"
+        }
+      ]
+    },
+    {
       "date": "2019-12-19",
       "version": "v3.12.22",
       "notes": [

@@ -14,20 +14,20 @@ const localMessages = {
 const OpenWebPreview = () => (
   <div className="platform-create-open-web-preview">
     <Row>
-      <Col lg={10}>
+      <Col lg={8}>
         <OpenWebStoryCountPreviewContainer />
       </Col>
-      <Col lg={2}>
+      <Col lg={4}>
         <p className="light"><i><FormattedMessage {...localMessages.about} /></i></p>
       </Col>
     </Row>
     <Row>
-      <Col lg={10} md={10} xs={12}>
+      <Col lg={12}>
         <OpenWebAttentionPreviewContainer />
       </Col>
     </Row>
     <Row>
-      <Col lg={10} md={10} xs={12}>
+      <Col lg={12}>
         <OpenWebWordsPreview />
       </Col>
     </Row>

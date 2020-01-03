@@ -33,8 +33,6 @@ export const formatTopicPreviewQuery = (topicQuery) => ({
 });
 
 // while creating a topic, this can format the under-construction topic params propertly for a preview request
-
-// while creating a topic, this can format the under-construction topic params propertly for a preview request
 export const formatTopicPlatformPreviewQuery = (topicQuery, platform, query) => ({
   topics_id: topicQuery.topics_id,
   current_platform_type: platform,
@@ -63,5 +61,7 @@ export const formatTopicTwitterPreviewForQuery = (topicQuery) => ({
   channel: JSON.stringify(topicQuery.channel),
   source: 'pushshift', // TODO crimson hex or pushshift
 });
+
+export const timespanForDate = (date, timespans, period) => timespans.filter(t => t.period === period).find(t => date >= t.startDateObj && date <= t.endDateObj);
 
 export const TEMP = 'temp';

@@ -438,3 +438,8 @@ export function topicPlatformList() {
 export function platformsInTopic(topicId) {
   return createApiPromise(`/api/topics/${topicId}/platforms/list`);
 }
+
+export function topicTopStoriesOnDates(topicId, params) {
+  const acceptedParams = acceptParams(params, ['startTimestamp', 'endTimestamp', 'snapshotId', 'timespanId', 'focusId', 'sort', 'limit', 'q', 'selectedTimespanId']);
+  return createApiPromise(`/api/topics/${topicId}/stories/top-on-dates`, acceptedParams);
+}

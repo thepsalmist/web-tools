@@ -21,7 +21,7 @@ const localMessages = {
   addNewSubtopicsDesc: { id: 'topics.addNewSubtopics.desc', defaultMessage: 'Slice and dice your topic into subtopics to support comparative analysis. You can create subtopics with a growing list of techniques; allowing you to group stories by simple boolean queries, the country of focus, the themes included, and more.' },
   cannotUpdateTopic: { id: 'topic.modify.cannotUpdate', defaultMessage: 'Another topic of yours is generating. You can only run one at a time, so you can\'t change this topic until that one finished.' },
   addNewPlatform: { id: 'topics.addNewPlatform', defaultMessage: 'Add or Modify Platforms' },
-  addNewPlatformDesc: { id: 'topics.addNewPlatform.desc', defaultMessage: 'Add New Platforms' },
+  addNewPlatformDesc: { id: 'topics.addNewPlatform.desc', defaultMessage: 'Media about your topic is shared across the web and social media. Set up queries for various platforms to find news links on the open-web, those shared on twitter, on reddit, and other platforms. This lets you discover what news links are being shared on different platforms.' },
 };
 
 const TopicNewVersionContainer = props => (
@@ -34,7 +34,7 @@ const TopicNewVersionContainer = props => (
         <WarningNotice><FormattedHTMLMessage {...localMessages.cannotUpdateTopic} /></WarningNotice>
       )}
       <Row>
-        <Col lg={5}>
+        <Col lg={4}>
           <h2><FormattedMessage {...localMessages.createNewVersion} /></h2>
           <p><FormattedMessage {...localMessages.createNewVersionDesc} /></p>
           <LinkWithFilters to={`/topics/${props.topicId}/update`}>
@@ -45,8 +45,7 @@ const TopicNewVersionContainer = props => (
             />
           </LinkWithFilters>
         </Col>
-        <Col lg={1} />
-        <Col lg={5}>
+        <Col lg={4}>
           <h2><FormattedMessage {...localMessages.addNewSubtopics} /></h2>
           <p><FormattedMessage {...localMessages.addNewSubtopicsDesc} /></p>
           <LinkWithFilters to={`/topics/${props.topicId}/snapshot/foci`}>
@@ -57,9 +56,7 @@ const TopicNewVersionContainer = props => (
             />
           </LinkWithFilters>
         </Col>
-      </Row>
-      <Row>
-        <Col lg={5}>
+        <Col lg={4}>
           <h2><FormattedMessage {...localMessages.addNewPlatform} /></h2>
           <p><FormattedMessage {...localMessages.addNewPlatformDesc} /></p>
           <LinkWithFilters to={`/topics/${props.topicId}/platforms/manage`}>

@@ -5,7 +5,7 @@ import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import PlatformTable from '../../common/PlatformTable';
+import AvailablePlatformList from './AvailablePlatformList';
 import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
 import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, selectPlatformType, resetTopicPlatforms } from '../../../actions/topicActions';
@@ -71,16 +71,21 @@ class ManagePlatformsContainer extends React.Component {
       <div>
         <NeedsNewVersionWarning />
         <NewVersionPlatformComparisonContainer topicInfo={topicInfo} platforms={platforms} newPlatforms={platforms} latestVersionRunning={topicInfo.latestVersionRunning} />
-        <div className="manage-focal-sets">
+        <div className="manage-platforms">
           <Grid>
             <Row>
               <Col lg={10} xs={12}>
-                <h2>
+                <h1>
                   <FormattedMessage {...messages.managePlatforms} />
-                </h2>
+                </h1>
               </Col>
             </Row>
-            <PlatformTable platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} onDeleteClicked={this.handleDelete} />
+            <AvailablePlatformList
+              platforms={platforms}
+              onEdit={this.onEditPlatform}
+              onAdd={this.onNewPlatform}
+              onDelete={this.handleDelete}
+            />
           </Grid>
           <ConfirmationDialog
             open={this.state.removeDialogOpen}

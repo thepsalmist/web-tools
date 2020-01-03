@@ -97,7 +97,7 @@ Platform4ConfirmContainer.propTypes = {
 
 const mapStateToProps = state => ({
   formValues: state.form.platform.values,
-  currentPlatformType: state.topics.selected.platforms.selected.select.currentPlatformType,
+  currentPlatformType: state.topics.selected.platforms.selected.platform,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

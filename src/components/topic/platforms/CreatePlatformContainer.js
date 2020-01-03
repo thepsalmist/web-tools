@@ -62,7 +62,7 @@ CreatePlatformContainer.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   topicInfo: state.topics.selected.info,
-  currentPlatformType: state.topics.selected.platforms.selected.select.currentPlatformType,
+  currentPlatformType: state.topics.selected.platforms.selected.platform,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

@@ -4,11 +4,10 @@ import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
-import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import AvailablePlatformList from './AvailablePlatformList';
 import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
-import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, selectPlatformType, resetTopicPlatforms } from '../../../actions/topicActions';
+import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, selectPlatformType } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import NewVersionPlatformComparisonContainer from './NewVersionPlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
@@ -111,7 +110,6 @@ ManagePlatformsContainer.propTypes = {
   topicInfo: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
   // from state
-  fetchStatus: PropTypes.string.isRequired,
   platforms: PropTypes.array.isRequired,
   filters: PropTypes.object.isRequired,
   // from dispatch
@@ -151,15 +149,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-const fetchAsyncData = (dispatch, { topicId }) => {
-  dispatch(resetTopicPlatforms(topicId));
-};
-
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncData(fetchAsyncData)(
-      ManagePlatformsContainer
-    )
+    ManagePlatformsContainer
   )
 );

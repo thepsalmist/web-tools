@@ -20,8 +20,8 @@ const localMessages = {
   about: { id: 'platform.create.edit.about',
     defaultMessage: 'This Platform is driven by an open web seed query.  Any stories that match the query you create will be included in the Platform.' },
   errorNoKeywords: { id: 'platform.error', defaultMessage: 'You need to specify a query.' },
-  SandC: { id: 'platform.create.edit.sandC',
-    defaultMessage: 'Media' },
+  SandC: { id: 'platform.create.edit.sandC', defaultMessage: 'Media' },
+  keywords: { id: 'platform.create.edit.query', defaultMessage: 'Query Keywords' },
 };
 
 class EditOpenWebContainer extends React.Component {
@@ -59,7 +59,6 @@ class EditOpenWebContainer extends React.Component {
     cleanedInitialValues.media = sourcesAndCollections;
     // infoForQuery['collections[]'] = topic.media_tags.map(s => s.tags_id);
     // infoForQuery['sources[]'] = topic.media_tags.map(s => s.media_id);
-    const mediaLabel = <label htmlFor="media"><FormattedMessage {...localMessages.SandC} /></label>;
     mediaPicker = (
       <MediaPickerDialog
         initMedia={cleanedInitialValues.media} // {selected.media ? selected.media : cleanedInitialValues.media}
@@ -88,28 +87,22 @@ class EditOpenWebContainer extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col lg={8} xs={12}>
+            <Col lg={6}>
+              <label htmlFor="query"><FormattedMessage {...localMessages.keywords} /></label>
               <Field
                 name="query"
                 component={renderTextField}
-                // placeholder={formatMessage(messages.searchByKeywords)}
+                placeholder={formatMessage(messages.searchByKeywords)}
                 fullWidth
+                multiline
+                rows="3"
+                variant="outlined"
                 onKeyDown={this.handleKeyDown}
               />
             </Col>
-            <Col lg={2} xs={12}>
-              <AppButton
-                id="open-web-preview-button"
-                label={formatMessage(messages.search)}
-                style={{ marginTop: 33 }}
-                onClick={this.updateQuery}
-              />
-            </Col>
-          </Row>
-          <Row>
             <Col lg={6}>
               <div className="media-field-wrapper">
-                {mediaLabel}
+                <label htmlFor="media"><FormattedMessage {...localMessages.SandC} /></label>
                 <OpenWebMediaFieldArray
                   formatMessage={formatMessage}
                   className="query-field"
@@ -125,10 +118,20 @@ class EditOpenWebContainer extends React.Component {
               </div>
             </Col>
           </Row>
+          <Row>
+            <Col lg={2} xs={12}>
+              <AppButton
+                id="open-web-preview-button"
+                label={formatMessage(messages.search)}
+                style={{ marginTop: 33 }}
+                onClick={this.updateQuery}
+              />
+            </Col>
+          </Row>
           { previewContent }
           <Row>
             <Col lg={8} xs={12}>
-              <AppButton disabled={nextButtonDisabled} type="submit" label={formatMessage(messages.next)} primary />
+              <AppButton className="platform-builder-next" disabled={nextButtonDisabled} type="submit" label={formatMessage(messages.next)} primary />
             </Col>
           </Row>
         </form>

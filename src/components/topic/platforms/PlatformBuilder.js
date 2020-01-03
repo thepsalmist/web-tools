@@ -34,7 +34,6 @@ const fetchAsyncData = (dispatch, { topicId }) => {
   dispatch(fetchPlatformsInTopicList(topicId));
 };
 
-
 export default
 injectIntl(
   connect(mapStateToProps)(

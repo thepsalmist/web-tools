@@ -21,7 +21,7 @@ export function needsNewVersion(usingLatest, newDefinitions, latestVersionRunnin
 
 export function placeholderNewPlatformNeedsNewVersion(usingLatest, newPlatforms, latestVersionRunning) {
   const forceDisplay = usingLatest && newPlatforms && !latestVersionRunning;
-  return !forceDisplay;
+  return Math.abs(forceDisplay); // always return true for now
 }
 
 const NeedsNewVersionWarning = ({ topicId, newDefinitions, latestVersionRunning, usingLatest }) => (

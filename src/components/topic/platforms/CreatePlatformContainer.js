@@ -26,9 +26,10 @@ const CreatePlatformContainer = (props) => {
   const { topicInfo, location, handleDone, currentPlatformType } = props;
   const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, currentPlatformType };
   if (currentPlatformType === 'twitter') {
-    initialValues.channel = [
+    initialValues.channel = [ // TODO, depending on how channel data is prepped from back end, maybe put in reducer or python platform stubs
       { type: 'elite', id: 0, label: 'Elite', selected: false, value: false },
       { type: 'crimson', id: 1, label: 'Crimson Hexagon', selected: false, value: false },
+      { type: 'other', id: 2, label: 'Other', selected: false, value: false },
     ];
   }
   const initAndTopicInfoValues = { ...initialValues, ...topicInfo, query: topicInfo.solr_seed_query };

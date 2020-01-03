@@ -46,7 +46,6 @@ class PickedMediaContainer extends React.Component {
 
   render() {
     const { selectedMediaQueryType, selectedMedia, handleUnselectMedia, handleClearAll } = this.props;
-    const { formatMessage } = this.props.intl;
     const options = [
       { label: localMessages.pickFeatured, value: PICK_FEATURED },
       { label: localMessages.pickSAndC, value: PICK_SOURCE_AND_COLLECTION },
@@ -106,7 +105,6 @@ class PickedMediaContainer extends React.Component {
               key={obj.id || obj.tags_id || obj.media_id || obj.tag_sets_id || obj.tags.name}
               object={obj}
               onDelete={() => handleUnselectMedia(obj)}
-              formatMessage={formatMessage}
             />
           ))}
           { warningInfo }

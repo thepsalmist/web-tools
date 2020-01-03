@@ -10,7 +10,7 @@ import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
 import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, selectPlatformType, resetTopicPlatforms } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
-// import NewVersionPlatformComparisonContainer from './NewVersionPlatformComparisonContainer';
+import NewVersionPlatformComparisonContainer from './NewVersionPlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
 import { filteredLinkTo } from '../../util/location';
 
@@ -61,7 +61,7 @@ class ManagePlatformsContainer extends React.Component {
   }
 
   render() {
-    const { platforms } = this.props;
+    const { platforms, topicInfo } = this.props;
     const { formatMessage } = this.props.intl;
     /* TODO get the latest platform info of each category if exists, relevantPlatforms = platform.map... */
     /* and, compare previous version with current to see if new platforms and if so, offer spider and generate */
@@ -70,6 +70,7 @@ class ManagePlatformsContainer extends React.Component {
     return (
       <div>
         <NeedsNewVersionWarning />
+        <NewVersionPlatformComparisonContainer topicInfo={topicInfo} platforms={platforms} newPlatforms={platforms} latestVersionRunning={topicInfo.latestVersionRunning} />
         <div className="manage-focal-sets">
           <Grid>
             <Row>
@@ -99,6 +100,7 @@ class ManagePlatformsContainer extends React.Component {
 ManagePlatformsContainer.propTypes = {
   // from composition
   topicId: PropTypes.number.isRequired,
+  topicInfo: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,

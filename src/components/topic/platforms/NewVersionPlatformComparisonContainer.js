@@ -6,7 +6,7 @@ import { Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
 import AppButton from '../../common/AppButton';
 import PlatformSummary from './PlatformSummary';
-import { needsNewVersion } from '../versions/NeedsNewVersionWarning';
+import { placeholderNewPlatformNeedsNewVersion } from '../versions/NeedsNewVersionWarning';
 import { topicSnapshotSpider } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 
@@ -33,7 +33,7 @@ class NewVersionPlatformComparisonContainer extends React.Component {
   render() {
     const { topicId, usingLatest, newPlatforms, platforms, latestVersionRunning } = this.props;
     const submitting = this.state.submittingVersion;
-    if (needsNewVersion(usingLatest, newPlatforms, latestVersionRunning)) {
+    if (placeholderNewPlatformNeedsNewVersion(usingLatest, newPlatforms, latestVersionRunning)) {
       return (
         <fragment>
           <Row>

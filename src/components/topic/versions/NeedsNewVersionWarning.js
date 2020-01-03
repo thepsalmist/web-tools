@@ -19,6 +19,11 @@ export function needsNewVersion(usingLatest, newDefinitions, latestVersionRunnin
   return usingLatest && newDefinitions && !latestVersionRunning;
 }
 
+export function placeholderNewPlatformNeedsNewVersion(usingLatest, newPlatforms, latestVersionRunning) {
+  const forceDisplay = usingLatest && newPlatforms && !latestVersionRunning;
+  return !forceDisplay;
+}
+
 const NeedsNewVersionWarning = ({ topicId, newDefinitions, latestVersionRunning, usingLatest }) => (
   <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
     {needsNewVersion(usingLatest, newDefinitions, latestVersionRunning) && (

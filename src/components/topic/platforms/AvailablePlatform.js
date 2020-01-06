@@ -28,11 +28,11 @@ const localMessages = {
 
 const UNKNOWN_THING_MS = { id: 'unknown', defaultMessage: 'Unknown :-(' };
 
-const platformNameMessage = platform => (localMessages[`${platform}-name`] ? localMessages[`${platform}-name`] : UNKNOWN_THING_MS);
-const sourceNameMessage = source => (localMessages[`${source}-name`] ? localMessages[`${source}-name`] : UNKNOWN_THING_MS);
+export const platformNameMessage = platform => (localMessages[`${platform}-name`] ? localMessages[`${platform}-name`] : UNKNOWN_THING_MS);
+export const sourceNameMessage = source => (localMessages[`${source}-name`] ? localMessages[`${source}-name`] : UNKNOWN_THING_MS);
 const platformDescriptionMessage = (platform, source) => (localMessages[`${platform}.${source}-about`] ? localMessages[`${platform}.${source}-about`] : UNKNOWN_THING_MS);
 
-const platformIconUrl = (platform) => {
+export const platformIconUrl = (platform) => {
   if (platform === 'reddit') return googleFavIconUrl('https://reddit.com');
   if (platform === 'facebook') return googleFavIconUrl('https://facebook.com');
   if (platform === 'twitter') return googleFavIconUrl('https://twitter.com');
@@ -41,7 +41,7 @@ const platformIconUrl = (platform) => {
 };
 
 const AvailablePlatform = ({ platform, onAdd, onEdit, onDelete }) => (
-  <div className={`available-platform ${(platform.topic_seed_queries_id === -1) ? 'inactive' : 'active'}`}>
+  <div className={`available-platform ${(platform.isEnabled) ? 'active' : 'inactive'}`}>
     <Row>
       <Col lg={4}>
         <h3>
@@ -49,16 +49,16 @@ const AvailablePlatform = ({ platform, onAdd, onEdit, onDelete }) => (
           <FormattedHTMLMessage {...platformNameMessage(platform.platform)} />
         </h3>
         <small><FormattedHTMLMessage {...sourceNameMessage(platform.source)} /></small>
-        {(platform.topic_seed_queries_id !== -1) && <Chip label="enabled" color="primary" size="small" />}
-        {(platform.topic_seed_queries_id === -1) && <Chip label="disabled" variant="outlined" size="small" />}
+        {(platform.isEnabled) && <Chip label="enabled" color="primary" size="small" />}
+        {(!platform.isEnabled) && <Chip label="disabled" variant="outlined" size="small" />}
       </Col>
       <Col lg={6}>
         <FormattedHTMLMessage {...platformDescriptionMessage(platform.platform, platform.source)} />
       </Col>
       <Col lg={2}>
         <div className="actions">
-          {(platform.topic_seed_queries_id === -1) && <AppButton primary label={message.add} onClick={() => onAdd(platform)} />}
-          {(platform.topic_seed_queries_id !== -1) && (
+          {(!platform.isEnabled) && <AppButton primary label={message.add} onClick={() => onAdd(platform)} />}
+          {(platform.isEnabled) && (
             <>
               <AppButton primary label={message.edit} onClick={() => onEdit(platform)} />
               <br />

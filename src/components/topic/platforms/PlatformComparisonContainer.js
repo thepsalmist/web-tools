@@ -5,7 +5,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
 import AppButton from '../../common/AppButton';
-import PlatformSummary from './PlatformSummary';
+import EnabledPlatformList from './EnabledPlatformList';
 import { placeholderNewPlatformNeedsNewVersion } from '../versions/NeedsNewVersionWarning';
 import { topicSnapshotSpider } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
@@ -17,9 +17,12 @@ const localMessages = {
   applyChanges: { id: 'platforms.list.applyChanges', defaultMessage: 'apply your changes' },
   failed: { id: 'platforms.save.failed', defaultMessage: 'Sorry, something went wrong!' },
   worked: { id: 'platforms.save.worked', defaultMessage: 'We started generating the version' },
+  currentVersionComparisonTitle: { id: 'topic.platforms.comparison.currentTitle', defaultMessage: 'Version {versionNumber}: Platform Summary' },
+  nextVersionComparisonTitle: { id: 'topic.platforms.comparison.nextTitle', defaultMessage: 'Next Version: Platform Summary' },
+  noPlatforms: { id: 'platforms.noneYet', defaultMessage: '(No current version to compare to, becuase you are setting up your first version)' },
 };
 
-class NewVersionPlatformComparisonContainer extends React.Component {
+class PlatformComparisonContainer extends React.Component {
   state = {
     submittingVersion: false,
   };
@@ -31,7 +34,7 @@ class NewVersionPlatformComparisonContainer extends React.Component {
   }
 
   render() {
-    const { topicId, usingLatest, newPlatforms, platforms, latestVersionRunning } = this.props;
+    const { topicId, usingLatest, newPlatforms, platforms, selectedSnapshot, latestVersionRunning } = this.props;
     const submitting = this.state.submittingVersion;
     if (placeholderNewPlatformNeedsNewVersion(usingLatest, newPlatforms, latestVersionRunning)) {
       return (
@@ -43,13 +46,18 @@ class NewVersionPlatformComparisonContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={5}>
-              <PlatformSummary platforms={platforms} version={latestVersionRunning} />
+              {selectedSnapshot && <EnabledPlatformList platforms={platforms} titleMsg={localMessages.currentVersionComparisonTitle} latestVersionNumber={selectedSnapshot.note} /> }
+              {((selectedSnapshot === null) || (selectedSnapshot === undefined)) && <FormattedMessage {...localMessages.noPlatforms} /> }
             </Col>
             <Col lg={2}>
               <span style={{ display: 'block', fontSize: '56px', marginTop: '120px', textAlign: 'center' }}>➡</span>
             </Col>
             <Col lg={5}>
-              <PlatformSummary platforms={newPlatforms} />
+              <EnabledPlatformList
+                platforms={newPlatforms.filter(p => (p.query && p.query.length > 0))}
+                titleMsg={localMessages.nextVersionComparisonTitle}
+                latestVersionNumber={null}
+              />
               <AppButton
                 label={localMessages.createVersionAndStartSpider}
                 onClick={() => this.onGenerateVersion(topicId, null)}
@@ -65,7 +73,7 @@ class NewVersionPlatformComparisonContainer extends React.Component {
   }
 }
 
-NewVersionPlatformComparisonContainer.propTypes = {
+PlatformComparisonContainer.propTypes = {
   // from composition
   intl: PropTypes.object.isRequired,
   // from state
@@ -109,6 +117,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    NewVersionPlatformComparisonContainer
+    PlatformComparisonContainer
   )
 );

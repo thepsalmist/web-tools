@@ -9,12 +9,12 @@ import { goToCreatePlatformStep } from '../../../../actions/topicActions';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../../lib/platformTypes';
 import messages from '../../../../resources/messages';
 
-const Platform2ConfigureContainer = (props) => {
-  const { topicId, initialValues, handleNextStep, currentPlatformType, currentPlatformInfo, location } = props;
+const Platform1ConfigureContainer = (props) => {
+  const { topicId, initialValues, handleNextStep, selectedPlatform, location } = props;
   let content = null;
-  switch (currentPlatformType) {
+  switch (selectedPlatform.platform) {
     case PLATFORM_OPEN_WEB:
-      const platformDetails = { ...initialValues, ...currentPlatformInfo };
+      const platformDetails = { ...initialValues, ...selectedPlatform };
       content = (
         <EditOpenWebContainer
           topicId={topicId}
@@ -56,7 +56,7 @@ const Platform2ConfigureContainer = (props) => {
   );
 };
 
-Platform2ConfigureContainer.propTypes = {
+Platform1ConfigureContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
@@ -66,14 +66,12 @@ Platform2ConfigureContainer.propTypes = {
   // from dipatch
   handleNextStep: PropTypes.func.isRequired,
   // from state:
-  currentPlatformType: PropTypes.string.isRequired,
-  currentPlatformInfo: PropTypes.object,
+  selectedPlatform: PropTypes.object,
   location: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  currentPlatformInfo: state.topics.selected.platforms.selected,
-  currentPlatformType: state.topics.selected.platforms.selected.platform,
+  selectedPlatform: state.topics.selected.platforms.selected,
   topicInfo: state.topics.selected.info,
   params: ownProps.params,
 });
@@ -87,6 +85,6 @@ const mapDispatchToProps = dispatch => ({
 export default
 connect(mapStateToProps, mapDispatchToProps)(
   injectIntl(
-    Platform2ConfigureContainer
+    Platform1ConfigureContainer
   )
 );

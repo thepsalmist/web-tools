@@ -6,10 +6,9 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import BackLinkingControlBar from '../../BackLinkingControlBar';
-// import Platform1Container from './Platform1Container';
-import Platform2ConfigureContainer from './Platform2ConfigureContainer';
-import Platform3ValidateContainer from './Platform3ValidateContainer';
-import Platform4ConfirmContainer from './Platform4ConfirmContainer';
+import Platform1ConfigureContainer from './Platform1ConfigureContainer';
+import Platform2ValidateContainer from './Platform2ValidateContainer';
+import Platform3ConfirmContainer from './Platform3ConfirmContainer';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
 
 const localMessages = {
@@ -39,10 +38,9 @@ class PlatformWizard extends React.Component {
   render() {
     const { topicId, topicInfo, currentStep, location, initialValues, onDone } = this.props;
     const steps = [
-      // Platform1Container,
-      Platform2ConfigureContainer,
-      Platform3ValidateContainer,
-      Platform4ConfirmContainer,
+      Platform1ConfigureContainer,
+      Platform2ValidateContainer,
+      Platform3ConfirmContainer,
     ];
     const initAndTopicInfoValues = { ...initialValues, ...topicInfo, query: topicInfo.solr_seed_query };
     const CurrentStepComponent = steps[currentStep];

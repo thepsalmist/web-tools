@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../../common/hocs/IntlForm';
-import OpenWebSummary from './openWeb/OpenWebSummary';
+// import OpenWebSummary from './openWeb/OpenWebSummary';
+import EnabledPlatformSummary from '../EnabledPlatformSummary';
 import RedditSummary from './reddit/RedditSummary';
 import TwitterSummary from './twitter/TwitterSummary';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
@@ -19,14 +20,14 @@ const localMessages = {
   platform: { id: 'platform.create', defaultMessage: 'Platform' },
 };
 
-const Platform4ConfirmContainer = (props) => {
+const Platform3ConfirmContainer = (props) => {
   const { topicId, formValues, currentPlatformType, initialValues, handlePreviousStep, handleSubmit, finishStep, submitting } = props;
   const { formatMessage } = props.intl;
   let content = null;
   switch (currentPlatformType) {
     case PLATFORM_OPEN_WEB:
       content = (
-        <OpenWebSummary topicId={topicId} formValues={formValues} initialValues={initialValues} />
+        <EnabledPlatformSummary platform={formValues} />
       );
       break;
     case PLATFORM_REDDIT:
@@ -78,7 +79,7 @@ const Platform4ConfirmContainer = (props) => {
   );
 };
 
-Platform4ConfirmContainer.propTypes = {
+Platform3ConfirmContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
   initialValues: PropTypes.object,
@@ -128,7 +129,7 @@ injectIntl(
   withIntlForm(
     reduxForm(reduxFormConfig)(
       connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-        Platform4ConfirmContainer
+        Platform3ConfirmContainer
       )
     )
   )

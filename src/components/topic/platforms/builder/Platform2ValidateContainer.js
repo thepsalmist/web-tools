@@ -30,7 +30,7 @@ const localMessages = {
   warningOk: { id: 'topic.modify.warning.warningOk', defaultMessage: 'I\'ll edit my seed query' },
 };
 
-class Platform3ValidateContainer extends React.Component {
+class Platform2ValidateContainer extends React.Component {
   state = {
     matchCount: 0,
     warningOpen: false,
@@ -147,7 +147,7 @@ class Platform3ValidateContainer extends React.Component {
   }
 }
 
-Platform3ValidateContainer.propTypes = {
+Platform2ValidateContainer.propTypes = {
   // from parent
   location: PropTypes.object.isRequired,
   currentStepText: PropTypes.object,
@@ -233,7 +233,7 @@ injectIntl(
     reduxForm(reduxFormConfig)(
       connect(mapStateToProps, mapDispatchToProps)(
         withAsyncData(fetchAsyncData)(
-          Platform3ValidateContainer
+          Platform2ValidateContainer
         )
       )
     )

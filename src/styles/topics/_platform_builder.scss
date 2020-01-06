@@ -13,12 +13,27 @@
     }
   }
 
+  .available-platform-list {
+    margin-top: 30px;
+  }
+
   .platform-edit-open-web {
 
     .media-field-wrapper {
       margin-top: 0px;
     }
 
+  }
+
+  .platform-summary {
+    margin-bottom: 5px;
+    img {
+      margin-right: 5px;
+    }
+    code {
+      margin: 5px 20px;
+      font-size: 10px;
+    }
   }
 
 }

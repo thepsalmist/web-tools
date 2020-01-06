@@ -23,9 +23,9 @@ const localMessages = {
 
 
 const CreatePlatformContainer = (props) => {
-  const { topicInfo, location, handleDone, currentPlatformType } = props;
-  const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, currentPlatformType };
-  if (currentPlatformType === 'twitter') {
+  const { topicInfo, location, handleDone, selectedPlatform } = props;
+  const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, selectedPlatform };
+  if (selectedPlatform.platform === PLATFORM_TWITTER) {
     initialValues.channel = [ // TODO, depending on how channel data is prepped from back end, maybe put in reducer or python platform stubs
       { type: 'elite', id: 0, label: 'Elite', selected: false, value: false },
       { type: 'crimson', id: 1, label: 'Crimson Hexagon', selected: false, value: false },
@@ -52,7 +52,7 @@ CreatePlatformContainer.propTypes = {
   handleDone: PropTypes.func.isRequired,
   // from state
   values: PropTypes.object,
-  currentPlatformType: PropTypes.string.isRequired,
+  selectedPlatform: PropTypes.object.isRequired,
   // from context:
   topicInfo: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
@@ -62,7 +62,7 @@ CreatePlatformContainer.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   topicInfo: state.topics.selected.info,
-  currentPlatformType: state.topics.selected.platforms.selected.platform,
+  selectedPlatform: state.topics.selected.platforms.selected.platform,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

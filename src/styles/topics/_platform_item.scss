@@ -17,6 +17,14 @@
     }
   }
 
+  small {
+    font-size: 16px;
+    color: $material-grey800;
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+
   &.inactive {
     opacity: 0.4;
     &:hover {
@@ -27,6 +35,18 @@
   button {
     margin: 0px;
     margin-bottom: 15px;
+  }
+
+  .platform-query {
+    margin-top: 5px;
+    label {
+      font-size: 14px;
+      display: inline-block;
+      margin-right: 5px;
+    }
+    code {
+      font-size: 10px;
+    }
   }
 
 }

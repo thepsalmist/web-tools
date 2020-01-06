@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2020-01-06",
+      "version": "v3.12.24",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Download for entities and organizations works again"
+        },
+      ]
+    },
+    {
       "date": "2020-01-02",
       "version": "v3.12.23",
       "notes": [

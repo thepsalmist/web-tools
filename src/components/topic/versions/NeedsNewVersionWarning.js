@@ -8,6 +8,8 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
 import { WarningNotice } from '../../common/Notice';
 import LinkWithFilters from '../LinkWithFilters';
+import { PLATFORM_OPEN_WEB } from '../../../lib/platformTypes';
+
 
 const localMessages = {
   needsNewSnapshot: { id: 'topic.needsNewSnapshot.subtopics', defaultMessage: 'You\'ve changed some subtopics and need to generate a new version!' },
@@ -30,10 +32,10 @@ export function placeholderNewPlatformNeedsNewVersion(usingLatest, currentPlatfo
   const oldOneGone = currentPlatforms.filter(currentPlatform => newPlatforms.filter(
     newPlatform => (currentPlatform.platform === newPlatform.platform) && (currentPlatform.source === newPlatform.source)
   ).length === 0).length > 0;
-  // queries different in any of same platforms
-  const oldWeb = currentPlatforms.filter(p => p.platform === 'web');
+  // queries different in any of same platforms (TODO: make this work on all platforms, not just web)
+  const oldWeb = currentPlatforms.filter(p => p.platform === PLATFORM_OPEN_WEB);
   const oldWebQuery = (oldWeb.length > 0) ? oldWeb[0].query : '';
-  const newWeb = newPlatforms.filter(p => p.platform === 'web');
+  const newWeb = newPlatforms.filter(p => p.platform === PLATFORM_OPEN_WEB);
   const newWebQuery = (newWeb.length > 0) ? newWeb[0].query : '';
   const differentQuery = newWebQuery !== oldWebQuery;
   // now combine logic

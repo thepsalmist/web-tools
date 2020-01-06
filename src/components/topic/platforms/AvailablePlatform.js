@@ -5,6 +5,7 @@ import Chip from '@material-ui/core/Chip';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import AppButton from '../../common/AppButton';
 import messages from '../../../resources/messages';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER, PLATFORM_FACEBOOK } from '../../../lib/platformTypes';
 import { googleFavIconUrl } from '../../../lib/urlUtil';
 
 const localMessages = {
@@ -33,10 +34,10 @@ export const sourceNameMessage = source => (localMessages[`${source}-name`] ? lo
 const platformDescriptionMessage = (platform, source) => (localMessages[`${platform}.${source}-about`] ? localMessages[`${platform}.${source}-about`] : UNKNOWN_THING_MS);
 
 export const platformIconUrl = (platform) => {
-  if (platform === 'reddit') return googleFavIconUrl('https://reddit.com');
-  if (platform === 'facebook') return googleFavIconUrl('https://facebook.com');
-  if (platform === 'twitter') return googleFavIconUrl('https://twitter.com');
-  if (platform === 'web') return googleFavIconUrl('https://mediacloud.org');
+  if (platform === PLATFORM_REDDIT) return googleFavIconUrl('https://reddit.com');
+  if (platform === PLATFORM_FACEBOOK) return googleFavIconUrl('https://facebook.com');
+  if (platform === PLATFORM_TWITTER) return googleFavIconUrl('https://twitter.com');
+  if (platform === PLATFORM_OPEN_WEB) return googleFavIconUrl('https://mediacloud.org');
   return '';
 };
 

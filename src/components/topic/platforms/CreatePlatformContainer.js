@@ -25,7 +25,7 @@ const localMessages = {
 const CreatePlatformContainer = (props) => {
   const { topicInfo, location, handleDone, selectedPlatform } = props;
   const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, selectedPlatform };
-  if (selectedPlatform.platform === 'twitter') {
+  if (selectedPlatform.platform === PLATFORM_TWITTER) {
     initialValues.channel = [ // TODO, depending on how channel data is prepped from back end, maybe put in reducer or python platform stubs
       { type: 'elite', id: 0, label: 'Elite', selected: false, value: false },
       { type: 'crimson', id: 1, label: 'Crimson Hexagon', selected: false, value: false },

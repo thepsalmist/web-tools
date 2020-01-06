@@ -9,12 +9,13 @@ import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER, PLATFORM_FACEBOOK
 import { googleFavIconUrl } from '../../../lib/urlUtil';
 
 const localMessages = {
-  // platforms
-  'reddit-name': { id: 'reddit.name', defaultMessage: 'Links Submitted to Reddit' },
-  'twitter-name': { id: 'twitter.name', defaultMessage: 'Links Shared in Tweets' },
-  'facebook-name': { id: 'facebook.name', defaultMessage: 'Links Posted on Facebook' },
-  'web-name': { id: 'web.name', defaultMessage: 'News Sources on the Open Web' },
-  // sources
+  // platforms names
+  'reddit.pushshift.io-name': { id: 'rd.ps.name', defaultMessage: 'Links Submitted to Reddit' },
+  'twitter.pushshift.io-name': { id: 'tw.ps.name', defaultMessage: 'Links Shared in Verified Tweets' },
+  'twitter.crimson_hexagon-name': { id: 'tw.ch.name', defaultMessage: 'Links Shared in Sampled Tweets' },
+  'facebook.crowd_tangle-name': { id: 'fb.ct.name', defaultMessage: 'Links Posted in Large Public Facebook Groups' },
+  'web.web_ui_shim-name': { id: 'web.shim.name', defaultMessage: 'News on the Open Web' },
+  // source names
   'crowd_tangle-name': { id: 'crowdTangle.name', defaultMessage: 'via Crowd Tangle' },
   'pushshift.io-name': { id: 'rd.ps.name', defaultMessage: 'via Pushshift.io' },
   'crimson_hexagon-name': { id: 'crimson_hexagon.name', defaultMessage: 'via Crimson Hexagon' },
@@ -29,9 +30,9 @@ const localMessages = {
 
 const UNKNOWN_THING_MS = { id: 'unknown', defaultMessage: 'Unknown :-(' };
 
-export const platformNameMessage = platform => (localMessages[`${platform}-name`] ? localMessages[`${platform}-name`] : UNKNOWN_THING_MS);
-export const sourceNameMessage = source => (localMessages[`${source}-name`] ? localMessages[`${source}-name`] : UNKNOWN_THING_MS);
-const platformDescriptionMessage = (platform, source) => (localMessages[`${platform}.${source}-about`] ? localMessages[`${platform}.${source}-about`] : UNKNOWN_THING_MS);
+export const platformNameMessage = (platform, source) => (localMessages[`${platform}.${source}-name`] || UNKNOWN_THING_MS);
+export const sourceNameMessage = source => (localMessages[`${source}-name`] || UNKNOWN_THING_MS);
+const platformDescriptionMessage = (platform, source) => (localMessages[`${platform}.${source}-about`] || UNKNOWN_THING_MS);
 
 export const platformIconUrl = (platform) => {
   if (platform === PLATFORM_REDDIT) return googleFavIconUrl('https://reddit.com');
@@ -47,7 +48,7 @@ const AvailablePlatform = ({ platform, onAdd, onEdit, onDelete }) => (
       <Col lg={4}>
         <h3>
           <img src={platformIconUrl(platform.platform)} alt={platform.platform} />
-          <FormattedHTMLMessage {...platformNameMessage(platform.platform)} />
+          <FormattedHTMLMessage {...platformNameMessage(platform.platform, platform.source)} />
         </h3>
         <small><FormattedHTMLMessage {...sourceNameMessage(platform.source)} /></small>
         {(platform.isEnabled) && <Chip label="enabled" color="primary" size="small" />}

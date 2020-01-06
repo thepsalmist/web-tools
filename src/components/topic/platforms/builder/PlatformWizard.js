@@ -59,7 +59,14 @@ class PlatformWizard extends React.Component {
             </Step>
           </Stepper>
         </BackLinkingControlBar>
-        <CurrentStepComponent topicId={topicId} location={location} initialValues={initAndTopicInfoValues} onDone={onDone} currentStep={currentStep} currentPlatformType={initAndTopicInfoValues.currentPlatformType} />
+        <CurrentStepComponent
+          topicId={topicId}
+          location={location}
+          initialValues={initAndTopicInfoValues}
+          onDone={onDone}
+          currentStep={currentStep}
+          currentPlatformType={initAndTopicInfoValues.currentPlatformType}
+        />
       </div>
     );
   }

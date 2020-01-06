@@ -27,9 +27,6 @@ export const topicUpdatePlatform = createAsyncAction(TOPIC_UPDATE_PLATFORM, api.
 export const SELECT_PLATFORM = 'SELECT_PLATFORM';
 export const selectPlatform = createAsyncAction(SELECT_PLATFORM, id => id);
 
-export const SELECT_PLATFORM_TYPE = 'SELECT_PLATFORM_TYPE';
-export const selectPlatformType = createAsyncAction(SELECT_PLATFORM_TYPE, type => type);
-
 export const FETCH_PLATFORM_PREVIEW_STORY_COUNTS = 'FETCH_PLATFORM_PREVIEW_STORY_COUNTS';
 export const fetchStoryCountsByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PREVIEW_STORY_COUNTS, api.topicStoryCountsByPlatformQuery);
 

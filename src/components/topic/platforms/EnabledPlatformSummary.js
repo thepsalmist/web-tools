@@ -6,7 +6,7 @@ import { platformIconUrl, platformNameMessage, sourceNameMessage } from './Avail
 const EnabledPlatformSummary = ({ platform }) => (
   <div className="platform-summary">
     <img src={platformIconUrl(platform.platform)} alt={platform.platform} />
-    <FormattedHTMLMessage {...platformNameMessage(platform.platform)} />
+    <FormattedHTMLMessage {...platformNameMessage(platform.platform, platform.source)} />
     (<FormattedHTMLMessage {...sourceNameMessage(platform.source)} />)
     <code>{platform.query}</code>
   </div>

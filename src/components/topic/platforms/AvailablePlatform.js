@@ -8,33 +8,29 @@ import message from '../../../resources/messages';
 import { googleFavIconUrl } from '../../../lib/urlUtil';
 
 const localMessages = {
-  'reddit.pushshift.io-name': { id: 'rd.ps.name', defaultMessage: 'Reddit (via Pushshift.io)' },
+  // platforms
+  'reddit-name': { id: 'reddit.name', defaultMessage: 'Links Submitted to Reddit' },
+  'twitter-name': { id: 'twitter.name', defaultMessage: 'Links Shared in Tweets' },
+  'facebook-name': { id: 'facebook.name', defaultMessage: 'Links Posted on Facebook' },
+  'web-name': { id: 'web.name', defaultMessage: 'News Sources on the Open Web' },
+  // sources
+  'crowd_tangle-name': { id: 'crowdTangle.name', defaultMessage: 'via Crowd Tangle' },
+  'pushshift.io-name': { id: 'rd.ps.name', defaultMessage: 'via Pushshift.io' },
+  'crimson_hexagon-name': { id: 'crimson_hexagon.name', defaultMessage: 'via Crimson Hexagon' },
+  'web_ui_shim-name': { id: 'web_shim.name', defaultMessage: 'via Media Cloud' },
+  // combos
   'reddit.pushshift.io-about': { id: 'rd.ps.about', defaultMessage: 'Discover links shared on the historical Reddit archive hosted by PushShift.io. Specify keywords and subreddits to focus on. Any submissions matching the keywords in the specified subreddits will be checked for links. Any links found will be add into the topic, and queued up for spidering.' },
-  'twitter.pushshift.io-name': { id: 'tw.ps.name', defaultMessage: 'Twitter (via Pushshift.io)' },
   'twitter.pushshift.io-about': { id: 'tw.ps.about', defaultMessage: 'Discover links shared by validated Twitter accounts since mid 2019 in the archive hosted by PushShift.io. Specify keywords to focus on. Any tweets matching the keywords will be checked for links. Any links found will be add into the topic, and queued up for spidering.' },
-  'twitter.crimson_hexagon-name': { id: 'tw.ch.name', defaultMessage: 'Twitter (via Crimson Hexagon)' },
   'twitter.crimson_hexagon-about': { id: 'tw.ch.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in tweets from a Crimson Hexagon Monitor you have already created. You need the id of that monitor. Any tweets matching the keywords will be checked for links. Any links found will be add into the topic, and queued up for spidering.' },
-  'facebook.crowd_tangle-name': { id: 'fb.ct.name', defaultMessage: 'Facebook (via Crowd Tangle)' },
   'facebook.crowd_tangle-about': { id: 'fb.ct.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in Facebook posts via Crowd Tangle. Specify keywords to match. Any posts from large public groups matching the keywords will be checked for links. Any links found will be add into the topic, and queued up for spidering.' },
-  'web.web_ui_shim-name': { id: 'web.shim.name', defaultMessage: 'Open Web (via Media Cloud)' },
   'web.web_ui_shim-about': { id: 'web.shim.about', defaultMessage: 'Find matching stories in the Media Cloud archive. Specify media sources or collections. Any news matching those keywords from those sourecs will be added into the topic, and queued up for spidering.' },
 };
 
-const platformName = (platform, source) => {
-  const msg = localMessages[`${platform}.${source}-name`];
-  if (msg) {
-    return msg;
-  }
-  return { id: 'unknown', defaultMessage: 'Unknown :-(' };
-};
+const UNKNOWN_THING_MS = { id: 'unknown', defaultMessage: 'Unknown :-(' };
 
-const platformDescription = (platform, source) => {
-  const msg = localMessages[`${platform}.${source}-about`];
-  if (msg) {
-    return msg;
-  }
-  return { id: 'unknown', defaultMessage: 'Unknown :-(' };
-};
+const platformNameMessage = platform => (localMessages[`${platform}-name`] ? localMessages[`${platform}-name`] : UNKNOWN_THING_MS);
+const sourceNameMessage = source => (localMessages[`${source}-name`] ? localMessages[`${source}-name`] : UNKNOWN_THING_MS);
+const platformDescriptionMessage = (platform, source) => (localMessages[`${platform}.${source}-about`] ? localMessages[`${platform}.${source}-about`] : UNKNOWN_THING_MS);
 
 const platformIconUrl = (platform) => {
   if (platform === 'reddit') return googleFavIconUrl('https://reddit.com');
@@ -50,13 +46,14 @@ const AvailablePlatform = ({ platform, onAdd, onEdit, onDelete }) => (
       <Col lg={4}>
         <h3>
           <img src={platformIconUrl(platform.platform)} alt={platform.platform} />
-          <FormattedHTMLMessage {...platformName(platform.platform, platform.source)} />
+          <FormattedHTMLMessage {...platformNameMessage(platform.platform)} />
         </h3>
+        <small><FormattedHTMLMessage {...sourceNameMessage(platform.source)} /></small>
         {(platform.topic_seed_queries_id !== -1) && <Chip label="enabled" color="primary" size="small" />}
         {(platform.topic_seed_queries_id === -1) && <Chip label="disabled" variant="outlined" size="small" />}
       </Col>
       <Col lg={6}>
-        <FormattedHTMLMessage {...platformDescription(platform.platform, platform.source)} />
+        <FormattedHTMLMessage {...platformDescriptionMessage(platform.platform, platform.source)} />
       </Col>
       <Col lg={2}>
         <div className="actions">

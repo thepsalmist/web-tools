@@ -4,7 +4,7 @@ import { Row, Col } from 'react-flexbox-grid/lib';
 import Chip from '@material-ui/core/Chip';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import AppButton from '../../common/AppButton';
-import message from '../../../resources/messages';
+import messages from '../../../resources/messages';
 import { googleFavIconUrl } from '../../../lib/urlUtil';
 
 const localMessages = {
@@ -54,15 +54,21 @@ const AvailablePlatform = ({ platform, onAdd, onEdit, onDelete }) => (
       </Col>
       <Col lg={6}>
         <FormattedHTMLMessage {...platformDescriptionMessage(platform.platform, platform.source)} />
+        {(platform.isEnabled) && (
+          <div className="platform-query">
+            <label><FormattedHTMLMessage {...messages.query} /></label>
+            <code>{platform.query}</code>
+          </div>
+        )}
       </Col>
       <Col lg={2}>
         <div className="actions">
-          {(!platform.isEnabled) && <AppButton primary label={message.add} onClick={() => onAdd(platform)} />}
+          {(!platform.isEnabled) && <AppButton primary label={messages.add} onClick={() => onAdd(platform)} />}
           {(platform.isEnabled) && (
             <>
-              <AppButton primary label={message.edit} onClick={() => onEdit(platform)} />
+              <AppButton primary label={messages.edit} onClick={() => onEdit(platform)} />
               <br />
-              <AppButton secondary label={message.remove} onClick={() => onDelete(platform)} />
+              <AppButton secondary label={messages.remove} onClick={() => onDelete(platform)} />
             </>
           )}
         </div>

@@ -37,4 +37,16 @@
     margin-bottom: 15px;
   }
 
+  .platform-query {
+    margin-top: 5px;
+    label {
+      font-size: 14px;
+      display: inline-block;
+      margin-right: 5px;
+    }
+    code {
+      font-size: 10px;
+    }
+  }
+
 }

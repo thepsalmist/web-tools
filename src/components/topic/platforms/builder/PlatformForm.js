@@ -23,7 +23,7 @@ const localMessages = {
 };
 
 class PlatformForm extends React.Component {
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const { change, platform } = this.props;
     const { formatMessage } = this.props.intl;
     // set smart-looking default set name/description based on the focal technique currently selected

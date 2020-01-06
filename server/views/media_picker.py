@@ -202,7 +202,7 @@ def custom_collection_as_solr_query(custom_ids_str):
                 custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
                 custom_sets.append(custom_id_set_string)
             elif len(tag_grp) == 1:
-                custom_id_set_string = re.sub('\[*\]*', '', str(tag_grp))
+                custom_id_set_string = re.sub(r'\[*\]*', '', str(tag_grp))
                 custom_id_set_string = "tags_id_media:({})".format(custom_id_set_string)
                 custom_sets.append(custom_id_set_string)
         query_custom_ids = " AND ".join(custom_sets)  # AND the metadata sets together

@@ -4,8 +4,11 @@ from server.views.test import BaseAppTest
 
 
 class HomepageTest(BaseAppTest):
+    """
+    Make sure the homepage returns, nothing else.
+    """
 
-    def test_home_age(self):
+    def testHomePageResponds(self):
         response = self.app.get('/', follow_redirects=True)
         assert response.status_code == 200
 

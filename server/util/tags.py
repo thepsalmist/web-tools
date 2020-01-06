@@ -25,12 +25,14 @@ TAG_SET_GEOCODER_VERSION = 1937
 TAG_SET_NYT_LABELS_VERSION = 1964
 
 # constants related to the CLIFF-based geotagging (ie. tags on stories indicating places they are about)
+# each story processed for entities by CLIFF is tagged with the specific version of CLIFF it was processed with
 CLIFF_CLAVIN_2_3_0_TAG_ID = 9353691  # the tag that indicates a story was tagged by the CLIFF version 2.3.0
 CLIFF_CLAVIN_2_4_1_TAG_ID = 9696677  # the tag that indicates a story was tagged by the CLIFF version 2.4.1
-GEO_TAG_SET = 1011  # the tag set all the geo tags are in
+CLIFF_CLAVIN_2_6_0_TAG_ID = 189462640  # the tag that indicates a story was tagged by the CLIFF version 2.6.0
+GEO_TAG_SET = 1011  # there is one giant tag set that all the geo tags are in (disambiguated results from CLIFF, with geonames ids)
 GEO_SAMPLE_SIZE = 10000  # the sample size to use for looking at geo tags
-CLIFF_ORGS = 2388
-CLIFF_PEOPLE = 2389
+CLIFF_ORGS = 2388  # there is a tag set that has one tag for each organization we find (not disambiguated)
+CLIFF_PEOPLE = 2389  # there is a tag set that has one tag for each person we find (not disambiguated)
 
 # Source collection tags sets
 TAG_SETS_ID_COLLECTIONS = 5  # holds all the Media Cloud collections
@@ -84,7 +86,7 @@ def processed_for_entities_query_clause():
     :return: A solr query clause you can use to filter for stories that have been tagged by any version
      of our CLIFF geotagging engine (ie. tagged with people, places, and organizations)
     """
-    return "(tags_id_stories:({} {}))".format(CLIFF_CLAVIN_2_4_1_TAG_ID, CLIFF_CLAVIN_2_3_0_TAG_ID)
+    return "(tags_id_stories:({}))".format(" ".join([str(t) for t in processed_for_entities_tag_ids()]))
 
 
 def processed_for_entities_tag_ids():
@@ -92,7 +94,7 @@ def processed_for_entities_tag_ids():
     :return: A list of the tags that mean a story has been processed by some version of CLIFF (ie. the story
      has been tagged with people, places, and organizations)
     """
-    return [CLIFF_CLAVIN_2_3_0_TAG_ID, CLIFF_CLAVIN_2_4_1_TAG_ID]
+    return [CLIFF_CLAVIN_2_3_0_TAG_ID, CLIFF_CLAVIN_2_4_1_TAG_ID, CLIFF_CLAVIN_2_6_0_TAG_ID]
 
 
 def is_metadata_tag_set(tag_sets_id):

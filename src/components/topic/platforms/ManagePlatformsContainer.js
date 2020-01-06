@@ -7,7 +7,7 @@ import { push } from 'react-router-redux';
 import AvailablePlatformList from './AvailablePlatformList';
 import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
-import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, selectPlatformType } from '../../../actions/topicActions';
+import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import PlatformComparisonContainer from './PlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
@@ -52,9 +52,9 @@ class ManagePlatformsContainer extends React.Component {
     );
   }
 
-  onNewPlatform = (platformType) => {
+  onNewPlatform = (platform) => {
     const { topicId, filters, handleSelectNewPlatform } = this.props;
-    handleSelectNewPlatform({ platform: platformType }, filteredLinkTo(`/topics/${topicId}/platforms/create`, filters));
+    handleSelectNewPlatform(platform, filteredLinkTo(`/topics/${topicId}/platforms/create`, filters));
   }
 
   handleDelete = (platformId, platformType) => {
@@ -149,7 +149,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(push(url));
   },
   handleSelectNewPlatform: (args, url) => {
-    dispatch(selectPlatformType(args));
+    dispatch(selectPlatform(args));
     dispatch(push(url));
   },
 });

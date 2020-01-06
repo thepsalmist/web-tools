@@ -32,6 +32,7 @@ const CreatePlatformContainer = (props) => {
       { type: 'other', id: 2, label: 'Other', selected: false, value: false },
     ];
   }
+  // default to any solr seed query they might be using already
   const initAndTopicInfoValues = { ...initialValues, ...topicInfo, query: topicInfo.solr_seed_query };
 
   return (

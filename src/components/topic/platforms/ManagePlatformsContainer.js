@@ -72,12 +72,6 @@ class ManagePlatformsContainer extends React.Component {
     return (
       <div>
         <NeedsNewVersionWarning />
-        <PlatformComparisonContainer
-          topicInfo={topicInfo}
-          platforms={platforms.filter(p => p.isEnabled)}
-          newPlatforms={platforms}
-          latestVersionRunning={topicInfo.latestVersionRunning}
-        />
         <div className="manage-platforms">
           <Grid>
             <Row>
@@ -87,6 +81,12 @@ class ManagePlatformsContainer extends React.Component {
                 </h1>
               </Col>
             </Row>
+            <PlatformComparisonContainer
+              topicInfo={topicInfo}
+              platforms={platforms.filter(p => p.isEnabled)}
+              newPlatforms={platforms}
+              latestVersionRunning={topicInfo.latestVersionRunning}
+            />
             <AvailablePlatformList
               platforms={platforms}
               onEdit={this.onEditPlatform}

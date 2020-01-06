@@ -19,8 +19,26 @@ export function needsNewVersion(usingLatest, newDefinitions, latestVersionRunnin
   return usingLatest && newDefinitions && !latestVersionRunning;
 }
 
-export function placeholderNewPlatformNeedsNewVersion(usingLatest, newPlatforms, latestVersionRunning) {
-  const forceDisplay = usingLatest && newPlatforms && !latestVersionRunning;
+export function placeholderNewPlatformNeedsNewVersion(usingLatest, currentPlatforms, newPlatforms, latestVersionRunning) {
+  // if different amount of platforms
+  const differentAmount = currentPlatforms.length !== newPlatforms.length;
+  // new platform doesn't exist in currentTitle
+  const newOneThere = newPlatforms.filter(newPlatform => currentPlatforms.filter(
+    currentPlatform => (currentPlatform.platform === newPlatform.platform) && (currentPlatform.source === newPlatform.source)
+  ).length === 0).length > 0;
+  // current platform doesn't exist in new
+  const oldOneGone = currentPlatforms.filter(currentPlatform => newPlatforms.filter(
+    newPlatform => (currentPlatform.platform === newPlatform.platform) && (currentPlatform.source === newPlatform.source)
+  ).length === 0).length > 0;
+  // queries different in any of same platforms
+  const oldWeb = currentPlatforms.filter(p => p.platform === 'web');
+  const oldWebQuery = (oldWeb.length > 0) ? oldWeb[0].query : '';
+  const newWeb = newPlatforms.filter(p => p.platform === 'web');
+  const newWebQuery = (newWeb.length > 0) ? newWeb[0].query : '';
+  const differentQuery = newWebQuery !== oldWebQuery;
+  // now combine logic
+  const thereAreNewPlatforms = differentAmount || newOneThere || oldOneGone || differentQuery;
+  const forceDisplay = usingLatest && thereAreNewPlatforms && !latestVersionRunning;
   return Math.abs(forceDisplay); // always return true for now
 }
 

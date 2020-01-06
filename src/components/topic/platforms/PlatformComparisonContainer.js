@@ -36,7 +36,8 @@ class PlatformComparisonContainer extends React.Component {
   render() {
     const { topicId, usingLatest, newPlatforms, platforms, selectedSnapshot, latestVersionRunning } = this.props;
     const submitting = this.state.submittingVersion;
-    if (placeholderNewPlatformNeedsNewVersion(usingLatest, newPlatforms, latestVersionRunning)) {
+    // TODO: we need to fetch the platforms on the current version and compare that to the platforms on the next version
+    if (placeholderNewPlatformNeedsNewVersion(usingLatest, platforms, newPlatforms.filter(p => p.isEnabled), latestVersionRunning)) {
       return (
         <Grid>
           <Row>

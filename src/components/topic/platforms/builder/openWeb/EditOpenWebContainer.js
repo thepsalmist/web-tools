@@ -57,6 +57,7 @@ class EditOpenWebContainer extends React.Component {
     const sourcesAndCollections = initialValues.media_tags;
     const cleanedInitialValues = {};
     cleanedInitialValues.media = sourcesAndCollections;
+    cleanedInitialValues.query = initialValues.query;
     // infoForQuery['collections[]'] = topic.media_tags.map(s => s.tags_id);
     // infoForQuery['sources[]'] = topic.media_tags.map(s => s.media_id);
     mediaPicker = (
@@ -92,7 +93,6 @@ class EditOpenWebContainer extends React.Component {
               <Field
                 name="query"
                 component={renderTextField}
-                placeholder={formatMessage(messages.searchByKeywords)}
                 fullWidth
                 multiline
                 rows="3"
@@ -180,20 +180,11 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-function validate(values) {
-  const errors = {};
-  if (!notEmptyString(values.query)) {
-    errors.query = true; // localMessages.errorNoKeywords;
-  }
-  return errors;
-}
-
 const reduxFormConfig = {
   form: 'platform', // make sure this matches the sub-components and other wizard steps
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
   enableReinitialize: true,
-  validate,
 };
 
 export default

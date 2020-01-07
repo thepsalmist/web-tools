@@ -23,6 +23,11 @@
       "test"
     ]
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "sh scripts/validate-release-history.sh"
+    }
+  },
   "dependencies": {
     "@material-ui/core": "^4.8.2",
     "@material-ui/icons": "^4.5.1",

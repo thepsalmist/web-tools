@@ -31,13 +31,13 @@ const localMessages = {
 const formSelector = formValueSelector('advanced-media-picker-search');
 
 class SourceSearchResultsContainer extends React.Component {
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const { selectedMediaQueryType, updateMediaQuerySelection } = this.props;
     this.correlateSelection(this.props);
     updateMediaQuerySelection({ type: selectedMediaQueryType, tags: {} }); // clear out previous selections
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.selectedMedia !== this.props.selectedMedia
       // if the results have changed from a keyword entry, we need to update the UI
       || (nextProps.sourceResults && nextProps.sourceResults.lastFetchSuccess !== this.props.sourceResults.lastFetchSuccess)) {

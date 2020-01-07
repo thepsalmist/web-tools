@@ -7,8 +7,6 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../../common/hocs/IntlForm';
 // import OpenWebSummary from './openWeb/OpenWebSummary';
 import EnabledPlatformSummary from '../EnabledPlatformSummary';
-import RedditSummary from './reddit/RedditSummary';
-import TwitterSummary from './twitter/TwitterSummary';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../../lib/platformTypes';
 import AppButton from '../../../common/AppButton';
@@ -24,25 +22,6 @@ const Platform3ConfirmContainer = (props) => {
   const { topicId, formValues, currentPlatformType, initialValues, handlePreviousStep, handleSubmit, finishStep, submitting } = props;
   const { formatMessage } = props.intl;
   let content = null;
-  switch (currentPlatformType) {
-    case PLATFORM_OPEN_WEB:
-      content = (
-        <EnabledPlatformSummary platform={formValues} />
-      );
-      break;
-    case PLATFORM_REDDIT:
-      content = (
-        <RedditSummary topicId={topicId} formValues={formValues} initialValues={initialValues} />
-      );
-      break;
-    case PLATFORM_TWITTER:
-      content = (
-        <TwitterSummary topicId={topicId} formValues={formValues} initialValues={initialValues} />
-      );
-      break;
-    default:
-      content = <FormattedMessage {...messages.unimplemented} />;
-  }
   return (
     <form className="platform-confirm" name="platformValidation" onSubmit={handleSubmit(finishStep.bind(this))}>
       <Grid>
@@ -58,7 +37,7 @@ const Platform3ConfirmContainer = (props) => {
         </Row>
         <Row>
           <Col lg={12}>
-            {content}
+            <EnabledPlatformSummary platform={formValues} />
           </Col>
         </Row>
         <Row>

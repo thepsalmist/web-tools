@@ -3,6 +3,7 @@ import React from 'react';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import Chip from '@material-ui/core/Chip';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
+import PlatformDetailsInfo from './PlatformDetailsInfo';
 import AppButton from '../../common/AppButton';
 import messages from '../../../resources/messages';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER, PLATFORM_FACEBOOK } from '../../../lib/platformTypes';
@@ -57,10 +58,7 @@ const AvailablePlatform = ({ platform, onAdd, onEdit, onDelete }) => (
       <Col lg={6}>
         <FormattedHTMLMessage {...platformDescriptionMessage(platform.platform, platform.source)} />
         {(platform.isEnabled) && (
-          <div className="platform-query">
-            <label><FormattedHTMLMessage {...messages.query} /></label>
-            <code>{platform.query}</code>
-          </div>
+          <PlatformDetailsInfo platform={platform} />
         )}
       </Col>
       <Col lg={2}>

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedHTMLMessage, injectIntl } from 'react-intl';
+import PlatformDetailsInfo from '../../PlatformDetailsInfo';
 
 const NEW_PLATFORM_ID = 'new';
 
@@ -22,16 +23,10 @@ const OpenWebSummary = (props) => {
     default:
       platformContent = <FormattedHTMLMessage {...localMessages.platformExisting} />;
   }
+  platformContent += <PlatformDetailsInfo platform={formValues} />;
   // TODO, show before/after platform?
   return (
-    <div className="open-web-summary">
-      <ul>
-        <li><FormattedHTMLMessage {...localMessages.name} values={{ name: formValues.currentPlatform }} /></li>
-        <li><FormattedHTMLMessage {...localMessages.description} values={{ description: formValues.query }} /></li>
-        <li>{platformContent}</li>
-        <li><FormattedHTMLMessage {...localMessages.query} values={{ query: formValues.query }} /></li>
-      </ul>
-    </div>
+    { platformContent }
   );
 };
 

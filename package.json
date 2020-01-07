@@ -15,7 +15,7 @@
     "tools-dev": "MC_APP_NAME=tools webpack-dev-server --config config/webpack.config.js",
     "tools-release": "NODE_ENV=production MC_APP_NAME=tools webpack --config config/webpack.config.js",
     "test-acceptance": "react-scripts test --env=jsdom test/acceptance",
-    "requirements-check": "node check-version.js",
+    "requirements-check": "node scripts/check-version.js",
     "postinstall": "npm run requirements-check"
   },
   "jest": {
@@ -85,6 +85,7 @@
     "@babel/preset-env": "^7.7.7",
     "@babel/preset-react": "^7.7.4",
     "@babel/register": "^7.7.7",
+    "ajv-cli": "^3.0.0",
     "autoprefixer": "^9.7.3",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
@@ -105,6 +106,7 @@
     "happypack": "^5.0.1",
     "hard-source-webpack-plugin": "^0.13.1",
     "html-webpack-plugin": "^3.2.0",
+    "husky": "^4.0.0",
     "if-env": "^1.0.4",
     "image-webpack-loader": "^6.0.0",
     "manifest-revision-webpack-plugin": "^0.4.1",

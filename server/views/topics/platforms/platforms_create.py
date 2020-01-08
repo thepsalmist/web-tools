@@ -70,7 +70,6 @@ def topic_update_by_web_platform(topics_id):
     }
     # parse out any sources and collections to add
     media = json.loads(request.form['platform_channel'])
-    media = media['platform_channel']
     sources = media['sources[]'] if 'sources[]' in media and not [None, ''] else ''
     collections = media['collections[]'] if 'collections[]' in media else ''
 
@@ -124,16 +123,19 @@ def topic_update_platform(topics_id, platform_id):
     source = request.form['platform_source'] if 'platform_source' in request.form else None
     query = request.form['platform_query'] if 'platform_query' in request.form else None
     platform = request.form['platform_type']
-
+    result ={}
     if platform == 'web':
-        result = topic_update_by_web_platform(topics_id)  # and the request.form info
+        response = topic_update_by_web_platform(topics_id)
+        result['success'] = 1 if response.status == '200 OK' else 0  # and the request.form info
+        result['id'] = platform_id #web_shim_ui
     else:
         # TODO combine channel into query
     #   result = user_mc.topicUpdateSeedQuery(topics_id, platform_id, source)
         result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id=platform_id)
         result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
-    result['success'] = 1 if 'topic_seed_query' in result else 0
-    result['id'] = result['topic_seed_query']['topic_seed_queries_id']
+        result['success'] = 1 if 'topic_seed_query' in result else 0
+        result['id'] = result['topic_seed_query']['topic_seed_queries_id']
+
     return result #topic_seed_queries_id
 
 

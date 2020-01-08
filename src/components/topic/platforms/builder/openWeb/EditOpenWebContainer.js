@@ -162,7 +162,7 @@ EditOpenWebContainer.propTypes = {
 
 const mapStateToProps = state => ({
   currentQuery: formSelector(state, 'query'),
-  currentPlatformType: formSelector(state, 'currentPlatformType'),
+  currentPlatformType: state.topics.selected.platforms.selected.platform.platform,
   currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
 });
 

@@ -67,8 +67,8 @@ def topic_update_by_web_platform(topics_id):
         'twitter_topics_id': request.form['twitter_topics_id'] if 'twitter_topics_id' in request.form else None
     }
     # parse out any sources and collections to add
-    media = json.loads(request.form['channel'])
-    media = media['channel']
+    media = json.loads(request.form['platform_channel'])
+    media = media['platform_channel']
     sources = media['sources[]'] if 'sources[]' in media and not [None, ''] else ''
     collections = media['collections[]'] if 'collections[]' in media else ''
 
@@ -87,12 +87,12 @@ def topic_update_by_web_platform(topics_id):
 @api_error_handler
 def topic_add_platform(topics_id):
     user_mc = user_mediacloud_client()
-    platform = request.form['current_platform_type']
+    platform = request.form['platform_type']
     query = request.form['platform_query']
 
-    channel = request.form['channel'] if 'channel' in request.form else None
+    channel = request.form['platform_channel'] if 'platform_channel' in request.form else None
 
-    source = request.form['source'] if 'source' in request.form else None
+    source = request.form['platform_source'] if 'platform_source' in request.form else None
 
     if platform == 'web':
         # channel has open web sources in it
@@ -114,10 +114,10 @@ def topic_add_platform(topics_id):
 def topic_update_platform(topics_id, platform_id):
     user_mc = user_mediacloud_client()
 
-    channel = request.form['channel'] if 'channel' in request.form else None
-    source = request.form['source'] if 'source' in request.form else None
-    query = request.form['query'] if 'query' in request.form else None
-    platform = request.form['current_platform_type']
+    channel = request.form['platform_channel'] if 'channel' in request.form else None
+    source = request.form['platform_source'] if 'source' in request.form else None
+    query = request.form['platform_query'] if 'query' in request.form else None
+    platform = request.form['platform_type']
     #channel has open web sources in it
     #so, if source is mediacloud, do something with the channel
     # NOTE: dates are not modified - they are set at the topic level. TODO: confirm user can change dates in topic settings
@@ -136,7 +136,7 @@ def topic_update_platform(topics_id, platform_id):
 @api_error_handler
 def topic_remove_platform(topics_id, platform_id):
     user_mc = user_mediacloud_client()
-    platform = request.form['current_platform_type']
+    platform = request.form['platform_type']
     if platform == 'web': # web_ui_shim that is
         result = user_mc.topicUpdate(topics_id, solr_seed_query='', media_ids=[], media_tags_ids=[])
     else:

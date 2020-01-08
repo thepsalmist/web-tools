@@ -77,7 +77,7 @@ const mapDispatchToProps = (dispatch, { topic, selectedPlatform, intl }) => ({
         return null;
     }
     const infoForQuery = {
-      platform_type: selectedPlatform.platform,
+      cplatform_type: selectedPlatform.platform,
       platform_query: formValues.query,
       platform_source: selectedPlatform.source,
       platform_channel: formatPlatformChannelData ? JSON.stringify(formatPlatformChannelData(formValues)) : JSON.stringify(formValues),

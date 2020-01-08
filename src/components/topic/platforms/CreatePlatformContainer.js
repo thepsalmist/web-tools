@@ -62,40 +62,36 @@ const mapStateToProps = (state, ownProps) => ({
   selectedPlatform: state.topics.selected.platforms.selected,
 });
 
-const mapDispatchToProps = (dispatch, { topic, selectedPlatform, intl }) => ({
-  submitDone: (originalValues, formValues) => {
-    // let saveData = null;
-    // const nameAlreadyExists = queryData.focalSetDefinitions.filter(fc => fc.name === formValues.focalSetName);
-    /* if (nameAlreadyExists.length > 0) {
-      return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.duplicateName) }));
-    }
-    */
+const mapDispatchToProps = (dispatch, { intl }) => ({
+  submitDone: (topicInfo, formValues) => {
     let formatPlatformChannelData;
-    switch (selectedPlatform.platform) {
+    switch (formValues.selectedPlatform.platform) {
       case PLATFORM_OPEN_WEB:
         formatPlatformChannelData = formatPlatformOpenWebChannelData;
         break;
       case PLATFORM_REDDIT:
         formatPlatformChannelData = formatPlatformRedditChannelData;
         break;
+      case PLATFORM_TWITTER:
+        break;
       default:
         return null;
     }
     const infoForQuery = {
-      platform_type: selectedPlatform.platform,
+      platform_type: formValues.selectedPlatform.platform,
       platform_query: formValues.query,
-      platform_source: selectedPlatform.source,
+      platform_source: formValues.selectedPlatform.source,
       platform_channel: formatPlatformChannelData ? JSON.stringify(formatPlatformChannelData(formValues)) : JSON.stringify(formValues),
-      start_date: topic.start_date,
-      end_date: topic.end_date,
+      start_date: topicInfo.start_date,
+      end_date: topicInfo.end_date,
     };
-    return dispatch(topicCreatePlatform(topic.topics_id, infoForQuery))
+    return dispatch(topicCreatePlatform(topicInfo.topics_id, infoForQuery))
       .then((results) => {
         if (results.success > -1) {
           const platformSavedMessage = intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
-          dispatch(push(`/topics/${originalValues.topics_id}/platforms/manage`));
+          dispatch(push(`/topics/${topicInfo.topics_id}/platforms/manage`));
           dispatch(reset('platform')); // it is a wizard so we have to do this by hand
         } else {
           const platformNotSavedMessage = intl.formatMessage(localMessages.platformNotSaved);

@@ -12,9 +12,9 @@ import messages from '../../../../resources/messages';
 const Platform1ConfigureContainer = (props) => {
   const { topicId, initialValues, handleNextStep, selectedPlatform, location } = props;
   let content = null;
+  const platformDetails = { ...initialValues, ...selectedPlatform };
   switch (selectedPlatform.platform) {
     case PLATFORM_OPEN_WEB:
-      const platformDetails = { ...initialValues, ...selectedPlatform };
       content = (
         <EditOpenWebContainer
           topicId={topicId}

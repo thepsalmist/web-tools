@@ -387,13 +387,15 @@ export function topicSnapshotCreate(topicId) {
   return createPostingApiPromise(`/api/topics/${topicId}/snapshots/create`);
 }
 
+const platformPreviewAcceptedParams = ['platform_type', 'platform_query', 'platform_channel', 'platform_source', 'start_date', 'end_date', 'sources[]', 'collections[]', 'searches[]'];
+
 export function topicCreatePlatform(topicId, params) {
-  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'source']);
+  const acceptedParams = acceptParams(params, platformPreviewAcceptedParams);
   return createPostingApiPromise(`/api/topics/${topicId}/platforms/add`, acceptedParams);
 }
 
 export function topicUpdatePlatform(topicId, platformId, params) {
-  const acceptedParams = acceptParams(params, ['current_platform_id', 'current_platform_type', 'platform_query', 'channel', 'source', 'sources[]', 'collections[]', 'searches[]']);
+  const acceptedParams = acceptParams(params, platformPreviewAcceptedParams);
   return createPostingApiPromise(`/api/topics/${topicId}/platforms/${platformId}/update`, acceptedParams);
 }
 
@@ -401,8 +403,6 @@ export function topicDeletePlatform(topicId, platformId, params) {
   const acceptedParams = acceptParams(params, ['current_platform_type']);
   return createPostingApiPromise(`/api/topics/${topicId}/platforms/${platformId}/remove`, acceptedParams);
 }
-
-const platformPreviewAcceptedParams = ['platform_type', 'platform_query', 'platform_channel', 'platform_source', 'start_date', 'end_date'];
 
 export function topicStoryCountsByPlatformQuery(topicId, params) {
   const acceptedParams = acceptParams(params, platformPreviewAcceptedParams);

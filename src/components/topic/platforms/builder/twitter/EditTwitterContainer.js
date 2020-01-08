@@ -9,6 +9,7 @@ import withIntlForm from '../../../../common/hocs/IntlForm';
 import messages from '../../../../../resources/messages';
 import PlatformPreview from '../preview/PlatformPreview';
 import { notEmptyString } from '../../../../../lib/formValidators';
+import { CRIMSON_HEXAGON_SOURCE } from '../../../../../lib/platformTypes';
 
 const formSelector = formValueSelector('platform');
 
@@ -46,7 +47,7 @@ class EditTwitterContainer extends React.Component {
   }
 
   render() {
-    const { topicId, renderTextField, handleSubmit, finishStep } = this.props;
+    const { topicId, renderTextField, handleSubmit, finishStep, currentPlatform } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
@@ -56,6 +57,33 @@ class EditTwitterContainer extends React.Component {
         <div>
           <PlatformPreview topicId={topicId} query={this.state.query} />
         </div>
+      );
+    }
+    const formWidget = (
+      <Row>
+        <Col lg={8} xs={12}>
+          <Field
+            name="query"
+            component={renderTextField}
+            fullWidth
+            onKeyDown={this.handleKeyDown}
+          />
+        </Col>
+      </Row>
+    );
+    let ancillaryField = null;
+    if (currentPlatform.source === CRIMSON_HEXAGON_SOURCE) {
+      ancillaryField = (
+        <Row>
+          <Col lg={8} xs={12}>
+            <Field
+              name="crimson_hexagon_id"
+              component={renderTextField}
+              fullWidth
+              onKeyDown={this.handleKeyDown}
+            />
+          </Col>
+        </Row>
       );
     }
     return (
@@ -69,17 +97,8 @@ class EditTwitterContainer extends React.Component {
               </p>
             </Col>
           </Row>
-          <Row>
-            <Col lg={8} xs={12}>
-              <Field
-                name="query"
-                component={renderTextField}
-                placeholder={messages.searchByKeywords}
-                fullWidth
-                onKeyDown={this.handleKeyDown}
-              />
-            </Col>
-          </Row>
+          {formWidget}
+          {ancillaryField}
           <Col lg={2} xs={12}>
             <AppButton
               id="preview-search-button"
@@ -110,10 +129,8 @@ EditTwitterContainer.propTypes = {
   initialValues: PropTypes.object,
   onNextStep: PropTypes.func.isRequired,
   // from state
-  currentPlatformType: PropTypes.string,
-  currentPlatformInfo: PropTypes.object,
+  currentPlatform: PropTypes.object,
   currentQuery: PropTypes.string,
-  channel: PropTypes.string.isRequired,
   change: PropTypes.func.isRequired,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
@@ -126,9 +143,7 @@ EditTwitterContainer.propTypes = {
 
 const mapStateToProps = state => ({
   currentQuery: formSelector(state, 'query'),
-  channel: formSelector(state, 'channel'),
-  currentPlatformType: state.topics.selected.platforms.selected.platform,
-  currentPlatformInfo: state.topics.selected.platforms.selected,
+  currentPlatform: state.topics.selected.platforms.selected,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

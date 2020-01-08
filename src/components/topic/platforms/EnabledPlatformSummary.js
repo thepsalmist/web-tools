@@ -9,10 +9,11 @@ const NEW_PLATFORM_ID = 'new'; // TODO undefined if a fetchAsncy
 const EnabledPlatformSummary = ({ platform }) => {
   let platformHeading = null;
   let platformChannel = null;
-  switch (platform.topic_seed_queries_id) { // TODO no seed queries if async
+  switch (platform.topic_seed_queries_id) {
     case NEW_PLATFORM_ID:
     case undefined:
-      platformHeading = <FormattedHTMLMessage {...sourceNameMessage} />;
+      platformHeading = <FormattedHTMLMessage {...sourceNameMessage(platform.source)} />;
+      platformChannel = <PlatformDetailsInfo platform={platform} />;
       break;
     default:
       platformHeading = <FormattedHTMLMessage {...platformNameMessage(platform.platform, platform.source)} />;

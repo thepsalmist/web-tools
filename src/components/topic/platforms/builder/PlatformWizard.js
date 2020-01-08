@@ -65,7 +65,7 @@ class PlatformWizard extends React.Component {
           initialValues={initAndTopicInfoValues}
           onDone={onDone}
           currentStep={currentStep}
-          currentPlatformType={initAndTopicInfoValues.currentPlatformType}
+          currentPlatformType={initAndTopicInfoValues.currentPlatform}
         />
       </div>
     );
@@ -82,7 +82,7 @@ PlatformWizard.propTypes = {
   onDone: PropTypes.func.isRequired,
   // from state
   currentStep: PropTypes.number.isRequired,
-  currentPlatformType: PropTypes.string,
+  currentPlatform: PropTypes.string,
   // from dispatch
   goToStep: PropTypes.func.isRequired,
   handleUnmount: PropTypes.func.isRequired,

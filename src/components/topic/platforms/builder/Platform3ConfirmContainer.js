@@ -11,7 +11,7 @@ import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
 
 const localMessages = {
-  title: { id: 'platform.create.confirm.title', defaultMessage: 'Step 4: Confirm Your Platform Changes' },
+  title: { id: 'platform.create.confirm.title', defaultMessage: 'Step 4: Confirm Your {name} Platform Changes' },
   addAnotherPlatform: { id: 'platform.create.new', defaultMessage: 'Save and Add More' },
   platform: { id: 'platform.create', defaultMessage: 'Platform' },
 };
@@ -24,7 +24,7 @@ const Platform3ConfirmContainer = (props) => {
       <Grid>
         <Row>
           <Col lg={12}>
-            <h2><FormattedMessage {...localMessages.title} values={{ name: formValues.platformName }} /></h2>
+            <h2><FormattedMessage {...localMessages.title} values={{ name: formValues.platform }} /></h2>
           </Col>
         </Row>
         <Row>
@@ -74,7 +74,7 @@ Platform3ConfirmContainer.propTypes = {
 
 const mapStateToProps = state => ({
   formValues: state.form.platform.values,
-  currentPlatformType: state.topics.selected.platforms.selected.platform,
+  currentPlatform: state.topics.selected.platforms.selected,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

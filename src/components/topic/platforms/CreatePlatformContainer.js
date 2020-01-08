@@ -8,7 +8,7 @@ import { topicCreatePlatform, setTopicNeedsNewSnapshot } from '../../../actions/
 // import { LEVEL_ERROR } from '../../common/Notice';
 import { updateFeedback } from '../../../actions/appActions';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../lib/platformTypes';
-import { formatPlatformOpenWebChannelData, formatPlatformRedditChannelData } from '../../util/topicUtil';
+import { formatPlatformOpenWebChannelData, formatPlatformRedditChannelData, formatPlatformTwitterChannelData } from '../../util/topicUtil';
 
 const DEFAULT_SELECTED_NUMBER = 5;
 
@@ -73,6 +73,7 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
         formatPlatformChannelData = formatPlatformRedditChannelData;
         break;
       case PLATFORM_TWITTER:
+        formatPlatformChannelData = formatPlatformTwitterChannelData;
         break;
       default:
         return null;

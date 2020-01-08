@@ -44,8 +44,8 @@ def get_topic_platforms(topics_id):
     for seed_query in topic['topic_seed_queries']:
         match = [p for p in available_platforms if (p['platform'] == seed_query['platform']) and (p['source'] == seed_query['source'])]
         if len(match) == 1:
-            match['query'] = seed_query['query']
-            match['topics_seed_queries_id'] = seed_query['topics_seed_queries_id']
+            match[0]['query'] = seed_query['query']
+            match[0]['topic_seed_queries_id'] = seed_query['topic_seed_queries_id']
     return jsonify({'results': available_platforms})
 
 
@@ -100,7 +100,7 @@ def topic_add_platform(topics_id):
         # TODO - add retweet partisanship? or will that be handled in the back end
     else:
     # do we need to add dates?
-    # TODO format channel properly for twitter
+    # TODO format channel properly for twitter (CHID) and reddit (subreddit)
         result = user_mc.topicAddSeedQuery(topics_id=topics_id, platform=platform, source=source, query=query)
 
     result['success'] = result['topic_seed_query']['topic_seed_queries_id']
@@ -114,18 +114,17 @@ def topic_add_platform(topics_id):
 def topic_update_platform(topics_id, platform_id):
     user_mc = user_mediacloud_client()
 
-    channel = request.form['platform_channel'] if 'channel' in request.form else None
-    source = request.form['platform_source'] if 'source' in request.form else None
-    query = request.form['platform_query'] if 'query' in request.form else None
+    channel = request.form['platform_channel'] if 'platform_channel' in request.form else None
+    source = request.form['platform_source'] if 'platform_source' in request.form else None
+    query = request.form['platform_query'] if 'platform_query' in request.form else None
     platform = request.form['platform_type']
-    #channel has open web sources in it
-    #so, if source is mediacloud, do something with the channel
-    # NOTE: dates are not modified - they are set at the topic level. TODO: confirm user can change dates in topic settings
+
     if platform == 'web':
         result = topic_update_by_web_platform(topics_id)  # and the request.form info
     else:
+        # TODO combine channel into query
     #   result = user_mc.topicUpdateSeedQuery(topics_id, platform_id, source)
-        result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id =platform_id)
+        result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id=platform_id)
         result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
     #result['success'] = result['topic_seed_query']['topic_seed_queries_id']
     return result #topic_seed_queries_id

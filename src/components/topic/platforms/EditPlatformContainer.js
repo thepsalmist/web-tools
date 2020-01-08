@@ -8,8 +8,8 @@ import PlatformWizard from './builder/PlatformWizard';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { topicUpdatePlatform, setTopicNeedsNewSnapshot, selectPlatform } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT } from '../../../lib/platformTypes';
-import { formatPlatformOpenWebChannelData, formatPlatformRedditChannelData } from '../../util/topicUtil';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../lib/platformTypes';
+import { formatPlatformOpenWebChannelData, formatPlatformRedditChannelData, formatPlatformTwitterChannelData } from '../../util/topicUtil';
 
 const localMessages = {
   platformSaved: { id: 'focus.edit.saved', defaultMessage: 'We saved your platform.' },
@@ -63,36 +63,39 @@ const mapStateToProps = (state, ownProps) => ({
   selectedPlatform: state.topics.selected.platforms.selected,
 });
 
-const mapDispatchToProps = (dispatch, { topic, selectedPlatform, intl }) => ({
-  handleUpdatePlatform: (originalValues, formValues) => {
+const mapDispatchToProps = (dispatch, { intl }) => ({
+  handleUpdatePlatform: (topicInfo, formValues) => {
     let formatPlatformChannelData;
-    switch (selectedPlatform.platform) {
+    switch (formValues.platform) {
       case PLATFORM_OPEN_WEB:
         formatPlatformChannelData = formatPlatformOpenWebChannelData;
         break;
       case PLATFORM_REDDIT:
         formatPlatformChannelData = formatPlatformRedditChannelData;
         break;
+      case PLATFORM_TWITTER:
+        formatPlatformChannelData = formatPlatformTwitterChannelData;
+        break;
       default:
         return null;
     }
     const infoForQuery = {
-      cplatform_type: selectedPlatform.platform,
+      cplatform_type: formValues.platform,
       platform_query: formValues.query,
-      platform_source: selectedPlatform.source,
+      platform_source: formValues.source,
       platform_channel: formatPlatformChannelData ? JSON.stringify(formatPlatformChannelData(formValues)) : JSON.stringify(formValues),
-      start_date: topic.start_date,
-      end_date: topic.end_date,
+      start_date: topicInfo.start_date,
+      end_date: topicInfo.end_date,
     };
     // NOTE, this may be a remove/add vs an update on the back end
-    return dispatch(topicUpdatePlatform(originalValues.topicId, selectedPlatform.topic_seed_queries_id, infoForQuery))
+    return dispatch(topicUpdatePlatform(topicInfo.topicId, formValues.platformDetails.topic_seed_queries_id, infoForQuery))
       .then((results) => {
         if (results.status.indexOf('200 OK') > -1) { // TODO will have to check results
           // TODO get topicId from return const newOrSameId = results.id
           const platformSavedMessage = intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
-          dispatch(push(`/topics/${originalValues.topics_id}/platforms/manage`)); // go back to focus management page
+          dispatch(push(`/topics/${topicInfo.topics_id}/platforms/manage`)); // go back to focus management page
           // dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
         } else {
           const platformNotSavedMessage = intl.formatMessage(localMessages.platformNotSaved);

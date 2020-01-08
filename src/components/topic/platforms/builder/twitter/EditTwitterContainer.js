@@ -16,7 +16,7 @@ const localMessages = {
   title: { id: 'platform.create.edit.title', defaultMessage: 'Step 1: Configure Your Twitter platform' },
   intro: { id: 'platform.create.edit.intro', defaultMessage: 'Step 1: intro' },
   about: { id: 'platform.create.edit.about',
-    defaultMessage: 'This Platform is driven by an open web seed query.  Any stories that match the query you create will be included in the Platform.' },
+    defaultMessage: 'This Twitter platform is driven by a seed query.  Any stories that match the query you create will be included in the Platform.' },
   errorNoKeywords: { id: 'platform.error', defaultMessage: 'You need to specify a query.' },
 };
 

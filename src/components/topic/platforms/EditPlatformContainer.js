@@ -86,14 +86,13 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
       start_date: topicInfo.start_date,
       end_date: topicInfo.end_date,
     };
-    // NOTE, this may be a remove/add vs an update on the back end
     return dispatch(topicUpdatePlatform(topicInfo.topicId, formValues.platformDetails.topic_seed_queries_id, infoForQuery))
-      .then((results) => {
+      .then((results) => { // remember, new id comes back b/c we are deleting/adding
         if (results.success) {
           const platformSavedMessage = intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
-          dispatch(push(`/topics/${results.id}/platforms/manage`)); // go back to focus management page
+          dispatch(push(`/topics/${topicInfo.topicId}/platforms/${results.id}/edit`)); // go back to focus management page
           // dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
         } else {
           const platformNotSavedMessage = intl.formatMessage(localMessages.platformNotSaved);

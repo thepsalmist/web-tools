@@ -65,7 +65,7 @@ def tweet_split_count(query, start_date: dt.datetime = None, end_date: dt.dateti
             'timestamp': d['key'],
             'count': d['doc_count'],
         })
-    return data
+    return {'counts': data}
 
 
 def tweet_count(query, start_date: dt.datetime = None, end_date: dt.datetime = None):

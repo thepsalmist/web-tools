@@ -1,11 +1,30 @@
 import slugify from 'slugify';
 import { serializeSearchTags } from '../../lib/explorerUtil';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT } from '../../lib/platformTypes';
 
 export const topicDownloadFilename = (topicName, filters) => (
   `${slugify(topicName)}-${filters.snapshotId}-${filters.timespanId}-${filters.focusId}`
 );
 
+export const formatPlatformOpenWebChannelData = (formValues) => {
+  let data = {};
+  if (formValues) {
+    data = {
+      'collections[]': formValues.media.filter(s => s.tags_id !== undefined).map(s => s.tags_id),
+      'sources[]': formValues.media.filter(s => s.media_id !== undefined).map(s => s.media_id),
+      'searches[]': serializeSearchTags(formValues.media.filter(s => s.customColl === true)),
+    };
+  } else {
+    data = {
+      'collections[]': [],
+      'sources[]': [],
+      'searches[]': [],
+    };
+  }
+  return data;
+};
+
+// TODO: remove this and replace with formatPlatformOpenWebChasdfnnelData?
 export const formatTopicOpenWebSourcesForQuery = (topicSourcesAndCollections) => {
   if (topicSourcesAndCollections) {
     return {
@@ -56,10 +75,8 @@ export const formatTopicRedditPreviewForQuery = (topicQuery) => ({
   source: 'pushshift', // TODO change - not sure what it should be
 });
 
-export const formatTopicTwitterPreviewForQuery = (topicQuery) => ({
-  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_TWITTER, topicQuery.query),
-  channel: JSON.stringify(topicQuery.channel),
-  source: 'pushshift', // TODO crimson hex or pushshift
+export const formatPlatformRedditChannelData = (formValues) => ({
+  channel: formValues.channel.split(','),
 });
 
 export const timespanForDate = (date, timespans, period) => timespans.filter(t => t.period === period).find(t => date >= t.startDateObj && date <= t.endDateObj);

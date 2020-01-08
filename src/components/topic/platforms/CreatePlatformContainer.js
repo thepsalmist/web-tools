@@ -8,7 +8,7 @@ import { topicCreatePlatform, setTopicNeedsNewSnapshot } from '../../../actions/
 // import { LEVEL_ERROR } from '../../common/Notice';
 import { updateFeedback } from '../../../actions/appActions';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../lib/platformTypes';
-import { formatTopicOpenWebPreviewQuery, formatTopicRedditPreviewForQuery, formatTopicTwitterPreviewForQuery } from '../../util/topicUtil';
+import { formatPlatformOpenWebChannelData, formatPlatformRedditChannelData } from '../../util/topicUtil';
 
 const DEFAULT_SELECTED_NUMBER = 5;
 
@@ -26,11 +26,7 @@ const CreatePlatformContainer = (props) => {
   const { topicInfo, location, handleDone, selectedPlatform } = props;
   const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, selectedPlatform };
   if (selectedPlatform.platform === PLATFORM_TWITTER) {
-    initialValues.channel = [ // TODO, depending on how channel data is prepped from back end, maybe put in reducer or python platform stubs
-      { type: 'elite', id: 0, label: 'Elite', selected: false, value: false },
-      { type: 'crimson', id: 1, label: 'Crimson Hexagon', selected: false, value: false },
-      { type: 'other', id: 2, label: 'Other', selected: false, value: false },
-    ];
+    initialValues.channel = '';
   }
   // default to any solr seed query they might be using already
   const initAndTopicInfoValues = { ...initialValues, ...topicInfo, query: topicInfo.solr_seed_query };
@@ -63,50 +59,46 @@ CreatePlatformContainer.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   topicInfo: state.topics.selected.info,
-  selectedPlatform: state.topics.selected.platforms.selected.platform,
+  selectedPlatform: state.topics.selected.platforms.selected,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  submitDone: (originalValues, values) => {
+const mapDispatchToProps = (dispatch, { topic, selectedPlatform, intl }) => ({
+  submitDone: (originalValues, formValues) => {
     // let saveData = null;
     // const nameAlreadyExists = queryData.focalSetDefinitions.filter(fc => fc.name === formValues.focalSetName);
     /* if (nameAlreadyExists.length > 0) {
       return dispatch(addNotice({ level: LEVEL_ERROR, message: ownProps.intl.formatMessage(localMessages.duplicateName) }));
     }
     */
-    let infoForQuery = {};
-
-    switch (values.currentPlatformType) {
+    let formatPlatformChannelData;
+    switch (selectedPlatform.platform) {
       case PLATFORM_OPEN_WEB:
-        // need media
-        infoForQuery = {
-          ...formatTopicOpenWebPreviewQuery({ ...originalValues, query: values.query, channel: values.media }),
-        };
-        break;
-      case PLATFORM_TWITTER:
-        // source = internet archive or push_shift
-        infoForQuery = {
-          ...formatTopicTwitterPreviewForQuery({ ...originalValues, query: values.query, channel: values.channel }),
-        };
+        formatPlatformChannelData = formatPlatformOpenWebChannelData;
         break;
       case PLATFORM_REDDIT:
-        infoForQuery = {
-          ...formatTopicRedditPreviewForQuery({ ...originalValues, query: values.query, channel: values.channel }),
-        };
+        formatPlatformChannelData = formatPlatformRedditChannelData;
         break;
       default:
         return null;
     }
-    return dispatch(topicCreatePlatform(originalValues.topics_id, { ...infoForQuery }))
+    const infoForQuery = {
+      platform_type: selectedPlatform.platform,
+      platform_query: formValues.query,
+      platform_source: selectedPlatform.source,
+      platform_channel: formatPlatformChannelData ? JSON.stringify(formatPlatformChannelData(formValues)) : JSON.stringify(formValues),
+      start_date: topic.start_date,
+      end_date: topic.end_date,
+    };
+    return dispatch(topicCreatePlatform(topic.topics_id, infoForQuery))
       .then((results) => {
         if (results.success > -1) {
-          const platformSavedMessage = ownProps.intl.formatMessage(localMessages.platformSaved);
+          const platformSavedMessage = intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
           dispatch(push(`/topics/${originalValues.topics_id}/platforms/manage`));
           dispatch(reset('platform')); // it is a wizard so we have to do this by hand
         } else {
-          const platformNotSavedMessage = ownProps.intl.formatMessage(localMessages.platformNotSaved);
+          const platformNotSavedMessage = intl.formatMessage(localMessages.platformNotSaved);
           dispatch(updateFeedback({ open: true, message: platformNotSavedMessage })); // user feedback
         }
       });

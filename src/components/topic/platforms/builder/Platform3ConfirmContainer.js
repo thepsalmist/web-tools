@@ -5,10 +5,8 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../../common/hocs/IntlForm';
-// import OpenWebSummary from './openWeb/OpenWebSummary';
 import EnabledPlatformSummary from '../EnabledPlatformSummary';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../../lib/platformTypes';
 import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
 
@@ -19,9 +17,8 @@ const localMessages = {
 };
 
 const Platform3ConfirmContainer = (props) => {
-  const { topicId, formValues, currentPlatformType, initialValues, handlePreviousStep, handleSubmit, finishStep, submitting } = props;
+  const { formValues, handlePreviousStep, handleSubmit, finishStep, submitting } = props;
   const { formatMessage } = props.intl;
-  let content = null;
   return (
     <form className="platform-confirm" name="platformValidation" onSubmit={handleSubmit(finishStep.bind(this))}>
       <Grid>

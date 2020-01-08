@@ -402,29 +402,26 @@ export function topicDeletePlatform(topicId, platformId, params) {
   return createPostingApiPromise(`/api/topics/${topicId}/platforms/${platformId}/remove`, acceptedParams);
 }
 
+const platformPreviewAcceptedParams = ['platform_type', 'platform_query', 'platform_channel', 'platform_source', 'start_date', 'end_date'];
+
 export function topicStoryCountsByPlatformQuery(topicId, params) {
-  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel', 'start_date', 'end_date', 'limit']);
+  const acceptedParams = acceptParams(params, platformPreviewAcceptedParams);
   return createApiPromise(`/api/topics/${topicId}/platforms/preview/story-count`, acceptedParams);
 }
 
-export function topicSplitStoryCountsByPlatformQuery(topicId, params) {
-  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel', 'start_date', 'end_date', 'limit']);
-  return createApiPromise(`api/topics/${topicId}/platforms/preview/split-story-count`, acceptedParams);
-}
-
-export function topicStoriesByPlatformQuery(topicId, params) {
-  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel', 'start_date', 'end_date', 'limit']);
-  return createApiPromise(`/api/topics/${topicId}/platforms/preview/stories`, acceptedParams);
-}
-
 export function topicAttentionByPlatformQuery(topicId, params) {
-  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel', 'start_date', 'end_date', 'limit']);
+  const acceptedParams = acceptParams(params, platformPreviewAcceptedParams);
   return createApiPromise(`/api/topics/${topicId}/platforms/preview/attention`, acceptedParams);
 }
 
 export function topicTopWordsByPlatformQuery(topicId, params) {
-  const acceptedParams = acceptParams(params, ['current_platform_type', 'platform_query', 'channel', 'start_date', 'end_date', 'limit', 'snapshotId', 'timespanId', 'focusId', 'q', 'withTotals', 'sample_size']);
+  const acceptedParams = acceptParams(params, platformPreviewAcceptedParams);
   return createApiPromise(`/api/topics/${topicId}/platforms/preview/words`, acceptedParams);
+}
+
+export function topicStoriesByPlatformQuery(topicId, params) {
+  const acceptedParams = acceptParams(params, platformPreviewAcceptedParams);
+  return createApiPromise(`/api/topics/${topicId}/platforms/preview/stories`, acceptedParams);
 }
 
 export function topicPlatformList() {

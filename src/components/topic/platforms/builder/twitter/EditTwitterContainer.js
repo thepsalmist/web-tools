@@ -7,8 +7,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../../../common/AppButton';
 import withIntlForm from '../../../../common/hocs/IntlForm';
 import messages from '../../../../../resources/messages';
-import TwitterPreview from './TwitterPreview';
-import TwitterCheckboxFieldArray from '../../../../common/TwitterCheckboxFieldArray';
+import PlatformPreview from '../preview/PlatformPreview';
 import { notEmptyString } from '../../../../../lib/formValidators';
 
 const formSelector = formValueSelector('platform');
@@ -19,10 +18,6 @@ const localMessages = {
   about: { id: 'platform.create.edit.about',
     defaultMessage: 'This Platform is driven by an open web seed query.  Any stories that match the query you create will be included in the Platform.' },
   errorNoKeywords: { id: 'platform.error', defaultMessage: 'You need to specify a query.' },
-  typeCrimson: { id: 'platform.create.edit.crimson', defaultMessage: 'Crimson Hexagon' },
-  typeCrimsonId: { id: 'platform.create.edit.crimson.id', defaultMessage: 'Crimson Hexagon ID' },
-  typeElite: { id: 'platform.create.edit.elite', defaultMessage: 'Verified Accounts (via Pushshift.io)' },
-  typeOther: { id: 'platform.create.edit.other', defaultMessage: 'Other' },
 };
 
 class EditTwitterContainer extends React.Component {
@@ -35,42 +30,31 @@ class EditTwitterContainer extends React.Component {
   }
 
   updateQuery = () => {
-    const { change, currentQuery, currentPlatformType } = this.props;
-    // TODO: add in twitter sources/feeds
-    // change('channel', channel); // redux-form change action
-    change('currentPlatformType', currentPlatformType);
+    const { currentQuery } = this.props;
     this.setState({ query: currentQuery });
   }
 
-  selectTwitterChannel = (args) => {
-    const { channel, handleChannelChange } = this.props;
-    // get the values from the channel, store so other components can access it (checkboxes)
-    // this is pushed in as previouslySelected into cbx components
-    const userSelected = [args];
-    const updatedChannel = channel;
-    if (updatedChannel) {
-      updatedChannel.forEach((p, i) => {
-        const toUpdate = userSelected.findIndex(t => t.id === p.id);
-        if (toUpdate > -1) {
-          updatedChannel[i].selected = userSelected[toUpdate].value;
-          updatedChannel[i].value = userSelected[toUpdate].value;
-        }
-      });
+  handleKeyDown = (event) => {
+    switch (event.key) {
+      case 'Enter':
+        this.updateKeywords();
+        event.preventDefault();
+        break;
+      default:
+        break;
     }
-    handleChannelChange(updatedChannel);
   }
 
   render() {
-    const { topicId, initialValues, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
+    const { topicId, renderTextField, handleSubmit, finishStep } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
-    // TODO, handle multiple twitter choices
     if ((this.state.query !== null) && (this.state.query !== undefined) && (this.state.query.length > 0)) {
       nextButtonDisabled = false;
       previewContent = (
         <div>
-          <TwitterPreview topicId={topicId} query={this.state.query} location={location} />
+          <PlatformPreview topicId={topicId} query={this.state.query} />
         </div>
       );
     }
@@ -95,32 +79,18 @@ class EditTwitterContainer extends React.Component {
                 onKeyDown={this.handleKeyDown}
               />
             </Col>
-            <Col lg={2} xs={12}>
-              <AppButton
-                id="open-web-preview-button"
-                label={formatMessage(messages.search)}
-                style={{ marginTop: 33 }}
-                onClick={this.updateQuery}
-              />
-            </Col>
           </Row>
+          <Col lg={2} xs={12}>
+            <AppButton
+              id="preview-search-button"
+              label={formatMessage(messages.search)}
+              style={{ marginTop: 33 }}
+              onClick={this.updateQuery}
+            />
+          </Col>
           <Row>
-            <Col lg={8} xs={12}>
-              <TwitterCheckboxFieldArray
-                name="channel"
-                form="platform"
-                initVal={initialValues.channel}
-                onChange={(args) => this.selectTwitterChannel(args)}
-                keepDirtyOnReinitialize
-                destroyOnUnmount={false}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={10}>
-              <div className="media-field-wrapper">
-                {previewContent}
-              </div>
+            <Col lg={12}>
+              {previewContent}
             </Col>
           </Row>
           <Row>
@@ -139,13 +109,12 @@ EditTwitterContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   initialValues: PropTypes.object,
   onNextStep: PropTypes.func.isRequired,
-  handleChannelChange: PropTypes.func.isRequired,
   // from state
   currentPlatformType: PropTypes.string,
   currentPlatformInfo: PropTypes.object,
   currentQuery: PropTypes.string,
+  channel: PropTypes.string.isRequired,
   change: PropTypes.func.isRequired,
-  channel: PropTypes.array,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
   // from compositional helper
@@ -153,7 +122,6 @@ EditTwitterContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,
-  renderCheckbox: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -164,10 +132,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleChannelChange: (updatedChannel) => {
-    ownProps.change('channel', updatedChannel);
-  },
-  handleMediaDelete: () => null, // in create mode we don't need to update the values
   finishStep: (values) => {
     const customProps = {
       query: values.query,

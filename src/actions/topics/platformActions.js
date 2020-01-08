@@ -11,7 +11,6 @@ export const fetchTopicPlatforms = createAsyncAction(FETCH_ALL_PLATFORMS, api.to
 export const RESET_PLATFORMS = 'RESET_PLATFORMS';
 export const resetTopicPlatforms = createAction(RESET_PLATFORMS);
 
-
 export const FETCH_PLATFORMS_IN_TOPIC = 'FETCH_PLATFORMS_IN_TOPIC';
 export const fetchPlatformsInTopicList = createAsyncAction(FETCH_PLATFORMS_IN_TOPIC, api.platformsInTopic);
 

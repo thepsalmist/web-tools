@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
+import { reduxForm, formValueSelector } from 'redux-form';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import Dialog from '@material-ui/core/Dialog';
@@ -13,12 +13,14 @@ import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AppButton from '../../../common/AppButton';
 import StoryFeedbackRow from '../../../common/StoryFeedbackRow';
 import { goToCreatePlatformStep, fetchStoriesByPlatformQuery } from '../../../../actions/topicActions';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../../lib/platformTypes';
-import { formatTopicOpenWebPreviewQuery, formatTopicRedditPreviewForQuery, formatTopicTwitterPreviewForQuery } from '../../../util/topicUtil';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT } from '../../../../lib/platformTypes';
+import { formatPlatformOpenWebChannelData, formatPlatformRedditChannelData } from '../../../util/topicUtil';
 
 const VALIDATION_CUTOFF = 0.9;
+const formSelector = formValueSelector('platform');
 
 const localMessages = {
+  title: { id: 'topic.platform.validate.title', defaultMessage: 'Validate Content' },
   warningTitle: { id: 'topic.modify.validate.warningTitle', defaultMessage: 'Relevance Low' },
   warning: { id: 'topic.modify.validate.warning',
     defaultMessage: 'It seems that not enough of the stories are relevant to the topic you\'re researching. We recommend at least 90% of stories from the list presented must be relevant for the topic to work well. We suggest going back to your query and try either changing the search terms (to narrow in a bit more), your time period (to focus around any key events), or media sources (to specify media from the place you care about). If you\'re unable to generate relevant stories after that, please feel free to reach us at support@mediacloud.org for help.' },
@@ -71,12 +73,12 @@ class Platform2ValidateContainer extends React.Component {
   }
 
   render = () => {
-    const { handlePreviousStep, stories, mode, currentPlatformType } = this.props;
+    const { handlePreviousStep, stories, mode } = this.props;
     const { formatMessage } = this.props.intl;
 
     return (
       <Grid>
-        <h1>{currentPlatformType}</h1>
+        <h1><FormattedMessage {...localMessages.title} /></h1>
         <br />
         <Row start="lg" className="topic-modify-sample-story-table">
           <Col lg={12}>
@@ -149,17 +151,14 @@ class Platform2ValidateContainer extends React.Component {
 
 Platform2ValidateContainer.propTypes = {
   // from parent
-  location: PropTypes.object.isRequired,
-  currentStepText: PropTypes.object,
   mode: PropTypes.string, // .isRequired,
   handlePreviousStep: PropTypes.func,
   handleNextStep: PropTypes.func, // .isRequired,
   // form composition
   intl: PropTypes.object.isRequired,
   // from state
-  // platforms: PropTypes.array.isRequired,
-  topicId: PropTypes.number.isRequired,
-  currentTopicInfo: PropTypes.object,
+  topic: PropTypes.object.isRequired,
+  selectedPlatform: PropTypes.object.isRequired,
   currentPlatformType: PropTypes.string,
   currentQuery: PropTypes.string,
   fetchStatus: PropTypes.string.isRequired,
@@ -176,10 +175,9 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
   total: state.topics.selected.platforms.preview.matchingStories.total,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
-  currentTopicInfo: state.topics.selected.info,
-  currentQuery: state.form.platform.values.query || null,
-  currentPlatformType: state.topics.selected.platforms.selected.platform,
-  channel: state.form.platform.values.channel || state.form.platform.values.sourcesAndCollections || [],
+  topic: state.topics.selected.info,
+  formValues: formSelector(state, 'media', 'query'),
+  selectedPlatform: state.topics.selected.platforms.selected,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -194,31 +192,26 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-const fetchAsyncData = (dispatch, { topicId, currentTopicInfo, currentPlatformType, currentQuery, channel }) => {
-  let infoForQuery = {};
-
-  switch (currentPlatformType) {
+const fetchAsyncData = (dispatch, { topic, formValues, selectedPlatform }) => {
+  let formatPlatformChannelData = null;
+  switch (selectedPlatform.platform) {
     case PLATFORM_OPEN_WEB:
-      // need media
-      infoForQuery = {
-        ...formatTopicOpenWebPreviewQuery({ ...currentTopicInfo, currentPlatformType, query: currentQuery, channel }),
-      };
-      break;
-    case PLATFORM_TWITTER:
-      // source = internet archive or push_shift
-      infoForQuery = {
-        ...formatTopicTwitterPreviewForQuery({ ...currentTopicInfo, currentPlatformType, query: currentQuery, channel }),
-      };
+      formatPlatformChannelData = formatPlatformOpenWebChannelData;
       break;
     case PLATFORM_REDDIT:
-      infoForQuery = {
-        ...formatTopicRedditPreviewForQuery({ ...currentTopicInfo, currentPlatformType, query: currentQuery, channel }),
-      };
+      formatPlatformChannelData = formatPlatformRedditChannelData;
       break;
     default:
       return null;
   }
-  return dispatch(fetchStoriesByPlatformQuery(topicId, { ...infoForQuery }));
+  return dispatch(fetchStoriesByPlatformQuery(topic.topics_id, {
+    platform_type: selectedPlatform.platform,
+    platform_query: formValues.query,
+    platform_source: selectedPlatform.source,
+    platform_channel: formatPlatformChannelData ? JSON.stringify(formatPlatformChannelData(formValues)) : JSON.stringify(formValues),
+    start_date: topic.start_date,
+    end_date: topic.end_date,
+  }));
 };
 
 const reduxFormConfig = {

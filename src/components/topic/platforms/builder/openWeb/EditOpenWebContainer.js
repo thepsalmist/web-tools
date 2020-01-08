@@ -7,9 +7,9 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../../../common/AppButton';
 import withIntlForm from '../../../../common/hocs/IntlForm';
 import messages from '../../../../../resources/messages';
-import OpenWebPreview from './OpenWebPreview';
-import { notEmptyString } from '../../../../../lib/formValidators';
+import PlatformPreview from '../preview/PlatformPreview';
 import MediaPickerDialog from '../../../../common/mediaPicker/MediaPickerDialog';
+import { formatPlatformOpenWebChannelData } from '../../../../util/topicUtil';
 import OpenWebMediaFieldArray from '../../../../common/form/OpenWebMediaFieldArray';
 
 const formSelector = formValueSelector('platform');
@@ -51,7 +51,7 @@ class EditOpenWebContainer extends React.Component {
   }
 
   render() {
-    const { topicId, initialValues, handleMediaChange, renderTextField, handleSubmit, finishStep, location } = this.props;
+    const { initialValues, handleMediaChange, renderTextField, handleSubmit, finishStep } = this.props;
     const { formatMessage } = this.props.intl;
     let mediaPicker = null;
     const sourcesAndCollections = initialValues.media_tags;
@@ -72,7 +72,7 @@ class EditOpenWebContainer extends React.Component {
       nextButtonDisabled = false;
       previewContent = (
         <div>
-          <OpenWebPreview topicId={topicId} topicInfo={initialValues} query={this.state.query} location={location} />
+          <PlatformPreview topic={initialValues} query={this.state.query} formatPlatformChannelData={formatPlatformOpenWebChannelData} />
         </div>
       );
     }
@@ -121,7 +121,7 @@ class EditOpenWebContainer extends React.Component {
           <Row>
             <Col lg={2} xs={12}>
               <AppButton
-                id="open-web-preview-button"
+                id="preview-search-button"
                 label={formatMessage(messages.search)}
                 style={{ marginTop: 33 }}
                 onClick={this.updateQuery}

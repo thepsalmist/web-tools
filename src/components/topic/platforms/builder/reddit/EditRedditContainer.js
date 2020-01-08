@@ -7,7 +7,8 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../../../common/AppButton';
 import withIntlForm from '../../../../common/hocs/IntlForm';
 import messages from '../../../../../resources/messages';
-import RedditPreview from './RedditPreview';
+import { formatPlatformRedditChannelData } from '../../../../util/topicUtil';
+import PlatformPreview from '../preview/PlatformPreview';
 import { notEmptyString } from '../../../../../lib/formValidators';
 
 const formSelector = formValueSelector('platform');
@@ -30,10 +31,7 @@ class EditRedditContainer extends React.Component {
   }
 
   updateQuery = () => {
-    const { change, currentQuery, currentPlatformType, channel } = this.props;
-    // TODO add in subreddits
-    change('currentPlatformType', currentPlatformType);
-    change('channel', channel); // redux-form change action
+    const { currentQuery } = this.props;
     this.setState({ query: currentQuery });
   }
 
@@ -49,7 +47,7 @@ class EditRedditContainer extends React.Component {
   }
 
   render() {
-    const { topicId, /* handleMediaChange */ renderTextField, handleSubmit, finishStep, location } = this.props;
+    const { topicId, renderTextField, handleSubmit, finishStep } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
@@ -57,7 +55,7 @@ class EditRedditContainer extends React.Component {
       nextButtonDisabled = false;
       previewContent = (
         <div>
-          <RedditPreview topicId={topicId} query={this.state.query} location={location} />
+          <PlatformPreview topicId={topicId} query={this.state.query} formatPlatformChannelData={formatPlatformRedditChannelData} />
         </div>
       );
     }
@@ -82,14 +80,6 @@ class EditRedditContainer extends React.Component {
                 onKeyDown={this.handleKeyDown}
               />
             </Col>
-            <Col lg={2} xs={12}>
-              <AppButton
-                id="open-web-preview-button"
-                label={formatMessage(messages.search)}
-                style={{ marginTop: 33 }}
-                onClick={this.updateQuery}
-              />
-            </Col>
           </Row>
           <Row>
             <Col lg={8} xs={12}>
@@ -102,11 +92,17 @@ class EditRedditContainer extends React.Component {
               />
             </Col>
           </Row>
+          <Col lg={2} xs={12}>
+            <AppButton
+              id="preview-search-button"
+              label={formatMessage(messages.search)}
+              style={{ marginTop: 33 }}
+              onClick={this.updateQuery}
+            />
+          </Col>
           <Row>
             <Col lg={12}>
-              <div className="media-field-wrapper">
-                {previewContent}
-              </div>
+              {previewContent}
             </Col>
           </Row>
           <Row>

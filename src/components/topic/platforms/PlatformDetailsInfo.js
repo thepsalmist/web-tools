@@ -9,7 +9,7 @@ const PlatformDetailsInfo = ({ platform }) => {
   switch (platform.platform) {
     case 'web':
       if (platform.media !== null && platform.media.length) {
-        channelContent = platform.media.map(m => <OpenWebMediaItem object={m} />);
+        channelContent = platform.media.map((m, idx) => <OpenWebMediaItem key={idx} object={m} />);
       }
       break;
     case 'reddit':

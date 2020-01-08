@@ -35,7 +35,7 @@ class EditOpenWebContainer extends React.Component {
 
   updateQuery = () => {
     const { change, currentQuery, currentPlatformType } = this.props;
-    change('currentPlatformType', currentPlatformType);
+    change('platform', currentPlatformType);
     this.setState({ query: currentQuery });
   }
 
@@ -55,11 +55,9 @@ class EditOpenWebContainer extends React.Component {
     const { formatMessage } = this.props.intl;
     let mediaPicker = null;
     const sourcesAndCollections = initialValues.media_tags;
-    const cleanedInitialValues = {};
+    const cleanedInitialValues = {...initialValues};
     cleanedInitialValues.media = sourcesAndCollections;
-    cleanedInitialValues.query = initialValues.query;
-    // infoForQuery['collections[]'] = topic.media_tags.map(s => s.tags_id);
-    // infoForQuery['sources[]'] = topic.media_tags.map(s => s.media_id);
+
     mediaPicker = (
       <MediaPickerDialog
         initMedia={cleanedInitialValues.media} // {selected.media ? selected.media : cleanedInitialValues.media}
@@ -72,7 +70,7 @@ class EditOpenWebContainer extends React.Component {
       nextButtonDisabled = false;
       previewContent = (
         <div>
-          <PlatformPreview topic={initialValues} query={this.state.query} formatPlatformChannelData={formatPlatformOpenWebChannelData} />
+          <PlatformPreview topic={cleanedInitialValues} query={this.state.query} formatPlatformChannelData={formatPlatformOpenWebChannelData} />
         </div>
       );
     }
@@ -169,7 +167,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleMediaChange: (sourceAndCollections) => {
     // take selections from mediaPicker and push them back into topicForm
-    ownProps.change('sourcesAndCollections', sourceAndCollections); // redux-form change action
+    ownProps.change('media', sourceAndCollections); // redux-form change action
   },
   handleMediaDelete: () => null, // in create mode we don't need to update the values
   finishStep: (values) => {

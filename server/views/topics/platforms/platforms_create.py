@@ -6,6 +6,7 @@ import json
 from server import app
 from server.util.request import api_error_handler
 from server.auth import user_mediacloud_client
+from server.util.request import form_fields_required
 from server.views.topics.topic import topic_summary
 logger = logging.getLogger(__name__)
 
@@ -51,6 +52,7 @@ def get_topic_platforms(topics_id):
 
 @app.route('/api/topics/<topics_id>/snapshots/update-seed-query', methods=['PUT'])
 @flask_login.login_required
+@form_fields_required('platform_type', 'platform_query', 'platform_source', 'platform_channel')
 @api_error_handler
 def topic_update_by_web_platform(topics_id):
     # update the seed query first 5 MUST be filled in)
@@ -84,6 +86,7 @@ def topic_update_by_web_platform(topics_id):
 
 @app.route('/api/topics/<topics_id>/platforms/add', methods=['POST'])
 @flask_login.login_required
+@form_fields_required('platform_type', 'platform_query', 'platform_source', 'platform_channel')
 @api_error_handler
 def topic_add_platform(topics_id):
     user_mc = user_mediacloud_client()
@@ -99,17 +102,20 @@ def topic_add_platform(topics_id):
         result = topic_update_by_web_platform(topics_id) #and the request.form info
         # TODO - add retweet partisanship? or will that be handled in the back end
     else:
-    # do we need to add dates?
-    # TODO format channel properly for twitter (CHID) and reddit (subreddit)
+        # TODO do we need to add dates?
+        # TODO format channel properly for reddit (subreddit)
+        #if twitter crimson_hexagon, id is in query field
         result = user_mc.topicAddSeedQuery(topics_id=topics_id, platform=platform, source=source, query=query)
 
-    result['success'] = result['topic_seed_query']['topic_seed_queries_id']
+    result['success'] = 1 if 'topic_seed_query' in result else 0
+    result['id'] = result['topic_seed_query']['topic_seed_queries_id']
     return jsonify(result) #topic_seed_queries_id
 
 
 
 @app.route('/api/topics/<topics_id>/platforms/<platform_id>/update', methods=['POST'])
 @flask_login.login_required
+@form_fields_required('platform_type', 'platform_query', 'platform_source', 'platform_channel')
 @api_error_handler
 def topic_update_platform(topics_id, platform_id):
     user_mc = user_mediacloud_client()
@@ -126,12 +132,14 @@ def topic_update_platform(topics_id, platform_id):
     #   result = user_mc.topicUpdateSeedQuery(topics_id, platform_id, source)
         result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id=platform_id)
         result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
-    #result['success'] = result['topic_seed_query']['topic_seed_queries_id']
+    result['success'] = 1 if 'topic_seed_query' in result else 0
+    result['id'] = result['topic_seed_query']['topic_seed_queries_id']
     return result #topic_seed_queries_id
 
 
 @app.route('/api/topics/<topics_id>/platforms/<platform_id>/remove', methods=['POST'])
 @flask_login.login_required
+@form_fields_required('platform_type')
 @api_error_handler
 def topic_remove_platform(topics_id, platform_id):
     user_mc = user_mediacloud_client()

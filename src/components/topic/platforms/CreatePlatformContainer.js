@@ -8,7 +8,7 @@ import { topicCreatePlatform, setTopicNeedsNewSnapshot } from '../../../actions/
 // import { LEVEL_ERROR } from '../../common/Notice';
 import { updateFeedback } from '../../../actions/appActions';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../lib/platformTypes';
-import { formatPlatformOpenWebChannelData, formatPlatformRedditChannelData, formatPlatformTwitterChannelData } from '../../util/topicUtil';
+import { formatPlatformOpenWebChannelData, formatPlatformRedditChannelData } from '../../util/topicUtil';
 
 const DEFAULT_SELECTED_NUMBER = 5;
 
@@ -73,7 +73,6 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
         formatPlatformChannelData = formatPlatformRedditChannelData;
         break;
       case PLATFORM_TWITTER:
-        formatPlatformChannelData = formatPlatformTwitterChannelData;
         break;
       default:
         return null;
@@ -88,11 +87,11 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
     };
     return dispatch(topicCreatePlatform(topicInfo.topics_id, infoForQuery))
       .then((results) => {
-        if (results.success > -1) {
+        if (results.success) {
           const platformSavedMessage = intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
-          dispatch(push(`/topics/${topicInfo.topics_id}/platforms/manage`));
+          dispatch(push(`/topics/${results.id}/platforms/manage`));
           dispatch(reset('platform')); // it is a wizard so we have to do this by hand
         } else {
           const platformNotSavedMessage = intl.formatMessage(localMessages.platformNotSaved);

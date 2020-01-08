@@ -60,7 +60,7 @@ Platform3ConfirmContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   initialValues: PropTypes.object,
   onDone: PropTypes.func.isRequired,
-  currentPlatformType: PropTypes.string.isRequired,
+  currentPlatform: PropTypes.string.isRequired,
   // form context
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,

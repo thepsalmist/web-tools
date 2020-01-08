@@ -79,10 +79,6 @@ export const formatPlatformRedditChannelData = (formValues) => ({
   channel: formValues.channel.split(','),
 });
 
-export const formatPlatformTwitterChannelData = (formValues) => ({
-  channel: formValues.crimson_hexagon_id,
-});
-
 export const timespanForDate = (date, timespans, period) => timespans.filter(t => t.period === period).find(t => date >= t.startDateObj && date <= t.endDateObj);
 
 export const TEMP = 'temp';

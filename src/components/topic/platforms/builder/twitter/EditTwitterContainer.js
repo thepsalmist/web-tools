@@ -9,7 +9,6 @@ import withIntlForm from '../../../../common/hocs/IntlForm';
 import messages from '../../../../../resources/messages';
 import PlatformPreview from '../preview/PlatformPreview';
 import { notEmptyString } from '../../../../../lib/formValidators';
-import { CRIMSON_HEXAGON_SOURCE } from '../../../../../lib/platformTypes';
 
 const formSelector = formValueSelector('platform');
 
@@ -47,7 +46,7 @@ class EditTwitterContainer extends React.Component {
   }
 
   render() {
-    const { topicId, renderTextField, handleSubmit, finishStep, currentPlatform } = this.props;
+    const { topicId, renderTextField, handleSubmit, finishStep } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
@@ -57,33 +56,6 @@ class EditTwitterContainer extends React.Component {
         <div>
           <PlatformPreview topicId={topicId} query={this.state.query} />
         </div>
-      );
-    }
-    const formWidget = (
-      <Row>
-        <Col lg={8} xs={12}>
-          <Field
-            name="query"
-            component={renderTextField}
-            fullWidth
-            onKeyDown={this.handleKeyDown}
-          />
-        </Col>
-      </Row>
-    );
-    let ancillaryField = null;
-    if (currentPlatform.source === CRIMSON_HEXAGON_SOURCE) {
-      ancillaryField = (
-        <Row>
-          <Col lg={8} xs={12}>
-            <Field
-              name="crimson_hexagon_id"
-              component={renderTextField}
-              fullWidth
-              onKeyDown={this.handleKeyDown}
-            />
-          </Col>
-        </Row>
       );
     }
     return (
@@ -97,8 +69,16 @@ class EditTwitterContainer extends React.Component {
               </p>
             </Col>
           </Row>
-          {formWidget}
-          {ancillaryField}
+          <Row>
+            <Col lg={8} xs={12}>
+              <Field
+                name="query"
+                component={renderTextField}
+                fullWidth
+                onKeyDown={this.handleKeyDown}
+              />
+            </Col>
+          </Row>
           <Col lg={2} xs={12}>
             <AppButton
               id="preview-search-button"

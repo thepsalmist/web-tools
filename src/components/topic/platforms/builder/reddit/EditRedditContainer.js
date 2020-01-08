@@ -125,7 +125,6 @@ EditRedditContainer.propTypes = {
   currentPlatformType: PropTypes.string,
   currentPlatformInfo: PropTypes.object,
   currentQuery: PropTypes.string,
-  channel: PropTypes.string.isRequired,
   change: PropTypes.func.isRequired,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
@@ -138,7 +137,6 @@ EditRedditContainer.propTypes = {
 
 const mapStateToProps = state => ({
   currentQuery: formSelector(state, 'query'),
-  channel: formSelector(state, 'channel'),
   currentPlatformType: state.topics.selected.platforms.selected.platform,
   currentPlatformInfo: state.topics.selected.platforms.selected,
 });

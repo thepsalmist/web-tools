@@ -85,13 +85,13 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
       start_date: topicInfo.start_date,
       end_date: topicInfo.end_date,
     };
-    return dispatch(topicCreatePlatform(topicInfo.topicId, infoForQuery))
+    return dispatch(topicCreatePlatform(topicInfo.topics_id, infoForQuery))
       .then((results) => {
         if (results.success) {
           const platformSavedMessage = intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
-          dispatch(push(`/topics/${topicInfo.topicId}/platforms/${results.id}/edit`));
+          dispatch(push(`/topics/${topicInfo.topics_id}/platforms/${results.id}/edit`));
           dispatch(reset('platform')); // it is a wizard so we have to do this by hand
         } else {
           const platformNotSavedMessage = intl.formatMessage(localMessages.platformNotSaved);

@@ -18,7 +18,7 @@ const localMessages = {
 };
 
 const TopicSeedDetailsForm = (props) => {
-  const { renderTextField, initialValues } = props;
+  const { renderTextField, renderSolrTextField, initialValues } = props;
   const { formatMessage } = props.intl;
   return (
     <div>
@@ -52,7 +52,7 @@ const TopicSeedDetailsForm = (props) => {
         <Col lg={12}>
           <Field
             name="solr_seed_query"
-            component={renderTextField}
+            component={renderSolrTextField}
             multiline
             rows={2}
             rowsMax={4}
@@ -79,6 +79,7 @@ TopicSeedDetailsForm.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
   renderTextField: PropTypes.func.isRequired,
+  renderSolrTextField: PropTypes.func.isRequired,
   renderCheckbox: PropTypes.func.isRequired,
   renderSelect: PropTypes.func.isRequired,
   // from parent

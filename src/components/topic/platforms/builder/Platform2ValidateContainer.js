@@ -13,8 +13,7 @@ import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AppButton from '../../../common/AppButton';
 import StoryFeedbackRow from '../../../common/StoryFeedbackRow';
 import { goToCreatePlatformStep, fetchStoriesByPlatformQuery } from '../../../../actions/topicActions';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT } from '../../../../lib/platformTypes';
-import { formatPlatformOpenWebChannelData, formatPlatformRedditChannelData } from '../../../util/topicUtil';
+import { platformChannelDataFormatter } from '../../../util/topicUtil';
 
 const VALIDATION_CUTOFF = 0.9;
 const formSelector = formValueSelector('platform');
@@ -193,17 +192,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const fetchAsyncData = (dispatch, { topic, formValues, selectedPlatform }) => {
-  let formatPlatformChannelData = null;
-  switch (selectedPlatform.platform) {
-    case PLATFORM_OPEN_WEB:
-      formatPlatformChannelData = formatPlatformOpenWebChannelData;
-      break;
-    case PLATFORM_REDDIT:
-      formatPlatformChannelData = formatPlatformRedditChannelData;
-      break;
-    default:
-      return null;
-  }
+  const formatPlatformChannelData = platformChannelDataFormatter(formValues.selectedPlatform.platform);
   return dispatch(fetchStoriesByPlatformQuery(topic.topics_id, {
     platform_type: selectedPlatform.platform,
     platform_query: formValues.query,

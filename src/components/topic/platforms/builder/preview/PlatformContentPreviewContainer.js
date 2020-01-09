@@ -35,6 +35,8 @@ PlatformContentPreviewContainer.propTypes = {
   helpButton: PropTypes.node.isRequired,
   // from parent
   topic: PropTypes.object.isRequired,
+  lastUpdated: PropTypes.number,
+  formatPlatformChannelData: PropTypes.func, // will be pass the formValues, and should return a string suitable for upload to server
   // from state
   fetchStatus: PropTypes.string.isRequired,
   stories: PropTypes.array,
@@ -66,7 +68,7 @@ export default
 injectIntl(
   connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, messages.storiesTableHelpText)(
-      withAsyncData(fetchAsyncData, ['keywords'])(
+      withAsyncData(fetchAsyncData, ['lastUpdated'])(
         PlatformContentPreviewContainer
       )
     )

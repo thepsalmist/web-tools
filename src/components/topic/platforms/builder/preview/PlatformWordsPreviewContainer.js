@@ -38,6 +38,8 @@ PlatformWordsPreview.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   topic: PropTypes.object.isRequired,
+  lastUpdated: PropTypes.number,
+  formatPlatformChannelData: PropTypes.func, // will be pass the formValues, and should return a string suitable for upload to server
   // from state
   fetchStatus: PropTypes.string.isRequired,
   words: PropTypes.array,
@@ -68,7 +70,7 @@ export default
 injectIntl(
   connect(mapStateToProps)(
     withDescription(localMessages.descriptionIntro, [messages.wordcloudHelpText])(
-      withAsyncData(fetchAsyncData, ['query'])(
+      withAsyncData(fetchAsyncData, ['lastUpdated'])(
         PlatformWordsPreview
       )
     )

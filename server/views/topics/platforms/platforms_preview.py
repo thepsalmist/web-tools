@@ -56,7 +56,7 @@ def api_topics_platform_preview_total_content(topics_id):
         story_count_result = ps_twitter.tweet_count(query=platform_query, start_date=start_date, end_date=end_date)
     elif platform == 'web':
         solr_query, fq = _parse_channel_as_open_web()
-        story_count_result = base_apicache.story_count(user_mediacloud_key(), platform_query, fq)
+        story_count_result = base_apicache.story_count(user_mediacloud_key(), solr_query, fq)
     return jsonify(story_count_result)
 
 

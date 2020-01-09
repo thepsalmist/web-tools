@@ -7,8 +7,7 @@ import PlatformWizard from './builder/PlatformWizard';
 import { topicCreatePlatform, setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
 // import { LEVEL_ERROR } from '../../common/Notice';
 import { updateFeedback } from '../../../actions/appActions';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../lib/platformTypes';
-import { formatPlatformOpenWebChannelData, formatPlatformRedditChannelData } from '../../util/topicUtil';
+import { platformChannelDataFormatter } from '../../util/topicUtil';
 
 const DEFAULT_SELECTED_NUMBER = 5;
 
@@ -25,12 +24,8 @@ const localMessages = {
 const CreatePlatformContainer = (props) => {
   const { topicInfo, location, handleDone, selectedPlatform } = props;
   const initialValues = { numberSelected: DEFAULT_SELECTED_NUMBER, selectedPlatform };
-  if (selectedPlatform.platform === PLATFORM_TWITTER) {
-    initialValues.channel = '';
-  }
   // default to any solr seed query they might be using already
   const initAndTopicInfoValues = { ...initialValues, ...topicInfo, query: topicInfo.solr_seed_query };
-
   return (
     <PlatformWizard
       topicId={topicInfo.topics_id}
@@ -64,19 +59,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, { intl }) => ({
   submitDone: (topicInfo, formValues) => {
-    let formatPlatformChannelData;
-    switch (formValues.selectedPlatform.platform) {
-      case PLATFORM_OPEN_WEB:
-        formatPlatformChannelData = formatPlatformOpenWebChannelData;
-        break;
-      case PLATFORM_REDDIT:
-        formatPlatformChannelData = formatPlatformRedditChannelData;
-        break;
-      case PLATFORM_TWITTER:
-        break;
-      default:
-        return null;
-    }
+    const formatPlatformChannelData = platformChannelDataFormatter(formValues.selectedPlatform.platform);
     const infoForQuery = {
       platform_type: formValues.selectedPlatform.platform,
       platform_query: formValues.query,

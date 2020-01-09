@@ -48,7 +48,7 @@ PlatformAttentionPreviewContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   topic: PropTypes.object.isRequired,
-  query: PropTypes.string.isRequired,
+  lastUpdated: PropTypes.number,
   formatPlatformChannelData: PropTypes.func, // will be pass the formValues, and should return a string suitable for upload to server
   // from state
   total: PropTypes.number,
@@ -82,7 +82,7 @@ export default
 injectIntl(
   connect(mapStateToProps)(
     withDescription(localMessages.descriptionIntro, localMessages.helpText)(
-      withAsyncData(fetchAsyncData, ['query'])(
+      withAsyncData(fetchAsyncData, ['lastUpdated'])(
         PlatformAttentionPreviewContainer
       )
     )

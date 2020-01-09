@@ -1,60 +1,19 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import EditOpenWebContainer from './openWeb/EditOpenWebContainer';
-import EditRedditContainer from './reddit/EditRedditContainer';
-import EditTwitterContainer from './twitter/EditTwitterContainer';
+import PlatformFormContainer from './PlatformFormContainer';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../../../lib/platformTypes';
-import messages from '../../../../resources/messages';
 
-const Platform1ConfigureContainer = (props) => {
-  const { topicId, initialValues, handleNextStep, selectedPlatform, location } = props;
-  let content = null;
-  const platformDetails = { ...initialValues, ...selectedPlatform };
-  switch (selectedPlatform.platform) {
-    case PLATFORM_OPEN_WEB:
-      content = (
-        <EditOpenWebContainer
-          topicId={topicId}
-          // onPreviousStep={handlePreviousStep}
-          onNextStep={handleNextStep}
-          location={location}
-          initialValues={platformDetails}
-        />
-      );
-      break;
-    case PLATFORM_REDDIT:
-      content = (
-        <EditRedditContainer
-          topicId={topicId}
-          initialValues={platformDetails}
-          // onPreviousStep={handlePreviousStep}
-          onNextStep={handleNextStep}
-          location={location}
-        />
-      );
-      break;
-    case PLATFORM_TWITTER:
-      content = (
-        <EditTwitterContainer
-          topicId={topicId}
-          initialValues={platformDetails}
-          onNextStep={handleNextStep}
-          location={location}
-        />
-      );
-      break;
-    default:
-      content = <FormattedMessage {...messages.unimplemented} />;
-  }
-  return (
-    <div>
-      { content }
-    </div>
-  );
-};
+const Platform1ConfigureContainer = ({ topicId, initialValues, handleNextStep, selectedPlatform, location }) => (
+  <PlatformFormContainer
+    topicId={topicId}
+    // onPreviousStep={handlePreviousStep}
+    onNextStep={handleNextStep}
+    location={location}
+    initialValues={{ ...initialValues, ...selectedPlatform }}
+  />
+);
 
 Platform1ConfigureContainer.propTypes = {
   // from parent

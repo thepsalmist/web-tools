@@ -1,6 +1,6 @@
 import slugify from 'slugify';
 import { serializeSearchTags } from '../../lib/explorerUtil';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT } from '../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER } from '../../lib/platformTypes';
 
 export const topicDownloadFilename = (topicName, filters) => (
   `${slugify(topicName)}-${filters.snapshotId}-${filters.timespanId}-${filters.focusId}`
@@ -81,4 +81,14 @@ export const formatPlatformRedditChannelData = (formValues) => ({
 
 export const timespanForDate = (date, timespans, period) => timespans.filter(t => t.period === period).find(t => date >= t.startDateObj && date <= t.endDateObj);
 
-export const TEMP = 'temp';
+export const platformChannelDataFormatter = (platform) => {
+  switch (platform) {
+    case PLATFORM_OPEN_WEB:
+      return formatPlatformOpenWebChannelData;
+    case PLATFORM_REDDIT:
+      return formatPlatformRedditChannelData;
+    case PLATFORM_TWITTER:
+    default:
+      return null;
+  }
+};

@@ -7,54 +7,49 @@ import PlatformAttentionPreviewContainer from './PlatformAttentionPreviewContain
 import PlatformWordsPreviewContainer from './PlatformWordsPreviewContainer';
 import PlatformContentPreviewContainer from './PlatformContentPreviewContainer';
 
-const OpenWebPreview = ({ topic, query, formatPlatformOpenWebChannelData }) => (
+const PlatformPreview = ({ formatPlatformChannelData, lastUpdated }) => (
   <div className="platform-create-open-web-preview">
     <Row>
       <Col lg={12}>
         <PlatformTotalContentPreviewContainer
-          topic={topic}
-          query={query}
-          formatPlatformChannelData={formatPlatformOpenWebChannelData}
+          lastUpdated={lastUpdated}
+          formatPlatformChannelData={formatPlatformChannelData}
         />
       </Col>
     </Row>
     <Row>
       <Col lg={12}>
         <PlatformAttentionPreviewContainer
-          topic={topic}
-          query={query}
-          formatPlatformChannelData={formatPlatformOpenWebChannelData}
+          lastUpdated={lastUpdated}
+          formatPlatformChannelData={formatPlatformChannelData}
         />
       </Col>
     </Row>
     <Row>
       <Col lg={12}>
         <PlatformWordsPreviewContainer
-          topic={topic}
-          query={query}
-          formatPlatformChannelData={formatPlatformOpenWebChannelData}
+          lastUpdated={lastUpdated}
+          formatPlatformChannelData={formatPlatformChannelData}
         />
       </Col>
     </Row>
     <Row>
       <Col lg={12}>
         <PlatformContentPreviewContainer
-          topic={topic}
-          query={query}
-          formatPlatformChannelData={formatPlatformOpenWebChannelData}
+          lastUpdated={lastUpdated}
+          formatPlatformChannelData={formatPlatformChannelData}
         />
       </Col>
     </Row>
   </div>
 );
 
-OpenWebPreview.propTypes = {
+PlatformPreview.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
   // from parent
-  topic: PropTypes.object.isRequired,
-  query: PropTypes.string.isRequired,
-  formatPlatformOpenWebChannelData: PropTypes.func,
+  lastUpdated: PropTypes.number,
+  formatPlatformChannelData: PropTypes.func,
 };
 
-export default injectIntl(OpenWebPreview);
+export default injectIntl(PlatformPreview);

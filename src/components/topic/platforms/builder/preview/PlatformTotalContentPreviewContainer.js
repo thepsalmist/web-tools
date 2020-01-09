@@ -1,16 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import withAsyncData from '../../../../common/hocs/AsyncDataContainer';
 import withDescription from '../../../../common/hocs/DescribedDataCard';
-import DataCard from '../../../../common/DataCard';
-import BubbleRowChart from '../../../../vis/BubbleRowChart';
-import { getBrandDarkColor } from '../../../../../styles/colors';
 import { fetchStoryCountsByPlatformQuery } from '../../../../../actions/topicActions';
-
-const BUBBLE_CHART_DOM_ID = 'bubble-chart-keyword-preview-story-total';
+import StatBar from '../../../../common/statbar/StatBar';
 
 const formSelector = formValueSelector('platform');
 
@@ -24,41 +20,14 @@ const localMessages = {
   descriptionIntro: { id: 'platform.preview.about', defaultMessage: 'Here is a preview of total amount of content we have found that match your query.' },
 };
 
-const PlatformTotalContentPreviewContainer = (props) => {
-  const { counts } = props;
-  const { formatMessage, formatNumber } = props.intl;
-  let content = null;
-  if (counts !== null) {
-    const data = [ // format the data for the bubble chart help
-      {
-        value: counts.count,
-        fill: getBrandDarkColor(),
-        aboveText: formatMessage(localMessages.filteredLabel),
-        aboveTextColor: 'rgb(255,255,255)',
-        rolloverText: `${formatMessage(localMessages.filteredLabel)}: ${formatNumber(counts.count)} stories`,
-      },
-      {
-        value: counts.total,
-        aboveText: formatMessage(localMessages.totalLabel),
-        rolloverText: `${formatMessage(localMessages.totalLabel)}: ${formatNumber(counts.total)} stories`,
-      },
-    ];
-    content = (
-      <BubbleRowChart
-        data={data}
-        domId={BUBBLE_CHART_DOM_ID}
-        width={400}
-        padding={30}
-      />
-    );
-  }
-  return (
-    <DataCard>
-      <h2><FormattedMessage {...localMessages.title} /></h2>
-      {content}
-    </DataCard>
-  );
-};
+const PlatformTotalContentPreviewContainer = ({ counts, intl }) => (
+  <StatBar
+    columnWidth={4}
+    stats={[
+      { message: localMessages.title, data: intl.formatNumber(counts.count) },
+    ]}
+  />
+);
 
 PlatformTotalContentPreviewContainer.propTypes = {
   // from compositional chain

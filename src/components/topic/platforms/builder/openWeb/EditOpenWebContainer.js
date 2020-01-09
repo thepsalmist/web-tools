@@ -55,7 +55,7 @@ class EditOpenWebContainer extends React.Component {
     const { formatMessage } = this.props.intl;
     let mediaPicker = null;
     const sourcesAndCollections = initialValues.media_tags;
-    const cleanedInitialValues = {...initialValues};
+    const cleanedInitialValues = { ...initialValues };
     cleanedInitialValues.media = sourcesAndCollections;
 
     mediaPicker = (

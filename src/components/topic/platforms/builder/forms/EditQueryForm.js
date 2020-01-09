@@ -5,7 +5,7 @@ import { injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../../../common/hocs/IntlForm';
 
-const EditOpenWebForm = ({ renderTextField, onEnterKey }) => (
+const EditQueryForm = ({ renderTextField, onEnterKey }) => (
   <>
     <Row>
       <Col lg={8} xs={12}>
@@ -20,7 +20,7 @@ const EditOpenWebForm = ({ renderTextField, onEnterKey }) => (
   </>
 );
 
-EditOpenWebForm.propTypes = {
+EditQueryForm.propTypes = {
   // from parent
   initialValues: PropTypes.object,
   onEnterKey: PropTypes.func,
@@ -42,7 +42,7 @@ export default
 injectIntl(
   withIntlForm(
     reduxForm(reduxFormConfig)(
-      EditOpenWebForm
+      EditQueryForm
     )
   )
 );

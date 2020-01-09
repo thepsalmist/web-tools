@@ -11,7 +11,7 @@ import PlatformPreview from './preview/PlatformPreview';
 import { platformChannelDataFormatter } from '../../../util/topicUtil';
 import { PLATFORM_OPEN_WEB, PLATFORM_TWITTER, PLATFORM_REDDIT } from '../../../../lib/platformTypes';
 import EditOpenWebForm from './forms/EditOpenWebForm';
-import EditTwitterForm from './forms/EditTwitterForm';
+import EditQueryForm from './forms/EditQueryForm';
 import EditRedditForm from './forms/EditRedditForm';
 import { platformNameMessage, sourceNameMessage, platformDescriptionMessage } from '../AvailablePlatform';
 
@@ -49,11 +49,11 @@ class PlatformFormContainer extends React.Component {
       case PLATFORM_OPEN_WEB:
         FormRenderer = EditOpenWebForm;
         break;
-      case PLATFORM_TWITTER:
-        FormRenderer = EditTwitterForm;
-        break;
       case PLATFORM_REDDIT:
         FormRenderer = EditRedditForm;
+        break;
+      case PLATFORM_TWITTER:
+        FormRenderer = EditQueryForm;
         break;
       default:
         break;

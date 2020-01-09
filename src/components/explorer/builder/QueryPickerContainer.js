@@ -153,7 +153,9 @@ class QueryPickerContainer extends React.Component {
       ...formQuery,
       color: selected.color,
     };
-    updatedQuery.q = replaceCurlyQuotes(updatedQuery.q);
+    // handle a text query, or a codemirror object
+    const queryText = (typeof updatedQuery.q === 'string') ? updatedQuery.q : updatedQuery.q.getValue();
+    updatedQuery.q = replaceCurlyQuotes(queryText);
     updateCurrentQuery(updatedQuery, 'label');
   }
 
@@ -186,7 +188,8 @@ class QueryPickerContainer extends React.Component {
     }
 
     if (propertyName === 'q') {
-      const cleanedQ = replaceCurlyQuotes(newValue);
+      const queryText = (typeof newValue === 'string') ? newValue : newValue.getValue();
+      const cleanedQ = replaceCurlyQuotes(queryText);
       updatedQuery.q = cleanedQ;
       if (updatedQuery.autoNaming) { // no longer auto-name query if the user has intentionally changed it
         updatedQuery.label = cleanedQ;

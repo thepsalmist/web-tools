@@ -1,4 +1,4 @@
-import { FETCH_PLATFORMS_IN_TOPIC, RESET_PLATFORMS/* FETCH_ALL_PLATFORMS */ }
+import { FETCH_PLATFORMS_IN_TOPIC, RESET_PLATFORMS }
   from '../../../../actions/topicActions';
 import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 

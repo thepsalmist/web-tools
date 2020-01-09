@@ -14,13 +14,6 @@ WEB_SEED_QUERY_PLACEHOLDER_ID = -1
 WEB_SEED_QUERY_PLACEHOLDER = {'platform': 'web', 'source': 'web_ui_shim', 'query': '', 'topic_seed_queries_id': -1}
 
 
-@app.route('/api/topics/platforms/all', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def topic_platform_list(): #everything 1.0 platform but web, probably
-    return jsonify({'results': [{'platform_type': '1.0', 'platform': 'reddit', 'query': 'dummy'}, {'platform_type': '1.0', 'platform': 'twitter', 'query': 'dummy'}]})
-
-
 @app.route('/api/topics/<topics_id>/platforms/list', methods=['GET'])
 @flask_login.login_required
 def get_topic_platforms(topics_id):
@@ -43,7 +36,8 @@ def get_topic_platforms(topics_id):
     available_platforms.insert(0, web_seed_query)  # important to have this one at start of list
     # now fill in with any seed queries that have been created
     for seed_query in topic['topic_seed_queries']:
-        match = [p for p in available_platforms if (p['platform'] == seed_query['platform']) and (p['source'] == seed_query['source'])]
+        match = [p for p in available_platforms if (p['platform'] == seed_query['platform'])
+                 and (p['source'] == seed_query['source'])]
         if len(match) == 1:
             match[0]['query'] = seed_query['query']
             match[0]['topic_seed_queries_id'] = seed_query['topic_seed_queries_id']
@@ -109,7 +103,6 @@ def topic_add_platform(topics_id):
     result['success'] = 1 if 'topic_seed_query' in result else 0
     result['id'] = result['topic_seed_query']['topic_seed_queries_id']
     return jsonify(result) #topic_seed_queries_id
-
 
 
 @app.route('/api/topics/<topics_id>/platforms/<platform_id>/update', methods=['POST'])

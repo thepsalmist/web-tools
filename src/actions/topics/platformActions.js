@@ -4,9 +4,6 @@ import * as api from '../../lib/serverApi/topics';
 
 export const GO_TO_CREATE_PLATFORM_STEP = 'GO_TO_CREATE_PLATFORM_STEP';
 export const goToCreatePlatformStep = createAction(GO_TO_CREATE_PLATFORM_STEP, step => step);
-// pass in the topicId
-export const FETCH_ALL_PLATFORMS = 'FETCH_ALL_PLATFORMS';
-export const fetchTopicPlatforms = createAsyncAction(FETCH_ALL_PLATFORMS, api.topicPlatformList);
 
 export const RESET_PLATFORMS = 'RESET_PLATFORMS';
 export const resetTopicPlatforms = createAction(RESET_PLATFORMS);

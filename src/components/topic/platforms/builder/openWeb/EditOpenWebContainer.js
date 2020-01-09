@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Field, reduxForm, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from '../../../../common/AppButton';
 import withIntlForm from '../../../../common/hocs/IntlForm';
@@ -11,17 +11,12 @@ import PlatformPreview from '../preview/PlatformPreview';
 import MediaPickerDialog from '../../../../common/mediaPicker/MediaPickerDialog';
 import { formatPlatformOpenWebChannelData } from '../../../../util/topicUtil';
 import OpenWebMediaFieldArray from '../../../../common/form/OpenWebMediaFieldArray';
+import { platformNameMessage, sourceNameMessage, platformDescriptionMessage } from '../../AvailablePlatform';
 
 const formSelector = formValueSelector('platform');
 
 const localMessages = {
-  title: { id: 'platform.create.edit.title', defaultMessage: 'Step 1: Configure Your Open Web platform' },
-  intro: { id: 'platform.create.edit.intro', defaultMessage: 'Step 1: intro' },
-  about: { id: 'platform.create.edit.about',
-    defaultMessage: 'This Platform is driven by an open web seed query.  Any stories that match the query you create will be included in the Platform.' },
-  errorNoKeywords: { id: 'platform.error', defaultMessage: 'You need to specify a query.' },
-  SandC: { id: 'platform.create.edit.sandC', defaultMessage: 'Media' },
-  keywords: { id: 'platform.create.edit.query', defaultMessage: 'Query Keywords' },
+  title: { id: 'platform.create.edit.title', defaultMessage: 'Step 1: Configure Your Platform: ' },
 };
 
 class EditOpenWebContainer extends React.Component {
@@ -34,8 +29,8 @@ class EditOpenWebContainer extends React.Component {
   }
 
   updateQuery = () => {
-    const { change, currentQuery, currentPlatformType } = this.props;
-    change('platform', currentPlatformType);
+    const { change, currentQuery, currentPlatform } = this.props;
+    change('platform', currentPlatform.platform);
     this.setState({ query: currentQuery });
   }
 
@@ -51,43 +46,31 @@ class EditOpenWebContainer extends React.Component {
   }
 
   render() {
-    const { initialValues, handleMediaChange, renderTextField, handleSubmit, finishStep } = this.props;
-    const { formatMessage } = this.props.intl;
-    let mediaPicker = null;
-    const sourcesAndCollections = initialValues.media_tags;
-    const cleanedInitialValues = { ...initialValues };
-    cleanedInitialValues.media = sourcesAndCollections;
-
-    mediaPicker = (
-      <MediaPickerDialog
-        initMedia={cleanedInitialValues.media} // {selected.media ? selected.media : cleanedInitialValues.media}
-        onConfirmSelection={selections => handleMediaChange(selections)}
-      />
-    );
-    let previewContent = null;
-    let nextButtonDisabled = true;
-    if ((this.state.query !== null) && (this.state.query !== undefined) && (this.state.query.length > 0)) {
-      nextButtonDisabled = false;
-      previewContent = (
-        <div>
-          <PlatformPreview topic={cleanedInitialValues} query={this.state.query} formatPlatformChannelData={formatPlatformOpenWebChannelData} />
-        </div>
-      );
-    }
+    const { initialValues, handleMediaChange, renderTextField, handleSubmit, finishStep, currentPlatform, intl } = this.props;
+    const cleanedInitialValues = {
+      ...initialValues,
+      media: initialValues.media_tags,
+    };
+    const queryExists = (this.state.query !== null) && (this.state.query !== undefined) && (this.state.query.length > 0);
     return (
       <Grid>
         <form className="platform-create-edit-keyword platform-edit-open-web" name="platform" onSubmit={handleSubmit(finishStep.bind(this))}>
           <Row>
             <Col lg={10}>
-              <h2><FormattedMessage {...localMessages.title} /></h2>
+              <h2>
+                <FormattedMessage {...localMessages.title} />
+                <FormattedHTMLMessage {...platformNameMessage(currentPlatform.platform, currentPlatform.source)} />
+                &nbsp;
+                ( <FormattedHTMLMessage {...sourceNameMessage(currentPlatform.source)} /> )
+              </h2>
               <p>
-                <FormattedMessage {...localMessages.about} />
+                <FormattedHTMLMessage {...platformDescriptionMessage(currentPlatform.platform, currentPlatform.source)} />
               </p>
             </Col>
           </Row>
           <Row>
             <Col lg={6}>
-              <label htmlFor="query"><FormattedMessage {...localMessages.keywords} /></label>
+              <label htmlFor="query"><FormattedMessage {...messages.query} /></label>
               <Field
                 name="query"
                 component={renderTextField}
@@ -100,9 +83,9 @@ class EditOpenWebContainer extends React.Component {
             </Col>
             <Col lg={6}>
               <div className="media-field-wrapper">
-                <label htmlFor="media"><FormattedMessage {...localMessages.SandC} /></label>
+                <label htmlFor="media"><FormattedMessage {...messages.topicSourceCollectionsProp} /></label>
                 <OpenWebMediaFieldArray
-                  formatMessage={formatMessage}
+                  formatMessage={intl.formatMessage}
                   className="query-field"
                   form="platform"
                   enableReinitialize
@@ -112,7 +95,10 @@ class EditOpenWebContainer extends React.Component {
                   initialValues={cleanedInitialValues} // to and from MediaPicker
                   allowRemoval
                 />
-                {mediaPicker}
+                <MediaPickerDialog
+                  initMedia={cleanedInitialValues.media} // {selected.media ? selected.media : cleanedInitialValues.media}
+                  onConfirmSelection={selections => handleMediaChange(selections)}
+                />
               </div>
             </Col>
           </Row>
@@ -120,16 +106,18 @@ class EditOpenWebContainer extends React.Component {
             <Col lg={2} xs={12}>
               <AppButton
                 id="preview-search-button"
-                label={formatMessage(messages.search)}
+                label={messages.search}
                 style={{ marginTop: 33 }}
                 onClick={this.updateQuery}
               />
             </Col>
           </Row>
-          { previewContent }
+          { queryExists && (
+            <PlatformPreview topic={cleanedInitialValues} query={this.state.query} formatPlatformChannelData={formatPlatformOpenWebChannelData} />
+          ) }
           <Row>
             <Col lg={8} xs={12}>
-              <AppButton className="platform-builder-next" disabled={nextButtonDisabled} type="submit" label={formatMessage(messages.next)} primary />
+              <AppButton className="platform-builder-next" disabled={!queryExists} type="submit" label={messages.next} primary />
             </Col>
           </Row>
         </form>
@@ -145,8 +133,7 @@ EditOpenWebContainer.propTypes = {
   onNextStep: PropTypes.func.isRequired,
   handleMediaChange: PropTypes.func.isRequired,
   // from state
-  currentPlatformType: PropTypes.string,
-  currentPlatformInfo: PropTypes.object,
+  currentPlatform: PropTypes.object,
   currentQuery: PropTypes.string,
   change: PropTypes.func.isRequired,
   // from dispatch
@@ -160,8 +147,7 @@ EditOpenWebContainer.propTypes = {
 
 const mapStateToProps = state => ({
   currentQuery: formSelector(state, 'query'),
-  currentPlatformType: state.topics.selected.platforms.selected.platform.platform,
-  currentPlatformInfo: state.topics.selected.platforms.selected.platformDetails,
+  currentPlatform: state.topics.selected.platforms.selected,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

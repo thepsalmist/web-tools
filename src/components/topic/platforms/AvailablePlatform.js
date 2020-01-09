@@ -33,7 +33,7 @@ const UNKNOWN_THING_MS = { id: 'unknown', defaultMessage: 'Unknown :-(' };
 
 export const platformNameMessage = (platform, source) => (localMessages[`${platform}.${source}-name`] || UNKNOWN_THING_MS);
 export const sourceNameMessage = source => (localMessages[`${source}-name`] || UNKNOWN_THING_MS);
-const platformDescriptionMessage = (platform, source) => (localMessages[`${platform}.${source}-about`] || UNKNOWN_THING_MS);
+export const platformDescriptionMessage = (platform, source) => (localMessages[`${platform}.${source}-about`] || UNKNOWN_THING_MS);
 
 export const platformIconUrl = (platform) => {
   if (platform === PLATFORM_REDDIT) return googleFavIconUrl('https://reddit.com');

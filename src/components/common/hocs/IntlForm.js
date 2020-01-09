@@ -24,7 +24,7 @@ function withIntlForm(Component) {
 
     intlCustomProps = (customProps) => {
       const intlCustom = { ...customProps };
-      ['label', 'helpertext', 'error', 'disabled'].forEach((prop) => {
+      ['label', 'helpertext', 'error', 'disabled', 'placeholder'].forEach((prop) => {
         if ((prop in customProps)) {
           intlCustom[prop] = this.intlIfObject(customProps[prop]);
         }

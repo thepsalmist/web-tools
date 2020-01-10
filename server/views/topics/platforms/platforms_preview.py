@@ -12,6 +12,7 @@ import server.util.pushshift.reddit as ps_reddit
 import server.util.pushshift.twitter as ps_twitter
 import server.views.apicache as base_apicache
 from server.views.topics import concatenate_solr_dates, concatenate_query_for_solr
+from server.views.topics.platforms import PLATFORM_OPEN_WEB, PLATFORM_TWITTER, PLATFORM_REDDIT, PUSHSHIFT_SOURCE
 
 logger = logging.getLogger(__name__)
 
@@ -23,20 +24,23 @@ logger = logging.getLogger(__name__)
 def api_topics_platform_preview_story_sample(topics_id):
     platform = request.args['platform_type']
     platform_query = request.args['platform_query']
+    platform_source = request.args['platform_source']
     start_date, end_date = _parse_query_dates()
-    if platform == 'reddit':
+    story_list = []
+    if platform == PLATFORM_REDDIT:
         time.sleep(0.1)
-        story_count_result = ps_reddit.top_submissions(query=platform_query,
+        story_list = ps_reddit.top_submissions(query=platform_query,
                                                        start_date=start_date, end_date=end_date,
                                                        subreddits=_parse_channel_as_reddit_subs())
-    elif platform == 'twitter':
-        story_count_result = ps_twitter.matching_tweets(query=platform_query,
-                                                        start_date=start_date, end_date=end_date)
-    elif platform == 'web':
+    elif platform == PLATFORM_TWITTER:
+        if platform_source == PUSHSHIFT_SOURCE:
+            story_list = ps_twitter.matching_tweets(query=platform_query,
+                                                            start_date=start_date, end_date=end_date)
+    elif platform == PLATFORM_OPEN_WEB:
         solr_query, fq = _parse_channel_as_open_web()
-        story_count_result = base_apicache.story_list(user_mediacloud_key(), solr_query, fq)
+        story_list = base_apicache.story_list(user_mediacloud_key(), solr_query, fq)
 
-    return jsonify(story_count_result)
+    return jsonify(story_list)
 
 
 @app.route('/api/topics/<topics_id>/platforms/preview/story-count', methods=['GET'])
@@ -46,15 +50,19 @@ def api_topics_platform_preview_story_sample(topics_id):
 def api_topics_platform_preview_total_content(topics_id):
     platform = request.args['platform_type']
     platform_query = request.args['platform_query']
+    platform_source = request.args['platform_source']
     start_date, end_date = _parse_query_dates()
-    if platform == 'reddit':
+    story_count_result = {'count': None}
+    if platform == PLATFORM_REDDIT:
         time.sleep(0.2)
-        story_count_result = ps_reddit.submission_count(query=platform_query,
-                                                        start_date=start_date, end_date=end_date,
-                                                        subreddits=_parse_channel_as_reddit_subs())
-    elif platform =='twitter':
-        story_count_result = ps_twitter.tweet_count(query=platform_query, start_date=start_date, end_date=end_date)
-    elif platform == 'web':
+        story_count_result = {'count': ps_reddit.submission_count(query=platform_query,
+                                                                  start_date=start_date, end_date=end_date,
+                                                                  subreddits=_parse_channel_as_reddit_subs())}
+    elif platform == PLATFORM_TWITTER:
+        if platform_source == PUSHSHIFT_SOURCE:
+            story_count_result = {'count': ps_twitter.tweet_count(query=platform_query, start_date=start_date,
+                                                                  end_date=end_date)}
+    elif platform == PLATFORM_OPEN_WEB:
         solr_query, fq = _parse_channel_as_open_web()
         story_count_result = base_apicache.story_count(user_mediacloud_key(), solr_query, fq)
     return jsonify(story_count_result)
@@ -67,18 +75,20 @@ def api_topics_platform_preview_total_content(topics_id):
 def api_topics_platform_preview_split_story_count(topics_id):
     platform = request.args['platform_type']
     platform_query = request.args['platform_query']
+    platform_source = request.args['platform_source']
     start_date, end_date = _parse_query_dates()
     results = {}
-    if platform == 'reddit':
+    if platform == PLATFORM_REDDIT:
         time.sleep(0.3)
         results = ps_reddit.submission_normalized_and_split_story_count(query=platform_query,
                                                                         start_date=start_date, end_date=end_date,
                                                                         subreddits=_parse_channel_as_reddit_subs())
-    elif platform == 'web':
+    elif platform == PLATFORM_TWITTER:
+        if platform_source == PUSHSHIFT_SOURCE:
+            results = ps_twitter.tweet_split_count(query=platform_query, start_date=start_date, end_date=end_date)
+    elif platform == PLATFORM_OPEN_WEB:
         solr_query, fq = _parse_channel_as_open_web()
         results = base_apicache.story_count(user_mediacloud_key(), solr_query, fq, split=True)
-    elif platform == 'twitter':
-        results = ps_twitter.tweet_split_count(query=platform_query, start_date=start_date, end_date=end_date)
     # sum the total for display
     total_stories = 0
     if 'counts' in results:
@@ -95,9 +105,10 @@ def api_topics_platform_preview_split_story_count(topics_id):
 def api_topics_platform_preview_top_words(topics_id, **kwargs):
     platform = request.args['platform_type']
     # platform_query = request.args['platform_query']
+    # platform_source = request.args['platform_source']
     # start_date, end_date = _parse_query_dates()
     results = []
-    if platform == 'web':
+    if platform == PLATFORM_OPEN_WEB:
         solr_query, fq = _parse_channel_as_open_web()
         results = base_apicache.word_count(user_mediacloud_key(), solr_query, fq)[:100]
     return jsonify({'results': results})
@@ -123,15 +134,18 @@ def _parse_query_dates():
     return start_date, end_date
 
 
+def parse_open_web_media_from_channel(channel):
+    media = json.loads(channel)
+    sources = media['sources[]'] if 'sources[]' in media and not [None, ''] else ''
+    collections = media['collections[]'] if 'collections[]' in media else ''
+    return sources, collections
+
+
 def _parse_channel_as_open_web():
     """
     Parse the channel out of the request as sources and collections
     """
-    media = json.loads(request.args['platform_channel'])
-    sources = media['sources[]'] if 'sources[]' in media and not [None, ''] else ''
-    collections = media['collections[]'] if 'collections[]' in media else ''
-    # searches = media['searches[]'] if 'searches[]' in media else '' #TODO for platforms? I don't think so
-    # channel contains sources, collections and searches
+    sources, collections = parse_open_web_media_from_channel(request.args['platform_channel'])
     q = concatenate_query_for_solr(solr_seed_query=request.args['platform_query'],
                                    media_ids=sources,
                                    tags_ids=collections)

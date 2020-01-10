@@ -27,8 +27,8 @@ const localMessages = {
   usefulStory: { id: 'topic.modify.validate.randomStory', defaultMessage: 'Is this Relevant?' },
   prev: { id: 'topic.modify.warning.prev', defaultMessage: 'back to preview' },
   next: { id: 'topic.modify.warning.next', defaultMessage: 'review and confirm' },
-  warningIgnore: { id: 'topic.modify.warning.warningIgnore', defaultMessage: 'Ignore and Save Topic Anyway' },
-  warningOk: { id: 'topic.modify.warning.warningOk', defaultMessage: 'I\'ll edit my seed query' },
+  warningIgnore: { id: 'topic.modify.warning.warningIgnore', defaultMessage: 'Ignore and Continue' },
+  warningOk: { id: 'topic.modify.warning.warningOk', defaultMessage: 'I\'ll edit my query' },
 };
 
 class Platform2ValidateContainer extends React.Component {
@@ -192,7 +192,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const fetchAsyncData = (dispatch, { topic, formValues, selectedPlatform }) => {
-  const formatPlatformChannelData = platformChannelDataFormatter(formValues.selectedPlatform.platform);
+  const formatPlatformChannelData = platformChannelDataFormatter(selectedPlatform.platform);
   return dispatch(fetchStoriesByPlatformQuery(topic.topics_id, {
     platform_type: selectedPlatform.platform,
     platform_query: formValues.query,

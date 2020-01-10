@@ -64,7 +64,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, { intl }) => ({
   handleUpdatePlatform: (topicInfo, formValues) => {
-    const formatPlatformChannelData = platformChannelDataFormatter(formValues.selectedPlatform.platform);
+    const formatPlatformChannelData = platformChannelDataFormatter(formValues.platform);
     const infoForQuery = {
       platform_type: formValues.platform,
       platform_query: formValues.query,

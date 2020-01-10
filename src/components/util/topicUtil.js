@@ -24,7 +24,6 @@ export const formatPlatformOpenWebChannelData = (formValues) => {
   return data;
 };
 
-// TODO: remove this and replace with formatPlatformOpenWebChasdfnnelData?
 export const formatTopicOpenWebSourcesForQuery = (topicSourcesAndCollections) => {
   if (topicSourcesAndCollections) {
     return {
@@ -51,33 +50,7 @@ export const formatTopicPreviewQuery = (topicQuery) => ({
   ...formatTopicOpenWebSourcesForQuery(topicQuery.sourcesAndCollections),
 });
 
-// while creating a topic, this can format the under-construction topic params propertly for a preview request
-export const formatTopicPlatformPreviewQuery = (topicQuery, platform, query) => ({
-  topics_id: topicQuery.topics_id,
-  current_platform_type: platform,
-  platform_query: query,
-  start_date: topicQuery.start_date, // for querying purposes
-  end_date: topicQuery.end_date,
-  channel: topicQuery.channel,
-});
-
-export const formatTopicOpenWebPreviewQuery = (topicQuery) => {
-  const channel = JSON.stringify(formatTopicOpenWebSourcesForQuery(topicQuery.channel));
-  return {
-    ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_OPEN_WEB, topicQuery.query),
-    channel,
-    source: 'mediacloud',
-  };
-};
-
-export const formatTopicRedditPreviewForQuery = (topicQuery) => ({
-  ...formatTopicPlatformPreviewQuery(topicQuery, PLATFORM_REDDIT, topicQuery.query),
-  source: 'pushshift', // TODO change - not sure what it should be
-});
-
-export const formatPlatformRedditChannelData = (formValues) => ({
-  channel: formValues.channel ? formValues.channel.split(',') : formValues.channel,
-});
+export const formatPlatformRedditChannelData = (formValues) => (formValues.channel ? formValues.channel.split(',') : '');
 
 export const timespanForDate = (date, timespans, period) => timespans.filter(t => t.period === period).find(t => date >= t.startDateObj && date <= t.endDateObj);
 

@@ -62,7 +62,7 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.platforms.preview.matchingAttention.fetchStatus,
   total: state.topics.selected.platforms.preview.matchingAttention.total,
   counts: state.topics.selected.platforms.preview.matchingAttention.counts,
-  formValues: formSelector(state, 'media', 'query'),
+  formValues: formSelector(state, 'media', 'query', 'channel'),
   selectedPlatform: state.topics.selected.platforms.selected,
 });
 

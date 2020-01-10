@@ -2,7 +2,6 @@ import logging
 from flask import jsonify, request
 import flask_login
 import json
-import time
 
 from server import app
 from server.auth import user_mediacloud_key
@@ -115,7 +114,8 @@ def _parse_channel_as_reddit_subs():
     """
     Parse the channel out of the request as a comma-separated list of subreddit names
     """
-    return request.args['platform_channel'].split(',') if 'channel' in request.args else []
+    platform_channel = request.args['platform_channel'] if 'platform_channel' in request.args else ''
+    return json.loads(platform_channel)
 
 
 def _parse_query_dates():

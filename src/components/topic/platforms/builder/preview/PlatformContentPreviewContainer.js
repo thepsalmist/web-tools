@@ -48,7 +48,7 @@ const mapStateToProps = state => ({
   topic: state.topics.selected.info,
   fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
-  formValues: formSelector(state, 'media', 'query'),
+  formValues: formSelector(state, 'media', 'query', 'channel'),
   selectedPlatform: state.topics.selected.platforms.selected,
 });
 

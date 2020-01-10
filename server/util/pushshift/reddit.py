@@ -33,7 +33,7 @@ def _cached_submission_search(query: str = None, start_date: dt.datetime = None,
     return r.json()
 
 
-def _sanitize_url_for_reddit(url):
+def _sanitize_url_for_reddit(url: str) -> str:
     return url.split('?')[0]
 
 
@@ -47,14 +47,14 @@ def _url_submission_count(url: str):
 
 
 @synchronized
-def url_submission_counts(story_list: List[Dict]):
+def url_submission_counts(story_list: List[Dict]) -> Dict:
     results = defaultdict(dict)
     for s in story_list:
         results[s['stories_id']] = _url_submission_count(s['url'])
     return results
 
 
-def url_submissions_by_subreddit(url: str):
+def url_submissions_by_subreddit(url: str) -> List[Dict]:
     data = _cached_submission_search(url=_sanitize_url_for_reddit(url), aggs='subreddit', size=0)
     results = []
     for d in data['aggs']['subreddit']:
@@ -76,7 +76,7 @@ def submission_count(query: str, start_date: dt.datetime, end_date: dt.datetime,
 
 
 def submission_split_count(query: str, start_date: dt.datetime, end_date: dt.datetime,
-                           subreddits: List[str] = None, period: str = '1d'):
+                           subreddits: List[str] = None, period: str = '1d') -> List[Dict]:
     data = _cached_submission_search(q=query, subreddits=subreddits,
                                      start_date=start_date, end_date=end_date,
                                      aggs='created_utc', frequency=period, size=0)
@@ -92,7 +92,7 @@ def submission_split_count(query: str, start_date: dt.datetime, end_date: dt.dat
 
 
 def submission_normalized_and_split_story_count(query: str, start_date: dt.datetime, end_date: dt.datetime,
-                                                subreddits: List[str] = None):
+                                                subreddits: List[str] = None) -> Dict:
     split_count = submission_split_count(query, start_date, end_date, subreddits=subreddits)
     matching_total = sum([d['count'] for d in split_count])
     split_count_without_query = submission_split_count('', start_date, end_date, subreddits=subreddits)
@@ -104,7 +104,7 @@ def submission_normalized_and_split_story_count(query: str, start_date: dt.datet
     }
 
 
-def _submission_to_row(item):
+def _submission_to_row(item: Dict) -> Dict:
     return {
         'media_name': '/r/{}'.format(item['subreddit']),
         'media_url': item['full_link'],
@@ -120,14 +120,14 @@ def _submission_to_row(item):
     }
 
 
-def _cached_top_submissions(**kwargs):
+def _cached_top_submissions(**kwargs) -> List:
     data = _cached_submission_search(**kwargs)
     cleaned_data = [_submission_to_row(item) for item in data['data'][:kwargs['limit']]]
     return cleaned_data
 
 
 def top_submissions(query: str, start_date: dt.datetime, end_date: dt.datetime, subreddits: List[str] = None,
-                    limit: int = 20):
+                    limit: int = 20) -> List:
     data = _cached_top_submissions(q=query, subreddits=subreddits,
                                    start_date=start_date, end_date=end_date,
                                    limit=limit, sort='desc', sort_type='score')

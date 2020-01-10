@@ -127,7 +127,7 @@ export function updateOrCreateFocusDefinition(topicId, params) {
   const acceptedParams = acceptParams(params, [
     'foci_id',
     'focalSetName', 'focalSetDescription', 'focalTechnique',
-    'focusName', 'focusDescription', 'focalSetDefinitionId', 'keywords',
+    'focusName', 'focusDescription', 'focalSetDefinitionId', 'keywords', 'searchValues',
   ]);
   return createPostingApiPromise(`/api/topics/${topicId}/focus-definitions/update-or-create`, acceptedParams);
 }

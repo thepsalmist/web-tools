@@ -5,7 +5,7 @@ import { injectIntl } from 'react-intl';
 import { push } from 'react-router-redux';
 import { reset } from 'redux-form';
 import FocusBuilderWizard from './builder/FocusBuilderWizard';
-import { FOCAL_TECHNIQUE_BOOLEAN_QUERY, FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP, FOCAL_TECHNIQUE_TOP_COUNTRIES, FOCAL_TECHNIQUE_NYT_THEME, FOCAL_TECHNIQUE_MEDIA_TYPE } from '../../../../lib/focalTechniques';
+import { FOCAL_TECHNIQUE_BOOLEAN_QUERY, FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP, FOCAL_TECHNIQUE_TOP_COUNTRIES, FOCAL_TECHNIQUE_NYT_THEME, FOCAL_TECHNIQUE_MEDIA_TYPE, FOCAL_TECHNIQUE_MEDIA_SEARCH } from '../../../../lib/focalTechniques';
 import { submitFocusUpdateOrCreate, setTopicNeedsNewSnapshot, createRetweetFocalSet, createTopCountriesFocalSet, createNytThemeFocalSet, createMediaTypeFocalSet } from '../../../../actions/topicActions';
 import { LEVEL_ERROR } from '../../../common/Notice';
 import { updateFeedback, addNotice } from '../../../../actions/appActions';
@@ -76,6 +76,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
     switch (formValues.focalTechnique) {
       case FOCAL_TECHNIQUE_BOOLEAN_QUERY:
+      case FOCAL_TECHNIQUE_MEDIA_SEARCH:
         return dispatch(submitFocusUpdateOrCreate(topicId, formValues))
           .then((results) => {
             if (results.length === 1) {

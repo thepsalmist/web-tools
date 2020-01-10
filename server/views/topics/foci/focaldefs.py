@@ -19,7 +19,9 @@ def topic_focus_definition_update_or_create(topics_id):
     user_mc = user_mediacloud_client()
     name = request.form['focusName']
     description = request.form['focusDescription']
-    query = request.form['keywords']
+    query = request.form['keywords'] if 'keywords' in request.form else None
+    media = request.form['searchValues'] if 'searchValues' in request.form else None
+    query = query or media #either keywords or media search
     # update if it has an id, create if new
     if 'foci_id' in request.form:
         # you can't change the focal set a focus is in

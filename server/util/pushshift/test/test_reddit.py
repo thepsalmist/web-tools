@@ -4,6 +4,9 @@ import datetime as dt
 import server.util.pushshift.reddit as ps_reddit
 
 
+PS_TWITTER_SEARCH_URL = 'https://twitter-es.pushshift.io/twitter_verified,twitter_verified2/_search'
+
+
 class RedditSubmissionTest(unittest.TestCase):
 
     def testUrlSubmissionsBySub(self):
@@ -15,14 +18,12 @@ class RedditSubmissionTest(unittest.TestCase):
 
     def testSubmissionCount(self):
         results = ps_reddit.submission_count("Trump", dt.datetime.strptime("2019-01-01", "%Y-%m-%d"),
-                                             dt.datetime.strptime("2019-02-01", "%Y-%m-%d"),
-                                             [])
+                                             dt.datetime.strptime("2019-02-01", "%Y-%m-%d"))
         assert results > 0
 
     def testTopSubmissions(self):
         results = ps_reddit.top_submissions("Trump", dt.datetime.strptime("2019-01-01", "%Y-%m-%d"),
-                                            dt.datetime.strptime("2019-02-01", "%Y-%m-%d"),
-                                            [])
+                                            dt.datetime.strptime("2019-02-01", "%Y-%m-%d"))
         last_score = 9999999999999
         for post in results:
             assert last_score >= post['score']
@@ -30,8 +31,7 @@ class RedditSubmissionTest(unittest.TestCase):
 
     def testSplitSubmissionCount(self):
         results = ps_reddit.submission_split_count("Trump", dt.datetime.strptime("2019-01-01", "%Y-%m-%d"),
-                                                   dt.datetime.strptime("2019-02-01", "%Y-%m-%d"),
-                                                   [])
+                                                   dt.datetime.strptime("2019-02-01", "%Y-%m-%d"))
         for item in results:
             assert 'date' in item
             assert 'count' in item
@@ -39,8 +39,7 @@ class RedditSubmissionTest(unittest.TestCase):
     def testSubmissionNormalizedSplitCounts(self):
         results = ps_reddit.submission_normalized_and_split_story_count("Trump",
                                                                         dt.datetime.strptime("2019-01-01", "%Y-%m-%d"),
-                                                                        dt.datetime.strptime("2019-02-01", "%Y-%m-%d"),
-                                                                        [])
+                                                                        dt.datetime.strptime("2019-02-01", "%Y-%m-%d"))
         assert 'counts' in results
         assert 'total' in results
         assert results['total'] > 0

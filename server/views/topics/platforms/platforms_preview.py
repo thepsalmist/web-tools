@@ -28,7 +28,6 @@ def api_topics_platform_preview_story_sample(topics_id):
     start_date, end_date = _parse_query_dates()
     story_list = []
     if platform == PLATFORM_REDDIT:
-        time.sleep(0.1)
         story_list = ps_reddit.top_submissions(query=platform_query,
                                                        start_date=start_date, end_date=end_date,
                                                        subreddits=_parse_channel_as_reddit_subs())
@@ -54,7 +53,6 @@ def api_topics_platform_preview_total_content(topics_id):
     start_date, end_date = _parse_query_dates()
     story_count_result = {'count': None}
     if platform == PLATFORM_REDDIT:
-        time.sleep(0.2)
         story_count_result = {'count': ps_reddit.submission_count(query=platform_query,
                                                                   start_date=start_date, end_date=end_date,
                                                                   subreddits=_parse_channel_as_reddit_subs())}
@@ -79,7 +77,6 @@ def api_topics_platform_preview_split_story_count(topics_id):
     start_date, end_date = _parse_query_dates()
     results = {}
     if platform == PLATFORM_REDDIT:
-        time.sleep(0.3)
         results = ps_reddit.submission_normalized_and_split_story_count(query=platform_query,
                                                                         start_date=start_date, end_date=end_date,
                                                                         subreddits=_parse_channel_as_reddit_subs())

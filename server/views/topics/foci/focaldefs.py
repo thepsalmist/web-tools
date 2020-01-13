@@ -12,7 +12,7 @@ NEW_FOCAL_SET_PLACEHOLDER_ID = -1
 
 
 @app.route('/api/topics/<topics_id>/focus-definitions/update-or-create', methods=['POST'])
-@form_fields_required('focusName', 'focusDescription', 'keywords')
+@form_fields_required('focusName', 'focusDescription')
 @flask_login.login_required
 @api_error_handler
 def topic_focus_definition_update_or_create(topics_id):
@@ -20,8 +20,9 @@ def topic_focus_definition_update_or_create(topics_id):
     name = request.form['focusName']
     description = request.form['focusDescription']
     query = request.form['keywords'] if 'keywords' in request.form else None
-    media = request.form['searchValues'] if 'searchValues' in request.form else None
-    query = query or media #either keywords or media search
+    sources = request.form['sources[]'] if 'sources[]' in request.form else None
+    collections = request.form['collections[]'] if 'collections[]' in request.form else None
+    query = query or sources and collections #either keywords or media search
     # update if it has an id, create if new
     if 'foci_id' in request.form:
         # you can't change the focal set a focus is in

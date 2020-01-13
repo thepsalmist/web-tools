@@ -25,14 +25,10 @@ export const deleteFocusDefinition = createAsyncAction(DELETE_FOCUS_DEFINITION, 
 // pass in the number of the step to go to
 export const goToCreateFocusStep = createAction(GO_TO_CREATE_FOCUS_STEP, step => step);
 
-// pass in topicId, limit, q
-export const fetchCreateFocusKeywordStories = createAsyncAction(FETCH_CREATE_FOCUS_KEYWORD_STORIES, api.topicTopStories);
-
-// pass in topicId, q
-export const fetchCreateFocusKeywordStoryCounts = createAsyncAction(FETCH_CREATE_FOCUS_KEYWORD_STORY_COUNTS, api.topicStoryCounts);
-
+// TODO: these will use same events, pass q or media
+export const fetchCreateFocusKeywordStories = createAsyncAction(FETCH_CREATE_FOCUS_SEARCH_STORIES, api.topicTopStories);
+export const fetchCreateFocusKeywordStoryCounts = createAsyncAction(FETCH_CREATE_FOCUS_SEARCH_STORY_COUNTS, api.topicStoryCounts);
 export const fetchCreateFocusSearchStories = createAsyncAction(FETCH_CREATE_FOCUS_SEARCH_STORIES, api.topicTopStories);
-
 export const fetchCreateFocusSearchStoryCounts = createAsyncAction(FETCH_CREATE_FOCUS_SEARCH_STORY_COUNTS, api.topicStoryCounts);
 
 export const createRetweetFocalSet = createAsyncAction(CREATE_RETWEET_FOCUS_SET, api.createRetweetFocalSet);

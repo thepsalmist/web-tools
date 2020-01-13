@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
 import withHelp from '../../../../../common/hocs/HelpfulContainer';
-import { fetchCreateFocusKeywordStories } from '../../../../../../actions/topicActions';
+import { fetchCreateFocusSearchStories } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
 import TopicStoryTable from '../../../../TopicStoryTable';
 import messages from '../../../../../../resources/messages';
@@ -35,7 +35,7 @@ SearchStoryPreviewContainer.propTypes = {
   helpButton: PropTypes.node.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
-  keywords: PropTypes.string.isRequired,
+  searchValues: PropTypes.array.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   stories: PropTypes.array,
@@ -48,7 +48,11 @@ const mapStateToProps = state => ({
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
 });
 
-const fetchAsyncData = (dispatch, { topicId, keywords }) => dispatch(fetchCreateFocusKeywordStories(topicId, { q: keywords, limit: NUM_TO_SHOW }));
+const fetchAsyncData = (dispatch, { topicId, searchValues }) => {
+  const collections = searchValues.filter(obj => obj.tags_id).map(s => s.tags_id);
+  const sources = searchValues.filter(obj => obj.media_id).map(s => s.media_id);
+  dispatch(fetchCreateFocusSearchStories(topicId, { 'collections[]': JSON.stringify(collections), 'sources[]': JSON.stringify(sources), limit: NUM_TO_SHOW }));
+};
 
 export default
 injectIntl(

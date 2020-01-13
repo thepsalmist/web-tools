@@ -16,7 +16,7 @@ const SearchPreview = (props) => {
     <div className="focal-create-boolean-keyword-preview">
       <Row>
         <Col lg={10}>
-          <SearchStoryCountPreviewContainer topicId={topicId} keywords={searchValues} />
+          <SearchStoryCountPreviewContainer topicId={topicId} searchValues={searchValues} />
         </Col>
         <Col lg={2}>
           <p className="light"><i><FormattedMessage {...localMessages.about} /></i></p>
@@ -24,7 +24,7 @@ const SearchPreview = (props) => {
       </Row>
       <Row>
         <Col lg={10} md={10} xs={12}>
-          <SearchStoryPreviewContainer topicId={topicId} keywords={searchValues} />
+          <SearchStoryPreviewContainer topicId={topicId} searchValues={searchValues} />
         </Col>
       </Row>
     </div>
@@ -35,7 +35,7 @@ SearchPreview.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
   // from parent
-  searchValues: PropTypes.string.isRequired,
+  searchValues: PropTypes.array.isRequired,
   topicId: PropTypes.number.isRequired,
 };
 

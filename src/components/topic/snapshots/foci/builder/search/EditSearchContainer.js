@@ -52,11 +52,11 @@ class EditSearchContainer extends React.Component {
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
-    if ((this.state.values !== null) && (this.state.values !== undefined) && (this.state.keywords.length > 0)) {
+    if ((this.state.values !== null) && (this.state.values !== undefined) && (this.state.values.length > 0)) {
       nextButtonDisabled = false;
       previewContent = (
         <div>
-          <SearchPreview topicId={topicId} keywords={this.state.values} location={location} />
+          <SearchPreview topicId={topicId} searchValues={this.state.values} location={location} />
         </div>
       );
     }
@@ -122,7 +122,7 @@ EditSearchContainer.propTypes = {
   handleMediaChange: PropTypes.func.isRequired,
   // from state
   formData: PropTypes.object,
-  currentSearchValues: PropTypes.string,
+  currentSearchValues: PropTypes.array,
   currentFocalTechnique: PropTypes.string,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
@@ -135,7 +135,7 @@ EditSearchContainer.propTypes = {
 
 const mapStateToProps = state => ({
   formData: state.form.snapshotFocus,
-  currentSearchValues: formSelector(state, 'searchValues'),
+  currentSearchValues: formSelector(state, 'media'),
   currentFocalTechnique: formSelector(state, 'focalTechnique'),
 });
 

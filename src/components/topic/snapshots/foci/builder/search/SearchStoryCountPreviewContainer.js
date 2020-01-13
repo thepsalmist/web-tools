@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
 import withHelp from '../../../../../common/hocs/HelpfulContainer';
-import { fetchCreateFocusKeywordStoryCounts } from '../../../../../../actions/topicActions';
+import { fetchCreateFocusSearchStoryCounts } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
 import BubbleRowChart from '../../../../../vis/BubbleRowChart';
 import { getBrandDarkColor } from '../../../../../../styles/colors';
@@ -66,7 +66,7 @@ SearchStoryCountPreviewContainer.propTypes = {
   helpButton: PropTypes.node.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
-  keywords: PropTypes.string.isRequired,
+  searchValues: PropTypes.array.isRequired,
   // from state
   counts: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
@@ -77,7 +77,11 @@ const mapStateToProps = state => ({
   counts: state.topics.selected.focalSets.create.matchingStoryCounts.counts,
 });
 
-const fetchAsyncData = (dispatch, { topicId, keywords }) => dispatch(fetchCreateFocusKeywordStoryCounts(topicId, { q: keywords }));
+const fetchAsyncData = (dispatch, { topicId, searchValues }) => {
+  const collections = searchValues.filter(obj => obj.tags_id).map(s => s.tags_id);
+  const sources = searchValues.filter(obj => obj.media_id).map(s => s.media_id);
+  dispatch(fetchCreateFocusSearchStoryCounts(topicId, { 'collections[]': JSON.stringify(collections), 'sources[]': JSON.stringify(sources) }));
+};
 
 export default
 injectIntl(

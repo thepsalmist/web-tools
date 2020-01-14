@@ -42,11 +42,16 @@ def access_public_topic(topics_id):
 
 # TODO: Tigrat eto use mediapicker.concate!
 # helper for topic preview queries
-def concatenate_query_for_solr(solr_seed_query, media_ids, tags_ids):
-    query = '({})'.format(solr_seed_query)
+def concatenate_query_for_solr(solr_seed_query=None, media_ids=None, tags_ids=None):
+    query = ''
+    if solr_seed_query not in [None,'']:
+        query = '({})'.format(solr_seed_query)
 
     if len(media_ids) > 0 or len(tags_ids) > 0:
-        query += " AND ("
+        if solr_seed_query not in [None,'']:
+            query += " AND ("
+        else:
+            query += "("
         # add in the media sources they specified
         if len(media_ids) > 0:
             query_media_ids = " ".join(map(str, media_ids))

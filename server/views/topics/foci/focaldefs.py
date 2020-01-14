@@ -5,6 +5,7 @@ import flask_login
 from server import app
 from server.util.request import form_fields_required, api_error_handler
 from server.auth import user_admin_mediacloud_client, user_mediacloud_client
+from server.views.topics import concatenate_query_for_solr
 
 logger = logging.getLogger(__name__)
 
@@ -19,10 +20,10 @@ def topic_focus_definition_update_or_create(topics_id):
     user_mc = user_mediacloud_client()
     name = request.form['focusName']
     description = request.form['focusDescription']
-    query = request.form['keywords'] if 'keywords' in request.form else None
+    q = request.form['keywords'] if 'keywords' in request.form else ''
     sources = request.form['sources[]'] if 'sources[]' in request.form else None
     collections = request.form['collections[]'] if 'collections[]' in request.form else None
-    query = query or sources and collections #either keywords or media search
+    query = concatenate_query_for_solr(q, [sources], [collections])
     # update if it has an id, create if new
     if 'foci_id' in request.form:
         # you can't change the focal set a focus is in
@@ -35,7 +36,7 @@ def topic_focus_definition_update_or_create(topics_id):
             fs_name = request.form['focalSetName']
             fs_description = request.form['focalSetDescription']
             focal_technique = request.form['focalTechnique']
-            new_focal_set = user_mc.topicFocalSetDefinitionCreate(topics_id, fs_name, fs_description, focal_technique)
+            new_focal_set = user_mc.topicFocalSetDefinitionCreate(topics_id, fs_name, fs_description, 'Boolean Query')
             focal_set_definitions_id = new_focal_set['focal_set_definitions_id']
         else:
             focal_set_definitions_id = request.form['focalSetDefinitionId']

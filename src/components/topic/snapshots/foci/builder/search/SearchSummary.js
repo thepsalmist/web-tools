@@ -8,7 +8,7 @@ const localMessages = {
   focalSetExisting: { id: 'focus.create.confirm.focalSetExisting', defaultMessage: '<b>Technique</b>: Add to existing' },
   name: { id: 'focus.create.confirm.name', defaultMessage: '<b>Name</b>: {name}' },
   description: { id: 'focus.create.confirm.description', defaultMessage: '<b>Description</b>: {description}' },
-  searchValues: { id: 'focus.create.confirm.booleanQuery.keywords', defaultMessage: '<b>Search by</b>: {searchValues}' },
+  searchValues: { id: 'focus.create.confirm.booleanQuery.searchValues', defaultMessage: '<b>Search using media </b>: {searchValues}' },
 };
 
 const SearchSummary = (props) => {

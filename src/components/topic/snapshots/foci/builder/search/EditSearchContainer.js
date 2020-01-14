@@ -15,7 +15,7 @@ import { notEmptyString } from '../../../../../../lib/formValidators';
 const formSelector = formValueSelector('snapshotFocus');
 
 const localMessages = {
-  title: { id: 'focus.create.edit.title', defaultMessage: 'Step 2: Configure Your {technique} Subtopic' },
+  title: { id: 'focus.create.edit.title', defaultMessage: 'Step 2: Configure Your Media Sources Subtopic' },
   about: { id: 'focus.create.edit.about',
     defaultMessage: 'This Subtopic is driven by a {type} search.  Any stories that match to boolean query you create will be included in the Subtopic for analysis together.' },
   errorNoKeywords: { id: 'focalTechnique.boolean.keywords.error', defaultMessage: 'You need to specify some {values}.' },
@@ -72,28 +72,27 @@ class EditSearchContainer extends React.Component {
             </Col>
           </Row>
           <Row>
-            <OpenWebMediaFieldArray
-              className="query-field"
-              form="snapshotFocus"
-              fieldName="media"
-              enableReinitialize
-              keepDirtyOnReinitialize
-              destroyOnUnmount={false}
-              allowRemoval={false}
-              title={localMessages.title}
-              intro={localMessages.intro}
-            />
-            <MediaPickerDialog
-              initMedia={initialValues.media || []}
-              onConfirmSelection={selections => handleMediaChange(selections)}
-            />
-          </Row>
-          <Row>
-            <Col lg={2} xs={12}>
+            <Col lg={8}>
+              <OpenWebMediaFieldArray
+                className="query-field"
+                form="snapshotFocus"
+                fieldName="media"
+                enableReinitialize
+                keepDirtyOnReinitialize
+                destroyOnUnmount={false}
+                allowRemoval={false}
+                title={localMessages.title}
+                intro={localMessages.intro}
+              />
+              <MediaPickerDialog
+                initMedia={initialValues.media || []}
+                onConfirmSelection={selections => handleMediaChange(selections)}
+              />
+            </Col>
+            <Col lg={4} xs={12}>
               <AppButton
                 id="keyword-search-preview-button"
                 label={formatMessage(messages.search)}
-                style={{ marginTop: 33 }}
                 onClick={this.updateSearchValues}
               />
             </Col>

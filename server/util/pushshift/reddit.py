@@ -29,7 +29,7 @@ def _cached_submission_search(query: str = None, start_date: dt.datetime = None,
     # and now add in any other arguments they have sent in
     params.update(kwargs)
     r = requests.get(PS_REDDIT_SEARCH_URL, headers=headers, params=params)
-    temp = r.url
+    temp = r.url # useful assignment for debugging investigations
     return r.json()
 
 

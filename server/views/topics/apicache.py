@@ -364,7 +364,7 @@ def _cached_topic_tag_counts(user_mc_key, topics_id, tag_sets_id, query):
     tag_counts = user_mc.storyTagCount(query, tag_sets_id=tag_sets_id)
     # add in the pct so we can show relative values within the sample
     for t in tag_counts:
-        if (is_bad_theme(t['tags_id'])):
+        if is_bad_theme(t['tags_id']):
             tag_counts.remove(t)
 
     return tag_counts
@@ -399,7 +399,7 @@ def _cached_topic_sentence_sample(user_mc_key, sample_size=1000, **kwargs):
         local_mc = user_admin_mediacloud_client()
 
     sentences = local_mc.sentenceList(kwargs['q'], "timespans_id:{}".format(kwargs['timespans_id']),
-                                     rows=sample_size, sort=local_mc.SORT_RANDOM)
+                                      rows=sample_size, sort=local_mc.SORT_RANDOM)
     return sentences
 
 

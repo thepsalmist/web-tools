@@ -28,12 +28,12 @@ def api_topics_platform_preview_story_sample(topics_id):
     story_list = []
     if platform == PLATFORM_REDDIT:
         story_list = ps_reddit.top_submissions(query=platform_query,
-                                                       start_date=start_date, end_date=end_date,
-                                                       subreddits=_parse_channel_as_reddit_subs())
+                                               start_date=start_date, end_date=end_date,
+                                               subreddits=_parse_channel_as_reddit_subs())
     elif platform == PLATFORM_TWITTER:
         if platform_source == PUSHSHIFT_SOURCE:
             story_list = ps_twitter.matching_tweets(query=platform_query,
-                                                            start_date=start_date, end_date=end_date)
+                                                    start_date=start_date, end_date=end_date)
     elif platform == PLATFORM_OPEN_WEB:
         solr_query, fq = _parse_channel_as_open_web()
         story_list = base_apicache.story_list(user_mediacloud_key(), solr_query, fq)
@@ -149,4 +149,3 @@ def _parse_channel_as_open_web():
     fq = concatenate_solr_dates(start_date=request.args['start_date'],
                                 end_date=request.args['end_date'])
     return q, fq
-

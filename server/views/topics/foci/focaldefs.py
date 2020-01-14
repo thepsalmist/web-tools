@@ -23,15 +23,17 @@ def topic_focus_definition_update_or_create(topics_id):
     q = request.form['keywords'] if 'keywords' in request.form else ''
     sources = request.form['sources[]'] if 'sources[]' in request.form else None
     collections = request.form['collections[]'] if 'collections[]' in request.form else None
-    query = concatenate_query_for_solr(q, [sources], [collections])
     # update if it has an id, create if new
     if 'foci_id' in request.form:
+        # for editing, the media ids come in through the keywords parameter
         # you can't change the focal set a focus is in
         foci_id = request.form['foci_id']
         focus = user_mc.topicFocusDefinitionUpdate(topics_id, foci_id, name=name, description=description,
-                                                   query=query)
+                                                   query=q)
     else:
         # if new focal set, then create that first
+        query = concatenate_query_for_solr(q, [sources], [collections])
+
         if int(request.form['focalSetDefinitionId']) is NEW_FOCAL_SET_PLACEHOLDER_ID:
             fs_name = request.form['focalSetName']
             fs_description = request.form['focalSetDescription']

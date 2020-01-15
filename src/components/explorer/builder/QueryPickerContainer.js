@@ -17,7 +17,7 @@ import { selectQuery, updateQuery, addCustomQuery, loadUserSearches, saveUserSea
 import { AddQueryButton } from '../../common/IconButton';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
 import { autoMagicQueryLabel, KEYWORD, DATES, MEDIA,
-  DEFAULT_COLLECTION_OBJECT_ARRAY, replaceCurlyQuotes, uniqueQueryId, LEFT, prepSearches } from '../../../lib/explorerUtil';
+  DEFAULT_COLLECTION_OBJECT_ARRAY, replaceCurlyQuotes, uniqueQueryId, LEFT, prepSearches, getQFromCodeMirror } from '../../../lib/explorerUtil';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
 const localMessages = {
@@ -418,7 +418,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     // formQuery
     let newValues = null;
     if (whichFilter === KEYWORD) {
-      newValues = { q: currentFormValues.q };
+      const q = { q: (typeof currentFormValues.q === 'string') ? currentFormValues.q : getQFromCodeMirror(currentFormValues.q) };
+      newValues = q;
     } else if (whichFilter === DATES) {
       newValues = { startDate: currentFormValues.startDate, endDate: currentFormValues.endDate };
     } else if (whichFilter === MEDIA) {

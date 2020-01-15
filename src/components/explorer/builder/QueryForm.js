@@ -18,7 +18,7 @@ import MediaHelpDialog from '../../common/help/MediaHelpDialog';
 import SavedSearchControls from './SavedSearchControls';
 import { emptyString, validDate } from '../../../lib/formValidators';
 import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil';
-import { KEYWORD, MEDIA, DATES } from '../../../lib/explorerUtil';
+import { KEYWORD, MEDIA, DATES, getQFromCodeMirror } from '../../../lib/explorerUtil';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 import messages from '../../../resources/messages';
 
@@ -355,7 +355,7 @@ function warn(values, props) {
   }
   // first time through text is a form field, then a codemirror object
   if (values.q) {
-    const queryText = (typeof values.q === 'string') ? values.q : values.q.getValue();
+    const queryText = (typeof values.q === 'string') ? values.q : getQFromCodeMirror(values.q);
     if (emptyString(queryText)) {
       const errString = formatMessage(localMessages.queryStringError, { name: values.label });
       warnings.q = { _warning: errString };

@@ -15,7 +15,7 @@ from server import app, cliff, TOOL_API_KEY
 from server.auth import is_user_logged_in, user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
 from server.cache import cache
 from server.util.request import api_error_handler, filters_from_args
-from server.views.topics import access_public_topic
+from server.views.topics import access_public_topic, concatenate_query_for_solr
 from server.util.tags import TAG_SPIDERED_STORY
 
 logger = logging.getLogger(__name__)
@@ -40,8 +40,16 @@ def story_counts(topics_id):
         local_key = user_mediacloud_key()
     else:
         return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
-    total = apicache.topic_story_count(local_key, topics_id, timespans_id=None, snapshots_id=None, q=None, foci_id=None)
-    filtered = apicache.topic_story_count(local_key, topics_id)
+    query = request.form['keywords'] if 'keywords' in request.form else ''
+    #for preview information in subtopics and platforms - scope by media source info
+    sources = request.args['sources[]'] if 'sources[]' in request.args else None
+    collections = request.args['collections[]'] if 'collections[]' in request.args else None
+    merged_args = {}
+    if sources not in [None] or collections not in [None]:
+        query = concatenate_query_for_solr(query, [sources], [collections])
+        merged_args = {'q': query }
+    filtered = apicache.topic_story_count(local_key, topics_id, **merged_args)
+    total = apicache.topic_story_count(local_key, topics_id, timespans_id=None, snapshots_id=None, foci_id=None, q=None)
     return jsonify({'counts': {'count': filtered['count'], 'total': total['count']}})
 
 

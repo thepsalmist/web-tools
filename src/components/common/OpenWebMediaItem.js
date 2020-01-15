@@ -68,7 +68,6 @@ const OpenWebMediaItem = ({ object, onDelete, intl }) => {
 OpenWebMediaItem.propTypes = {
   object: PropTypes.object.isRequired,
   onDelete: PropTypes.func,
-  formatMessage: PropTypes.func.isRequired,
   intl: PropTypes.object,
 };
 

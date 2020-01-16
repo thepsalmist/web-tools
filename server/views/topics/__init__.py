@@ -42,6 +42,35 @@ def access_public_topic(topics_id):
     return False
 
 
+def _parse_media_ids(args):
+    media_ids = []
+    if 'sources[]' in args:
+        src = args['sources[]']
+        if isinstance(src, str):
+            src = re.sub(r'\[*\]*', '', str(src))
+            if len(src) == 0:
+                media_ids = []
+            media_ids = src.split(',') if len(src) > 0 else []
+        else:
+            media_ids = src
+    return media_ids
+
+
+def _parse_collection_ids(args):
+    if 'collections[]' in args:
+        coll = args['collections[]']
+        if isinstance(coll, str):
+            coll = re.sub(r'\[*\]*', '', str(coll))
+            if len(coll) == 0:
+                tags_ids = []
+            else:
+                tags_ids = coll.split(',')  # make a list
+        else:
+            tags_ids = coll
+
+    return tags_ids
+
+
 # TODO: Tigrat eto use mediapicker.concate!
 # helper for topic preview queries
 def concatenate_query_for_solr(solr_seed_query=None, media_ids=None, tags_ids=None):

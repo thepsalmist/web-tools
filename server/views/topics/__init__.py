@@ -47,6 +47,8 @@ def _parse_media_ids(args):
     if 'sources[]' in args:
         src = args['sources[]']
         if isinstance(src, str):
+            media_ids = src.split(',')
+            media_ids = " ".join([str(m) for m in media_ids])
             src = re.sub(r'\[*\]*', '', str(src))
             if len(src) == 0:
                 media_ids = []
@@ -60,7 +62,9 @@ def _parse_collection_ids(args):
     if 'collections[]' in args:
         coll = args['collections[]']
         if isinstance(coll, str):
-            coll = re.sub(r'\[*\]*', '', str(coll))
+            tags_ids = coll.split(',')
+            tags_ids = " ".join([str(m) for m in tags_ids])
+            coll = re.sub(r'\[*\]*', '', str(tags_ids))
             if len(coll) == 0:
                 tags_ids = []
             else:

@@ -28,12 +28,18 @@ class EditSearchContainer extends React.Component {
     // We can't read out of the form state becase we need to know when they click "search",
     // but that is updated live as they type.
     super(props);
-    this.state = { values: null };
+    this.state = { values: null, searchButtonDisabled: true };
   }
 
   updateSearchValues = () => {
     const { currentSearchValues } = this.props;
     this.setState({ values: currentSearchValues });
+  }
+
+  updateAndMediaChange = (values) => {
+    const { handleMediaChange } = this.props;
+    this.setState({ searchButtonDisabled: false });
+    handleMediaChange(values);
   }
 
   handleKeyDown = (event) => {
@@ -48,7 +54,7 @@ class EditSearchContainer extends React.Component {
   }
 
   render() {
-    const { topicId, initialValues, currentFocalTechnique, handleSubmit, onPreviousStep, finishStep, location, handleMediaChange } = this.props;
+    const { topicId, initialValues, currentFocalTechnique, handleSubmit, onPreviousStep, finishStep, location } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
@@ -86,7 +92,7 @@ class EditSearchContainer extends React.Component {
               />
               <MediaPickerDialog
                 initMedia={initialValues.media || []}
-                onConfirmSelection={selections => handleMediaChange(selections)}
+                onConfirmSelection={selections => this.updateAndMediaChange(selections)}
               />
             </Col>
             <Col lg={4} xs={12}>
@@ -94,6 +100,7 @@ class EditSearchContainer extends React.Component {
                 id="keyword-search-preview-button"
                 label={formatMessage(messages.search)}
                 onClick={this.updateSearchValues}
+                disabled={this.state.searchButtonDisabled}
               />
             </Col>
           </Row>

@@ -1,6 +1,8 @@
 import logging
 import datetime
 import mediacloud.api
+import re
+
 
 from server import mc
 from server.auth import is_user_logged_in
@@ -51,10 +53,11 @@ def concatenate_query_for_solr(solr_seed_query=None, media_ids=None, tags_ids=No
         if solr_seed_query not in [None,'']:
             query += " AND ("
         else:
-            query += "("
+            query += "(*) AND ("
         # add in the media sources they specified
         if len(media_ids) > 0:
             query_media_ids = " ".join(map(str, media_ids))
+            query_media_ids = re.sub(r'\[*\]*', '', str(query_media_ids))
             query_media_ids = " media_id:({})".format(query_media_ids)
             query += '(' + query_media_ids + ')'
 
@@ -63,6 +66,7 @@ def concatenate_query_for_solr(solr_seed_query=None, media_ids=None, tags_ids=No
         # add in the collections they specified
         if len(tags_ids) > 0:
             query_tags_ids = " ".join(map(str, tags_ids))
+            query_tags_ids = re.sub(r'\[*\]*', '', str(query_tags_ids))
             query_tags_ids = " tags_id_media:({})".format(query_tags_ids)
             query += '(' + query_tags_ids + ')'
         query += ')'

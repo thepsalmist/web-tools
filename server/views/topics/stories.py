@@ -45,7 +45,7 @@ def story_counts(topics_id):
     sources = request.args['sources[]'] if 'sources[]' in request.args else None
     collections = request.args['collections[]'] if 'collections[]' in request.args else None
     merged_args = {}
-    if sources not in [None] or collections not in [None]:
+    if ((sources not in [None, ''] and len(sources) > 0) or collections not in [None, ''] and len(collections) > 0):
         query = concatenate_query_for_solr(query, [sources], [collections])
         merged_args = {'q': query }
     filtered = apicache.topic_story_count(local_key, topics_id, **merged_args)

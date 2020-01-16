@@ -5,7 +5,7 @@ import flask_login
 from server import app
 from server.util.request import form_fields_required, api_error_handler
 from server.auth import user_admin_mediacloud_client, user_mediacloud_client
-from server.views.topics import concatenate_query_for_solr
+from server.views.topics import concatenate_query_for_solr, _parse_collection_ids, _parse_media_ids
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +21,8 @@ def topic_focus_definition_update_or_create(topics_id):
     name = request.form['focusName']
     description = request.form['focusDescription']
     q = request.form['keywords'] if 'keywords' in request.form else ''
-    sources = request.form['sources[]'] if 'sources[]' in request.form else None
-    collections = request.form['collections[]'] if 'collections[]' in request.form else None
+    collections = _parse_collection_ids(request.form)
+    sources = _parse_media_ids(request.form)
     # update if it has an id, create if new
     if 'foci_id' in request.form:
         # for editing, the media ids come in through the keywords parameter
@@ -32,9 +32,8 @@ def topic_focus_definition_update_or_create(topics_id):
                                                    query=q)
     else:
         # if new focal set, then create that first
-        sources_array = [sources] if sources not in [None, ''] else ''
-        collections_array = [collections] if collections not in [None, ''] else ''
-        query = concatenate_query_for_solr(q, sources_array, collections_array)
+        if ((sources not in [None, ''] and len(sources) > 0) or collections not in [None, ''] and len(collections) > 0):
+            query = concatenate_query_for_solr(q, sources, collections)
 
         if int(request.form['focalSetDefinitionId']) is NEW_FOCAL_SET_PLACEHOLDER_ID:
             fs_name = request.form['focalSetName']

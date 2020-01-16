@@ -1,6 +1,27 @@
 {
   "releases": [
     {
+      "date": "2020-01-16",
+      "version": "v3.13.1",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Media sources subtopic now available."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Query items do not collapse incorrectly"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Can copy query to all queries"
+        }
+      ]
+    },
+    {
       "date": "2020-01-09",
       "version": "v3.13.0",
       "notes": [

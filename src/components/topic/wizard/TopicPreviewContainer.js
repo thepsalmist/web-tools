@@ -15,8 +15,14 @@ const TopicPreviewContainer = (props) => {
   const { onStepChange, formData, mode, currentStepText } = props;
   const { formatMessage } = props.intl;
   if (formData !== undefined) {
-    const content = <TopicCreatePreview formData={formData} />;
-
+    const content = (
+      <TopicCreatePreview
+        formData={{
+          ...formData,
+          solr_seed_query: formData.solr_seed_query.getValue(),
+        }}
+      />
+    );
     return (
       <Grid>
         <h1 dangerouslySetInnerHTML={{ __html: currentStepText.title }} />

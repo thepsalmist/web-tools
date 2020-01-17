@@ -36,6 +36,8 @@ export function serializeQueriesForUrl(queries) {
   return encodeURIComponent(JSON.stringify(queries));
 }
 
+export function getQFromCodeMirror(q) { return q.getValue(); }
+
 export const metadataQueryFields = new Set([PUBLICATION_COUNTRY, PUBLICATION_STATE, PRIMARY_LANGUAGE, COUNTRY_OF_FOCUS, MEDIA_TYPE]);
 
 // grab media keyword and array of tags Ids (irregardless of metadata type) to send to python

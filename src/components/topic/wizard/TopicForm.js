@@ -173,7 +173,7 @@ function validate(values, props) {
   if (values.solr_seed_query) {
     const queryText = (typeof values.solr_seed_query === 'string') ? values.solr_seed_query : values.solr_seed_query.getValue();
     if (emptyString(queryText)) {
-      const errString = formatMessage(localMessages.queryStringError, { name: values.label });
+      const errString = formatMessage(localMessages.seedQueryError, { name: values.label });
       errors.solr_seed_query = { _warning: errString };
     }
   }

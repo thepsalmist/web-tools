@@ -50,14 +50,15 @@ const TopicSeedDetailsForm = (props) => {
       </Row>
       <Row>
         <Col lg={12}>
+          <label htmlFor="solr_seed_query"><FormattedMessage {...localMessages.seedQuery} /></label>
           <Field
+            className="query-field"
             name="solr_seed_query"
             component={renderSolrTextField}
             multiline
             rows={2}
             rowsMax={4}
             fullWidth
-            label={formatMessage(localMessages.seedQuery)}
           />
           <small>
             <b><QueryHelpDialog trigger={formatMessage(messages.queryHelpLink)} /></b>

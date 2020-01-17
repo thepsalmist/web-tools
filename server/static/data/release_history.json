@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2020-01-17",
+      "version": "v3.13.2",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic creation previews are accurate again."
+        }
+      ]
+    },
+    {
       "date": "2020-01-16",
       "version": "v3.13.1",
       "notes": [

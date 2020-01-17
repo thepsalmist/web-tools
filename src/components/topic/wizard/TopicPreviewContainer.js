@@ -5,6 +5,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import AppButton from '../../common/AppButton';
 import TopicCreatePreview from './preview/TopicCreatePreview';
+import { topicQueryAsString } from '../../util/topicUtil';
 
 const localMessages = {
   prev: { id: 'topic.create.preview.prev', defaultMessage: 'back to seed query' },
@@ -19,7 +20,7 @@ const TopicPreviewContainer = (props) => {
       <TopicCreatePreview
         formData={{
           ...formData,
-          solr_seed_query: formData.solr_seed_query.getValue(),
+          solr_seed_query: topicQueryAsString(formData.solr_seed_query),
         }}
       />
     );

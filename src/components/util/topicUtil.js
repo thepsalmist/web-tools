@@ -20,9 +20,12 @@ export const formatTopicOpenWebSourcesForQuery = (topicSourcesAndCollections) =>
   };
 };
 
+// handle string or codemirror object
+export const topicQueryAsString = (obj) => ((typeof obj === 'string') ? obj : obj.getValue());
+
 // while creating a topic, this can format the under-construction topic params propertly for a preview request
 export const formatTopicPreviewQuery = (topicQuery) => ({
-  q: topicQuery.solr_seed_query,
+  q: topicQueryAsString(topicQuery.solr_seed_query),
   start_date: topicQuery.start_date,
   end_date: topicQuery.end_date,
   ...formatTopicOpenWebSourcesForQuery(topicQuery.sourcesAndCollections),

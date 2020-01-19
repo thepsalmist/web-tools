@@ -5,9 +5,14 @@
       "version": "v3.13.3",
       "notes": [
         {
-          "apps": [ "topics" ],
+          "apps": [ "explorer" ],
           "type": "Fixed",
           "note": "Editing multiple queries works again."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic top story list works again."
         }
       ]
     },

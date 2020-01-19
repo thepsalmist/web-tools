@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2020-01-19",
+      "version": "v3.13.3",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Editing multiple queries works again."
+        }
+      ]
+    },
+    {
       "date": "2020-01-17",
       "version": "v3.13.2",
       "notes": [

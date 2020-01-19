@@ -57,21 +57,22 @@ def _parse_media_ids(args):
 
 
 def _parse_collection_ids(args):
+    collection_ids = []
     if 'collections[]' in args:
         coll = args['collections[]']
         if isinstance(coll, str):
             coll = re.sub(r'\[*\]*', '', str(coll))
             if len(coll) == 0:
-                tags_ids = []
+                collection_ids = []
             else:
-                tags_ids = coll.split(',')  # make a list
+                collection_ids = coll.split(',')  # make a list
         else:
-            tags_ids = coll
+            collection_ids = coll
 
-    return tags_ids
+    return collection_ids
 
 
-# TODO: Tigrat eto use mediapicker.concate!
+# TODO: Migrate eto use mediapicker.concate!
 # helper for topic preview queries
 def concatenate_query_for_solr(solr_seed_query=None, media_ids=None, tags_ids=None):
     query = ''

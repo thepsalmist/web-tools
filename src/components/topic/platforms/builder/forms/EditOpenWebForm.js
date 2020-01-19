@@ -6,22 +6,29 @@ import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../../../common/hocs/IntlForm';
 import messages from '../../../../../resources/messages';
 import MediaPickerDialog from '../../../../common/mediaPicker/MediaPickerDialog';
+import QueryHelpDialog from '../../../../common/help/QueryHelpDialog';
 import OpenWebMediaFieldArray from '../../../../common/form/OpenWebMediaFieldArray';
 
-const EditOpenWebForm = ({ initialValues, renderTextField, intl, onEnterKey, onFormChange }) => (
+const EditOpenWebForm = ({ initialValues, renderSolrTextField, intl, onFormChange }) => (
   <>
     <Row>
       <Col lg={6}>
         <label htmlFor="query"><FormattedMessage {...messages.query} /></label>
-        <Field
-          name="query"
-          component={renderTextField}
-          fullWidth
-          multiline
-          rows="3"
-          variant="outlined"
-          onKeyDown={onEnterKey}
-        />
+        <Row>
+          <Col lg={12}>
+            <Field
+              name="query"
+              component={renderSolrTextField}
+              multiline
+              rows={2}
+              rowsMax={4}
+              fullWidth
+            />
+            <small>
+              <b><QueryHelpDialog trigger={intl.formatMessage(messages.queryHelpLink)} /></b>
+            </small>
+          </Col>
+        </Row>
       </Col>
       <Col lg={6}>
         <div className="media-field-wrapper">
@@ -60,7 +67,7 @@ EditOpenWebForm.propTypes = {
   onFormChange: PropTypes.func.isRequired,
   // from compositional helper
   intl: PropTypes.object.isRequired,
-  renderTextField: PropTypes.func.isRequired,
+  renderSolrTextField: PropTypes.func.isRequired,
 };
 
 const reduxFormConfig = {

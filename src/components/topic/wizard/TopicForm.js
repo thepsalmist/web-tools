@@ -11,6 +11,7 @@ import MediaPickerDialog from '../../common/mediaPicker/MediaPickerDialog';
 import OpenWebMediaFieldArray from '../../common/form/OpenWebMediaFieldArray';
 import { emptyString, invalidDate, validDate } from '../../../lib/formValidators';
 import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil';
+import { topicQueryAsString } from '../../util/topicUtil';
 import { fetchTopicWithNameExists } from '../../../actions/topicActions';
 import { assetUrl } from '../../../lib/assetUtil';
 
@@ -171,9 +172,9 @@ function validate(values, props) {
   }
   // first time through solr_seed_query is a form field, then a codemirror object
   if (values.solr_seed_query) {
-    const queryText = (typeof values.solr_seed_query === 'string') ? values.solr_seed_query : values.solr_seed_query.getValue();
+    const queryText = topicQueryAsString(values.solr_seed_query);
     if (emptyString(queryText)) {
-      const errString = formatMessage(localMessages.queryStringError, { name: values.label });
+      const errString = formatMessage(localMessages.seedQueryError, { name: values.label });
       errors.solr_seed_query = { _warning: errString };
     }
   }

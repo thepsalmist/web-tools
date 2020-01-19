@@ -1,6 +1,38 @@
 {
   "releases": [
     {
+      "date": "2020-01-19",
+      "version": "v3.13.3",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Editing multiple queries works again."
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic top story list works again."
+        }
+      ]
+    },
+    {
+      "date": "2020-01-17",
+      "version": "v3.13.2",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic creation previews are accurate again."
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Clicking on attention chart in Explorer works again."
+        }
+      ]
+    },
+    {
       "date": "2020-01-16",
       "version": "v3.13.1",
       "notes": [

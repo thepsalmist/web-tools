@@ -19,6 +19,7 @@ import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
 import { autoMagicQueryLabel, KEYWORD, DATES, MEDIA,
   DEFAULT_COLLECTION_OBJECT_ARRAY, replaceCurlyQuotes, uniqueQueryId, LEFT, prepSearches, getQFromCodeMirror } from '../../../lib/explorerUtil';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
+import { queryAsString } from '../../../lib/stringUtil';
 
 const localMessages = {
   mainTitle: { id: 'explorer.querypicker.mainTitle', defaultMessage: 'Query List' },
@@ -40,6 +41,7 @@ class QueryPickerContainer extends React.Component {
     const updatedQuery = {
       ...selected,
       ...formQuery,
+      q: queryAsString(formQuery.q),
       color: newColorInfo.value,
     };
     updateCurrentQuery(updatedQuery, 'color');
@@ -52,6 +54,7 @@ class QueryPickerContainer extends React.Component {
     const updatedMedia = {
       ...selected,
       ...formQuery,
+      q: queryAsString(formQuery.q),
     };
     const updatedSources = formQuery.media.filter(m => m.id !== toBeDeletedObj.id && (m.type === 'source' || m.media_id));
     const updatedCollections = formQuery.media.filter(m => m.id !== toBeDeletedObj.id && (m.type === 'collection' || m.tags_id));
@@ -68,6 +71,7 @@ class QueryPickerContainer extends React.Component {
     const updatedQuery = {
       ...selected,
       ...formQuery,
+      q: queryAsString(formQuery.q),
     };
     if (sourceAndCollections.filter(m => m.id === ALL_MEDIA).length === 0) {
       const updatedSources = sourceAndCollections.filter(m => m.type === 'source' || m.media_id);

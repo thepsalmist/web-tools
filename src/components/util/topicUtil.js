@@ -1,5 +1,6 @@
 import slugify from 'slugify';
 import { serializeSearchTags } from '../../lib/explorerUtil';
+import { queryAsString } from '../../lib/stringUtil';
 
 export const topicDownloadFilename = (topicName, filters) => (
   `${slugify(topicName)}-${filters.snapshotId}-${filters.timespanId}-${filters.focusId}`
@@ -21,7 +22,7 @@ export const formatTopicOpenWebSourcesForQuery = (topicSourcesAndCollections) =>
 };
 
 // handle string or codemirror object
-export const topicQueryAsString = (obj) => ((typeof obj === 'string') ? obj : obj.getValue());
+export const topicQueryAsString = queryAsString;
 
 // while creating a topic, this can format the under-construction topic params propertly for a preview request
 export const formatTopicPreviewQuery = (topicQuery) => ({

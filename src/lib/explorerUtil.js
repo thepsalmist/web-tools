@@ -36,7 +36,7 @@ export function serializeQueriesForUrl(queries) {
   return encodeURIComponent(JSON.stringify(queries));
 }
 
-export function getQFromCodeMirror(q) { return q.getValue(); }
+export const getQFromCodeMirror = queryAsString;
 
 export const metadataQueryFields = new Set([PUBLICATION_COUNTRY, PUBLICATION_STATE, PRIMARY_LANGUAGE, COUNTRY_OF_FOCUS, MEDIA_TYPE]);
 

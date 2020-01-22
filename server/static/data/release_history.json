@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2020-01-22",
+      "version": "v3.13.4",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Admins can now create new sources with just a URL."
+        }
+      ]
+    },
+    {
       "date": "2020-01-19",
       "version": "v3.13.3",
       "notes": [

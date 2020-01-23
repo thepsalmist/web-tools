@@ -14,6 +14,7 @@ from server.util.request import api_error_handler
 import server.util.csv as csv
 from server.cache import cache
 import server.views.apicache as apicache
+import server.util.corenlp as corenlp
 
 QUERY_LAST_FEW_DAYS = "publish_date:[NOW-3DAY TO NOW]"
 QUERY_LAST_WEEK = "publish_date:[NOW-7DAY TO NOW]"
@@ -210,7 +211,7 @@ def predict_news_labels(story_text):
 @flask_login.login_required
 @api_error_handler
 def story_top_image(stories_id):
-    story = mc.story(stories_id)
+    story = apicache.story(user_mediacloud_key(), stories_id)
     # use the tool key so anyone can see these images
     story_html = apicache.story_raw_1st_download(TOOL_API_KEY, stories_id)
     article = newspaper.Article(url=story['url'])
@@ -230,3 +231,11 @@ def story_top_image(stories_id):
         'all': [],
     })
 
+
+@app.route('/api/stories/<stories_id>/quotes', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def story_quotes(stories_id):
+    story = apicache.story(user_mediacloud_key(), stories_id, text=True)
+    quotes = corenlp.quotes_from_text(story['story_text'])
+    return jsonify({'quotes': quotes})

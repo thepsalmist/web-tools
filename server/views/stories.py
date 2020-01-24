@@ -9,7 +9,7 @@ import newspaper
 from flask import request
 import server.util.pushshift as pushshift
 from server import app, cliff, NYT_THEME_LABELLER_URL, mc, TOOL_API_KEY
-from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_mediacloud_key
+from server.auth import user_mediacloud_key
 from server.util.request import api_error_handler
 import server.util.csv as csv
 from server.cache import cache
@@ -30,15 +30,11 @@ logger = logging.getLogger(__name__)
 @flask_login.login_required
 @api_error_handler
 def story_info(stories_id):
-    user_mc = user_mediacloud_client()
-    admin_mc = user_admin_mediacloud_client()
-    if stories_id in [None, 'NaN']:
-        return jsonify({'error': 'bad value'})
     if 'text' in request.args and request.args['text'] == 'true':
-        story = admin_mc.story(stories_id, text=True)
+        story = apicache.story(user_mediacloud_key(), stories_id, text=True)
     else:
-        story = user_mc.story(stories_id)
-    story["media"] = user_mc.media(story["media_id"])
+        story = apicache.story(user_mediacloud_key(), stories_id)
+    story["media"] = apicache.media(story["media_id"])
     return jsonify({'info': story})
 
 
@@ -84,10 +80,7 @@ def story_subreddit_shares_csv(stories_id):
 @api_error_handler
 def story_tags_csv(stories_id):
     # in the download include all entity types
-    admin_mc = user_admin_mediacloud_client()
-    if stories_id in [None, 'NaN']:
-        return jsonify({'error': 'bad value'})
-    story = admin_mc.story(stories_id, text=True)  # Note - this call doesn't pull cliff places
+    story = apicache.story(user_mediacloud_key(), stories_id)  # Note - this call doesn't pull cliff places
     props = ['tags_id', 'tag', 'tag_sets_id', 'tag_set']
     return csv.stream_response(story['story_tags'], props, 'story-' + str(stories_id) + '-all-tags-and-tag-sets')
 
@@ -238,4 +231,4 @@ def story_top_image(stories_id):
 def story_quotes(stories_id):
     story = apicache.story(user_mediacloud_key(), stories_id, text=True)
     quotes = corenlp.quotes_from_text(story['story_text'])
-    return jsonify({'quotes': quotes})
+    return jsonify({'all': quotes})

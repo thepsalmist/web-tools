@@ -5,6 +5,27 @@ from server.util.corenlp import quotes_from_text, _fetch_annotations
 
 class CorenlpTest(unittest.TestCase):
 
+    def testRealDataForQuotes(self):
+        text = """
+        Vice President Mike Pence announced Thursday that Israel's Prime Minister and opposition leader will visit the White House next week to discuss "regional issues as well as the prospect of peace." The announcement comes as reports suggest a potential reveal of the Trump administration's Middle East peace plan could be imminent.
+        Pence, who was in Jerusalem for a gathering of world leaders to mark the 75th anniversary of the liberation of Auschwitz, extended the invitation to Prime Minister Benjamin Netanyahu from President Donald Trump. He also announced that Blue and White chairman Benny Gantz will also attend the meeting at the White House on Tuesday.
+        In a tweet Trump appeared to dash speculation an announcement on the peace plan may be imminent. "The United States looks forward to welcoming Prime Minister @Netanyahu & Blue & White Chairman @Gantzbe to the @WhiteHouse next week. Reports about details and timing of our closely-held peace plan are purely speculative," he tweeted.
+        The unveiling of the plan, which is being spearheaded by Trump's senior adviser and son-in-law Jared Kushner, has been delayed amid the months-long period of turmoil in Israeli politics with the country due to hold an unprecedented third national election in less than a year in March.
+        Israel heads for unprecedented third election in a year, as Netanyahu clings to power
+        Israel heads for unprecedented third election in a year, as Netanyahu clings to power
+        The two previous elections have failed to produce a clear winner and both Netanyahu and Gantz have failed in efforts to form a new government.
+        Seated next to Pence at the US embassy in Jerusalem as he accepted the White House invitation, Netanyahu spoke of an "historic opportunity" for Israel.
+        And he ramped up the pressure on Gantz, saying, "With such friends in the White House, with such backing from the United States, we should get as broad a consensus as possible around the efforts to achieve security and peace for the state of Israel."
+        As well as a third election campaign, Netanyahu also has the prospect of a possible criminal trial hanging over him on charges of bribery and fraud and breach of trust.
+        He denies any wrongdoing and has asked for immunity from prosecution.
+        An Israeli parliamentary committee is due to start debating his request on Tuesday, the same day he is expected to meet Trump in Washington.
+        The Trump administration released the economic portion of its peace plan during a conference with mainly regional officials in Bahrain last June, but it has yet to unveil the political portion, which will address the most intractable issues -- like the matter of Palestinian statehood, the status of Jerusalem and the fate of Palestinian refugees -- to resolving the conflict.
+        CNN's Maegan Vazquez contributed to this report.'
+        """
+        quotes = quotes_from_text(text)
+        assert len(quotes) == 4
+
+
     def testAnnotate(self):
         results = _fetch_annotations('This is some text with a quote, like "Help me" which was said by Rahul Bhargava')
         assert 'sentences' in results

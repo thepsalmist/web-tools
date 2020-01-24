@@ -6,7 +6,7 @@ from server.cache import cache
 
 
 CORENLP_URL = config.get('CORENLP_URL')
-SNIPPET_WINDOW_SIZE = 100  # how many chars before or after the quote to save for context into the DB
+SNIPPET_WINDOW_SIZE = 150  # how many chars before or after the quote to save for context into the DB
 
 
 def quotes_from_text(text: str) -> List[Dict]:
@@ -17,9 +17,8 @@ def quotes_from_text(text: str) -> List[Dict]:
 
 @cache.cache_on_arguments()
 def _fetch_annotations(text: str) -> Dict:
-    r = requests.post(
-        'http://' + CORENLP_URL + '/?properties={"annotators":"tokenize,ssplit,pos,lemma,ner,depparse,coref,quote","outputFormat":"json"}',
-        data=text.encode('utf-8'))
+    url = 'http://' + CORENLP_URL + '/?properties={"annotators":"tokenize,ssplit,pos,lemma,ner,depparse,coref,quote","outputFormat":"json"}'
+    r = requests.post(url, data=text.encode('utf-8'))
     return r.json()
 
 

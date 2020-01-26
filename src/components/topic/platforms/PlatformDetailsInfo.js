@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import OpenWebMediaItem from '../../common/OpenWebMediaItem';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER, CRIMSON_HEXAGON_SOURCE } from '../../../lib/platformTypes';
+import messages from '../../../resources/messages';
 
 const PlatformDetailsInfo = ({ platform }) => {
   let queryContent = null;
@@ -10,9 +11,13 @@ const PlatformDetailsInfo = ({ platform }) => {
   // TODO, some formatting perhaps of the query across platforms
   switch (platform.platform) {
     case PLATFORM_OPEN_WEB:
-      if (platform.media !== null && platform.media.length) {
-        channelContent = platform.media.map((m, idx) => <OpenWebMediaItem key={idx} object={m} />);
-      }
+      channelContent = (
+        <>
+          <FormattedMessage {...messages.topicSourceCollectionsProp} />: &nbsp;
+          {platform.media_tags && platform.media_tags.map(t => <OpenWebMediaItem justText key={t.tags_id} object={t} />)}
+          {platform.media && platform.media.map(m => <OpenWebMediaItem justText key={m.media_id} object={m} />)}
+        </>
+      );
       queryContent = <code>{platform.query}</code>;
       break;
     case PLATFORM_REDDIT:
@@ -31,7 +36,8 @@ const PlatformDetailsInfo = ({ platform }) => {
   }
   return (
     <div className="platform-summary">
-      {queryContent}
+      <FormattedMessage {...messages.topicQueryProp} /> :{queryContent}
+      <br />
       {channelContent}
     </div>
   );

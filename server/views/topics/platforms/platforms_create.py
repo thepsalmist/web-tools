@@ -21,9 +21,9 @@ WEB_SEED_QUERY_PLACEHOLDER = {'platform': PLATFORM_OPEN_WEB, 'source': WEB_SEED_
 def get_topic_platforms(topics_id):
     user_mc = user_mediacloud_client()
     available_platforms = [
+        {'platform': PLATFORM_TWITTER, 'source': CRIMSON_HEXAGON_SOURCE, 'query': '', 'topic_seed_queries_id': -1},
         {'platform': PLATFORM_REDDIT, 'source': PUSHSHIFT_SOURCE, 'query': '', 'topic_seed_queries_id': -1},
         {'platform': PLATFORM_TWITTER, 'source': PUSHSHIFT_SOURCE, 'query': '', 'topic_seed_queries_id': -1},
-        {'platform': PLATFORM_TWITTER, 'source': CRIMSON_HEXAGON_SOURCE, 'query': '', 'topic_seed_queries_id': -1},
         {'platform': PLATFORM_FACEBOOK, 'source': CROWD_TANGLE_SOURCE, 'query': '', 'topic_seed_queries_id': -1},
     ]
     topic = user_mc.topic(topics_id)

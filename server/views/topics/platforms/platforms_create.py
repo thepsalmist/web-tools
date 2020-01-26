@@ -28,8 +28,8 @@ def get_topic_platforms(topics_id):
     ]
     topic = user_mc.topic(topics_id)
     # and add in the open web query, which isn't stored in topic_seed_queries for historical reasons :-(
-    if topic['solr_seed_query'] not in [None, '']:
-        web_seed_query = _platform_for_web_seed_query(topic)
+    if topic_has_seed_query(topic):
+        web_seed_query = platform_for_web_seed_query(topic)
     else:
         web_seed_query = WEB_SEED_QUERY_PLACEHOLDER
     available_platforms.insert(0, web_seed_query)  # important to have this one at start of list
@@ -112,10 +112,28 @@ def topic_remove_platform(topics_id, platform_id):
     return jsonify(result)
 
 
-def _platform_for_web_seed_query(object_with_query):
+def platform_for_web_seed_query(object_with_query):
+    # parse out pieces
+    if 'solr_seed_query' in object_with_query:
+        seed_query = object_with_query['solr_seed_query']
+    else:
+        seed_query = object_with_query['topic']['solr_seed_query']
+    if 'media' in object_with_query:
+        media = object_with_query['media']
+    else:
+        media = object_with_query['topic_media']
+    if 'media_tags' in object_with_query:
+        collection = object_with_query['media_tags']
+    else:
+        collection = object_with_query['topic_media_tags']
     web_seed_query = {'platform': PLATFORM_OPEN_WEB,
                       'source': WEB_SEED_QUERY_SOURCE,
-                      'query': object_with_query['solr_seed_query'],
-                      'media': object_with_query['media_tags'],
+                      'query': seed_query,
+                      'media': media,
+                      'media_tags': collection,
                       'topic_seed_queries_id': 1}
     return web_seed_query
+
+
+def topic_has_seed_query(topic):
+    return topic['solr_seed_query'] not in [None, ''];

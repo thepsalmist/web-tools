@@ -33,7 +33,7 @@ def _topic_seed_story_count(topic):
             fq=concatenate_solr_dates(start_date=topic['start_date'], end_date=topic['end_date'])
         )['count']
     except mediacloud.error.MCException:
-        # the query syntax is wrong (perhaps pre-story-level search
+        # the query syntax is wrong (perhaps pre-story-level search)
         seed_query_count = None
     return seed_query_count
 
@@ -42,7 +42,6 @@ def _topic_seed_story_count(topic):
 @api_error_handler
 def topic_summary(topics_id):
     topic = _topic_summary(topics_id)
-    topic['seed_query_story_count'] = _topic_seed_story_count(topic)
     return jsonify(topic)
 
 
@@ -116,16 +115,6 @@ def _topic_summary(topics_id):
     if is_user_logged_in():
         add_user_favorite_flag_to_topics([topic])
     return topic
-
-
-@app.route('/api/topics/<topics_id>/snapshots/list', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def topic_snapshots_list(topics_id):
-    user_mc = user_mediacloud_client()
-    topic = user_mc.topic(topics_id)
-    snapshots = _topic_snapshot_list(topic)
-    return jsonify(snapshots)
 
 
 @app.route('/api/topics/<topics_id>/snapshots/<snapshots_id>/timespans/list', methods=['GET'])

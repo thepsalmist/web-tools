@@ -20,8 +20,7 @@ const PlatformDetailsInfo = ({ platform }) => {
           <code>{platform.query}</code>
           <br />
           <FormattedMessage {...messages.topicSourceCollectionsProp} />: &nbsp;
-          {platform.media_tags && platform.media_tags.map(t => <OpenWebMediaItem justText key={t.tags_id} object={t} />)}
-          {platform.media && platform.media.map(m => <OpenWebMediaItem justText key={m.media_id} object={m} />)}
+          {platform.media && platform.media.map(m => <OpenWebMediaItem justText key={m.media_id || m.tags_id} object={m} />)}
         </>
       );
       break;

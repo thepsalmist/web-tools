@@ -133,7 +133,7 @@ def _parse_query_dates():
 
 def parse_open_web_media_from_channel(channel):
     media = json.loads(channel)
-    sources = media['sources[]'] if 'sources[]' in media and not [None, ''] else ''
+    sources = media['sources[]'] if 'sources[]' in media and 'sources' not in [None, ''] else ''
     collections = media['collections[]'] if 'collections[]' in media else ''
     return sources, collections
 

@@ -75,7 +75,7 @@ class PlatformFormContainer extends React.Component {
             </Col>
           </Row>
           <FormRenderer
-            initialValues={initialValues}
+            initialValues={{ ...initialValues, ...currentPlatform, media: currentPlatform.channel }}
             onEnterKey={this.handleEnterKeyDown}
             onFormChange={change}
           />
@@ -139,8 +139,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 const reduxFormConfig = {
   form: 'platform', // make sure this matches the sub-components and other wizard steps
   destroyOnUnmount: false, // <------ preserve form data
-  forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
   enableReinitialize: true,
+  keepDirtyOnReinitialize: true,
 };
 
 export default

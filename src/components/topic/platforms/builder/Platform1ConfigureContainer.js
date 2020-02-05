@@ -5,9 +5,10 @@ import { connect } from 'react-redux';
 import PlatformFormContainer from './PlatformFormContainer';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
 
-const Platform1ConfigureContainer = ({ topicId, initialValues, handleNextStep, selectedPlatform, location }) => (
+const Platform1ConfigureContainer = ({ topicId, topicInfo, initialValues, handleNextStep, selectedPlatform, location }) => (
   <PlatformFormContainer
     topicId={topicId}
+    topicInfo={topicInfo}
     // onPreviousStep={handlePreviousStep}
     onNextStep={handleNextStep}
     location={location}

@@ -43,12 +43,12 @@ const EditOpenWebForm = ({ initialValues, renderSolrTextField, intl, onFormChang
             fieldName="media"
             initialValues={{
               ...initialValues,
-              media: initialValues.media.concat(initialValues.media_tags),
+              media: initialValues.media,
             }} // to and from MediaPicker
             allowRemoval
           />
           <MediaPickerDialog
-            initMedia={initialValues.media_tags} // {selected.media ? selected.media : cleanedInitialValues.media}
+            initMedia={initialValues.media} // {selected.media ? selected.media : cleanedInitialValues.media}
             onConfirmSelection={selections => onFormChange('media', selections)}
           />
         </div>

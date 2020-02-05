@@ -45,9 +45,11 @@ class PlatformFormContainer extends React.Component {
   render() {
     const { initialValues, handleSubmit, finishStep, currentPlatform, change /* redux form helper */ } = this.props;
     let FormRenderer;
+    let initValues = initialValues;
     switch (currentPlatform.platform) {
       case PLATFORM_OPEN_WEB:
         FormRenderer = EditOpenWebForm;
+        initValues = { ...initialValues, ...currentPlatform, media: currentPlatform.channel ? currentPlatform.channel : initialValues.media.concat(initialValues.media_tags) }
         break;
       case PLATFORM_REDDIT:
         FormRenderer = EditRedditForm;
@@ -75,7 +77,7 @@ class PlatformFormContainer extends React.Component {
             </Col>
           </Row>
           <FormRenderer
-            initialValues={{ ...initialValues, ...currentPlatform, media: currentPlatform.channel }}
+            initialValues={initValues}
             onEnterKey={this.handleEnterKeyDown}
             onFormChange={change}
           />

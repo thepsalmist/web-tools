@@ -41,10 +41,7 @@ const EditOpenWebForm = ({ initialValues, renderSolrTextField, intl, onFormChang
             keepDirtyOnReinitialize
             destroyOnUnmount={false}
             fieldName="media"
-            initialValues={{
-              ...initialValues,
-              media: initialValues.media,
-            }} // to and from MediaPicker
+            initialValues={initialValues} // to and from MediaPicker
             allowRemoval
           />
           <MediaPickerDialog

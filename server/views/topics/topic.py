@@ -29,8 +29,8 @@ def _topic_seed_story_count(topic):
         seed_query_count = shared_apicache.story_count(
             api_key,
             q=concatenate_query_for_solr(solr_seed_query=topic['solr_seed_query'],
-                                         media_ids=[m['media_id'] for m in topic['media']],
-                                         tags_ids=[t['tags_id'] for t in topic['media_tags']]),
+                                         media_ids=[m['media_id'] for m in topic['media'] if 'media_id' in m],
+                                         tags_ids=[t['tags_id'] for t in topic['media_tags'] if 'tags_id' in t]),
             fq=concatenate_solr_dates(start_date=topic['start_date'], end_date=topic['end_date'])
         )['count']
     except mediacloud.error.MCException:
@@ -96,6 +96,7 @@ def _topic_snapshot_list(topic):
             platforms.append(p)
         else:
             if topic_has_seed_query(topic):
+
                 p = platform_for_web_seed_query(topic)
                 platforms.append(p)
         s['platform_seed_queries'] = platforms

@@ -43,7 +43,7 @@ const EditOpenWebForm = ({ initialValues, renderSolrTextField, intl, onFormChang
             fieldName="media"
             initialValues={{
               ...initialValues,
-              media: initialValues.media_tags,
+              media: initialValues.media.concat(initialValues.media_tags),
             }} // to and from MediaPicker
             allowRemoval
           />

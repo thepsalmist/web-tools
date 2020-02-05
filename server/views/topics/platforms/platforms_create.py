@@ -118,19 +118,21 @@ def platform_for_web_seed_query(object_with_query):
         seed_query = object_with_query['solr_seed_query']
     else:
         seed_query = object_with_query['topic']['solr_seed_query']
+    sources = []
+    collections = []
     if 'media' in object_with_query:
-        media = object_with_query['media']
+        sources = object_with_query['media'].copy()
     else:
-        media = object_with_query['topic_media']
+        sources = object_with_query['topic_media'].copy()
     if 'media_tags' in object_with_query:
-        collection = object_with_query['media_tags']
+        collections = object_with_query['media_tags'].copy()
     else:
-        collection = object_with_query['topic_media_tags']
+        collections = object_with_query['topic_media_tags'].copy()
+    sources += collections
     web_seed_query = {'platform': PLATFORM_OPEN_WEB,
                       'source': WEB_SEED_QUERY_SOURCE,
                       'query': seed_query,
-                      'media': media,
-                      'media_tags': collection,
+                      'channel': sources,
                       'topic_seed_queries_id': 1}
     return web_seed_query
 

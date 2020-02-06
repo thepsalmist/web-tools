@@ -17,7 +17,7 @@ const PlatformDetailsInfo = ({ platform }) => {
         <>
           <FormattedMessage {...messages.topicQueryProp} />:
           &nbsp;
-          <code>{platform.query}</code>
+          <code>{typeof platform.query === 'object' ? platform.query.getValue() : platform.query}</code>
           <br />
           <FormattedMessage {...messages.topicSourceCollectionsProp} />: &nbsp;
           {platform.channel && platform.channel.map(m => <OpenWebMediaItem justText key={m.media_id || m.tags_id} object={m} />)}

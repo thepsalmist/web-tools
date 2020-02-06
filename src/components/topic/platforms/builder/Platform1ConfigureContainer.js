@@ -4,17 +4,25 @@ import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import PlatformFormContainer from './PlatformFormContainer';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
+import { PLATFORM_OPEN_WEB } from '../../../../lib/platformTypes';
 
-const Platform1ConfigureContainer = ({ topicId, topicInfo, initialValues, handleNextStep, selectedPlatform, location }) => (
-  <PlatformFormContainer
-    topicId={topicId}
-    topicInfo={topicInfo}
-    // onPreviousStep={handlePreviousStep}
-    onNextStep={handleNextStep}
-    location={location}
-    initialValues={{ ...initialValues, ...selectedPlatform }}
-  />
-);
+const Platform1ConfigureContainer = ({ topicId, topicInfo, initialValues, handleNextStep, selectedPlatform, location }) => {
+  let initValues = { ...initialValues, ...selectedPlatform };
+  if (selectedPlatform.platform === PLATFORM_OPEN_WEB) {
+    initValues = { ...initialValues, media: selectedPlatform.channel ? selectedPlatform.channel : (initialValues.media.concat(initialValues.media_tags)) };
+  }
+
+  return (
+    <PlatformFormContainer
+      topicId={topicId}
+      topicInfo={topicInfo}
+      // onPreviousStep={handlePreviousStep}
+      onNextStep={handleNextStep}
+      location={location}
+      initialValues={initValues}
+    />
+  );
+};
 
 Platform1ConfigureContainer.propTypes = {
   // from parent

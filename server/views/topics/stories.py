@@ -117,7 +117,7 @@ def topic_stories_csv(topics_id):
     include_fb_date = (request.args['fbData'] == '1') if 'fbData' in request.args else False
     return stream_story_list_csv(user_mediacloud_key(), "stories", topic,
                                  story_limit=story_limit, reddit_submissions=reddit_submissions,
-                                 story_tags=story_tags, include_fb_date=include_fb_date,
+                                 story_tags=story_tags, fb_data=include_fb_date,
                                  media_metadata=media_metadata)
 
 

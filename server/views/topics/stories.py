@@ -333,7 +333,8 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
         # build a media lookup table in parallel so it is faster
         if include_media_metadata:
             with concurrent.futures.ProcessPoolExecutor() as executor:
-                jobs = [{'user_key': user_key, 'media_id': s['media_id']} for s in story_page['stories']]
+                media_ids = set([s['media_id'] for s in story_page['stories']])
+                jobs = [{'user_key': user_key, 'media_id': mid} for mid in media_ids]
                 job_results = executor.map(_media_info_worker, jobs)  # blocks until they are all done
                 media_lookup = {j['media_id']: j for j in job_results}
 

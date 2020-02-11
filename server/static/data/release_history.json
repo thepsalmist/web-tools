@@ -1,6 +1,22 @@
 {
   "releases": [
     {
+      "date": "2020-02-11",
+      "version": "v3.13.6",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "New",
+          "note": "Initial podcast support as feed type"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic top story for fb and all media correctly downloads."
+        }
+      ]
+    },
+    {
       "date": "2020-01-24",
       "version": "v3.13.5",
       "notes": [

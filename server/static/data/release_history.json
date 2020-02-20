@@ -1,6 +1,16 @@
 {
   "releases": [
     {
+      "date": "2020-02-20",
+      "version": "v3.13.7",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Searching by All Media (not advised) and downloading stories now works"
+        }
+      ]
+    },{
       "date": "2020-02-11",
       "version": "v3.13.6",
       "notes": [

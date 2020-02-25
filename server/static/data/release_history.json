@@ -5,7 +5,7 @@
       "version": "v3.13.8",
       "notes": [
         {
-          "apps": [ "explorer" ],
+          "apps": [ "explorer", "topics", "sources" ],
           "type": "Fix",
           "note": "Plumbing work on cache-related problems"
         }

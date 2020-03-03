@@ -186,14 +186,16 @@ def topic_word_counts(user_mc_key, topics_id, **kwargs):
     word_data = cached_topic_word_counts(user_mc_key, topics_id, **merged_args)
     words = [w['term'] for w in word_data]
     # and now add in word2vec model position data
-    google_word2vec_data = _cached_word2vec_google_2d_results(words)
-    for i in range(len(google_word2vec_data)):
-        word_data[i]['google_w2v_x'] = google_word2vec_data[i]['x']
-        word_data[i]['google_w2v_y'] = google_word2vec_data[i]['y']
-    topic_word2vec_data = _word2vec_topic_2d_results(topics_id, snapshots_id, words)
-    for i in range(len(topic_word2vec_data)):
-        word_data[i]['w2v_x'] = topic_word2vec_data[i]['x']
-        word_data[i]['w2v_y'] = topic_word2vec_data[i]['y']
+    if len(words) > 0:
+        google_word2vec_data = _cached_word2vec_google_2d_results(words)
+        for i in range(len(google_word2vec_data)):
+            word_data[i]['google_w2v_x'] = google_word2vec_data[i]['x']
+            word_data[i]['google_w2v_y'] = google_word2vec_data[i]['y']
+        topic_word2vec_data = _word2vec_topic_2d_results(topics_id, snapshots_id, words)
+        for i in range(len(topic_word2vec_data)):
+            word_data[i]['w2v_x'] = topic_word2vec_data[i]['x']
+            word_data[i]['w2v_y'] = topic_word2vec_data[i]['y']
+
     return word_data
 
 

@@ -3,7 +3,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import withSampleSize from '../../common/composers/SampleSize';
+import withSampleSize from '../../common/hocs/SampleSize';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import { fetchTopicTopWords } from '../../../actions/topicActions';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';

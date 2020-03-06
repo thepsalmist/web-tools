@@ -4,7 +4,7 @@ import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import slugify from 'slugify';
-import withSampleSize from '../../common/composers/SampleSize';
+import withSampleSize from '../../common/hocs/SampleSize';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import { fetchTopicTopWords } from '../../../actions/topicActions';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';

@@ -9,7 +9,7 @@ import withIntlForm from '../../../common/hocs/IntlForm';
 import messages from '../../../../resources/messages';
 import PlatformPreview from './preview/PlatformPreview';
 import { platformChannelDataFormatter } from '../../../util/topicUtil';
-import { PLATFORM_OPEN_WEB, PLATFORM_TWITTER, PLATFORM_REDDIT } from '../../../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB, PLATFORM_TWITTER, PLATFORM_REDDIT, MEDIA_CLOUD_SOURCE } from '../../../../lib/platformTypes';
 import EditOpenWebForm from './forms/EditOpenWebForm';
 import EditQueryForm from './forms/EditQueryForm';
 import EditRedditForm from './forms/EditRedditForm';
@@ -47,15 +47,21 @@ class PlatformFormContainer extends React.Component {
     let FormRenderer;
     switch (currentPlatform.platform) {
       case PLATFORM_OPEN_WEB:
-        FormRenderer = EditOpenWebForm;
+        switch (currentPlatform.source) {
+          case MEDIA_CLOUD_SOURCE:
+            FormRenderer = EditOpenWebForm;
+            break;
+          default:
+            FormRenderer = EditQueryForm;
+            break;
+        }
         break;
       case PLATFORM_REDDIT:
         FormRenderer = EditRedditForm;
         break;
       case PLATFORM_TWITTER:
-        FormRenderer = EditQueryForm;
-        break;
       default:
+        FormRenderer = EditQueryForm;
         break;
     }
     return (

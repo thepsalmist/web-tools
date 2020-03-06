@@ -11,7 +11,8 @@ import server.util.pushshift.reddit as ps_reddit
 import server.util.pushshift.twitter as ps_twitter
 import server.views.apicache as base_apicache
 from server.views.topics import concatenate_solr_dates, concatenate_query_for_solr
-from server.views.topics.platforms import PLATFORM_OPEN_WEB, PLATFORM_TWITTER, PLATFORM_REDDIT, PLATFORM_SOURCE_PUSHSHIFT
+from server.views.topics.platforms import PLATFORM_OPEN_WEB, PLATFORM_TWITTER, PLATFORM_REDDIT, \
+    PLATFORM_SOURCE_PUSHSHIFT, PLATFORM_SOURCE_MEDIA_CLOUD
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +35,7 @@ def api_topics_platform_preview_story_sample(topics_id):
         if platform_source == PLATFORM_SOURCE_PUSHSHIFT:
             story_list = ps_twitter.matching_tweets(query=platform_query,
                                                     start_date=start_date, end_date=end_date)
-    elif platform == PLATFORM_OPEN_WEB:
+    elif platform == PLATFORM_OPEN_WEB and platform_source == PLATFORM_SOURCE_MEDIA_CLOUD:
         solr_query, fq = _parse_channel_as_open_web()
         story_list = base_apicache.story_list(user_mediacloud_key(), solr_query, fq)
 
@@ -59,7 +60,7 @@ def api_topics_platform_preview_total_content(topics_id):
         if platform_source == PLATFORM_SOURCE_PUSHSHIFT:
             story_count_result = {'count': ps_twitter.tweet_count(query=platform_query, start_date=start_date,
                                                                   end_date=end_date)}
-    elif platform == PLATFORM_OPEN_WEB:
+    elif platform == PLATFORM_OPEN_WEB and platform_source == PLATFORM_SOURCE_MEDIA_CLOUD:
         solr_query, fq = _parse_channel_as_open_web()
         story_count_result = base_apicache.story_count(user_mediacloud_key(), solr_query, fq)
     return jsonify(story_count_result)
@@ -82,7 +83,7 @@ def api_topics_platform_preview_split_story_count(topics_id):
     elif platform == PLATFORM_TWITTER:
         if platform_source == PLATFORM_SOURCE_PUSHSHIFT:
             results = ps_twitter.tweet_split_count(query=platform_query, start_date=start_date, end_date=end_date)
-    elif platform == PLATFORM_OPEN_WEB:
+    elif platform == PLATFORM_OPEN_WEB and platform_source == PLATFORM_SOURCE_MEDIA_CLOUD:
         solr_query, fq = _parse_channel_as_open_web()
         results = base_apicache.story_count(user_mediacloud_key(), solr_query, fq, split=True)
     # sum the total for display
@@ -101,10 +102,10 @@ def api_topics_platform_preview_split_story_count(topics_id):
 def api_topics_platform_preview_top_words(topics_id, **kwargs):
     platform = request.args['platform_type']
     # platform_query = request.args['platform_query']
-    # platform_source = request.args['platform_source']
+    platform_source = request.args['platform_source']
     # start_date, end_date = _parse_query_dates()
     results = []
-    if platform == PLATFORM_OPEN_WEB:
+    if platform == PLATFORM_OPEN_WEB and platform_source == PLATFORM_SOURCE_MEDIA_CLOUD:
         solr_query, fq = _parse_channel_as_open_web()
         results = base_apicache.word_count(user_mediacloud_key(), solr_query, fq)[:100]
     return jsonify({'results': results})

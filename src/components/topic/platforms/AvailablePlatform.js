@@ -26,12 +26,12 @@ const localMessages = {
   'google-name': { id: 'mediaCloud.name', defaultMessage: 'via Google' },
   'csv-name': { id: 'mediaCloud.name', defaultMessage: 'via CSV upload' },
   // combos
-  'reddit.pushshift-about': { id: 'rd.ps.about', defaultMessage: 'Discover links shared on the historical Reddit archive hosted by PushShift.io. Specify keywords and subreddits to focus on. Any submissions matching the keywords in the specified subreddits will be checked for links. Any links found will be add into the topic, and queued up for spidering.' },
-  'twitter.pushshift-about': { id: 'tw.ps.about', defaultMessage: 'Discover links shared by validated Twitter accounts since mid 2019 in the archive hosted by PushShift.io. Specify keywords to focus on. Any tweets matching the keywords will be checked for links. Any links found will be add into the topic, and queued up for spidering.' },
-  'twitter.crimson_hexagon-about': { id: 'tw.ch.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in tweets from a Crimson Hexagon Monitor you have already created. <b>You need to enter the id of that monitor.</b> Any tweets matching the keywords will be checked for links. Any links found will be add into the topic, and queued up for spidering.' },
-  'facebook.crowd_tangle-about': { id: 'fb.ct.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in Facebook posts via Crowd Tangle. Specify keywords to match. Any posts from large public groups matching the keywords will be checked for links. Any links found will be add into the topic, and queued up for spidering.' },
-  'web.mediacloud-about': { id: 'web.mediaCloud.about', defaultMessage: 'Find matching stories in the Media Cloud archive. Specify media sources or collections. Any news matching those keywords from those sources will be added into the topic, and queued up for spidering.' },
-  'web.google-about': { id: 'web.google.about', defaultMessage: 'Find top matching news stories in Google search for your time period. Any news stories in the first few pages of Google search results on each day matching your keywords will be added into the topic, and queued up for spidering.' },
+  'reddit.pushshift-about': { id: 'rd.ps.about', defaultMessage: 'Discover links shared on the historical Reddit archive hosted by PushShift.io. Specify keywords and subreddits to focus on. Any submissions matching the keywords in the specified subreddits will be checked for links. Any links found will be added into the topic.' },
+  'twitter.pushshift-about': { id: 'tw.ps.about', defaultMessage: 'Discover links shared by validated Twitter accounts since mid 2019 in the archive hosted by PushShift.io. Specify keywords to focus on. Any tweets matching the keywords will be checked for links. Any links found will be add into the topic.' },
+  'twitter.crimson_hexagon-about': { id: 'tw.ch.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in tweets from a Crimson Hexagon Monitor you have already created. <b>You need to enter the id of that monitor.</b> Any tweets matching the keywords will be checked for links. Any links found will be add into the topic' },
+  'facebook.crowd_tangle-about': { id: 'fb.ct.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in Facebook posts via Crowd Tangle. Specify keywords to match. Any posts from large public groups matching the keywords will be checked for links. Any links found will be add into the topic' },
+  'web.mediacloud-about': { id: 'web.mediaCloud.about', defaultMessage: 'Find matching stories in the Media Cloud archive. Specify media sources or collections. Any news matching those keywords from those sources will be added into the topic.' },
+  'web.google-about': { id: 'web.google.about', defaultMessage: 'Find top matching news stories in Google search for your time period. Any news stories in the first few pages of Google search results on each day matching your keywords will be added into the topic' },
   'generic_post.csv-about': { id: 'generic_post.csv.about', defaultMessage: 'Find links shared in content you upload in a CSV file. This is helpful if you have some content you want to start with that you\'ve acquired outside out system.' },
 };
 
@@ -47,7 +47,7 @@ export const platformIconUrl = (platform, source) => {
   if (platform === PLATFORM_TWITTER) return googleFavIconUrl('https://twitter.com');
   if (platform === PLATFORM_GENERIC) return googleFavIconUrl('https://dictionary.com'); // just an icon i picked
   if ((platform === PLATFORM_OPEN_WEB) && (source === GOOGLE_SOURCE)) return googleFavIconUrl('https://google.com');
-  return googleFavIconUrl('https://mediacloud.org.com');
+  return googleFavIconUrl('https://mediacloud.org');
 };
 
 const AvailablePlatform = ({ platform, onAdd, onEdit, onDelete }) => (

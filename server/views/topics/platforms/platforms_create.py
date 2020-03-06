@@ -8,13 +8,13 @@ from server.auth import user_mediacloud_client
 from server.util.request import form_fields_required
 import server.views.topics.apicache as apicache
 from server.views.topics.platforms.platforms_preview import parse_open_web_media_from_channel
-from server.views.topics.platforms import PLATFORM_OPEN_WEB, PLATFORM_SOURCE_MEDIA_COULD
+from server.views.topics.platforms import PLATFORM_OPEN_WEB, PLATFORM_SOURCE_MEDIA_CLOUD
 
 logger = logging.getLogger(__name__)
 
 WEB_SEED_QUERY_PLACEHOLDER_ID = -1
 WEB_SEED_QUERY_SOURCE = 'web_ui_shim'
-WEB_SEED_QUERY_PLACEHOLDER = {'platform': PLATFORM_OPEN_WEB, 'source': PLATFORM_SOURCE_MEDIA_COULD, 'query': '', 'topic_seed_queries_id': -1}
+WEB_SEED_QUERY_PLACEHOLDER = {'platform': PLATFORM_OPEN_WEB, 'source': PLATFORM_SOURCE_MEDIA_CLOUD, 'query': '', 'topic_seed_queries_id': -1}
 
 
 def _avaialble_platforms():
@@ -36,7 +36,7 @@ def get_topic_platforms(topics_id):
     # and add in the open web query, which isn't stored in topic_seed_queries for historical reasons :-(
     if topic_has_seed_query(topic):
         for item in available_platforms:
-            if (item['platform'] == PLATFORM_OPEN_WEB) and (item['source'] == PLATFORM_SOURCE_MEDIA_COULD):
+            if (item['platform'] == PLATFORM_OPEN_WEB) and (item['source'] == PLATFORM_SOURCE_MEDIA_CLOUD):
                 item['query'] = platform_for_web_seed_query(topic)
                 break
     # now fill in with any seed queries that have been created

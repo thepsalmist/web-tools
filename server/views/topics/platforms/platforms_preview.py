@@ -11,7 +11,7 @@ import server.util.pushshift.reddit as ps_reddit
 import server.util.pushshift.twitter as ps_twitter
 import server.views.apicache as base_apicache
 from server.views.topics import concatenate_solr_dates, concatenate_query_for_solr
-from server.views.topics.platforms import PLATFORM_OPEN_WEB, PLATFORM_TWITTER, PLATFORM_REDDIT, PUSHSHIFT_SOURCE
+from server.views.topics.platforms import PLATFORM_OPEN_WEB, PLATFORM_TWITTER, PLATFORM_REDDIT, PLATFORM_SOURCE_PUSHSHIFT
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ def api_topics_platform_preview_story_sample(topics_id):
                                                start_date=start_date, end_date=end_date,
                                                subreddits=_parse_channel_as_reddit_subs())
     elif platform == PLATFORM_TWITTER:
-        if platform_source == PUSHSHIFT_SOURCE:
+        if platform_source == PLATFORM_SOURCE_PUSHSHIFT:
             story_list = ps_twitter.matching_tweets(query=platform_query,
                                                     start_date=start_date, end_date=end_date)
     elif platform == PLATFORM_OPEN_WEB:
@@ -56,7 +56,7 @@ def api_topics_platform_preview_total_content(topics_id):
                                                                   start_date=start_date, end_date=end_date,
                                                                   subreddits=_parse_channel_as_reddit_subs())}
     elif platform == PLATFORM_TWITTER:
-        if platform_source == PUSHSHIFT_SOURCE:
+        if platform_source == PLATFORM_SOURCE_PUSHSHIFT:
             story_count_result = {'count': ps_twitter.tweet_count(query=platform_query, start_date=start_date,
                                                                   end_date=end_date)}
     elif platform == PLATFORM_OPEN_WEB:
@@ -80,7 +80,7 @@ def api_topics_platform_preview_split_story_count(topics_id):
                                                                         start_date=start_date, end_date=end_date,
                                                                         subreddits=_parse_channel_as_reddit_subs())
     elif platform == PLATFORM_TWITTER:
-        if platform_source == PUSHSHIFT_SOURCE:
+        if platform_source == PLATFORM_SOURCE_PUSHSHIFT:
             results = ps_twitter.tweet_split_count(query=platform_query, start_date=start_date, end_date=end_date)
     elif platform == PLATFORM_OPEN_WEB:
         solr_query, fq = _parse_channel_as_open_web()

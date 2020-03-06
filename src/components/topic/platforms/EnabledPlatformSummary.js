@@ -7,7 +7,7 @@ import PlatformDetailsInfo from './PlatformDetailsInfo';
 const EnabledPlatformSummary = ({ platform }) => (
   <div className="platform-summary">
     <b>
-      <img src={platformIconUrl(platform.platform)} alt={platform.platform} />
+      <img src={platformIconUrl(platform.platform, platform.source)} alt={platform.platform} />
       <FormattedHTMLMessage {...platformNameMessage(platform.platform, platform.source)} />
       &nbsp;
       (<FormattedHTMLMessage {...sourceNameMessage(platform.source)} />)

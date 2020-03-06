@@ -1,38 +1,44 @@
 import logging
 from flask import jsonify, request
 import flask_login
+
 from server import app
 from server.util.request import api_error_handler
 from server.auth import user_mediacloud_client
 from server.util.request import form_fields_required
+import server.views.topics.apicache as apicache
 from server.views.topics.platforms.platforms_preview import parse_open_web_media_from_channel
-from server.views.topics.platforms import PLATFORM_OPEN_WEB, PLATFORM_TWITTER, PLATFORM_REDDIT, PLATFORM_FACEBOOK,\
-    PUSHSHIFT_SOURCE, CRIMSON_HEXAGON_SOURCE, CROWD_TANGLE_SOURCE
+from server.views.topics.platforms import PLATFORM_OPEN_WEB, PLATFORM_SOURCE_MEDIA_COULD
 
 logger = logging.getLogger(__name__)
 
 WEB_SEED_QUERY_PLACEHOLDER_ID = -1
 WEB_SEED_QUERY_SOURCE = 'web_ui_shim'
-WEB_SEED_QUERY_PLACEHOLDER = {'platform': PLATFORM_OPEN_WEB, 'source': WEB_SEED_QUERY_SOURCE, 'query': '', 'topic_seed_queries_id': -1}
+WEB_SEED_QUERY_PLACEHOLDER = {'platform': PLATFORM_OPEN_WEB, 'source': PLATFORM_SOURCE_MEDIA_COULD, 'query': '', 'topic_seed_queries_id': -1}
+
+
+def _avaialble_platforms():
+    info = apicache.topic_platform_info()
+    return [{
+        'platform': i['platform_name'],
+        'source': i['source_name'],
+        'query': '',
+        'topic_seed_queries_id': -1,
+    } for i in info['info']['topic_platforms_sources_map']]
 
 
 @app.route('/api/topics/<topics_id>/platforms/list', methods=['GET'])
 @flask_login.login_required
 def get_topic_platforms(topics_id):
     user_mc = user_mediacloud_client()
-    available_platforms = [
-        {'platform': PLATFORM_TWITTER, 'source': CRIMSON_HEXAGON_SOURCE, 'query': '', 'topic_seed_queries_id': -1},
-        {'platform': PLATFORM_REDDIT, 'source': PUSHSHIFT_SOURCE, 'query': '', 'topic_seed_queries_id': -1},
-        {'platform': PLATFORM_TWITTER, 'source': PUSHSHIFT_SOURCE, 'query': '', 'topic_seed_queries_id': -1},
-        {'platform': PLATFORM_FACEBOOK, 'source': CROWD_TANGLE_SOURCE, 'query': '', 'topic_seed_queries_id': -1},
-    ]
+    available_platforms = _avaialble_platforms()
     topic = user_mc.topic(topics_id)
     # and add in the open web query, which isn't stored in topic_seed_queries for historical reasons :-(
     if topic_has_seed_query(topic):
-        web_seed_query = platform_for_web_seed_query(topic)
-    else:
-        web_seed_query = WEB_SEED_QUERY_PLACEHOLDER
-    available_platforms.insert(0, web_seed_query)  # important to have this one at start of list
+        for item in available_platforms:
+            if (item['platform'] == PLATFORM_OPEN_WEB) and (item['source'] == PLATFORM_SOURCE_MEDIA_COULD):
+                item['query'] = platform_for_web_seed_query(topic)
+                break
     # now fill in with any seed queries that have been created
     for seed_query in topic['topic_seed_queries']:
         match = [p for p in available_platforms if (p['platform'] == seed_query['platform'])
@@ -59,7 +65,7 @@ def topic_add_platform(topics_id):
         sources, collections = parse_open_web_media_from_channel(channel)
         user_mc.topicUpdate(topics_id, media_ids=sources, media_tags_ids=collections, solr_seed_query=query)
         result['success'] = 1
-        result['id'] = 1 #web_shim_ui
+        result['id'] = 1  # web/mediacloud
     else:
         # TODO do we need to add dates?
         # TODO format channel properly for reddit (subreddit)

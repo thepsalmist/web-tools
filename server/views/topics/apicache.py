@@ -467,3 +467,9 @@ def is_timespans_match(timespan1, timespan2):
             and (timespan1['end_date'] == timespan2['end_date']) \
             and (timespan1['period'] == timespan2['period'])
     return match
+
+
+@cache.cache_on_arguments()
+def topic_platform_info():
+    # this is system-wide info so cache it globally
+    return mc.topicInfo()

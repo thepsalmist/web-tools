@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import OpenWebMediaItem from '../../common/OpenWebMediaItem';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER, CRIMSON_HEXAGON_SOURCE } from '../../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER, CRIMSON_HEXAGON_SOURCE, MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
 import messages from '../../../resources/messages';
 
 const localMessages = {
@@ -13,16 +13,18 @@ const PlatformDetailsInfo = ({ platform }) => {
   let content = null;
   switch (platform.platform) {
     case PLATFORM_OPEN_WEB:
-      content = (
-        <>
-          <FormattedMessage {...messages.topicQueryProp} />:
-          &nbsp;
-          <code>{typeof platform.query === 'object' ? platform.query.getValue() : platform.query}</code>
-          <br />
-          <FormattedMessage {...messages.topicSourceCollectionsProp} />: &nbsp;
-          {platform.channel && platform.channel.map(m => <OpenWebMediaItem justText key={m.media_id || m.tags_id} object={m} />)}
-        </>
-      );
+      if (platform.source === MEDIA_CLOUD_SOURCE) {
+        content = (
+          <>
+            <FormattedMessage {...messages.topicQueryProp} />:
+            &nbsp;
+            <code>{typeof platform.query === 'object' ? platform.query.getValue() : platform.query}</code>
+            <br />
+            <FormattedMessage {...messages.topicSourceCollectionsProp} />: &nbsp;
+            {platform.channel && platform.channel.map(m => <OpenWebMediaItem justText key={m.media_id || m.tags_id} object={m} />)}
+          </>
+        );
+      }
       break;
     case PLATFORM_REDDIT:
       content = (

@@ -12,10 +12,6 @@ from server.views.topics.platforms import PLATFORM_OPEN_WEB, PLATFORM_SOURCE_MED
 
 logger = logging.getLogger(__name__)
 
-WEB_SEED_QUERY_PLACEHOLDER_ID = -1
-WEB_SEED_QUERY_SOURCE = 'web_ui_shim'
-WEB_SEED_QUERY_PLACEHOLDER = {'platform': PLATFORM_OPEN_WEB, 'source': PLATFORM_SOURCE_MEDIA_CLOUD, 'query': '', 'topic_seed_queries_id': -1}
-
 
 def _avaialble_platforms():
     info = apicache.topic_platform_info()
@@ -37,7 +33,9 @@ def get_topic_platforms(topics_id):
     if topic_has_seed_query(topic):
         for item in available_platforms:
             if (item['platform'] == PLATFORM_OPEN_WEB) and (item['source'] == PLATFORM_SOURCE_MEDIA_CLOUD):
-                item['query'] = platform_for_web_seed_query(topic)
+                real_web_query = platform_for_web_seed_query(topic)
+                for key in real_web_query:
+                    item[key] = real_web_query[key]
                 break
     # now fill in with any seed queries that have been created
     for seed_query in topic['topic_seed_queries']:
@@ -136,7 +134,7 @@ def platform_for_web_seed_query(object_with_query):
         collections = object_with_query['topic_media_tags'].copy()
     sources += collections
     web_seed_query = {'platform': PLATFORM_OPEN_WEB,
-                      'source': WEB_SEED_QUERY_SOURCE,
+                      'source': PLATFORM_SOURCE_MEDIA_CLOUD,
                       'query': seed_query,
                       'channel': sources,
                       'topic_seed_queries_id': 1}

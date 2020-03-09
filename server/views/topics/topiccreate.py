@@ -4,77 +4,13 @@ import flask_login
 import mediacloud.error
 
 from server import app, mc
-import server.views.apicache as base_apicache
-from server.auth import user_mediacloud_client, user_mediacloud_key
+from server.auth import user_mediacloud_client
 from server.util.request import form_fields_required, api_error_handler, json_error_response, arguments_required
-from server.util.stringutil import ids_from_comma_separated_str
-from server.util.tags import US_COLLECTIONS
-from server.views.topics import concatenate_solr_dates
-from server.views.media_picker import concatenate_query_for_solr, custom_collection_as_solr_query
-from server.views.topics.foci.retweetpartisanship import add_retweet_partisanship_to_topic
+
 from server.views.topics.topic import topic_summary
 
 logger = logging.getLogger(__name__)
 VERSION_1 = 1
-
-
-def _topic_query_from_request():
-    # helper to centralize parsing of request params in any create preview widgets
-    q = concatenate_query_for_solr(solr_seed_query=request.form['q'],
-                                   media_ids=ids_from_comma_separated_str(request.form['sources[]'])
-                                   if 'sources[]' in request.form else None,
-                                   tags_ids=ids_from_comma_separated_str(request.form['collections[]'])
-                                   if 'collections[]' in request.form else None,
-                                   custom_ids=request.form['searches[]'])
-    fq = concatenate_solr_dates(start_date=request.form['start_date'],
-                                end_date=request.form['end_date'])
-    return q, fq
-
-
-@app.route('/api/topics/create/preview/split-story/count', methods=['POST'])
-@flask_login.login_required
-@form_fields_required('q')
-@api_error_handler
-def api_topics_preview_split_story_count():
-    solr_query, fq = _topic_query_from_request()
-    results = base_apicache.story_count(user_mediacloud_key(), solr_query, fq, split=True)
-    total_stories = 0
-    for c in results['counts']:
-        total_stories += c['count']
-    results['total_story_count'] = total_stories
-    return jsonify({'results': results})
-
-
-@app.route('/api/topics/create/preview/story/count', methods=['POST'])
-@flask_login.login_required
-@form_fields_required('q')
-@api_error_handler
-def api_topics_preview_story_count():
-    solr_query, fq = _topic_query_from_request()
-    story_count_result = base_apicache.story_count(user_mediacloud_key(), solr_query, fq)
-    # maybe check admin role before we run this?
-    return jsonify(story_count_result)  # give them back new data, so they can update the client
-
-
-@app.route('/api/topics/create/preview/stories/sample', methods=['POST'])
-@flask_login.login_required
-@form_fields_required('q')
-@api_error_handler
-def api_topics_preview_story_sample():
-    solr_query, fq = _topic_query_from_request()
-    num_stories = request.form['rows']
-    story_count_result = base_apicache.story_list(user_mediacloud_key(), solr_query, fq, sort=mc.SORT_RANDOM, rows=num_stories)
-    return jsonify(story_count_result)
-
-
-@app.route('/api/topics/create/preview/words/count', methods=['POST'])
-@flask_login.login_required
-@form_fields_required('q')
-@api_error_handler
-def api_topics_preview_word_count():
-    solr_query, fq = _topic_query_from_request()
-    word_count_result = base_apicache.word_count(user_mediacloud_key(), solr_query, fq)
-    return jsonify(word_count_result)  # give them back new data, so they can update the client
 
 
 @app.route('/api/topics/create', methods=['PUT'])

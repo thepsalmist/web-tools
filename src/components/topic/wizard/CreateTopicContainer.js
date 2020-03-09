@@ -26,7 +26,7 @@ const localMessages = {
 const CreateTopicContainer = (props) => {
   const endDate = getCurrentDate();
   const startDate = getMomentDateSubtraction(endDate, 3, 'months');
-  const initialValues = { start_date: startDate, end_date: endDate, buttonLabel: props.intl.formatMessage(messages.create) };
+  const initialValues = { mode: 'web', start_date: startDate, end_date: endDate, buttonLabel: props.intl.formatMessage(messages.create) };
   return (
     <Grid>
       <PageTitle value={localMessages.pageTitle} />
@@ -63,22 +63,16 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   handleCreateEmptyTopic: (values) => {
-    const formValuesForSubmission = () => {
-      let queryInfo = formatTopicPreviewQuery(values);
-      queryInfo = {
-        ...queryInfo,
-        name: values.name,
-        description: values.description,
-        solr_seed_query: queryInfo.q,
-        max_iterations: values.max_iterations,
-        ch_monitor_id: values.ch_monitor_id === undefined ? '' : values.ch_monitor_id,
-        is_public: values.is_public ? 1 : 0,
-        is_logogram: values.is_logogram ? 1 : 0,
-        max_stories: values.max_topic_stories,
-      };
-      return queryInfo;
+    const queryInfo = {
+      name: values.name,
+      description: values.description,
+      solr_seed_query: values.solr_seed_query,
+      max_iterations: values.max_iterations,
+      ch_monitor_id: values.ch_monitor_id === undefined ? '' : values.ch_monitor_id,
+      is_public: values.is_public ? 1 : 0,
+      is_logogram: values.is_logogram ? 1 : 0,
+      max_stories: values.max_topic_stories,
     };
-    const queryInfo = formValuesForSubmission(values);
     return dispatch(createTopic(queryInfo));
     // TODO push to summary or version page where the lack of platforms will push the user to the Manage Platform screen
     /* if (createResults && createResults.topics_id) {

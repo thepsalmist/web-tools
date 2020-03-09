@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { reduxForm, Field, propTypes } from 'redux-form';
+import { connect } from 'react-redux';
+import { reduxForm, Field, propTypes, formValueSelector } from 'redux-form';
 import { FormattedHTMLMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -20,8 +21,10 @@ const localMessages = {
   maxIterationsHelp: { id: 'topic.form.detail.maxIterations.help', defaultMessage: 'Any news stories discovered will be checked for links. Any links found will be followed via a process called "spidering". Media Cloud defaults to 15 rounds of spidering. You can customize this here.<br/>&nbsp;<br/>' },
 };
 
+const selector = formValueSelector('topicForm');
+
 const TopicAdvancedForm = (props) => {
-  const { renderTextField, renderSelect } = props;
+  const { renderTextField, renderSelect, topicMode } = props;
   const { formatMessage } = props.intl;
   const iterations = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
   return (
@@ -33,6 +36,7 @@ const TopicAdvancedForm = (props) => {
               name="solr_seed_query"
               component={renderTextField}
               multiline
+              disabled={topicMode === 'web'}
               rows={2}
               rowsMax={4}
               fullWidth
@@ -70,6 +74,7 @@ const TopicAdvancedForm = (props) => {
         <Col lg={3}>
           <Field
             name="max_iterations"
+            disabled={topicMode !== 'web'}
             component={renderSelect}
             fullWidth
             defaultValue={0}
@@ -103,11 +108,19 @@ TopicAdvancedForm.propTypes = {
     PropTypes.bool,
   ]).isRequired,
   submitting: PropTypes.bool.isRequired,
+  // from state
+  topicMode: PropTypes.string.isRequired,
 };
 
+const mapStateToProps = (state) => ({
+  topicMode: selector(state, 'mode'),
+});
+
 export default
-withIntlForm(
-  reduxForm({ propTypes })(
-    TopicAdvancedForm
+connect(mapStateToProps)(
+  withIntlForm(
+    reduxForm({ propTypes })(
+      TopicAdvancedForm
+    )
   )
 );

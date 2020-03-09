@@ -34,7 +34,7 @@ const TopicForm = (props) => {
   const { formatMessage } = props.intl;
   let formContent = (
     <TopicCreateForm
-      defaultValue={initialValues}
+      initialValues={initialValues}
       destroyOnUnmount={false}
       form="topicForm"
       forceUnregisterOnUnmount

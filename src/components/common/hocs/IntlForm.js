@@ -7,6 +7,7 @@ import 'codemirror/theme/material.css';
 import 'codemirror/mode/solr/solr';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
+import Radio from '@material-ui/core/Radio';
 import Select from '@material-ui/core/Select';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -158,6 +159,17 @@ function withIntlForm(Component) {
       );
     }
 
+    renderRadio = ({ input, ...custom }) => {
+      const intlCustom = this.intlCustomProps(custom);
+      return (
+        <Radio
+          {...input}
+          onChange={event => input.onChange(event.target.value)}
+          {...intlCustom}
+        />
+      );
+    }
+
     render() {
       const helpers = {
         renderTextField: this.renderTextField,
@@ -168,6 +180,7 @@ function withIntlForm(Component) {
         renderAutocomplete: this.renderAutocomplete,
         renderAsyncAutocomplete: this.renderAsyncAutocomplete,
         renderSolrTextField: this.renderSolrTextField,
+        renderRadio: this.renderRadio,
       };
       return (
         <Component {...this.props} {...helpers} />

@@ -8,12 +8,12 @@ from server.auth import user_mediacloud_client
 from server.util.request import form_fields_required
 import server.views.topics.apicache as apicache
 from server.views.topics.platforms.platforms_preview import parse_open_web_media_from_channel
-from server.views.topics.platforms import PLATFORM_OPEN_WEB, PLATFORM_SOURCE_MEDIA_CLOUD
+from server.platforms import PLATFORM_OPEN_WEB, PLATFORM_SOURCE_MEDIA_CLOUD
 
 logger = logging.getLogger(__name__)
 
 
-def _avaialble_platforms():
+def _available_platforms():
     info = apicache.topic_platform_info()
     return [{
         'platform': i['platform_name'],
@@ -27,7 +27,7 @@ def _avaialble_platforms():
 @flask_login.login_required
 def get_topic_platforms(topics_id):
     user_mc = user_mediacloud_client()
-    available_platforms = _avaialble_platforms()
+    available_platforms = _available_platforms()
     topic = user_mc.topic(topics_id)
     # and add in the open web query, which isn't stored in topic_seed_queries for historical reasons :-(
     if topic_has_seed_query(topic):

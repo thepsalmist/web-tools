@@ -6,7 +6,7 @@ from server.platforms.twitter_pushshift import TwitterPushshiftProvider
 TERM = "trump"
 
 
-class TwitterPushshiftTest(unittest.TestCase):
+class TwitterPushshiftProviderTest(unittest.TestCase):
 
     def setUp(self):
         self._provider = TwitterPushshiftProvider()

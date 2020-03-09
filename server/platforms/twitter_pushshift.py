@@ -14,6 +14,7 @@ PS_TWITTER_SEARCH_URL = 'https://twitter-es.pushshift.io/twitter_verified/_searc
 class TwitterPushshiftProvider(ContentProvider):
 
     def __init__(self):
+        super(TwitterPushshiftProvider, self).__init__()
         self._logger = logging.getLogger(__name__)
 
     def sample(self, query: str, start_date: dt.datetime, end_date: dt.datetime, limit: int = 20, **kwargs) -> List[Dict]:
@@ -61,7 +62,7 @@ class TwitterPushshiftProvider(ContentProvider):
             })
         return sum([d['count'] for d in data])
 
-    def count_over_time(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List[Dict]:
+    def count_over_time(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> Dict:
         """
         How many verified tweets over time match the query.
         :param query:
@@ -151,5 +152,4 @@ class TwitterPushshiftProvider(ContentProvider):
             'retweet_count': item['retweet_count'],
             'favorite_count': item['favorite_count'],
         }
-
 

@@ -6,7 +6,8 @@ import json
 from server import app
 from server.util.request import api_error_handler, arguments_required
 import server.util.dates as date_util
-from server.platforms import provider_for, PLATFORM_REDDIT, PLATFORM_OPEN_WEB, PLATFORM_SOURCE_MEDIA_CLOUD
+from server.platforms import provider_for, PLATFORM_REDDIT, PLATFORM_OPEN_WEB, PLATFORM_SOURCE_MEDIA_CLOUD, \
+    PLATFORM_TWITTER, PLATFORM_SOURCE_CRIMSON_HEXAGON
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +31,9 @@ def _info_from_request():
         sources = media['sources[]'] if 'sources[]' in media and 'sources' not in [None, ''] else ''
         collections = media['collections[]'] if 'collections[]' in media else ''
         options = {'sources': sources, 'collections': collections}
+    elif (platform == PLATFORM_TWITTER) and (source == PLATFORM_SOURCE_CRIMSON_HEXAGON):
+        options = {'monitor_id': query}
+        query = ''
     return provider, query, start_date, end_date, options
 
 
@@ -37,7 +41,7 @@ def _info_from_request():
 @arguments_required('platform_type', 'platform_query', 'platform_source', 'platform_channel', 'start_date', 'end_date')
 @flask_login.login_required
 @api_error_handler
-def api_topics_platform_preview_story_sample():
+def api_topics_platform_preview_story_sample(topics_id):
     provider, query, start_date, end_date, options = _info_from_request()
     content_list = provider.sample(query, start_date, end_date, **options)
     return jsonify(content_list)
@@ -47,7 +51,7 @@ def api_topics_platform_preview_story_sample():
 @arguments_required('platform_type', 'platform_query', 'platform_source', 'platform_channel', 'start_date', 'end_date')
 @flask_login.login_required
 @api_error_handler
-def api_topics_platform_preview_total_content():
+def api_topics_platform_preview_total_content(topics_id):
     provider, query, start_date, end_date, options = _info_from_request()
     content_count = provider.count(query, start_date, end_date, **options)
     return jsonify({'count': content_count})
@@ -57,7 +61,7 @@ def api_topics_platform_preview_total_content():
 @arguments_required('platform_type', 'platform_query', 'platform_source', 'platform_channel', 'start_date', 'end_date')
 @flask_login.login_required
 @api_error_handler
-def api_topics_platform_preview_split_story_count():
+def api_topics_platform_preview_split_story_count(topics_id):
     provider, query, start_date, end_date, options = _info_from_request()
     content_count_over_time = provider.count_over_time(query, start_date, end_date, **options)
     # sum the total for display
@@ -73,7 +77,7 @@ def api_topics_platform_preview_split_story_count():
 @arguments_required('platform_type', 'platform_query', 'platform_source', 'platform_channel', 'start_date', 'end_date')
 @flask_login.login_required
 @api_error_handler
-def api_topics_platform_preview_top_words():
+def api_topics_platform_preview_top_words(topics_id):
     provider, query, start_date, end_date, options = _info_from_request()
     content_words = provider.words(query, start_date, end_date, **options)
     return jsonify({'results': content_words})

@@ -10,7 +10,7 @@ MC_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 class ContentProvider(object):
     """
     An abstract wrapper to be implemented for each platform we want to preview content from.
-    Any unimplement methods raise an Exception
+    Any unimplemented methods raise an Exception
     """
 
     def __init__(self):
@@ -23,7 +23,7 @@ class ContentProvider(object):
     def count(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> int:
         raise NotImplementedError("Subclasses should implement contentCount!")
 
-    def count_over_time(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List[Dict]:
+    def count_over_time(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> Dict:
         raise NotImplementedError("Subclasses should implement contentCountOverTime!")
 
     def words(self, query: str, start_date: dt.datetime, end_date: dt.datetime, limit: int = 100,

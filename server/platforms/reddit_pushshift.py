@@ -17,6 +17,7 @@ NEWS_SUBREDDITS = ['politics', 'worldnews', 'news', 'conspiracy', 'Libertarian',
 class RedditPushshiftProvider(ContentProvider):
 
     def __init__(self):
+        super(RedditPushshiftProvider, self).__init__()
         self._logger = logging.getLogger(__name__)
 
     def sample(self, query: str, start_date: dt.datetime, end_date: dt.datetime, limit: int = 20, **kwargs) -> List[Dict]:
@@ -53,7 +54,7 @@ class RedditPushshiftProvider(ContentProvider):
         counts = [r['doc_count'] for r in data['aggs']['created_utc']]
         return sum(counts)
 
-    def count_over_time(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List[Dict]:
+    def count_over_time(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> Dict:
         """
         How many reddit submissions over time match the query.
         :param query:
@@ -75,7 +76,7 @@ class RedditPushshiftProvider(ContentProvider):
                 'timestamp': d['key'],
                 'count': d['doc_count'],
             })
-        return results
+        return {'counts': results}
 
     def words(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List[Dict]:
         """

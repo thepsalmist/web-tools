@@ -4,7 +4,7 @@ import datetime as dt
 from server.platforms.reddit_pushshift import RedditPushshiftProvider
 
 
-class RedditPushshiftTest(unittest.TestCase):
+class RedditPushshiftProviderTest(unittest.TestCase):
 
     def setUp(self):
         self._provider = RedditPushshiftProvider()

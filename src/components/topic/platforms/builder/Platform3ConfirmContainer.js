@@ -17,7 +17,7 @@ const localMessages = {
 };
 
 const Platform3ConfirmContainer = (props) => {
-  const { formValues, handlePreviousStep, handleSubmit, finishStep, submitting } = props;
+  const { formValues, handlePreviousStep, handleSubmit, finishStep, submitting, currentPlatform } = props;
   const { formatMessage } = props.intl;
   const mergeChannelValue = { channel: formValues.media ? formValues.media : formValues.channel };
   return (
@@ -35,7 +35,7 @@ const Platform3ConfirmContainer = (props) => {
         </Row>
         <Row>
           <Col lg={12}>
-            <EnabledPlatformSummary platform={{ ...formValues, ...mergeChannelValue }} />
+            <EnabledPlatformSummary platform={{ ...currentPlatform, ...formValues, ...mergeChannelValue }} />
           </Col>
         </Row>
         <Row>

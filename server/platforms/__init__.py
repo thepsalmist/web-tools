@@ -1,11 +1,12 @@
 import logging
 
+from server import config
 from server.auth import user_mediacloud_key
 from server.platforms.provider import ContentProvider
 from server.platforms.reddit_pushshift import RedditPushshiftProvider
 from server.platforms.twitter_pushshift import TwitterPushshiftProvider
 from server.platforms.web_mediacloud import WebMediaCloudProvider
-
+from server.platforms.twitter_crimson_hexagon import TwitterCrimsonHexagonProvider
 
 logger = logging.getLogger(__name__)
 
@@ -31,9 +32,11 @@ def provider_for(platform: str, source: str) -> ContentProvider:
         return TwitterPushshiftProvider()
     if (platform == PLATFORM_REDDIT) and (source == PLATFORM_SOURCE_PUSHSHIFT):
         return RedditPushshiftProvider()
+    if (platform == PLATFORM_TWITTER) and (source == PLATFORM_SOURCE_CRIMSON_HEXAGON):
+        return TwitterCrimsonHexagonProvider(config.get('CRIMSON_HEXAGON_API_KEY'))
     raise UnknownProviderException(platform, source)
 
 
 class UnknownProviderException(Exception):
     def __init__(self, platform, source):
-        self.message = "Uknown provider {} from {}".format(platform, source)
+        self.message = "Unknown provider {} from {}".format(platform, source)

@@ -6,7 +6,6 @@ import mediacloud.error
 from server import mc, TOOL_API_KEY
 from server.views import WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_UI_NUM_WORDS
 from server.cache import cache
-import server.views.apicache as base_cache
 from server.util.tags import STORY_UNDATEABLE_TAG, is_bad_theme
 import server.util.wordembeddings as wordembeddings
 from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_mediacloud_key, is_user_logged_in
@@ -123,7 +122,7 @@ def _cached_topic_story_list(user_mc_key, topics_id, **kwargs):
     Internal helper - don't call this; call topic_story_list instead. This needs user_mc_key in the
     function signature to make sure the caching is keyed correctly.
     """
-    local_mc = base_cache.mc_client(user_mc_key)
+    local_mc = user_mediacloud_client(user_mc_key)
     return local_mc.topicStoryList(topics_id, **kwargs)
 
 

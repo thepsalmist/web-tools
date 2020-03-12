@@ -21,7 +21,7 @@ class TwitterCrimsonHexagonProvider(ContentProvider):
     def sample(self, query: str, start_date: dt.datetime, end_date: dt.datetime, limit: int = 20,
                **kwargs) -> List[Dict]:
         """
-        This is isn't returning actualy tweet content, so we're just gonna not show anything for now
+        This is isn't returning actual tweet content, so we're just gonna not show anything for now
         :param query:
         :param start_date:
         :param end_date:

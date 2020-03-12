@@ -80,7 +80,7 @@ PlatformComparisonContainer.propTypes = {
   // from state
   topicId: PropTypes.number.isRequired,
   usingLatest: PropTypes.bool.isRequired,
-  selectedSnapshot: PropTypes.object.isRequired,
+  selectedSnapshot: PropTypes.object,
   platforms: PropTypes.array, // .isRequired,
   newPlatforms: PropTypes.array,
   latestVersionRunning: PropTypes.bool.isRequired,

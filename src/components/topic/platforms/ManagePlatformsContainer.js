@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
+import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import AvailablePlatformList from './AvailablePlatformList';
 import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
@@ -123,6 +124,7 @@ ManagePlatformsContainer.propTypes = {
   filters: PropTypes.object.isRequired,
   platforms: PropTypes.array.isRequired,
   selectedSnapshot: PropTypes.object,
+  fetchStatus: PropTypes.string.isRequired,
   // from dispatch
   handleDeletePlatform: PropTypes.func.isRequired,
   handleSelectPlatform: PropTypes.func.isRequired,
@@ -132,6 +134,7 @@ ManagePlatformsContainer.propTypes = {
 const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
   topicInfo: state.topics.selected.info,
+  fetchStatus: state.topics.selected.platforms.all.fetchStatus,
   platforms: state.topics.selected.platforms.all.results,
   filters: state.topics.selected.filters,
   selectedSnapshot: state.topics.selected.snapshots.selected,
@@ -161,9 +164,16 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
+const fetchAsyncData = (dispatch, { topicId }) => {
+  // already loaded by PlatformBuilder parent,so just select the one the user wants
+  dispatch(fetchPlatformsInTopicList(topicId));
+};
+
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    ManagePlatformsContainer
+    withAsyncData(fetchAsyncData)(
+      ManagePlatformsContainer
+    )
   )
 );

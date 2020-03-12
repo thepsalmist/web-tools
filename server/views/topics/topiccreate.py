@@ -24,6 +24,8 @@ def topic_create():
     solr_seed_query = request.form['solr_seed_query']
     start_date = request.form['start_date']
     end_date = request.form['end_date']
+    #temp fix CSB
+    solr_seed_query = solr_seed_query + " AND (media_id: 1)"
     optional_args = {
         'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
         'max_stories': request.form['max_stories'] if 'max_stories' in request.form and request.form['max_stories'] != 'null' else flask_login.current_user.profile['limits']['max_topic_stories'],

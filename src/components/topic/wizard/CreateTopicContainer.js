@@ -66,6 +66,8 @@ const mapDispatchToProps = dispatch => ({
     const queryInfo = {
       name: values.name,
       description: values.description,
+      start_date: values.start_date,
+      end_date: values.end_date,
       solr_seed_query: values.solr_seed_query,
       max_iterations: values.max_iterations,
       ch_monitor_id: values.ch_monitor_id === undefined ? '' : values.ch_monitor_id,

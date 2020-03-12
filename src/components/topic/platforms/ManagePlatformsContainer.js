@@ -12,6 +12,7 @@ import { updateFeedback } from '../../../actions/appActions';
 import PlatformComparisonContainer from './PlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
 import { filteredLinkTo } from '../../util/location';
+import { URL_SHARING, PLATFORM_OPEN_WEB } from '../../../lib/platformTypes';
 
 const localMessages = {
   listTitle: { id: 'platform.list.title', defaultMessage: 'Platform Details' },
@@ -69,6 +70,10 @@ class ManagePlatformsContainer extends React.Component {
     /* and, compare previous version with current to see if new platforms and if so, offer spider and generate */
     /* { new vs old platforms are different ? <PlatformComparisonContainer platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} /> : '' }
     */
+    let filteredPlatforms = platforms;
+    if (topicInfo.mode === URL_SHARING) {
+      filteredPlatforms = platforms.filter(p => p.platform !== PLATFORM_OPEN_WEB);
+    }
     return (
       <div>
         <NeedsNewVersionWarning />
@@ -88,7 +93,7 @@ class ManagePlatformsContainer extends React.Component {
               latestVersionRunning={topicInfo.latestVersionRunning}
             />
             <AvailablePlatformList
-              platforms={platforms}
+              platforms={filteredPlatforms}
               onEdit={this.onEditPlatform}
               onAdd={this.onNewPlatform}
               onDelete={this.handleDelete}

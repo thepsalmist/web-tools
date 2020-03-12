@@ -10,7 +10,7 @@ import { WarningNotice } from '../../common/Notice';
 import { FETCH_SUCCEEDED } from '../../../lib/fetchConstants';
 import PageTitle from '../../common/PageTitle';
 import TopicForm from './TopicForm';
-import { formatTopicPreviewQuery } from '../../util/topicUtil';
+// import { formatTopicPreviewQuery } from '../../util/topicUtil';
 import messages from '../../../resources/messages';
 import { getCurrentDate, getMomentDateSubtraction } from '../../../lib/dateUtil';
 

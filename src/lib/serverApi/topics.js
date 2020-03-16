@@ -427,3 +427,8 @@ export function topicTopStoriesOnDates(topicId, params) {
   const acceptedParams = acceptParams(params, ['startTimestamp', 'endTimestamp', 'snapshotId', 'timespanId', 'focusId', 'sort', 'limit', 'q', 'selectedTimespanId']);
   return createApiPromise(`/api/topics/${topicId}/stories/top-on-dates`, acceptedParams);
 }
+
+export function uploadPlatformGenericCsvFile(topicId, params) {
+  const acceptedParams = acceptParams(params, ['file']);
+  return createPostingApiPromise(`/api/topics/${topicId}/platforms/generic-csv/upload`, acceptedParams);
+}

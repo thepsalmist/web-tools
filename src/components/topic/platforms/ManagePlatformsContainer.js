@@ -13,7 +13,7 @@ import { updateFeedback } from '../../../actions/appActions';
 import PlatformComparisonContainer from './PlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
 import { filteredLinkTo } from '../../util/location';
-import { URL_SHARING, PLATFORM_OPEN_WEB } from '../../../lib/platformTypes';
+import { MODE_URL_SHARING, MODE_OPEN_WEB, MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
 import * as fetchConstants from '../../../lib/fetchConstants';
 
 const localMessages = {
@@ -72,10 +72,15 @@ class ManagePlatformsContainer extends React.Component {
     /* and, compare previous version with current to see if new platforms and if so, offer spider and generate */
     /* { new vs old platforms are different ? <PlatformComparisonContainer platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} /> : '' }
     */
+    let preventAdditions = false;
     let filteredPlatforms = platforms;
     if (platforms && platforms.length > 0) {
-      if (topicInfo.mode === URL_SHARING) {
-        filteredPlatforms = platforms.filter(p => p.platform !== PLATFORM_OPEN_WEB);
+      if (topicInfo.mode === MODE_URL_SHARING) {
+        filteredPlatforms = platforms.filter(p => p.platform !== MODE_OPEN_WEB);
+      } else {
+        // if there isn't a web platform yet, prevent all others until user creates one
+        filteredPlatforms = platforms.map(p => ({ ...p, isEnabled: (p.source === MEDIA_CLOUD_SOURCE) }));
+        preventAdditions = true;
       }
       return (
         <div>
@@ -100,6 +105,7 @@ class ManagePlatformsContainer extends React.Component {
                 onEdit={this.onEditPlatform}
                 onAdd={this.onNewPlatform}
                 onDelete={this.handleDelete}
+                preventAdditions={preventAdditions}
               />
             </Grid>
             <ConfirmationDialog

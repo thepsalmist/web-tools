@@ -50,7 +50,7 @@ export const platformIconUrl = (platform, source) => {
   return googleFavIconUrl('https://mediacloud.org');
 };
 
-const AvailablePlatform = ({ platform, onAdd, onEdit, onDelete }) => (
+const AvailablePlatform = ({ platform, onAdd, onEdit, onDelete, preventAdditions }) => (
   <div className={`available-platform ${(platform.isEnabled) ? 'active' : 'inactive'}`}>
     <Row>
       <Col lg={4}>
@@ -70,7 +70,7 @@ const AvailablePlatform = ({ platform, onAdd, onEdit, onDelete }) => (
       </Col>
       <Col lg={2}>
         <div className="actions">
-          {(!platform.isEnabled) && <AppButton primary label={messages.add} onClick={() => onAdd(platform)} />}
+          {(!platform.isEnabled) && <AppButton primary label={messages.add} onClick={() => onAdd(platform)} disabled={preventAdditions} />}
           {(platform.isEnabled) && (
             <>
               <AppButton primary label={messages.edit} onClick={() => onEdit(platform)} />
@@ -90,6 +90,7 @@ AvailablePlatform.propTypes = {
   platform: PropTypes.object.isRequired,
   onEdit: PropTypes.func.isRequired,
   onAdd: PropTypes.func.isRequired,
+  preventAdditions: PropTypes.bool,
   onDelete: PropTypes.func.isRequired,
   // form context
   intl: PropTypes.object.isRequired,

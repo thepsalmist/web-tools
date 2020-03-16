@@ -127,7 +127,7 @@ const TopicVersionListContainer = ({ topicId, topic, storyCounts, versions, sele
         <Permissioned onlyRole={PERMISSION_ADMIN}>
           <Row>
             <Col lg={10}>
-              <JobList jobs={[...topic.job_states]} highlightSnapshotId={selectedSnapshot.snapshots_id} />
+              <JobList jobs={[...topic.job_states]} highlightSnapshotId={selectedSnapshot ? selectedSnapshot.snapshots_id : -1} />
             </Col>
           </Row>
         </Permissioned>

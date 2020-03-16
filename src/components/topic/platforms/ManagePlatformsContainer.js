@@ -14,6 +14,7 @@ import PlatformComparisonContainer from './PlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
 import { filteredLinkTo } from '../../util/location';
 import { URL_SHARING, PLATFORM_OPEN_WEB } from '../../../lib/platformTypes';
+import * as fetchConstants from '../../../lib/fetchConstants';
 
 const localMessages = {
   listTitle: { id: 'platform.list.title', defaultMessage: 'Platform Details' },
@@ -72,46 +73,49 @@ class ManagePlatformsContainer extends React.Component {
     /* { new vs old platforms are different ? <PlatformComparisonContainer platforms={platforms} onEditClicked={this.onEditPlatform} onAddClicked={this.onNewPlatform} /> : '' }
     */
     let filteredPlatforms = platforms;
-    if (topicInfo.mode === URL_SHARING) {
-      filteredPlatforms = platforms.filter(p => p.platform !== PLATFORM_OPEN_WEB);
-    }
-    return (
-      <div>
-        <NeedsNewVersionWarning />
-        <div className="manage-platforms">
-          <Grid>
-            <Row>
-              <Col lg={10} xs={12}>
-                <h1>
-                  <FormattedMessage {...messages.managePlatforms} />
-                </h1>
-              </Col>
-            </Row>
-            <PlatformComparisonContainer
-              topicInfo={topicInfo}
-              platforms={selectedSnapshot ? selectedSnapshot.platform_seed_queries : []}
-              newPlatforms={platforms.filter(p => p.isEnabled)}
-              latestVersionRunning={topicInfo.latestVersionRunning}
-            />
-            <AvailablePlatformList
-              platforms={filteredPlatforms}
-              onEdit={this.onEditPlatform}
-              onAdd={this.onNewPlatform}
-              onDelete={this.handleDelete}
-            />
-          </Grid>
-          <ConfirmationDialog
-            open={this.state.removeDialogOpen}
-            title={formatMessage(localMessages.removePlatform)}
-            okText={formatMessage(localMessages.removeOk)}
-            onCancel={this.onCancelDeletePlatform}
-            onOk={this.onDeletePlatform}
-          >
-            <FormattedHTMLMessage {...localMessages.removePlatform} />
-          </ConfirmationDialog>
+    if (platforms && platforms.length > 0) {
+      if (topicInfo.mode === URL_SHARING) {
+        filteredPlatforms = platforms.filter(p => p.platform !== PLATFORM_OPEN_WEB);
+      }
+      return (
+        <div>
+          <NeedsNewVersionWarning />
+          <div className="manage-platforms">
+            <Grid>
+              <Row>
+                <Col lg={10} xs={12}>
+                  <h1>
+                    <FormattedMessage {...messages.managePlatforms} />
+                  </h1>
+                </Col>
+              </Row>
+              <PlatformComparisonContainer
+                topicInfo={topicInfo}
+                platforms={selectedSnapshot ? selectedSnapshot.platform_seed_queries : []}
+                newPlatforms={platforms.filter(p => p.isEnabled)}
+                latestVersionRunning={topicInfo.latestVersionRunning}
+              />
+              <AvailablePlatformList
+                platforms={filteredPlatforms}
+                onEdit={this.onEditPlatform}
+                onAdd={this.onNewPlatform}
+                onDelete={this.handleDelete}
+              />
+            </Grid>
+            <ConfirmationDialog
+              open={this.state.removeDialogOpen}
+              title={formatMessage(localMessages.removePlatform)}
+              okText={formatMessage(localMessages.removeOk)}
+              onCancel={this.onCancelDeletePlatform}
+              onOk={this.onDeletePlatform}
+            >
+              <FormattedHTMLMessage {...localMessages.removePlatform} />
+            </ConfirmationDialog>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+    return <div />;
   }
 }
 
@@ -122,7 +126,7 @@ ManagePlatformsContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
   filters: PropTypes.object.isRequired,
-  platforms: PropTypes.array.isRequired,
+  platforms: PropTypes.array,
   selectedSnapshot: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
   // from dispatch
@@ -134,8 +138,8 @@ ManagePlatformsContainer.propTypes = {
 const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
   topicInfo: state.topics.selected.info,
-  fetchStatus: state.topics.selected.platforms.all.fetchStatus,
   platforms: state.topics.selected.platforms.all.results,
+  fetchStatus: state.topics.selected.platforms.all.fetchStatus,
   filters: state.topics.selected.filters,
   selectedSnapshot: state.topics.selected.snapshots.selected,
 });
@@ -164,15 +168,16 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
-const fetchAsyncData = (dispatch, { topicId }) => {
-  // already loaded by PlatformBuilder parent,so just select the one the user wants
-  dispatch(fetchPlatformsInTopicList(topicId));
+const fetchAsyncData = (dispatch, { topicId, fetchStatus }) => {
+  if (fetchStatus !== fetchConstants.FETCH_SUCCEEDED) {
+    dispatch(fetchPlatformsInTopicList(topicId));
+  }
 };
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncData(fetchAsyncData)(
+    withAsyncData(fetchAsyncData, ['fetchStatus'])(
       ManagePlatformsContainer
     )
   )

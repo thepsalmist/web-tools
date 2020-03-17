@@ -5,50 +5,29 @@ import flask_login
 import os
 from multiprocessing import Process
 
-from server import app, base_dir
-from server.auth import is_user_logged_in, user_admin_mediacloud_client
+from server import app
+from server.auth import user_mediacloud_client
+import server.views.topics.apicache as apicache
 from server.util.request import arguments_required, filters_from_args, api_error_handler
-from server.util import mapwriter
-from server.views.topics import access_public_topic
-
-DATA_DIR = os.path.join(base_dir, "data", "map-files")
-MAP_TYPES = ['wordMap', 'linkMap']
 
 logger = logging.getLogger(__name__)
 
 
-@app.route('/api/topics/<topics_id>/map-files', methods=['GET'])
+@app.route('/api/topics/<topics_id>/map-files/list', methods=['GET'])
+@arguments_required('timespanId')
 @api_error_handler
-def map_files(topics_id):
-    files = { 
-        'wordMap': 'unsupported',
-        'linkMap': 'not rendered'
-    }
+def map_files_list(topics_id):
+    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    results = apicache.topic_media_map_list(topics_id, timespans_id)
+    return jsonify(results)
 
-    if access_public_topic(topics_id) or is_user_logged_in():
-        snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
-        map_type = MAP_TYPES[0]  # no linkMaps yet
-        prefix = _get_file_prefix(map_type, topics_id, timespans_id)
-        lock_filename = prefix+".lock"
-        rendered_filename = prefix+".gexf"
-        # check if rendered file is there
-        is_rendered = os.path.isfile(os.path.join(DATA_DIR, rendered_filename))
-        # logger.warn(os.path.join(DATA_DIR,rendered_filename))
-        # logger.warn(is_rendered)
-        if is_rendered:
-            status = 'rendered'
-        else:
-            lockfile_path = os.path.join(DATA_DIR, lock_filename)
-            is_generating = os.path.isfile(lockfile_path)
-            if not is_generating:
-                status = 'starting'
-                _start_generating_map_file(map_type, topics_id, timespans_id)
-            else:
-                status = 'generating'
-        files[map_type] = status
-        return jsonify(files)
-    else:
-        return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
+
+@app.route('/api/topics/<topics_id>/map-files/<timespans_maps_id>', methods=['GET'])
+@api_error_handler
+def map_file(topics_id, timespans_maps_id):
+    return apicache.topic_media_map(topics_id, timespans_maps_id)
+
+
 
 
 @app.route('/api/topics/<topics_id>/map-files/<map_type>.<map_format>', methods=['GET'])
@@ -70,7 +49,7 @@ def map_files_download(topics_id, map_type, map_format):
 @arguments_required('timespanId', 'color_field', 'num_media', 'include_weights')
 # @flask_login.login_required
 def map_files_download_custom(topics_id):
-    user_mc = user_admin_mediacloud_client()
+    user_mc = user_mediacloud_client()
     # how to treat these as req or default?
     optional_args = {
         'timespans_id': request.args['timespanId'] if 'timespanId' in request.args else None,

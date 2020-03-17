@@ -84,7 +84,8 @@ PlatformComparisonContainer.propTypes = {
   platforms: PropTypes.array, // .isRequired,
   newPlatforms: PropTypes.array,
   latestVersionRunning: PropTypes.bool.isRequired,
-  latestUsableSnapshot: PropTypes.number.isRequired,
+  latestUsableSnapshot: PropTypes.number,
+  initializedPlatform: PropTypes.bool.isRequired,
   // from dispatch
   handleNewVersionAndSpider: PropTypes.func.isRequired,
 };
@@ -96,7 +97,7 @@ const mapStateToProps = state => ({
   latestVersionRunning: state.topics.selected.snapshots.latestVersionRunning,
   latestUsableSnapshot: state.topics.selected.snapshots.latestUsableSnapshot,
   selectedSnapshot: state.topics.selected.snapshots.selected,
-  initializedPlatform: state.topics.selected.platforms.all.initializedPlatform,
+  initializedPlatform: state.topics.selected.platforms.all.initialized,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

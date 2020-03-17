@@ -8,6 +8,7 @@ export const PUSHSHIFT_SOURCE = 'pushshift';
 export const CRIMSON_HEXAGON_SOURCE = 'crimson_hexagon';
 export const GOOGLE_SOURCE = 'google';
 export const MEDIA_CLOUD_SOURCE = 'mediacloud';
+export const CSV_SOURCE = 'csv';
 
 // export const MODE_URL_SHARING = 'url_sharing';
 export const MODE_OPEN_WEB = 'web';

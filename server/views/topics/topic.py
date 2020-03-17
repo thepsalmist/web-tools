@@ -13,7 +13,7 @@ from server.views.topics import access_public_topic
 from server.views.topics import concatenate_solr_dates
 from server.views.media_picker import concatenate_query_for_solr
 from server.views.topics.topiclist import add_user_favorite_flag_to_topics
-from server.views.topics.platforms.platforms_create import platform_for_web_seed_query, topic_has_seed_query
+from server.views.topics.platforms.platforms_manage import platform_for_web_seed_query, topic_has_seed_query
 
 logger = logging.getLogger(__name__)
 

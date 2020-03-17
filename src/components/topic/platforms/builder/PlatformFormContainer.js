@@ -9,14 +9,29 @@ import withIntlForm from '../../../common/hocs/IntlForm';
 import messages from '../../../../resources/messages';
 import PlatformPreview from './preview/PlatformPreview';
 import { platformChannelDataFormatter } from '../../../util/topicUtil';
-import { PLATFORM_OPEN_WEB, PLATFORM_TWITTER, PLATFORM_REDDIT, MEDIA_CLOUD_SOURCE } from '../../../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_GENERIC, MEDIA_CLOUD_SOURCE, CSV_SOURCE } from '../../../../lib/platformTypes';
 import EditOpenWebForm from './forms/EditOpenWebForm';
 import EditQueryForm from './forms/EditQueryForm';
 import EditRedditForm from './forms/EditRedditForm';
+import EditGenericCsvForm from './forms/EditGenericCsvForm';
 import { platformNameMessage, sourceNameMessage, platformDescriptionMessage } from '../AvailablePlatform';
 
 const localMessages = {
   title: { id: 'platform.create.edit.title', defaultMessage: 'Step 1: Configure Your Platform: ' },
+};
+
+const formForPlatformSource = (platform, source) => {
+  if ((platform === PLATFORM_OPEN_WEB) && (source === MEDIA_CLOUD_SOURCE)) {
+    return EditOpenWebForm;
+  }
+  if ((platform === PLATFORM_GENERIC) && (source === CSV_SOURCE)) {
+    return EditGenericCsvForm;
+  }
+  if (platform === PLATFORM_REDDIT) {
+    return EditRedditForm;
+  }
+  // anything without special seetings gets a generic query text box
+  return EditQueryForm;
 };
 
 class PlatformFormContainer extends React.Component {
@@ -44,26 +59,7 @@ class PlatformFormContainer extends React.Component {
 
   render() {
     const { initialValues, handleSubmit, finishStep, currentPlatform, change /* redux form helper */ } = this.props;
-    let FormRenderer;
-    switch (currentPlatform.platform) {
-      case PLATFORM_OPEN_WEB:
-        switch (currentPlatform.source) {
-          case MEDIA_CLOUD_SOURCE:
-            FormRenderer = EditOpenWebForm;
-            break;
-          default:
-            FormRenderer = EditQueryForm;
-            break;
-        }
-        break;
-      case PLATFORM_REDDIT:
-        FormRenderer = EditRedditForm;
-        break;
-      case PLATFORM_TWITTER:
-      default:
-        FormRenderer = EditQueryForm;
-        break;
-    }
+    const FormRenderer = formForPlatformSource(currentPlatform.platform, currentPlatform.source);
     return (
       <Grid>
         <form className="platform-edit-form" name="platform-form" onSubmit={handleSubmit(finishStep.bind(this))}>

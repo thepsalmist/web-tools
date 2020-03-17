@@ -1,6 +1,7 @@
 import logging
 from flask import jsonify, request
 import flask_login
+import os
 
 from server import app
 from server.util.request import api_error_handler
@@ -8,7 +9,7 @@ from server.auth import user_mediacloud_client
 from server.util.request import form_fields_required
 import server.views.topics.apicache as apicache
 from server.views.topics.platforms.platforms_preview import parse_open_web_media_from_channel
-from server.platforms import PLATFORM_OPEN_WEB, PLATFORM_SOURCE_MEDIA_CLOUD
+from server.platforms import PLATFORM_OPEN_WEB, PLATFORM_SOURCE_MEDIA_CLOUD, PLATFORM_GENERIC, PLATFORM_SOURCE_CSV
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +59,14 @@ def topic_add_platform(topics_id):
     query = request.form['platform_query'] if 'platform_query' in request.form else None
     platform = request.form['platform_type']
     result = {}
-    if platform == PLATFORM_OPEN_WEB:
+    # now preprocess anything you need to
+    if (platform == PLATFORM_GENERIC) and (source == PLATFORM_SOURCE_CSV):
+        # in this case the query field has been overloaded to hold the server temporary CSV filename
+        with open(os.path.join(app.config['UPLOAD_FOLDER'], query), 'r') as csv_file:
+            data = csv_file.read()
+        query = data
+    # and save the platform (media cloud isn't saved as a real platform)
+    if (platform == PLATFORM_OPEN_WEB) and (source == PLATFORM_SOURCE_MEDIA_CLOUD):
         # channel has open web sources in it
         sources, collections = parse_open_web_media_from_channel(channel)
         user_mc.topicUpdate(topics_id, media_ids=sources, media_tags_ids=collections, solr_seed_query=query)
@@ -67,11 +75,11 @@ def topic_add_platform(topics_id):
     else:
         # TODO do we need to add dates?
         # TODO format channel properly for reddit (subreddit)
-        #if twitter crimson_hexagon, id is in query field
+        # if twitter crimson_hexagon, id is in query field
         result = user_mc.topicAddSeedQuery(topics_id=topics_id, platform=platform, source=source, query=query)
         result['success'] = 1 if 'topic_seed_query' in result else 0
         result['id'] = result['topic_seed_query']['topic_seed_queries_id']
-    return jsonify(result) #topic_seed_queries_id
+    return jsonify(result)  # topic_seed_queries_id
 
 
 @app.route('/api/topics/<topics_id>/platforms/<platform_id>/update', methods=['POST'])

@@ -34,3 +34,6 @@ export const fetchAttentionByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PR
 
 export const FETCH_PLATFORM_PREVIEW_WORDS = 'FETCH_PLATFORM_PREVIEW_WORDS';
 export const fetchWordsByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PREVIEW_WORDS, api.topicTopWordsByPlatformQuery);
+
+export const UPLOAD_PLATFORM_GENERIC_CSV_FILE = 'UPLOAD_PLATFORM_GENERIC_CSV_FILE';
+export const uploadPlatformGenericCsvFile = createAsyncAction(UPLOAD_PLATFORM_GENERIC_CSV_FILE, api.uploadPlatformGenericCsvFile);

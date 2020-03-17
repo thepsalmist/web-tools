@@ -22,7 +22,7 @@ export function needsNewVersion(usingLatest, newDefinitions, latestVersionRunnin
   return (usingLatest && newDefinitions && !latestVersionRunning);
 }
 
-export function placeholderNewPlatformNeedsNewVersion(usingLatest, currentPlatforms, newPlatforms, latestVersionRunning, latestUsableSnapshot) {
+export function placeholderNewPlatformNeedsNewVersion(usingLatest, currentPlatforms, newPlatforms, latestVersionRunning, latestUsableSnapshot, initializedPlatform) {
   // if different amount of platforms
   const differentAmount = currentPlatforms.length !== newPlatforms.length;
   // new platform doesn't exist in currentTitle
@@ -41,7 +41,7 @@ export function placeholderNewPlatformNeedsNewVersion(usingLatest, currentPlatfo
   const differentQuery = newWebQuery !== oldWebQuery;
   // now combine logic
   const thereAreNewPlatforms = differentAmount || newOneThere || oldOneGone || differentQuery;
-  const forceDisplay = (usingLatest && thereAreNewPlatforms && !latestVersionRunning) || latestUsableSnapshot === null;
+  const forceDisplay = (usingLatest && thereAreNewPlatforms && !latestVersionRunning) || (latestUsableSnapshot === null && initializedPlatform);
   return forceDisplay;
 }
 

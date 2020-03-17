@@ -75,20 +75,17 @@ class ManagePlatformsContainer extends React.Component {
     */
     let preventAdditions = false;
     let filteredPlatforms = platforms;
-    let notifyIncompleteContent = null;
     // require that the mediasource platform is created first
     // to 'unlock' other platforms once we have a relevance query
     const incompleteWebPlatform = platforms.filter(p => p.topic_seed_queries_id !== -1 && p.source === MEDIA_CLOUD_SOURCE && p.query.indexOf('null') > -1);
     if (incompleteWebPlatform.length > 0) {
       filteredPlatforms = platforms.map(p => ({ ...p, isEnabled: (p.source === MEDIA_CLOUD_SOURCE) }));
       preventAdditions = true;
-      notifyIncompleteContent = 'show warning';
     }
     return (
       <div>
         <IncompletePlatformWarning />
         <NeedsNewVersionWarning />
-        {notifyIncompleteContent}
         <div className="manage-platforms">
           <Grid>
             <Row>

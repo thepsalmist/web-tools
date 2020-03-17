@@ -34,10 +34,10 @@ class PlatformComparisonContainer extends React.Component {
   }
 
   render() {
-    const { topicId, usingLatest, newPlatforms, platforms, selectedSnapshot, latestVersionRunning, latestUsableSnapshot } = this.props;
+    const { topicId, usingLatest, newPlatforms, platforms, selectedSnapshot, latestVersionRunning, latestUsableSnapshot, initializedPlatform } = this.props;
     const submitting = this.state.submittingVersion;
     // TODO: we need to fetch the platforms on the current version and compare that to the platforms on the next version
-    if (placeholderNewPlatformNeedsNewVersion(usingLatest, platforms, newPlatforms.filter(p => p.isEnabled), latestVersionRunning, latestUsableSnapshot)) {
+    if (placeholderNewPlatformNeedsNewVersion(usingLatest, platforms, newPlatforms.filter(p => p.isEnabled), latestVersionRunning, latestUsableSnapshot, initializedPlatform)) {
       return (
         <Grid>
           <Row>
@@ -96,6 +96,7 @@ const mapStateToProps = state => ({
   latestVersionRunning: state.topics.selected.snapshots.latestVersionRunning,
   latestUsableSnapshot: state.topics.selected.snapshots.latestUsableSnapshot,
   selectedSnapshot: state.topics.selected.snapshots.selected,
+  initializedPlatform: state.topics.selected.platforms.all.initializedPlatform,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

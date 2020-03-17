@@ -12,13 +12,14 @@ import { PLATFORM_OPEN_WEB } from '../../../lib/platformTypes';
 
 
 const localMessages = {
-  needsNewSnapshot: { id: 'topic.needsNewSnapshot.subtopics', defaultMessage: 'You\'ve changed some subtopics and need to generate a new version!' },
+  needsNewSnapshot: { id: 'topic.needsNewSnapshot.subtopics', defaultMessage: 'You\'ve changed this topic and need to generate a new version!' },
   needsNewSnapshotAction: { id: 'topic.needsNewSnapshot.subtopics.action', defaultMessage: 'Review Changes' },
 };
 
-// TODO: move this into a reducer
-export function needsNewVersion(usingLatest, newDefinitions, latestVersionRunning) {
-  return usingLatest && newDefinitions && !latestVersionRunning;
+// TODO: move this into a reducer when we've accounted for all cases
+// latestUsableSnapshot === null accounts for an empty topic with no snapshot...
+export function needsNewVersion(usingLatest, newDefinitions, latestVersionRunning, latestUsableSnapshot) {
+  return (usingLatest && newDefinitions && !latestVersionRunning) || latestUsableSnapshot === null;
 }
 
 export function placeholderNewPlatformNeedsNewVersion(usingLatest, currentPlatforms, newPlatforms, latestVersionRunning) {
@@ -44,9 +45,9 @@ export function placeholderNewPlatformNeedsNewVersion(usingLatest, currentPlatfo
   return Math.abs(forceDisplay); // always return true for now
 }
 
-const NeedsNewVersionWarning = ({ topicId, newDefinitions, latestVersionRunning, usingLatest }) => (
+const NeedsNewVersionWarning = ({ topicId, newDefinitions, latestVersionRunning, usingLatest, latestUsableSnapshot }) => (
   <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-    {needsNewVersion(usingLatest, newDefinitions, latestVersionRunning) && (
+    {needsNewVersion(usingLatest, newDefinitions, latestVersionRunning, latestUsableSnapshot) && (
       <div className="warning-background">
         <Grid>
           <Row>
@@ -70,6 +71,7 @@ NeedsNewVersionWarning.propTypes = {
   usingLatest: PropTypes.bool.isRequired,
   newDefinitions: PropTypes.bool.isRequired,
   latestVersionRunning: PropTypes.bool.isRequired,
+  latestUsableSnapshot: PropTypes.number,
   topicId: PropTypes.number.isRequired,
   // from compositional chain
   intl: PropTypes.object.isRequired,
@@ -80,6 +82,7 @@ const mapStateToProps = state => ({
   usingLatest: state.topics.selected.snapshots.usingLatest,
   newDefinitions: state.topics.selected.focalSets.all.newDefinitions,
   latestVersionRunning: state.topics.selected.snapshots.latestVersionRunning,
+  latestUsableSnapshot: state.topics.selected.snapshots.latestUsableSnapshot,
 });
 
 export default

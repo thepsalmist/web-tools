@@ -12,8 +12,9 @@ import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicLis
 import { updateFeedback } from '../../../actions/appActions';
 import PlatformComparisonContainer from './PlatformComparisonContainer';
 import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
+import IncompletePlatformWarning from '../versions/IncompletePlatformWarning';
 import { filteredLinkTo } from '../../util/location';
-import { MODE_URL_SHARING, MODE_OPEN_WEB, MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
+import { MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
 import * as fetchConstants from '../../../lib/fetchConstants';
 
 const localMessages = {
@@ -74,54 +75,55 @@ class ManagePlatformsContainer extends React.Component {
     */
     let preventAdditions = false;
     let filteredPlatforms = platforms;
-    if (platforms && platforms.length > 0) {
-      if (topicInfo.mode === MODE_URL_SHARING) {
-        filteredPlatforms = platforms.filter(p => p.platform !== MODE_OPEN_WEB);
-      } else {
-        // if there isn't a web platform yet, prevent all others until user creates one
-        filteredPlatforms = platforms.map(p => ({ ...p, isEnabled: (p.source === MEDIA_CLOUD_SOURCE) }));
-        preventAdditions = true;
-      }
-      return (
-        <div>
-          <NeedsNewVersionWarning />
-          <div className="manage-platforms">
-            <Grid>
-              <Row>
-                <Col lg={10} xs={12}>
-                  <h1>
-                    <FormattedMessage {...messages.managePlatforms} />
-                  </h1>
-                </Col>
-              </Row>
-              <PlatformComparisonContainer
-                topicInfo={topicInfo}
-                platforms={selectedSnapshot ? selectedSnapshot.platform_seed_queries : []}
-                newPlatforms={platforms.filter(p => p.isEnabled)}
-                latestVersionRunning={topicInfo.latestVersionRunning}
-              />
-              <AvailablePlatformList
-                platforms={filteredPlatforms}
-                onEdit={this.onEditPlatform}
-                onAdd={this.onNewPlatform}
-                onDelete={this.handleDelete}
-                preventAdditions={preventAdditions}
-              />
-            </Grid>
-            <ConfirmationDialog
-              open={this.state.removeDialogOpen}
-              title={formatMessage(localMessages.removePlatform)}
-              okText={formatMessage(localMessages.removeOk)}
-              onCancel={this.onCancelDeletePlatform}
-              onOk={this.onDeletePlatform}
-            >
-              <FormattedHTMLMessage {...localMessages.removePlatform} />
-            </ConfirmationDialog>
-          </div>
-        </div>
-      );
+    let notifyIncompleteContent = null;
+    // require that the mediasource platform is created first
+    // to 'unlock' other platforms once we have a relevance query
+    const incompleteWebPlatform = platforms.filter(p => p.topic_seed_queries_id !== -1 && p.source === MEDIA_CLOUD_SOURCE && p.query.indexOf('null') > -1);
+    if (incompleteWebPlatform.length > 0) {
+      filteredPlatforms = platforms.map(p => ({ ...p, isEnabled: (p.source === MEDIA_CLOUD_SOURCE) }));
+      preventAdditions = true;
+      notifyIncompleteContent = 'show warning';
     }
-    return <div />;
+    return (
+      <div>
+        <IncompletePlatformWarning />
+        <NeedsNewVersionWarning />
+        {notifyIncompleteContent}
+        <div className="manage-platforms">
+          <Grid>
+            <Row>
+              <Col lg={10} xs={12}>
+                <h1>
+                  <FormattedMessage {...messages.managePlatforms} />
+                </h1>
+              </Col>
+            </Row>
+            <PlatformComparisonContainer
+              topicInfo={topicInfo}
+              platforms={selectedSnapshot ? selectedSnapshot.platform_seed_queries : filteredPlatforms}
+              newPlatforms={platforms.filter(p => p.isEnabled)}
+              latestVersionRunning={topicInfo.latestVersionRunning}
+            />
+            <AvailablePlatformList
+              platforms={filteredPlatforms}
+              onEdit={this.onEditPlatform}
+              onAdd={this.onNewPlatform}
+              onDelete={this.handleDelete}
+              preventAdditions={preventAdditions}
+            />
+          </Grid>
+          <ConfirmationDialog
+            open={this.state.removeDialogOpen}
+            title={formatMessage(localMessages.removePlatform)}
+            okText={formatMessage(localMessages.removeOk)}
+            onCancel={this.onCancelDeletePlatform}
+            onOk={this.onDeletePlatform}
+          >
+            <FormattedHTMLMessage {...localMessages.removePlatform} />
+          </ConfirmationDialog>
+        </div>
+      </div>
+    );
   }
 }
 

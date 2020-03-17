@@ -18,11 +18,11 @@ const localMessages = {
 
 // TODO: move this into a reducer when we've accounted for all cases
 // latestUsableSnapshot === null accounts for an empty topic with no snapshot...
-export function needsNewVersion(usingLatest, newDefinitions, latestVersionRunning, latestUsableSnapshot) {
-  return (usingLatest && newDefinitions && !latestVersionRunning) || latestUsableSnapshot === null;
+export function needsNewVersion(usingLatest, newDefinitions, latestVersionRunning) {
+  return (usingLatest && newDefinitions && !latestVersionRunning);
 }
 
-export function placeholderNewPlatformNeedsNewVersion(usingLatest, currentPlatforms, newPlatforms, latestVersionRunning) {
+export function placeholderNewPlatformNeedsNewVersion(usingLatest, currentPlatforms, newPlatforms, latestVersionRunning, latestUsableSnapshot) {
   // if different amount of platforms
   const differentAmount = currentPlatforms.length !== newPlatforms.length;
   // new platform doesn't exist in currentTitle
@@ -41,13 +41,13 @@ export function placeholderNewPlatformNeedsNewVersion(usingLatest, currentPlatfo
   const differentQuery = newWebQuery !== oldWebQuery;
   // now combine logic
   const thereAreNewPlatforms = differentAmount || newOneThere || oldOneGone || differentQuery;
-  const forceDisplay = usingLatest && thereAreNewPlatforms && !latestVersionRunning;
-  return Math.abs(forceDisplay); // always return true for now
+  const forceDisplay = (usingLatest && thereAreNewPlatforms && !latestVersionRunning) || latestUsableSnapshot === null;
+  return forceDisplay;
 }
 
-const NeedsNewVersionWarning = ({ topicId, newDefinitions, latestVersionRunning, usingLatest, latestUsableSnapshot }) => (
+const NeedsNewVersionWarning = ({ topicId, newDefinitions, latestVersionRunning, usingLatest }) => (
   <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-    {needsNewVersion(usingLatest, newDefinitions, latestVersionRunning, latestUsableSnapshot) && (
+    {needsNewVersion(usingLatest, newDefinitions, latestVersionRunning) && (
       <div className="warning-background">
         <Grid>
           <Row>
@@ -71,7 +71,6 @@ NeedsNewVersionWarning.propTypes = {
   usingLatest: PropTypes.bool.isRequired,
   newDefinitions: PropTypes.bool.isRequired,
   latestVersionRunning: PropTypes.bool.isRequired,
-  latestUsableSnapshot: PropTypes.number,
   topicId: PropTypes.number.isRequired,
   // from compositional chain
   intl: PropTypes.object.isRequired,
@@ -82,7 +81,6 @@ const mapStateToProps = state => ({
   usingLatest: state.topics.selected.snapshots.usingLatest,
   newDefinitions: state.topics.selected.focalSets.all.newDefinitions,
   latestVersionRunning: state.topics.selected.snapshots.latestVersionRunning,
-  latestUsableSnapshot: state.topics.selected.snapshots.latestUsableSnapshot,
 });
 
 export default

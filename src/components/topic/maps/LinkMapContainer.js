@@ -7,7 +7,7 @@ import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import TopicPageTitle from '../TopicPageTitle';
 import { fetchTopicMapFiles } from '../../../actions/topicActions';
 import GexfLinkMap from './GexfLinkMap';
-import SvgLinkMap from './SvgLinkMapContainer';
+import SvgLinkMap from './SvgLinkMap';
 
 const localMessages = {
   title: { id: 'topic.maps.link.title', defaultMessage: 'Link Map' },

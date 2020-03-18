@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Sigma, LoadGEXF } from 'react-sigma';
-import { linkToMediaMap } from '../summary/DownloadMapContainer';
+import { urlToMediaMap } from '../summary/DownloadMapContainer';
 
 const GexfLinkMap = ({ topicId, timespanId, mediaMapFile }) => (
   <Sigma style={{ border: '1px sold #ccc', width: '1100px', height: '800px' }}>
-    <LoadGEXF path={linkToMediaMap(topicId, timespanId, mediaMapFile)} />
+    <LoadGEXF path={urlToMediaMap(topicId, timespanId, mediaMapFile)} />
   </Sigma>
 );
 

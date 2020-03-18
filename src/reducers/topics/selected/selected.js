@@ -16,7 +16,6 @@ import word from './word/word';
 import nytlabels from './nytlabels';
 import geotags from './geotags';
 import snapshotStoryCounts from './snapshotStoryCounts';
-import mapFiles from './mapFiles';
 import { parseId } from '../../../lib/numberUtil';
 
 function id(state = null, action) {
@@ -73,7 +72,6 @@ const selected = combineReducers({
   nytlabels,
   geotags,
   snapshotStoryCounts,
-  mapFiles,
 });
 
 const rootReducer = (state, action) => {

@@ -32,10 +32,9 @@ def map_file(topics_id, timespans_maps_id):
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     map_file_list = apicache.topic_media_map_list(topics_id, timespans_id)['timespan_maps']
     requested_file = [f for f in map_file_list if f['timespan_maps_id'] == int(timespans_maps_id)][0]
-    content = apicache.topic_media_map(topics_id, timespans_maps_id)
-    filename = "{}-{}-link-map-{}.{}".format(topics_id, timespans_id, timespans_maps_id, requested_file['format'])
-    if requested_file['format'] == 'svg':
-        mimetype = "image/svg+xml"
-    else:
-        mimetype = "text/xml"
+    file_format = requested_file['format']
+    content = apicache.topic_media_map(topics_id, timespans_maps_id, file_format)
+    # for direct download we should download the raw content
+    filename = "{}-{}-link-map-{}.{}".format(topics_id, timespans_id, timespans_maps_id, file_format)
+    mimetype = "image/svg+xml" if file_format == 'svg' else "text/xml"
     return flask.Response(content, mimetype=mimetype, headers={"Content-Disposition": "attachment;filename=" + filename})

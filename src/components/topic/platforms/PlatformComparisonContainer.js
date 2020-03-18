@@ -84,7 +84,7 @@ PlatformComparisonContainer.propTypes = {
   platforms: PropTypes.array, // .isRequired,
   newPlatforms: PropTypes.array,
   latestVersionRunning: PropTypes.bool.isRequired,
-  latestUsableSnapshot: PropTypes.number,
+  latestUsableSnapshot: PropTypes.object,
   initializedPlatform: PropTypes.bool.isRequired,
   // from dispatch
   handleNewVersionAndSpider: PropTypes.func.isRequired,

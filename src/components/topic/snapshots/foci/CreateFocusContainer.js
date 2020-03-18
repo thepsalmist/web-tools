@@ -77,8 +77,13 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     switch (formValues.focalTechnique) {
       case FOCAL_TECHNIQUE_MEDIA_SEARCH:
       case FOCAL_TECHNIQUE_BOOLEAN_QUERY:
-        const collections = formValues.media.filter(obj => obj.tags_id).map(s => s.tags_id);
-        const sources = formValues.media.filter(obj => obj.media_id).map(s => s.media_id);
+        let collections = [];
+        let sources = [];
+        if (formValues.media) {
+          // if there are media options on the form (ie. a MEDIA_SEARCH) then respect them
+          collections = formValues.media.filter(obj => obj.tags_id).map(s => s.tags_id);
+          sources = formValues.media.filter(obj => obj.media_id).map(s => s.media_id);
+        }
         saveData['collections[]'] = collections;
         saveData['sources[]'] = sources;
         return dispatch(submitFocusUpdateOrCreate(topicId, saveData))

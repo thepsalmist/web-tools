@@ -17,7 +17,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { DownloadButton } from '../../common/IconButton';
 import { getBrandDarkColor } from '../../../styles/colors';
-import { filteredLinkTo, urlWithFilters } from '../../util/location';
+import { filteredLinkTo, filtersAsUrlParams } from '../../util/location';
 import { timespanForDate } from '../../util/topicUtil';
 import TopicPropTypes from '../TopicPropTypes';
 import { trimToMaxLength } from '../../../lib/stringUtil';
@@ -38,7 +38,7 @@ class SplitStoryCountSummaryContainer extends React.Component {
 
   downloadCsv = () => {
     const { topicId, filters } = this.props;
-    const url = urlWithFilters(`/api/topics/${topicId}/split-story/count.csv`, filters);
+    const url = `/api/topics/${topicId}/split-story/count.csv?${filtersAsUrlParams(filters)}`;
     window.location = url;
   }
 

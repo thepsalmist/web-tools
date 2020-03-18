@@ -470,3 +470,23 @@ def is_timespans_match(timespan1, timespan2):
             and (timespan1['end_date'] == timespan2['end_date']) \
             and (timespan1['period'] == timespan2['period'])
     return match
+
+
+def topic_media_map_list(topics_id, timespans_id):
+    return _cached_topic_media_map_list(user_mediacloud_key(), topics_id, timespans_id)
+
+
+@cache.cache_on_arguments()
+def _cached_topic_media_map_list(user_mc_key, topics_id, timespans_id):
+    user_mc = user_mediacloud_client(user_mc_key)
+    return user_mc.topicMediaMapList(topics_id, timespans_id=timespans_id)
+
+
+def topic_media_map(topics_id, timespan_maps_id, file_format):
+    return _cached_topic_media_map(user_mediacloud_key(), topics_id, timespan_maps_id, file_format)
+
+
+@cache.cache_on_arguments()
+def _cached_topic_media_map(user_mc_key, topics_id, timespans_maps_id, file_format):
+    user_mc = user_mediacloud_client(user_mc_key)
+    return user_mc.topicMediaMapDownload(topics_id, timespans_maps_id, file_format)

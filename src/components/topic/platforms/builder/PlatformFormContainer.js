@@ -84,8 +84,7 @@ class PlatformFormContainer extends React.Component {
           <Row>
             <Col lg={2} xs={12}>
               <AppButton
-                id="preview-search-button"
-                label={messages.search}
+                label={messages.preview}
                 style={{ marginTop: 33 }}
                 onClick={this.handleSearchClick}
               />

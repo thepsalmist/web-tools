@@ -32,7 +32,7 @@ const localMessages = {
   'facebook.crowd_tangle-about': { id: 'fb.ct.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in Facebook posts via Crowd Tangle. Specify keywords to match. Any posts from large public groups matching the keywords will be checked for links. Any links found will be add into the topic' },
   'web.mediacloud-about': { id: 'web.mediaCloud.about', defaultMessage: 'Find matching stories in the Media Cloud archive. Specify media sources or collections. Any news matching those keywords from those sources will be added into the topic.' },
   'web.google-about': { id: 'web.google.about', defaultMessage: 'Find top matching news stories in Google search for your time period. Any news stories in the first few pages of Google search results on each day matching your keywords will be added into the topic' },
-  'generic_post.csv-about': { id: 'generic_post.csv.about', defaultMessage: 'Find links shared in content you upload in a CSV file. This is helpful if you have some content you want to start with that you\'ve acquired outside out system.' },
+  'generic_post.csv-about': { id: 'generic_post.csv.about', defaultMessage: 'Find links shared in content you upload in a CSV file. This is helpful if you have some content you want to start with that you\'ve acquired outside out system. You can import it via CSV format. Your CSV must have columns titled "content", "author", and "publish_date". It can also optionally have "channel", "url", and "post_id" columns. Any other columns will be ignored.' },
 };
 
 const UNKNOWN_THING_MS = { id: 'unknown', defaultMessage: 'Unknown :-(' };

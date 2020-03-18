@@ -7,8 +7,8 @@ import logging
 import os
 
 from server import app
+from server.cache import cache
 from server.platforms.provider import ContentProvider, MC_DATE_FORMAT
-# from server.cache import cache
 
 
 class GenericCsvProvider(ContentProvider):
@@ -36,6 +36,7 @@ class GenericCsvProvider(ContentProvider):
                 data.append(row)
         return data
 
+    @cache.cache_on_arguments()
     def sample(self, query: str, start_date: dt.datetime, end_date: dt.datetime, limit: int = 20, **kwargs) -> List[Dict]:
         """
         Return a list of random content .
@@ -47,6 +48,7 @@ class GenericCsvProvider(ContentProvider):
         """
         return [self._content_to_row(item) for item in random.sample(self._data, min(len(self._data), limit))]
 
+    @cache.cache_on_arguments()
     def count(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> int:
         """
         Count how many items are in the CSV
@@ -58,6 +60,7 @@ class GenericCsvProvider(ContentProvider):
         """
         return len(self._data)
 
+    @cache.cache_on_arguments()
     def count_over_time(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> Dict:
         """
         How many items match are in the CSV by day?
@@ -77,9 +80,10 @@ class GenericCsvProvider(ContentProvider):
         } for date, items in groups.items()]
         return {'counts': results}
 
+    @cache.cache_on_arguments()
     def words(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List[Dict]:
         """
-        We don't have a way to get word counts from the CSV, do we?
+        We don't want to process all the data and do word counts just for a preview
         :param query:
         :return:
         """

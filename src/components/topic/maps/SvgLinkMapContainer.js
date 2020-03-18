@@ -10,6 +10,7 @@ const SvgLinkMapContainer = ({ svgData }) => <UncontrolledReactSVGPanZoom width=
 SvgLinkMapContainer.propTypes = {
   // from parent
   topicId: PropTypes.number.isRequired,
+  timespanId: PropTypes.number.isRequired,
   mediaMapFile: PropTypes.object.isRequired,
   // from state
   svgData: PropTypes.string,
@@ -20,8 +21,8 @@ const mapStateToProps = state => ({
   svgData: state.topics.selected.mapFiles.svg,
 });
 
-const fetchAsyncData = (dispatch, { topicId, mediaMapFile }) => {
-  dispatch(fetchTopicMediaMapFile(topicId, mediaMapFile.timespan_maps_id));
+const fetchAsyncData = (dispatch, { topicId, mediaMapFile, timespanId }) => {
+  dispatch(fetchTopicMediaMapFile(topicId, { timespan_maps_id: mediaMapFile.timespan_maps_id, timespanId }));
 };
 
 export default

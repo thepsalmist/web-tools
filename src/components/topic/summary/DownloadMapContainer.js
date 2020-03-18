@@ -17,7 +17,7 @@ const localMessages = {
   link: { id: 'topic.summary.mapDownload.link', defaultMessage: '{type} - in {format} format ({size}MB) - ' },
 };
 
-export const linkToMediaMap = (topicId, mmf) => `/api/topics/${topicId}/map-files/${mmf.timespan_maps_id}`;
+export const linkToMediaMap = (topicId, timespanId, mmf) => `/api/topics/${topicId}/map-files/${mmf.timespan_maps_id}?timespanId=${timespanId}`;
 
 const DownloadMapContainer = (props) => {
   const { topicId, filters, mediaMapFiles, intl } = props;
@@ -46,7 +46,7 @@ const DownloadMapContainer = (props) => {
               }}
             />
             &nbsp; &nbsp;
-            <a href={linkToMediaMap(topicId, mmf)}><FormattedMessage {...messages.download} /></a>
+            <a href={linkToMediaMap(topicId, filters.timespanId, mmf)}><FormattedMessage {...messages.download} /></a>
             &nbsp; &nbsp;
             <LinkWithFilters to={`/topics/${topicId}/media-map/${mmf.timespan_maps_id}`}>
               <FormattedMessage {...messages.view} />

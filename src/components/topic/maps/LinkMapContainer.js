@@ -13,7 +13,7 @@ const localMessages = {
   title: { id: 'topic.maps.link.title', defaultMessage: 'Link Map' },
 };
 
-const LinkMapContainer = ({ topicId, mediaMapFiles, params }) => {
+const LinkMapContainer = ({ topicId, timespanId, mediaMapFiles, params }) => {
   const mediaMapFile = mediaMapFiles.find(mmf => mmf.timespan_maps_id === parseInt(params.mediaMapId, 10));
   return (
     <Grid>
@@ -21,8 +21,8 @@ const LinkMapContainer = ({ topicId, mediaMapFiles, params }) => {
         <Col lg={12}>
           <TopicPageTitle value={localMessages.title} />
           <h1><FormattedMessage {...localMessages.title} /></h1>
-          {(mediaMapFile.format === 'gexf') && <GexfLinkMap topicId={topicId} mediaMapFile={mediaMapFile} />}
-          {(mediaMapFile.format === 'svg') && <SvgLinkMap topicId={topicId} mediaMapFile={mediaMapFile} />}
+          {(mediaMapFile.format === 'gexf') && <GexfLinkMap topicId={topicId} timespanId={timespanId} mediaMapFile={mediaMapFile} />}
+          {(mediaMapFile.format === 'svg') && <SvgLinkMap topicId={topicId} timespanId={timespanId} mediaMapFile={mediaMapFile} />}
         </Col>
       </Row>
     </Grid>
@@ -37,6 +37,7 @@ LinkMapContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   mediaMapFiles: PropTypes.array,
   apiKey: PropTypes.string.isRequired,
+  timespanId: PropTypes.number.isRequired,
   // from dispatch
   // from parent
 };
@@ -46,6 +47,7 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.summary.mapFiles.fetchStatus,
   mediaMapFiles: state.topics.selected.summary.mapFiles.timespan_maps,
   apiKey: state.user.key,
+  timespanId: state.topics.selected.filters.timespanId,
 });
 
 const fetchAsyncData = (dispatch, props) => {

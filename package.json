@@ -70,8 +70,6 @@
     "react-select": "^3.0.8",
     "react-sigma": "^1.2.34",
     "react-slick": "^0.25.2",
-    "react-svg-pan-zoom": "^3.8.0",
-    "react-svg-pan-zoom-loader": "^1.4.1",
     "redux": "^4.0.5",
     "redux-actions": "^2.6.5",
     "redux-form": "^8.2.6",

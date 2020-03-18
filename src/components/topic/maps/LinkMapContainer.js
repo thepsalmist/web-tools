@@ -7,7 +7,6 @@ import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import TopicPageTitle from '../TopicPageTitle';
 import { fetchTopicMapFiles } from '../../../actions/topicActions';
 import GexfLinkMap from './GexfLinkMap';
-import SvgLinkMap from './SvgLinkMap';
 
 const localMessages = {
   title: { id: 'topic.maps.link.title', defaultMessage: 'Link Map' },
@@ -22,7 +21,6 @@ const LinkMapContainer = ({ topicId, timespanId, mediaMapFiles, params }) => {
           <TopicPageTitle value={localMessages.title} />
           <h1><FormattedMessage {...localMessages.title} /></h1>
           {(mediaMapFile.format === 'gexf') && <GexfLinkMap topicId={topicId} timespanId={timespanId} mediaMapFile={mediaMapFile} />}
-          {(mediaMapFile.format === 'svg') && <SvgLinkMap topicId={topicId} timespanId={timespanId} mediaMapFile={mediaMapFile} />}
         </Col>
       </Row>
     </Grid>

@@ -48,9 +48,16 @@ const DownloadMapContainer = (props) => {
             &nbsp; &nbsp;
             <a href={urlToMediaMap(topicId, filters.timespanId, mmf)}><FormattedMessage {...messages.download} /></a>
             &nbsp; &nbsp;
-            <LinkWithFilters to={`/topics/${topicId}/media-map/${mmf.timespan_maps_id}`}>
-              <FormattedMessage {...messages.view} />
-            </LinkWithFilters>
+            {(mmf.format === 'gexf') && (
+              <LinkWithFilters to={`/topics/${topicId}/media-map/${mmf.timespan_maps_id}`}>
+                <FormattedMessage {...messages.view} />
+              </LinkWithFilters>
+            )}
+            {(mmf.format === 'svg') && (
+              <a href={`${urlToMediaMap(topicId, filters.timespanId, mmf)}&download=0`} target="_new">
+                <FormattedMessage {...messages.view} />
+              </a>
+            )}
           </li>
         ))}
       </ul>

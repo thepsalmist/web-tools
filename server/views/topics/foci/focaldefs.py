@@ -31,9 +31,11 @@ def topic_focus_definition_update_or_create(topics_id):
         focus = user_mc.topicFocusDefinitionUpdate(topics_id, foci_id, name=name, description=description,
                                                    query=q)
     else:
-        # if new focal set, then create that first
-        if ((sources not in [None, ''] and len(sources) > 0) or collections not in [None, ''] and len(collections) > 0):
+        # respect option for media and sources
+        if (sources not in [None, ''] and len(sources) > 0) or (collections not in [None, ''] and len(collections) > 0):
             query = concatenate_query_for_solr(q, sources, collections)
+        else:
+            query = q
 
         if int(request.form['focalSetDefinitionId']) is NEW_FOCAL_SET_PLACEHOLDER_ID:
             fs_name = request.form['focalSetName']

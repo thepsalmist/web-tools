@@ -1,6 +1,72 @@
 {
   "releases": [
     {
+      "date": "2020-03-18",
+      "version": "v3.13.11",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Fix display & download of topic SVG link maps"
+        }
+      ]
+    },{
+      "date": "2020-03-17",
+      "version": "v3.13.10",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Add links to auto-generated topic link maps"
+        }
+      ]
+    },{
+      "date": "2020-02-28",
+      "version": "v3.13.9",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Saving keyword-based subtopics works again"
+        }
+      ]
+    },{
+      "date": "2020-02-24",
+      "version": "v3.13.8",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics", "sources" ],
+          "type": "Fix",
+          "note": "Plumbing work on cache-related problems"
+        }
+      ]
+    },{
+      "date": "2020-02-20",
+      "version": "v3.13.7",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Searching by All Media (not advised) and downloading stories now works"
+        }
+      ]
+    },{
+      "date": "2020-02-11",
+      "version": "v3.13.6",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "New",
+          "note": "Initial podcast support as feed type"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Topic top story for fb and all media correctly downloads."
+        }
+      ]
+    },
+    {
       "date": "2020-01-24",
       "version": "v3.13.5",
       "notes": [

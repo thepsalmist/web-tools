@@ -187,6 +187,7 @@ const messages = {
   editWordCloud: { id: 'editWordCloud', defaultMessage: 'Edit this Word Cloud' },
   viewWordCloud: { id: 'viewWordCloud', defaultMessage: 'View this Word Cloud' },
   download: { id: 'download', defaultMessage: 'Download' },
+  view: { id: 'view', defaultMessage: 'View' },
   downloadSVG: { id: 'downloadSVG', defaultMessage: 'Download a SVG' },
   downloadCSV: { id: 'downloadCSV', defaultMessage: 'Download a CSV' },
   downloadOptions: { id: 'downloadOptions', defaultMessage: 'Download Options...' },

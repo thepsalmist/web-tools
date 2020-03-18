@@ -1,13 +1,23 @@
 {
   "releases": [
     {
+      "date": "2020-03-18",
+      "version": "v3.13.11",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Fix display & download of topic SVG link maps"
+        }
+      ]
+    },{
       "date": "2020-03-17",
       "version": "v3.13.10",
       "notes": [
         {
           "apps": [ "topics" ],
           "type": "New",
-          "note": "Add links to auto-generated link maps"
+          "note": "Add links to auto-generated topic link maps"
         }
       ]
     },{

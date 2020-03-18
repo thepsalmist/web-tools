@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { push } from 'react-router-redux';
 import { Grid } from 'react-flexbox-grid/lib';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
@@ -7,6 +8,7 @@ import { reset, reduxForm } from 'redux-form';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchUserQueuedAndRunningTopics, createTopic } from '../../../actions/topicActions';
 import { WarningNotice } from '../../common/Notice';
+import { updateFeedback } from '../../../actions/appActions';
 import { FETCH_SUCCEEDED } from '../../../lib/fetchConstants';
 import PageTitle from '../../common/PageTitle';
 import TopicForm from './TopicForm';
@@ -21,6 +23,9 @@ const localMessages = {
   createTopic: { id: 'topic.create', defaultMessage: 'Create Topic' },
   creatingTitle: { id: 'topic.creating.title', defaultMessage: 'Please wait - we\'re creating your Topic now' },
   creatingDesc: { id: 'topic.creating.detail', defaultMessage: 'We are creating your topic now.  This can take a minute or so, just to make sure everyting is in order.  Once it is created, you\'ll be shown a page telling you we are gathering the stories.' },
+  feedback: { id: 'topic.edit.save.feedback', defaultMessage: 'We created your topic!' },
+  failed: { id: 'topic.edit.save.failed', defaultMessage: 'Sorry, that didn\'t work!' },
+
 };
 
 const CreateTopicContainer = (props) => {
@@ -61,7 +66,7 @@ const mapStateToProps = state => ({
   isAdmin: state.user.isAdmin,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   handleCreateEmptyTopic: (values) => {
     const queryInfo = {
       name: values.name,
@@ -75,13 +80,14 @@ const mapDispatchToProps = dispatch => ({
       is_logogram: values.is_logogram ? 1 : 0,
       max_stories: values.max_topic_stories,
     };
-    return dispatch(createTopic(queryInfo));
-    // TODO push to summary or version page where the lack of platforms will push the user to the Manage Platform screen
-    /* if (createResults && createResults.topics_id) {
-        dispatch(updateFeedback({ classes: 'info-notice', open: true, message: intl.formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
-        return dispatch(push(`/topics/${results.topics_id}/versions`)); summary
-      }
-    */
+    dispatch(createTopic(queryInfo))
+      .then((results) => {
+        if (results && results.topics_id) {
+          dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
+          return dispatch(push(`/topics/${results.topics_id}/summary`));
+        }
+        return dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));
+      });
   },
 });
 const fetchAsyncData = (dispatch, { isAdmin }) => {

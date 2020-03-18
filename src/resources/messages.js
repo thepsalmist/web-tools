@@ -133,6 +133,8 @@ const messages = {
   addPlatform: { id: 'platform.add', defaultMessage: 'Add A New Platform' },
   managePlatforms: { id: 'platform.manage', defaultMessage: 'Manage Platforms' },
   platformSource: { id: 'platform.source', defaultMessage: 'Source' },
+  incompletePlatform: { id: 'platform.incompletePlatform', defaultMessage: 'You need to set up a platform for your topic!' },
+
 
   story: { id: 'story', defaultMessage: 'Story' },
   storyPlural: { id: 'stories', defaultMessage: 'Stories' },

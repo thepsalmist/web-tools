@@ -144,4 +144,5 @@ def platform_for_web_seed_query(object_with_query):
 
 
 def topic_has_seed_query(topic):
-    return topic['solr_seed_query'] not in [None, ''];
+    # HACK: support our temporary hack for topics needing a query and media_id during creation
+    return (topic['solr_seed_query'] not in [None, '']) and (topic['solr_seed_query'] != 'null')

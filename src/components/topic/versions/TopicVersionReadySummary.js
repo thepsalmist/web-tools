@@ -7,7 +7,7 @@ import messages from '../../../resources/messages';
 const localMessages = {
   completedDetails: { id: 'topic.version.completedDetails', defaultMessage: 'Includes {total} stories ({discoveredPct} discovered), {platformCount, plural,\n =0 {no platforms}\n =1 {1 platform}\n other {# platforms}}, and {fociCount, plural,\n =0 {no subtopics}\n =1 {1 subtopic}\n other {# subtopics}}.' },
   snapshotDetails: { id: 'topic.version.snapshotDetails', defaultMessage: 'details' },
-  dates: { id: 'topic.version.dates', defaultMessage: 'Storied between {start} and {end}' },
+  dates: { id: 'topic.version.dates', defaultMessage: 'Stories between {start} and {end}' },
   spidering: { id: 'topic.version.spidering', defaultMessage: '{rounds} rounds of spidering' },
 };
 

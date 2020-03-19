@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import { push } from 'react-router-redux';
 import LinkWithFilters from '../LinkWithFilters';
 import AppButton from '../../common/AppButton';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
@@ -10,10 +11,11 @@ import messages from '../../../resources/messages';
 import BackLinkingControlBar from '../BackLinkingControlBar';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../../lib/auth';
-import { fetchSnapshotStoryCounts } from '../../../actions/topicActions';
+import { fetchSnapshotStoryCounts, topicSnapshotSpider } from '../../../actions/topicActions';
+import { updateFeedback } from '../../../actions/appActions';
+import { TOPIC_FORM_MODE_EDIT } from '../wizard/TopicForm';
 import JobList from './homepages/JobList';
 import TopicVersionListItem from './TopicVersionListItem';
-import { createNewSpideredVersion } from '../wizard/TopicConfirmContainer';
 
 const localMessages = {
   title: { id: 'topic.versionList.title', defaultMessage: 'Topic Versions' },
@@ -157,6 +159,17 @@ const mapStateToProps = state => ({
   selectedSnapshot: state.topics.selected.snapshots.selected,
   isAdmin: state.user.isAdmin,
 });
+
+export const createNewSpideredVersion = (topicId, dispatch, formatMessage) => {
+  dispatch(topicSnapshotSpider(topicId))
+    .then((spiderResults) => {
+      if (spiderResults && spiderResults.topics_id) { // let them know it worked
+        dispatch(updateFeedback({ classes: 'info-notice', open: true, message: formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
+        return dispatch(push(`/topics/${spiderResults.topics_id}/versions`));
+      }
+      return dispatch(updateFeedback({ open: true, message: formatMessage(localMessages.failed) }));
+    });
+};
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleQuickCreate: (topicId) => {

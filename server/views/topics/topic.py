@@ -152,6 +152,9 @@ def topic_update_settings(topics_id):
         'description': request.form['description'] if 'description' in request.form else None,
         'is_public': request.form['is_public'] if 'is_public' in request.form else None,
         'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
+        'start_date': request.form['start_date'] if 'start_date' in request.form else None,
+        'end_date': request.form['end_date'] if 'end_date' in request.form else None,
+        'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
     }
     result = user_mc.topicUpdate(topics_id, **args)
     return topic_summary(result['topics'][0]['topics_id'])  # give them back new data, so they can update the client

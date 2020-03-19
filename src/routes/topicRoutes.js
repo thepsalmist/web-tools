@@ -31,7 +31,7 @@ import systemRoutes from './systemRoutes';
 import TopicsApp from '../components/topic/TopicsApp';
 import About from '../components/topic/About';
 import CreateTopicContainer from '../components/topic/wizard/CreateTopicContainer';
-import EditWizardTopicContainer from '../components/topic/wizard/EditWizardTopicContainer';
+import EditTopicDataOptionsContainer from '../components/topic/wizard/EditTopicDataOptionsContainer';
 import EditTopicSettingsContainer from '../components/topic/wizard/EditTopicSettingsContainer';
 import AttentionContainer from '../components/topic/attention/AttentionContainer';
 import WordContainer from '../components/topic/words/WordContainer';
@@ -60,9 +60,7 @@ const topicRoutes = (
     <Route path="/topics/status" component={AdminAllTopicsContainer} onEnter={requireAuth} />
 
     <Route path="/topics/:topicId" component={TopicContainer} onEnter={requireAuth}>
-      <Route path="/topics/:topicId/update" component={EditWizardTopicContainer} onEnter={requireAuth}>
-        <Route path="/topics/:topicId/update/:step" component={EditWizardTopicContainer} onEnter={requireAuth} />
-      </Route>
+      <Route path="data-options" component={EditTopicDataOptionsContainer} onEnter={requireAuth} />
       <Route path="versions" component={TopicVersionListContainer} onEnter={requireAuth} />
       <Route path="permissions" component={TopicPermissionsContainer} onEnter={requireAuth} />
       <Route path="settings" component={EditTopicSettingsContainer} onEnter={requireAuth} />

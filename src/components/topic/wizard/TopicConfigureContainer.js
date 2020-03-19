@@ -12,12 +12,6 @@ import messages from '../../../resources/messages';
 import { getCurrentDate, getMomentDateSubtraction } from '../../../lib/dateUtil';
 import { MAX_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 
-const localMessages = {
-  addCollectionsTitle: { id: 'topic.create.addCollectionsTitle', defaultMessage: 'Select Sources And Collections' },
-  addCollectionsIntro: { id: 'topic.create.addCollectionsIntro', defaultMessage: 'The following are the Sources and Collections associated with this topic:' },
-  sourceCollectionsError: { id: 'topic.create.form.detail.sourcesCollections.error', defaultMessage: 'You must select at least one Source or one Collection to seed this topic.' },
-};
-
 const formSelector = formValueSelector('topicForm');
 
 const TopicConfigureContainer = (props) => {
@@ -50,8 +44,6 @@ const TopicConfigureContainer = (props) => {
       <TopicForm
         initialValues={initialValues}
         onSubmit={() => onStepChange(mode, 1)}
-        title={formatMessage(localMessages.addCollectionsTitle)}
-        intro={formatMessage(localMessages.addCollectionsIntro)}
         mode={mode}
         onMediaChange={handleMediaChange}
         onMediaDelete={handleMediaDelete}
@@ -62,8 +54,6 @@ const TopicConfigureContainer = (props) => {
 
 TopicConfigureContainer.propTypes = {
   // from parent
-  location: PropTypes.object.isRequired,
-  initialValues: PropTypes.object,
   currentStep: PropTypes.number,
   currentStepText: PropTypes.object,
   mode: PropTypes.string.isRequired,

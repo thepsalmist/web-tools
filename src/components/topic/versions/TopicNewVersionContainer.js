@@ -15,8 +15,8 @@ import LinkWithFilters from '../LinkWithFilters';
 
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Make a New Version' },
-  createNewVersion: { id: 'topics.createNewVersion', defaultMessage: 'Change Dates / Spidering' },
-  createNewVersionDesc: { id: 'topics.createNewVersion.desc', defaultMessage: 'Change the dates or advanced settings such as how many rounds of spidering to do. Once you save your changes, we start building a new version with stories that match your new dates and follow new links to discover more stories.' },
+  changeDatesSpdering: { id: 'topics.changeDatesSpdering', defaultMessage: 'Change Dates / Spidering' },
+  changeDatesSpderingDesc: { id: 'topics.changeDatesSpdering.desc', defaultMessage: 'Change the dates or advanced settings such as how many rounds of spidering to do. Once you save your changes, we start building a new version with stories that match your new dates and follow new links to discover more stories.' },
   addNewSubtopics: { id: 'topics.addNewSubtopics', defaultMessage: 'Add or Modify Subtopics' },
   addNewSubtopicsDesc: { id: 'topics.addNewSubtopics.desc', defaultMessage: 'Slice and dice your topic into subtopics to support comparative analysis. You can create subtopics with a growing list of techniques; allowing you to group stories by simple boolean queries, the country of focus, the themes included, and more.' },
   cannotUpdateTopic: { id: 'topic.modify.cannotUpdate', defaultMessage: 'Another topic of yours is generating. You can only run one at a time, so you can\'t change this topic until that one finished.' },
@@ -35,11 +35,11 @@ const TopicNewVersionContainer = props => (
       )}
       <Row>
         <Col lg={4}>
-          <h2><FormattedMessage {...localMessages.createNewVersion} /></h2>
-          <p><FormattedMessage {...localMessages.createNewVersionDesc} /></p>
-          <LinkWithFilters to={`/topics/${props.topicId}/update`}>
+          <h2><FormattedMessage {...localMessages.changeDatesSpdering} /></h2>
+          <p><FormattedMessage {...localMessages.changeDatesSpderingDesc} /></p>
+          <LinkWithFilters to={`/topics/${props.topicId}/data-options`}>
             <AppButton
-              label={props.intl.formatMessage(localMessages.createNewVersion)}
+              label={props.intl.formatMessage(localMessages.changeDatesSpdering)}
               primary
               disabled={!props.allowedToRun}
             />

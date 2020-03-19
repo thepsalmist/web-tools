@@ -485,6 +485,6 @@ def topic_media_map(topics_id, timespan_maps_id, file_format):
 
 
 @cache.cache_on_arguments()
-def _cached_topic_media_map(user_mc_key, topics_id, timespans_maps_id, file_format):
+def _cached_topic_media_map(user_mc_key, topics_id, timespan_maps_id, file_format):
     user_mc = user_mediacloud_client(user_mc_key)
-    return user_mc.topicMediaMapDownload(topics_id, timespans_maps_id, file_format)
+    return user_mc.topicMediaMapDownload(topics_id, timespan_maps_id, file_format)

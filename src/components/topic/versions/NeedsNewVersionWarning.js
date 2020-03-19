@@ -17,7 +17,7 @@ const localMessages = {
 // TODO: move this into a reducer when we've accounted for all cases
 // latestUsableSnapshot === null accounts for an empty topic with no snapshot...
 function needsNewVersion(usingLatest, newDefinitions, platformsHaveChanged, datesOrSpideringHaveChanged, latestVersionRunning) {
-  return (usingLatest && !latestVersionRunning && (newDefinitions || platformsHaveChanged));
+  return (usingLatest && !latestVersionRunning && (newDefinitions || platformsHaveChanged || datesOrSpideringHaveChanged));
 }
 
 const NeedsNewVersionWarning = ({ topicId, newDefinitions, latestVersionRunning, usingLatest, platformsHaveChanged, datesOrSpideringHaveChanged }) => (
@@ -29,16 +29,9 @@ const NeedsNewVersionWarning = ({ topicId, newDefinitions, latestVersionRunning,
             <Col lg={12}>
               <WarningNotice>
                 <FormattedMessage {...localMessages.needsNewSnapshot} />
-                {newDefinitions && (
-                  <LinkWithFilters to={`/topics/${topicId}/snapshot/foci`}>
-                    <AppButton label={localMessages.needsNewSnapshotAction} />
-                  </LinkWithFilters>
-                )}
-                {!newDefinitions && platformsHaveChanged && (
-                  <LinkWithFilters to={`/topics/${topicId}/platforms/manage`}>
-                    <AppButton label={localMessages.needsNewSnapshotAction} />
-                  </LinkWithFilters>
-                )}
+                <LinkWithFilters to={`/topics/${topicId}/new-version`}>
+                  <AppButton label={localMessages.needsNewSnapshotAction} />
+                </LinkWithFilters>
               </WarningNotice>
             </Col>
           </Row>

@@ -15,6 +15,7 @@ import LinkWithFilters from '../LinkWithFilters';
 
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Make a New Version' },
+  youMadeChanges: { id: 'topics.youMadeChanges', defaultMessage: 'You made changes' },
   changeDatesSpdering: { id: 'topics.changeDatesSpdering', defaultMessage: 'Change Dates / Spidering' },
   changeDatesSpderingDesc: { id: 'topics.changeDatesSpdering.desc', defaultMessage: 'Change the dates or advanced settings such as how many rounds of spidering to do. Once you save your changes, we start building a new version with stories that match your new dates and follow new links to discover more stories.' },
   addNewSubtopics: { id: 'topics.addNewSubtopics', defaultMessage: 'Add or Modify Subtopics' },
@@ -24,46 +25,55 @@ const localMessages = {
   addNewPlatformDesc: { id: 'topics.addNewPlatform.desc', defaultMessage: 'Media about your topic is shared across the web and social media. Set up queries for various platforms to find news links on the open-web, those shared on twitter, on reddit, and other platforms. This lets you discover what news links are being shared on different platforms.' },
 };
 
-const TopicNewVersionContainer = props => (
+const TopicNewVersionContainer = ({ topicId, allowedToRun, intl, newDefinitions, datesOrSpideringHaveChanged, platformsHaveChanged }) => (
   <div className="topic-container topic-new-version-container">
-    <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${props.topicId}/summary`} />
+    <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
     <Grid>
       <PageTitle value={localMessages.title} />
       <h1><FormattedMessage {...localMessages.title} /></h1>
-      {!props.allowedToRun && (
+      {!allowedToRun && (
         <WarningNotice><FormattedHTMLMessage {...localMessages.cannotUpdateTopic} /></WarningNotice>
       )}
       <Row>
         <Col lg={4}>
           <h2><FormattedMessage {...localMessages.changeDatesSpdering} /></h2>
+          {datesOrSpideringHaveChanged && (
+            <WarningNotice><FormattedHTMLMessage {...localMessages.youMadeChanges} /></WarningNotice>
+          )}
           <p><FormattedMessage {...localMessages.changeDatesSpderingDesc} /></p>
-          <LinkWithFilters to={`/topics/${props.topicId}/data-options`}>
+          <LinkWithFilters to={`/topics/${topicId}/data-options`}>
             <AppButton
-              label={props.intl.formatMessage(localMessages.changeDatesSpdering)}
+              label={intl.formatMessage(localMessages.changeDatesSpdering)}
               primary
-              disabled={!props.allowedToRun}
+              disabled={!allowedToRun}
             />
           </LinkWithFilters>
         </Col>
         <Col lg={4}>
           <h2><FormattedMessage {...localMessages.addNewSubtopics} /></h2>
+          {newDefinitions && (
+            <WarningNotice><FormattedHTMLMessage {...localMessages.youMadeChanges} /></WarningNotice>
+          )}
           <p><FormattedMessage {...localMessages.addNewSubtopicsDesc} /></p>
-          <LinkWithFilters to={`/topics/${props.topicId}/snapshot/foci`}>
+          <LinkWithFilters to={`/topics/${topicId}/snapshot/foci`}>
             <AppButton
-              label={props.intl.formatMessage(localMessages.addNewSubtopics)}
+              label={intl.formatMessage(localMessages.addNewSubtopics)}
               primary
-              disabled={!props.allowedToRun}
+              disabled={!allowedToRun}
             />
           </LinkWithFilters>
         </Col>
         <Col lg={4}>
           <h2><FormattedMessage {...localMessages.addNewPlatform} /></h2>
+          {platformsHaveChanged && (
+            <WarningNotice><FormattedHTMLMessage {...localMessages.youMadeChanges} /></WarningNotice>
+          )}
           <p><FormattedMessage {...localMessages.addNewPlatformDesc} /></p>
-          <LinkWithFilters to={`/topics/${props.topicId}/platforms/manage`}>
+          <LinkWithFilters to={`/topics/${topicId}/platforms/manage`}>
             <AppButton
-              label={props.intl.formatMessage(localMessages.addNewPlatform)}
+              label={intl.formatMessage(localMessages.addNewPlatform)}
               primary
-              disabled={!props.allowedToRun}
+              disabled={!allowedToRun}
             />
           </LinkWithFilters>
         </Col>
@@ -79,6 +89,10 @@ TopicNewVersionContainer.propTypes = {
   formatMessage: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
   allowedToRun: PropTypes.bool.isRequired,
+  newDefinitions: PropTypes.bool.isRequired,
+  platformsHaveChanged: PropTypes.bool.isRequired,
+  datesOrSpideringHaveChanged: PropTypes.bool.isRequired,
+  latestVersionRunning: PropTypes.bool.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
   goToUrl: PropTypes.func.isRequired,
@@ -90,6 +104,10 @@ const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
   fetchStatus: state.topics.modify.userRunningTopicStatus.fetchStatus,
   allowedToRun: state.topics.modify.userRunningTopicStatus.allowed, // non-admin users can only run one at a time
+  newDefinitions: state.topics.selected.focalSets.all.newDefinitions,
+  platformsHaveChanged: state.topics.selected.info.platformsHaveChanged,
+  datesOrSpideringHaveChanged: state.topics.selected.info.datesOrSpideringHaveChanged,
+  latestVersionRunning: state.topics.selected.snapshots.latestVersionRunning,
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -155,7 +155,7 @@ def topic_update_settings(topics_id):
         'start_date': _safe_member_of_dict('start_date', request.form),
         'end_date': _safe_member_of_dict('end_date', request.form),
         'max_iterations': _safe_member_of_dict('max_iterations', request.form),
-        'max_topic_stories': _safe_member_of_dict('max_topic_stories', request.form),
+        'max_stories': _safe_member_of_dict('max_topic_stories', request.form),
     }
     result = user_mc.topicUpdate(topics_id, **args)
     return topic_summary(result['topics'][0]['topics_id'])  # give them back new data, so they can update the client

@@ -12,6 +12,8 @@ import BackLinkingControlBar from '../BackLinkingControlBar';
 import messages from '../../../resources/messages';
 import { WarningNotice } from '../../common/Notice';
 import LinkWithFilters from '../LinkWithFilters';
+import { needsNewVersion } from './NeedsNewVersionWarning';
+import VersionComparisonContainer from './VersionComparisonContainer';
 
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Make a New Version' },
@@ -25,67 +27,75 @@ const localMessages = {
   addNewPlatformDesc: { id: 'topics.addNewPlatform.desc', defaultMessage: 'Media about your topic is shared across the web and social media. Set up queries for various platforms to find news links on the open-web, those shared on twitter, on reddit, and other platforms. This lets you discover what news links are being shared on different platforms.' },
 };
 
-const TopicNewVersionContainer = ({ topicId, allowedToRun, intl, newDefinitions, datesOrSpideringHaveChanged, platformsHaveChanged }) => (
-  <div className="topic-container topic-new-version-container">
-    <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
-    <Grid>
-      <PageTitle value={localMessages.title} />
-      <h1><FormattedMessage {...localMessages.title} /></h1>
-      {!allowedToRun && (
-        <WarningNotice><FormattedHTMLMessage {...localMessages.cannotUpdateTopic} /></WarningNotice>
-      )}
-      <Row>
-        <Col lg={4}>
-          <h2><FormattedMessage {...localMessages.changeDatesSpdering} /></h2>
-          {datesOrSpideringHaveChanged && (
-            <WarningNotice><FormattedHTMLMessage {...localMessages.youMadeChanges} /></WarningNotice>
-          )}
-          <p><FormattedMessage {...localMessages.changeDatesSpderingDesc} /></p>
-          <LinkWithFilters to={`/topics/${topicId}/data-options`}>
-            <AppButton
-              label={intl.formatMessage(localMessages.changeDatesSpdering)}
-              primary
-              disabled={!allowedToRun}
-            />
-          </LinkWithFilters>
-        </Col>
-        <Col lg={4}>
-          <h2><FormattedMessage {...localMessages.addNewSubtopics} /></h2>
-          {newDefinitions && (
-            <WarningNotice><FormattedHTMLMessage {...localMessages.youMadeChanges} /></WarningNotice>
-          )}
-          <p><FormattedMessage {...localMessages.addNewSubtopicsDesc} /></p>
-          <LinkWithFilters to={`/topics/${topicId}/snapshot/foci`}>
-            <AppButton
-              label={intl.formatMessage(localMessages.addNewSubtopics)}
-              primary
-              disabled={!allowedToRun}
-            />
-          </LinkWithFilters>
-        </Col>
-        <Col lg={4}>
-          <h2><FormattedMessage {...localMessages.addNewPlatform} /></h2>
-          {platformsHaveChanged && (
-            <WarningNotice><FormattedHTMLMessage {...localMessages.youMadeChanges} /></WarningNotice>
-          )}
-          <p><FormattedMessage {...localMessages.addNewPlatformDesc} /></p>
-          <LinkWithFilters to={`/topics/${topicId}/platforms/manage`}>
-            <AppButton
-              label={intl.formatMessage(localMessages.addNewPlatform)}
-              primary
-              disabled={!allowedToRun}
-            />
-          </LinkWithFilters>
-        </Col>
-      </Row>
-    </Grid>
-  </div>
+const TopicNewVersionContainer = ({ topic, allowedToRun, intl, newDefinitions, datesOrSpideringHaveChanged, usingLatest,
+  platformsHaveChanged, latestVersionRunning, selectedSnapshot }) => (
+    <div className="topic-container topic-new-version-container">
+      <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topic.topics_id}/summary`} />
+      <Grid>
+        <PageTitle value={localMessages.title} />
+
+        <h1><FormattedMessage {...localMessages.title} /></h1>
+        {!allowedToRun && (
+          <WarningNotice><FormattedHTMLMessage {...localMessages.cannotUpdateTopic} /></WarningNotice>
+        )}
+
+        {needsNewVersion(usingLatest, newDefinitions, platformsHaveChanged, datesOrSpideringHaveChanged, latestVersionRunning) && (
+          <VersionComparisonContainer topicId={topic.topics_id} current={selectedSnapshot} next={topic} />
+        )}
+
+        <Row>
+          <Col lg={4}>
+            <h2><FormattedMessage {...localMessages.changeDatesSpdering} /></h2>
+            {datesOrSpideringHaveChanged && (
+              <WarningNotice><FormattedHTMLMessage {...localMessages.youMadeChanges} /></WarningNotice>
+            )}
+            <p><FormattedMessage {...localMessages.changeDatesSpderingDesc} /></p>
+            <LinkWithFilters to={`/topics/${topic.topics_id}/data-options`}>
+              <AppButton
+                label={intl.formatMessage(localMessages.changeDatesSpdering)}
+                primary
+                disabled={!allowedToRun}
+              />
+            </LinkWithFilters>
+          </Col>
+          <Col lg={4}>
+            <h2><FormattedMessage {...localMessages.addNewSubtopics} /></h2>
+            {newDefinitions && (
+              <WarningNotice><FormattedHTMLMessage {...localMessages.youMadeChanges} /></WarningNotice>
+            )}
+            <p><FormattedMessage {...localMessages.addNewSubtopicsDesc} /></p>
+            <LinkWithFilters to={`/topics/${topic.topics_id}/snapshot/foci`}>
+              <AppButton
+                label={intl.formatMessage(localMessages.addNewSubtopics)}
+                primary
+                disabled={!allowedToRun}
+              />
+            </LinkWithFilters>
+          </Col>
+          <Col lg={4}>
+            <h2><FormattedMessage {...localMessages.addNewPlatform} /></h2>
+            {platformsHaveChanged && (
+              <WarningNotice><FormattedHTMLMessage {...localMessages.youMadeChanges} /></WarningNotice>
+            )}
+            <p><FormattedMessage {...localMessages.addNewPlatformDesc} /></p>
+            <LinkWithFilters to={`/topics/${topic.topics_id}/platforms/manage`}>
+              <AppButton
+                label={intl.formatMessage(localMessages.addNewPlatform)}
+                primary
+                disabled={!allowedToRun}
+              />
+            </LinkWithFilters>
+          </Col>
+        </Row>
+      </Grid>
+    </div>
 );
 
 TopicNewVersionContainer.propTypes = {
   // from state
   filters: PropTypes.object,
-  topicId: PropTypes.number,
+  usingLatest: PropTypes.bool.isRequired,
+  topic: PropTypes.object,
   formatMessage: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
   allowedToRun: PropTypes.bool.isRequired,
@@ -93,6 +103,7 @@ TopicNewVersionContainer.propTypes = {
   platformsHaveChanged: PropTypes.bool.isRequired,
   datesOrSpideringHaveChanged: PropTypes.bool.isRequired,
   latestVersionRunning: PropTypes.bool.isRequired,
+  selectedSnapshot: PropTypes.object,
   // from context
   intl: PropTypes.object.isRequired,
   goToUrl: PropTypes.func.isRequired,
@@ -100,14 +111,15 @@ TopicNewVersionContainer.propTypes = {
 
 const mapStateToProps = state => ({
   filters: state.topics.selected.filters,
-  topicInfo: state.topics.selected.info,
-  topicId: state.topics.selected.id,
+  topic: state.topics.selected.info,
+  usingLatest: state.topics.selected.snapshots.usingLatest,
   fetchStatus: state.topics.modify.userRunningTopicStatus.fetchStatus,
   allowedToRun: state.topics.modify.userRunningTopicStatus.allowed, // non-admin users can only run one at a time
   newDefinitions: state.topics.selected.focalSets.all.newDefinitions,
   platformsHaveChanged: state.topics.selected.info.platformsHaveChanged,
   datesOrSpideringHaveChanged: state.topics.selected.info.datesOrSpideringHaveChanged,
   latestVersionRunning: state.topics.selected.snapshots.latestVersionRunning,
+  selectedSnapshot: state.topics.selected.snapshots.selected,
 });
 
 const mapDispatchToProps = dispatch => ({

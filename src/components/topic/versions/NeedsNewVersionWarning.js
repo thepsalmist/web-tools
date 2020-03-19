@@ -16,7 +16,7 @@ const localMessages = {
 
 // TODO: move this into a reducer when we've accounted for all cases
 // latestUsableSnapshot === null accounts for an empty topic with no snapshot...
-function needsNewVersion(usingLatest, newDefinitions, platformsHaveChanged, datesOrSpideringHaveChanged, latestVersionRunning) {
+export function needsNewVersion(usingLatest, newDefinitions, platformsHaveChanged, datesOrSpideringHaveChanged, latestVersionRunning) {
   return (usingLatest && !latestVersionRunning && (newDefinitions || platformsHaveChanged || datesOrSpideringHaveChanged));
 }
 

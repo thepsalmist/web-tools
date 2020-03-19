@@ -84,7 +84,7 @@ function checkForAnyPlatformChanges(currentPlatforms, newPlatforms) {
  * @return boolean true if there are differences in start/end date or spidering iterations
  */
 const checkForDateSpideringChanges = (t, latestSnapshot) => {
-  const spideringChanged = t.max_iterations !== latestSnapshot.seed_queries.topic.num_iterations;
+  const spideringChanged = t.max_iterations !== latestSnapshot.seed_queries.topic.max_iterations;
   const datesChanged = (t.start_date !== latestSnapshot.seed_queries.topic.start_date) || (t.end_date !== latestSnapshot.seed_queries.topic.end_date);
   return spideringChanged || datesChanged;
 };

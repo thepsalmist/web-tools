@@ -5,45 +5,74 @@ import { platformNameMessage, sourceNameMessage } from '../platforms/AvailablePl
 import messages from '../../../resources/messages';
 
 const localMessages = {
-  completedDetails: { id: 'topic.state.completedDetails', defaultMessage: 'Includes {total} stories ({discoveredPct} discovered), {platformCount, plural,\n =0 {no platforms}\n =1 {1 platform}\n other {# platforms}}, and {fociCount, plural,\n =0 {no subtopics}\n =1 {1 subtopic}\n other {# subtopics}}.' },
-  snapshotDetails: { id: 'topic.state.snapshotDetails', defaultMessage: 'details' },
+  completedDetails: { id: 'topic.version.completedDetails', defaultMessage: 'Includes {total} stories ({discoveredPct} discovered), {platformCount, plural,\n =0 {no platforms}\n =1 {1 platform}\n other {# platforms}}, and {fociCount, plural,\n =0 {no subtopics}\n =1 {1 subtopic}\n other {# subtopics}}.' },
+  snapshotDetails: { id: 'topic.version.snapshotDetails', defaultMessage: 'details' },
+  dates: { id: 'topic.version.dates', defaultMessage: 'Storied between {start} and {end}' },
+  spidering: { id: 'topic.version.spidering', defaultMessage: '{rounds} rounds of spidering' },
 };
 
 class TopicVersionReadySummary extends React.Component {
-  state = {
-    showDetails: false,
-  };
+  constructor(props) {
+    super(props);
+    // yes, we init state with props here, but this is the exception to the anti-pattern
+    // we are just seeding the state here; this coponent is in control from now on
+    // this just lets us re-use this component in multiple places
+    this.state = {
+      showDetails: props.startWithDetailsShowing || false,
+    };
+  }
 
   render() {
-    const { storyCounts, snapshot, intl } = this.props;
+    const { storyCounts, snapshot, intl, focalSets, startWithDetailsShowing } = this.props;
     const { formatNumber } = intl;
+    const total = storyCounts ? formatNumber(storyCounts.total) : '?';
+    let discoveredPct = 'unknown';
+    if (storyCounts) {
+      discoveredPct = storyCounts.total === 0 ? '0%' : formatNumber(storyCounts.spidered / storyCounts.total, { style: 'percent', maximumFractionDigits: 0 });
+    }
+    const seedQueries = snapshot.topic_seed_queries || snapshot.platform_seed_queries;
+    const fociCount = snapshot.foci_count || (focalSets && focalSets.length) || 0;
     return (
       <>
-        <FormattedMessage
-          {...localMessages.completedDetails}
-          values={{
-            total: formatNumber(storyCounts.total),
-            discoveredPct: storyCounts.total === 0 ? '0%' : formatNumber(storyCounts.spidered / storyCounts.total, { style: 'percent', maximumFractionDigits: 0 }),
-            platformCount: snapshot.platform_seed_queries.length,
-            fociCount: snapshot.foci_count,
-          }}
-        />
-        &nbsp;
-        <a
-          href="#version-details"
-          onClick={(evt) => {
-            evt.preventDefault();
-            this.setState(state => ({ showDetails: !state.showDetails }));
-          }}
-        >
-          <FormattedMessage {...localMessages.snapshotDetails} />
-        </a>
+        {!startWithDetailsShowing && (
+          <>
+            <FormattedMessage
+              {...localMessages.completedDetails}
+              values={{
+                total,
+                discoveredPct,
+                platformCount: seedQueries.length,
+                fociCount,
+              }}
+            />
+            &nbsp;
+            <a
+              href="#version-details"
+              onClick={(evt) => {
+                evt.preventDefault();
+                this.setState(state => ({ showDetails: !state.showDetails }));
+              }}
+            >
+              <FormattedMessage {...localMessages.snapshotDetails} />
+            </a>
+          </>
+        )}
         <span>
           {this.state.showDetails && (
             <ul>
+              <li>
+                <FormattedMessage
+                  {...localMessages.dates}
+                  values={{
+                    start: snapshot.start_date || snapshot.seed_queries.topic.start_date,
+                    end: snapshot.end_date || snapshot.seed_queries.topic.end_date,
+                  }}
+                />
+              </li>
+              <li><FormattedMessage {...localMessages.spidering} values={{ rounds: snapshot.max_iterations || snapshot.seed_queries.topic.max_iterations }} /></li>
               <li><FormattedMessage {...messages.platformHeader} />:
                 <ul>
-                  {snapshot.platform_seed_queries.map((p, idx) => (
+                  {seedQueries.map((p, idx) => (
                     <li key={idx}>
                       <FormattedMessage {...platformNameMessage(p.platform, p.source)} />
                       &nbsp;
@@ -54,7 +83,7 @@ class TopicVersionReadySummary extends React.Component {
               </li>
               <li><FormattedMessage {...messages.focusHeader} />:
                 <ul>
-                  {snapshot.foci_names.map((fs, idx) => (
+                  {(focalSets || snapshot.foci_names).map((fs, idx) => (
                     <li key={idx}>{fs.focal_set_name}: {fs.foci_names.join(', ')}</li>
                   ))}
                 </ul>
@@ -67,11 +96,12 @@ class TopicVersionReadySummary extends React.Component {
   }
 }
 
-
 TopicVersionReadySummary.propTypes = {
   // from parent
   snapshot: PropTypes.object.isRequired,
-  storyCounts: PropTypes.object.isRequired,
+  storyCounts: PropTypes.object,
+  startWithDetailsShowing: PropTypes.bool,
+  focalSets: PropTypes.array, // for the current version, the focal sets need to be passed in because they aren't part of the topic siummary object
   // from compositional chain
   intl: PropTypes.object.isRequired,
 };

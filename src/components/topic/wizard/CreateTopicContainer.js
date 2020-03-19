@@ -31,7 +31,13 @@ const localMessages = {
 const CreateTopicContainer = (props) => {
   const endDate = getCurrentDate();
   const startDate = getMomentDateSubtraction(endDate, 3, 'months');
-  const initialValues = { mode: 'web', start_date: startDate, end_date: endDate, buttonLabel: props.intl.formatMessage(messages.create) };
+  const initialValues = {
+    mode: 'web',
+    start_date: startDate,
+    end_date: endDate,
+    buttonLabel: props.intl.formatMessage(messages.create),
+    max_iterations: 15,
+  };
   return (
     <Grid>
       <PageTitle value={localMessages.pageTitle} />

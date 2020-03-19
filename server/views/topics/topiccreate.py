@@ -24,18 +24,16 @@ def topic_create():
     solr_seed_query = request.form['solr_seed_query']
     start_date = request.form['start_date']
     end_date = request.form['end_date']
-    #temp fix CSB
-    solr_seed_query = solr_seed_query + " AND (media_id: 1)"
     optional_args = {
-        'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
+        'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form and request.form['max_iterations'] != 'null' else None,
         'max_stories': request.form['max_stories'] if 'max_stories' in request.form and request.form['max_stories'] != 'null' else flask_login.current_user.profile['limits']['max_topic_stories'],
     }
-
     try:
-
         topic_result = user_mc.topicCreate(name=name, description=description, solr_seed_query=solr_seed_query,
-                                           start_date=start_date, end_date=end_date, **optional_args)['topics'][0]
-
+                                           start_date=start_date, end_date=end_date,
+                                           media_ids=[1], # HACK: can't save without one of these in place (for now)
+                                           **optional_args,
+                                           )['topics'][0]
         topics_id = topic_result['topics_id']
         logger.info("Created new topic \"{}\" as {}".format(name, topics_id))
         # if this includes any of the US-centric collections, add the retweet partisanship subtopic by default

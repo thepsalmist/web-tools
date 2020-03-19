@@ -28,7 +28,7 @@ const localMessages = {
 };
 
 const TopicNewVersionContainer = ({ topic, allowedToRun, intl, newDefinitions, datesOrSpideringHaveChanged, usingLatest,
-  platformsHaveChanged, latestVersionRunning, selectedSnapshot }) => (
+  platformsHaveChanged, latestVersionRunning }) => (
     <div className="topic-container topic-new-version-container">
       <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topic.topics_id}/summary`} />
       <Grid>
@@ -40,7 +40,7 @@ const TopicNewVersionContainer = ({ topic, allowedToRun, intl, newDefinitions, d
         )}
 
         {needsNewVersion(usingLatest, newDefinitions, platformsHaveChanged, datesOrSpideringHaveChanged, latestVersionRunning) && (
-          <VersionComparisonContainer topicId={topic.topics_id} current={selectedSnapshot} next={topic} />
+          <VersionComparisonContainer />
         )}
 
         <Row>
@@ -103,7 +103,6 @@ TopicNewVersionContainer.propTypes = {
   platformsHaveChanged: PropTypes.bool.isRequired,
   datesOrSpideringHaveChanged: PropTypes.bool.isRequired,
   latestVersionRunning: PropTypes.bool.isRequired,
-  selectedSnapshot: PropTypes.object,
   // from context
   intl: PropTypes.object.isRequired,
   goToUrl: PropTypes.func.isRequired,

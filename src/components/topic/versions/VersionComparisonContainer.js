@@ -33,7 +33,7 @@ class VersionComparisonContainer extends React.Component {
   }
 
   render() {
-    const { topicId, current, next, focalSetDefinitions, selectedSnapshot } = this.props;
+    const { topicId, current, next, focalSetDefinitions } = this.props;
     const submitting = this.state.submittingVersion;
     return (
       <Grid>
@@ -45,7 +45,7 @@ class VersionComparisonContainer extends React.Component {
         <Row>
           <Col lg={5}>
             <div className="topic-info-sidebar faded">
-              <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: selectedSnapshot.note }} /></h2>
+              <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current.note }} /></h2>
               <TopicVersionReadySummary snapshot={current} startWithDetailsShowing />
             </div>
           </Col>
@@ -54,7 +54,7 @@ class VersionComparisonContainer extends React.Component {
           </Col>
           <Col lg={5}>
             <div className="topic-info-sidebar">
-              <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: selectedSnapshot.note + 1 }} /></h2>
+              <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current.note + 1 }} /></h2>
               <TopicVersionReadySummary
                 snapshot={next}
                 focalSets={focalSetDefinitions}
@@ -78,19 +78,20 @@ VersionComparisonContainer.propTypes = {
   // from composition
   intl: PropTypes.object.isRequired,
   // from parent
-  topicId: PropTypes.number.isRequired,
+  // from state
   current: PropTypes.object,
   next: PropTypes.object,
-  // from state
+  topicId: PropTypes.number.isRequired,
   focalSetDefinitions: PropTypes.array,
-  selectedSnapshot: PropTypes.object,
   // from dispatch
   handleNewVersionAndSpider: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
+  topicId: state.topics.selected.id,
   focalSetDefinitions: state.topics.selected.focalSets.definitions.list,
-  selectedSnapshot: state.topics.selected.snapshots.selected,
+  current: state.topics.selected.snapshots.selected,
+  next: state.topics.selected.info,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

@@ -83,7 +83,10 @@ class TopicVersionReadySummary extends React.Component {
               </li>
               <li><FormattedMessage {...messages.focusHeader} />:
                 <ul>
-                  {(focalSets || snapshot.foci_names).map((fs, idx) => (
+                  {focalSets && focalSets.map((fs, idx) => (
+                    <li key={idx}>{fs.name}: {fs.focus_definitions.map(fd => fd.name).join(', ')}</li>
+                  ))}
+                  {snapshot.foci_names && snapshot.foci_names.map((fs, idx) => (
                     <li key={idx}>{fs.focal_set_name}: {fs.foci_names.join(', ')}</li>
                   ))}
                 </ul>

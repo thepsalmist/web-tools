@@ -10,8 +10,8 @@ import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
 import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
-import PlatformComparisonContainer from './PlatformComparisonContainer';
 import IncompletePlatformWarning from '../versions/IncompletePlatformWarning';
+import VersionComparisonContainer from '../versions/VersionComparisonContainer';
 import { filteredLinkTo } from '../../util/location';
 import { MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
 import * as fetchConstants from '../../../lib/fetchConstants';
@@ -63,7 +63,7 @@ class ManagePlatformsContainer extends React.Component {
   }
 
   render() {
-    const { platforms, topicInfo, selectedSnapshot } = this.props;
+    const { platforms, platformsHaveChanged } = this.props;
     const { formatMessage } = this.props.intl;
     /* TODO get the latest platform info of each category if exists, relevantPlatforms = platform.map... */
     /* and, compare previous version with current to see if new platforms and if so, offer spider and generate */
@@ -100,12 +100,7 @@ class ManagePlatformsContainer extends React.Component {
                 </h1>
               </Col>
             </Row>
-            <PlatformComparisonContainer
-              topicInfo={topicInfo}
-              platforms={selectedSnapshot ? selectedSnapshot.platform_seed_queries : filteredPlatforms}
-              newPlatforms={platforms.filter(p => p.isEnabled)}
-              latestVersionRunning={topicInfo.latestVersionRunning}
-            />
+            {platformsHaveChanged && <VersionComparisonContainer />}
             <AvailablePlatformList
               platforms={filteredPlatforms}
               onEdit={this.onEditPlatform}
@@ -134,11 +129,10 @@ ManagePlatformsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from state
   topicId: PropTypes.number.isRequired,
-  topicInfo: PropTypes.object.isRequired,
   filters: PropTypes.object.isRequired,
   platforms: PropTypes.array,
-  selectedSnapshot: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
+  platformsHaveChanged: PropTypes.bool.isRequired,
   // from dispatch
   handleDeletePlatform: PropTypes.func.isRequired,
   handleSelectPlatform: PropTypes.func.isRequired,
@@ -147,11 +141,10 @@ ManagePlatformsContainer.propTypes = {
 
 const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
-  topicInfo: state.topics.selected.info,
   platforms: state.topics.selected.platforms.all.results,
+  platformsHaveChanged: state.topics.selected.info.platformsHaveChanged,
   fetchStatus: state.topics.selected.platforms.all.fetchStatus,
   filters: state.topics.selected.filters,
-  selectedSnapshot: state.topics.selected.snapshots.selected,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

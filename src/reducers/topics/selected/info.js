@@ -3,6 +3,7 @@ import { FETCH_TOPIC_SUMMARY, UPDATE_TOPIC_SEED_QUERY, UPDATE_TOPIC_SETTINGS, SE
   TOPIC_START_SPIDER, TOPIC_GENERATE_SNAPSHOT, TOPIC_CREATE_SNAPSHOT } from '../../../actions/topicActions';
 import { createAsyncReducer } from '../../../lib/reduxHelpers';
 import { snapshotIsUsable, latestSnapshotByDate, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_RUNNING } from './snapshots';
+import { PLATFORM_OPEN_WEB, MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
 
 const addVersionNumberToJobs = (snapshots, jobStates) => {
   let newJobStates;
@@ -42,7 +43,19 @@ function checkForAnyPlatformChanges(currentPlatforms, newPlatforms) {
   const oldOnesInNew = currentPlatforms.filter(currentPlatform => newPlatforms.filter(newPlatform => (currentPlatform.platform === newPlatform.platform) && (currentPlatform.source === newPlatform.source)));
   const numberOfQueriesThatChanged = oldOnesInNew.map(currentPlatform => {
     const matchingNewPlatform = newPlatforms.filter(newPlatform => (currentPlatform.platform === newPlatform.platform) && (currentPlatform.source === newPlatform.source))[0];
-    return (currentPlatform.query !== matchingNewPlatform.query) ? 1 : 0;
+    // need to handle mediacloud query uniquely, because it is a synthetic platform (real data is stored at topic level)
+    if ((currentPlatform.platform === PLATFORM_OPEN_WEB) && (currentPlatform.source === MEDIA_CLOUD_SOURCE)) {
+      const currentCollections = currentPlatform.channel.filter(c => c.tags_id).map(c => c.tags_id).sort();
+      const newCollections = matchingNewPlatform.channel.filter(c => c.tags_id).map(c => c.tags_id).sort();
+      const collectionsDiffer = JSON.stringify(currentCollections) !== JSON.stringify(newCollections);
+      const currentMedia = currentPlatform.channel.filter(c => c.media_id).map(c => c.media_id).sort();
+      const newMedia = matchingNewPlatform.channel.filter(c => c.media_id).map(c => c.media_id).sort();
+      const mediaDiffer = JSON.stringify(currentMedia) !== JSON.stringify(newMedia);
+      const queriesDiffer = currentPlatform.query !== matchingNewPlatform.query;
+      return (collectionsDiffer || queriesDiffer || mediaDiffer) ? 1 : 0;
+    }
+    // since we can't update topic seed queries, we can just check if the IDs are different here
+    return (currentPlatform.topic_seed_queries_id !== matchingNewPlatform.topic_seed_queries_id) ? 1 : 0;
   }).reduce((a, b) => a + b, 0) > 0;
   if (numberOfQueriesThatChanged > 0) {
     return true;

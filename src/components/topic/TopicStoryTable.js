@@ -13,6 +13,7 @@ import SafelyFormattedNumber from '../common/SafelyFormattedNumber';
 const localMessages = {
   undateable: { id: 'story.publishDate.undateable', defaultMessage: 'Undateable' },
   foci: { id: 'story.foci.list', defaultMessage: 'List of Subtopics {list}' },
+  postCount: { id: 'story.postCount', defaultMessage: 'Posts' },
 };
 
 const ICON_STYLE = { margin: 0, padding: 0, width: 12, height: 12 };
@@ -65,6 +66,7 @@ class TopicStoryTable extends React.Component {
               <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
               <th className="numeric"><FormattedMessage {...messages.outlinks} /></th>
               <th className="numeric">{this.sortableHeader('facebook', messages.facebookShares)}</th>
+              <th className="numeric"><FormattedMessage {...localMessages.postCount} /></th>
               {tweetHeader}
               <th>{}</th>
               <th><FormattedMessage {...messages.focusHeader} /></th>
@@ -119,6 +121,7 @@ class TopicStoryTable extends React.Component {
                   <td className="numeric"><SafelyFormattedNumber value={story.media_inlink_count} /></td>
                   <td className="numeric"><SafelyFormattedNumber value={story.outlink_count} /></td>
                   <td className="numeric"><SafelyFormattedNumber value={story.facebook_share_count} /></td>
+                  <td className="numeric"><SafelyFormattedNumber value={story.post_count} /></td>
                   {tweetInfo}
                   <td>
                     <a href={story.url} target="_blank" rel="noopener noreferrer">

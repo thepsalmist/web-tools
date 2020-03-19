@@ -16,13 +16,13 @@ const localMessages = {
 
 // TODO: move this into a reducer when we've accounted for all cases
 // latestUsableSnapshot === null accounts for an empty topic with no snapshot...
-function needsNewVersion(usingLatest, newDefinitions, platformsHaveChanged, latestVersionRunning) {
+function needsNewVersion(usingLatest, newDefinitions, platformsHaveChanged, datesOrSpideringHaveChanged, latestVersionRunning) {
   return (usingLatest && !latestVersionRunning && (newDefinitions || platformsHaveChanged));
 }
 
-const NeedsNewVersionWarning = ({ topicId, newDefinitions, latestVersionRunning, usingLatest, platformsHaveChanged }) => (
+const NeedsNewVersionWarning = ({ topicId, newDefinitions, latestVersionRunning, usingLatest, platformsHaveChanged, datesOrSpideringHaveChanged }) => (
   <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-    {needsNewVersion(usingLatest, newDefinitions, platformsHaveChanged, latestVersionRunning) && (
+    {needsNewVersion(usingLatest, newDefinitions, platformsHaveChanged, datesOrSpideringHaveChanged, latestVersionRunning) && (
       <div className="warning-background">
         <Grid>
           <Row>
@@ -53,6 +53,7 @@ NeedsNewVersionWarning.propTypes = {
   usingLatest: PropTypes.bool.isRequired,
   newDefinitions: PropTypes.bool.isRequired,
   platformsHaveChanged: PropTypes.bool.isRequired,
+  datesOrSpideringHaveChanged: PropTypes.bool.isRequired,
   latestVersionRunning: PropTypes.bool.isRequired,
   topicId: PropTypes.number.isRequired,
   // from compositional chain
@@ -64,6 +65,7 @@ const mapStateToProps = state => ({
   usingLatest: state.topics.selected.snapshots.usingLatest,
   newDefinitions: state.topics.selected.focalSets.all.newDefinitions,
   platformsHaveChanged: state.topics.selected.info.platformsHaveChanged,
+  datesOrSpideringHaveChanged: state.topics.selected.info.datesOrSpideringHaveChanged,
   latestVersionRunning: state.topics.selected.snapshots.latestVersionRunning,
 });
 

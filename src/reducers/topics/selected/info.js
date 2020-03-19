@@ -63,6 +63,12 @@ function checkForAnyPlatformChanges(currentPlatforms, newPlatforms) {
   return false;
 }
 
+const checkForDateSpideringChanges = (t, latestSnapshot) => {
+  const spideringChanged = t.max_iterations !== latestSnapshot.seed_queries.topic.num_iterations;
+  const datesChanged = (t.start_date !== latestSnapshot.seed_queries.topic.start_date) || (t.end_date !== latestSnapshot.seed_queries.topic.end_date);
+  return spideringChanged || datesChanged;
+};
+
 // this is important to handle the fact that some older topics don't have any snapshots but do have jobs
 export const addLatestStateToTopic = (t) => {
   // 1. figure out latest state and jobs associated with the topic
@@ -92,12 +98,16 @@ export const addLatestStateToTopic = (t) => {
     };
   }
   // 2. figure out if there are any new platforms
-  const platformsHaveChanged = checkForAnyPlatformChanges(t.topic_seed_queries, (t.snapshots) ? latestSnapshotByDate(t.snapshots.list).platform_seed_queries : []);
+  const latestSnapshot = latestSnapshotByDate(t.snapshots.list);
+  const platformsHaveChanged = checkForAnyPlatformChanges(t.topic_seed_queries, (t.snapshots) ? latestSnapshot.platform_seed_queries : []);
+  // 3. figure out if topic dates or spidering config have changed
+  const datesOrSpideringHaveChanged = checkForDateSpideringChanges(t, latestSnapshot);
   // return augmented state
   return {
     ...t,
     latestState,
     platformsHaveChanged,
+    datesOrSpideringHaveChanged,
     job_states: t.snapshots ? addVersionNumberToJobs(t.snapshots.list, t.job_states) : [],
   };
 };

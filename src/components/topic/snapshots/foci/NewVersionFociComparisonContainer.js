@@ -85,7 +85,6 @@ NewVersionFociComparisonContainer.propTypes = {
   currentFocalSets: PropTypes.array,
   usingLatest: PropTypes.bool.isRequired,
   newDefinitions: PropTypes.bool.isRequired,
-  platformsHaveChanged: PropTypes.bool.isRequired,
   latestVersionRunning: PropTypes.bool.isRequired,
   selectedSnapshot: PropTypes.object,
   // from dispatch
@@ -97,7 +96,6 @@ const mapStateToProps = state => ({
   focalSetDefinitions: state.topics.selected.focalSets.definitions.list,
   currentFocalSets: state.topics.selected.focalSets.all.list,
   usingLatest: state.topics.selected.snapshots.usingLatest,
-  platformsHaveChanged: state.topics.selected.info.platformsHaveChanged,
   newDefinitions: state.topics.selected.focalSets.all.newDefinitions,
   latestVersionRunning: state.topics.selected.snapshots.latestVersionRunning,
   selectedSnapshot: state.topics.selected.snapshots.selected,

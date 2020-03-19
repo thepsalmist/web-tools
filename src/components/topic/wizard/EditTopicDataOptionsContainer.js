@@ -83,7 +83,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         if (results.topics_id) {
           // let them know it worked
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
-          // redirect back to topic summary
+          // TODO: where to redirect to?
           const topicSummaryUrl = filteredLinkTo(`/topics/${results.topics_id}/summary`, filters);
           dispatch(push(topicSummaryUrl));
         } else {

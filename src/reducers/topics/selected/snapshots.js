@@ -51,7 +51,7 @@ function cleanUpSnapshotList(rawList, jobList) {
   }));
 }
 
-const latestByDate = (list) => {
+export const latestSnapshotByDate = (list) => {
   const orderedList = snapshotsByDateDesc(list);
   if (orderedList && orderedList.length > 0) {
     return orderedList[0];
@@ -85,7 +85,7 @@ function isLatestVersionRunning(snapshotList, jobList) {
 }
 
 const usingLatestSnapshot = (list, selectedId) => {
-  const latest = latestByDate(list);
+  const latest = latestSnapshotByDate(list);
   if (latest) {
     return selectedId === latest.snapshots_id;
   }
@@ -93,7 +93,7 @@ const usingLatestSnapshot = (list, selectedId) => {
 };
 
 const latestSnaphostIsUsable = (list) => {
-  const latest = latestByDate(list);
+  const latest = latestSnapshotByDate(list);
   if (latest) {
     return snapshotIsUsable(latest);
   }
@@ -112,7 +112,7 @@ const snapshots = createAsyncReducer({
   },
   [resolve(FETCH_TOPIC_SUMMARY)]: (payload, state) => ({ // topic summary includes list of snapshots
     list: cleanUpSnapshotList(payload.snapshots.list, payload.job_states),
-    latest: latestByDate(payload.snapshots.list),
+    latest: latestSnapshotByDate(payload.snapshots.list),
     usingLatest: usingLatestSnapshot(payload.snapshots.list, state.selectedId),
     latestIsUsable: latestSnaphostIsUsable(payload.snapshots.list),
     latestUsableSnapshot: latestUsableSnapshot(payload.snapshots.list),

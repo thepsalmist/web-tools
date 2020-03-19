@@ -2,7 +2,7 @@ import { resolve } from 'redux-simple-promise';
 import { FETCH_TOPIC_SUMMARY, UPDATE_TOPIC_SEED_QUERY, UPDATE_TOPIC_SETTINGS, SET_TOPIC_FAVORITE,
   TOPIC_START_SPIDER, TOPIC_GENERATE_SNAPSHOT, TOPIC_CREATE_SNAPSHOT } from '../../../actions/topicActions';
 import { createAsyncReducer } from '../../../lib/reduxHelpers';
-import { snapshotIsUsable, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_RUNNING } from './snapshots';
+import { snapshotIsUsable, latestSnapshotByDate, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_RUNNING } from './snapshots';
 
 const addVersionNumberToJobs = (snapshots, jobStates) => {
   let newJobStates;
@@ -79,7 +79,7 @@ export const addLatestStateToTopic = (t) => {
     };
   }
   // 2. figure out if there are any new platforms
-  const platformsHaveChanged = checkForAnyPlatformChanges(t.topic_seed_queries, (t.snapshots) ? t.snapshots.list[0].platform_seed_queries : []);
+  const platformsHaveChanged = checkForAnyPlatformChanges(t.topic_seed_queries, (t.snapshots) ? latestSnapshotByDate(t.snapshots.list).platform_seed_queries : []);
   // return augmented state
   return {
     ...t,

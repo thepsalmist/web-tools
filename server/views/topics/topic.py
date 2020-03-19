@@ -94,6 +94,7 @@ def _topic_snapshot_list(topic):
         if (s['seed_queries'] is not None) and ('topic' in s['seed_queries']):
             p = platform_for_web_seed_query(s['seed_queries'])
             platforms.append(p)
+            platforms += s['seed_queries']['topic_seed_queries']
         else:
             if topic_has_seed_query(topic):
                 p = platform_for_web_seed_query(topic)

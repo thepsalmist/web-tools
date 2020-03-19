@@ -148,13 +148,18 @@ def topic_timespan_list(topics_id, snapshots_id):
 def topic_update_settings(topics_id):
     user_mc = user_mediacloud_client()
     args = {
-        'name': request.form['name'] if 'name' in request.form else None,
-        'description': request.form['description'] if 'description' in request.form else None,
-        'is_public': request.form['is_public'] if 'is_public' in request.form else None,
-        'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
-        'start_date': request.form['start_date'] if 'start_date' in request.form else None,
-        'end_date': request.form['end_date'] if 'end_date' in request.form else None,
-        'max_iterations': request.form['max_iterations'] if 'max_iterations' in request.form else None,
+        'name': _safe_member_of_dict('name', request.form),
+        'description': _safe_member_of_dict('description', request.form),
+        'is_public': _safe_member_of_dict('is_public', request.form),
+        'is_logogram': _safe_member_of_dict('is_logogram', request.form),
+        'start_date': _safe_member_of_dict('start_date', request.form),
+        'end_date': _safe_member_of_dict('end_date', request.form),
+        'max_iterations': _safe_member_of_dict('max_iterations', request.form),
+        'max_topic_stories': _safe_member_of_dict('max_topic_stories', request.form),
     }
     result = user_mc.topicUpdate(topics_id, **args)
     return topic_summary(result['topics'][0]['topics_id'])  # give them back new data, so they can update the client
+
+
+def _safe_member_of_dict(key, a_dict):
+    return a_dict[key] if key in a_dict else None

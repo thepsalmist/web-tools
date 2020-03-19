@@ -217,7 +217,7 @@ export function fetchWordsByQuery(params) {
 }
 
 export function updateTopicSettings(topicId, params) {
-  const acceptedParams = acceptParams(params, ['name', 'description', 'is_public', 'is_logogram']);
+  const acceptedParams = acceptParams(params, ['name', 'description', 'is_public', 'is_logogram', 'start_date', 'end_date', 'max_iterations', 'max_topic_stories']);
   return createPostingApiPromise(`/api/topics/${topicId}/update-settings`, acceptedParams, 'put');
 }
 

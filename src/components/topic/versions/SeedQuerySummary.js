@@ -8,7 +8,7 @@ const localMessages = {
   newTitle: { id: 'topic.info.newTitle', defaultMessage: 'New Version: Summary' },
 };
 
-const SeedQuerySummary = ({ snapshot }) => (
+const SeedQuerySummary = ({ topic, snapshot }) => (
   <div className="topic-info-sidebar">
     <h2>
       {snapshot && <FormattedHTMLMessage {...localMessages.title} values={{ versionNumber: snapshot.note }} />}
@@ -16,6 +16,7 @@ const SeedQuerySummary = ({ snapshot }) => (
     </h2>
     <TopicVersionReadySummary
       snapshot={snapshot}
+      topic={topic}
       startWithDetailsShowing
     />
   </div>

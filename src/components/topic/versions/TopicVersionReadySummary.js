@@ -23,7 +23,7 @@ class TopicVersionReadySummary extends React.Component {
   }
 
   render() {
-    const { storyCounts, snapshot, intl, focalSets, startWithDetailsShowing } = this.props;
+    const { topic, storyCounts, snapshot, intl, focalSets, startWithDetailsShowing } = this.props;
     const { formatNumber } = intl;
     const total = storyCounts ? formatNumber(storyCounts.total) : '?';
     let discoveredPct = 'unknown';
@@ -64,12 +64,12 @@ class TopicVersionReadySummary extends React.Component {
                 <FormattedMessage
                   {...localMessages.dates}
                   values={{
-                    start: snapshot.start_date || snapshot.seed_queries.topic.start_date,
-                    end: snapshot.end_date || snapshot.seed_queries.topic.end_date,
+                    start: snapshot.start_date || ((snapshot.seed_queries) ? snapshot.seed_queries.topic.start_date : null) || topic.start_date,
+                    end: snapshot.end_date || ((snapshot.seed_queries) ? snapshot.seed_queries.topic.end_date : null) || topic.end_date,
                   }}
                 />
               </li>
-              <li><FormattedMessage {...localMessages.spidering} values={{ rounds: snapshot.max_iterations || snapshot.seed_queries.topic.max_iterations }} /></li>
+              <li><FormattedMessage {...localMessages.spidering} values={{ rounds: snapshot.max_iterations || ((snapshot.seed_queries) ? snapshot.seed_queries.topic.max_iterations : null) || topic.max_iterations }} /></li>
               <li><FormattedMessage {...messages.platformHeader} />:
                 <ul>
                   {seedQueries.map((p, idx) => (
@@ -102,6 +102,7 @@ class TopicVersionReadySummary extends React.Component {
 TopicVersionReadySummary.propTypes = {
   // from parent
   snapshot: PropTypes.object.isRequired,
+  topic: PropTypes.object.isRequired,
   storyCounts: PropTypes.object,
   startWithDetailsShowing: PropTypes.bool,
   focalSets: PropTypes.array, // for the current version, the focal sets need to be passed in because they aren't part of the topic siummary object

@@ -84,9 +84,12 @@ function checkForAnyPlatformChanges(currentPlatforms, newPlatforms) {
  * @return boolean true if there are differences in start/end date or spidering iterations
  */
 const checkForDateSpideringChanges = (t, latestSnapshot) => {
-  const spideringChanged = t.max_iterations !== latestSnapshot.seed_queries.topic.max_iterations;
-  const datesChanged = (t.start_date !== latestSnapshot.seed_queries.topic.start_date) || (t.end_date !== latestSnapshot.seed_queries.topic.end_date);
-  return spideringChanged || datesChanged;
+  if (latestSnapshot.seed_queries) { // older snapshots don't have seed_queries on them
+    const spideringChanged = t.max_iterations !== latestSnapshot.seed_queries.topic.max_iterations;
+    const datesChanged = (t.start_date !== latestSnapshot.seed_queries.topic.start_date) || (t.end_date !== latestSnapshot.seed_queries.topic.end_date);
+    return spideringChanged || datesChanged;
+  }
+  return false;
 };
 
 /**
@@ -122,11 +125,16 @@ export const addUsefulDetailsToTopic = (t) => {
       job_states_id: mostRecentJobState.job_states_id,
     };
   }
+  // brand new topics don't yet have a snapshot, or maybe the first one failed
+  const latestSnapshot = (t.snapshots) ? latestSnapshotByDate(t.snapshots.list) : null;
   // 2. figure out if there are any new platforms
-  const latestSnapshot = latestSnapshotByDate(t.snapshots.list);
-  const platformsHaveChanged = checkForAnyPlatformChanges(t.topic_seed_queries, (t.snapshots) ? latestSnapshot.platform_seed_queries : []);
   // 3. figure out if topic dates or spidering config have changed
-  const datesOrSpideringHaveChanged = checkForDateSpideringChanges(t, latestSnapshot);
+  let platformsHaveChanged = false;
+  let datesOrSpideringHaveChanged = false;
+  if (latestSnapshot) {
+    platformsHaveChanged = checkForAnyPlatformChanges(t.topic_seed_queries, (t.snapshots) ? latestSnapshot.platform_seed_queries : []);
+    datesOrSpideringHaveChanged = checkForDateSpideringChanges(t, latestSnapshot);
+  }
   // return augmented state
   return {
     ...t,

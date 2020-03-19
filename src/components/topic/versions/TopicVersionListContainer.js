@@ -57,6 +57,7 @@ const TopicVersionListContainer = ({ topicId, topic, storyCounts, versions, sele
         selected={selectedSnapshot.snapshots_id === snapshot.snapshots_id}
         key={idx}
         topicId={topicId}
+        topic={topic}
         number={versions.length - idx}
         version={snapshot}
         storyCounts={storyCounts[snapshot.snapshots_id]}
@@ -70,6 +71,7 @@ const TopicVersionListContainer = ({ topicId, topic, storyCounts, versions, sele
         seleceted
         number={1}
         topicId={topicId}
+        topic={topic}
         version={{
           state: topic.state,
           snapshots_id: -1,

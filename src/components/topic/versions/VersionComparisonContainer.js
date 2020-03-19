@@ -33,7 +33,7 @@ class VersionComparisonContainer extends React.Component {
   }
 
   render() {
-    const { topicId, current, next, focalSetDefinitions } = this.props;
+    const { topic, topicId, current, next, focalSetDefinitions } = this.props;
     const submitting = this.state.submittingVersion;
     return (
       <Grid>
@@ -46,7 +46,7 @@ class VersionComparisonContainer extends React.Component {
           <Col lg={5}>
             <div className="topic-info-sidebar faded">
               <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current.note }} /></h2>
-              <TopicVersionReadySummary snapshot={current} startWithDetailsShowing />
+              <TopicVersionReadySummary topic={topic} snapshot={current} startWithDetailsShowing />
             </div>
           </Col>
           <Col lg={2}>
@@ -57,6 +57,7 @@ class VersionComparisonContainer extends React.Component {
               <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current.note + 1 }} /></h2>
               <TopicVersionReadySummary
                 snapshot={next}
+                topic={topic}
                 focalSets={focalSetDefinitions}
                 startWithDetailsShowing
               />
@@ -82,6 +83,7 @@ VersionComparisonContainer.propTypes = {
   current: PropTypes.object,
   next: PropTypes.object,
   topicId: PropTypes.number.isRequired,
+  topic: PropTypes.object.isRequired,
   focalSetDefinitions: PropTypes.array,
   // from dispatch
   handleNewVersionAndSpider: PropTypes.func.isRequired,
@@ -89,6 +91,7 @@ VersionComparisonContainer.propTypes = {
 
 const mapStateToProps = (state) => ({
   topicId: state.topics.selected.id,
+  topic: state.topics.selected,
   focalSetDefinitions: state.topics.selected.focalSets.definitions.list,
   current: state.topics.selected.snapshots.selected,
   next: state.topics.selected.info,

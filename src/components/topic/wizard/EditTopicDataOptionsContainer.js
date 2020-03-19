@@ -83,8 +83,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         if (results.topics_id) {
           // let them know it worked
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.feedback) }));
-          // TODO: where to redirect to?
-          const topicSummaryUrl = filteredLinkTo(`/topics/${results.topics_id}/summary`, filters);
+          const topicSummaryUrl = filteredLinkTo(`/topics/${results.topics_id}/new-version`, filters);
           dispatch(push(topicSummaryUrl));
         } else {
           dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.failed) }));

@@ -72,7 +72,7 @@ class TopicVersionReadySummary extends React.Component {
               <li><FormattedMessage {...localMessages.spidering} values={{ rounds: snapshot.max_iterations || ((snapshot.seed_queries) ? snapshot.seed_queries.topic.max_iterations : null) || topic.max_iterations }} /></li>
               <li><FormattedMessage {...messages.platformHeader} />:
                 <ul>
-                  {seedQueries.map((p, idx) => (
+                  {seedQueries && seedQueries.map((p, idx) => (
                     <li key={idx}>
                       <FormattedMessage {...platformNameMessage(p.platform, p.source)} />
                       &nbsp;

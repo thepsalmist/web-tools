@@ -5,10 +5,13 @@ from typing import List, Dict
 import random
 import logging
 import os
+import dateutil.parser
 
 from server import app
 from server.cache import cache
-from server.platforms.provider import ContentProvider, MC_DATE_FORMAT
+from server.platforms.provider import ContentProvider
+
+MC_DAY_FORMAT = "%Y-%m-%d"
 
 
 class GenericCsvProvider(ContentProvider):
@@ -34,6 +37,9 @@ class GenericCsvProvider(ContentProvider):
             reader = csv.DictReader(csvfile)
             for row in reader:
                 data.append(row)
+        for row in data:
+            # this validates the date the same way to back-end parses it
+            row['publish_date'] = dateutil.parser.parse(row['publish_date'])
         return data
 
     @cache.cache_on_arguments()
@@ -43,6 +49,7 @@ class GenericCsvProvider(ContentProvider):
         :param query:
         :param start_date:
         :param end_date:
+        :param limit:
         :param kwargs:
         :return:
         """
@@ -71,11 +78,12 @@ class GenericCsvProvider(ContentProvider):
         :return:
         """
         groups = collections.defaultdict(list)
-        for obj in self._data:
-            groups[obj['publish_date']].append(obj)
+        # group by day
+        for row in self._data:
+            groups[row['publish_date'].strftime(MC_DAY_FORMAT)].append(row)
         results = [{
             'date': date,
-            'timestamp': dt.datetime.strptime(date, MC_DATE_FORMAT).timestamp(),
+            'timestamp': dt.datetime.strptime(date, MC_DAY_FORMAT).timestamp(),
             'count': len(items),
         } for date, items in groups.items()]
         return {'counts': results}
@@ -93,7 +101,7 @@ class GenericCsvProvider(ContentProvider):
     def _content_to_row(cls, item):
         return {
             'author': item['author'],
-            'publish_date': item['publish_date'],
+            'publish_date': item['publish_date'].strftime(MC_DAY_FORMAT),
             'title': item['content'][0:100],
             'media_name': 'CVS Upload',
             'media_url': None,

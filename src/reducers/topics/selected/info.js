@@ -5,6 +5,12 @@ import { createAsyncReducer } from '../../../lib/reduxHelpers';
 import { snapshotIsUsable, latestSnapshotByDate, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_RUNNING } from './snapshots';
 import { PLATFORM_OPEN_WEB, MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
 
+/**
+ * We repurpose the snapshot.notes field to hold the version number of each snapshot.
+ * @param snapshots List of snapshots in the topic.
+ * @param jobStates List of jobs assoacited with the topic, which may or may not be associaged with a snapshot.
+ * @return New list of job states, with a `versionNumber` property added to them
+ */
 const addVersionNumberToJobs = (snapshots, jobStates) => {
   let newJobStates;
   if (snapshots) {
@@ -19,6 +25,13 @@ const addVersionNumberToJobs = (snapshots, jobStates) => {
   return newJobStates;
 };
 
+/**
+ * Compare two lists of platforms (ie. topic_seed_queries) to see if there are any differences. This is needed to see
+ * if there are any changes (between the latest snapshot and the topic) that require a new version to be run.
+ * @param currentPlatforms List of topic_seed_queries on the latest snapshot
+ * @param newPlatforms List of topic_seed_queries for the next topic
+ * @return boolean true if there are differences between the platform lists
+ */
 function checkForAnyPlatformChanges(currentPlatforms, newPlatforms) {
   // if different amount of platforms
   const differentAmount = currentPlatforms.length !== newPlatforms.length;
@@ -63,14 +76,26 @@ function checkForAnyPlatformChanges(currentPlatforms, newPlatforms) {
   return false;
 }
 
+/**
+ * Check to see if the topic and the latest snapshot configuration have any differences. Specifically this checkes things
+ * that aren't captured in platforms or subtopics.
+ * @param t the whole topic, with all meta data on it
+ * @param latestSnapshot The latest snapshot
+ * @return boolean true if there are differences in start/end date or spidering iterations
+ */
 const checkForDateSpideringChanges = (t, latestSnapshot) => {
   const spideringChanged = t.max_iterations !== latestSnapshot.seed_queries.topic.num_iterations;
   const datesChanged = (t.start_date !== latestSnapshot.seed_queries.topic.start_date) || (t.end_date !== latestSnapshot.seed_queries.topic.end_date);
   return spideringChanged || datesChanged;
 };
 
-// this is important to handle the fact that some older topics don't have any snapshots but do have jobs
-export const addLatestStateToTopic = (t) => {
+/**
+ * Add a bunch of calculated fields to the topic so they are available for UI logic. It is smart to centralize this in
+ * the reducer so we just don't need to worry at the UI level.
+ * @param t the whole topic
+ * @return the topic, with a bunch of stuff added
+ */
+export const addUsefulDetailsToTopic = (t) => {
   // 1. figure out latest state and jobs associated with the topic
   let latestState; // this acts as a psuedo-snapshot
   // if no jobs, use original topic state
@@ -112,16 +137,19 @@ export const addLatestStateToTopic = (t) => {
   };
 };
 
+/**
+ * Anytime the topic summary gets sent back from the server, make sure we update it here.
+ */
 const info = createAsyncReducer({
   action: FETCH_TOPIC_SUMMARY,
-  handleSuccess: payload => ({ ...addLatestStateToTopic(payload) }),
+  handleSuccess: payload => ({ ...addUsefulDetailsToTopic(payload) }),
   // whenever we change somethign we return whole topic from the server and need update all this stuff
-  [resolve(UPDATE_TOPIC_SEED_QUERY)]: payload => ({ ...addLatestStateToTopic(payload) }),
-  [resolve(UPDATE_TOPIC_SETTINGS)]: payload => ({ ...addLatestStateToTopic(payload) }),
-  [resolve(TOPIC_START_SPIDER)]: payload => ({ ...addLatestStateToTopic(payload) }),
-  [resolve(TOPIC_GENERATE_SNAPSHOT)]: payload => ({ ...addLatestStateToTopic(payload) }),
-  [resolve(TOPIC_CREATE_SNAPSHOT)]: payload => ({ ...addLatestStateToTopic(payload) }),
-  [resolve(SET_TOPIC_FAVORITE)]: payload => ({ ...addLatestStateToTopic(payload) }),
+  [resolve(UPDATE_TOPIC_SEED_QUERY)]: payload => ({ ...addUsefulDetailsToTopic(payload) }),
+  [resolve(UPDATE_TOPIC_SETTINGS)]: payload => ({ ...addUsefulDetailsToTopic(payload) }),
+  [resolve(TOPIC_START_SPIDER)]: payload => ({ ...addUsefulDetailsToTopic(payload) }),
+  [resolve(TOPIC_GENERATE_SNAPSHOT)]: payload => ({ ...addUsefulDetailsToTopic(payload) }),
+  [resolve(TOPIC_CREATE_SNAPSHOT)]: payload => ({ ...addUsefulDetailsToTopic(payload) }),
+  [resolve(SET_TOPIC_FAVORITE)]: payload => ({ ...addUsefulDetailsToTopic(payload) }),
 });
 
 export default info;

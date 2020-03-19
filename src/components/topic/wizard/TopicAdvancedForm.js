@@ -14,7 +14,6 @@ import { ADMIN_MAX_RECOMMENDED_STORIES } from '../../../lib/formValidators';
 const localMessages = {
   advancedSettings: { id: 'topic.form.detail.advancedSettings', defaultMessage: 'Advanced Settings' },
   seedQuery: { id: 'topic.form.detail.seedQuery', defaultMessage: 'Relevance Query' },
-  seedQueryDescription: { id: 'topic.form.detail.seedQuery.about', defaultMessage: '<b>Admin only</b>. If you add an open web platform query to your topic, any news stories discovered from any platform will be checked against that query to make sure they are relevant to your topic. If you do not add an open web platform to your query, then all the news stories shared in content matching the query on that platform will be included, no matter what they are about. Admins can tweak the relevance query.<br/>&nbsp;<br/>' },
   maxStories: { id: 'topic.form.detail.maxStories', defaultMessage: 'Maximum # of Stories' },
   maxSeedStoriesHelp: { id: 'topic.form.detail.maxStories', defaultMessage: '<b>Admin only</b>. Public users can make topics with up to 100,000 total stories by default. Admins can tweak this default for each user. Here admins can change this max if you want to allow a special case exception.<br/>&nbsp;<br/>' },
   maxIterations: { id: 'topic.form.detail.maxIterations', defaultMessage: 'Max Spider Iterations' },
@@ -30,27 +29,6 @@ const TopicAdvancedForm = (props) => {
   return (
     <CollapsingPanel titleMsg={localMessages.advancedSettings}>
       <Permissioned onlyRole={PERMISSION_ADMIN}>
-        <Row>
-          <Col lg={12}>
-            <Field
-              name="solr_seed_query"
-              component={renderTextField}
-              multiline
-              disabled={topicMode === 'web'}
-              rows={2}
-              rowsMax={4}
-              fullWidth
-              label={formatMessage(localMessages.seedQuery)}
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={8}>
-            <small>
-              <FormattedHTMLMessage {...localMessages.seedQueryDescription} />
-            </small>
-          </Col>
-        </Row>
         <Row>
           <Col lg={3}>
             <Field

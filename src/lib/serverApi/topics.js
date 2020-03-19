@@ -395,7 +395,7 @@ export function topicUpdatePlatform(topicId, platformId, params) {
 }
 
 export function topicDeletePlatform(topicId, platformId, params) {
-  const acceptedParams = acceptParams(params, ['current_platform_type']);
+  const acceptedParams = acceptParams(params, []);
   return createPostingApiPromise(`/api/topics/${topicId}/platforms/${platformId}/remove`, acceptedParams);
 }
 

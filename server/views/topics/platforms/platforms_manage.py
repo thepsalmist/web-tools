@@ -110,17 +110,13 @@ def topic_update_platform(topics_id, platform_id):
     return result  # topic_seed_queries_id
 
 
-@app.route('/api/topics/<topics_id>/platforms/<platform_id>/remove', methods=['POST'])
+@app.route('/api/topics/<topics_id>/platforms/<topic_seed_queries_id>/remove', methods=['POST'])
 @flask_login.login_required
-@form_fields_required('platform_type')
 @api_error_handler
-def topic_remove_platform(topics_id, platform_id):
+def topic_remove_platform(topics_id, topic_seed_queries_id):
     user_mc = user_mediacloud_client()
-    platform = request.form['platform_type']
-    if platform == PLATFORM_OPEN_WEB: # web_ui_shim that is
-        result = user_mc.topicUpdate(topics_id, solr_seed_query='', media_ids=[], media_tags_ids=[])
-    else:
-        result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id = platform_id)
+    # Note: you can't delete the web/mediacloud type of platform
+    result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id=topic_seed_queries_id)
     return jsonify(result)
 
 
@@ -130,8 +126,6 @@ def platform_for_web_seed_query(object_with_query):
         seed_query = object_with_query['solr_seed_query']
     else:
         seed_query = object_with_query['topic']['solr_seed_query']
-    sources = []
-    collections = []
     if 'media' in object_with_query:
         sources = object_with_query['media'].copy()
     else:

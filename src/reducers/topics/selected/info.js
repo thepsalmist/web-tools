@@ -18,9 +18,41 @@ const addVersionNumberToJobs = (snapshots, jobStates) => {
   return newJobStates;
 };
 
-// this is important to handle the fact that some older topics don't have any snapshots
-// but do have jobs
+function checkForAnyPlatformChanges(currentPlatforms, newPlatforms) {
+  // if different amount of platforms
+  const differentAmount = currentPlatforms.length !== newPlatforms.length;
+  if (differentAmount) {
+    return true;
+  }
+  // new platform doesn't exist in current
+  const newOneThere = newPlatforms.filter(newPlatform => currentPlatforms.filter(
+    currentPlatform => (currentPlatform.platform === newPlatform.platform) && (currentPlatform.source === newPlatform.source)
+  ).length === 0).length > 0;
+  if (newOneThere) {
+    return true;
+  }
+  // current platform doesn't exist in new
+  const oldOneGone = currentPlatforms.filter(currentPlatform => newPlatforms.filter(
+    newPlatform => (currentPlatform.platform === newPlatform.platform) && (currentPlatform.source === newPlatform.source)
+  ).length === 0).length > 0;
+  if (oldOneGone) {
+    return true;
+  }
+  // queries different in any of same platforms?
+  const oldOnesInNew = currentPlatforms.filter(currentPlatform => newPlatforms.filter(newPlatform => (currentPlatform.platform === newPlatform.platform) && (currentPlatform.source === newPlatform.source)));
+  const numberOfQueriesThatChanged = oldOnesInNew.map(currentPlatform => {
+    const matchingNewPlatform = newPlatforms.filter(newPlatform => (currentPlatform.platform === newPlatform.platform) && (currentPlatform.source === newPlatform.source))[0];
+    return (currentPlatform.query !== matchingNewPlatform.query) ? 1 : 0;
+  }).reduce((a, b) => a + b, 0) > 0;
+  if (numberOfQueriesThatChanged > 0) {
+    return true;
+  }
+  return false;
+}
+
+// this is important to handle the fact that some older topics don't have any snapshots but do have jobs
 export const addLatestStateToTopic = (t) => {
+  // 1. figure out latest state and jobs associated with the topic
   let latestState; // this acts as a psuedo-snapshot
   // if no jobs, use original topic state
   if (!t.job_states || t.job_states.length === 0) {
@@ -46,9 +78,13 @@ export const addLatestStateToTopic = (t) => {
       job_states_id: mostRecentJobState.job_states_id,
     };
   }
+  // 2. figure out if there are any new platforms
+  const platformsHaveChanged = checkForAnyPlatformChanges(t.topic_seed_queries, (t.snapshots) ? t.snapshots.list[0].platform_seed_queries : []);
+  // return augmented state
   return {
     ...t,
     latestState,
+    platformsHaveChanged,
     job_states: t.snapshots ? addVersionNumberToJobs(t.snapshots.list, t.job_states) : [],
   };
 };

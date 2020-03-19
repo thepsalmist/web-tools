@@ -6,7 +6,6 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
 import AppButton from '../../common/AppButton';
 import EnabledPlatformList from './EnabledPlatformList';
-import { placeholderNewPlatformNeedsNewVersion } from '../versions/NeedsNewVersionWarning';
 import { topicSnapshotSpider } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 
@@ -34,10 +33,10 @@ class PlatformComparisonContainer extends React.Component {
   }
 
   render() {
-    const { topicId, usingLatest, newPlatforms, platforms, selectedSnapshot, latestVersionRunning, latestUsableSnapshot, initializedPlatform } = this.props;
+    const { topicId, usingLatest, newPlatforms, platforms, selectedSnapshot, latestVersionRunning, platformsHaveChanged } = this.props;
     const submitting = this.state.submittingVersion;
     // TODO: we need to fetch the platforms on the current version and compare that to the platforms on the next version
-    if (placeholderNewPlatformNeedsNewVersion(usingLatest, platforms, newPlatforms.filter(p => p.isEnabled), latestVersionRunning, latestUsableSnapshot, initializedPlatform)) {
+    if (!latestVersionRunning && usingLatest && platformsHaveChanged) {
       return (
         <Grid>
           <Row>
@@ -82,10 +81,9 @@ PlatformComparisonContainer.propTypes = {
   usingLatest: PropTypes.bool.isRequired,
   selectedSnapshot: PropTypes.object,
   platforms: PropTypes.array, // .isRequired,
+  platformsHaveChanged: PropTypes.bool.isRequired,
   newPlatforms: PropTypes.array,
   latestVersionRunning: PropTypes.bool.isRequired,
-  latestUsableSnapshot: PropTypes.object,
-  initializedPlatform: PropTypes.bool.isRequired,
   // from dispatch
   handleNewVersionAndSpider: PropTypes.func.isRequired,
 };
@@ -94,10 +92,9 @@ const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
   usingLatest: state.topics.selected.snapshots.usingLatest,
   newPlatforms: state.topics.selected.platforms.all.results,
+  platformsHaveChanged: state.topics.selected.info.platformsHaveChanged,
   latestVersionRunning: state.topics.selected.snapshots.latestVersionRunning,
-  latestUsableSnapshot: state.topics.selected.snapshots.latestUsableSnapshot,
   selectedSnapshot: state.topics.selected.snapshots.selected,
-  initializedPlatform: state.topics.selected.platforms.all.initialized,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

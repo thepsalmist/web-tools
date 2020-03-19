@@ -11,7 +11,6 @@ import ConfirmationDialog from '../../common/ConfirmationDialog';
 import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import PlatformComparisonContainer from './PlatformComparisonContainer';
-import NeedsNewVersionWarning from '../versions/NeedsNewVersionWarning';
 import IncompletePlatformWarning from '../versions/IncompletePlatformWarning';
 import { filteredLinkTo } from '../../util/location';
 import { MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
@@ -31,19 +30,17 @@ const localMessages = {
 class ManagePlatformsContainer extends React.Component {
   state = {
     removeDialogOpen: false,
-    // idToEdit: null,
-    idToRemove: null,
-    typeToRemove: null,
+    platformToDelete: null,
   };
 
   onCancelDeletePlatform = () => {
-    this.setState({ removeDialogOpen: false, idToRemove: null });
+    this.setState({ removeDialogOpen: false, platformToDelete: null });
   }
 
   onDeletePlatform = () => {
     const { topicId, handleDeletePlatform } = this.props;
-    handleDeletePlatform(topicId, this.state.idToRemove, this.state.typeToRemove);
-    this.setState({ removeDialogOpen: false, idToRemove: null });
+    handleDeletePlatform(topicId, this.state.platformToDelete);
+    this.setState({ removeDialogOpen: false, platformToDelete: null });
   }
 
   onEditPlatform = (platform) => {
@@ -61,9 +58,8 @@ class ManagePlatformsContainer extends React.Component {
     handleSelectNewPlatform(platform, filteredLinkTo(`/topics/${topicId}/platforms/create`, filters));
   }
 
-  handleDelete = (platformId, platformType) => {
-    this.setState({ removeDialogOpen: true, idToRemove: platformId });
-    this.setState({ typeToRemove: platformType });
+  handleDelete = (platform) => {
+    this.setState({ removeDialogOpen: true, platformToDelete: platform });
   }
 
   render() {
@@ -82,10 +78,19 @@ class ManagePlatformsContainer extends React.Component {
       filteredPlatforms = platforms.map(p => ({ ...p, isEnabled: (p.source === MEDIA_CLOUD_SOURCE) }));
       preventAdditions = true;
     }
+    // sort in place so that the enabled platforms show up first
+    filteredPlatforms.sort((p1, p2) => {
+      if (!p1.isEnabled && p2.isEnabled) {
+        return 1;
+      }
+      if (p1.isEnabled && !p2.isEnabled) {
+        return -1;
+      }
+      return 0;
+    });
     return (
       <div>
         <IncompletePlatformWarning />
-        <NeedsNewVersionWarning />
         <div className="manage-platforms">
           <Grid>
             <Row>
@@ -150,9 +155,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleDeletePlatform: (topicId, platformId, platformType) => {
-    dispatch(selectPlatform({ topic_seed_queries_id: platformId, platformType }));
-    dispatch(deleteTopicPlatform(topicId, platformId, { current_platform_type: platformType }))
+  handleDeletePlatform: (topicId, platform) => {
+    // dispatch(selectPlatform({ topic_seed_queries_id: platformId, platformType }));
+    dispatch(deleteTopicPlatform(topicId, platform.topic_seed_queries_id))
       .then((res) => {
         if (res.success === 0) {
           dispatch(updateFeedback({ classes: 'error-notice', open: true, message: ownProps.intl.formatMessage(localMessages.removePlatformFailed) }));

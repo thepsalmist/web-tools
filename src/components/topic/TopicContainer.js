@@ -18,6 +18,7 @@ import { latestUsableSnapshot } from '../../reducers/topics/selected/snapshots';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { parseId } from '../../lib/numberUtil';
 import withFilteredUrlMaintenance from './versions/FilteredUrlMaintainer';
+import NeedsNewVersionWarning from './versions/NeedsNewVersionWarning';
 
 const pickDefaultTimespan = (dispatch, timespanList) => {
   // async handler after promise returns - pick the first timespan as the default (this is the overall one)
@@ -164,6 +165,7 @@ class TopicContainer extends React.Component {
             sideBarContent={this.state.sideBarContent}
             // implements handleRenderFilters and evaluates showFilters
           />
+          <NeedsNewVersionWarning />
           {childrenWithExtraProp}
         </>
       );

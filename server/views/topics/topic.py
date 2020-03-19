@@ -96,7 +96,6 @@ def _topic_snapshot_list(topic):
             platforms.append(p)
         else:
             if topic_has_seed_query(topic):
-
                 p = platform_for_web_seed_query(topic)
                 platforms.append(p)
         s['platform_seed_queries'] = platforms
@@ -124,6 +123,10 @@ def _topic_summary(topics_id):
     topic = local_mc.topic(topics_id)
     # add in snapshot list (with version numbers, by date)
     topic['snapshots'] = _topic_snapshot_list(topic)
+    # add in fake topic_seed_query for web/mediacloud platform
+    if topic_has_seed_query(topic):
+        p = platform_for_web_seed_query(topic)
+        topic['topic_seed_queries'].append(p)
     if is_user_logged_in():
         add_user_favorite_flag_to_topics([topic])
     return topic

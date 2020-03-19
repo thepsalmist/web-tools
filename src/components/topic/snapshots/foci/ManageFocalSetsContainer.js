@@ -14,7 +14,6 @@ import FocalSetDefinitionDetails from './FocalSetDefinitionDetails';
 import BackLinkingControlBar from '../../BackLinkingControlBar';
 import FocusIcon from '../../../common/icons/FocusIcon';
 import NewVersionFociComparisonContainer from './NewVersionFociComparisonContainer';
-import NeedsNewVersionWarning from '../../versions/NeedsNewVersionWarning';
 import LinkWithFilters from '../../LinkWithFilters';
 import { filteredLinkTo } from '../../../util/location';
 
@@ -66,7 +65,6 @@ class ManageFocalSetsContainer extends React.Component {
           message={localMessages.backToTopic}
           linkTo={filteredLinkTo(`/topics/${topicId}/summary`, filters)}
         />
-        <NeedsNewVersionWarning />
         <div className="manage-focal-sets">
           <Grid>
             <Row>

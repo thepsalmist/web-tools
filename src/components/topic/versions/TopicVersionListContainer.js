@@ -13,7 +13,6 @@ import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../../lib/auth';
 import { fetchSnapshotStoryCounts } from '../../../actions/topicActions';
 import JobList from './homepages/JobList';
 import TopicVersionListItem from './TopicVersionListItem';
-import NeedsNewVersionWarning from './NeedsNewVersionWarning';
 import { createNewSpideredVersion } from '../wizard/TopicConfirmContainer';
 
 const localMessages = {
@@ -84,7 +83,6 @@ const TopicVersionListContainer = ({ topicId, topic, storyCounts, versions, sele
   return (
     <>
       <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topicId}/summary`} />
-      <NeedsNewVersionWarning />
       <Grid>
         <Row>
           <Col lg={12}>

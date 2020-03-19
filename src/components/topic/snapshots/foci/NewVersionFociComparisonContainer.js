@@ -5,7 +5,6 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
 import AppButton from '../../../common/AppButton';
-import { needsNewVersion } from '../../versions/NeedsNewVersionWarning';
 import FocalSetSummary from './FocalSetSummary';
 import FocalSetDefinitionSummary from './FocalSetDefinitionSummary';
 import { topicSnapshotSpider } from '../../../../actions/topicActions';
@@ -37,7 +36,7 @@ class NewVersionFociComparisonContainer extends React.Component {
   render() {
     const { topicId, usingLatest, newDefinitions, latestVersionRunning, currentFocalSets, selectedSnapshot, focalSetDefinitions } = this.props;
     const submitting = this.state.submittingVersion;
-    if (needsNewVersion(usingLatest, newDefinitions, latestVersionRunning)) {
+    if (!latestVersionRunning && usingLatest && newDefinitions) {
       return (
         <>
           <Row>
@@ -86,6 +85,7 @@ NewVersionFociComparisonContainer.propTypes = {
   currentFocalSets: PropTypes.array,
   usingLatest: PropTypes.bool.isRequired,
   newDefinitions: PropTypes.bool.isRequired,
+  platformsHaveChanged: PropTypes.bool.isRequired,
   latestVersionRunning: PropTypes.bool.isRequired,
   selectedSnapshot: PropTypes.object,
   // from dispatch
@@ -97,6 +97,7 @@ const mapStateToProps = state => ({
   focalSetDefinitions: state.topics.selected.focalSets.definitions.list,
   currentFocalSets: state.topics.selected.focalSets.all.list,
   usingLatest: state.topics.selected.snapshots.usingLatest,
+  platformsHaveChanged: state.topics.selected.info.platformsHaveChanged,
   newDefinitions: state.topics.selected.focalSets.all.newDefinitions,
   latestVersionRunning: state.topics.selected.snapshots.latestVersionRunning,
   selectedSnapshot: state.topics.selected.snapshots.selected,

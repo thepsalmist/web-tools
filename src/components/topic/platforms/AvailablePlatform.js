@@ -6,7 +6,8 @@ import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import PlatformDetailsInfo from './PlatformDetailsInfo';
 import AppButton from '../../common/AppButton';
 import messages from '../../../resources/messages';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER, PLATFORM_FACEBOOK, GOOGLE_SOURCE, PLATFORM_GENERIC } from '../../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER, PLATFORM_FACEBOOK, GOOGLE_SOURCE,
+  PLATFORM_GENERIC, MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
 import { googleFavIconUrl } from '../../../lib/urlUtil';
 
 const localMessages = {
@@ -71,12 +72,9 @@ const AvailablePlatform = ({ platform, onAdd, onEdit, onDelete, preventAdditions
       <Col lg={2}>
         <div className="actions">
           {(!platform.isEnabled) && <AppButton primary label={messages.add} onClick={() => onAdd(platform)} disabled={preventAdditions} />}
-          {(platform.isEnabled) && (
-            <>
-              <AppButton primary label={messages.edit} onClick={() => onEdit(platform)} />
-              <br />
-              <AppButton secondary label={messages.remove} onClick={() => onDelete(platform)} />
-            </>
+          {(platform.isEnabled) && <AppButton primary label={messages.edit} onClick={() => onEdit(platform)} />}
+          {(platform.isEnabled) && (platform.platform !== PLATFORM_OPEN_WEB) && (platform.source !== MEDIA_CLOUD_SOURCE) && (
+            <AppButton secondary label={messages.remove} onClick={() => onDelete(platform)} />
           )}
         </div>
       </Col>

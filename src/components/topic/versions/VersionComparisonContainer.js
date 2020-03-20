@@ -18,7 +18,7 @@ const localMessages = {
   worked: { id: 'versions.comparison.worked', defaultMessage: 'We started generating the version' },
   currentVersionComparisonTitle: { id: 'versions.comparison.currentTitle', defaultMessage: 'Version {versionNumber}: Platform Summary' },
   nextVersionComparisonTitle: { id: 'versions.comparison.nextTitle', defaultMessage: 'Next Version: Platform Summary' },
-  noPlatforms: { id: 'versions.comparison.noneYet', defaultMessage: '(No current version to compare to, because you are setting up your first version)' },
+  noPrevious: { id: 'versions.comparison.noneYet', defaultMessage: '(No current version to compare to, because you are setting up your first version)' },
 };
 
 class VersionComparisonContainer extends React.Component {
@@ -45,8 +45,15 @@ class VersionComparisonContainer extends React.Component {
         <Row>
           <Col lg={5}>
             <div className="topic-info-sidebar faded">
-              <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current.note }} /></h2>
-              <TopicVersionReadySummary topic={topic} snapshot={current} startWithDetailsShowing />
+              {current && (
+                <>
+                  <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current ? current.note : 1 }} /></h2>
+                  <TopicVersionReadySummary topic={topic} snapshot={current} startWithDetailsShowing />
+                </>
+              )}
+              {(current === null) && (
+                <h2><FormattedMessage {...localMessages.noPrevious} /></h2>
+              )}
             </div>
           </Col>
           <Col lg={2}>
@@ -54,7 +61,7 @@ class VersionComparisonContainer extends React.Component {
           </Col>
           <Col lg={5}>
             <div className="topic-info-sidebar">
-              <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current.note + 1 }} /></h2>
+              <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current ? current.note + 1 : 1 }} /></h2>
               <TopicVersionReadySummary
                 snapshot={next}
                 topic={topic}

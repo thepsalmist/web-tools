@@ -11,6 +11,7 @@ from server.views.topics.topic import topic_summary
 
 logger = logging.getLogger(__name__)
 VERSION_1 = 1
+COLLECTION_US_TOP_ONLINE = 58722749
 
 
 @app.route('/api/topics/create', methods=['PUT'])
@@ -31,7 +32,7 @@ def topic_create():
     try:
         topic_result = user_mc.topicCreate(name=name, description=description, solr_seed_query=solr_seed_query,
                                            start_date=start_date, end_date=end_date,
-                                           media_ids=[1], # HACK: can't save without one of these in place (for now)
+                                           media_tags_id=[COLLECTION_US_TOP_ONLINE],  # HACK: can't save without one of these in place (for now)
                                            **optional_args,
                                            )['topics'][0]
         topics_id = topic_result['topics_id']

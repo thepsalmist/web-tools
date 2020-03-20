@@ -84,7 +84,7 @@ function checkForAnyPlatformChanges(currentPlatforms, newPlatforms) {
  * @return boolean true if there are differences in start/end date or spidering iterations
  */
 const checkForDateSpideringChanges = (t, latestSnapshot) => {
-  if (latestSnapshot.seed_queries) { // older snapshots don't have seed_queries on them
+  if (latestSnapshot && latestSnapshot.seed_queries) { // new topics have no snpashots, & older snapshots don't have seed_queries on them
     const spideringChanged = t.max_iterations !== latestSnapshot.seed_queries.topic.max_iterations;
     const datesChanged = (t.start_date !== latestSnapshot.seed_queries.topic.start_date) || (t.end_date !== latestSnapshot.seed_queries.topic.end_date);
     return spideringChanged || datesChanged;
@@ -131,8 +131,10 @@ export const addUsefulDetailsToTopic = (t) => {
   // 3. figure out if topic dates or spidering config have changed
   let platformsHaveChanged = false;
   let datesOrSpideringHaveChanged = false;
-  if (latestSnapshot) {
-    platformsHaveChanged = checkForAnyPlatformChanges(t.topic_seed_queries, (t.snapshots) ? latestSnapshot.platform_seed_queries : []);
+  if (latestSnapshot || (t.snapshots.list.length === 0)) {
+    // have to carefully handle the case of a new topic that has no previous snapshots
+    platformsHaveChanged = checkForAnyPlatformChanges(t.topic_seed_queries,
+      (t.snapshots && (t.snapshots.list.length > 0)) ? latestSnapshot.platform_seed_queries : []);
     datesOrSpideringHaveChanged = checkForDateSpideringChanges(t, latestSnapshot);
   }
   // return augmented state

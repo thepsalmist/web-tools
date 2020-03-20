@@ -172,6 +172,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 const fetchAsyncData = (dispatch, { topicId, fetchStatus }) => {
+  // this is a odd, and necessitates a forced refetch in EditPlatfromContainer and CreatePlatformConatiner
   if (fetchStatus !== fetchConstants.FETCH_SUCCEEDED) {
     dispatch(fetchPlatformsInTopicList(topicId));
   }

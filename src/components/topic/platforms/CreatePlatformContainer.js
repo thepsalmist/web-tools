@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { push, reset } from 'react-router-redux';
 import PlatformWizard from './builder/PlatformWizard';
-import { topicCreatePlatform, setTopicNeedsNewSnapshot } from '../../../actions/topicActions';
-// import { LEVEL_ERROR } from '../../common/Notice';
+import { topicCreatePlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import { platformChannelDataFormatter, topicQueryAsString } from '../../util/topicUtil';
 
@@ -74,6 +73,7 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
           const platformSavedMessage = intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
+          dispatch(fetchPlatformsInTopicList(topicInfo.topics_id)); // force refetch of newly configured platforms
           dispatch(push(`/topics/${topicInfo.topics_id}/platforms/manage`));
           dispatch(reset('platform')); // it is a wizard so we have to do this by hand
         } else {

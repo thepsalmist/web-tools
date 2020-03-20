@@ -6,7 +6,7 @@ import { push } from 'react-router-redux';
 // import { reset } from 'redux-form';
 import PlatformWizard from './builder/PlatformWizard';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import { topicUpdatePlatform, setTopicNeedsNewSnapshot, selectPlatform } from '../../../actions/topicActions';
+import { topicUpdatePlatform, setTopicNeedsNewSnapshot, selectPlatform, fetchPlatformsInTopicList } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import { platformChannelDataFormatter, topicQueryAsString } from '../../util/topicUtil';
 
@@ -80,8 +80,8 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
           const platformSavedMessage = intl.formatMessage(localMessages.platformSaved);
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
+          dispatch(fetchPlatformsInTopicList(topicInfo.topics_id)); // force refetch of newly configured platforms
           dispatch(push(`/topics/${topicInfo.topicId}/platforms/manage`)); // go back to focus management page
-          // dispatch(reset('snapshotFocus')); // it is a wizard so we have to do this by hand
         } else {
           const platformNotSavedMessage = intl.formatMessage(localMessages.platformNotSaved);
           dispatch(updateFeedback({ classes: 'error-notice', open: true, message: platformNotSavedMessage })); // user feedback

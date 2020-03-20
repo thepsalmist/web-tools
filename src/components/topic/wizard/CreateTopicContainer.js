@@ -17,7 +17,7 @@ import messages from '../../../resources/messages';
 import { getCurrentDate, getMomentDateSubtraction } from '../../../lib/dateUtil';
 
 const localMessages = {
-  pageTitle: { id: 'topic.modify.pageTitle', defaultMessage: 'Create a Topic' },
+  pageTitle: { id: 'topic.modify.pageTitle', defaultMessage: 'Step 1: Setup Your Topic' },
   pageDesc: { id: 'topic.modify.pageTitle', defaultMessage: 'You can try out your query in our <a href="https://explorer.mediacloud.org/">Explorer tool</a> before coming here to create a topic.' },
   cannotCreateTopic: { id: 'topic.modify.cannotCreateTopic', defaultMessage: 'You cannot create a new topic right now because you are currently running another topic.' },
   createTopic: { id: 'topic.create', defaultMessage: 'Create Topic' },

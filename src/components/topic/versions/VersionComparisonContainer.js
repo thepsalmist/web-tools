@@ -36,48 +36,50 @@ class VersionComparisonContainer extends React.Component {
     const { topic, topicId, current, next, focalSetDefinitions } = this.props;
     const submitting = this.state.submittingVersion;
     return (
-      <Grid>
-        <Row>
-          <Col lg={12}>
-            <h2><FormattedMessage {...localMessages.versionDiffTitle} /></h2>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={5}>
-            <div className="topic-info-sidebar faded">
-              {current && (
-                <>
-                  <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current ? current.note : 1 }} /></h2>
-                  <TopicVersionReadySummary topic={topic} snapshot={current} startWithDetailsShowing />
-                </>
-              )}
-              {(current === null) && (
-                <h2><FormattedMessage {...localMessages.noPrevious} /></h2>
-              )}
-            </div>
-          </Col>
-          <Col lg={2}>
-            <span style={{ display: 'block', fontSize: '56px', marginTop: '120px', textAlign: 'center' }}>➡</span>
-          </Col>
-          <Col lg={5}>
-            <div className="topic-info-sidebar">
-              <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current ? current.note + 1 : 1 }} /></h2>
-              <TopicVersionReadySummary
-                snapshot={next}
-                topic={topic}
-                focalSets={focalSetDefinitions}
-                startWithDetailsShowing
+      <div className="version-comparison">
+        <Grid>
+          <Row>
+            <Col lg={12}>
+              <h2><FormattedMessage {...localMessages.versionDiffTitle} /></h2>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={5}>
+              <div className="topic-info-sidebar faded">
+                {current && (
+                  <>
+                    <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current ? current.note : 1 }} /></h2>
+                    <TopicVersionReadySummary topic={topic} snapshot={current} startWithDetailsShowing />
+                  </>
+                )}
+                {(current === null) && (
+                  <h2><FormattedMessage {...localMessages.noPrevious} /></h2>
+                )}
+              </div>
+            </Col>
+            <Col lg={2}>
+              <span style={{ display: 'block', fontSize: '56px', marginTop: '120px', textAlign: 'center' }}>➡</span>
+            </Col>
+            <Col lg={5}>
+              <div className="topic-info-sidebar">
+                <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current ? current.note + 1 : 1 }} /></h2>
+                <TopicVersionReadySummary
+                  snapshot={next}
+                  topic={topic}
+                  focalSets={focalSetDefinitions}
+                  startWithDetailsShowing
+                />
+              </div>
+              <AppButton
+                label={localMessages.createVersionAndStartSpider}
+                onClick={() => this.onGenerateVersion(topicId, null)}
+                primary
+                disabled={submitting}
               />
-            </div>
-            <AppButton
-              label={localMessages.createVersionAndStartSpider}
-              onClick={() => this.onGenerateVersion(topicId, null)}
-              primary
-              disabled={submitting}
-            />
-          </Col>
-        </Row>
-      </Grid>
+            </Col>
+          </Row>
+        </Grid>
+      </div>
     );
   }
 }

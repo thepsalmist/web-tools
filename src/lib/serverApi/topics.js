@@ -432,3 +432,8 @@ export function uploadPlatformGenericCsvFile(topicId, params) {
   const acceptedParams = acceptParams(params, ['file']);
   return createPostingApiPromise(`/api/topics/${topicId}/platforms/generic-csv/upload`, acceptedParams);
 }
+
+export function uploadPlatformGenericCsvUrl(topicId, params) {
+  const acceptedParams = acceptParams(params, ['url']);
+  return createPostingApiPromise(`/api/topics/${topicId}/platforms/generic-csv/fetch-from-url`, acceptedParams);
+}

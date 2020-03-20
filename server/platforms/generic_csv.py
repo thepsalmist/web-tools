@@ -9,7 +9,7 @@ import dateutil.parser
 
 from server import app
 from server.cache import cache
-from server.platforms.provider import ContentProvider
+from server.platforms.provider import ContentProvider, MC_DATE_FORMAT
 
 MC_DAY_FORMAT = "%Y-%m-%d"
 
@@ -29,7 +29,7 @@ class GenericCsvProvider(ContentProvider):
 
     def set_filename(self, filename: str):
         path_to_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        self._data = self._load_from_file(path_to_file)
+        self._load_from_file(path_to_file)
 
     def _load_from_file(self, path_to_file: str) -> List[Dict]:
         data = []
@@ -40,10 +40,11 @@ class GenericCsvProvider(ContentProvider):
         for row in data:
             # this validates the date the same way to back-end parses it
             row['publish_date'] = dateutil.parser.parse(row['publish_date'])
-        return data
+        self._data = data
 
     @cache.cache_on_arguments()
-    def sample(self, query: str, start_date: dt.datetime, end_date: dt.datetime, limit: int = 20, **kwargs) -> List[Dict]:
+    def sample(self, query: str, start_date: dt.datetime, end_date: dt.datetime, limit: int = 20,
+               **kwargs) -> List[Dict]:
         """
         Return a list of random content .
         :param query:
@@ -93,6 +94,8 @@ class GenericCsvProvider(ContentProvider):
         """
         We don't want to process all the data and do word counts just for a preview
         :param query:
+        :param start_date:
+        :param end_date:
         :return:
         """
         return []
@@ -101,10 +104,9 @@ class GenericCsvProvider(ContentProvider):
     def _content_to_row(cls, item):
         return {
             'author': item['author'],
-            'publish_date': item['publish_date'].strftime(MC_DAY_FORMAT),
+            'publish_date': item['publish_date'].strftime(MC_DATE_FORMAT),
             'title': item['content'][0:100],
-            'media_name': 'CVS Upload',
+            'media_name': item['author'] if (('author' in item) and (item['author'] is not None)) else 'CSV Upload',
             'media_url': None,
             'url': item['url'] if 'url' in item else None,
         }
-

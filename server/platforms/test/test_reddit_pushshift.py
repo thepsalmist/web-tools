@@ -32,7 +32,7 @@ class RedditPushshiftProviderTest(unittest.TestCase):
     def test_count_over_time(self):
         results = self._provider.count_over_time("Trump", dt.datetime.strptime("2019-01-01", "%Y-%m-%d"),
                                                  dt.datetime.strptime("2019-02-01", "%Y-%m-%d"))
-        for item in results:
+        for item in results['counts']:
             assert 'date' in item
             assert 'count' in item
 

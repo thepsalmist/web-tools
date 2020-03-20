@@ -37,3 +37,6 @@ export const fetchWordsByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PREVIE
 
 export const UPLOAD_PLATFORM_GENERIC_CSV_FILE = 'UPLOAD_PLATFORM_GENERIC_CSV_FILE';
 export const uploadPlatformGenericCsvFile = createAsyncAction(UPLOAD_PLATFORM_GENERIC_CSV_FILE, api.uploadPlatformGenericCsvFile);
+
+export const UPLOAD_PLATFORM_GENERIC_CSV_URL = 'UPLOAD_PLATFORM_GENERIC_CSV_URL';
+export const uploadPlatformGenericCsvUrl = createAsyncAction(UPLOAD_PLATFORM_GENERIC_CSV_URL, api.uploadPlatformGenericCsvUrl);

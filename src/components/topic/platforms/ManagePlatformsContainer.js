@@ -18,8 +18,7 @@ import * as fetchConstants from '../../../lib/fetchConstants';
 
 const localMessages = {
   listTitle: { id: 'platform.list.title', defaultMessage: 'Platform Details' },
-  platformManageAbout: { id: 'platform.manage.about',
-    defaultMessage: 'empty' },
+  platformManageAbout: { id: 'platform.manage.about', defaultMessage: 'empty' },
   removePlatform: { id: 'platform.manage.remove', defaultMessage: 'Remove Platform' },
   removeOk: { id: 'platform.manage.remove.ok', defaultMessage: 'Remove It' },
   removePlatformSucceeded: { id: 'platform.manage.remove.succeeded', defaultMessage: 'Removed the Platform' },
@@ -63,7 +62,7 @@ class ManagePlatformsContainer extends React.Component {
   }
 
   render() {
-    const { platforms, platformsHaveChanged } = this.props;
+    const { platforms, platformsHaveChanged, titleMsg } = this.props;
     const { formatMessage } = this.props.intl;
     /* TODO get the latest platform info of each category if exists, relevantPlatforms = platform.map... */
     /* and, compare previous version with current to see if new platforms and if so, offer spider and generate */
@@ -88,6 +87,7 @@ class ManagePlatformsContainer extends React.Component {
       }
       return 0;
     });
+    const h1Msg = titleMsg || messages.managePlatforms;
     return (
       <div>
         <IncompletePlatformWarning />
@@ -96,7 +96,7 @@ class ManagePlatformsContainer extends React.Component {
             <Row>
               <Col lg={10} xs={12}>
                 <h1>
-                  <FormattedMessage {...messages.managePlatforms} />
+                  <FormattedMessage {...h1Msg} />
                 </h1>
               </Col>
             </Row>
@@ -127,6 +127,8 @@ class ManagePlatformsContainer extends React.Component {
 ManagePlatformsContainer.propTypes = {
   // from composition
   intl: PropTypes.object.isRequired,
+  // from parent
+  titleMsg: PropTypes.object, // alternate title
   // from state
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,

@@ -1,6 +1,5 @@
 import logging
-from datetime import datetime
-from server import mc 
+import dateutil
 
 logger = logging.getLogger(__name__)
 
@@ -13,4 +12,4 @@ def ids_from_comma_separated_str(comma_separated_string):
 
 
 def trim_solr_date(date_str):
-  return datetime.strptime(date_str, mc.SENTENCE_PUBLISH_DATE_FORMAT).strftime("%Y-%m-%d")
+    return dateutil.parser.parse(date_str).strftime("%Y-%m-%d")

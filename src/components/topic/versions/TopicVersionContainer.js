@@ -11,13 +11,9 @@ import TopicVersionQueuedStatusContainer from './homepages/TopicVersionQueuedSta
 import TopicVersionErrorStatusContainer from './homepages/TopicVersionErrorStatusContainer';
 import TopicVersionRunningStatusContainer from './homepages/TopicVersionRunningStatusContainer';
 import TopicVersionTooBigStatusContainer from './homepages/TopicVersionTooBigStatusContainer';
-import TopicVersionCreatedStatusContainer from './homepages/TopicVersionCreatedStatusContainer';
 import * as fetchConstants from '../../../lib/fetchConstants';
 import { filteredLinkTo } from '../../util/location';
 import { getCurrentVersionFromSnapshot } from '../../../lib/topicVersionUtil';
-import { topicSnapshotSpider } from '../../../actions/topicActions';
-import { LEVEL_ERROR } from '../../common/Notice';
-import { addNotice, updateFeedback } from '../../../actions/appActions';
 import { topicMessageSaysTooBig } from '../../../reducers/topics/adminList';
 
 const localMessages = {
@@ -25,6 +21,7 @@ const localMessages = {
   generationFailed: { id: 'topic.created.generationFailed', defaultMessage: 'Sorry, but we weren\'t able to start generating this version.' },
   runningSubtitle: { id: 'version.running.title', defaultMessage: 'Still Generating' },
   almostDoneSubtitle: { id: 'version.cancel', defaultMessage: 'Cancel This Version' },
+  setupPlatforms: { id: 'version.setupPlatforms', defaultMessage: 'Step 2: Setup Platforms' },
 };
 
 /**
@@ -32,7 +29,7 @@ const localMessages = {
  */
 const TopicVersionContainer = (props) => {
   const { children, topic, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo,
-    setSideBarContent, snapshotId, filters, selectedSnapshot, handleSnapshotGenerate } = props;
+    setSideBarContent, snapshotId, filters, selectedSnapshot } = props;
   const currentVersionNum = getCurrentVersionFromSnapshot(topic, snapshotId);
   // carefully figure out what the latest state for this version is
   let snapshotToUse;
@@ -53,19 +50,9 @@ const TopicVersionContainer = (props) => {
     };
   }
   let contentToShow;
-  // empty, newly created topic with no platforms, force to platforms
-  if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED && topic.topic_seed_queries.length === 0) {
-    contentToShow = <ManagePlatformsContainer />;
-  // handle case where there isn't a snapshot object yet (legacy)
-  } else if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
-    contentToShow = (
-      <TopicVersionCreatedStatusContainer
-        topic={topic}
-        snapshot={snapshotToUse}
-        onSnapshotGenerate={handleSnapshotGenerate}
-        goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
-      />
-    );
+  // empty, newly created topic should go to platform setup
+  if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_CREATED_NOT_QUEUED) {
+    contentToShow = <ManagePlatformsContainer titleMsg={localMessages.setupPlatforms} />;
   } else if (snapshotToUse.state === TOPIC_SNAPSHOT_STATE_QUEUED) {
     contentToShow = (
       <TopicVersionQueuedStatusContainer
@@ -120,7 +107,6 @@ TopicVersionContainer.propTypes = {
   location: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   // from dispatch
-  handleSnapshotGenerate: PropTypes.func.isRequired,
   goToCreateNewVersion: PropTypes.func,
   // from state
   filters: PropTypes.object.isRequired,
@@ -147,21 +133,10 @@ const mapStateToProps = state => ({
   snapshotCount: state.topics.selected.snapshots.list.length,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = (dispatch) => ({
   goToCreateNewVersion: (topic, filters) => {
     const url = `/topics/${topic.topics_id}/update`;
     dispatch(push(filteredLinkTo(url, filters)));
-  },
-  handleSnapshotGenerate: (topicId, snapshotId) => {
-    dispatch(topicSnapshotSpider(topicId, { snapshotId }))
-      .then((results) => {
-        if ((results.statusCode && results.statusCode !== 200) || results.error) {
-          dispatch(addNotice({ message: localMessages.generationFailed, details: results.message || results.error, level: LEVEL_ERROR }));
-        } else {
-          dispatch(updateFeedback({ open: true, message: ownProps.intl.formatMessage(localMessages.startedGenerating) }));
-          window.location.reload(); // to get new version status (ie. running hopefully)
-        }
-      });
   },
 });
 

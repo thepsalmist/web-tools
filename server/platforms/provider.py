@@ -40,9 +40,9 @@ class ContentProvider(object):
         :param kwargs:
         :return:
         """
-        matching_content_counts = self.count_over_time(query, start_date, end_date, **kwargs)
+        matching_content_counts = self.count_over_time(query, start_date, end_date, **kwargs)['counts']
         matching_total = sum([d['count'] for d in matching_content_counts])
-        no_query_content_counts = self.count_over_time('', start_date, end_date, **kwargs)
+        no_query_content_counts = self.count_over_time('', start_date, end_date, **kwargs)['counts']
         no_query_total = sum([d['count'] for d in no_query_content_counts])
         return {
             'counts': combined_split_and_normalized_counts(matching_content_counts, no_query_content_counts),

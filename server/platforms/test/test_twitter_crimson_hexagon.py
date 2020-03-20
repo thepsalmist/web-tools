@@ -27,7 +27,7 @@ class TwitterCrimsonHexagonProviderTest(unittest.TestCase):
     def test_count(self):
         results = self._provider.count(None, start_date=dt.datetime(2019, 1, 1), end_date=dt.datetime(2020, 1, 1),
                                        monitor_id=TEST_MONITOR_ID)
-        assert results > 0
+        assert results['counts'] > 0
 
     def test_words(self):
         results = self._provider.words(None, start_date=dt.datetime(2019, 1, 1), end_date=dt.datetime(2020, 1, 1),

@@ -9,7 +9,7 @@ import EnabledPlatformSummary from '../EnabledPlatformSummary';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
 import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
-import { PLATFORM_OPEN_WEB, } from '../../../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB } from '../../../../lib/platformTypes';
 
 
 const localMessages = {

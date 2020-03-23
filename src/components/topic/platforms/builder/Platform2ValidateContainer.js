@@ -175,7 +175,7 @@ const mapStateToProps = state => ({
   total: state.topics.selected.platforms.preview.matchingStories.total,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
   topic: state.topics.selected.info,
-  formValues: formSelector(state, 'media', 'query'),
+  formValues: formSelector(state, 'media', 'channel', 'query'),
   selectedPlatform: state.topics.selected.platforms.selected,
 });
 

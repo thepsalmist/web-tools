@@ -9,7 +9,7 @@ from server.auth import user_mediacloud_client
 from server.util.request import form_fields_required
 import server.views.topics.apicache as apicache
 from server.views.topics.platforms.platforms_preview import parse_open_web_media_from_channel
-from server.platforms import PLATFORM_OPEN_WEB, PLATFORM_SOURCE_MEDIA_CLOUD, PLATFORM_GENERIC, PLATFORM_SOURCE_CSV
+from server.platforms import PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_SOURCE_MEDIA_CLOUD, PLATFORM_GENERIC, PLATFORM_SOURCE_CSV
 
 logger = logging.getLogger(__name__)
 
@@ -100,10 +100,13 @@ def topic_update_platform(topics_id, platform_id):
         result['success'] = 1
         result['id'] = platform_id #web_shim_ui
     else:
-        # TODO combine channel into query
-        # Fake an update operation here by removing and then adding again
         result = user_mc.topicRemoveSeedQuery(topics_id, topic_seed_queries_id=platform_id)
+        # Fake an update operation here by removing and then adding again
+        if platform == PLATFORM_REDDIT:
+            #TODO update this merge with correct info from Jason/Pushshift library
+            query = "{} AND {}".format(query, channel)
         result = user_mc.topicAddSeedQuery(topics_id, platform, source, query)
+
         result['success'] = 1 if 'topic_seed_query' in result else 0
         result['id'] = result['topic_seed_query']['topic_seed_queries_id']
 

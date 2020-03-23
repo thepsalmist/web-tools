@@ -9,6 +9,8 @@ import EnabledPlatformSummary from '../EnabledPlatformSummary';
 import { goToCreatePlatformStep } from '../../../../actions/topicActions';
 import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
+import { PLATFORM_OPEN_WEB, } from '../../../../lib/platformTypes';
+
 
 const localMessages = {
   title: { id: 'platform.create.confirm.title', defaultMessage: 'Step 4: Confirm Your {name} Platform Changes' },
@@ -19,7 +21,7 @@ const localMessages = {
 const Platform3ConfirmContainer = (props) => {
   const { formValues, handlePreviousStep, handleSubmit, finishStep, submitting, currentPlatform } = props;
   const { formatMessage } = props.intl;
-  const mergeChannelValue = { channel: formValues.media ? formValues.media : formValues.channel };
+  const mergeChannelValue = { channel: (currentPlatform.platform === PLATFORM_OPEN_WEB) ? formValues.media : formValues.channel };
   return (
     <form className="platform-confirm" name="platformValidation" onSubmit={handleSubmit(finishStep.bind(this))}>
       <Grid>

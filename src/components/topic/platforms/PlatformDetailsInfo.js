@@ -33,7 +33,7 @@ const PlatformDetailsInfo = ({ platform }) => {
           &nbsp;
           <code>{platform.query}</code>
           <br />
-          <p>platform.channel</p>
+          <p>{platform.channel}</p>
         </>
       );
       break;

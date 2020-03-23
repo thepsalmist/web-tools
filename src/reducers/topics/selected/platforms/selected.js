@@ -1,6 +1,6 @@
 import { SELECT_PLATFORM } from '../../../../actions/topicActions';
 
-const INITIAL_STATE = { topic_seed_queries_id: -1, currentPlatformType: '' };
+const INITIAL_STATE = { topic_seed_queries_id: -1, currentPlatformType: '', channel: [] };
 
 function selected(state = INITIAL_STATE, action) {
   let updatedState = null;

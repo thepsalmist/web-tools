@@ -131,7 +131,7 @@ export const addUsefulDetailsToTopic = (t) => {
   // 3. figure out if topic dates or spidering config have changed
   let platformsHaveChanged = false;
   let datesOrSpideringHaveChanged = false;
-  if (latestSnapshot || (t.snapshots.list.length === 0)) {
+  if (latestSnapshot || (t.snapshots && (t.snapshots.list.length === 0))) {
     // have to carefully handle the case of a new topic that has no previous snapshots
     platformsHaveChanged = checkForAnyPlatformChanges(t.topic_seed_queries,
       (t.snapshots && (t.snapshots.list.length > 0)) ? latestSnapshot.platform_seed_queries : []);

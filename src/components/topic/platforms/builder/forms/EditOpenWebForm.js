@@ -16,17 +16,20 @@ const EditOpenWebForm = ({ initialValues, renderSolrTextField, intl, onFormChang
         <label htmlFor="query"><FormattedMessage {...messages.query} /></label>
         <Row>
           <Col lg={12}>
-            <Field
-              name="query"
-              component={renderSolrTextField}
-              multiline
-              rows={2}
-              rowsMax={4}
-              fullWidth
-            />
-            <small>
-              <b><QueryHelpDialog trigger={intl.formatMessage(messages.queryHelpLink)} /></b>
-            </small>
+            <div className="q-field-wrapper">
+              <Field
+                className="query-field"
+                name="query"
+                component={renderSolrTextField}
+                multiline
+                rows={2}
+                rowsMax={4}
+                fullWidth
+              />
+              <small>
+                <b><QueryHelpDialog trigger={intl.formatMessage(messages.queryHelpLink)} /></b>
+              </small>
+            </div>
           </Col>
         </Row>
       </Col>

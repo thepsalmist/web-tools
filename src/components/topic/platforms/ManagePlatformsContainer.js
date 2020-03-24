@@ -87,6 +87,16 @@ class ManagePlatformsContainer extends React.Component {
       }
       return 0;
     });
+    // sort in place so that the enabled platforms show up first
+    filteredPlatforms.sort((p1, p2) => {
+      if (p2.source === MEDIA_CLOUD_SOURCE) {
+        return 1;
+      }
+      if (p1.source === MEDIA_CLOUD_SOURCE) {
+        return -1;
+      }
+      return 0;
+    });
     const h1Msg = titleMsg || messages.managePlatforms;
     return (
       <div>

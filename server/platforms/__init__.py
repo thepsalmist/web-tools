@@ -8,6 +8,7 @@ from server.platforms.twitter_pushshift import TwitterPushshiftProvider
 from server.platforms.web_mediacloud import WebMediaCloudProvider
 from server.platforms.twitter_crimson_hexagon import TwitterCrimsonHexagonProvider
 from server.platforms.generic_csv import GenericCsvProvider
+from server.platforms.web_google import WebGoogleProvider
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +25,17 @@ PLATFORM_SOURCE_CSV = 'csv'
 PLATFORM_SOURCE_MEDIA_CLOUD = 'mediacloud'
 PLATFORM_SOURCE_PUSHSHIFT = 'pushshift'
 PLATFORM_SOURCE_CROWD_TANGLE = 'crowd_tangle'  # coming soon
+PLATFORM_SOURCE_GOOGLE = 'google'
 
 
 def provider_for(platform: str, source: str) -> ContentProvider:
+    """
+    A factory method that returns the appropriate data provider. Trhows an exception to let you know if the
+    arguments are unsupported.
+    :param platform: One of the PLATFORM_* constants above.
+    :param source: One of the PLATFORM_SOURCE>* constants above.
+    :return:
+    """
     if (platform == PLATFORM_OPEN_WEB) and (source == PLATFORM_SOURCE_MEDIA_CLOUD):
         return WebMediaCloudProvider(user_mediacloud_key())
     if (platform == PLATFORM_TWITTER) and (source == PLATFORM_SOURCE_PUSHSHIFT):
@@ -37,6 +46,8 @@ def provider_for(platform: str, source: str) -> ContentProvider:
         return TwitterCrimsonHexagonProvider(config.get('CRIMSON_HEXAGON_API_KEY'))
     if (platform == PLATFORM_GENERIC) and (source == PLATFORM_SOURCE_CSV):
         return GenericCsvProvider()
+    if (platform == PLATFORM_OPEN_WEB) and (source == PLATFORM_SOURCE_GOOGLE):
+        return WebGoogleProvider()
     raise UnknownProviderException(platform, source)
 
 

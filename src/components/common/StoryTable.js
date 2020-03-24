@@ -33,12 +33,15 @@ const StoryTable = (props) => {
             if (story.publish_date === 'undateable') {
               dateToShow = formatMessage(localMessages.undateable);
               dateStyle = 'story-date-undateable';
-            } else {
+            } else if (story.publish_date) {
               dateToShow = formatDate(storyPubDateToTimestamp(story.publish_date));
               dateStyle = (story.date_is_reliable === 0) ? 'story-date-unreliable' : 'story-date-reliable';
               if (story.date_is_reliable === 0) {
                 dateToShow += '?';
               }
+            } else {
+              dateToShow = 'TBD';
+              dateStyle = 'story-date-undateable';
             }
             return (
               <tr key={`${story.stories_id}${idx}`} className={(idx % 2 === 0) ? `even${isSelected}` : `odd${isSelected}`}>

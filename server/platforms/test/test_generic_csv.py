@@ -1,5 +1,4 @@
 import unittest
-import datetime as dt
 import os
 
 from server.platforms.generic_csv import GenericCsvProvider

@@ -73,8 +73,11 @@ const AvailablePlatform = ({ platform, onAdd, onEdit, onDelete, preventAdditions
         <div className="actions">
           {(!platform.isEnabled) && <AppButton primary label={messages.add} onClick={() => onAdd(platform)} disabled={preventAdditions} />}
           {(platform.isEnabled) && <AppButton primary label={messages.edit} onClick={() => onEdit(platform)} />}
-          {(platform.isEnabled) && (platform.platform !== PLATFORM_OPEN_WEB) && (platform.source !== MEDIA_CLOUD_SOURCE) && (
-            <AppButton secondary label={messages.remove} onClick={() => onDelete(platform)} />
+          {(platform.isEnabled) && (platform.source !== MEDIA_CLOUD_SOURCE) && (
+            <>
+              <br />
+              <AppButton secondary label={messages.remove} onClick={() => onDelete(platform)} />
+            </>
           )}
         </div>
       </Col>

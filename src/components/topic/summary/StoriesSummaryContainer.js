@@ -13,7 +13,7 @@ import Permissioned from '../../common/Permissioned';
 import { getUserRoles, hasPermissions, PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
-import TopicStoryTable from '../TopicStoryTable';
+import TopicStoryTableContainer from '../TopicStoryTableContainer';
 import messages from '../../../resources/messages';
 import { urlWithFilters, filtersAsUrlParams } from '../../util/location';
 import withTopicStoryDownload from '../TopicStoryDownloader';
@@ -44,9 +44,8 @@ class StoriesSummaryContainer extends React.Component {
     const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
     return (
       <>
-        <TopicStoryTable
+        <TopicStoryTableContainer
           stories={stories}
-          showTweetCounts={showTweetCounts}
           topicId={topicId}
           onChangeSort={isLoggedIn ? this.onChangeSort : null}
           onChangeFocusSelection={handleFocusSelected}

@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import TopicStoryTable from '../TopicStoryTable';
+import TopicStoryTableContainer from '../TopicStoryTableContainer';
 import { fetchTopicInfluentialStories, sortTopicInfluentialStories } from '../../../actions/topicActions';
 import messages from '../../../resources/messages';
 import { DownloadButton } from '../../common/IconButton';
@@ -23,7 +23,7 @@ const localMessages = {
 };
 
 const InfluentialStoriesContainer = (props) => {
-  const { stories, showTweetCounts, sort, topicId, previousButton, nextButton, helpButton,
+  const { stories, sort, topicId, previousButton, nextButton, showTweetCounts, helpButton,
     sortData, showTopicStoryDownloadDialog } = props;
   const { formatMessage } = props.intl;
   return (
@@ -47,10 +47,8 @@ const InfluentialStoriesContainer = (props) => {
                 <FormattedMessage {...localMessages.exploreLink} />
               </LinkWithFilters>
             </p>
-            <TopicStoryTable
-              topicId={topicId}
+            <TopicStoryTableContainer
               stories={stories}
-              showTweetCounts={showTweetCounts}
               onChangeSort={newSort => sortData(newSort)}
               sortedBy={sort}
             />

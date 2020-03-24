@@ -13,11 +13,14 @@ import SafelyFormattedNumber from '../common/SafelyFormattedNumber';
 const localMessages = {
   undateable: { id: 'story.publishDate.undateable', defaultMessage: 'Undateable' },
   foci: { id: 'story.foci.list', defaultMessage: 'List of Subtopics {list}' },
-  postCount: { id: 'story.postCount', defaultMessage: 'Posts' },
 };
 
 const ICON_STYLE = { margin: 0, padding: 0, width: 12, height: 12 };
 
+/**
+ * Main component to use for showing a table of stories within a topic. Used across the entire interface.
+ * Most likely you want to use TopicStoryTableContainer, so it adds in some of the required properties for you.
+ */
 class TopicStoryTable extends React.Component {
   sortableHeader = (sortKey, textMsg) => {
     const { onChangeSort, sortedBy } = this.props;
@@ -52,7 +55,8 @@ class TopicStoryTable extends React.Component {
   }
 
   render() {
-    const { stories, showTweetCounts, onChangeFocusSelection, topicId, maxTitleLength, helpButton } = this.props;
+    const { stories, showTweetCounts, onChangeFocusSelection, topicId, maxTitleLength, helpButton,
+      showInlinksOutlinks, showAuthorCount } = this.props;
     const { formatMessage, formatDate } = this.props.intl;
     const tweetHeader = showTweetCounts ? <th className="numeric">{this.sortableHeader('twitter', messages.tweetCounts)}</th> : null;
     return (
@@ -63,10 +67,14 @@ class TopicStoryTable extends React.Component {
               <th><FormattedMessage {...messages.storyTitle} /></th>
               <th><FormattedMessage {...messages.media} /></th>
               <th><FormattedMessage {...messages.storyDate} />{helpButton}</th>
-              <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
-              <th className="numeric"><FormattedMessage {...messages.outlinks} /></th>
+              {showInlinksOutlinks && (
+                <>
+                  <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
+                  <th className="numeric"><FormattedMessage {...messages.outlinks} /></th>
+                </>
+              )}
               <th className="numeric">{this.sortableHeader('facebook', messages.facebookShares)}</th>
-              <th className="numeric"><FormattedMessage {...localMessages.postCount} /></th>
+              { showAuthorCount && (<th className="numeric"><FormattedMessage {...messages.authorCount} /></th>)}
               {tweetHeader}
               <th>{}</th>
               <th><FormattedMessage {...messages.focusHeader} /></th>
@@ -118,10 +126,14 @@ class TopicStoryTable extends React.Component {
                     </LinkWithFilters>
                   </td>
                   <td><span className={`story-date ${dateStyle}`}>{dateToShow}</span></td>
-                  <td className="numeric"><SafelyFormattedNumber value={story.media_inlink_count} /></td>
-                  <td className="numeric"><SafelyFormattedNumber value={story.outlink_count} /></td>
+                  {showInlinksOutlinks && (
+                    <>
+                      <td className="numeric"><SafelyFormattedNumber value={story.media_inlink_count} /></td>
+                      <td className="numeric"><SafelyFormattedNumber value={story.outlink_count} /></td>
+                    </>
+                  )}
                   <td className="numeric"><SafelyFormattedNumber value={story.facebook_share_count} /></td>
-                  <td className="numeric"><SafelyFormattedNumber value={story.post_count} /></td>
+                  { showAuthorCount && (<td className="numeric"><SafelyFormattedNumber value={story.post_count} /></td>) }
                   {tweetInfo}
                   <td>
                     <a href={story.url} target="_blank" rel="noopener noreferrer">
@@ -140,18 +152,24 @@ class TopicStoryTable extends React.Component {
 }
 
 TopicStoryTable.propTypes = {
+  // from original parent
   stories: PropTypes.array.isRequired,
-  showTweetCounts: PropTypes.bool,
-  intl: PropTypes.object.isRequired,
-  helpButton: PropTypes.node.isRequired,
-  topicId: PropTypes.number, // not required as this table is now also used by query routine
   onChangeSort: PropTypes.func,
-  onChangeFocusSelection: PropTypes.func,
-  sortedBy: PropTypes.string,
   maxTitleLength: PropTypes.number,
+  sortedBy: PropTypes.string,
+  onChangeFocusSelection: PropTypes.func,
+  // from parent (container)
+  showTweetCounts: PropTypes.bool.isRequired,
+  topicId: PropTypes.number.isRequired,
+  showInlinksOutlinks: PropTypes.bool.isRequired,
+  showAuthorCount: PropTypes.bool.isRequired,
+  // from compositional chain
+  helpButton: PropTypes.node.isRequired,
+  intl: PropTypes.object.isRequired,
 };
 
-export default injectIntl(
+export default
+injectIntl(
   withHelp(messages.pubDateTableHelpTitle, messages.pubDateTableHelpText)(
     TopicStoryTable
   )

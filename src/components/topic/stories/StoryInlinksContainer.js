@@ -6,7 +6,7 @@ import { fetchStoryInlinks } from '../../../actions/topicActions';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
-import TopicStoryTable from '../TopicStoryTable';
+import TopicStoryTableContainer from '../TopicStoryTableContainer';
 import DataCard from '../../common/DataCard';
 import TopicPropTypes from '../TopicPropTypes';
 import { DownloadButton } from '../../common/IconButton';
@@ -17,7 +17,7 @@ const localMessages = {
 };
 
 const StoryInlinksContainer = (props) => {
-  const { inlinkedStories, showTweetCounts, topicId, helpButton, storiesId, filters } = props;
+  const { inlinkedStories, topicId, helpButton, storiesId, filters } = props;
   const { formatMessage } = props.intl;
   return (
     <DataCard>
@@ -34,7 +34,7 @@ const StoryInlinksContainer = (props) => {
         <FormattedMessage {...messages.inlinks} />
         {helpButton}
       </h2>
-      <TopicStoryTable stories={inlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} />
+      <TopicStoryTableContainer stories={inlinkedStories} />
     </DataCard>
   );
 };
@@ -49,14 +49,12 @@ StoryInlinksContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
   inlinkedStories: PropTypes.array.isRequired,
-  showTweetCounts: PropTypes.bool,
   filters: TopicPropTypes.filters.isRequired,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.story.inlinks.fetchStatus,
   inlinkedStories: state.topics.selected.story.inlinks.stories,
-  showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
   filters: state.topics.selected.filters,
 });
 

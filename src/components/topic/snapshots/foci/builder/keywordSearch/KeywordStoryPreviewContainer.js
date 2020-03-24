@@ -6,7 +6,7 @@ import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
 import withHelp from '../../../../../common/hocs/HelpfulContainer';
 import { fetchCreateFocusKeywordStories } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
-import TopicStoryTable from '../../../../TopicStoryTable';
+import TopicStoryTableContainer from '../../../../TopicStoryTableContainer';
 import messages from '../../../../../../resources/messages';
 
 const NUM_TO_SHOW = 20;
@@ -17,14 +17,14 @@ const localMessages = {
 };
 
 const KeywordStoryPreviewContainer = (props) => {
-  const { stories, topicId, helpButton, showTweetCounts } = props;
+  const { stories, helpButton } = props;
   return (
     <DataCard>
       <h2>
         <FormattedMessage {...localMessages.title} />
         {helpButton}
       </h2>
-      <TopicStoryTable stories={stories.slice(0, NUM_TO_SHOW)} showTweetCounts={showTweetCounts} topicId={topicId} />
+      <TopicStoryTableContainer stories={stories.slice(0, NUM_TO_SHOW)} />
     </DataCard>
   );
 };
@@ -39,13 +39,11 @@ KeywordStoryPreviewContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
   stories: PropTypes.array,
-  showTweetCounts: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.focalSets.create.matchingStories.fetchStatus,
   stories: state.topics.selected.focalSets.create.matchingStories.stories,
-  showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
 });
 
 const fetchAsyncData = (dispatch, { topicId, keywords }) => dispatch(fetchCreateFocusKeywordStories(topicId, { q: keywords, limit: NUM_TO_SHOW }));

@@ -8,7 +8,7 @@ import server.views.apicache as shared_apicache
 import server.views.topics.apicache as apicache
 from server import app, mc, executor, TOOL_API_KEY
 from server.auth import user_mediacloud_key, user_mediacloud_client, is_user_logged_in
-from server.util.request import api_error_handler
+from server.util.request import api_error_handler, filters_from_args
 from server.views.topics import access_public_topic
 from server.views.topics import concatenate_solr_dates
 from server.views.media_picker import concatenate_query_for_solr
@@ -137,8 +137,18 @@ def _topic_summary(topics_id):
 @flask_login.login_required
 @api_error_handler
 def topic_timespan_list(topics_id, snapshots_id):
-    foci_id = request.args.get('focusId')
+    ignored_snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id, snapshots_id, foci_id)
+    # add the focal_set type to the timespan so we can use that in the client (ie. decide what to show or not
+    # based on what type of focal_set this timespan is part of)
+    focal_sets = apicache.topic_focal_sets_list(user_mediacloud_key(), topics_id, snapshots_id)
+    for t in timespans:
+        for fs in focal_sets:
+            for f in fs['foci']:
+                if f['foci_id'] == t['foci_id']:
+                    t['focal_set'] = fs
+                    t['focus'] = f
+                    break
     return jsonify({'list': timespans})
 
 

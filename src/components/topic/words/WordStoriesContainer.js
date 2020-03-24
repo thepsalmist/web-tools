@@ -7,7 +7,7 @@ import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
-import TopicStoryTable from '../TopicStoryTable';
+import TopicStoryTableContainer from '../TopicStoryTableContainer';
 import DataCard from '../../common/DataCard';
 import { DownloadButton } from '../../common/IconButton';
 import { filtersAsUrlParams } from '../../util/location';
@@ -22,8 +22,7 @@ const localMessages = {
 };
 
 const WordStoriesContainer = (props) => {
-  const { term, topicId, filters, notifyOfCsvDownload, inlinkedStories, handleChangeSort, helpButton,
-    showTweetCounts } = props;
+  const { term, topicId, filters, notifyOfCsvDownload, inlinkedStories, handleChangeSort, helpButton } = props;
   const { formatMessage } = props.intl;
   return (
     <DataCard>
@@ -41,9 +40,8 @@ const WordStoriesContainer = (props) => {
         <FormattedMessage {...localMessages.title} />
         {helpButton}
       </h2>
-      <TopicStoryTable
+      <TopicStoryTableContainer
         stories={inlinkedStories}
-        showTweetCounts={showTweetCounts}
         topicId={topicId}
         onChangeSort={handleChangeSort}
       />
@@ -67,7 +65,6 @@ WordStoriesContainer.propTypes = {
   sort: PropTypes.string.isRequired,
   fetchStatus: PropTypes.string.isRequired,
   inlinkedStories: PropTypes.array.isRequired,
-  showTweetCounts: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
@@ -75,7 +72,6 @@ const mapStateToProps = state => ({
   inlinkedStories: state.topics.selected.word.stories.stories,
   sort: state.topics.selected.word.stories.sort,
   stem: state.topics.selected.word.info.stem,
-  showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
 });
 
 const mapDispatchToProps = dispatch => ({

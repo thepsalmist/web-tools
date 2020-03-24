@@ -44,7 +44,7 @@ class MediaTable extends React.Component {
   }
 
   render() {
-    const { media, topicId, includeMetadata, showTweetCounts } = this.props;
+    const { media, topicId, includeMetadata, showTweetCounts, showInlinksOutlinks } = this.props;
     const tweetHeader = showTweetCounts ? <th className="numeric">{this.sortableHeader('twitter', messages.tweetCounts)}</th> : null;
     return (
       <div className="media-table">
@@ -54,8 +54,12 @@ class MediaTable extends React.Component {
             <tr>
               <th colSpan="2"><FormattedMessage {...messages.mediaName} /></th>
               <th><FormattedMessage {...messages.storyPlural} /></th>
-              <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
-              <th className="numeric"><FormattedMessage {...messages.outlinks} /></th>
+              {showInlinksOutlinks && (
+                <>
+                  <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
+                  <th className="numeric"><FormattedMessage {...messages.outlinks} /></th>
+                </>
+              )}
               <th className="numeric">{this.sortableHeader('facebook', messages.facebookShares)}</th>
               {tweetHeader}
               {(includeMetadata !== false) && (
@@ -79,8 +83,12 @@ class MediaTable extends React.Component {
                   </LinkWithFilters>
                 </td>
                 <td className="numeric"><FormattedNumber value={m.story_count !== undefined ? m.story_count : '?'} /></td>
-                <td className="numeric"><FormattedNumber value={m.media_inlink_count !== undefined ? m.media_inlink_count : '?'} /></td>
-                <td className="numeric"><FormattedNumber value={m.outlink_count !== undefined ? m.outlink_count : '?'} /></td>
+                {showInlinksOutlinks && (
+                  <>
+                    <td className="numeric"><FormattedNumber value={m.media_inlink_count !== undefined ? m.media_inlink_count : '?'} /></td>
+                    <td className="numeric"><FormattedNumber value={m.outlink_count !== undefined ? m.outlink_count : '?'} /></td>
+                  </>
+                )}
                 <td className="numeric"><FormattedNumber value={m.facebook_share_count !== undefined ? m.facebook_share_count : '?'} /></td>
                 { showTweetCounts && (
                   <td className="numeric"><SafelyFormattedNumber value={m.simple_tweet_count} /></td>
@@ -104,13 +112,16 @@ class MediaTable extends React.Component {
 }
 
 MediaTable.propTypes = {
+  // from parent
   media: PropTypes.array.isRequired,
-  showTweetCounts: PropTypes.bool,
   intl: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   onChangeSort: PropTypes.func,
   sortedBy: PropTypes.string,
   includeMetadata: PropTypes.bool, // default true
+  // from parent container
+  showTweetCounts: PropTypes.bool,
+  showInlinksOutlinks: PropTypes.bool,
 };
 
 export default injectIntl(MediaTable);

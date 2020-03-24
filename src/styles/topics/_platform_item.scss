@@ -49,4 +49,16 @@
     }
   }
 
+  .q-field-wrapper {
+    border: 1px solid $material-grey200 !important;
+    textarea {
+      margin-left: 10px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+    input {
+      margin-left: 10px;
+    }
+  }
+
 }

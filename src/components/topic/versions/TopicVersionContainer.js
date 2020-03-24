@@ -135,7 +135,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch) => ({
   goToCreateNewVersion: (topic, filters) => {
-    const url = `/topics/${topic.topics_id}/update`;
+    const url = `/topics/${topic.topics_id}/new-version`;
     dispatch(push(filteredLinkTo(url, filters)));
   },
 });

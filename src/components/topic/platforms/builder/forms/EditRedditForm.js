@@ -10,13 +10,16 @@ const EditRedditForm = ({ renderTextField, intl, onEnterKey }) => (
   <>
     <Row>
       <Col lg={8} xs={12}>
-        <Field
-          name="query"
-          component={renderTextField}
-          placeholder={intl.formatMessage(messages.searchByKeywords)}
-          fullWidth
-          onKeyDown={onEnterKey}
-        />
+        <div className="q-field-wrapper">
+          <Field
+            className="query-field"
+            name="query"
+            component={renderTextField}
+            placeholder={intl.formatMessage(messages.searchByKeywords)}
+            fullWidth
+            onKeyDown={onEnterKey}
+          />
+        </div>
       </Col>
     </Row>
     <Row>

@@ -13,7 +13,6 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../../lib/auth';
 import { fetchSnapshotStoryCounts, topicSnapshotSpider } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
-import { TOPIC_FORM_MODE_EDIT } from '../wizard/TopicForm';
 import JobList from './homepages/JobList';
 import TopicVersionListItem from './TopicVersionListItem';
 
@@ -41,6 +40,9 @@ const localMessages = {
   topicRunning: { id: 'topic.topicRunning', defaultMessage: 'We are scraping the web for all the stories in include in your topic.' },
   queueAge: { id: 'topic.spiderQueuedAge', defaultMessage: 'In the {queueName} queue since {lastUpdated}' },
   notUsingLatestSnapshot: { id: 'topic.notUsingLatestSnapshot', defaultMessage: 'You are not using the latest snapshot!  If you are not doing this on purpose, <a href="{url}">switch to the latest snapshot</a> to get the best data.' },
+  feedback: { id: 'topic.edit.save.feedback', defaultMessage: 'We created your topic!' },
+  failed: { id: 'topic.edit.save.failed', defaultMessage: 'Sorry, that didn\'t work!' },
+
 };
 
 const TopicVersionListContainer = ({ topicId, topic, storyCounts, versions, selectedSnapshot, intl, isAdmin, handleQuickCreate }) => {
@@ -166,7 +168,7 @@ export const createNewSpideredVersion = (topicId, dispatch, formatMessage) => {
   dispatch(topicSnapshotSpider(topicId))
     .then((spiderResults) => {
       if (spiderResults && spiderResults.topics_id) { // let them know it worked
-        dispatch(updateFeedback({ classes: 'info-notice', open: true, message: formatMessage(localMessages.feedback, { mode: TOPIC_FORM_MODE_EDIT }) }));
+        dispatch(updateFeedback({ classes: 'info-notice', open: true, message: formatMessage(localMessages.feedback) }));
         return dispatch(push(`/topics/${spiderResults.topics_id}/versions`));
       }
       return dispatch(updateFeedback({ open: true, message: formatMessage(localMessages.failed) }));

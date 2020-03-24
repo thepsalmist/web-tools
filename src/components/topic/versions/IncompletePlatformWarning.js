@@ -10,7 +10,7 @@ import AppButton from '../../common/AppButton';
 import LinkWithFilters from '../LinkWithFilters';
 
 const localMessages = {
-  platformIncomplete: { id: 'topic.incomplete', defaultMessage: 'Your topic is still new. Add some platforms and then you can run it.' },
+  platformIncomplete: { id: 'topic.incomplete', defaultMessage: 'This is a new Topic. You need to add the Media Cloud platform, and any others you\'d like. Then you can run it.' },
   platformIncompleteAction: { id: 'topic.incomplete.action', defaultMessage: 'Manage Platforms' },
 };
 

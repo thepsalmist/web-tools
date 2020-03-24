@@ -23,7 +23,7 @@ const localMessages = {
   'crowd_tangle-name': { id: 'crowdTangle.name', defaultMessage: 'via Crowd Tangle' },
   'pushshift-name': { id: 'rd.ps.name', defaultMessage: 'via Pushshift.io' },
   'crimson_hexagon-name': { id: 'crimson_hexagon.name', defaultMessage: 'via Crimson Hexagon' },
-  'mediacloud-name': { id: 'mediaCloud.name', defaultMessage: 'via Media Cloud' },
+  'mediacloud-name': { id: 'mediaCloud.name', defaultMessage: 'via Media Cloud (required)' },
   'google-name': { id: 'mediaCloud.name', defaultMessage: 'via Google' },
   'csv-name': { id: 'mediaCloud.name', defaultMessage: 'via CSV upload' },
   // combos
@@ -31,7 +31,7 @@ const localMessages = {
   'twitter.pushshift-about': { id: 'tw.ps.about', defaultMessage: 'Discover links shared by validated Twitter accounts since mid 2019 in the archive hosted by PushShift.io. Specify keywords to focus on. Any tweets matching the keywords will be checked for links. Any links found will be add into the topic.' },
   'twitter.crimson_hexagon-about': { id: 'tw.ch.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in tweets from a Crimson Hexagon Monitor you have already created. <b>You need to enter the id of that monitor.</b> Any tweets matching the keywords will be checked for links. Any links found will be add into the topic' },
   'facebook.crowd_tangle-about': { id: 'fb.ct.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in Facebook posts via Crowd Tangle. Specify keywords to match. Any posts from large public groups matching the keywords will be checked for links. Any links found will be add into the topic' },
-  'web.mediacloud-about': { id: 'web.mediaCloud.about', defaultMessage: 'Find matching stories in the Media Cloud archive. Specify media sources or collections. Any news matching those keywords from those sources will be added into the topic.' },
+  'web.mediacloud-about': { id: 'web.mediaCloud.about', defaultMessage: '<b>This platform is required.</b> Find matching stories in the Media Cloud archive. Specify media sources or collections. Any news matching those keywords from those sources will be added into the topic.' },
   'web.google-about': { id: 'web.google.about', defaultMessage: 'Find top matching news stories in Google search for your time period. For each day in your topic, up to the first 100 Google search results matching your keywords will be added into the topic' },
   'generic_post.csv-about': { id: 'generic_post.csv.about', defaultMessage: 'Find links shared in content you upload in a CSV file. This is helpful if you have some content you want to start with that you\'ve acquired outside out system. You can import it via CSV format. Your CSV must have columns titled "content", "author", and "publish_date" (we can handle most <a href="https://dateutil.readthedocs.io/en/stable/parser.html#module-dateutil.parser">standard date formats</a>). It can also optionally have "channel", "url", and "post_id" columns. Any other columns will be ignored. You can upload a CSV, or use a CSV hosted online at a standard web URL.' },
 };

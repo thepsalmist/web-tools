@@ -3,16 +3,20 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import messages from '../../resources/messages';
-import withHelp from '../common/hocs/HelpfulContainer';
 import LinkWithFilters from './LinkWithFilters';
 import { storyPubDateToTimestamp, STORY_PUB_DATE_UNDATEABLE } from '../../lib/dateUtil';
 import { googleFavIconUrl, storyDomainName } from '../../lib/urlUtil';
 import { ReadItNowButton } from '../common/IconButton';
 import SafelyFormattedNumber from '../common/SafelyFormattedNumber';
+import HelpDialog from '../common/HelpDialog';
 
 const localMessages = {
   undateable: { id: 'story.publishDate.undateable', defaultMessage: 'Undateable' },
   foci: { id: 'story.foci.list', defaultMessage: 'List of Subtopics {list}' },
+  facebookSharesHelp: { id: 'story.help.facebookShares', defaultMessage: '<p>The total number of shares this link has had on Facebook. It is important to note that this is captures at the time we first pulled this link into our system. Also note that many of these shares could have been for reasons totalled unrealted to the topic you are researching. Based on those caveats, we don\'t recommend using this for much.<p>' },
+  authorCountHelp: { id: 'story.help.authorCount', defaultMessage: '<p>The number of unique users that posted this link to the platform you are looking at.<p>' },
+  postCountHelp: { id: 'story.help.postCount', defaultMessage: '<p>The number of posts that included this link on the platform you are looking at.<p>' },
+  channelCountHelp: { id: 'story.help.channelCount', defaultMessage: '<p>This varies by platform:</p><ul><li>Twitter: it is identical to the author count</li></ul>' },
 };
 
 const ICON_STYLE = { margin: 0, padding: 0, width: 12, height: 12 };
@@ -55,10 +59,9 @@ class TopicStoryTable extends React.Component {
   }
 
   render() {
-    const { stories, showTweetCounts, onChangeFocusSelection, topicId, maxTitleLength, helpButton,
+    const { stories, showTweetCounts, onChangeFocusSelection, topicId, maxTitleLength,
       showInlinksOutlinks, showAuthorCount } = this.props;
     const { formatMessage, formatDate } = this.props.intl;
-    const tweetHeader = showTweetCounts ? <th className="numeric">{this.sortableHeader('twitter', messages.tweetCounts)}</th> : null;
     return (
       <div className="story-table">
         <table>
@@ -66,16 +69,39 @@ class TopicStoryTable extends React.Component {
             <tr>
               <th><FormattedMessage {...messages.storyTitle} /></th>
               <th><FormattedMessage {...messages.media} /></th>
-              <th><FormattedMessage {...messages.storyDate} />{helpButton}</th>
+              <th>
+                <FormattedMessage {...messages.storyDate} />
+                <HelpDialog title={messages.pubDateTableHelpTitle} content={messages.pubDateTableHelpText} />
+              </th>
               {showInlinksOutlinks && (
                 <>
                   <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
                   <th className="numeric"><FormattedMessage {...messages.outlinks} /></th>
                 </>
               )}
-              <th className="numeric">{this.sortableHeader('facebook', messages.facebookShares)}</th>
-              { showAuthorCount && (<th className="numeric"><FormattedMessage {...messages.authorCount} /></th>)}
-              {tweetHeader}
+              <th className="numeric">
+                {this.sortableHeader('facebook', messages.facebookShares)}
+                <HelpDialog title={messages.facebookShares} content={localMessages.facebookSharesHelp} />
+              </th>
+              { showAuthorCount && (
+                <>
+                  <th className="numeric">
+                    {this.sortableHeader('post_count', messages.postCount)}
+                    <HelpDialog title={messages.postCount} content={localMessages.postCountHelp} />
+                  </th>
+                  <th className="numeric">
+                    {this.sortableHeader('author_count', messages.authorCount)}
+                    <HelpDialog title={messages.authorCount} content={localMessages.authorCountHelp} />
+                  </th>
+                  <th className="numeric">
+                    {this.sortableHeader('channel_count', messages.channelCount)}
+                    <HelpDialog title={messages.channelCount} content={localMessages.channelCountHelp} />
+                  </th>
+                </>
+              )}
+              {showTweetCounts && (
+                <th className="numeric">{this.sortableHeader('twitter', messages.tweetCounts)}</th>
+              )}
               <th>{}</th>
               <th><FormattedMessage {...messages.focusHeader} /></th>
             </tr>
@@ -84,7 +110,6 @@ class TopicStoryTable extends React.Component {
               let dateToShow = null; // need to handle undateable stories
               let dateStyle = '';
               const title = maxTitleLength !== undefined ? `${story.title.substr(0, maxTitleLength)}...` : story.title;
-              const tweetInfo = showTweetCounts ? <td className="numeric"><SafelyFormattedNumber value={story.simple_tweet_count} /></td> : null;
               if (story.publish_date === STORY_PUB_DATE_UNDATEABLE) {
                 dateToShow = formatMessage(localMessages.undateable);
                 dateStyle = 'story-date-undateable';
@@ -133,8 +158,16 @@ class TopicStoryTable extends React.Component {
                     </>
                   )}
                   <td className="numeric"><SafelyFormattedNumber value={story.facebook_share_count} /></td>
-                  { showAuthorCount && (<td className="numeric"><SafelyFormattedNumber value={story.post_count} /></td>) }
-                  {tweetInfo}
+                  { showAuthorCount && (
+                    <>
+                      <td className="numeric"><SafelyFormattedNumber value={story.post_count} /></td>
+                      <td className="numeric"><SafelyFormattedNumber value={story.author_count} /></td>
+                      <td className="numeric"><SafelyFormattedNumber value={story.channel_count} /></td>
+                    </>
+                  )}
+                  { showTweetCounts && (
+                    <td className="numeric"><SafelyFormattedNumber value={story.simple_tweet_count} /></td>
+                  )}
                   <td>
                     <a href={story.url} target="_blank" rel="noopener noreferrer">
                       <ReadItNowButton />
@@ -164,13 +197,10 @@ TopicStoryTable.propTypes = {
   showInlinksOutlinks: PropTypes.bool.isRequired,
   showAuthorCount: PropTypes.bool.isRequired,
   // from compositional chain
-  helpButton: PropTypes.node.isRequired,
   intl: PropTypes.object.isRequired,
 };
 
 export default
 injectIntl(
-  withHelp(messages.pubDateTableHelpTitle, messages.pubDateTableHelpText)(
-    TopicStoryTable
-  )
+  TopicStoryTable
 );

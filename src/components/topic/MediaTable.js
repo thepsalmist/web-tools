@@ -44,8 +44,7 @@ class MediaTable extends React.Component {
   }
 
   render() {
-    const { media, topicId, includeMetadata, showTweetCounts, showInlinksOutlinks } = this.props;
-    const tweetHeader = showTweetCounts ? <th className="numeric">{this.sortableHeader('twitter', messages.tweetCounts)}</th> : null;
+    const { media, topicId, includeMetadata, showTweetCounts, showAuthorCount, showInlinksOutlinks } = this.props;
     return (
       <div className="media-table">
         <StorySearchFilterMediaWarning />
@@ -61,7 +60,16 @@ class MediaTable extends React.Component {
                 </>
               )}
               <th className="numeric">{this.sortableHeader('facebook', messages.facebookShares)}</th>
-              {tweetHeader}
+              { showAuthorCount && (
+                <>
+                  <th className="numeric">{this.sortableHeader('sum_post_count', messages.postCount)}</th>
+                  <th className="numeric">{this.sortableHeader('sum_author_count', messages.authorCount)}</th>
+                  <th className="numeric">{this.sortableHeader('sum_channel_count', messages.channelCount)}</th>
+                </>
+              )}
+              { showTweetCounts && (
+                <th className="numeric">{this.sortableHeader('twitter', messages.tweetCounts)}</th>
+              )}
               {(includeMetadata !== false) && (
                 <>
                   <th><FormattedMessage {...messages.mediaType} /></th>
@@ -90,6 +98,13 @@ class MediaTable extends React.Component {
                   </>
                 )}
                 <td className="numeric"><FormattedNumber value={m.facebook_share_count !== undefined ? m.facebook_share_count : '?'} /></td>
+                { showAuthorCount && (
+                  <>
+                    <td className="numeric"><SafelyFormattedNumber value={m.sum_post_count} /></td>
+                    <td className="numeric"><SafelyFormattedNumber value={m.sum_author_count} /></td>
+                    <td className="numeric"><SafelyFormattedNumber value={m.sum_channel_count} /></td>
+                  </>
+                )}
                 { showTweetCounts && (
                   <td className="numeric"><SafelyFormattedNumber value={m.simple_tweet_count} /></td>
                 )}
@@ -122,6 +137,7 @@ MediaTable.propTypes = {
   // from parent container
   showTweetCounts: PropTypes.bool,
   showInlinksOutlinks: PropTypes.bool,
+  showAuthorCount: PropTypes.bool.isRequired,
 };
 
 export default injectIntl(MediaTable);

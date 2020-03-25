@@ -40,7 +40,7 @@ const localMessages = {
   topicRunning: { id: 'topic.topicRunning', defaultMessage: 'We are scraping the web for all the stories in include in your topic.' },
   queueAge: { id: 'topic.spiderQueuedAge', defaultMessage: 'In the {queueName} queue since {lastUpdated}' },
   notUsingLatestSnapshot: { id: 'topic.notUsingLatestSnapshot', defaultMessage: 'You are not using the latest snapshot!  If you are not doing this on purpose, <a href="{url}">switch to the latest snapshot</a> to get the best data.' },
-  feedback: { id: 'topic.edit.save.feedback', defaultMessage: 'We created your topic!' },
+  feedback: { id: 'topic.edit.save.feedback', defaultMessage: 'We started generating a new version!' },
   failed: { id: 'topic.edit.save.failed', defaultMessage: 'Sorry, that didn\'t work!' },
 
 };

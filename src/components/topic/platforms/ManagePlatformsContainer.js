@@ -8,7 +8,7 @@ import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import AvailablePlatformList from './AvailablePlatformList';
 import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
-import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform } from '../../../actions/topicActions';
+import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, fetchTopicSummary } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import IncompletePlatformWarning from '../versions/IncompletePlatformWarning';
 import VersionComparisonContainer from '../versions/VersionComparisonContainer';
@@ -169,7 +169,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         } else {
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: ownProps.intl.formatMessage(localMessages.removePlatformSucceeded) }));
           dispatch(setTopicNeedsNewSnapshot(true));
-          dispatch(fetchPlatformsInTopicList(topicId));
+          dispatch(fetchTopicSummary(topicId));
+          // dispatch(fetchPlatformsInTopicList(topicId));
         }
       });
   },

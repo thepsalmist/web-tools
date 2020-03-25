@@ -38,6 +38,7 @@ import { filteredLinkTo, urlWithFilters } from '../../util/location';
 import { storyPubDateToTimestamp } from '../../../lib/dateUtil';
 import TopicPageTitle from '../TopicPageTitle';
 import StoryRedditAttention from '../../common/story/StoryRedditAttention';
+import StoryUrlSharingCounts from './StoryUrlSharingCounts';
 
 const MAX_STORY_TITLE_LENGTH = 70; // story titles longer than this will be trimmed and ellipses added
 
@@ -77,7 +78,7 @@ class StoryContainer extends React.Component {
   };
 
   render() {
-    const { storyInfo, topicStoryInfo, topicId, storiesId, topicName,
+    const { storyInfo, topicStoryInfo, topicId, storiesId, topicName, topicPlatforms,
       handleStoryCachedTextClick, handleStoryEditClick, filters, topicSeedQuery } = this.props;
     const { formatMessage, formatNumber, formatDate } = this.props.intl;
     const mediaUrl = `/topics/${topicId}/media/${storyInfo.media.media_id}`;
@@ -163,6 +164,7 @@ class StoryContainer extends React.Component {
               />
             </Col>
           </Row>
+          <StoryUrlSharingCounts story={topicStoryInfo} platforms={topicPlatforms} />
           <Row>
             <Col lg={12}>
               <StoryInlinksContainer topicId={topicId} storiesId={storiesId} />
@@ -235,6 +237,7 @@ StoryContainer.propTypes = {
   fetchStatus: PropTypes.array.isRequired,
   filters: PropTypes.object.isRequired,
   topicSeedQuery: PropTypes.string.isRequired,
+  topicPlatforms: PropTypes.array,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -247,6 +250,7 @@ const mapStateToProps = (state, ownProps) => ({
   topicSeedQuery: state.topics.selected.info.solr_seed_query,
   topicStoryInfo: state.topics.selected.story.info,
   storyInfo: state.story.info,
+  topicPlatforms: state.topics.selected.snapshots.selected.platform_seed_queries,
 });
 
 const fetchAsyncData = (dispatch, props) => {

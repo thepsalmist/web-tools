@@ -7,7 +7,7 @@ import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
-import TopicStoryTable from '../TopicStoryTable';
+import TopicStoryTableContainer from '../TopicStoryTableContainer';
 import { filtersAsUrlParams } from '../../util/location';
 import DataCard from '../../common/DataCard';
 import { DownloadButton } from '../../common/IconButton';
@@ -32,7 +32,7 @@ class MediaStoriesContainer extends React.Component {
   }
 
   render() {
-    const { inlinkedStories, showTweetCounts, topicId, helpButton, handleFocusSelected, handleChangeSort } = this.props;
+    const { inlinkedStories, helpButton, handleFocusSelected, handleChangeSort } = this.props;
     const { formatMessage } = this.props.intl;
     return (
       <DataCard>
@@ -43,10 +43,8 @@ class MediaStoriesContainer extends React.Component {
           <FormattedMessage {...localMessages.title} />
           {helpButton}
         </h2>
-        <TopicStoryTable
+        <TopicStoryTableContainer
           stories={inlinkedStories}
-          showTweetCounts={showTweetCounts}
-          topicId={topicId}
           onChangeSort={handleChangeSort}
           onChangeFocusSelection={handleFocusSelected}
         />
@@ -71,7 +69,6 @@ MediaStoriesContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   inlinkedStories: PropTypes.array.isRequired,
   sort: PropTypes.string.isRequired,
-  showTweetCounts: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({

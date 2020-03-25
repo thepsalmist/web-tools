@@ -6,7 +6,7 @@ import { fetchStoryOutlinks } from '../../../actions/topicActions';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
-import TopicStoryTable from '../TopicStoryTable';
+import TopicStoryTableContainer from '../TopicStoryTableContainer';
 import DataCard from '../../common/DataCard';
 import TopicPropTypes from '../TopicPropTypes';
 import { DownloadButton } from '../../common/IconButton';
@@ -17,7 +17,7 @@ const localMessages = {
 };
 
 const StoryOutlinksContainer = (props) => {
-  const { outlinkedStories, showTweetCounts, topicId, helpButton, storiesId, filters } = props;
+  const { outlinkedStories, topicId, helpButton, storiesId, filters } = props;
   const { formatMessage } = props.intl;
   return (
     <DataCard>
@@ -34,7 +34,7 @@ const StoryOutlinksContainer = (props) => {
         <FormattedMessage {...messages.outlinks} />
         {helpButton}
       </h2>
-      <TopicStoryTable stories={outlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} />
+      <TopicStoryTableContainer stories={outlinkedStories} />
     </DataCard>
   );
 };
@@ -56,7 +56,6 @@ StoryOutlinksContainer.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.story.outlinks.fetchStatus,
   outlinkedStories: state.topics.selected.story.outlinks.stories,
-  showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
   filters: state.topics.selected.filters,
 });
 

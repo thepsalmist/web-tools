@@ -4,6 +4,8 @@ import definitions from './definitions';
 import create from './create/create';
 import foci from './foci';
 
+export const isUrlSharingFocalSet = (focalSet) => (focalSet.name === 'URL Sharing');
+
 const focalSetsReducer = combineReducers({
   all,
   create,

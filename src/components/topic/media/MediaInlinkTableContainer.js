@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { fetchMediaInlinks, sortMediaInlinks } from '../../../actions/topicActions';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
-import TopicStoryTable from '../TopicStoryTable';
+import TopicStoryTableContainer from '../TopicStoryTableContainer';
 
 const STORIES_TO_SHOW = 10;
 
@@ -13,11 +13,11 @@ const localMessages = {
 };
 
 const MediaInlinkTableContainer = (props) => {
-  const { inlinkedStories, topicId, showTweetCounts, handleSortData } = props;
+  const { inlinkedStories, handleSortData } = props;
   return (
     <div>
       <h3><FormattedMessage {...localMessages.localTitle} /></h3>
-      <TopicStoryTable stories={inlinkedStories} showTweetCounts={showTweetCounts} topicId={topicId} onChangeSort={handleSortData} />
+      <TopicStoryTableContainer stories={inlinkedStories} onChangeSort={handleSortData} />
     </div>
   );
 };
@@ -35,14 +35,12 @@ MediaInlinkTableContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   inlinkedStories: PropTypes.array,
   sort: PropTypes.string.isRequired,
-  showTweetCounts: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.mediaSource.inlinks.fetchStatus,
   inlinkedStories: state.topics.selected.mediaSource.inlinks.stories,
   sort: state.topics.selected.mediaSource.inlinks.sort,
-  showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
 });
 
 const mapDispatchToProps = dispatch => ({

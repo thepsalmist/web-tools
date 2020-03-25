@@ -6,7 +6,7 @@ import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import CloseableDataCard from '../../../common/CloseableDataCard';
 import { resetTopicTopStoriesDrillDown, fetchTopicTopStoriesOnDates } from '../../../../actions/topicActions';
 import TopicPropTypes from '../../TopicPropTypes';
-import TopicStoryTable from '../../TopicStoryTable';
+import TopicStoryTableContainer from '../../TopicStoryTableContainer';
 
 const localMessages = {
   title: { id: 'topic.attention.drillDown.title', defaultMessage: 'Top Stories by Inlink in Week of {date1} to {date2}' },
@@ -31,7 +31,7 @@ class TopicAttentionDrillDownContainer extends React.Component {
   }
 
   render() {
-    const { topicId, handleClose, stories, timespan } = this.props;
+    const { handleClose, stories, timespan } = this.props;
     let content = <span />;
     if (timespan) {
       const title = (
@@ -54,7 +54,7 @@ class TopicAttentionDrillDownContainer extends React.Component {
             stories={stories}
             onClose={handleClose}
             content={
-              <TopicStoryTable stories={stories} topicId={topicId} sortedBy="inlink" />
+              <TopicStoryTableContainer stories={stories} sortedBy="inlink" />
             }
           />
         </div>

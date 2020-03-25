@@ -11,15 +11,20 @@ const localMessages = {
 
 const PlatformDetailsInfo = ({ platform }) => {
   let content = null;
+  let channelContent = null;
   switch (platform.platform) {
     case PLATFORM_OPEN_WEB:
+      content = (
+        <>
+          <FormattedMessage {...messages.topicQueryProp} />:
+          &nbsp;
+          <code>{typeof platform.query === 'object' ? platform.query.getValue() : platform.query}</code>
+          <br />
+        </>
+      );
       if (platform.source === MEDIA_CLOUD_SOURCE) {
-        content = (
+        channelContent = (
           <>
-            <FormattedMessage {...messages.topicQueryProp} />:
-            &nbsp;
-            <code>{typeof platform.query === 'object' ? platform.query.getValue() : platform.query}</code>
-            <br />
             <FormattedMessage {...messages.topicSourceCollectionsProp} />: &nbsp;
             {platform.channel && platform.channel.map(m => <OpenWebMediaItem justText key={m.media_id || m.tags_id} object={m} />)}
           </>
@@ -62,6 +67,7 @@ const PlatformDetailsInfo = ({ platform }) => {
   return (
     <div className="platform-summary">
       {content}
+      {channelContent}
     </div>
   );
 };

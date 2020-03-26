@@ -34,7 +34,7 @@ const localMessages = {
 
 class TopicSummaryContainer extends React.Component {
   state = {
-    selectedViewIndex: 0,
+    selectedTab: 0,
   };
 
   filtersAreSet() {
@@ -63,7 +63,7 @@ class TopicSummaryContainer extends React.Component {
     }
     if (!user.isLoggedIn || this.filtersAreSet()) { // TODO: but what if only one filter (snapshot) is set?
       let viewContent;
-      switch (this.state.selectedViewIndex) {
+      switch (this.state.selectedTab) {
         case 0:
           // influence
           viewContent = (
@@ -199,7 +199,7 @@ class TopicSummaryContainer extends React.Component {
                   formatMessage(messages.representation),
                   formatMessage(localMessages.statsTabTitle),
                 ]}
-                onViewSelected={index => this.setState({ selectedViewIndex: index })}
+                onViewSelected={index => this.setState({ selectedTab: index })}
               />
             </Row>
           </Grid>

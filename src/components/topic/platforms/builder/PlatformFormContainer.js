@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { reduxForm } from 'redux-form';
+import { reduxForm, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
@@ -16,8 +16,11 @@ import EditRedditForm from './forms/EditRedditForm';
 import EditGenericCsvForm from './forms/EditGenericCsvForm';
 import { platformNameMessage, sourceNameMessage, platformDescriptionMessage } from '../AvailablePlatform';
 
+const formSelector = formValueSelector('platform');
+
 const localMessages = {
   title: { id: 'platform.create.edit.title', defaultMessage: 'Step 1: Configure Your Platform: ' },
+  noMediaSpecified: { id: 'platform.web.media', defaultMessage: 'You must select a media source.' },
 };
 
 const formForPlatformSource = (platform, source) => {
@@ -32,6 +35,13 @@ const formForPlatformSource = (platform, source) => {
   }
   // anything without special seetings gets a generic query text box
   return EditQueryForm;
+};
+
+const validationForPlatformSource = (platform, source, formInfo) => {
+  if ((platform === PLATFORM_OPEN_WEB) && (source === MEDIA_CLOUD_SOURCE) && (formInfo.media && formInfo.media.length === 0)) {
+    return true; // disabled
+  }
+  return false;
 };
 
 class PlatformFormContainer extends React.Component {
@@ -58,7 +68,7 @@ class PlatformFormContainer extends React.Component {
   }
 
   render() {
-    const { initialValues, handleSubmit, finishStep, currentPlatform, change /* redux form helper */ } = this.props;
+    const { initialValues, handleSubmit, finishStep, currentPlatform, change /* redux form helper */, validationValues } = this.props;
     const FormRenderer = formForPlatformSource(currentPlatform.platform, currentPlatform.source);
     return (
       <Grid>
@@ -87,6 +97,7 @@ class PlatformFormContainer extends React.Component {
                 label={messages.preview}
                 style={{ marginTop: 33 }}
                 onClick={this.handleSearchClick}
+                disabled={validationForPlatformSource(currentPlatform.platform, currentPlatform.source, validationValues)}
               />
             </Col>
           </Row>
@@ -98,7 +109,7 @@ class PlatformFormContainer extends React.Component {
           )}
           <Row>
             <Col lg={8} xs={12}>
-              <AppButton className="platform-builder-next" type="submit" label={messages.next} primary />
+              <AppButton className="platform-builder-next" type="submit" label={messages.next} primary disabled={validationForPlatformSource(currentPlatform.platform, currentPlatform.source, validationValues)} />
             </Col>
           </Row>
         </form>
@@ -122,10 +133,13 @@ PlatformFormContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,
+  validationForPlatformSource: PropTypes.func.isRequired,
+  validationValues: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   currentPlatform: state.topics.selected.platforms.selected,
+  validationValues: formSelector(state, 'media'),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -137,11 +151,21 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
+function validate(values, props) {
+  const { formatMessage } = props.intl;
+  const errors = {};
+  if (!values.media || !values.media.length) {
+    errors.media = { _error: formatMessage(localMessages.noMediaSpecified) };
+  }
+  return errors;
+}
+
 const reduxFormConfig = {
   form: 'platform', // make sure this matches the sub-components and other wizard steps
   destroyOnUnmount: false, // <------ preserve form data
   enableReinitialize: true,
   keepDirtyOnReinitialize: true,
+  validate,
 };
 
 export default

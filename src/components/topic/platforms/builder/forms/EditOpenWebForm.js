@@ -9,10 +9,6 @@ import MediaPickerDialog from '../../../../common/mediaPicker/MediaPickerDialog'
 import QueryHelpDialog from '../../../../common/help/QueryHelpDialog';
 import OpenWebMediaFieldArray from '../../../../common/form/OpenWebMediaFieldArray';
 
-const localMessages = {
-  noMediaSpecified: { id: 'platform.web.media', defaultMessage: 'You must select a media source.' },
-};
-
 const EditOpenWebForm = ({ initialValues, renderSolrTextField, intl, onFormChange }) => (
   <>
     <Row>
@@ -50,6 +46,7 @@ const EditOpenWebForm = ({ initialValues, renderSolrTextField, intl, onFormChang
             fieldName="media"
             initialValues={initialValues} // to and from MediaPicker
             allowRemoval
+            onDelete={onFormChange}
           />
           <MediaPickerDialog
             initMedia={initialValues.media} // {selected.media ? selected.media : cleanedInitialValues.media}
@@ -72,24 +69,14 @@ EditOpenWebForm.propTypes = {
   // from compositional helper
   intl: PropTypes.object.isRequired,
   renderSolrTextField: PropTypes.func.isRequired,
+  handleMediaDelete: PropTypes.func.isRequired,
 };
-
-function warn(values, props) {
-  const { formatMessage } = props.intl;
-  const warnings = {};
-  if ((!values.collections || !values.collections.length)
-    && (!values.sources || !values.sources.length)
-    && (!values.media || !values.media.length)) {
-    warnings.media = { _warning: formatMessage(localMessages.noMediaSpecified) };
-  }
-}
 
 const reduxFormConfig = {
   form: 'platform', // make sure this matches the sub-components and other wizard steps
   destroyOnUnmount: false, // <------ preserve form data
   forceUnregisterOnUnmount: true, // <------ unregister fields on unmount
   enableReinitialize: true,
-  warning: warn,
 };
 
 export default

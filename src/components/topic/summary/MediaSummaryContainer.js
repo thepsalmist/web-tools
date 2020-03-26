@@ -9,7 +9,7 @@ import ActionMenu from '../../common/ActionMenu';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
-import MediaTable from '../MediaTable';
+import MediaTableContainer from '../MediaTableContainer';
 import messages from '../../../resources/messages';
 import { fetchTopicTopMedia, sortTopicTopMedia } from '../../../actions/topicActions';
 import Permissioned from '../../common/Permissioned';
@@ -50,17 +50,15 @@ class MediaSummaryContainer extends React.Component {
   }
 
   render() {
-    const { media, sort, topicId, user, showTweetCounts } = this.props;
+    const { media, sort, user } = this.props;
     const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
     return (
       <>
-        <MediaTable
+        <MediaTableContainer
           media={media}
           onChangeSort={isLoggedIn ? this.onChangeSort : null}
           sortedBy={sort}
-          topicId={topicId}
           includeMetadata={false}
-          showTweetCounts={showTweetCounts}
         />
         <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
           <ActionMenu actionTextMsg={messages.downloadOptions}>
@@ -100,7 +98,6 @@ MediaSummaryContainer.propTypes = {
   sort: PropTypes.string.isRequired,
   media: PropTypes.array,
   user: PropTypes.object,
-  showTweetCounts: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -108,7 +105,6 @@ const mapStateToProps = state => ({
   sort: state.topics.selected.summary.topMedia.sort,
   media: state.topics.selected.summary.topMedia.media,
   user: state.user,
-  showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

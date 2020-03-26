@@ -34,13 +34,23 @@ export function humanReadableNumber(number, numSigFigs, formatNumber) {
   return formatNumber(number);
 }
 
-// Use this to intl a variable when you don't know if it is a string or a message object
+// Is the object passed in an object waiting to be localized?
+export function isIntlMessage(object) {
+  return (object.id && object.defaultMessage);
+}
+
+/**
+ * Use this to intl a variable when you don't know if it is a string or a message object.
+ * Important that this return the raw object if it is neither a string, nor an intl object.
+ */
 export function intlIfObject(formatter, value) {
   if (value) {
     if (typeof value === 'string') {
       return value;
     }
-    return formatter(value);
+    if (isIntlMessage(value)) {
+      return formatter(value);
+    }
   }
   return value; // it is some kind of null, so return it as is for caller to deal with (ie. render empty or cause error)
 }

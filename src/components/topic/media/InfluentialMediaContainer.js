@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import MediaTable from '../MediaTable';
+import MediaTableContainer from '../MediaTableContainer';
 import { fetchTopicInfluentialMedia, sortTopicInfluentialMedia } from '../../../actions/topicActions';
 import { DownloadButton } from '../../common/IconButton';
 import MediaSearchContainer from './MediaSearchContainer';
@@ -21,7 +21,7 @@ const localMessages = {
 };
 
 const InfluentialMediaContainer = (props) => {
-  const { media, sort, handleChangeSort, topicId, previousButton, nextButton, showTweetCounts, filters } = props;
+  const { media, sort, handleChangeSort, topicId, previousButton, nextButton, filters } = props;
   const { formatMessage } = props.intl;
   return (
     <Grid>
@@ -43,12 +43,10 @@ const InfluentialMediaContainer = (props) => {
               <MediaSourceIcon height={32} />
               <FormattedMessage {...localMessages.title} />
             </h1>
-            <MediaTable
+            <MediaTableContainer
               media={media}
-              topicId={topicId}
               onChangeSort={newSort => handleChangeSort(newSort)}
               sortedBy={sort}
-              showTweetCounts={showTweetCounts}
             />
             { previousButton }
             { nextButton }
@@ -69,7 +67,6 @@ InfluentialMediaContainer.propTypes = {
   links: PropTypes.object,
   topicId: PropTypes.number.isRequired,
   topicInfo: PropTypes.object.isRequired,
-  showTweetCounts: PropTypes.bool.isRequired,
   // from dispatch
   handleChangeSort: PropTypes.func.isRequired,
   // from compositional chain
@@ -86,7 +83,6 @@ const mapStateToProps = (state, ownProps) => ({
   links: state.topics.selected.media.link_ids,
   topicId: state.topics.selected.id,
   topicInfo: state.topics.selected.info,
-  showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
   linkId: ownProps.location.query.linkId,
 });
 

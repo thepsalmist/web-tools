@@ -4,6 +4,7 @@ import { createAsyncReducer } from '../../../../../lib/reduxHelpers';
 const storyTotals = createAsyncReducer({
   initialState: {
     count: null,
+    supported: true,
   },
   action: FETCH_PLATFORM_PREVIEW_STORY_COUNTS,
 });

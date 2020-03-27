@@ -5,11 +5,12 @@ const matchingStories = createAsyncReducer({
   initialState: {
     list: [],
     links_ids: {},
+    supported: true,
   },
   action: FETCH_PLATFORM_PREVIEW_STORIES,
   handleSuccess: payload => ({
     total: payload.length,
-    list: payload,
+    ...payload,
   }),
 });
 

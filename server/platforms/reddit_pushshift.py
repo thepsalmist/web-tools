@@ -78,14 +78,6 @@ class RedditPushshiftProvider(ContentProvider):
             })
         return {'counts': results}
 
-    def words(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List[Dict]:
-        """
-        We don't have a way to get word counts from matching reddit submissions
-        :param query:
-        :return:
-        """
-        return []
-
     @cache.cache_on_arguments()
     def _cached_submission_search(self, query: str = None, start_date: dt.datetime = None, end_date: dt.datetime = None,
                                   subreddits: List[str] = None, **kwargs) -> Dict:

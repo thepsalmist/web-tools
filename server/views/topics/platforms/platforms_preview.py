@@ -48,8 +48,13 @@ def _info_from_request():
 @api_error_handler
 def api_topics_platform_preview_story_sample(topics_id):
     provider, query, start_date, end_date, options = _info_from_request()
-    content_list = provider.sample(query, start_date, end_date, **options)
-    return jsonify(content_list)
+    try:
+        content_list = provider.sample(query, start_date, end_date, **options)
+        supported = True
+    except NotImplementedError:  # if this provider doesn't support previewing the data, let the client know
+        content_list = []
+        supported = False
+    return jsonify({'list': content_list, 'supported': supported})
 
 
 @app.route('/api/topics/<topics_id>/platforms/preview/story-count', methods=['GET'])
@@ -58,8 +63,13 @@ def api_topics_platform_preview_story_sample(topics_id):
 @api_error_handler
 def api_topics_platform_preview_total_content(topics_id):
     provider, query, start_date, end_date, options = _info_from_request()
-    content_count = provider.count(query, start_date, end_date, **options)
-    return jsonify({'count': content_count})
+    try:
+        content_count = provider.count(query, start_date, end_date, **options)
+        supported = True
+    except NotImplementedError:  # if this provider doesn't support previewing the data, let the client know
+        content_count = 0
+        supported = False
+    return jsonify({'count': content_count, 'supported': supported})
 
 
 @app.route('/api/topics/<topics_id>/platforms/preview/attention', methods=['GET'])
@@ -68,14 +78,19 @@ def api_topics_platform_preview_total_content(topics_id):
 @api_error_handler
 def api_topics_platform_preview_split_story_count(topics_id):
     provider, query, start_date, end_date, options = _info_from_request()
-    content_count_over_time = provider.count_over_time(query, start_date, end_date, **options)
-    # sum the total for display
-    total_stories = 0
-    if 'counts' in content_count_over_time:
-        for c in content_count_over_time['counts']:
-            total_stories += c['count']
-    content_count_over_time['total_story_count'] = total_stories
-    return jsonify({'results': content_count_over_time})
+    try:
+        content_count_over_time = provider.count_over_time(query, start_date, end_date, **options)
+        # sum the total for display
+        total_stories = 0
+        if 'counts' in content_count_over_time:
+            for c in content_count_over_time['counts']:
+                total_stories += c['count']
+        content_count_over_time['total_story_count'] = total_stories
+        supported = True
+    except NotImplementedError:  # if this provider doesn't support previewing the data, let the client know
+        content_count_over_time = {}
+        supported = False
+    return jsonify({'results': content_count_over_time, 'supported': supported})
 
 
 @app.route('/api/topics/<topics_id>/platforms/preview/words', methods=['GET'])
@@ -84,8 +99,13 @@ def api_topics_platform_preview_split_story_count(topics_id):
 @api_error_handler
 def api_topics_platform_preview_top_words(topics_id):
     provider, query, start_date, end_date, options = _info_from_request()
-    content_words = provider.words(query, start_date, end_date, **options)
-    return jsonify({'results': content_words})
+    try:
+        content_words = provider.words(query, start_date, end_date, **options)
+        supported = True
+    except NotImplementedError:  # if this provider doesn't support previewing the data, let the client know
+        content_words = []
+        supported = False
+    return jsonify({'results': content_words, 'supported': supported})
 
 
 def _parse_query_dates():

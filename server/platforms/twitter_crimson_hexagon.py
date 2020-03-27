@@ -18,29 +18,6 @@ class TwitterCrimsonHexagonProvider(ContentProvider):
         self._logger = logging.getLogger(__name__)
         self._api_key = api_key
 
-    def sample(self, query: str, start_date: dt.datetime, end_date: dt.datetime, limit: int = 20,
-               **kwargs) -> List[Dict]:
-        """
-        This is isn't returning actual tweet content, so we're just gonna not show anything for now
-        :param query:
-        :param start_date:
-        :param end_date:
-        :param limit:
-        :param kwargs: monitor_id
-        :return:
-        """
-        return []
-        '''
-        params = {
-            'id': kwargs['monitor_id'],
-        }
-        results = self._cached_query2('posts', start_date, end_date, params)
-        data = []
-        for tweet in results['posts'][:limit]:
-            data.append(self._tweet_to_row(tweet))
-        return data
-        '''
-
     def count(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> int:
         """
         The number of tweets in the  monitor.

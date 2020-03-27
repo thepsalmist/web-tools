@@ -1,7 +1,6 @@
 import logging
 import flask
 from flask import jsonify, request
-import requests
 
 from server import app
 import server.util.file as file_util

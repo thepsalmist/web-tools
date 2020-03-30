@@ -173,8 +173,6 @@ function validate(values, props) {
   if (emptyString(values.query)) {
     if (values.platform === PLATFORM_TWITTER) {
       errors.query = { _error: formatMessage(localMessages.noMonitorSpecified) };
-    } else if (values.platform === PLATFORM_REDDIT) {
-      errors.query = { _error: formatMessage(localMessages.noChannelSpecified) };
     } else {
       errors.query = { _error: formatMessage(localMessages.noQuerySpecified) };
     }

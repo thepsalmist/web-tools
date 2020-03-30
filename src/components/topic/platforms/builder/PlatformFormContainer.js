@@ -38,7 +38,7 @@ const formForPlatformSource = (platform, source) => {
 };
 
 const validationForPlatformSource = (platform, source, formInfo) => {
-  if ((platform === PLATFORM_OPEN_WEB) && (source === MEDIA_CLOUD_SOURCE) && (formInfo.media && formInfo.media.length === 0)) {
+  if ((platform === PLATFORM_OPEN_WEB) && (source === MEDIA_CLOUD_SOURCE) && ((formInfo && formInfo.length < 1) || formInfo === undefined)) {
     return true; // disabled
   }
   return false;
@@ -109,7 +109,13 @@ class PlatformFormContainer extends React.Component {
           )}
           <Row>
             <Col lg={8} xs={12}>
-              <AppButton className="platform-builder-next" type="submit" label={messages.next} primary disabled={validationForPlatformSource(currentPlatform.platform, currentPlatform.source, validationValues)} />
+              <AppButton
+                className="platform-builder-next"
+                type="submit"
+                label={messages.next}
+                primary
+                disabled={validationForPlatformSource(currentPlatform.platform, currentPlatform.source, validationValues)}
+              />
             </Col>
           </Row>
         </form>

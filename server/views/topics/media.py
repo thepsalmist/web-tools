@@ -1,5 +1,4 @@
 import logging
-import json
 from flask import jsonify, request, Response
 import flask_login
 
@@ -51,9 +50,33 @@ def media(topics_id, media_id):
 @api_error_handler
 def topic_media_csv(topics_id):
     sort = validated_sort(request.args.get('sort'))
+    mc = user_mediacloud_client()
+    topic = mc.topic(topics_id)
+    timestamped_filename = csv.safe_filename(topic['name'] + '-' + 'media')
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
-    return _stream_media_list_csv(user_mediacloud_key(), 'media-for-topic-' + topics_id, topics_id, sort=sort,
-                                  snapshots_id=snapshots_id, timespans_id=timespans_id, foci_id=foci_id, q=q)
+    headers = {
+        "Content-Disposition": "attachment;filename=" + timestamped_filename
+    }
+    return Response(_stream_media_by_page(user_mediacloud_key(), topics_id, TOPIC_MEDIA_CSV_PROPS,
+                                          sort=sort, limit=1000, timespans_id=timespans_id, link_id=0),
+                    mimetype='text/csv; charset=utf-8', headers=headers)
+
+
+def _stream_media_by_page(user_mc_key, topics_id, props, **kwargs):
+    yield ','.join(props) + '\n'  # first send the column names
+    more_media = True
+    while more_media:
+        page = apicache.topic_media_list_page(user_mc_key, topics_id, **kwargs)
+        media = page['media']
+        for m in media:
+            row = csv.dict2row(props, m)
+            row_string = ','.join(row) + '\n'
+            yield row_string
+        if 'next' in page['link_ids']:
+            kwargs['link_id'] = page['link_ids']['next']
+            more_media = True
+        else:
+            more_media = False
 
 
 @app.route('/api/topics/<topics_id>/media/<media_id>/split-story/count', methods=['GET'])
@@ -244,32 +267,6 @@ def _topic_media_link_list_by_page_as_csv_row(user_mc_key, topics_id, props, **k
             link_id = media_link_page['link_ids']['next']
         else:
             more_media = False
-
-
-def _stream_media_list_csv(user_mc_key, filename, topics_id, **kwargs):
-    # Helper method to stream a list of media back to the client as a csv.  Any args you pass in will be
-    # simply be passed on to a call to topicMediaList.
-    all_media = []
-    more_media = True
-    params = kwargs
-    params['limit'] = 1000  # an arbitrary value to let us page through with big pages
-    try:
-
-        while more_media:
-            page = apicache.topic_media_list(user_mc_key, topics_id, **params)
-            media_list = page['media']
-
-            all_media = all_media + media_list
-
-            if 'next' in page['link_ids']:
-                params['link_id'] = page['link_ids']['next']
-                more_media = True
-            else:
-                more_media = False
-
-        return csv.download_media_csv(all_media, filename, TOPIC_MEDIA_CSV_PROPS)
-    except Exception as exception:
-        return json.dumps({'error': str(exception)}, separators=(',', ':')), 400
 
 
 @app.route('/api/topics/<topics_id>/media/<media_id>/words', methods=['GET'])

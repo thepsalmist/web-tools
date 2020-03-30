@@ -19,7 +19,10 @@ TOPIC_MEDIA_INFO_PROPS = ['media_id', 'name', 'url']
 TOPIC_MEDIA_PROPS = ['story_count', 'media_inlink_count', 'inlink_count', 'outlink_count',
                      'facebook_share_count', 'simple_tweet_count']
 
-TOPIC_MEDIA_CSV_PROPS = TOPIC_MEDIA_INFO_PROPS + TOPIC_MEDIA_PROPS + SOURCE_LIST_CSV_METADATA_PROPS
+TOPIC_MEDIA_URL_SHARING_PROPS = ['sum_post_count', 'sum_channel_count', 'sum_author_count']
+
+TOPIC_MEDIA_CSV_PROPS = TOPIC_MEDIA_INFO_PROPS + TOPIC_MEDIA_PROPS + TOPIC_MEDIA_URL_SHARING_PROPS + \
+                        SOURCE_LIST_CSV_METADATA_PROPS
 
 
 def validated_sort(desired_sort, default_sort=SORT_FACEBOOK):

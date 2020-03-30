@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import withCsvDownloadNotifyContainer from '../common/hocs/CsvDownloadNotifyContainer';
-import StoryDownloadDialog, { FIELD_STORY_COUNT, FIELD_MEDIA_METADATA, FIELD_STORY_TAGS, FIELD_FACEBOOK_DATES, FIELD_REDDIT_DATA, FIELD_SORT } from './StoryDownloadDialog';
+import StoryDownloadDialog, { FIELD_STORY_COUNT, FIELD_MEDIA_METADATA, FIELD_STORY_TAGS, FIELD_FACEBOOK_DATES,
+  FIELD_REDDIT_DATA, FIELD_SORT, FIELD_PLATFORM_URL_SHARES, FIELD_SOCIAL_SHARES } from './StoryDownloadDialog';
 import { formatAsUrlParams } from '../util/location';
 import { HELP_STORIES_CSV_COLUMNS } from '../../lib/helpConstants';
 
@@ -38,6 +39,12 @@ function withTopicStoryDownload() {
         }
         if (options[FIELD_FACEBOOK_DATES]) {
           params.fbData = 1;
+        }
+        if (options[FIELD_PLATFORM_URL_SHARES]) {
+          params.platformUrlShares = 1;
+        }
+        if (options[FIELD_SOCIAL_SHARES]) {
+          params.socialShares = 1;
         }
         const url = `/api/topics/${topicId}/stories.csv?${formatAsUrlParams(params)}`;
         window.location = url;

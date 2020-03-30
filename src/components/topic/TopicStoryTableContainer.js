@@ -17,18 +17,15 @@ TopicStoryTableContainer.propTypes = {
   // from state
   showTweetCounts: PropTypes.bool.isRequired,
   topicId: PropTypes.number.isRequired,
-  showInlinksOutlinks: PropTypes.bool.isRequired,
-  showAuthorCount: PropTypes.bool.isRequired,
+  usingUrlSharingSubtopic: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
   topicId: state.topics.selected.id,
   // show tweet counts if the user has a crimson hexagon id on the topic (to deptecate?)
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
-  // only show the author count if the user is in a "url sharing" focus
-  showAuthorCount: (state.topics.selected.filters.focusId !== null) && isUrlSharingFocalSet(state.topics.selected.timespans.selected.focal_set),
-  // hide inlinks and outlinks when the user has a "url sharing" focus selected
-  showInlinksOutlinks: (state.topics.selected.filters.focusId === null) || !isUrlSharingFocalSet(state.topics.selected.timespans.selected.focal_set),
+  // only show the author count, and hide inlinks/outlinks, if the user is in a "url sharing" focus
+  usingUrlSharingSubtopic: (state.topics.selected.filters.focusId !== null) && isUrlSharingFocalSet(state.topics.selected.timespans.selected.focal_set),
 });
 
 export default (

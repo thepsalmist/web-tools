@@ -44,7 +44,7 @@ class MediaTable extends React.Component {
   }
 
   render() {
-    const { media, topicId, includeMetadata, showTweetCounts, showAuthorCount, showInlinksOutlinks } = this.props;
+    const { media, topicId, includeMetadata, showTweetCounts, usingUrlSharingSubtopic } = this.props;
     return (
       <div className="media-table">
         <StorySearchFilterMediaWarning />
@@ -53,14 +53,14 @@ class MediaTable extends React.Component {
             <tr>
               <th colSpan="2"><FormattedMessage {...messages.mediaName} /></th>
               <th><FormattedMessage {...messages.storyPlural} /></th>
-              {showInlinksOutlinks && (
+              { !usingUrlSharingSubtopic && (
                 <>
                   <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
                   <th className="numeric"><FormattedMessage {...messages.outlinks} /></th>
                 </>
               )}
               <th className="numeric">{this.sortableHeader('facebook', messages.facebookShares)}</th>
-              { showAuthorCount && (
+              { usingUrlSharingSubtopic && (
                 <>
                   <th className="numeric">{this.sortableHeader('sum_post_count', messages.postCount)}</th>
                   <th className="numeric">{this.sortableHeader('sum_author_count', messages.authorCount)}</th>
@@ -91,14 +91,14 @@ class MediaTable extends React.Component {
                   </LinkWithFilters>
                 </td>
                 <td className="numeric"><FormattedNumber value={m.story_count !== undefined ? m.story_count : '?'} /></td>
-                {showInlinksOutlinks && (
+                { !usingUrlSharingSubtopic && (
                   <>
                     <td className="numeric"><FormattedNumber value={m.media_inlink_count !== undefined ? m.media_inlink_count : '?'} /></td>
                     <td className="numeric"><FormattedNumber value={m.outlink_count !== undefined ? m.outlink_count : '?'} /></td>
                   </>
                 )}
                 <td className="numeric"><FormattedNumber value={m.facebook_share_count !== undefined ? m.facebook_share_count : '?'} /></td>
-                { showAuthorCount && (
+                { usingUrlSharingSubtopic && (
                   <>
                     <td className="numeric"><SafelyFormattedNumber value={m.sum_post_count} /></td>
                     <td className="numeric"><SafelyFormattedNumber value={m.sum_author_count} /></td>
@@ -136,8 +136,7 @@ MediaTable.propTypes = {
   includeMetadata: PropTypes.bool, // default true
   // from parent container
   showTweetCounts: PropTypes.bool,
-  showInlinksOutlinks: PropTypes.bool,
-  showAuthorCount: PropTypes.bool.isRequired,
+  usingUrlSharingSubtopic: PropTypes.bool.isRequired,
 };
 
 export default injectIntl(MediaTable);

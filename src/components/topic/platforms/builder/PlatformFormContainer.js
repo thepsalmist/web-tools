@@ -9,7 +9,8 @@ import withIntlForm from '../../../common/hocs/IntlForm';
 import messages from '../../../../resources/messages';
 import PlatformPreview from './preview/PlatformPreview';
 import { platformChannelDataFormatter } from '../../../util/topicUtil';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_GENERIC, MEDIA_CLOUD_SOURCE, CSV_SOURCE } from '../../../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER, PLATFORM_GENERIC, MEDIA_CLOUD_SOURCE, CSV_SOURCE } from '../../../../lib/platformTypes';
+import { emptyString } from '../../../../lib/formValidators';
 import EditOpenWebForm from './forms/EditOpenWebForm';
 import EditQueryForm from './forms/EditQueryForm';
 import EditRedditForm from './forms/EditRedditForm';
@@ -21,6 +22,9 @@ const formSelector = formValueSelector('platform');
 const localMessages = {
   title: { id: 'platform.create.edit.title', defaultMessage: 'Step 1: Configure Your Platform: ' },
   noMediaSpecified: { id: 'platform.web.media', defaultMessage: 'You must select a media source.' },
+  noMonitorSpecified: { id: 'platform.twitter.monitor', defaultMessage: 'You must specify a monitor.' },
+  noChannelSpecified: { id: 'platform.reddit.channel', defaultMessage: 'You must specify a channel.' },
+  noQuerySpecified: { id: 'platform.query', defaultMessage: 'You must specify a query.' },
 };
 
 const formForPlatformSource = (platform, source) => {
@@ -38,8 +42,11 @@ const formForPlatformSource = (platform, source) => {
 };
 
 const validationForPlatformSource = (platform, source, formInfo) => {
-  if ((platform === PLATFORM_OPEN_WEB) && (source === MEDIA_CLOUD_SOURCE) && ((formInfo && formInfo.length < 1) || formInfo === undefined)) {
+  if ((platform === PLATFORM_OPEN_WEB) && (source === MEDIA_CLOUD_SOURCE) && ((formInfo.media && formInfo.media.length < 1) || formInfo.media === undefined)) {
     return true; // disabled
+  }
+  if (emptyString(formInfo.query)) {
+    return true;
   }
   return false;
 };
@@ -145,7 +152,7 @@ PlatformFormContainer.propTypes = {
 
 const mapStateToProps = state => ({
   currentPlatform: state.topics.selected.platforms.selected,
-  validationValues: formSelector(state, 'media'),
+  validationValues: formSelector(state, 'media', 'query'),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -162,6 +169,15 @@ function validate(values, props) {
   const errors = {};
   if (!values.media || !values.media.length) {
     errors.media = { _error: formatMessage(localMessages.noMediaSpecified) };
+  }
+  if (emptyString(values.query)) {
+    if (values.platform === PLATFORM_TWITTER) {
+      errors.query = { _error: formatMessage(localMessages.noMonitorSpecified) };
+    } else if (values.platform === PLATFORM_REDDIT) {
+      errors.query = { _error: formatMessage(localMessages.noChannelSpecified) };
+    } else {
+      errors.query = { _error: formatMessage(localMessages.noQuerySpecified) };
+    }
   }
   return errors;
 }

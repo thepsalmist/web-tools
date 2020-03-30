@@ -80,5 +80,14 @@ export function extractWordsFromQuery(searchString) {
   return null;
 }
 
+export function replaceCurlyQuotes(stringWithQuotes) {
+  if (stringWithQuotes) {
+    let removedQuotes = stringWithQuotes.replace(/[\u2018]/g, "'").replace(/[\u2019]/g, "'"); // replace single curly quotes
+    removedQuotes = removedQuotes.replace(/[\u201C]/g, '"').replace(/[\u201D]/g, '"'); // replace double curly quotes
+    return removedQuotes;
+  }
+  return stringWithQuotes;
+}
+
 // handle a CodeMirror or regular object
 export const queryAsString = (obj) => ((typeof obj === 'string') ? obj : obj.getValue());

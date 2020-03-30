@@ -25,7 +25,7 @@ def get_top_countries_by_story_tag_counts(topics_id, num_countries):
     overall_timespan = [t for t in timespans if t['period'] == "overall"]
     overall_timespan = next(iter(overall_timespan))
     timespan_query = "timespans_id:{}".format(overall_timespan['timespans_id'])
-    top_geo_tags = _cached_topic_tag_counts(user_mediacloud_key(), topics_id, GEO_TAG_SET, GEO_SAMPLE_SIZE, timespan_query)
+    top_geo_tags = _cached_topic_tag_counts(user_mediacloud_key(), topics_id, GEO_TAG_SET, timespan_query)
     
     # make sure the geo tag is in the geo_tags whitelist (is a country)
     country_tag_counts = [r for r in top_geo_tags if

@@ -44,6 +44,7 @@ PlatformWordsPreview.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
   words: PropTypes.array,
+  supported: PropTypes.bool,
   selectedPlatform: PropTypes.object.isRequired,
 };
 
@@ -51,6 +52,7 @@ const mapStateToProps = state => ({
   topic: state.topics.selected.info,
   fetchStatus: state.topics.selected.platforms.preview.matchingWords.fetchStatus,
   words: state.topics.selected.platforms.preview.matchingWords.list,
+  supported: state.topics.selected.platforms.preview.matchingWords.supported,
   formValues: formSelector(state, 'media', 'query', 'channel'),
   selectedPlatform: state.topics.selected.platforms.selected,
 });
@@ -70,8 +72,8 @@ const fetchAsyncData = (dispatch, { topic, formValues, selectedPlatform, formatP
 export default
 injectIntl(
   connect(mapStateToProps)(
-    withDescription(localMessages.descriptionIntro, [messages.wordcloudHelpText])(
-      withAsyncData(fetchAsyncData, ['lastUpdated'])(
+    withAsyncData(fetchAsyncData, ['lastUpdated', 'supported'])(
+      withDescription(localMessages.descriptionIntro, messages.wordcloudHelpText, 'supported')(
         PlatformWordsPreview
       )
     )

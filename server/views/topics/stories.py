@@ -107,6 +107,12 @@ def topic_stories(topics_id):
 @app.route('/api/topics/<topics_id>/stories.csv', methods=['GET'])
 @flask_login.login_required
 def topic_stories_csv(topics_id):
+    """
+    This is the main handler for downloading a list of stories from the topic summary page. Very important user
+    function, so be careful with any changes you make.
+    :param topics_id:
+    :return: streaming page by page CSV-formatted results
+    """
     user_mc = user_admin_mediacloud_client()
     topic = user_mc.topic(topics_id)
     story_limit = request.args['storyLimit'] if 'storyLimit' in request.args else None
@@ -114,10 +120,17 @@ def topic_stories_csv(topics_id):
     media_metadata = (request.args['mediaMetadata'] == '1') if 'mediaMetadata' in request.args else False
     reddit_submissions = (request.args['redditData'] == '1') if 'redditData' in request.args else False
     include_fb_date = (request.args['fbData'] == '1') if 'fbData' in request.args else False
+    include_platform_url_shares = (request.args['platformUrlShares'] == '1') if 'platformUrlShares' in request.args else False
+    include_all_url_shares = (request.args['socialShares'] == '1') if 'socialShares' in request.args else False
     return stream_story_list_csv(user_mediacloud_key(), "stories", topic,
                                  story_limit=story_limit, reddit_submissions=reddit_submissions,
                                  story_tags=story_tags, fb_data=include_fb_date,
-                                 media_metadata=media_metadata)
+                                 media_metadata=media_metadata, include_platform_url_shares=include_platform_url_shares,
+                                 include_all_url_shares=include_all_url_shares)
+
+
+def _platform_csv_column_header_prefix(topic_seed_query):
+    return "{}_{}_".format(topic_seed_query['platform'], topic_seed_query['source'])
 
 
 def stream_story_list_csv(user_key, filename, topic, **kwargs):
@@ -129,6 +142,8 @@ def stream_story_list_csv(user_key, filename, topic, **kwargs):
     include_story_tags = ('story_tags' in kwargs) and (kwargs['story_tags'] is True)
     include_reddit_submissions = ('reddit_submissions' in kwargs) and (kwargs['reddit_submissions'] is True)
     include_fb_date = kwargs['fb_data'] if 'fb_data' in kwargs else False
+    include_platform_url_shares = kwargs['include_platform_url_shares'] if 'include_platform_url_shares' in kwargs else False
+    include_all_url_shares = kwargs['include_all_url_shares'] if 'include_all_url_shares' in kwargs else False
     all_stories = []
     params = kwargs.copy()
 
@@ -142,11 +157,6 @@ def stream_story_list_csv(user_key, filename, topic, **kwargs):
     }
     params.update(merged_args)
 
-    story_count = apicache.topic_story_count(user_key, topic['topics_id'],
-                                             snapshots_id=params['snapshots_id'], timespans_id=params['timespans_id'],
-                                             foci_id=params['foci_id'], q=params['q'])
-    logger.info("Total stories to download: {}".format(story_count['count']))
-
     if 'as_attachment' in params:
         del params['as_attachment']
     if 'fb_data' in params:
@@ -158,8 +168,20 @@ def stream_story_list_csv(user_key, filename, topic, **kwargs):
     # determine which props the user actually wants to download
     props = [
         'stories_id', 'publish_date', 'title', 'url', 'language', 'ap_syndicated', 'inlink_count',
-        'facebook_share_count',
+        'facebook_share_count'
     ]
+    if include_platform_url_shares:
+        props += ['post_count', 'channel_count', 'author_count']
+    if include_all_url_shares:
+        # if the user requested to download all the url sharing counts by platform, we need to grab the config for that
+        # which is held in the platform seed query objects
+        topic_seed_queries = topic['topic_seed_queries']
+        extra_columns = []
+        for tsq in topic_seed_queries:
+            prefix = _platform_csv_column_header_prefix(tsq)
+            extra_columns += [prefix+'post_count', prefix+'channel_count', prefix+'author_count']
+        props += extra_columns
+        params['topic_seed_queries'] = topic_seed_queries
     if has_twitter_data:
         props.append('simple_tweet_count')
     if include_reddit_submissions:
@@ -199,6 +221,40 @@ def stream_story_list_csv(user_key, filename, topic, **kwargs):
     }
     return Response(_topic_story_list_by_page_as_csv_row(user_key, topic['topics_id'], props, **params),
                     mimetype='text/csv; charset=utf-8', headers=headers)
+
+
+# generator you can use to handle a long list of stories row by row (one row per story)
+def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
+    yield ','.join(props) + '\n'  # first send the column names
+    include_all_url_shares = kwargs['include_all_url_shares'] if 'include_all_url_shares' in kwargs else False
+    story_count = 0
+    link_id = 0
+    more_pages = True
+    yet_to_hit_story_limit = True
+    has_story_limit = ('story_limit' in kwargs) and (kwargs['story_limit'] is not None)
+    while more_pages and ((not has_story_limit) or (has_story_limit and yet_to_hit_story_limit)):
+        page = _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs)
+        if 'next' in page['link_ids']:
+            link_id = page['link_ids']['next']
+        else:
+            more_pages = False
+        for s in page['stories']:
+            if include_all_url_shares:
+                topic_seed_queries = kwargs['topic_seed_queries']
+                # add in each header col
+                for item in s['url_sharing_counts']:
+                    seed_query = [tsq for tsq in topic_seed_queries if tsq['topic_seed_queries_id'] == item['topic_seed_queries_id']][0]
+                    prefix = _platform_csv_column_header_prefix(seed_query)
+                    s[prefix + "post_count"] = item['post_count']
+                    s[prefix + "channel_count"] = item['channel_count']
+                    s[prefix + "author_count"] = item['author_count']
+            # first foci down to just the readable names
+            s['subtopics'] = ["{}: {}".format(f['focal_set_name'], f['name']) for f in s['foci']]
+            cleaned_row = csv.dict2row(props, s)
+            row_string = ','.join(cleaned_row) + '\n'
+            yield row_string
+        story_count += len(page['stories'])
+        yet_to_hit_story_limit = has_story_limit and (story_count < int(kwargs['story_limit']))
 
 
 @app.route('/api/topics/<topics_id>/stories/story-links.csv', methods=['GET'])
@@ -283,30 +339,6 @@ def _topic_story_link_list_by_page_as_csv_row(user_key, topics_id, props, **kwar
             more_pages = False
 
 
-# generator you can use to handle a long list of stories row by row (one row per story)
-def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
-    yield ','.join(props) + '\n'  # first send the column names
-    story_count = 0
-    link_id = 0
-    more_pages = True
-    yet_to_hit_story_limit = True
-    has_story_limit = ('story_limit' in kwargs) and (kwargs['story_limit'] is not None)
-    while more_pages and ((not has_story_limit) or (has_story_limit and yet_to_hit_story_limit)):
-        page = _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs)
-        if 'next' in page['link_ids']:
-            link_id = page['link_ids']['next']
-        else:
-            more_pages = False
-        for s in page['stories']:
-            # first foci down to just the readable names
-            s['subtopics'] = ["{}: {}".format(f['focal_set_name'], f['name']) for f in s['foci']]
-            cleaned_row = csv.dict2row(props, s)
-            row_string = ','.join(cleaned_row) + '\n'
-            yield row_string
-        story_count += len(page['stories'])
-        yet_to_hit_story_limit = has_story_limit and (story_count < int(kwargs['story_limit']))
-
-
 def _media_info_worker(info):
     return base_apicache.get_media_with_key(info['user_key'], info['media_id'])
 
@@ -317,10 +349,10 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
 
     include_media_metadata = ('media_metadata' in kwargs) and (kwargs['media_metadata'] is True)
     include_story_tags = ('story_tags' in kwargs) and (kwargs['story_tags'] is True)
-    include_reddit_submissions = ('reddit_submissions' in kwargs) and (kwargs['reddit_submissions'] is True)
 
     args = kwargs.copy()   # need to make sure invalid params don't make it to API call
-    optional_args = ['media_metadata', 'story_limit', 'reddit_submissions', 'story_tags', 'include_fb_date']
+    optional_args = ['media_metadata', 'story_limit', 'reddit_submissions', 'story_tags', 'include_fb_date',
+                     'include_platform_url_shares', 'include_all_url_shares', 'topic_seed_queries']
     for key in optional_args:
         if key in args:
             del args[key]

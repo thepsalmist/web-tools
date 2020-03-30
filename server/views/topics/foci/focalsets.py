@@ -9,6 +9,8 @@ from server.views.topics import apicache as apicache
 
 logger = logging.getLogger(__name__)
 
+URL_SHARING_FOCAL_SET_NAME = "URL Sharing"
+
 
 @app.route('/api/topics/<topics_id>/focal-sets/list', methods=['GET'])
 @arguments_required('snapshotId')

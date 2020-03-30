@@ -90,14 +90,6 @@ class TwitterPushshiftProvider(ContentProvider):
             })
         return {'counts': data}
 
-    def words(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List[Dict]:
-        """
-        We don't have a way to get word counts from matching tweets
-        :param query:
-        :return:
-        """
-        return []
-
     @cache.cache_on_arguments()
     def _cached_query(self, query: str = None, start_date: dt.datetime = None, end_date: dt.datetime = None,
                                   **kwargs) -> Dict:

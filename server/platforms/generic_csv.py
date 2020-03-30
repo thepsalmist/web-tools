@@ -89,17 +89,6 @@ class GenericCsvProvider(ContentProvider):
         } for date, items in groups.items()]
         return {'counts': results}
 
-    @cache.cache_on_arguments()
-    def words(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List[Dict]:
-        """
-        We don't want to process all the data and do word counts just for a preview
-        :param query:
-        :param start_date:
-        :param end_date:
-        :return:
-        """
-        return []
-
     @classmethod
     def _content_to_row(cls, item):
         return {

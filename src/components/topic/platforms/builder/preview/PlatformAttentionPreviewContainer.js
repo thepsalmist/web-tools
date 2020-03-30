@@ -54,6 +54,7 @@ PlatformAttentionPreviewContainer.propTypes = {
   // from state
   total: PropTypes.number,
   counts: PropTypes.array,
+  supported: PropTypes.bool,
   fetchStatus: PropTypes.string.isRequired,
   selectedPlatform: PropTypes.object.isRequired,
 };
@@ -63,6 +64,7 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.platforms.preview.matchingAttention.fetchStatus,
   total: state.topics.selected.platforms.preview.matchingAttention.total,
   counts: state.topics.selected.platforms.preview.matchingAttention.counts,
+  supported: state.topics.selected.platforms.preview.matchingAttention.supported,
   formValues: formSelector(state, 'media', 'query', 'channel'),
   selectedPlatform: state.topics.selected.platforms.selected,
 });
@@ -82,8 +84,8 @@ const fetchAsyncData = (dispatch, { topic, formValues, selectedPlatform, formatP
 export default
 injectIntl(
   connect(mapStateToProps)(
-    withDescription(localMessages.descriptionIntro, localMessages.helpText)(
-      withAsyncData(fetchAsyncData, ['lastUpdated'])(
+    withAsyncData(fetchAsyncData, ['lastUpdated', 'supported'])(
+      withDescription(localMessages.descriptionIntro, localMessages.helpText, 'supported')(
         PlatformAttentionPreviewContainer
       )
     )

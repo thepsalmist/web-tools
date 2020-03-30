@@ -4,11 +4,10 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import withAsyncData from '../../../../common/hocs/AsyncDataContainer';
-import withHelp from '../../../../common/hocs/HelpfulContainer';
+import withDescription from '../../../../common/hocs/DescribedDataCard';
 import { fetchStoriesByPlatformQuery } from '../../../../../actions/topicActions';
 import DataCard from '../../../../common/DataCard';
 import StoryTable from '../../../../common/StoryTable';
-import messages from '../../../../../resources/messages';
 import { topicQueryAsString } from '../../../../util/topicUtil';
 
 const NUM_TO_SHOW = 20;
@@ -16,15 +15,14 @@ const NUM_TO_SHOW = 20;
 const formSelector = formValueSelector('platform');
 
 const localMessages = {
-  title: { id: 'topic.summary.stories.title', defaultMessage: 'Sample Stories' },
-  helpTitle: { id: 'topic.summary.stories.help.title', defaultMessage: 'About Matching Top Stories' },
+  title: { id: 'topic.summary.stories.title', defaultMessage: 'Sample Content' },
+  description: { id: 'topic.summary.stories.description', defaultMessage: 'This is a random sample of the content matching your query on this platform.' },
 };
 
-const PlatformContentPreviewContainer = ({ stories, helpButton, showTweetCounts, topic }) => (
+const PlatformContentPreviewContainer = ({ stories, showTweetCounts, topic }) => (
   <DataCard>
     <h2>
       <FormattedMessage {...localMessages.title} />
-      {helpButton}
     </h2>
     <StoryTable stories={stories.slice(0, NUM_TO_SHOW)} showTweetCounts={showTweetCounts} topicId={topic.topics_id} />
   </DataCard>
@@ -33,7 +31,6 @@ const PlatformContentPreviewContainer = ({ stories, helpButton, showTweetCounts,
 PlatformContentPreviewContainer.propTypes = {
   // from the composition chain
   intl: PropTypes.object.isRequired,
-  helpButton: PropTypes.node.isRequired,
   // from parent
   topic: PropTypes.object.isRequired,
   lastUpdated: PropTypes.number,
@@ -41,6 +38,7 @@ PlatformContentPreviewContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
   stories: PropTypes.array,
+  supported: PropTypes.bool,
   showTweetCounts: PropTypes.bool,
   selectedPlatform: PropTypes.object.isRequired,
 };
@@ -49,6 +47,7 @@ const mapStateToProps = state => ({
   topic: state.topics.selected.info,
   fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
   stories: state.topics.selected.platforms.preview.matchingStories.list,
+  supported: state.topics.selected.platforms.preview.matchingStories.supported,
   formValues: formSelector(state, 'media', 'query', 'channel'),
   selectedPlatform: state.topics.selected.platforms.selected,
 });
@@ -68,8 +67,8 @@ const fetchAsyncData = (dispatch, { topic, formValues, selectedPlatform, formatP
 export default
 injectIntl(
   connect(mapStateToProps)(
-    withHelp(localMessages.helpTitle, messages.storiesTableHelpText)(
-      withAsyncData(fetchAsyncData, ['lastUpdated'])(
+    withAsyncData(fetchAsyncData, ['lastUpdated', 'supported'])(
+      withDescription(localMessages.description, null, 'supported')(
         PlatformContentPreviewContainer
       )
     )

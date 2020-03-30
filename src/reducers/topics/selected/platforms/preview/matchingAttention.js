@@ -6,11 +6,13 @@ const matchingAttention = createAsyncReducer({
   initialState: {
     total: null,
     counts: [],
+    supported: true,
   },
   action: FETCH_PLATFORM_PREVIEW_ATTENTION,
   handleSuccess: payload => ({
     total: payload.results.total_story_count,
     counts: cleanDateCounts(payload.results.counts),
+    supported: payload.supported,
   }),
 });
 

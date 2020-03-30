@@ -59,8 +59,7 @@ class TopicStoryTable extends React.Component {
   }
 
   render() {
-    const { stories, showTweetCounts, onChangeFocusSelection, topicId, maxTitleLength,
-      showInlinksOutlinks, showAuthorCount } = this.props;
+    const { stories, showTweetCounts, onChangeFocusSelection, topicId, maxTitleLength, usingUrlSharingSubtopic } = this.props;
     const { formatMessage, formatDate } = this.props.intl;
     return (
       <div className="story-table">
@@ -73,7 +72,7 @@ class TopicStoryTable extends React.Component {
                 <FormattedMessage {...messages.storyDate} />
                 <HelpDialog title={messages.pubDateTableHelpTitle} content={messages.pubDateTableHelpText} />
               </th>
-              {showInlinksOutlinks && (
+              { !usingUrlSharingSubtopic && (
                 <>
                   <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
                   <th className="numeric"><FormattedMessage {...messages.outlinks} /></th>
@@ -83,7 +82,7 @@ class TopicStoryTable extends React.Component {
                 {this.sortableHeader('facebook', messages.facebookShares)}
                 <HelpDialog title={messages.facebookShares} content={localMessages.facebookSharesHelp} />
               </th>
-              { showAuthorCount && (
+              { usingUrlSharingSubtopic && (
                 <>
                   <th className="numeric">
                     {this.sortableHeader('post_count', messages.postCount)}
@@ -151,14 +150,14 @@ class TopicStoryTable extends React.Component {
                     </LinkWithFilters>
                   </td>
                   <td><span className={`story-date ${dateStyle}`}>{dateToShow}</span></td>
-                  {showInlinksOutlinks && (
+                  { !usingUrlSharingSubtopic && (
                     <>
                       <td className="numeric"><SafelyFormattedNumber value={story.media_inlink_count} /></td>
                       <td className="numeric"><SafelyFormattedNumber value={story.outlink_count} /></td>
                     </>
                   )}
                   <td className="numeric"><SafelyFormattedNumber value={story.facebook_share_count} /></td>
-                  { showAuthorCount && (
+                  { usingUrlSharingSubtopic && (
                     <>
                       <td className="numeric"><SafelyFormattedNumber value={story.post_count} /></td>
                       <td className="numeric"><SafelyFormattedNumber value={story.author_count} /></td>
@@ -194,8 +193,7 @@ TopicStoryTable.propTypes = {
   // from parent (container)
   showTweetCounts: PropTypes.bool.isRequired,
   topicId: PropTypes.number.isRequired,
-  showInlinksOutlinks: PropTypes.bool.isRequired,
-  showAuthorCount: PropTypes.bool.isRequired,
+  usingUrlSharingSubtopic: PropTypes.bool.isRequired,
   // from compositional chain
   intl: PropTypes.object.isRequired,
 };

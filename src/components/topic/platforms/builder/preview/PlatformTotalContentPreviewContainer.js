@@ -21,11 +21,11 @@ const localMessages = {
   descriptionIntro: { id: 'platform.preview.about', defaultMessage: 'Here is a preview of total amount of content we have found that match your query.' },
 };
 
-const PlatformTotalContentPreviewContainer = ({ counts, intl }) => (
+const PlatformTotalContentPreviewContainer = ({ total, intl }) => (
   <StatBar
     columnWidth={4}
     stats={[
-      { message: localMessages.title, data: intl.formatNumber(counts.count) },
+      { message: localMessages.title, data: intl.formatNumber(total) },
     ]}
   />
 );
@@ -38,7 +38,8 @@ PlatformTotalContentPreviewContainer.propTypes = {
   lastUpdated: PropTypes.number,
   formatPlatformChannelData: PropTypes.func, // will be pass the formValues, and should return a string suitable for upload to server
   // from state
-  counts: PropTypes.object,
+  total: PropTypes.number,
+  supported: PropTypes.bool,
   fetchStatus: PropTypes.string.isRequired,
   selectedPlatform: PropTypes.object.isRequired,
 };
@@ -46,7 +47,8 @@ PlatformTotalContentPreviewContainer.propTypes = {
 const mapStateToProps = state => ({
   topic: state.topics.selected.info,
   fetchStatus: state.topics.selected.platforms.preview.matchingStoryCounts.fetchStatus,
-  counts: state.topics.selected.platforms.preview.matchingStoryCounts,
+  total: state.topics.selected.platforms.preview.matchingStoryCounts.count,
+  supported: state.topics.selected.platforms.preview.matchingStoryCounts.supported,
   formValues: formSelector(state, 'media', 'query', 'channel'),
   selectedPlatform: state.topics.selected.platforms.selected,
 });
@@ -66,8 +68,8 @@ const fetchAsyncData = (dispatch, { topic, formValues, selectedPlatform, formatP
 export default
 injectIntl(
   connect(mapStateToProps)(
-    withDescription(localMessages.descriptionIntro)(
-      withAsyncData(fetchAsyncData, ['lastUpdated'])(
+    withAsyncData(fetchAsyncData, ['lastUpdated', 'supported'])(
+      withDescription(localMessages.descriptionIntro, null, 'supported')(
         PlatformTotalContentPreviewContainer
       )
     )

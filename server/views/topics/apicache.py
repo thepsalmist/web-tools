@@ -12,10 +12,15 @@ from server.auth import user_mediacloud_client, user_admin_mediacloud_client, us
 from server.util.request import filters_from_args
 from server.views.topics import validated_sort, access_public_topic
 from server.util.api_helper import add_missing_dates_to_split_story_counts
+from server.views.topics.foci.focalsets import URL_SHARING_FOCAL_SET_NAME
 
 logger = logging.getLogger(__name__)
 
 WORD_COUNT_DOWNLOAD_COLUMNS = ['term', 'stem', 'count', 'sample_size', 'ratio']
+
+
+def topic_media_list_page(user_mc_key, topics_id, **kwargs):
+    return _cached_topic_media(user_mc_key, topics_id, **kwargs)
 
 
 def topic_media_list(user_mc_key, topics_id, **kwargs):
@@ -33,11 +38,11 @@ def topic_media_list(user_mc_key, topics_id, **kwargs):
         'link_id': request.args.get('linkId'),
     }
     merged_args.update(kwargs)    # passed in args override anything pulled form the request.args
-    return _cached_topic_media_list_with_metadata(user_mc_key, topics_id, **merged_args)
+    return _cached_topic_media(user_mc_key, topics_id, **merged_args)
 
 
 @cache.cache_on_arguments()
-def _cached_topic_media_list_with_metadata(user_mc_key, topics_id, **kwargs):
+def _cached_topic_media(user_mc_key, topics_id, **kwargs):
     """
     Internal helper - don't call this; call topic_media_list instead. This needs user_mc_key in the
     function signature to make sure the caching is keyed correctly.
@@ -45,7 +50,7 @@ def _cached_topic_media_list_with_metadata(user_mc_key, topics_id, **kwargs):
     if user_mc_key == TOOL_API_KEY:
         local_mc = mc
     else:
-        local_mc = user_mediacloud_client()
+        local_mc = user_mediacloud_client(user_mc_key)
     return local_mc.topicMediaList(topics_id, **kwargs)
 
 
@@ -294,6 +299,7 @@ def topic_foci_list(user_mc_key, topics_id, focal_sets_id):
     return response
 
 
+@cache.cache_on_arguments()
 def topic_focal_sets_list(user_mc_key, topics_id, snapshots_id):
     # This needs user_mc_key in the function signature to make sure the caching is keyed correctly.
     user_mc = user_mediacloud_client(user_mc_key)
@@ -494,3 +500,15 @@ def topic_media_map(topics_id, timespan_maps_id, file_format):
 def _cached_topic_media_map(user_mc_key, topics_id, timespan_maps_id, file_format):
     user_mc = user_mediacloud_client(user_mc_key)
     return user_mc.topicMediaMapDownload(topics_id, timespan_maps_id, file_format)
+
+
+def url_sharing_focal_set(topics_id, snapshots_id) -> bool:
+    """
+    Return the focal_set that is marked as the auto-generated "URL Sharing" one.
+    :param topics_id:
+    :param snapshots_id:
+    :return: a focal set, or None if the topic doesn't have one
+    """
+    focal_sets = topic_focal_sets_list(user_mediacloud_key(), topics_id, snapshots_id)
+    url_sharing_focal_sets = [fs for fs in focal_sets if fs['name'] == URL_SHARING_FOCAL_SET_NAME]
+    return url_sharing_focal_sets[0] if len(url_sharing_focal_sets) > 0 else None

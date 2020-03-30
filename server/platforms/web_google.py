@@ -33,38 +33,6 @@ class WebGoogleProvider(ContentProvider):
         stories = [self._content_to_row(link) for link in links]
         return stories
 
-    def count(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> int:
-        """
-        We can't get the total via googler, so just return 0.
-        :param query:
-        :param start_date:
-        :param end_date:
-        :param kwargs:
-        :return:
-        """
-        return 0
-
-    def count_over_time(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> Dict:
-        """
-        Since we only fetch a sample here, just leave the chart empty.
-        :param query:
-        :param start_date:
-        :param end_date:
-        :param kwargs:
-        :return:
-        """
-        return {'counts': []}
-
-    def words(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List[Dict]:
-        """
-        We don't get the content here so we can't return word counts
-        :param query:
-        :param start_date:
-        :param end_date:
-        :return:
-        """
-        return []
-
     @classmethod
     def _content_to_row(cls, item):
         try:

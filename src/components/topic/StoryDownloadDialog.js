@@ -17,6 +17,8 @@ const localMessages = {
   intro: { id: 'topic.story.download.intro', defaultMessage: 'A list of top stories is a CSV including basic information like the story URL, publication date, language, media source, and title. Use the form below to pick any additional data you want to download in addition to this.' },
   storyCount: { id: 'topic.story.download.storyCount', defaultMessage: 'Download' },
   storyTags: { id: 'topic.story.download.storyTags', defaultMessage: 'Include themes and subtopics?' },
+  platformUrlShares: { id: 'topic.story.download.platformUrlShares', defaultMessage: 'Include this subtopic\'s post, channel, author counts?' },
+  socialShares: { id: 'topic.story.download.socialShares', defaultMessage: 'Include share counts for each URL Sharing subtopic?' },
   facebookDates: { id: 'topic.story.download.facebookDates', defaultMessage: 'Include the date we collected Facebook share data?' },
   redditData: { id: 'topic.story.download.redditData', defaultMessage: 'Include live Reddit submission counts?' },
   mediaMetadata: { id: 'topic.story.download.mediaMetadata', defaultMessage: 'Include metadata about the media sources?' },
@@ -30,6 +32,8 @@ export const FIELD_STORY_TAGS = 'includeStoryTags';
 export const FIELD_FACEBOOK_DATES = 'includeFacebookDates';
 export const FIELD_REDDIT_DATA = 'includeRedditData';
 export const FIELD_MEDIA_METADATA = 'includeMediaMetadata';
+export const FIELD_PLATFORM_URL_SHARES = 'platformUrlShares';
+export const FIELD_SOCIAL_SHARES = 'socialShares';
 
 // TODO: figure out how to intl these
 const DOWNLOAD_SIZE_OPTIONS = {
@@ -128,6 +132,28 @@ const StoryDownloadDialog = (props) => {
           <Row>
             <Col lg={12}>
               <Field
+                name={FIELD_PLATFORM_URL_SHARES}
+                component={renderCheckbox}
+                type="inline"
+                fullWidth
+                label={localMessages.platformUrlShares}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={12}>
+              <Field
+                name={FIELD_SOCIAL_SHARES}
+                component={renderCheckbox}
+                type="inline"
+                fullWidth
+                label={localMessages.socialShares}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={12}>
+              <Field
                 name={FIELD_MEDIA_METADATA}
                 component={renderCheckbox}
                 type="inline"
@@ -136,20 +162,6 @@ const StoryDownloadDialog = (props) => {
               />
             </Col>
           </Row>
-          { // we still need to solve the rate limiting problem before enabling this
-          /*
-          <Row>
-            <Col lg={12}>
-              <Field
-                name={FIELD_REDDIT_DATA}
-                component={renderCheckbox}
-                type="inline"
-                fullWidth
-                label={localMessages.redditData}
-              />
-            </Col>
-          </Row>
-          */ }
           <Row>
             <Col lg={12}>
               <Field

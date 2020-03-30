@@ -42,7 +42,7 @@ export function filteredLinkTo(to, filters, baseQuery) {
 }
 
 export function combineQueryParams(filterQ, query) {
-  if (filterQ !== null) {
+  if (filterQ) {
     return `${filterQ} AND ${query}`;
   }
   return query;

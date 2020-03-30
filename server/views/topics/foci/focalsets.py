@@ -12,6 +12,10 @@ logger = logging.getLogger(__name__)
 URL_SHARING_FOCAL_SET_NAME = "URL Sharing"
 
 
+def is_url_sharing_focal_set(fs):
+    return fs['name'] == URL_SHARING_FOCAL_SET_NAME
+
+
 @app.route('/api/topics/<topics_id>/focal-sets/list', methods=['GET'])
 @arguments_required('snapshotId')
 @flask_login.login_required
@@ -20,6 +24,9 @@ def topic_focal_set_list(topics_id):
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     include_story_counts = request.args.get('includeStoryCounts')
     focal_sets = apicache.topic_focal_sets_list(user_mediacloud_key(), topics_id, snapshots_id)
+    # now mark the ones that are the magically added URL sharing platform ones
+    for fs in focal_sets:
+        fs['is_url_sharing'] = is_url_sharing_focal_set(fs)
     if include_story_counts and (include_story_counts == u'1'):
         _add_story_counts_to_foci(topics_id, focal_sets)
     return jsonify(focal_sets)

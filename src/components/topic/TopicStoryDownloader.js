@@ -17,6 +17,8 @@ function withTopicStoryDownload() {
         sort: null,
         showTweetCounts: false,
         onDownload: null,
+        usingUrlSharingSubtopic: false,
+        hasAUrlSharingFocalSet: false,
       }
 
       handleDownload = (options) => {
@@ -57,8 +59,8 @@ function withTopicStoryDownload() {
           <span className="topic-story-downloader">
             <ChildComponent
               {...this.props}
-              showTopicStoryDownloadDialog={(sort, showTweetCounts, onDownload) => {
-                this.setState({ showDialog: true, showTweetCounts, sort, onDownload });
+              showTopicStoryDownloadDialog={(sort, showTweetCounts, onDownload, usingUrlSharingSubtopic, hasAUrlSharingFocalSet) => {
+                this.setState({ showDialog: true, usingUrlSharingSubtopic, hasAUrlSharingFocalSet, showTweetCounts, sort, onDownload });
               }}
             />
             {this.state.showDialog && (
@@ -68,6 +70,8 @@ function withTopicStoryDownload() {
                 onCancel={() => this.setState({ showDialog: false })}
                 hasTweetCounts={this.state.showTweetCounts}
                 initialValues={{ storyCount: 1000, sort: this.state.sort }}
+                usingUrlSharingSubtopic={this.state.usingUrlSharingSubtopic}
+                hasAUrlSharingFocalSet={this.state.hasAUrlSharingFocalSet}
               />
             )}
           </span>
@@ -78,6 +82,7 @@ function withTopicStoryDownload() {
     TopicStoryDownloader.propTypes = {
       // from compositional chain
       notifyOfCsvDownload: PropTypes.func.isRequired,
+      usingUrlSharingSubtopic: PropTypes.bool,
       // from child
       filters: PropTypes.object.isRequired,
       topicId: PropTypes.number.isRequired,

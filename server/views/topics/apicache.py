@@ -12,7 +12,7 @@ from server.auth import user_mediacloud_client, user_admin_mediacloud_client, us
 from server.util.request import filters_from_args
 from server.views.topics import validated_sort, access_public_topic
 from server.util.api_helper import add_missing_dates_to_split_story_counts
-from server.views.topics.foci.focalsets import URL_SHARING_FOCAL_SET_NAME
+from server.views.topics.foci.focalsets import is_url_sharing_focal_set
 
 logger = logging.getLogger(__name__)
 
@@ -510,5 +510,5 @@ def url_sharing_focal_set(topics_id, snapshots_id) -> bool:
     :return: a focal set, or None if the topic doesn't have one
     """
     focal_sets = topic_focal_sets_list(user_mediacloud_key(), topics_id, snapshots_id)
-    url_sharing_focal_sets = [fs for fs in focal_sets if fs['name'] == URL_SHARING_FOCAL_SET_NAME]
+    url_sharing_focal_sets = [fs for fs in focal_sets if is_url_sharing_focal_set(fs)]
     return url_sharing_focal_sets[0] if len(url_sharing_focal_sets) > 0 else None

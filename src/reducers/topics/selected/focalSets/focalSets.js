@@ -6,6 +6,8 @@ import foci from './foci';
 
 export const isUrlSharingFocalSet = (focalSet) => (focalSet.name === 'URL Sharing');
 
+export const hasAUrlSharingFocalSet = (focalSets) => focalSets.map(fs => isUrlSharingFocalSet(fs)).reduce((combined, current) => combined || current, false);
+
 const focalSetsReducer = combineReducers({
   all,
   create,

@@ -56,7 +56,8 @@ const DOWNLOAD_SORT_OPTIONS = {
 };
 
 const StoryDownloadDialog = (props) => {
-  const { open, onCancel, onDownload, intl, handleSubmit, renderCheckbox, renderSelect, hasTweetCounts } = props;
+  const { open, onCancel, onDownload, intl, handleSubmit, renderCheckbox, renderSelect, hasTweetCounts,
+    usingUrlSharingSubtopic, hasAUrlSharingFocalSet } = props;
   return (
     <form
       className="app-form topic-story-download-form"
@@ -129,28 +130,32 @@ const StoryDownloadDialog = (props) => {
               />
             </Col>
           </Row>
-          <Row>
-            <Col lg={12}>
-              <Field
-                name={FIELD_PLATFORM_URL_SHARES}
-                component={renderCheckbox}
-                type="inline"
-                fullWidth
-                label={localMessages.platformUrlShares}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={12}>
-              <Field
-                name={FIELD_SOCIAL_SHARES}
-                component={renderCheckbox}
-                type="inline"
-                fullWidth
-                label={localMessages.socialShares}
-              />
-            </Col>
-          </Row>
+          {usingUrlSharingSubtopic && (
+            <Row>
+              <Col lg={12}>
+                <Field
+                  name={FIELD_PLATFORM_URL_SHARES}
+                  component={renderCheckbox}
+                  type="inline"
+                  fullWidth
+                  label={localMessages.platformUrlShares}
+                />
+              </Col>
+            </Row>
+          )}
+          {hasAUrlSharingFocalSet && (
+            <Row>
+              <Col lg={12}>
+                <Field
+                  name={FIELD_SOCIAL_SHARES}
+                  component={renderCheckbox}
+                  type="inline"
+                  fullWidth
+                  label={localMessages.socialShares}
+                />
+              </Col>
+            </Row>
+          )}
           <Row>
             <Col lg={12}>
               <Field
@@ -198,6 +203,8 @@ StoryDownloadDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   initialValues: PropTypes.object,
   hasTweetCounts: PropTypes.bool, // defaults to false
+  usingUrlSharingSubtopic: PropTypes.bool,
+  hasAUrlSharingFocalSet: PropTypes.bool,
   // from context
   intl: PropTypes.object.isRequired,
   renderTextField: PropTypes.func.isRequired,

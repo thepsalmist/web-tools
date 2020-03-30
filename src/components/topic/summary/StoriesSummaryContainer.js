@@ -17,6 +17,7 @@ import TopicStoryTableContainer from '../TopicStoryTableContainer';
 import messages from '../../../resources/messages';
 import { urlWithFilters, filtersAsUrlParams } from '../../util/location';
 import withTopicStoryDownload from '../TopicStoryDownloader';
+import { isUrlSharingFocalSet, hasAUrlSharingFocalSet } from '../../../reducers/topics/selected/focalSets/focalSets';
 
 const NUM_TO_SHOW = 10;
 
@@ -40,7 +41,7 @@ class StoriesSummaryContainer extends React.Component {
   }
 
   render() {
-    const { stories, sort, topicId, handleFocusSelected, user, showTweetCounts, showTopicStoryDownloadDialog } = this.props;
+    const { stories, sort, topicId, handleFocusSelected, user, showTweetCounts, showTopicStoryDownloadDialog, usingUrlSharingSubtopic } = this.props;
     const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
     return (
       <>
@@ -58,7 +59,7 @@ class StoriesSummaryContainer extends React.Component {
               <MenuItem
                 className="action-icon-menu-item"
                 id="topic-summary-top-stories-download-dialog"
-                onClick={() => showTopicStoryDownloadDialog(sort, showTweetCounts)}
+                onClick={() => showTopicStoryDownloadDialog(sort, showTweetCounts, null, usingUrlSharingSubtopic, hasAUrlSharingFocalSet)}
               >
                 <ListItemText><FormattedMessage {...localMessages.downloadTopStories} /></ListItemText>
                 <ListItemIcon>
@@ -102,6 +103,8 @@ StoriesSummaryContainer.propTypes = {
   stories: PropTypes.array,
   user: PropTypes.object,
   showTweetCounts: PropTypes.bool,
+  usingUrlSharingSubtopic: PropTypes.bool.isRequired,
+  hasAUrlSharingFocalSet: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -110,6 +113,8 @@ const mapStateToProps = state => ({
   stories: state.topics.selected.summary.topStories.stories,
   user: state.user,
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
+  usingUrlSharingSubtopic: (state.topics.selected.filters.focusId !== null) && isUrlSharingFocalSet(state.topics.selected.timespans.selected.focal_set),
+  hasAUrlSharingFocalSet: hasAUrlSharingFocalSet(state.topics.selected.focalSets.all.list),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

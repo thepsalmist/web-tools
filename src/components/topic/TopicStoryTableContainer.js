@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import TopicStoryTable from './TopicStoryTable';
-import { isUrlSharingFocalSet } from '../../reducers/topics/selected/focalSets/focalSets';
+import { isUrlSharingFocalSet, hasAUrlSharingFocalSet } from '../../reducers/topics/selected/focalSets/focalSets';
 
 /**
  * Simple wrapper around TopicStoryTable to pull in some stuff from state (so the components that use
@@ -26,6 +26,7 @@ const mapStateToProps = state => ({
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
   // only show the author count, and hide inlinks/outlinks, if the user is in a "url sharing" focus
   usingUrlSharingSubtopic: (state.topics.selected.filters.focusId !== null) && isUrlSharingFocalSet(state.topics.selected.timespans.selected.focal_set),
+  hasAUrlSharingFocalSet: hasAUrlSharingFocalSet(state.topics.selected.focalSets.all.list),
 });
 
 export default (

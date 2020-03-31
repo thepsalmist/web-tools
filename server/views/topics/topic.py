@@ -69,8 +69,7 @@ def _add_snapshot_foci_count(api_key, topics_id, snapshots):
             'snapshot': s,
         }
         jobs.append(job)
-    snapshots = _snapshot_foci_count_job.map(jobs)
-    return snapshots
+    return [item for item in _snapshot_foci_count_job.map(jobs)]
 
 
 def _topic_snapshot_list(topic):

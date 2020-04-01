@@ -9,6 +9,7 @@ from server.platforms.web_mediacloud import WebMediaCloudProvider
 from server.platforms.twitter_crimson_hexagon import TwitterCrimsonHexagonProvider
 from server.platforms.generic_csv import GenericCsvProvider
 from server.platforms.web_google import WebGoogleProvider
+from server.platforms.youtube_youtube import YouTubeYouTubeProvider
 
 logger = logging.getLogger(__name__)
 
@@ -18,14 +19,16 @@ PLATFORM_TWITTER = 'twitter'
 PLATFORM_REDDIT = 'reddit'
 PLATFORM_GENERIC = 'generic_post'
 PLATFORM_FACEBOOK = 'facebook'  # coming soon
+PLATFORM_YOUTUBE = 'youtube'  # coming soon
 
 # static list matching topics/info results
 PLATFORM_SOURCE_CRIMSON_HEXAGON = 'crimson_hexagon'
 PLATFORM_SOURCE_CSV = 'csv'
 PLATFORM_SOURCE_MEDIA_CLOUD = 'mediacloud'
 PLATFORM_SOURCE_PUSHSHIFT = 'pushshift'
-PLATFORM_SOURCE_CROWD_TANGLE = 'crowd_tangle'  # coming soon
 PLATFORM_SOURCE_GOOGLE = 'google'
+PLATFORM_SOURCE_CROWD_TANGLE = 'crowd_tangle'  # coming soon
+PLATFORM_SOURCE_YOUTUBE = 'youtube'  # coming soon
 
 
 def provider_for(platform: str, source: str) -> ContentProvider:
@@ -48,6 +51,8 @@ def provider_for(platform: str, source: str) -> ContentProvider:
         return GenericCsvProvider()
     if (platform == PLATFORM_OPEN_WEB) and (source == PLATFORM_SOURCE_GOOGLE):
         return WebGoogleProvider()
+    if (platform == PLATFORM_YOUTUBE) and (source == PLATFORM_SOURCE_YOUTUBE):
+        YouTubeYouTubeProvider(config.get('YOUTUBE_API_KEY'))
     raise UnknownProviderException(platform, source)
 
 

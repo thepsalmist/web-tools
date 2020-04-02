@@ -40,7 +40,7 @@ const StoryTable = (props) => {
                 dateToShow += '?';
               }
             } else {
-              dateToShow = 'TBD';
+              dateToShow = '?';
               dateStyle = 'story-date-undateable';
             }
             return (

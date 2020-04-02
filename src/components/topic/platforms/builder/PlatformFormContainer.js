@@ -11,6 +11,7 @@ import PlatformPreview from './preview/PlatformPreview';
 import { platformChannelDataFormatter } from '../../../util/topicUtil';
 import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER, PLATFORM_GENERIC, MEDIA_CLOUD_SOURCE, CSV_SOURCE } from '../../../../lib/platformTypes';
 import { emptyString } from '../../../../lib/formValidators';
+import { queryAsString } from '../../../../lib/stringUtil';
 import EditOpenWebForm from './forms/EditOpenWebForm';
 import EditQueryForm from './forms/EditQueryForm';
 import EditRedditForm from './forms/EditRedditForm';
@@ -45,7 +46,7 @@ const validationForPlatformSource = (platform, source, formInfo) => {
   if ((platform === PLATFORM_OPEN_WEB) && (source === MEDIA_CLOUD_SOURCE) && ((formInfo.media && formInfo.media.length < 1) || formInfo.media === undefined)) {
     return true; // disabled
   }
-  if (emptyString(formInfo.query)) {
+  if (formInfo.query !== undefined && emptyString(queryAsString(formInfo.query))) {
     return true;
   }
   return false;
@@ -170,7 +171,7 @@ function validate(values, props) {
   if (!values.media || !values.media.length) {
     errors.media = { _error: formatMessage(localMessages.noMediaSpecified) };
   }
-  if (emptyString(values.query)) {
+  if (values.query === undefined || emptyString(queryAsString(values.query))) {
     if (values.platform === PLATFORM_TWITTER) {
       errors.query = { _error: formatMessage(localMessages.noMonitorSpecified) };
     } else {

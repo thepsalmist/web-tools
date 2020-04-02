@@ -79,7 +79,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       description: values.description,
       start_date: values.start_date,
       end_date: values.end_date,
-      solr_seed_query: values.solr_seed_query,
+      solr_seed_query: null, // we don't create it here anymore values.solr_seed_query,
       max_iterations: values.max_iterations,
       ch_monitor_id: values.ch_monitor_id === undefined ? '' : values.ch_monitor_id,
       is_public: values.is_public ? 1 : 0,

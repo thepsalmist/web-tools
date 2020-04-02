@@ -140,6 +140,7 @@ export const addUsefulDetailsToTopic = (t) => {
   // return augmented state
   return {
     ...t,
+    solr_seed_query: t.solr_seed_query === 'null' ? '' : t.solr_seed_query,
     latestState,
     platformsHaveChanged,
     datesOrSpideringHaveChanged,

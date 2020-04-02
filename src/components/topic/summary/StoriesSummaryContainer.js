@@ -41,7 +41,7 @@ class StoriesSummaryContainer extends React.Component {
   }
 
   render() {
-    const { stories, sort, topicId, handleFocusSelected, user, showTweetCounts, showTopicStoryDownloadDialog, usingUrlSharingSubtopic } = this.props;
+    const { stories, sort, topicId, handleFocusSelected, user, showTweetCounts, showTopicStoryDownloadDialog, usingUrlSharingSubtopic, usingUrlSharingFocalSet } = this.props;
     const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
     return (
       <>
@@ -59,7 +59,8 @@ class StoriesSummaryContainer extends React.Component {
               <MenuItem
                 className="action-icon-menu-item"
                 id="topic-summary-top-stories-download-dialog"
-                onClick={() => showTopicStoryDownloadDialog(sort, showTweetCounts, null, usingUrlSharingSubtopic, hasAUrlSharingFocalSet)}
+                onClick={() => showTopicStoryDownloadDialog(sort, showTweetCounts, null,
+                  usingUrlSharingSubtopic, usingUrlSharingFocalSet)}
               >
                 <ListItemText><FormattedMessage {...localMessages.downloadTopStories} /></ListItemText>
                 <ListItemIcon>
@@ -104,7 +105,7 @@ StoriesSummaryContainer.propTypes = {
   user: PropTypes.object,
   showTweetCounts: PropTypes.bool,
   usingUrlSharingSubtopic: PropTypes.bool.isRequired,
-  hasAUrlSharingFocalSet: PropTypes.bool.isRequired,
+  usingUrlSharingFocalSet: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -114,7 +115,7 @@ const mapStateToProps = state => ({
   user: state.user,
   showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
   usingUrlSharingSubtopic: (state.topics.selected.filters.focusId !== null) && isUrlSharingFocalSet(state.topics.selected.timespans.selected.focal_set),
-  hasAUrlSharingFocalSet: hasAUrlSharingFocalSet(state.topics.selected.focalSets.all.list),
+  usingUrlSharingFocalSet: hasAUrlSharingFocalSet(state.topics.selected.focalSets.all.list),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

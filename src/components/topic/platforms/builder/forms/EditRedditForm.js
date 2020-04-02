@@ -22,17 +22,6 @@ const EditRedditForm = ({ renderTextField, intl, onEnterKey }) => (
         </div>
       </Col>
     </Row>
-    <Row>
-      <Col lg={8} xs={12}>
-        <Field
-          name="channel"
-          placeholder={intl.formatMessage(messages.searchByRedditChannel)}
-          component={renderTextField}
-          fullWidth
-          onKeyDown={onEnterKey}
-        />
-      </Col>
-    </Row>
   </>
 );
 

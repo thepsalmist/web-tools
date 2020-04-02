@@ -22,6 +22,7 @@ class EditPlatformContainer extends React.Component {
       topicId,
       currentPlatformId: selectedPlatform.topic_seed_queries_id,
       currentPlatformType: selectedPlatform.platform,
+      query: selectedPlatform.query,
       platformDetails: selectedPlatform,
       media: selectedPlatform.channel,
     };

@@ -61,7 +61,7 @@ export const formatTopicPreviewQuery = (topicQuery) => ({
   ...formatTopicOpenWebSourcesForQuery(topicQuery.sourcesAndCollections),
 });
 
-export const formatPlatformRedditChannelData = (formValues) => (formValues.channel ? formValues.channel.split(',') : '');
+export const formatPlatformRedditChannelData = (formValues) => ((formValues.channel && formValues.channel.length > 0) ? formValues.channel.split(',') : '');
 
 export const timespanForDate = (date, timespans, period) => timespans.filter(t => t.period === period).find(t => date >= t.startDateObj && date <= t.endDateObj);
 

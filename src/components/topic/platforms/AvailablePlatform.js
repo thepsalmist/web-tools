@@ -27,7 +27,7 @@ const localMessages = {
   'google-name': { id: 'mediaCloud.name', defaultMessage: 'via Google' },
   'csv-name': { id: 'mediaCloud.name', defaultMessage: 'via CSV upload' },
   // combos
-  'reddit.pushshift-about': { id: 'rd.ps.about', defaultMessage: 'Discover links shared on the historical Reddit archive hosted by PushShift.io. Specify keywords and subreddits to focus on. Any submissions matching the keywords in the specified subreddits will be checked for links. Any links found will be added into the topic.' },
+  'reddit.pushshift-about': { id: 'rd.ps.about', defaultMessage: 'Discover links shared on the historical Reddit archive hosted by PushShift.io. Specify keywords. Any submissions matching the keywords on reddit will be checked for links. Any links found will be added into the topic.' },
   'twitter.pushshift-about': { id: 'tw.ps.about', defaultMessage: 'Discover links shared by validated Twitter accounts since mid 2019 in the archive hosted by PushShift.io. Specify keywords to focus on. Any tweets matching the keywords will be checked for links. Any links found will be add into the topic.' },
   'twitter.crimson_hexagon-about': { id: 'tw.ch.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in tweets from a Crimson Hexagon Monitor you have already created. <b>You need to enter the id of that monitor.</b> Any tweets matching the keywords will be checked for links. Any links found will be add into the topic' },
   'facebook.crowd_tangle-about': { id: 'fb.ct.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in Facebook posts via Crowd Tangle. Specify keywords to match. Any posts from large public groups matching the keywords will be checked for links. Any links found will be add into the topic' },

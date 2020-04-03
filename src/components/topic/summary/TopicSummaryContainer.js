@@ -12,11 +12,13 @@ import WordsSummaryContainer from './WordsSummaryContainer';
 import SplitStoryCountSummaryContainer from './SplitStoryCountSummaryContainer';
 import TopicStoryStatsContainer from './TopicStoryStatsContainer';
 import StoryTotalsSummaryContainer from './StoryTotalsSummaryContainer';
-import DownloadMapContainer from './DownloadMapContainer';
+import DownloadMapFilesContainer from './export/DownloadMapFilesContainer';
+import DownloadTimespanFilesConatainer from './export/DownloadTimespanFilesContainer';
+import DownloadSnapshotFilesConatainer from './export/DownloadSnapshotFilesContainer';
 import NytLabelSummaryContainer from './NytLabelSummaryContainer';
 import GeoTagSummaryContainer from './GeoTagSummaryContainer';
 import Permissioned from '../../common/Permissioned';
-import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
+import { PERMISSION_LOGGED_IN, PERMISSION_ADMIN } from '../../../lib/auth';
 import TopicStoryMetadataStatsContainer from './TopicStoryMetadataStatsContainer';
 import FociStoryCountComparisonContainer from './FociStoryCountComparisonContainer';
 import TopicWordSpaceContainer from './TopicWordSpaceContainer';
@@ -30,6 +32,7 @@ const localMessages = {
   previewTitle: { id: 'topic.summary.public.title', defaultMessage: 'Topic Preview: {name}' },
   previewIntro: { id: 'topic.summary.public.intro', defaultMessage: 'This is a preview of our {name} topic.  It shows just a sample of the data available once you login to the Topic Mapper tool. To explore, click on a link and sign in.' },
   statsTabTitle: { id: 'topic.summary.summary.about', defaultMessage: 'Stats' },
+  exportTabTitle: { id: 'topic.summary.summary.export', defaultMessage: 'Export' },
 };
 
 class TopicSummaryContainer extends React.Component {
@@ -78,13 +81,6 @@ class TopicSummaryContainer extends React.Component {
                   <MediaSummaryContainer topicId={topic.topics_id} filters={filters} location={location} />
                 </Col>
               </Row>
-              <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-                <Row>
-                  <Col lg={12}>
-                    <DownloadMapContainer topicId={topic.topics_id} filters={filters} />
-                  </Col>
-                </Row>
-              </Permissioned>
             </>
           );
           break;
@@ -174,6 +170,33 @@ class TopicSummaryContainer extends React.Component {
             </>
           );
           break;
+        case 5:
+          // export
+          // stats
+          viewContent = (
+            <>
+              <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
+                <Row>
+                  <Col lg={12}>
+                    <DownloadMapFilesContainer topicId={topic.topics_id} filters={filters} />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col lg={12}>
+                    <DownloadTimespanFilesConatainer topicId={topic.topics_id} filters={filters} />
+                  </Col>
+                </Row>
+              </Permissioned>
+              <Permissioned onlyRole={PERMISSION_ADMIN}>
+                <Row>
+                  <Col lg={12}>
+                    <DownloadSnapshotFilesConatainer topicId={topic.topics_id} filters={filters} />
+                  </Col>
+                </Row>
+              </Permissioned>
+            </>
+          );
+          break;
         default:
           break;
       }
@@ -198,6 +221,7 @@ class TopicSummaryContainer extends React.Component {
                   formatMessage(messages.language),
                   formatMessage(messages.representation),
                   formatMessage(localMessages.statsTabTitle),
+                  formatMessage(localMessages.exportTabTitle),
                 ]}
                 onViewSelected={index => this.setState({ selectedTab: index })}
               />

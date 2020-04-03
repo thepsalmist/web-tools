@@ -488,3 +488,14 @@ def topic_media_map(topics_id, timespan_maps_id, file_format):
 def _cached_topic_media_map(user_mc_key, topics_id, timespan_maps_id, file_format):
     user_mc = user_mediacloud_client(user_mc_key)
     return user_mc.topicMediaMapDownload(topics_id, timespan_maps_id, file_format)
+
+
+def topic_timespan_files_list(topics_id, timespans_id):
+    return _cached_topic_timespan_files_list(user_mediacloud_key(), topics_id, timespans_id)
+
+
+@cache.cache_on_arguments()
+def _cached_topic_timespan_files_list(user_mc_key, topics_id, timespans_id):
+    user_mc = user_mediacloud_client(user_mc_key)
+    return user_mc.topicTimespanFiles(topics_id, timespans_id=timespans_id)
+

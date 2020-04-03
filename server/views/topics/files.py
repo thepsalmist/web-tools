@@ -5,6 +5,7 @@ from flask import jsonify, request
 from server import app
 import server.util.file as file_util
 import server.views.topics.apicache as apicache
+from server.auth import user_admin_mediacloud_client
 from server.util.request import arguments_required, filters_from_args, api_error_handler
 
 logger = logging.getLogger(__name__)
@@ -42,3 +43,23 @@ def map_file(topics_id, timespan_maps_id):
     mimetype = "image/svg+xml" if file_format == 'svg' else "text/xml"
     headers = {"Content-Disposition": "attachment;filename=" + filename} if as_attachment else None
     return flask.Response(content, mimetype=mimetype, headers=headers)
+
+
+@app.route('/api/topics/<topics_id>/timespan-files/list', methods=['GET'])
+@arguments_required('timespanId')
+@api_error_handler
+def timespan_files_list(topics_id):
+    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    results = apicache.topic_timespan_files_list(topics_id, timespans_id)
+    return jsonify(results)
+
+
+@app.route('/api/topics/<topics_id>/snapshot-files/list', methods=['GET'])
+@arguments_required('snapshotId')
+@api_error_handler
+def snapshot_files_list(topics_id):
+    # don't cache this because the URLs contain sensitive info, but the are public
+    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    user_admin_mc = user_admin_mediacloud_client()
+    results = user_admin_mc.topicSnapshotFiles(topics_id, snapshots_id=snapshots_id)
+    return jsonify(results)

@@ -4,7 +4,7 @@ export * from './topics/focalSetActions.js';
 export * from './topics/focusActions.js';
 export * from './topics/geotagActions.js';
 export * from './topics/mediaActions.js';
-export * from './topics/networkMapActions.js';
+export * from './topics/fileActions.js';
 export * from './topics/nyttagActions.js';
 export * from './topics/permissionActions.js';
 export * from './topics/splitStoryActions.js';

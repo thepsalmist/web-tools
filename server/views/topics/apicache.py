@@ -513,6 +513,7 @@ def url_sharing_focal_set(topics_id, snapshots_id) -> bool:
     url_sharing_focal_sets = [fs for fs in focal_sets if is_url_sharing_focal_set(fs)]
     return url_sharing_focal_sets[0] if len(url_sharing_focal_sets) > 0 else None
 
+
 def topic_timespan_files_list(topics_id, timespans_id):
     return _cached_topic_timespan_files_list(user_mediacloud_key(), topics_id, timespans_id)
 

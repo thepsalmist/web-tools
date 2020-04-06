@@ -17,7 +17,7 @@ import TopicStoryTableContainer from '../TopicStoryTableContainer';
 import messages from '../../../resources/messages';
 import { urlWithFilters, filtersAsUrlParams } from '../../util/location';
 import withTopicStoryDownload from '../TopicStoryDownloader';
-import { isUrlSharingFocalSet, hasAUrlSharingFocalSet } from '../../../reducers/topics/selected/focalSets/focalSets';
+import { isUrlSharingFocalSet, hasAUrlSharingFocalSet } from '../../../lib/topicVersionUtil';
 
 const NUM_TO_SHOW = 10;
 

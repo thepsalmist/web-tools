@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import withFilteredAsyncData from '../../FilteredAsyncDataContainer';
 import { fetchTopicTimespanFiles } from '../../../../actions/topicActions';
 import DownloadTimespanFiles from './DownloadTimespanFiles';
-import { isUrlSharingFocalSet } from '../../../../reducers/topics/selected/focalSets/focalSets';
+import { isUrlSharingFocalSet } from '../../../../lib/topicVersionUtil';
 
 const DownloadTimespanFilesContainer = ({ filters, files, usingUrlSharingSubtopic }) => (
   <DownloadTimespanFiles filters={filters} files={files} usingUrlSharingSubtopic={usingUrlSharingSubtopic} />

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import MediaTable from './MediaTable';
-import { isUrlSharingFocalSet } from '../../reducers/topics/selected/focalSets/focalSets';
+import { isUrlSharingFocalSet } from '../../lib/topicVersionUtil';
 
 /**
  * Simple wrapper around MediaTable to pull in some stuff from state (so the components that use

@@ -1,6 +1,47 @@
 {
   "releases": [
     {
+      "date": "2020-04-06",
+      "version": "v3.14.0",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Topics can now import links shared on a variety of platforms"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Import top related Google search results into a topic"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Import links shared on Reddit into a topic"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Import links in content from a CSV you upload into a topic"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Sharing metrics at the author and post level for topic platforms"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Quickly export CSVs of all the stories or media in a topic"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Top words for a media source in a topic work again"
+        }
+      ]
+    },
+    {
       "date": "2020-03-26",
       "version": "v3.13.12",
       "notes": [

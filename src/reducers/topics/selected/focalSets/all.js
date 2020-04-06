@@ -6,10 +6,12 @@ import { FETCH_TOPIC_FOCAL_SETS_LIST, TOPIC_FILTER_BY_SNAPSHOT, FETCH_FOCAL_SET_
   from '../../../../actions/topicActions';
 import { createAsyncReducer } from '../../../../lib/reduxHelpers';
 
+const URL_SHARING_FOCAL_SET_NAME = 'URL Sharing';
 // Return true if there are focal set changes that require a new snapshot
 function pendingFocalSetDefinitions(definitions, focalSets) {
   // differet total number
-  if (definitions.length !== focalSets.length) {
+  const focalSetsNoAutoSets = focalSets.filter(f => f.name !== URL_SHARING_FOCAL_SET_NAME);
+  if (definitions.length !== focalSetsNoAutoSets.length) {
     return true;
   }
   // has match?

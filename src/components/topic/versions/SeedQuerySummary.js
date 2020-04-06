@@ -8,7 +8,7 @@ const localMessages = {
   newTitle: { id: 'topic.info.newTitle', defaultMessage: 'New Version: Summary' },
 };
 
-const SeedQuerySummary = ({ topic, snapshot }) => (
+const SeedQuerySummary = ({ topic, snapshot, focalSets }) => (
   <div className="topic-info-sidebar">
     <h2>
       {snapshot && <FormattedHTMLMessage {...localMessages.title} values={{ versionNumber: snapshot.note }} />}
@@ -17,14 +17,18 @@ const SeedQuerySummary = ({ topic, snapshot }) => (
     <TopicVersionReadySummary
       snapshot={snapshot}
       topic={topic}
+      focalSets={focalSets}
       startWithDetailsShowing
     />
   </div>
 );
 
 SeedQuerySummary.propTypes = {
+  // from parent
   snapshot: PropTypes.object.isRequired,
   topic: PropTypes.object.isRequired,
+  focalSets: PropTypes.array,
+  // from component chain
   intl: PropTypes.object.isRequired,
 };
 

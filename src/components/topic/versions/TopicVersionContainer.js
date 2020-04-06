@@ -29,7 +29,7 @@ const localMessages = {
  */
 const TopicVersionContainer = (props) => {
   const { children, topic, goToCreateNewVersion, fetchStatusSnapshot, fetchStatusInfo,
-    setSideBarContent, snapshotId, filters, selectedSnapshot } = props;
+    setSideBarContent, snapshotId, filters, selectedSnapshot, focalSetDefs } = props;
   const currentVersionNum = getCurrentVersionFromSnapshot(topic, snapshotId);
   // carefully figure out what the latest state for this version is
   let snapshotToUse;
@@ -58,6 +58,7 @@ const TopicVersionContainer = (props) => {
       <TopicVersionQueuedStatusContainer
         topic={topic}
         snapshot={snapshotToUse}
+        focalSets={focalSetDefs}
         goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
       />
     );
@@ -67,6 +68,7 @@ const TopicVersionContainer = (props) => {
       <TopicVersionRunningStatusContainer
         topic={topic}
         snapshot={snapshotToUse}
+        focalSets={focalSetDefs}
         title={(snapshotToUse.state === TOPIC_SNAPSHOT_STATE_RUNNING) ? localMessages.runningSubtitle : localMessages.almostDoneSubtitle}
       />
     );
@@ -76,6 +78,7 @@ const TopicVersionContainer = (props) => {
       <TopicVersionTooBigStatusContainer
         topic={topic}
         snapshot={snapshotToUse}
+        focalSets={focalSetDefs}
         goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
       />
     );
@@ -84,6 +87,7 @@ const TopicVersionContainer = (props) => {
       <TopicVersionErrorStatusContainer
         topic={topic}
         snapshot={snapshotToUse}
+        focalSets={focalSetDefs}
         goToCreateNewVersion={() => goToCreateNewVersion(topic, filters)}
       />
     );
@@ -131,6 +135,7 @@ const mapStateToProps = state => ({
   snapshotId: state.topics.selected.filters.snapshotId,
   needsNewSnapshot: state.topics.selected.needsNewSnapshot,
   snapshotCount: state.topics.selected.snapshots.list.length,
+  focalSetDefs: state.topics.selected.focalSets.definitions.list,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -2,8 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import TopicStoryTable from './TopicStoryTable';
-import { isUrlSharingFocalSet, hasAUrlSharingFocalSet } from '../../reducers/topics/selected/focalSets/focalSets';
-
+import { isUrlSharingFocalSet, hasAUrlSharingFocalSet } from '../../lib/topicVersionUtil';
 /**
  * Simple wrapper around TopicStoryTable to pull in some stuff from state (so the components that use
  * TopicStoryTable don't need to pass it in). This just passses along all the other props so maintenance

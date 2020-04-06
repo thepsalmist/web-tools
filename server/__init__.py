@@ -239,7 +239,7 @@ if (server_app == SERVER_APP_TOPICS) or is_dev_mode():
     import server.views.topics.foci.nyttheme
     import server.views.topics.foci.mediatype
     import server.views.topics.permissions
-    import server.views.topics.maps
+    import server.views.topics.files
     import server.views.topics.nyttags
     import server.views.topics.entities
     import server.views.topics.geotags

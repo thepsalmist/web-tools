@@ -6,6 +6,7 @@ import dateutil.parser
 from urllib.parse import urlparse
 import subprocess
 
+from server import base_dir
 from server.cache import cache
 from server.platforms.provider import ContentProvider, MC_DATE_FORMAT
 
@@ -57,7 +58,10 @@ class WebGoogleProvider(ContentProvider):
         start_query = "after:" + start_date.strftime("%Y-%m-%d")
         end_query = "before:" + (end_date + dt.timedelta(days=1)).strftime('%Y-%m-%d')
         full_query = "%s %s %s" % (query, start_query, end_query)
-        results = subprocess.check_output(["googler", "--json", "-n {}".format(limit), full_query])
+        results = subprocess.check_output(["{}/scripts/googler".format(base_dir),
+                                           "--json",
+                                           "-n {}".format(limit),
+                                           full_query])
         links = json.loads(results)
         return links
 

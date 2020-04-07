@@ -8,7 +8,3 @@ export const fetchTopicMapFiles = createAsyncAction(FETCH_TOPIC_MAP_FILES, api.t
 // pass in topic id & params (snapshot id, focus id, timespan id)
 export const FETCH_TOPIC_TIMESPAN_FILES = 'FETCH_TOPIC_TIMESPAN_FILES';
 export const fetchTopicTimespanFiles = createAsyncAction(FETCH_TOPIC_TIMESPAN_FILES, api.topicTimespanFiles);
-
-// pass in topic id & params (snapshot id, focus id, timespan id)
-export const FETCH_TOPIC_SNAPSHOT_FILES = 'FETCH_TOPIC_SNAPSHOT_FILES';
-export const fetchTopicSnapshotFiles = createAsyncAction(FETCH_TOPIC_SNAPSHOT_FILES, api.topicSnapshotFiles);

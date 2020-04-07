@@ -52,14 +52,3 @@ def timespan_files_list(topics_id):
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     results = apicache.topic_timespan_files_list(topics_id, timespans_id)
     return jsonify(results)
-
-
-@app.route('/api/topics/<topics_id>/snapshot-files/list', methods=['GET'])
-@arguments_required('snapshotId')
-@api_error_handler
-def snapshot_files_list(topics_id):
-    # don't cache this because the URLs contain sensitive info, but the are public
-    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
-    user_admin_mc = user_admin_mediacloud_client()
-    results = user_admin_mc.topicSnapshotFiles(topics_id, snapshots_id=snapshots_id)
-    return jsonify(results)

@@ -240,11 +240,6 @@ export function topicTimespanFiles(topicId, params) {
   return createApiPromise(`/api/topics/${topicId}/timespan-files/list`, acceptedParams);
 }
 
-export function topicSnapshotFiles(topicId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q']);
-  return createApiPromise(`/api/topics/${topicId}/snapshot-files/list`, acceptedParams);
-}
-
 export function fetchTopicSearchResults(searchStr, params) {
   const acceptedParams = acceptParams(params, ['mode']);
   return createApiPromise('/api/topics/search', { searchStr, ...acceptedParams });

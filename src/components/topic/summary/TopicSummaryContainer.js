@@ -14,11 +14,10 @@ import TopicStoryStatsContainer from './TopicStoryStatsContainer';
 import StoryTotalsSummaryContainer from './StoryTotalsSummaryContainer';
 import DownloadMapFilesContainer from './export/DownloadMapFilesContainer';
 import DownloadTimespanFilesConatainer from './export/DownloadTimespanFilesContainer';
-import DownloadSnapshotFilesConatainer from './export/DownloadSnapshotFilesContainer';
 import NytLabelSummaryContainer from './NytLabelSummaryContainer';
 import GeoTagSummaryContainer from './GeoTagSummaryContainer';
 import Permissioned from '../../common/Permissioned';
-import { PERMISSION_LOGGED_IN, PERMISSION_ADMIN } from '../../../lib/auth';
+import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import TopicStoryMetadataStatsContainer from './TopicStoryMetadataStatsContainer';
 import FociStoryCountComparisonContainer from './FociStoryCountComparisonContainer';
 import TopicWordSpaceContainer from './TopicWordSpaceContainer';
@@ -184,13 +183,6 @@ class TopicSummaryContainer extends React.Component {
                 <Row>
                   <Col lg={12}>
                     <DownloadTimespanFilesConatainer topicId={topic.topics_id} filters={filters} />
-                  </Col>
-                </Row>
-              </Permissioned>
-              <Permissioned onlyRole={PERMISSION_ADMIN}>
-                <Row>
-                  <Col lg={12}>
-                    <DownloadSnapshotFilesConatainer topicId={topic.topics_id} filters={filters} />
                   </Col>
                 </Row>
               </Permissioned>

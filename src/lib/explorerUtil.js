@@ -64,12 +64,6 @@ export function serializeSearchTags(searches) {
   return currentSearch.length ? `[${currentSearch}]` : '';
 }
 
-
-export function replaceCurlyQuotes(stringWithQuotes) {
-  let removedQuotes = stringWithQuotes.replace(/[\u2018]/g, "'").replace(/[\u2019]/g, "'"); // replace single curly quotes
-  removedQuotes = removedQuotes.replace(/[\u201C]/g, '"').replace(/[\u201D]/g, '"'); // replace double curly quotes
-  return removedQuotes;
-}
 /* deletions, duplications and new queries shouldn't be shown in results until they have fetched results */
 export function ensureSafeSortedQueries(queries) {
   const unDeletedQueries = queries.filter(q => q.deleted !== true);

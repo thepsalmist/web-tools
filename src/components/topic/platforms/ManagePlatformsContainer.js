@@ -47,7 +47,7 @@ class ManagePlatformsContainer extends React.Component {
     // filteredLinkTo link to edit wizard
     // in edit, we will find latest topic_seed_query for this platform
     handleSelectPlatform(
-      { topic_seed_queries_id: platform.topic_seed_queries_id, platform: platform.platform },
+      { ...platform },
       filteredLinkTo(`/topics/${topicId}/platforms/${platform.topic_seed_queries_id}/edit`, filters)
     );
   }

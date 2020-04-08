@@ -48,7 +48,7 @@ const PlatformDetailsInfo = ({ platform }) => {
           <>
             <FormattedMessage {...localMessages.crimsonHexagonId} />:
             &nbsp;
-            <code>{platform.query}</code>
+            <code>{typeof platform.query === 'object' ? platform.query.getValue() : platform.query}</code>
           </>
         );
       } else {
@@ -56,7 +56,7 @@ const PlatformDetailsInfo = ({ platform }) => {
           <>
             <FormattedMessage {...messages.topicQueryProp} />:
             &nbsp;
-            <code>{platform.query}</code>
+            <code>{typeof platform.query === 'object' ? platform.query.getValue() : platform.query}</code>
           </>
         );
       }

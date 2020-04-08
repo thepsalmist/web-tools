@@ -20,11 +20,7 @@ class EditPlatformContainer extends React.Component {
     const { topicId, selectedPlatform } = this.props;
     return {
       topicId,
-      currentPlatformId: selectedPlatform.topic_seed_queries_id,
-      currentPlatformType: selectedPlatform.platform,
-      query: selectedPlatform.query,
-      platformDetails: selectedPlatform,
-      media: selectedPlatform.channel,
+      selectedPlatform,
     };
   }
 
@@ -70,12 +66,12 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
     const infoForQuery = {
       platform_type: formValues.platform,
       platform_query: topicQueryAsString(formValues.query),
-      platform_source: formValues.source,
+      platform_source: formValues.source || '',
       platform_channel: formatPlatformChannelData ? JSON.stringify(formatPlatformChannelData(formValues)) : JSON.stringify(formValues),
-      start_date: topicInfo.start_date,
-      end_date: topicInfo.end_date,
+      start_date: formValues.start_date,
+      end_date: formValues.end_date,
     };
-    return dispatch(topicUpdatePlatform(topicInfo.topicId, formValues.platformDetails.topic_seed_queries_id, infoForQuery))
+    return dispatch(topicUpdatePlatform(topicInfo.topicId, formValues.topic_seed_queries_id, infoForQuery))
       .then((results) => { // remember, new id comes back b/c we are deleting/adding
         if (results.success) {
           const platformSavedMessage = intl.formatMessage(localMessages.platformSaved);

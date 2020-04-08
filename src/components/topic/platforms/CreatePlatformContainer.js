@@ -2,9 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import { push, reset } from 'react-router-redux';
+import { reset } from 'redux-form';
+import { push } from 'react-router-redux';
 import PlatformWizard from './builder/PlatformWizard';
-import { topicCreatePlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList } from '../../../actions/topicActions';
+import { topicCreatePlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, fetchTopicSummary } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import { platformChannelDataFormatter, topicQueryAsString } from '../../util/topicUtil';
 
@@ -74,8 +75,9 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
           dispatch(setTopicNeedsNewSnapshot(true)); // user feedback
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
           dispatch(fetchPlatformsInTopicList(topicInfo.topics_id)); // force refetch of newly configured platforms
-          dispatch(push(`/topics/${topicInfo.topics_id}/platforms/manage`));
-          dispatch(reset('platform')); // it is a wizard so we have to do this by hand
+          dispatch(push(`/topics/${topicInfo.topics_id}/summary`));
+          dispatch(reset('platforms')); // it is a wizard so we have to do this by hand
+          dispatch(fetchTopicSummary(topicInfo.topics_id)); // force refetch of newly configured platforms
         } else {
           const platformNotSavedMessage = intl.formatMessage(localMessages.platformNotSaved);
           dispatch(updateFeedback({ open: true, message: platformNotSavedMessage })); // user feedback

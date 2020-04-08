@@ -6,11 +6,11 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
 import { WarningNotice } from '../../common/Notice';
-import AppButton from '../../common/AppButton';
-import LinkWithFilters from '../LinkWithFilters';
+// import AppButton from '../../common/AppButton';
+// import LinkWithFilters from '../LinkWithFilters';
 
 const localMessages = {
-  platformIncomplete: { id: 'topic.incomplete', defaultMessage: 'This is a new Topic. You need to add the Media Cloud platform, and any others you\'d like. Then you can run it.' },
+  platformIncomplete: { id: 'topic.incomplete', defaultMessage: 'This is a new Topic. You need to add the Open Web Media Cloud platform, and any others you\'d like. Then you can run it.' },
   platformIncompleteAction: { id: 'topic.incomplete.action', defaultMessage: 'Manage Platforms' },
 };
 
@@ -21,7 +21,7 @@ export function platformIncomplete(initializedPlatform) {
 /**
  * For new topics we can use this to show the user that they need to add some platforms.
  */
-const IncompletePlatformWarning = ({ initializedPlatform, topicId }) => (
+const IncompletePlatformWarning = ({ initializedPlatform }) => (
   <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
     {platformIncomplete(initializedPlatform) && (
       <div className="notice warning-background">
@@ -30,11 +30,6 @@ const IncompletePlatformWarning = ({ initializedPlatform, topicId }) => (
             <Col lg={12}>
               <WarningNotice>
                 <FormattedMessage {...localMessages.platformIncomplete} />
-                {window.location.href.indexOf('platforms') === -1 && (
-                  <LinkWithFilters to={`/topics/${topicId}/platforms/manage`}>
-                    <AppButton label={localMessages.platformIncompleteAction} />
-                  </LinkWithFilters>
-                )}
               </WarningNotice>
             </Col>
           </Row>

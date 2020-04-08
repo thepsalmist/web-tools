@@ -101,7 +101,7 @@ const fetchAsyncData = (dispatch, { params, location }) => {
   dispatch(updateTopicFilterParsingStatus(FILTER_PARSING_ONGOING));
   // now get the topic info, and once you have it set the default filters
   dispatch(fetchTopicSummary(params.topicId))
-    .then(results => pickDefaultFilters(dispatch, params.topicId, results.snapshots.list, location));
+    .then(results => pickDefaultFilters(dispatch, params.topicId, results.snapshots ? results.snapshots.list : [], location));
 };
 
 /*

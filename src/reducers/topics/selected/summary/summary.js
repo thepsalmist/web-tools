@@ -12,7 +12,6 @@ import topEntitiesPeople from './topEntitiesPeople';
 import topEntitiesOrgs from './topEntitiesOrgs';
 import mapFiles from './mapFiles';
 import timespanFiles from './timespanFiles';
-import snapshotFiles from './snapshotFiles';
 import word2vec from './word2vec';
 import word2vecTimespans from './word2vecTimespans';
 import attentionDrillDownStories from './attentionDrillDownStories';
@@ -31,7 +30,6 @@ const summaryReducer = combineReducers({
   topEntitiesOrgs,
   mapFiles,
   timespanFiles,
-  snapshotFiles,
   word2vec,
   word2vecTimespans,
   attentionDrillDownStories,

@@ -147,7 +147,6 @@ PlatformFormContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,
-  validationForPlatformSource: PropTypes.func.isRequired,
   validationValues: PropTypes.object.isRequired,
 };
 

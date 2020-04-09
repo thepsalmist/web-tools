@@ -76,7 +76,7 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
           dispatch(updateFeedback({ classes: 'info-notice', open: true, message: platformSavedMessage })); // user feedback
           dispatch(fetchPlatformsInTopicList(topicInfo.topics_id)); // force refetch of newly configured platforms
           dispatch(push(`/topics/${topicInfo.topics_id}/summary`));
-          dispatch(reset('platforms')); // it is a wizard so we have to do this by hand
+          dispatch(reset('platform')); // it is a wizard so we have to do this by hand
           dispatch(fetchTopicSummary(topicInfo.topics_id)); // force refetch of newly configured platforms
         } else {
           const platformNotSavedMessage = intl.formatMessage(localMessages.platformNotSaved);

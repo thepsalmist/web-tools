@@ -10,7 +10,7 @@ import messages from '../../../resources/messages';
 import ConfirmationDialog from '../../common/ConfirmationDialog';
 import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, fetchTopicSummary } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
-import IncompletePlatformWarning from '../versions/IncompletePlatformWarning';
+import IncompletePlatformWarning from './IncompletePlatformWarning';
 import VersionComparisonContainer from '../versions/VersionComparisonContainer';
 import { filteredLinkTo } from '../../util/location';
 import { MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';

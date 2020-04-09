@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import IncompletePlatformWarning from '../versions/IncompletePlatformWarning';
+import IncompletePlatformWarning from './IncompletePlatformWarning';
 import { fetchPlatformsInTopicList } from '../../../actions/topicActions';
 
 /*   title: { id: 'platform.builder.title', defaultMessage: 'Platform Builder' },

@@ -15,7 +15,7 @@ import MediaOutlinkContainer from './MediaOutlinkContainer';
 import { updateFeedback } from '../../../actions/appActions';
 import MediaStoriesContainer from './MediaStoriesContainer';
 import MediaSplitStoryCountContainer from './MediaSplitStoryCountContainer';
-import MediaWordsContainer from './MediaWordsContainer';
+import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
 import messages from '../../../resources/messages';
 import { RemoveButton, ReadItNowButton } from '../../common/IconButton';
 import ComingSoon from '../../common/ComingSoon';
@@ -144,7 +144,7 @@ class MediaContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={12}>
-              <MediaWordsContainer topicId={topicId} mediaId={mediaId} topicName={topicName} />
+              <TopicWordCloudContainer title={messages.topWords} svgName={`media-${mediaId}`} extraQueryClause={`media_id:${mediaId}`} width={720} />
             </Col>
           </Row>
           <Row>

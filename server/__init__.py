@@ -243,6 +243,7 @@ if (server_app == SERVER_APP_TOPICS) or is_dev_mode():
     import server.views.topics.nyttags
     import server.views.topics.entities
     import server.views.topics.geotags
+    import server.views.topics.provider
 if (server_app == SERVER_APP_EXPLORER) or is_dev_mode():
     import server.views.explorer.explorer_query
     import server.views.explorer.sentences

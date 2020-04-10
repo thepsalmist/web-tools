@@ -14,3 +14,4 @@ export * from './topics/createActions.js';
 export * from './topics/wordActions.js';
 export * from './topics/entityActions.js';
 export * from './topics/platformActions.js';
+export * from './topics/providerActions.js';

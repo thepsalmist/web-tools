@@ -5,12 +5,13 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { selectWord } from '../../../actions/topicActions';
 import WordDetails from './WordDetails';
-import WordWordsContainer from './WordWordsContainer';
+import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
 import WordStoriesContainer from './WordStoriesContainer';
 import WordSplitStoryCountContainer from './WordSplitStoryCountContainer';
 import WordInContextContainer from './WordInContextContainer';
 import WordSimilarWordsContainer from './WordSimilarWordsContainer';
 import TopicPageTitle from '../TopicPageTitle';
+import messages from '../../../resources/messages';
 
 const localMessages = {
   mainTitle: { id: 'word.details.mainTitle', defaultMessage: 'Word: "{title}"' },
@@ -51,7 +52,7 @@ class WordContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={12}>
-              <WordWordsContainer topicId={topicId} stem={stem} term={term} filters={filters} topicName={topicName} />
+              <TopicWordCloudContainer title={messages.topWords} svgName={`word-${stem}`} extraQueryClause={`${stem}*`} width={720} />
             </Col>
           </Row>
           <Row>

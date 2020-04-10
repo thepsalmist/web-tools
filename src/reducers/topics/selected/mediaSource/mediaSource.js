@@ -6,7 +6,6 @@ import inlinks from './inlinks';
 import outlinks from './outlinks';
 import allInlinks from './allInlinks';
 import allOutlinks from './allOutlinks';
-import words from './words';
 
 const mediaSourceReducer = combineReducers({
   info,
@@ -16,7 +15,6 @@ const mediaSourceReducer = combineReducers({
   outlinks,
   allInlinks,
   allOutlinks,
-  words,
 });
 
 export default mediaSourceReducer;

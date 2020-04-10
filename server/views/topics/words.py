@@ -63,59 +63,6 @@ def topic_word(topics_id, word):
     return jsonify(response)
 
 
-def _find_overall_timespan(topics_id, snapshots_id):
-    selected_snapshot_timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id,
-                                                                      snapshots_id=snapshots_id)
-    for timespan in selected_snapshot_timespans:
-        if timespan['period'] == 'overall':
-            return timespan
-    raise RuntimeError('Missing overall timespan in snapshot {} (topic {})!'.format(snapshots_id, topics_id))
-
-
-@app.route('/api/topics/<topics_id>/words', methods=['GET'])
-@api_error_handler
-def topic_words(topics_id):
-    sample_size = request.args['sample_size'] if 'sample_size' in request.args else WORD_COUNT_SAMPLE_SIZE
-
-    if access_public_topic(topics_id):
-        results = apicache.topic_word_counts(TOOL_API_KEY, topics_id, sample_size=sample_size,
-                                             snapshots_id=None, timespans_id=None, foci_id=None, q=None)
-    elif is_user_logged_in():
-        # grab the top words, respecting all the filters
-        results = apicache.topic_word_counts(user_mediacloud_key(), topics_id, sample_size=sample_size)
-    else:
-        return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
-
-    totals = []  # important so that these get reset on the client when they aren't requested
-    logger.debug(request.args)
-    if (is_user_logged_in()) and ('withTotals' in request.args) and (request.args['withTotals'] == "true"):
-        # return along with the results for the overall timespan, to facilitate comparison
-        snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
-        overall_timespan = _find_overall_timespan(topics_id, snapshots_id)
-        totals = apicache.topic_word_counts(user_mediacloud_key(), topics_id, sample_size=sample_size,
-                                            timespans_id=overall_timespan['timespans_id'], foci_id=None, q=None)
-
-    response = {
-        'list': results[:WORD_COUNT_UI_NUM_WORDS],
-        'totals': totals[:WORD_COUNT_UI_NUM_WORDS],
-        'sample_size': str(sample_size)
-    }
-    return jsonify(response)
-
-
-@app.route('/api/topics/<topics_id>/words.csv', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def topic_words_csv(topics_id):
-    query = apicache.add_to_user_query(None)
-    sample_size = request.args['sample_size'] if 'sample_size' in request.args else WORD_COUNT_DOWNLOAD_SAMPLE_SIZE
-    ngram_size = request.args['ngram_size'] if 'ngram_size' in request.args else 1  # default to word count
-    word_counts = apicache.topic_ngram_counts(user_mediacloud_key(), topics_id, ngram_size=ngram_size, q=query,
-                                              num_words=WORD_COUNT_DOWNLOAD_NUM_WORDS, sample_size=sample_size)
-    return csv.stream_response(word_counts, apicache.WORD_COUNT_DOWNLOAD_COLUMNS,
-                               'topic-{}-sampled-ngrams-{}-word'.format(topics_id, ngram_size))
-
-
 @app.route('/api/topics/<topics_id>/words/<word>/split-story/count', methods=['GET'])
 @flask_login.login_required
 @api_error_handler

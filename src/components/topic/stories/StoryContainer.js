@@ -11,7 +11,6 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { selectStory, fetchStory } from '../../../actions/storyActions';
 import { fetchTopicStoryInfo } from '../../../actions/topicActions';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import StoryWordsContainer from './StoryWordsContainer';
 import StoryInlinksContainer from './StoryInlinksContainer';
 import StoryOutlinksContainer from './StoryOutlinksContainer';
 import ActionMenu from '../../common/ActionMenu';
@@ -34,6 +33,7 @@ import { storyPubDateToTimestamp } from '../../../lib/dateUtil';
 import TopicPageTitle from '../TopicPageTitle';
 import StoryRedditAttention from '../../common/story/StoryRedditAttention';
 import StoryUrlSharingCounts from './StoryUrlSharingCounts';
+import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
 
 const MAX_STORY_TITLE_LENGTH = 70; // story titles longer than this will be trimmed and ellipses added
 
@@ -66,7 +66,7 @@ class StoryContainer extends React.Component {
   }
 
   render() {
-    const { storyInfo, topicStoryInfo, topicId, storiesId, topicName, topicPlatforms,
+    const { storyInfo, topicStoryInfo, topicId, storiesId, topicPlatforms,
       handleStoryCachedTextClick, handleStoryEditClick, filters, topicSeedQuery } = this.props;
     const { formatMessage, formatNumber, formatDate } = this.props.intl;
     const mediaUrl = `/topics/${topicId}/media/${storyInfo.media.media_id}`;
@@ -121,7 +121,7 @@ class StoryContainer extends React.Component {
           <>
             <Row>
               <Col lg={12}>
-                <StoryWordsContainer topicId={topicId} storiesId={storiesId} topicName={topicName} />
+                <TopicWordCloudContainer title={messages.topWords} svgName={`story-${storiesId}`} extraQueryClause={`stories_id:${storiesId}`} width={720} />
               </Col>
             </Row>
             <Row>
@@ -259,7 +259,6 @@ StoryContainer.propTypes = {
   topicStoryInfo: PropTypes.object.isRequired,
   storyInfo: PropTypes.object.isRequired,
   storiesId: PropTypes.number.isRequired,
-  topicName: PropTypes.string.isRequired,
   topicId: PropTypes.number.isRequired,
   fetchStatus: PropTypes.array.isRequired,
   filters: PropTypes.object.isRequired,
@@ -273,7 +272,6 @@ const mapStateToProps = (state, ownProps) => ({
   filters: state.topics.selected.filters,
   storiesId: parseInt(ownProps.params.storiesId, 10),
   topicId: state.topics.selected.id,
-  topicName: state.topics.selected.info.name,
   topicSeedQuery: state.topics.selected.info.solr_seed_query,
   topicStoryInfo: state.topics.selected.story.info,
   storyInfo: state.story.info,

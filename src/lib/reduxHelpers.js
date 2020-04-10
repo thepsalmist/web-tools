@@ -101,7 +101,7 @@ export function createReducer(handlers) {
  *  initialState: {
  *    list: [],
  *  },
- *  action: FETCH_TOPIC_TOP_WORDS,
+ *  action: FETCH_STUFF,
  * });
  * ```
  */

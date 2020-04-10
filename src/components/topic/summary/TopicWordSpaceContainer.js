@@ -70,8 +70,8 @@ TopicWordSpaceContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.selected.summary.topWords.fetchStatus,
-  words: state.topics.selected.summary.topWords.list,
+  fetchStatus: state.topics.selected.provider.words.fetchStatus,
+  words: state.topics.selected.provider.words.list,
 });
 
 const mapDispatchToProps = dispatch => ({

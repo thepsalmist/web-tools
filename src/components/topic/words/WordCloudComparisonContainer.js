@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import DataCard from '../../common/DataCard';
-import { fetchTopicTopWords } from '../../../actions/topicActions';
+import { fetchTopicAnalysisWords } from '../../../actions/topicActions';
 import { generateParamStr } from '../../../lib/apiUtil';
 import { getBrandDarkColor } from '../../../styles/colors';
 import OrderedWordCloud from '../../vis/OrderedWordCloud';
@@ -18,7 +18,7 @@ const localMessages = {
 };
 
 const WordCloudComparisonContainer = (props) => {
-  const { wordCounts, totalWordCounts, handleWordCloudClick, selectedTimespan } = props;
+  const { timespanWordCounts, overallWordCounts, handleWordCloudClick, selectedTimespan } = props;
   if ((selectedTimespan === undefined) || (selectedTimespan === null)) {
     return (<div />);
   }
@@ -36,7 +36,7 @@ const WordCloudComparisonContainer = (props) => {
           <TimespanDateRange timespan={selectedTimespan} />
         </h2>
         <OrderedWordCloud
-          words={wordCounts}
+          words={timespanWordCounts}
           textColor={getBrandDarkColor()}
           onWordClick={word => handleWordCloudClick(word, props)}
         />
@@ -51,7 +51,7 @@ const WordCloudComparisonContainer = (props) => {
             <FormattedMessage {...localMessages.unfiltered} />
           </h2>
           <OrderedWordCloud
-            words={totalWordCounts}
+            words={overallWordCounts}
             textColor={getBrandDarkColor()}
             onWordClick={handleWordCloudClick}
           />
@@ -72,9 +72,8 @@ WordCloudComparisonContainer.propTypes = {
   selectedTimespan: PropTypes.object,
   topicId: PropTypes.number.isRequired,
   fetchStatus: PropTypes.string.isRequired,
-  topWords: PropTypes.object.isRequired,
-  wordCounts: PropTypes.array.isRequired,
-  totalWordCounts: PropTypes.array.isRequired,
+  timespanWordCounts: PropTypes.array,
+  overallWordCounts: PropTypes.array,
   // from dispatch
   handleWordCloudClick: PropTypes.func.isRequired,
 };
@@ -82,10 +81,9 @@ WordCloudComparisonContainer.propTypes = {
 const mapStateToProps = state => ({
   selectedTimespan: state.topics.selected.timespans.selected,
   topicId: state.topics.selected.id,
-  fetchStatus: state.topics.selected.summary.topWords.fetchStatus,
-  topWords: state.topics.selected.summary.topWords,
-  wordCounts: state.topics.selected.summary.topWords.list, // for just this timespan
-  totalWordCounts: state.topics.selected.summary.topWords.totals, // for the whole snapshot/focus
+  fetchStatus: state.topics.selected.provider.words.fetchStatus,
+  timespanWordCounts: state.topics.selected.provider.words.list, // for just this timespan
+  overallWordCounts: state.topics.selected.provider.words.overall, // for the whole snapshot/focus
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -96,9 +94,7 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-const fetchAsyncData = (dispatch, props) => {
-  dispatch(fetchTopicTopWords(props.topicId, { ...props.filters, withTotals: true }));
-};
+const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicAnalysisWords(props.topicId, { ...props.filters, withOverall: true }));
 
 export default
 injectIntl(

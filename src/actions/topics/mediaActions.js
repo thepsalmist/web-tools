@@ -17,7 +17,6 @@ export const SORT_MEDIA_INLINKS = 'SORT_MEDIA_INLINKS';
 export const FETCH_MEDIA_OUTLINKS = 'FETCH_MEDIA_OUTLINKS';
 export const FETCH_ALL_MEDIA_OUTLINKS = 'FETCH_ALL_MEDIA_OUTLINKS';
 export const SORT_MEDIA_OUTLINKS = 'SORT_MEDIA_OUTLINKS';
-export const FETCH_MEDIA_WORDS = 'FETCH_MEDIA_WORDS';
 
 // pass in topicId, snapshotId, timespanId, sort, limit
 export const fetchTopicTopMedia = createAsyncAction(FETCH_TOPIC_TOP_MEDIA, api.topicTopMedia);

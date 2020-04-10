@@ -31,11 +31,6 @@ export function topicTopMedia(topicId, params) {
   return createApiPromise(`/api/topics/${topicId}/media`, acceptedParams);
 }
 
-export function fetchTopicTopWords(topicId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'withTotals', 'sample_size']);
-  return createApiPromise(`/api/topics/${topicId}/words`, acceptedParams);
-}
-
 export function topicTimespansList(topicId, snapshotId, params) {
   const acceptedParams = acceptParams(params, ['focusId']);
   return createApiPromise(`/api/topics/${topicId}/snapshots/${snapshotId}/timespans/list`, acceptedParams);

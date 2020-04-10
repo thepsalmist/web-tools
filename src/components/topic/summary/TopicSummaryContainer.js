@@ -4,11 +4,12 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import LoadingSpinner from '../../common/LoadingSpinner';
+import { urlWithFilters } from '../../util/location';
 import TopPeopleContainer from './TopPeopleContainer';
 import TopOrgsContainer from './TopOrgsContainer';
 import StoriesSummaryContainer from './StoriesSummaryContainer';
 import MediaSummaryContainer from './MediaSummaryContainer';
-import WordsSummaryContainer from './WordsSummaryContainer';
+import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
 import SplitStoryCountSummaryContainer from './SplitStoryCountSummaryContainer';
 import TopicStoryStatsContainer from './TopicStoryStatsContainer';
 import StoryTotalsSummaryContainer from './StoryTotalsSummaryContainer';
@@ -18,6 +19,7 @@ import NytLabelSummaryContainer from './NytLabelSummaryContainer';
 import GeoTagSummaryContainer from './GeoTagSummaryContainer';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
+import { SummarizedVizualization } from '../../common/hocs/SummarizedVizualization';
 import TopicStoryMetadataStatsContainer from './TopicStoryMetadataStatsContainer';
 import FociStoryCountComparisonContainer from './FociStoryCountComparisonContainer';
 import TopicWordSpaceContainer from './TopicWordSpaceContainer';
@@ -32,6 +34,9 @@ const localMessages = {
   previewIntro: { id: 'topic.summary.public.intro', defaultMessage: 'This is a preview of our {name} topic.  It shows just a sample of the data available once you login to the Topic Mapper tool. To explore, click on a link and sign in.' },
   statsTabTitle: { id: 'topic.summary.summary.about', defaultMessage: 'Stats' },
   exportTabTitle: { id: 'topic.summary.summary.export', defaultMessage: 'Export' },
+  wordsDescriptionIntro: { id: 'topic.summary.words.help.intro',
+    defaultMessage: '<p>Look at the top words to see how this topic was talked about. This can suggest what the dominant narrative was, and looking at different timespans can suggest how it evolved over time.</p>',
+  },
 };
 
 class TopicSummaryContainer extends React.Component {
@@ -94,6 +99,7 @@ class TopicSummaryContainer extends React.Component {
                 <Col lg={12}>
                   <TopicAttentionDrillDownContainer topicId={topic.topics_id} filters={filters} />
                 </Col>
+                {filteredStoryCountContent}
               </Row>
             </>
           );
@@ -104,14 +110,23 @@ class TopicSummaryContainer extends React.Component {
             <>
               <Row>
                 <Col lg={12}>
-                  <WordsSummaryContainer topicId={topic.topics_id} topicName={topic.name} filters={filters} width={720} />
+                  <SummarizedVizualization
+                    titleMessage={messages.topWords}
+                    introMessage={localMessages.wordsDescriptionIntro}
+                    detailedMessage={[messages.wordcloudHelpText, messages.wordCloudTopicWord2VecLayoutHelp]}
+                    handleExplore={urlWithFilters(`/topics/${topic.topics_id}/words`, filters)}
+                  >
+                    <TopicWordCloudContainer
+                      svgName="all-words"
+                      border={false}
+                    />
+                  </SummarizedVizualization>
                 </Col>
                 <Col lg={12}>
                   <TopicWordSpaceContainer topicId={topic.topics_id} topicName={topic.name} filters={filters} />
                 </Col>
               </Row>
               <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-                {filteredStoryCountContent}
                 <Row>
                   <Col lg={12}>
                     <NytLabelSummaryContainer topicId={topic.topics_id} filters={filters} topicName={topic.name} location={location} />

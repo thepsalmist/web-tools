@@ -81,31 +81,6 @@ export function mediaSplitStoryCounts(topicId, mediaId, params) {
   return createApiPromise(`/api/topics/${topicId}/media/${mediaId}/split-story/count`, acceptedParams);
 }
 
-export function mediaStories(topicId, mediaId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'sort', 'limit']);
-  return createApiPromise(`/api/topics/${topicId}/media/${mediaId}/stories`, acceptedParams);
-}
-
-export function mediaInlinks(topicId, mediaId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'sort', 'limit']);
-  return createApiPromise(`/api/topics/${topicId}/media/${mediaId}/inlinks`, acceptedParams);
-}
-
-export function allMediaInlinks(topicId, mediaId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'sort']);
-  return createApiPromise(`/api/topics/${topicId}/media/${mediaId}/inlinks/all`, acceptedParams);
-}
-
-export function mediaOutlinks(topicId, mediaId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'sort', 'limit']);
-  return createApiPromise(`/api/topics/${topicId}/media/${mediaId}/outlinks`, acceptedParams);
-}
-
-export function allMediaOutlinks(topicId, mediaId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'sort']);
-  return createApiPromise(`/api/topics/${topicId}/media/${mediaId}/outlinks/all`, acceptedParams);
-}
-
 export function topicFocalSetsList(topicId, params) {
   const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'includeStoryCounts']);
   return createApiPromise(`/api/topics/${topicId}/focal-sets/list`, acceptedParams);

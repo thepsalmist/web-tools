@@ -84,6 +84,7 @@ const messages = {
   collectionNameProp: { id: 'collection.prop.name', defaultMessage: 'Name' },
   collectionDescriptionProp: { id: 'collection.prop.description', defaultMessage: 'Description' },
 
+  stories: { id: 'common.stories', defaultMessage: 'Stories' },
   inlinks: { id: 'common.inlinks', defaultMessage: 'Inlinks' },
   sortByMediaInlinks: { id: 'common.sortByMediaInlinks', defaultMessage: 'sort by media inlinks' },
   mediaInlinks: { id: 'common.mediaInlinks', defaultMessage: 'Media Inlinks' },

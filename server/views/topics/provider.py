@@ -1,19 +1,30 @@
 import logging
 from flask import request, jsonify
 import flask_login
+from typing import List, Dict
 
 from server import app, TOOL_API_KEY, executor
 from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_DOWNLOAD_SAMPLE_SIZE, \
     WORD_COUNT_UI_NUM_WORDS
 import server.util.csv as csv
-from server.util.request import api_error_handler, arguments_required, filters_from_args, json_error_response
+from server.util.request import api_error_handler, safely_read_arg, arguments_required, filters_from_args, json_error_response
 from server.auth import user_mediacloud_key, is_user_logged_in, user_mediacloud_client
 from server.views.topics.attention import stream_topic_split_story_counts_csv
 from server.views.topics.stories import stream_story_list_csv
 import server.views.topics.apicache as apicache
 from server.views.topics import access_public_topic
+from server.util.stringutil import camel_to_snake
 
 logger = logging.getLogger(__name__)
+
+
+def _parse_optional_args(arg_names: List, custom_defaults: Dict = {}) -> Dict:
+    parsed_args = {}
+    for js_name in arg_names:
+        python_name = camel_to_snake(js_name)
+        default = None if js_name not in custom_defaults.keys() else custom_defaults[js_name]
+        parsed_args[python_name] = safely_read_arg(js_name, default)
+    return parsed_args
 
 
 def _parse_words_optional_arguments():
@@ -22,9 +33,8 @@ def _parse_words_optional_arguments():
     centralizes the parsing of those optional overrides from the request made.
     :return: a dict that can be spread as arguments to a call to topic_ngram_counts
     """
-    sample_size = request.args['sampleSize'] if 'sampleSize' in request.args else WORD_COUNT_SAMPLE_SIZE
-    ngram_size = request.args['ngramSize'] if 'ngramSize' in request.args else 1  # default to regular word count
-    return {'sample_size': sample_size, 'ngram_size': ngram_size}
+    return _parse_optional_args(['sample_size', 'ngramSize'],
+                                {'sample_size': WORD_COUNT_SAMPLE_SIZE, 'ngramSize': 1})
 
 
 def _find_overall_timespan(topics_id, snapshots_id):
@@ -47,7 +57,7 @@ def _find_overall_timespan(topics_id, snapshots_id):
 @api_error_handler
 def topic_provider_words(topics_id):
     optional_args = _parse_words_optional_arguments()
-    with_overall = request.args['withOverall'] if 'withOverall' in request.args else False
+    with_overall = safely_read_arg('withOverall', False)
     word_counts = apicache.topic_ngram_counts(user_mediacloud_key(), topics_id, **optional_args)
     results = {
         'list': word_counts[:WORD_COUNT_UI_NUM_WORDS],
@@ -75,11 +85,37 @@ def topic_provider_words_csv(topics_id):
     return csv.stream_response(results, apicache.WORD_COUNT_DOWNLOAD_COLUMNS, file_name)
 
 
-@app.route('/api/topics/<topics_id>/provider/count', methods=['GET'])
+def _parse_stories_optional_arguments():
+    """
+    The user can override some of the defaults that govern any request for a story list within the topic. This method
+    centralizes the parsing of those optional overrides from the request made.
+    :return: a dict that can be spread as arguments to a call to topic_story_list
+    """
+    return _parse_optional_args(['linkToMediaId', 'linkFromMediaId', 'linkToStoriesId', 'linkFromStoriesId',
+                                 'linkId', 'sort', 'limit'])
+
+
+@app.route('/api/topics/<topics_id>/provider/stories', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
-def topic_provider_count(topics_id):
-    filtered = apicache.topic_story_count(user_mediacloud_key(), topics_id)
-    total = apicache.topic_story_count(user_mediacloud_key(), topics_id, timespans_id=None, snapshots_id=None, foci_id=None,
-                                       q=None)
-    return jsonify({'counts': {'count': filtered['count'], 'total': total['count']}})
+def topic_provider_stories(topics_id):
+    optional_args = _parse_stories_optional_arguments()
+    results = apicache.topic_story_list(user_mediacloud_key(), topics_id, **optional_args)
+    # to allow for multiple parallel calls to be made on one page, here we support prefixing the results
+    # if you pass in a responsePrefix, `stories` in the response will be changed to `[thePrefix]Stories`
+    story_list_prefix = safely_read_arg('responsePrefix', False)
+    if story_list_prefix:
+        results["{}Stories".format(story_list_prefix)] = results['stories']
+        del results['stories']
+    return jsonify(results)
+
+
+@app.route('/api/topics/<topics_id>/provider/stories.csv', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def topic_provider_stories_csv(topics_id):
+    optional_args = _parse_stories_optional_arguments()
+    user_mc = user_mediacloud_client()
+    topic = user_mc.topic(topics_id)
+    del optional_args['link_id']  # we do this do make sure this helper can page through the results
+    return stream_story_list_csv(user_mediacloud_key(), 'stories', topic, **optional_args)

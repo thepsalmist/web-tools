@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import DataCard from '../../common/DataCard';
-import { fetchTopicAnalysisWords } from '../../../actions/topicActions';
+import { fetchTopicProviderWords } from '../../../actions/topicActions';
 import { generateParamStr } from '../../../lib/apiUtil';
 import { getBrandDarkColor } from '../../../styles/colors';
 import OrderedWordCloud from '../../vis/OrderedWordCloud';
@@ -94,7 +94,7 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicAnalysisWords(props.topicId, { ...props.filters, withOverall: true }));
+const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicProviderWords(props.topicId, { ...props.filters, withOverall: true }));
 
 export default
 injectIntl(

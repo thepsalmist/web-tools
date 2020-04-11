@@ -8,7 +8,7 @@ import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyC
 import { filtersAsUrlParams, combineQueryParams } from '../../util/location';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import EditableWordCloudDataCard from '../../common/EditableWordCloudDataCard';
-import { fetchTopicAnalysisWords } from '../../../actions/topicActions';
+import { fetchTopicProviderWords } from '../../../actions/topicActions';
 import { generateParamStr } from '../../../lib/apiUtil';
 import { topicDownloadFilename } from '../../util/topicUtil';
 
@@ -52,7 +52,7 @@ const mapStateToProps = state => ({
   words: state.topics.selected.provider.words.list,
 });
 
-const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicAnalysisWords(props.topicInfo.topics_id,
+const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicProviderWords(props.topicInfo.topics_id,
   { ...props.filters, sampleSize: props.sampleSize, q: combineQueryParams(props.filters.q, props.extraQueryClause) }));
 
 const mapDispatchToProps = (dispatch) => ({

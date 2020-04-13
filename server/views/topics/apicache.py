@@ -122,7 +122,7 @@ def topic_story_list(user_mc_key, topics_id, **kwargs):
     }
     # make sure not to add in other parameters from kwargs that aren't supported by the API method
     for k in TOPIC_STORY_LIST_API_PARAMS:
-        if k in merged_args:
+        if (k in merged_args) and (k in kwargs):
             merged_args[k] = kwargs[k]
     results = _cached_topic_story_list(user_mc_key, topics_id, **merged_args)
     if merged_args['limit']:    # TODO: remove this (this enforces the limit as a workaround to a back-end bug)

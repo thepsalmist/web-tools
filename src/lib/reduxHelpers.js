@@ -251,7 +251,9 @@ export function createIndexedAsyncReducer(handlers) {
       return { ...state,
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
         fetchStatuses: updatedFetchStatuses,
-        fetchUids: state.fetchUids };
+        fetchUids: state.fetchUids,
+        // NOT a good idea to set `results: null|[]|{}` here, because in case of a failure at least the last results will be there
+      };
     },
     handleSuccess: (payload, state, args) => {
       const firstArgWithUid = args.find(item => item.uid);

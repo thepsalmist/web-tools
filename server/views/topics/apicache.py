@@ -18,6 +18,12 @@ logger = logging.getLogger(__name__)
 
 WORD_COUNT_DOWNLOAD_COLUMNS = ['term', 'stem', 'count', 'sample_size', 'ratio']
 
+# the parameters actually accepted by the lower-level topicStoryList API call
+TOPIC_STORY_LIST_API_PARAMS = [
+    'snapshots_id', 'timespans_id', 'foci_id', 'q', 'sort', 'limit', 'linkId',
+    'linkToMediaId', 'linkFromMediaId', 'linkToStoriesId', 'linkFromStoriesId'
+]
+
 
 def topic_media_list_page(user_mc_key, topics_id, **kwargs):
     return _cached_topic_media(user_mc_key, topics_id, **kwargs)
@@ -104,6 +110,7 @@ def _cached_story_list(user_mc_key, q, rows):
 def topic_story_list(user_mc_key, topics_id, **kwargs):
     # Return sorted story list based on filters.
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    # these are the arguments support by the low-level API method
     merged_args = {
         'snapshots_id': snapshots_id,
         'timespans_id': timespans_id,
@@ -113,10 +120,12 @@ def topic_story_list(user_mc_key, topics_id, **kwargs):
         'limit': request.args.get('limit'),
         'link_id': request.args.get('linkId'),
     }
-
-    merged_args.update(kwargs)    # passed in args override anything pulled form the request.args
+    # make sure not to add in other parameters from kwargs that aren't supported by the API method
+    for k in TOPIC_STORY_LIST_API_PARAMS:
+        if k in merged_args:
+            merged_args[k] = kwargs[k]
     results = _cached_topic_story_list(user_mc_key, topics_id, **merged_args)
-    if merged_args['limit']:    # TODO: remove this (force limit as workaround to back-end bug)
+    if merged_args['limit']:    # TODO: remove this (this enforces the limit as a workaround to a back-end bug)
         results['stories'] = results['stories'][:int(merged_args['limit'])]
     return results
 

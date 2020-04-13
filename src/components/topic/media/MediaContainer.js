@@ -142,7 +142,13 @@ class MediaContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={12}>
-              <TopicWordCloudContainer title={messages.topWords} svgName={`media-${mediaId}`} extraQueryClause={`media_id:${mediaId}`} width={720} />
+              <TopicWordCloudContainer
+                title={messages.topWords}
+                svgName={`media-${mediaId}`}
+                extraQueryClause={`media_id:${mediaId}`}
+                width={720}
+                uid="media"
+              />
             </Col>
           </Row>
           <Row>

@@ -7,7 +7,6 @@ import filters from './filters';
 import info from './info';
 import media from './media';
 import mediaSource from './mediaSource/mediaSource';
-import stories from './stories';
 import story from './story/story';
 import focalSets from './focalSets/focalSets';
 import permissions from './permissions';
@@ -66,7 +65,6 @@ const selected = combineReducers({
   provider,
   media,
   mediaSource,
-  stories,
   story,
   focalSets,
   permissions,

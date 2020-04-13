@@ -78,12 +78,12 @@ WordCloudComparisonContainer.propTypes = {
   handleWordCloudClick: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   selectedTimespan: state.topics.selected.timespans.selected,
   topicId: state.topics.selected.id,
   fetchStatus: state.topics.selected.provider.words.fetchStatus,
-  timespanWordCounts: state.topics.selected.provider.words.list, // for just this timespan
-  overallWordCounts: state.topics.selected.provider.words.overall, // for the whole snapshot/focus
+  timespanWordCounts: state.topics.selected.provider.words.results.timespan ? state.topics.selected.provider.words.results.timespan.words : [], // for just this timespan
+  overallWordCounts: state.topics.selected.provider.words.results.overall ? state.topics.selected.provider.words.results.overall.words : [], // for the whole snapshot
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -94,7 +94,10 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicProviderWords(props.topicId, { ...props.filters, withOverall: true }));
+const fetchAsyncData = (dispatch, props) => {
+  dispatch(fetchTopicProviderWords(props.topicId, { ...props.filters, uid: 'timespan' }));
+  dispatch(fetchTopicProviderWords(props.topicId, { ...props.filters, snapshotId: null, focusId: null, uid: 'overall' }));
+};
 
 export default
 injectIntl(

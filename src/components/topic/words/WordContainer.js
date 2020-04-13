@@ -6,7 +6,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { selectWord } from '../../../actions/topicActions';
 import WordDetails from './WordDetails';
 import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
-import WordStoriesContainer from './WordStoriesContainer';
+import TopicStoriesContainer from '../provider/TopicStoriesContainer';
 import WordSplitStoryCountContainer from './WordSplitStoryCountContainer';
 import WordInContextContainer from './WordInContextContainer';
 import WordSimilarWordsContainer from './WordSimilarWordsContainer';
@@ -52,7 +52,13 @@ class WordContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={12}>
-              <TopicWordCloudContainer title={messages.topWords} svgName={`word-${stem}`} extraQueryClause={`${stem}*`} width={720} />
+              <TopicWordCloudContainer
+                title={messages.topWords}
+                svgName={`word-${stem}`}
+                extraQueryClause={`${stem}*`}
+                width={720}
+                uid="word"
+              />
             </Col>
           </Row>
           <Row>
@@ -62,7 +68,7 @@ class WordContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={12}>
-              <WordStoriesContainer topicId={topicId} stem={stem} term={term} filters={filters} />
+              <TopicStoriesContainer titleMsg={messages.stories} uid="word" extraQueryClause={`${stem}*`} />
             </Col>
           </Row>
           <Row>

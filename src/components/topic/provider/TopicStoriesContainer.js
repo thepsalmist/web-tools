@@ -9,17 +9,25 @@ import { DownloadButton } from '../../common/IconButton';
 import withSampleSize from '../../common/hocs/SampleSize';
 import withSorting from '../../common/hocs/Sorted';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
-import { combineQueryParams, filtersAsUrlParams, formatAsUrlParams } from '../../util/location';
+import { combineQueryParams } from '../../util/location';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import TopicStoryTableContainer from '../TopicStoryTableContainer';
 import { fetchTopicProviderStories } from '../../../actions/topicActions';
 import DataCard from '../../common/DataCard';
 import ActionMenu from '../../common/ActionMenu';
 import messages from '../../../resources/messages';
+import { FETCH_INVALID } from '../../../lib/fetchConstants';
+import { isUrlSharingFocalSet, hasAUrlSharingFocalSet } from '../../../lib/topicVersionUtil';
+import withTopicStoryDownload from '../TopicStoryDownloader';
+
+const localMessages = {
+  downloadTopStories: { id: 'topic.summary.stories.download.top', defaultMessage: 'Download Top Stories...' },
+  fullDownloadTip: { id: 'topic.summary.stories.download.top', defaultMessage: 'See the Summary->Export tab to download all stories' },
+};
 
 const TopicStoriesContainer = (props) => (
-  <DataCard>
-    <h2><FormattedHTMLMessage {...props.titleMsg} /></h2>
+  <DataCard className={props.className} border={(props.border === true) || (props.border === undefined)}>
+    {props.titleMsg && <h2><FormattedHTMLMessage {...props.titleMsg} /></h2>}
     <TopicStoryTableContainer
       stories={props.stories}
       {...props}
@@ -28,16 +36,17 @@ const TopicStoriesContainer = (props) => (
       <ActionMenu actionTextMsg={messages.downloadOptions}>
         <MenuItem
           className="action-icon-menu-item"
-          onClick={() => {
-            const downloadUrl = `/api/topics/${props.topicInfo.topics_id}/provider/stories.csv?${filtersAsUrlParams({
-              ...props.filters, q: combineQueryParams(props.filters.q, props.extraQueryClause) })}&${formatAsUrlParams(props.extraArgs)}`;
-            window.location = downloadUrl;
-          }}
+          id="topic-summary-top-stories-download-dialog"
+          onClick={() => props.showTopicStoryDownloadDialog(props.sort || 'inlink', props.showTweetCounts, null,
+            props.usingUrlSharingSubtopic, props.usingUrlSharingFocalSet)}
         >
-          <ListItemText><FormattedMessage {...messages.download} /></ListItemText>
+          <ListItemText><FormattedMessage {...localMessages.downloadTopStories} /></ListItemText>
           <ListItemIcon>
             <DownloadButton />
           </ListItemIcon>
+        </MenuItem>
+        <MenuItem className="action-icon-menu-item">
+          <ListItemText><i><FormattedMessage {...localMessages.fullDownloadTip} /></i></ListItemText>
         </MenuItem>
       </ActionMenu>
     </div>
@@ -48,24 +57,34 @@ TopicStoriesContainer.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
   sort: PropTypes.string,
+  showTopicStoryDownloadDialog: PropTypes.func.isRequired,
   // from parent
-  titleMsg: PropTypes.object.isRequired,
+  className: PropTypes.string,
+  linkId: PropTypes.string,
+  border: PropTypes.bool,
+  titleMsg: PropTypes.object,
   uid: PropTypes.string.isRequired, // too support mulitple on one page
   extraArgs: PropTypes.object, // any extra properties you can relayed to the server in the call for listing stories
   extraQueryClause: PropTypes.string,
-  responsePrefix: PropTypes.string, // if set, story list will be in `responsePrefixStories` instead of `stories`
   // from state
   topicInfo: PropTypes.object.isRequired,
   filters: PropTypes.object.isRequired,
   stories: PropTypes.array,
   fetchStatus: PropTypes.string.isRequired,
+  showTweetCounts: PropTypes.bool,
+  usingUrlSharingSubtopic: PropTypes.bool.isRequired,
+  usingUrlSharingFocalSet: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
+  topicId: state.topics.selected.info.topics_id, // redundant, but required by withTopicStoryDownload
   topicInfo: state.topics.selected.info,
   filters: state.topics.selected.filters,
-  fetchStatus: state.topics.selected.provider.stories.fetchStatus,
+  fetchStatus: state.topics.selected.provider.stories.fetchStatuses[ownProps.uid] || FETCH_INVALID,
   stories: state.topics.selected.provider.stories.results[ownProps.uid] ? state.topics.selected.provider.stories.results[ownProps.uid].stories : [],
+  showTweetCounts: Boolean(state.topics.selected.info.ch_monitor_id),
+  usingUrlSharingSubtopic: (state.topics.selected.filters.focusId !== null) && isUrlSharingFocalSet(state.topics.selected.timespans.selected.focal_set),
+  usingUrlSharingFocalSet: hasAUrlSharingFocalSet(state.topics.selected.focalSets.all.list),
 });
 
 const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicProviderStories(props.topicInfo.topics_id, {
@@ -74,6 +93,7 @@ const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicProviderStories(p
   ...props.extraArgs,
   uid: props.uid,
   sort: props.sort,
+  linkId: props.linkId,
 }));
 
 export default
@@ -82,8 +102,10 @@ injectIntl(
     withSampleSize(
       withSorting(
         withCsvDownloadNotifyContainer(
-          withFilteredAsyncData(fetchAsyncData, ['sort'])(
-            TopicStoriesContainer,
+          withTopicStoryDownload()(
+            withFilteredAsyncData(fetchAsyncData, ['sort', 'linkId'])(
+              TopicStoriesContainer,
+            )
           )
         )
       )

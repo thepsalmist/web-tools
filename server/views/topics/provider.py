@@ -22,6 +22,8 @@ def _parse_optional_args(arg_names: List, custom_defaults: Dict = {}) -> Dict:
     parsed_args = {}
     for js_name in arg_names:
         python_name = camel_to_snake(js_name)
+        # important to preserve None values here, rather than simple not adding the key,
+        # because the None might be here to override a default value in the API call
         default = None if js_name not in custom_defaults.keys() else custom_defaults[js_name]
         parsed_args[python_name] = safely_read_arg(js_name, default)
     return parsed_args
@@ -37,41 +39,16 @@ def _parse_words_optional_arguments():
                                 {'sample_size': WORD_COUNT_SAMPLE_SIZE, 'ngramSize': 1})
 
 
-def _find_overall_timespan(topics_id, snapshots_id):
-    """
-    This helper returns the "overall" timespan for this snapshot. Raises an Error if it can't find it
-    :param topics_id:
-    :param snapshots_id:
-    :return:
-    """
-    snapshot_timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id,
-                                                             snapshots_id=snapshots_id)
-    overall = [t for t in snapshot_timespans if t['period'] == 'overall']
-    if len(overall) is 0:
-        raise RuntimeError('Missing overall timespan in snapshot {} (topic {})!'.format(snapshots_id, topics_id))
-    return overall[0]
-
-
 @app.route('/api/topics/<topics_id>/provider/words', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
 def topic_provider_words(topics_id):
     optional_args = _parse_words_optional_arguments()
-    with_overall = safely_read_arg('withOverall', False)
     word_counts = apicache.topic_ngram_counts(user_mediacloud_key(), topics_id, **optional_args)
     results = {
-        'list': word_counts[:WORD_COUNT_UI_NUM_WORDS],
+        'words': word_counts[:WORD_COUNT_UI_NUM_WORDS],
         **optional_args
     }
-    # add overall snapshot counts if requested; this is parsed separately from optional_args because it is not a
-    # valid argument you can pass into topic_ngram_counts
-    if with_overall:
-        # support quickly comparing word counts within a timespan to the totals for the overall timespan
-        snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
-        overall_timespan = _find_overall_timespan(topics_id, snapshots_id)
-        overall_word_counts = apicache.topic_word_counts(user_mediacloud_key(), topics_id, **optional_args, q=None,
-                                                         timespans_id=overall_timespan['timespans_id'], foci_id=None)
-        results['overall'] = overall_word_counts[:WORD_COUNT_UI_NUM_WORDS]
     return jsonify(results)
 
 
@@ -91,8 +68,12 @@ def _parse_stories_optional_arguments():
     centralizes the parsing of those optional overrides from the request made.
     :return: a dict that can be spread as arguments to a call to topic_story_list
     """
-    return _parse_optional_args(['linkToMediaId', 'linkFromMediaId', 'linkToStoriesId', 'linkFromStoriesId',
-                                 'linkId', 'sort', 'limit'])
+    return _parse_optional_args(
+        # these ones are supported by the low-level call to `topicsStoryList`
+        apicache.TOPIC_STORY_LIST_API_PARAMS +
+        # these ones are options to the story CSV download helper
+        ['storyLimit', 'storyTags', 'mediaMetadata', 'platformUrlShares', 'socialShares']
+    )
 
 
 @app.route('/api/topics/<topics_id>/provider/stories', methods=['GET'])
@@ -101,12 +82,6 @@ def _parse_stories_optional_arguments():
 def topic_provider_stories(topics_id):
     optional_args = _parse_stories_optional_arguments()
     results = apicache.topic_story_list(user_mediacloud_key(), topics_id, **optional_args)
-    # to allow for multiple parallel calls to be made on one page, here we support prefixing the results
-    # if you pass in a responsePrefix, `stories` in the response will be changed to `[thePrefix]Stories`
-    story_list_prefix = safely_read_arg('responsePrefix', False)
-    if story_list_prefix:
-        results["{}Stories".format(story_list_prefix)] = results['stories']
-        del results['stories']
     return jsonify(results)
 
 

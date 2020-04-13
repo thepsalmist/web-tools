@@ -11,8 +11,7 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { selectStory, fetchStory } from '../../../actions/storyActions';
 import { fetchTopicStoryInfo } from '../../../actions/topicActions';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import StoryInlinksContainer from './StoryInlinksContainer';
-import StoryOutlinksContainer from './StoryOutlinksContainer';
+import TopicStoriesContainer from '../provider/TopicStoriesContainer';
 import ActionMenu from '../../common/ActionMenu';
 import TabSelector from '../../common/TabSelector';
 import StoryEntitiesContainer from '../../common/story/StoryEntitiesContainer';
@@ -105,12 +104,12 @@ class StoryContainer extends React.Component {
           <>
             <Row>
               <Col lg={12}>
-                <StoryInlinksContainer topicId={topicId} storiesId={storiesId} />
+                <TopicStoriesContainer extraArgs={{ linkToStoriesId: storiesId }} titleMsg={messages.inlinks} uid="inlinking" />
               </Col>
             </Row>
             <Row>
               <Col lg={12}>
-                <StoryOutlinksContainer topicId={topicId} storiesId={storiesId} />
+                <TopicStoriesContainer extraArgs={{ linkFromStoriesId: storiesId }} titleMsg={messages.outlinks} uid="outlinked" />
               </Col>
             </Row>
           </>
@@ -121,7 +120,13 @@ class StoryContainer extends React.Component {
           <>
             <Row>
               <Col lg={12}>
-                <TopicWordCloudContainer title={messages.topWords} svgName={`story-${storiesId}`} extraQueryClause={`stories_id:${storiesId}`} width={720} />
+                <TopicWordCloudContainer
+                  title={messages.topWords}
+                  svgName={`story-${storiesId}`}
+                  extraQueryClause={`stories_id:${storiesId}`}
+                  width={720}
+                  uid="story"
+                />
               </Col>
             </Row>
             <Row>

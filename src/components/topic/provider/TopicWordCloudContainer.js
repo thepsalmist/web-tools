@@ -11,6 +11,7 @@ import EditableWordCloudDataCard from '../../common/EditableWordCloudDataCard';
 import { fetchTopicProviderWords } from '../../../actions/topicActions';
 import { generateParamStr } from '../../../lib/apiUtil';
 import { topicDownloadFilename } from '../../util/topicUtil';
+import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
 const TopicWordCloudContainer = (props) => (
   <EditableWordCloudDataCard
@@ -36,6 +37,7 @@ TopicWordCloudContainer.propTypes = {
   // from parent
   svgName: PropTypes.string.isRequired,
   extraQueryClause: PropTypes.string,
+  uid: PropTypes.string.isRequired,
   // from dispatch
   handleWordCloudClick: PropTypes.func.isRequired,
   // from state
@@ -45,15 +47,15 @@ TopicWordCloudContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   topicInfo: state.topics.selected.info,
   filters: state.topics.selected.filters,
-  fetchStatus: state.topics.selected.provider.words.fetchStatus,
-  words: state.topics.selected.provider.words.list,
+  fetchStatus: state.topics.selected.provider.words.fetchStatuses[ownProps.uid] || FETCH_INVALID,
+  words: state.topics.selected.provider.words.results[ownProps.uid] ? state.topics.selected.provider.words.results[ownProps.uid].words : [],
 });
 
 const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicProviderWords(props.topicInfo.topics_id,
-  { ...props.filters, sampleSize: props.sampleSize, q: combineQueryParams(props.filters.q, props.extraQueryClause) }));
+  { ...props.filters, sampleSize: props.sampleSize, q: combineQueryParams(props.filters.q, props.extraQueryClause), uid: props.uid }));
 
 const mapDispatchToProps = (dispatch) => ({
   handleWordCloudClick: (word, topicId, filters) => {

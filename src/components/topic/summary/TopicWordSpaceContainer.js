@@ -16,6 +16,7 @@ import messages from '../../../resources/messages';
 import { DownloadButton } from '../../common/IconButton';
 import { topicDownloadFilename } from '../../util/topicUtil';
 import { downloadSvg } from '../../util/svg';
+import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
 const localMessages = {
   title: { id: 'topic.summary.words.space.title', defaultMessage: 'Topic Word Space' },
@@ -64,14 +65,15 @@ TopicWordSpaceContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
   topicName: PropTypes.string.isRequired,
+  uid: PropTypes.string.isRequired,
   // from state
   words: PropTypes.array,
   fetchStatus: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = state => ({
-  fetchStatus: state.topics.selected.provider.words.fetchStatus,
-  words: state.topics.selected.provider.words.list,
+const mapStateToProps = (state, ownProps) => ({
+  fetchStatus: state.topics.selected.provider.words.fetchStatuses[ownProps.uid] || FETCH_INVALID,
+  words: state.topics.selected.provider.words.results[ownProps.uid] ? state.topics.selected.provider.words.results[ownProps.uid].words : [],
 });
 
 const mapDispatchToProps = dispatch => ({

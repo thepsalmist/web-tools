@@ -78,45 +78,6 @@ def topic_word_split_story_counts_csv(topics_id, word):
                                                topics_id, q='\"{}\"'.format(word))
 
 
-@app.route('/api/topics/<topics_id>/words/<word>/stories', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def topic_word_stories(topics_id, word):
-    response = apicache.topic_story_list(user_mediacloud_key(), topics_id, q='\"{}\"'.format(word))
-    return jsonify(response)
-
-
-@app.route('/api/topics/<topics_id>/words/<word>/stories.csv', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def topic_word_stories_csv(topics_id, word):
-    user_mc = user_mediacloud_client()
-    topic = user_mc.topic(topics_id)
-    return stream_story_list_csv(user_mediacloud_key(), 'word-'+word+'-stories', topic, q='\"{}\"'.format(word))
-
-
-@app.route('/api/topics/<topics_id>/words/<word>/words', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def topic_word_associated_words(topics_id, word):
-    query = apicache.add_to_user_query('\"{}\"'.format(word))
-    response = apicache.topic_word_counts(user_mediacloud_key(), topics_id, q=query)[:100]
-    return jsonify(response)
-
-
-@app.route('/api/topics/<topics_id>/words/<word>/words.csv', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def topic_word_associated_words_csv(topics_id, word):
-    query = apicache.add_to_user_query('\"{}\"'.format(word))
-    ngram_size = request.args['ngram_size'] if 'ngram_size' in request.args else 1  # default to word count
-    word_counts = apicache.topic_ngram_counts(user_mediacloud_key(), topics_id, ngram_size=ngram_size, q=query,
-                                              num_words=WORD_COUNT_DOWNLOAD_NUM_WORDS,
-                                              sample_size=WORD_COUNT_DOWNLOAD_SAMPLE_SIZE)
-    return csv.stream_response(word_counts, apicache.WORD_COUNT_DOWNLOAD_COLUMNS,
-                               'topic-{}-{}-sampled-ngrams-{}-word'.format(topics_id, word, ngram_size))
-
-
 @app.route('/api/topics/<topics_id>/words/<word>/sample-usage', methods=['GET'])
 @flask_login.login_required
 @api_error_handler

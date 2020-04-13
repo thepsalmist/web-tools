@@ -7,7 +7,6 @@ import LoadingSpinner from '../../common/LoadingSpinner';
 import { urlWithFilters } from '../../util/location';
 import TopPeopleContainer from './TopPeopleContainer';
 import TopOrgsContainer from './TopOrgsContainer';
-import StoriesSummaryContainer from './StoriesSummaryContainer';
 import MediaSummaryContainer from './MediaSummaryContainer';
 import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
 import SplitStoryCountSummaryContainer from './SplitStoryCountSummaryContainer';
@@ -27,6 +26,7 @@ import TabSelector from '../../common/TabSelector';
 import messages from '../../../resources/messages';
 import SeedQuerySummary from '../versions/SeedQuerySummary';
 import TopicAttentionDrillDownContainer from './drilldowns/TopicAttentionDrillDownContainer';
+import TopicStoriesContainer from '../provider/TopicStoriesContainer';
 
 const localMessages = {
   title: { id: 'topic.summary.summary.title', defaultMessage: 'Topic: {name}' },
@@ -34,9 +34,9 @@ const localMessages = {
   previewIntro: { id: 'topic.summary.public.intro', defaultMessage: 'This is a preview of our {name} topic.  It shows just a sample of the data available once you login to the Topic Mapper tool. To explore, click on a link and sign in.' },
   statsTabTitle: { id: 'topic.summary.summary.about', defaultMessage: 'Stats' },
   exportTabTitle: { id: 'topic.summary.summary.export', defaultMessage: 'Export' },
-  wordsDescriptionIntro: { id: 'topic.summary.words.help.intro',
-    defaultMessage: '<p>Look at the top words to see how this topic was talked about. This can suggest what the dominant narrative was, and looking at different timespans can suggest how it evolved over time.</p>',
-  },
+  wordsDescriptionIntro: { id: 'topic.summary.words.help.intro', defaultMessage: '<p>Look at the top words to see how this topic was talked about. This can suggest what the dominant narrative was, and looking at different timespans can suggest how it evolved over time.</p>' },
+  topStories: { id: 'topic.summary.stories.title', defaultMessage: 'Top Stories' },
+  storiesDescriptionIntro: { id: 'topic.summary.stories.help.title', defaultMessage: '<p>The top stories within this topic can suggest the main ways it is talked about.  Sort by different measures to get a better picture of a story\'s influence.</p>' },
 };
 
 class TopicSummaryContainer extends React.Component {
@@ -77,7 +77,14 @@ class TopicSummaryContainer extends React.Component {
             <>
               <Row>
                 <Col lg={12}>
-                  <StoriesSummaryContainer topicId={topic.topics_id} filters={filters} location={location} />
+                  <SummarizedVizualization
+                    titleMessage={localMessages.topStories}
+                    introMessage={localMessages.storiesDescriptionIntro}
+                    handleExplore={urlWithFilters(`/topics/${topic.topics_id}/stories`, filters)}
+                    wide
+                  >
+                    <TopicStoriesContainer uid="topic" border={false} />
+                  </SummarizedVizualization>
                 </Col>
               </Row>
               <Row>
@@ -116,14 +123,11 @@ class TopicSummaryContainer extends React.Component {
                     detailedMessage={[messages.wordcloudHelpText, messages.wordCloudTopicWord2VecLayoutHelp]}
                     handleExplore={urlWithFilters(`/topics/${topic.topics_id}/words`, filters)}
                   >
-                    <TopicWordCloudContainer
-                      svgName="all-words"
-                      border={false}
-                    />
+                    <TopicWordCloudContainer svgName="all-words" border={false} uid="topic" />
                   </SummarizedVizualization>
                 </Col>
                 <Col lg={12}>
-                  <TopicWordSpaceContainer topicId={topic.topics_id} topicName={topic.name} filters={filters} />
+                  <TopicWordSpaceContainer topicId={topic.topics_id} topicName={topic.name} filters={filters} uid="topic" />
                 </Col>
               </Row>
               <Permissioned onlyRole={PERMISSION_LOGGED_IN}>

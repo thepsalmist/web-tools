@@ -3,15 +3,11 @@ from flask import request, jsonify
 import flask_login
 
 from server import app, TOOL_API_KEY, executor
-from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_DOWNLOAD_SAMPLE_SIZE, \
-    WORD_COUNT_UI_NUM_WORDS
 import server.util.csv as csv
 from server.util.request import api_error_handler, arguments_required, filters_from_args, json_error_response
-from server.auth import user_mediacloud_key, is_user_logged_in, user_mediacloud_client
+from server.auth import user_mediacloud_key
 from server.views.topics.attention import stream_topic_split_story_counts_csv
-from server.views.topics.stories import stream_story_list_csv
 import server.views.topics.apicache as apicache
-from server.views.topics import access_public_topic
 
 logger = logging.getLogger(__name__)
 

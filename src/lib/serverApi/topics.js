@@ -51,11 +51,6 @@ export function topicStoryInfo(topicId, storiesId, params) {
   return createApiPromise(`/api/topics/${topicId}/stories/${storiesId}`, acceptedParams);
 }
 
-export function storyUpdate(storiesId, params) {
-  const acceptedParams = acceptParams(params, ['id', 'title', 'url', 'guid', 'language', 'description', 'publish_date', 'confirm_date', 'undateable']);
-  return createPostingApiPromise(`/api/stories/${storiesId}/storyUpdate`, acceptedParams);
-}
-
 export function media(topicId, mediaId, params) {
   const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q']);
   return createApiPromise(`/api/topics/${topicId}/media/${mediaId}`, acceptedParams);

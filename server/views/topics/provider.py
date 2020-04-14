@@ -1,18 +1,16 @@
 import logging
-from flask import request, jsonify
+from flask import jsonify
 import flask_login
 from typing import List, Dict
 
-from server import app, TOOL_API_KEY, executor
-from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_DOWNLOAD_SAMPLE_SIZE, \
-    WORD_COUNT_UI_NUM_WORDS
+from server import app
+from server.views import WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_UI_NUM_WORDS
 import server.util.csv as csv
-from server.util.request import api_error_handler, safely_read_arg, arguments_required, filters_from_args, json_error_response
-from server.auth import user_mediacloud_key, is_user_logged_in, user_mediacloud_client
+from server.util.request import api_error_handler, safely_read_arg
+from server.auth import user_mediacloud_key, user_mediacloud_client
 from server.views.topics.attention import stream_topic_split_story_counts_csv
 from server.views.topics.stories import stream_story_list_csv
 import server.views.topics.apicache as apicache
-from server.views.topics import access_public_topic
 from server.util.stringutil import camel_to_snake
 
 logger = logging.getLogger(__name__)
@@ -94,3 +92,32 @@ def topic_provider_stories_csv(topics_id):
     topic = user_mc.topic(topics_id)
     del optional_args['link_id']  # we do this do make sure this helper can page through the results
     return stream_story_list_csv(user_mediacloud_key(), 'stories', topic, **optional_args)
+
+
+def _parse_count_over_time_optional_arguments():
+    """
+    The user can override some of the defaults that govern any request for a count over time within the topic. This
+    method centralizes the parsing of those optional overrides from the request made.
+    :return: a dict that can be spread as arguments to a call to topic_split_story_counts
+    """
+    return _parse_optional_args(
+        # these ones are supported by the low-level call
+        ['snapshots_id', 'timespans_id', 'foci_id', 'q']
+    )
+
+
+@app.route('/api/topics/<topics_id>/provider/count-over-time', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def topic_provider_count_over_time(topics_id):
+    optional_args = _parse_count_over_time_optional_arguments()
+    results = apicache.topic_split_story_counts(user_mediacloud_key(), topics_id, **optional_args)
+    return jsonify(results)
+
+
+@app.route('/api/topics/<topics_id>/provider/count-over-time.csv', methods=['GET'])
+@flask_login.login_required
+def topic_provider_count_over_time_csv(topics_id):
+    optional_args = _parse_count_over_time_optional_arguments()
+    results = apicache.topic_split_story_counts(user_mediacloud_key(), topics_id, **optional_args)
+    return stream_topic_split_story_counts_csv(results)

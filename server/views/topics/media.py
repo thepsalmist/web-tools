@@ -3,12 +3,9 @@ from flask import jsonify, request, Response
 import flask_login
 
 from server import app, TOOL_API_KEY
-from server.views import WORD_COUNT_DOWNLOAD_NUM_WORDS, WORD_COUNT_DOWNLOAD_SAMPLE_SIZE
 from server.auth import user_mediacloud_key, user_mediacloud_client, user_admin_mediacloud_client, is_user_logged_in
 from server.util import csv
 from server.views.topics import validated_sort, TOPIC_MEDIA_CSV_PROPS
-from server.views.topics.attention import stream_topic_split_story_counts_csv
-from server.views.topics.stories import stream_story_list_csv
 import server.views.topics.apicache as apicache
 import server.views.apicache as base_apicache
 from server.util.request import filters_from_args, api_error_handler
@@ -77,32 +74,6 @@ def _stream_media_by_page(user_mc_key, topics_id, props, **kwargs):
             more_media = True
         else:
             more_media = False
-
-
-@app.route('/api/topics/<topics_id>/media/<media_id>/split-story/count', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def topic_media_split_story_count(topics_id, media_id):
-    return jsonify(apicache.topic_split_story_counts(user_mediacloud_key(), topics_id,
-                                                     q="media_id:{}".format(media_id)))
-
-
-@app.route('/api/topics/<topics_id>/media/<media_id>/split-story/count.csv', methods=['GET'])
-@flask_login.login_required
-def topic_media_story_split_count_csv(topics_id, media_id):
-    return stream_topic_split_story_counts_csv(user_mediacloud_key(), 'media-'+str(media_id)+'-split-story-counts',
-                                               topics_id, q="media_id:{}".format(media_id))
-
-
-@app.route('/api/topics/<topics_id>/media/<media_id>/stories', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def media_stories(topics_id, media_id):
-    sort = validated_sort(request.args.get('sort'))
-    limit = request.args.get('limit')
-    stories = apicache.topic_story_list(user_mediacloud_key(), topics_id,
-                                        media_id=media_id, sort=sort, limit=limit)
-    return jsonify(stories)
 
 
 @app.route('/api/topics/<topics_id>/media/media-links.csv', methods=['GET'])

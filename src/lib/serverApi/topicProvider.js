@@ -23,3 +23,10 @@ export function topicProviderStories(topicId, params) {
   const acceptedParams = acceptParams(params, [...TOPIC_FILTER_PARAMS, ...optionalApiParams, ...reducerParams, ...downloadParams]);
   return createApiPromise(`/api/topics/${topicId}/provider/stories`, acceptedParams);
 }
+
+export function topicProviderCountOverTime(topicId, params) {
+  // this is needed to help the reducer figure out where to put results (the value should be unique on the page being loaded)
+  const reducerParams = ['uid'];
+  const acceptedParams = acceptParams(params, [...TOPIC_FILTER_PARAMS, ...reducerParams]);
+  return createApiPromise(`/api/topics/${topicId}/provider/count-over-time`, acceptedParams);
+}

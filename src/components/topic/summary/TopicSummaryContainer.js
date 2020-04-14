@@ -9,7 +9,7 @@ import TopPeopleContainer from './TopPeopleContainer';
 import TopOrgsContainer from './TopOrgsContainer';
 import MediaSummaryContainer from './MediaSummaryContainer';
 import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
-import SplitStoryCountSummaryContainer from './SplitStoryCountSummaryContainer';
+import CountOverTimeSummaryContainer from './CountOverTimeSummaryContainer';
 import TopicStoryStatsContainer from './TopicStoryStatsContainer';
 import StoryTotalsSummaryContainer from './StoryTotalsSummaryContainer';
 import DownloadMapFilesContainer from './export/DownloadMapFilesContainer';
@@ -25,7 +25,6 @@ import TopicWordSpaceContainer from './TopicWordSpaceContainer';
 import TabSelector from '../../common/TabSelector';
 import messages from '../../../resources/messages';
 import SeedQuerySummary from '../versions/SeedQuerySummary';
-import TopicAttentionDrillDownContainer from './drilldowns/TopicAttentionDrillDownContainer';
 import TopicStoriesContainer from '../provider/TopicStoriesContainer';
 
 const localMessages = {
@@ -37,6 +36,7 @@ const localMessages = {
   wordsDescriptionIntro: { id: 'topic.summary.words.help.intro', defaultMessage: '<p>Look at the top words to see how this topic was talked about. This can suggest what the dominant narrative was, and looking at different timespans can suggest how it evolved over time.</p>' },
   topStories: { id: 'topic.summary.stories.title', defaultMessage: 'Top Stories' },
   storiesDescriptionIntro: { id: 'topic.summary.stories.help.title', defaultMessage: '<p>The top stories within this topic can suggest the main ways it is talked about.  Sort by different measures to get a better picture of a story\'s influence.</p>' },
+  countOverTimeDescriptionIntro: { id: 'topic.summary.splitStoryCount.help.title', defaultMessage: '<p>Analyze attention to this topic over time to understand how it is covered. This chart shows the total number of stories that matched your topic query. Spikes in attention can reveal key events.  Plateaus can reveal stable, "normal", attention levels. <b>Click a point to label it with the top inlinked story in that week.</b></p>' },
 };
 
 class TopicSummaryContainer extends React.Component {
@@ -99,13 +99,8 @@ class TopicSummaryContainer extends React.Component {
           // attention
           viewContent = (
             <>
+              <CountOverTimeSummaryContainer topic={topic} filters={filters} timespans={timespans} />
               <Row>
-                <Col lg={12}>
-                  <SplitStoryCountSummaryContainer topicId={topic.topics_id} filters={filters} timespans={timespans} />
-                </Col>
-                <Col lg={12}>
-                  <TopicAttentionDrillDownContainer topicId={topic.topics_id} filters={filters} />
-                </Col>
                 {filteredStoryCountContent}
               </Row>
             </>
@@ -263,9 +258,9 @@ TopicSummaryContainer.propTypes = {
   location: PropTypes.object,
   // from state
   filters: PropTypes.object.isRequired,
-  topic: PropTypes.object,
-  selectedTimespan: PropTypes.object,
-  timespans: PropTypes.array,
+  topic: PropTypes.object.isRequired,
+  selectedTimespan: PropTypes.object.isRequired,
+  timespans: PropTypes.array.isRequired,
   selectedSnapshot: PropTypes.object,
   user: PropTypes.object.isRequired,
 };
@@ -275,8 +270,8 @@ const mapStateToProps = state => ({
   topic: state.topics.selected.info,
   selectedTimespan: state.topics.selected.timespans.selected,
   selectedSnapshot: state.topics.selected.snapshots.selected,
-  user: state.user,
   timespans: state.topics.selected.timespans.list,
+  user: state.user,
 });
 
 export default

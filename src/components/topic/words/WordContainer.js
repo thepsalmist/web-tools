@@ -7,7 +7,7 @@ import { selectWord } from '../../../actions/topicActions';
 import WordDetails from './WordDetails';
 import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
 import TopicStoriesContainer from '../provider/TopicStoriesContainer';
-import WordSplitStoryCountContainer from './WordSplitStoryCountContainer';
+import TopicCountOverTimeContainer from '../provider/TopicCountOverTimeContainer';
 import WordInContextContainer from './WordInContextContainer';
 import WordSimilarWordsContainer from './WordSimilarWordsContainer';
 import TopicPageTitle from '../TopicPageTitle';
@@ -47,7 +47,7 @@ class WordContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={12}>
-              <WordSplitStoryCountContainer topicId={topicId} stem={stem} term={term} filters={filters} />
+              <TopicCountOverTimeContainer titleMsg={messages.attention} uid="word" extraQueryClause={`${stem}*`} />
             </Col>
           </Row>
           <Row>

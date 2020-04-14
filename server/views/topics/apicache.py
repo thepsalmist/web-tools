@@ -262,7 +262,6 @@ def topic_split_story_counts(user_mc_key, topics_id, **kwargs):
         'timespans_id': timespans_id,
         'foci_id': foci_id,
         'q': q,
-        'fq': timespan['fq']
     }
     merged_args.update(kwargs)    # passed in args override anything pulled form the request.args
     # and make sure to ignore undateable stories
@@ -284,15 +283,12 @@ def _cached_topic_split_story_counts(user_mc_key, topics_id, **kwargs):
     Internal helper - don't call this; call topic_split_story_counts instead. This needs user_mc_key in the
     function signature to make sure the caching is keyed correctly.
     """
-    local_mc = None
     if user_mc_key == TOOL_API_KEY:
         local_mc = mc
     else:
         local_mc = user_mediacloud_client()
 
-    results = local_mc.topicStoryCount(topics_id,
-        split=True,
-        **kwargs)
+    results = local_mc.topicStoryCount(topics_id, split=True, **kwargs)
     total_stories = 0
     for c in results['counts']:
         total_stories += c['count']

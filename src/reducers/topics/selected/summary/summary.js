@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux';
 import topMedia from './topMedia';
-import splitStoryCount from './splitStoryCount';
 import storyTotals from './storyTotals';
 import geocodedStoryTotals from './geocodedStoryTotals';
 import englishStoryTotals from './englishStoryTotals';
@@ -16,7 +15,6 @@ import attentionDrillDownStories from './attentionDrillDownStories';
 
 const summaryReducer = combineReducers({
   topMedia,
-  splitStoryCount,
   storyTotals,
   geocodedStoryTotals,
   englishStoryTotals,

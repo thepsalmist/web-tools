@@ -11,8 +11,8 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { selectMedia, fetchMedia } from '../../../actions/topicActions';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import TopicStoriesContainer from '../provider/TopicStoriesContainer';
+import TopicCountOverTimeContainer from '../provider/TopicCountOverTimeContainer';
 import { updateFeedback } from '../../../actions/appActions';
-import MediaSplitStoryCountContainer from './MediaSplitStoryCountContainer';
 import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
 import messages from '../../../resources/messages';
 import { RemoveButton, ReadItNowButton } from '../../common/IconButton';
@@ -48,7 +48,7 @@ class MediaContainer extends React.Component {
   };
 
   render() {
-    const { media, topicId, mediaId, filters } = this.props;
+    const { media, mediaId, filters } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
     const dialogActions = [
       <Button
@@ -122,7 +122,7 @@ class MediaContainer extends React.Component {
           </Row>
           <Row>
             <Col lg={12}>
-              <MediaSplitStoryCountContainer topicId={topicId} mediaId={mediaId} />
+              <TopicCountOverTimeContainer titleMsg={messages.attention} uid="media" extraQueryClause={`media_id:${mediaId}`} />
             </Col>
           </Row>
           <Row>

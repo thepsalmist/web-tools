@@ -1,86 +1,48 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import { connect } from 'react-redux';
-import { Field, reduxForm } from 'redux-form';
+import { reduxForm } from 'redux-form';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../../../common/hocs/IntlForm';
 import AppButton from '../../../../common/AppButton';
-import { uploadPlatformGenericCsvFile, uploadPlatformGenericCsvUrl } from '../../../../../actions/topicActions';
+import { uploadPlatformGenericCsvFile } from '../../../../../actions/topicActions';
 import { updateFeedback } from '../../../../../actions/appActions';
 
 const localMessages = {
   feedbackGood: { id: 'platform.generic.csv.feedback.worked', defaultMessage: 'This CSV is valid' },
   feedbackBad: { id: 'platform.generic.csv.feedback.failed', defaultMessage: 'The isn\'t valid ({message}).' },
-  urlLabel: { id: 'platform.generic.csv.url', defaultMessage: 'URL of a CSV file' },
   csvFile: { id: 'platform.generic.csv.file', defaultMessage: 'CSV file' },
   validate: { id: 'platform.generic.csv.validate', defaultMessage: 'Validate Format' },
 };
-
-const CSV_URL = 0;
-const CSV_UPLOAD = 1;
 
 class EditGenericCsvForm extends React.Component {
   constructor(props) {
     super(props);
     this.csvFileRef = React.createRef();
-    this.csvUrlRef = React.createRef();
-    this.state = {
-      value: CSV_URL,
-    };
   }
 
-  handleChange = (event, newValue) => {
-    this.setState({ value: newValue });
-  };
-
   handleFileChange = () => {
-    const { topicId, uploadFile, uploadFileUrl, change } = this.props;
-    if (this.state.value === CSV_UPLOAD) {
-      const fd = this.csvFileRef.current.files[0];
-      uploadFile(topicId, fd, change);
-    } else if (this.state.value === CSV_URL) {
-      const url = this.csvUrlRef.current.value;
-      uploadFileUrl(topicId, url, change);
-    }
+    const { topicId, uploadFile, change } = this.props;
+    const fd = this.csvFileRef.current.files[0];
+    uploadFile(topicId, fd, change);
   }
 
   render() {
-    const { renderTextField, intl } = this.props;
+    const { intl } = this.props;
     const validateButton = <AppButton label={intl.formatMessage(localMessages.validate)} color="primary" onClick={this.handleFileChange} />;
     return (
       <Row>
         <Col lg={12}>
-          <Tabs value={this.state.value} onChange={this.handleChange}>
-            <Tab label="Fetch From URL" />
-            <Tab label="Upload a File" />
-          </Tabs>
-          { (this.state.value === CSV_URL) && (
-            <div>
-              <Field
-                fullWidth
-                name="url"
-                type="text"
-                component={renderTextField}
-                ref={this.csvUrlRef}
-                label={localMessages.urlLabel}
-              />
-              {validateButton}
-            </div>
-          )}
-          { (this.state.value === CSV_UPLOAD) && (
-            <div>
-              <label htmlFor="csvFile"><FormattedMessage {...localMessages.csvFile} /></label>
-              <input
-                name="csvFile"
-                type="file"
-                ref={this.csvFileRef}
-              />
-              {validateButton}
-            </div>
-          )}
+          <div>
+            <label htmlFor="csvFile"><FormattedMessage {...localMessages.csvFile} /></label>
+            <input
+              name="csvFile"
+              type="file"
+              ref={this.csvFileRef}
+            />
+            {validateButton}
+          </div>
         </Col>
       </Row>
     );
@@ -96,7 +58,6 @@ EditGenericCsvForm.propTypes = {
   // from dispatch
   onFormChange: PropTypes.func.isRequired,
   uploadFile: PropTypes.func.isRequired,
-  uploadFileUrl: PropTypes.func.isRequired,
   // from compositional helper
   intl: PropTypes.object.isRequired,
   renderTextField: PropTypes.func.isRequired,
@@ -117,27 +78,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   uploadFile: (topicId, file, change) => {
     dispatch(uploadPlatformGenericCsvFile(topicId, { file }))
-      .then((results) => {
-        if (results.status === 'Error') {
-          return dispatch(updateFeedback({
-            classes: 'error-notice',
-            open: true,
-            message: ownProps.intl.formatMessage(localMessages.feedbackBad, { message: results.message }),
-          }));
-        }
-        if (results.status === 'Success') {
-          dispatch(change('query', results.filename));
-          return dispatch(updateFeedback({
-            classes: 'info-notice',
-            open: true,
-            message: ownProps.intl.formatMessage(localMessages.feedbackGood),
-          }));
-        }
-        return null;
-      });
-  },
-  uploadFileUrl: (topicId, url, change) => {
-    dispatch(uploadPlatformGenericCsvUrl(topicId, { url }))
       .then((results) => {
         if (results.status === 'Error') {
           return dispatch(updateFeedback({

@@ -23,18 +23,6 @@ export const topicUpdatePlatform = createAsyncAction(TOPIC_UPDATE_PLATFORM, api.
 export const SELECT_PLATFORM = 'SELECT_PLATFORM';
 export const selectPlatform = createAsyncAction(SELECT_PLATFORM, id => id);
 
-export const FETCH_PLATFORM_PREVIEW_STORY_COUNTS = 'FETCH_PLATFORM_PREVIEW_STORY_COUNTS';
-export const fetchStoryCountsByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PREVIEW_STORY_COUNTS, api.topicStoryCountsByPlatformQuery);
-
-export const FETCH_PLATFORM_PREVIEW_STORIES = 'FETCH_PLATFORM_PREVIEW_STORIES';
-export const fetchStoriesByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PREVIEW_STORIES, api.topicStoriesByPlatformQuery);
-
-export const FETCH_PLATFORM_PREVIEW_ATTENTION = 'FETCH_PLATFORM_PREVIEW_ATTENTION';
-export const fetchAttentionByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PREVIEW_ATTENTION, api.topicAttentionByPlatformQuery);
-
-export const FETCH_PLATFORM_PREVIEW_WORDS = 'FETCH_PLATFORM_PREVIEW_WORDS';
-export const fetchWordsByPlatformQuery = createAsyncAction(FETCH_PLATFORM_PREVIEW_WORDS, api.topicTopWordsByPlatformQuery);
-
 export const UPLOAD_PLATFORM_GENERIC_CSV_FILE = 'UPLOAD_PLATFORM_GENERIC_CSV_FILE';
 export const uploadPlatformGenericCsvFile = createAsyncAction(UPLOAD_PLATFORM_GENERIC_CSV_FILE, api.uploadPlatformGenericCsvFile);
 

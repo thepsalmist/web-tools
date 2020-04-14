@@ -69,7 +69,7 @@ EditOpenWebForm.propTypes = {
   // from compositional helper
   intl: PropTypes.object.isRequired,
   renderSolrTextField: PropTypes.func.isRequired,
-  handleMediaDelete: PropTypes.func.isRequired,
+  handleMediaDelete: PropTypes.func,
 };
 
 const reduxFormConfig = {

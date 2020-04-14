@@ -11,6 +11,9 @@ from server.platforms import provider_for, PLATFORM_REDDIT, PLATFORM_OPEN_WEB, P
 
 logger = logging.getLogger(__name__)
 
+PLATFORM_PREVIEW_ARGS = ['platform_type', 'platform_source', 'platform_channel',
+                         'platform_query', 'start_date', 'end_date']
+
 
 def _info_from_request():
     """
@@ -42,11 +45,11 @@ def _info_from_request():
     return provider, query, start_date, end_date, options
 
 
-@app.route('/api/topics/<topics_id>/platforms/preview/stories', methods=['GET'])
-@arguments_required('platform_type', 'platform_query', 'platform_source', 'platform_channel', 'start_date', 'end_date')
+@app.route('/api/platforms/sample', methods=['GET'])
+@arguments_required(*PLATFORM_PREVIEW_ARGS)
 @flask_login.login_required
 @api_error_handler
-def api_topics_platform_preview_story_sample(topics_id):
+def api_platforms_preview_sample():
     provider, query, start_date, end_date, options = _info_from_request()
     try:
         content_list = provider.sample(query, start_date, end_date, **options)
@@ -57,11 +60,11 @@ def api_topics_platform_preview_story_sample(topics_id):
     return jsonify({'list': content_list, 'supported': supported})
 
 
-@app.route('/api/topics/<topics_id>/platforms/preview/story-count', methods=['GET'])
-@arguments_required('platform_type', 'platform_query', 'platform_source', 'platform_channel', 'start_date', 'end_date')
+@app.route('/api/platforms/count', methods=['GET'])
+@arguments_required(*PLATFORM_PREVIEW_ARGS)
 @flask_login.login_required
 @api_error_handler
-def api_topics_platform_preview_total_content(topics_id):
+def api_platforms_preview_total_content():
     provider, query, start_date, end_date, options = _info_from_request()
     try:
         content_count = provider.count(query, start_date, end_date, **options)
@@ -72,11 +75,11 @@ def api_topics_platform_preview_total_content(topics_id):
     return jsonify({'count': content_count, 'supported': supported})
 
 
-@app.route('/api/topics/<topics_id>/platforms/preview/attention', methods=['GET'])
-@arguments_required('platform_type', 'platform_query', 'platform_source', 'platform_channel', 'start_date', 'end_date')
+@app.route('/api/platforms/count-over-time', methods=['GET'])
+@arguments_required(*PLATFORM_PREVIEW_ARGS)
 @flask_login.login_required
 @api_error_handler
-def api_topics_platform_preview_split_story_count(topics_id):
+def api_platforms_preview_split_story_count():
     provider, query, start_date, end_date, options = _info_from_request()
     try:
         content_count_over_time = provider.count_over_time(query, start_date, end_date, **options)
@@ -93,11 +96,11 @@ def api_topics_platform_preview_split_story_count(topics_id):
     return jsonify({'results': content_count_over_time, 'supported': supported})
 
 
-@app.route('/api/topics/<topics_id>/platforms/preview/words', methods=['GET'])
-@arguments_required('platform_type', 'platform_query', 'platform_source', 'platform_channel', 'start_date', 'end_date')
+@app.route('/api/platforms/words', methods=['GET'])
+@arguments_required(*PLATFORM_PREVIEW_ARGS)
 @flask_login.login_required
 @api_error_handler
-def api_topics_platform_preview_top_words(topics_id):
+def api_platforms_preview_top_words():
     provider, query, start_date, end_date, options = _info_from_request()
     try:
         content_words = provider.words(query, start_date, end_date, **options)

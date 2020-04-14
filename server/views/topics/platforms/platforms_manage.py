@@ -8,7 +8,7 @@ from server.util.request import api_error_handler
 from server.auth import user_mediacloud_client
 from server.util.request import form_fields_required
 import server.views.topics.apicache as apicache
-from server.views.topics.platforms.platforms_preview import parse_open_web_media_from_channel
+from server.views.platforms import parse_open_web_media_from_channel
 from server.platforms import PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_SOURCE_MEDIA_CLOUD, PLATFORM_GENERIC, PLATFORM_SOURCE_CSV
 
 logger = logging.getLogger(__name__)

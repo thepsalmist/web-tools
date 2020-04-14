@@ -12,7 +12,8 @@ import withIntlForm from '../../../common/hocs/IntlForm';
 import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AppButton from '../../../common/AppButton';
 import StoryFeedbackRow from '../../../common/StoryFeedbackRow';
-import { goToCreatePlatformStep, fetchStoriesByPlatformQuery } from '../../../../actions/topicActions';
+import { goToCreatePlatformStep } from '../../../../actions/topicActions';
+import { fetchPlatformSample } from '../../../../actions/platformActions';
 import { platformChannelDataFormatter, topicQueryAsString } from '../../../util/topicUtil';
 
 const VALIDATION_CUTOFF = 0.9;
@@ -161,8 +162,8 @@ Platform2ValidateContainer.propTypes = {
   currentPlatformType: PropTypes.string,
   currentQuery: PropTypes.string,
   fetchStatus: PropTypes.string.isRequired,
-  total: PropTypes.number.isRequired,
-  stories: PropTypes.array.isRequired,
+  total: PropTypes.number,
+  stories: PropTypes.array,
   // from dispatch
   handleEditSeedQueryRequest: PropTypes.func.isRequired,
   // from form
@@ -170,10 +171,10 @@ Platform2ValidateContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  currentStep: state.topics.selected.platforms.preview.workflow.currentStep,
-  fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
-  total: state.topics.selected.platforms.preview.matchingStories.total,
-  stories: state.topics.selected.platforms.preview.matchingStories.list,
+  currentStep: state.topics.selected.platforms.create.workflow.currentStep,
+  fetchStatus: state.platforms.sample.fetchStatus,
+  total: state.platforms.sample.total,
+  stories: state.platforms.sample.list,
   topic: state.topics.selected.info,
   formValues: formSelector(state, 'media', 'channel', 'query'),
   selectedPlatform: state.topics.selected.platforms.selected,
@@ -193,7 +194,7 @@ const mapDispatchToProps = dispatch => ({
 
 const fetchAsyncData = (dispatch, { topic, formValues, selectedPlatform }) => {
   const formatPlatformChannelData = platformChannelDataFormatter(selectedPlatform.platform);
-  return dispatch(fetchStoriesByPlatformQuery(topic.topics_id, {
+  return dispatch(fetchPlatformSample({
     platform_type: selectedPlatform.platform,
     platform_query: topicQueryAsString(formValues.query),
     platform_source: selectedPlatform.source,

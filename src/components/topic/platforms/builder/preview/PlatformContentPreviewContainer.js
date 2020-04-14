@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import withAsyncData from '../../../../common/hocs/AsyncDataContainer';
 import withDescription from '../../../../common/hocs/DescribedDataCard';
-import { fetchStoriesByPlatformQuery } from '../../../../../actions/topicActions';
+import { fetchPlatformSample } from '../../../../../actions/platformActions';
 import DataCard from '../../../../common/DataCard';
 import StoryTable from '../../../../common/StoryTable';
 import { topicQueryAsString } from '../../../../util/topicUtil';
@@ -45,16 +45,16 @@ PlatformContentPreviewContainer.propTypes = {
 
 const mapStateToProps = state => ({
   topic: state.topics.selected.info,
-  fetchStatus: state.topics.selected.platforms.preview.matchingStories.fetchStatus,
-  stories: state.topics.selected.platforms.preview.matchingStories.list,
-  supported: state.topics.selected.platforms.preview.matchingStories.supported,
+  fetchStatus: state.platforms.sample.fetchStatus,
+  stories: state.platforms.sample.list,
+  supported: state.platforms.sample.supported,
   formValues: formSelector(state, 'media', 'query', 'channel'),
   selectedPlatform: state.topics.selected.platforms.selected,
 });
 
 const fetchAsyncData = (dispatch, { topic, formValues, selectedPlatform, formatPlatformChannelData }) => {
   // call the fetcher the parent passed in to fetch the data we want to show
-  dispatch(fetchStoriesByPlatformQuery(topic.topics_id, {
+  dispatch(fetchPlatformSample({
     platform_type: selectedPlatform.platform,
     platform_query: topicQueryAsString(formValues.query),
     platform_source: selectedPlatform.source,

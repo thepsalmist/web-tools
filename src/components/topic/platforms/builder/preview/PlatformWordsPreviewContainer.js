@@ -7,7 +7,7 @@ import withAsyncData from '../../../../common/hocs/AsyncDataContainer';
 import withDescription from '../../../../common/hocs/DescribedDataCard';
 import OrderedWordCloud from '../../../../vis/OrderedWordCloud';
 import DataCard from '../../../../common/DataCard';
-import { fetchWordsByPlatformQuery } from '../../../../../actions/topicActions';
+import { fetchPlatformWords } from '../../../../../actions/platformActions';
 import messages from '../../../../../resources/messages';
 import { topicQueryAsString } from '../../../../util/topicUtil';
 
@@ -50,16 +50,16 @@ PlatformWordsPreview.propTypes = {
 
 const mapStateToProps = state => ({
   topic: state.topics.selected.info,
-  fetchStatus: state.topics.selected.platforms.preview.matchingWords.fetchStatus,
-  words: state.topics.selected.platforms.preview.matchingWords.list,
-  supported: state.topics.selected.platforms.preview.matchingWords.supported,
+  fetchStatus: state.platforms.words.fetchStatus,
+  words: state.platforms.words.list,
+  supported: state.platforms.words.supported,
   formValues: formSelector(state, 'media', 'query', 'channel'),
   selectedPlatform: state.topics.selected.platforms.selected,
 });
 
 const fetchAsyncData = (dispatch, { topic, formValues, selectedPlatform, formatPlatformChannelData }) => {
   // call the fetcher the parent passed in to fetch the data we want to show
-  dispatch(fetchWordsByPlatformQuery(topic.topics_id, {
+  dispatch(fetchPlatformWords({
     platform_type: selectedPlatform.platform,
     platform_query: topicQueryAsString(formValues.query),
     platform_source: selectedPlatform.source,

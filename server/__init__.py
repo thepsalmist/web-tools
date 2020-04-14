@@ -211,6 +211,7 @@ import server.views.media_search
 import server.views.media_picker
 import server.views.sources.search
 import server.views.metadata
+import server.views.platforms
 if (server_app == SERVER_APP_SOURCES) or is_dev_mode():
     import server.views.sources.collection
     import server.views.sources.collectionedit
@@ -230,7 +231,6 @@ if (server_app == SERVER_APP_TOPICS) or is_dev_mode():
     import server.views.topics.topicsnapshot
     import server.views.topics.words
     import server.views.topics.platforms.platforms_manage
-    import server.views.topics.platforms.platforms_preview
     import server.views.topics.platforms.platforms_generic_csv
     import server.views.topics.foci.focalsets
     import server.views.topics.foci.focaldefs

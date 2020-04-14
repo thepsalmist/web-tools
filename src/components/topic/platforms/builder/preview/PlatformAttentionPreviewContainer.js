@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import withAsyncData from '../../../../common/hocs/AsyncDataContainer';
-import { fetchAttentionByPlatformQuery } from '../../../../../actions/topicActions';
+import { fetchPlatformCountOverTime } from '../../../../../actions/platformActions';
 import DataCard from '../../../../common/DataCard';
 import { getBrandDarkColor } from '../../../../../styles/colors';
 import AttentionOverTimeChart from '../../../../vis/AttentionOverTimeChart';
@@ -61,17 +61,17 @@ PlatformAttentionPreviewContainer.propTypes = {
 
 const mapStateToProps = state => ({
   topic: state.topics.selected.info,
-  fetchStatus: state.topics.selected.platforms.preview.matchingAttention.fetchStatus,
-  total: state.topics.selected.platforms.preview.matchingAttention.total,
-  counts: state.topics.selected.platforms.preview.matchingAttention.counts,
-  supported: state.topics.selected.platforms.preview.matchingAttention.supported,
+  fetchStatus: state.platforms.countOverTime.fetchStatus,
+  total: state.platforms.countOverTime.total,
+  counts: state.platforms.countOverTime.counts,
+  supported: state.platforms.countOverTime.supported,
   formValues: formSelector(state, 'media', 'query', 'channel'),
   selectedPlatform: state.topics.selected.platforms.selected,
 });
 
 const fetchAsyncData = (dispatch, { topic, formValues, selectedPlatform, formatPlatformChannelData }) => {
   // call the fetcher the parent passed in to fetch the data we want to show
-  dispatch(fetchAttentionByPlatformQuery(topic.topics_id, {
+  dispatch(fetchPlatformCountOverTime({
     platform_type: selectedPlatform.platform,
     platform_query: topicQueryAsString(formValues.query),
     platform_source: selectedPlatform.source,

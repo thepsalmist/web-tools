@@ -9,19 +9,24 @@ from server.auth import user_mediacloud_client
 from server.util.request import form_fields_required
 import server.views.topics.apicache as apicache
 from server.views.platforms import parse_open_web_media_from_channel
-from server.platforms import PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_SOURCE_MEDIA_CLOUD, PLATFORM_GENERIC, PLATFORM_SOURCE_CSV
+from server.platforms import PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_SOURCE_MEDIA_CLOUD, PLATFORM_GENERIC, \
+    PLATFORM_SOURCE_CSV, PLATFORM_SOURCE_POSTGRES
 
 logger = logging.getLogger(__name__)
 
 
 def _available_platforms():
+    """
+    We hide the Generic/Postgresql source because it isn't viewable/editable
+    :return:
+    """
     info = apicache.topic_platform_info()
     return [{
         'platform': i['platform_name'],
         'source': i['source_name'],
         'query': '',
         'topic_seed_queries_id': -1,
-    } for i in info['info']['topic_platforms_sources_map']]
+    } for i in info['info']['topic_platforms_sources_map'] if i['source_name'] != PLATFORM_SOURCE_POSTGRES]
 
 
 @app.route('/api/topics/<topics_id>/platforms/list', methods=['GET'])

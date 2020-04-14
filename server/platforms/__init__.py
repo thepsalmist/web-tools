@@ -24,6 +24,7 @@ PLATFORM_YOUTUBE = 'youtube'  # coming soon
 # static list matching topics/info results
 PLATFORM_SOURCE_CRIMSON_HEXAGON = 'crimson_hexagon'
 PLATFORM_SOURCE_CSV = 'csv'
+PLATFORM_SOURCE_POSTGRES = 'postgres'
 PLATFORM_SOURCE_MEDIA_CLOUD = 'mediacloud'
 PLATFORM_SOURCE_PUSHSHIFT = 'pushshift'
 PLATFORM_SOURCE_GOOGLE = 'google'

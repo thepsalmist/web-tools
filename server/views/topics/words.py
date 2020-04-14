@@ -6,7 +6,6 @@ from server import app, TOOL_API_KEY, executor
 import server.util.csv as csv
 from server.util.request import api_error_handler, arguments_required, filters_from_args, json_error_response
 from server.auth import user_mediacloud_key
-from server.views.topics.attention import stream_topic_split_story_counts_csv
 import server.views.topics.apicache as apicache
 
 logger = logging.getLogger(__name__)
@@ -57,21 +56,6 @@ def topic_compare_subtopic_top_words(topics_id):
 def topic_word(topics_id, word):
     response = apicache.topic_word_counts(user_mediacloud_key(), topics_id, q=word)[:1]
     return jsonify(response)
-
-
-@app.route('/api/topics/<topics_id>/words/<word>/split-story/count', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def topic_word_split_story_counts(topics_id, word):
-    return jsonify(apicache.topic_split_story_counts(user_mediacloud_key(), topics_id, q='\"{}\"'.format(word)))
-
-
-@app.route('/api/topics/<topics_id>/words/<word>/split-story/count.csv', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def topic_word_split_story_counts_csv(topics_id, word):
-    return stream_topic_split_story_counts_csv(user_mediacloud_key(), 'word-'+word+'-split-story-counts',
-                                               topics_id, q='\"{}\"'.format(word))
 
 
 @app.route('/api/topics/<topics_id>/words/<word>/sample-usage', methods=['GET'])

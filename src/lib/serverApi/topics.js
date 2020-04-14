@@ -36,11 +36,6 @@ export function topicTimespansList(topicId, snapshotId, params) {
   return createApiPromise(`/api/topics/${topicId}/snapshots/${snapshotId}/timespans/list`, acceptedParams);
 }
 
-export function topicSplitStoryCounts(topicId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q']);
-  return createApiPromise(`/api/topics/${topicId}/split-story/count`, acceptedParams);
-}
-
 export function topicStoryCounts(topicId, params) {
   const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'start_date', 'end_date', 'sources[]', 'collections[]']);
   return createApiPromise(`/api/topics/${topicId}/stories/counts`, acceptedParams);

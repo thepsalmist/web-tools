@@ -259,7 +259,7 @@ TopicSummaryContainer.propTypes = {
   // from state
   filters: PropTypes.object.isRequired,
   topic: PropTypes.object.isRequired,
-  selectedTimespan: PropTypes.object.isRequired,
+  selectedTimespan: PropTypes.object,
   timespans: PropTypes.array.isRequired,
   selectedSnapshot: PropTypes.object,
   user: PropTypes.object.isRequired,

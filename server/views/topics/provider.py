@@ -2,16 +2,17 @@ import logging
 from flask import jsonify
 import flask_login
 from typing import List, Dict
+from operator import itemgetter
 
 from server import app
 from server.views import WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_UI_NUM_WORDS
 import server.util.csv as csv
 from server.util.request import api_error_handler, safely_read_arg
 from server.auth import user_mediacloud_key, user_mediacloud_client
-from server.views.topics.attention import stream_topic_split_story_counts_csv
 from server.views.topics.stories import stream_story_list_csv
 import server.views.topics.apicache as apicache
-from server.util.stringutil import camel_to_snake
+from server.util.stringutil import camel_to_snake, trim_solr_date
+
 
 logger = logging.getLogger(__name__)
 
@@ -120,4 +121,13 @@ def topic_provider_count_over_time(topics_id):
 def topic_provider_count_over_time_csv(topics_id):
     optional_args = _parse_count_over_time_optional_arguments()
     results = apicache.topic_split_story_counts(user_mediacloud_key(), topics_id, **optional_args)
-    return stream_topic_split_story_counts_csv(results)
+    return _stream_topic_split_story_counts_csv(results)
+
+
+def _stream_topic_split_story_counts_csv(user_mc_key, filename, topics_id, **kwargs):
+    results = apicache.topic_split_story_counts(user_mc_key, topics_id, **kwargs)
+    clean_results = [{'date': trim_solr_date(item['date']), 'stories': item['count']} for item in results['counts']]
+    sorted_results = sorted(clean_results, key=itemgetter('date'))
+    props = ['date', 'stories']
+    return csv.stream_response(sorted_results, props, filename)
+

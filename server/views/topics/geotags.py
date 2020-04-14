@@ -44,8 +44,7 @@ def topic_geo_tag_counts(topics_id):
 
 
 def _geo_tag_counts(user_mc_key, topics_id):
-    tag_counts = topic_tag_counts(user_mc_key, topics_id, tag_util.GEO_TAG_SET,
-                                  tag_util.GEO_SAMPLE_SIZE)
+    tag_counts = topic_tag_counts(user_mc_key, topics_id, tag_util.GEO_TAG_SET)
     # filter for countries, add in highcharts metadata
     country_tag_counts = [r for r in tag_counts if
                           int(r['tag'].split('_')[1]) in list(COUNTRY_GEONAMES_ID_TO_APLHA3.keys())]

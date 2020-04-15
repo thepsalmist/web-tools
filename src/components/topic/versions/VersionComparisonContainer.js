@@ -5,9 +5,12 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { push } from 'react-router-redux';
 import AppButton from '../../common/AppButton';
-import { topicSnapshotSpider } from '../../../actions/topicActions';
+import { topicSnapshotGenerate } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import TopicVersionReadySummary from './TopicVersionReadySummary';
+import GenerateVersionAdminDialog, { FIELD_NEW_VERSION, FIELD_SPIDER } from './GenerateVersionAdminDialog';
+import Permissioned from '../../common/Permissioned';
+import { PERMISSION_ADMIN } from '../../../lib/auth';
 
 const localMessages = {
   title: { id: 'versions.comparison.title', defaultMessage: 'Version {versionNumber}: Summary' },
@@ -21,20 +24,22 @@ const localMessages = {
   noPrevious: { id: 'versions.comparison.noneYet', defaultMessage: '(No current version to compare to, because you are setting up your first version)' },
 };
 
+/**
+ * This wrapper shows the difference between the current topic version and the settings queued up for
+ * the next one. This rolls up all the changes into one list so it is easier to think about.
+ * Notes:
+ * - `current` should be null if this is the first version
+ * - Admins get some extra options for how to generate the version.
+ */
 class VersionComparisonContainer extends React.Component {
   state = {
-    submittingVersion: false,
+    submittingVersion: false, // this isn't technically a form so we manually control the button disabled with this
   };
 
-  onGenerateVersion = (topicId, snapshotId) => {
-    const { handleNewVersionAndSpider } = this.props;
-    this.setState({ submittingVersion: true });
-    handleNewVersionAndSpider(topicId, snapshotId);
-  }
-
   render() {
-    const { topic, topicId, current, next, focalSetDefinitions } = this.props;
+    const { topic, topicId, current, next, focalSetDefinitions, handleGenerateVersion } = this.props;
     const submitting = this.state.submittingVersion;
+    const currentSnapshotsId = current ? current.snapshots_id : null;
     return (
       <div className="version-comparison">
         <Grid>
@@ -72,10 +77,25 @@ class VersionComparisonContainer extends React.Component {
               </div>
               <AppButton
                 label={localMessages.createVersionAndStartSpider}
-                onClick={() => this.onGenerateVersion(topicId, null)}
+                onClick={() => {
+                  this.setState({ submittingVersion: true });
+                  handleGenerateVersion(topicId, false, false, currentSnapshotsId);
+                }}
                 primary
                 disabled={submitting}
               />
+              <Permissioned onlyRole={PERMISSION_ADMIN}>
+                <GenerateVersionAdminDialog
+                  onGenerate={(values) => {
+                    this.setState({ submittingVersion: true });
+                    handleGenerateVersion(topicId, values[FIELD_NEW_VERSION] === 1, values[FIELD_SPIDER] === 1, currentSnapshotsId);
+                  }}
+                  initialValues={{
+                    [FIELD_NEW_VERSION]: 1,
+                    [FIELD_SPIDER]: 1,
+                  }}
+                />
+              </Permissioned>
             </Col>
           </Row>
         </Grid>
@@ -95,7 +115,7 @@ VersionComparisonContainer.propTypes = {
   topic: PropTypes.object.isRequired,
   focalSetDefinitions: PropTypes.array,
   // from dispatch
-  handleNewVersionAndSpider: PropTypes.func.isRequired,
+  handleGenerateVersion: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -107,13 +127,12 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  handleNewVersionAndSpider: (topicId, snapshotId) => {
-    // if currentVersion is null this will make a new version
-    const params = {};
-    if (snapshotId) {
-      params.snapshotId = snapshotId;
-    }
-    dispatch(topicSnapshotSpider(topicId, params))
+  handleGenerateVersion: (topicId, newVersion, alsoSpider, currentSnapshotsId) => {
+    const params = {
+      snapshotId: newVersion ? null : currentSnapshotsId,
+      spider: alsoSpider ? 1 : 0,
+    };
+    dispatch(topicSnapshotGenerate(topicId, params))
       .then((results) => {
         if (results && results.topics_id) {
           // let them know it worked

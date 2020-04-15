@@ -11,7 +11,7 @@ import messages from '../../../resources/messages';
 import BackLinkingControlBar from '../BackLinkingControlBar';
 import Permissioned from '../../common/Permissioned';
 import { PERMISSION_TOPIC_WRITE, PERMISSION_ADMIN } from '../../../lib/auth';
-import { fetchSnapshotStoryCounts, topicSnapshotSpider } from '../../../actions/topicActions';
+import { fetchSnapshotStoryCounts, topicSnapshotGenerate } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import JobList from './homepages/JobList';
 import TopicVersionListItem from './TopicVersionListItem';
@@ -165,7 +165,7 @@ const mapStateToProps = state => ({
 });
 
 export const createNewSpideredVersion = (topicId, dispatch, formatMessage) => {
-  dispatch(topicSnapshotSpider(topicId))
+  dispatch(topicSnapshotGenerate(topicId, { snapshotId: null, spider: 1 }))
     .then((spiderResults) => {
       if (spiderResults && spiderResults.topics_id) { // let them know it worked
         dispatch(updateFeedback({ classes: 'info-notice', open: true, message: formatMessage(localMessages.feedback) }));

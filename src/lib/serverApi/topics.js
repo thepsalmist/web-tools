@@ -370,13 +370,8 @@ export function createTopic(params) {
 }
 
 export function topicSnapshotGenerate(topicId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId']);
+  const acceptedParams = acceptParams(params, ['snapshotId', 'spider']);
   return createPostingApiPromise(`/api/topics/${topicId}/snapshots/generate`, acceptedParams);
-}
-
-export function topicSnapshotSpider(topicId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId']);
-  return createPostingApiPromise(`/api/topics/${topicId}/snapshots/spider`, acceptedParams);
 }
 
 export function topicUpdateSeedQuery(topicId, params) {

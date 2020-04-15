@@ -89,10 +89,7 @@ export const UPDATE_TOPIC_SEED_QUERY = 'UPDATE_TOPIC_SEED_QUERY';
 export const updateTopicSeedQuery = createAsyncAction(UPDATE_TOPIC_SEED_QUERY, api.topicUpdateSeedQuery);
 
 export const TOPIC_START_SPIDER = 'TOPIC_START_SPIDER';
-export const topicSnapshotSpider = createAsyncAction(TOPIC_START_SPIDER, api.topicSnapshotSpider);
-
-export const TOPIC_GENERATE_SNAPSHOT = 'TOPIC_GENERATE_SNAPSHOT';
-export const topicSnapshotGenerate = createAsyncAction(TOPIC_GENERATE_SNAPSHOT, api.topicSnapshotGenerate);
+export const topicSnapshotGenerate = createAsyncAction(TOPIC_START_SPIDER, api.topicSnapshotGenerate);
 
 export const TOPIC_CREATE_SNAPSHOT = 'TOPIC_CREATE_SNAPSHOT';
-export const topicSnapshotCreate = createAsyncAction(TOPIC_GENERATE_SNAPSHOT, api.topicSnapshotCreate);
+export const topicSnapshotCreate = createAsyncAction(TOPIC_CREATE_SNAPSHOT, api.topicSnapshotCreate);

@@ -57,7 +57,7 @@ WordsSummaryContainer.propTypes = {
   // from dispatch
   fetchData: PropTypes.func.isRequired,
   initSampleSize: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  handleExplore: PropTypes.func.isRequired,
+  handleExplore: PropTypes.string,
   // from state
   topicInfo: PropTypes.object,
   words: PropTypes.array,

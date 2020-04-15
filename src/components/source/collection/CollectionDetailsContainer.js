@@ -15,17 +15,8 @@ import { WarningNotice } from '../../common/Notice';
 import TabSelector from '../../common/TabSelector';
 
 const localMessages = {
-  collectionDetailsTitle: { id: 'collection.details.title', defaultMessage: 'Collection: {name}' },
-  noHealth: { id: 'collection.details.noHealth', defaultMessage: 'Sorry, we can\'t show collection-level health yet.' },
-  sourceTableTitle: { id: 'collection.details.sourceTable.title', defaultMessage: 'Sources' },
-  sourceTableIntro: { id: 'collection.details.sources.intro',
-    defaultMessage: 'This collection includes {count, plural,\n =0 {no media sources} \n =1 {one media source} \n other {# media sources}\n}.',
-  },
-  collectionIsOrIsnt: { id: 'collection.details.isOrIsnt', defaultMessage: 'This is a {shows, plural,\n =false {dynamic collection; sources can be added and removed from it}\n =true {static collection; the sources that are part of it will not change}\n}.' },
   collectionIsNotStatic: { id: 'collection.details.isStatic', defaultMessage: 'This is a dynamic collection; sources can be added and removed from it' },
   collectionIsStatic: { id: 'collection.details.isNotStatic', defaultMessage: 'This is a static collection; the sources that are part of it will not change.' },
-  collectionFavorited: { id: 'collection.favorited', defaultMessage: 'Marked this as a starred collection' },
-  collectionUnFavorited: { id: 'collection.unfavorited', defaultMessage: 'Remove this as a starred collection' },
   notPermitted: { id: 'collection.notPermitted', defaultMessage: 'Sorry, this is a private collection.' },
   sources: { id: 'collection.sourcesTab', defaultMessage: 'Source List' },
   content: { id: 'collection.contentTab', defaultMessage: 'Collection Content' },
@@ -101,7 +92,9 @@ class CollectionDetailsContainer extends React.Component {
         <Row>
           <Col lg={8}>
             <p><b>{collection.description}</b></p>
-            <p><FormattedMessage {...localMessages.collectionIsOrIsnt} values={{ shows: collection.is_static }} />
+            <p>
+              {collection.is_static && <FormattedMessage {...localMessages.collectionIsStatic} values={{ shows: collection.is_static }} />}
+              {!collection.is_static && <FormattedMessage {...localMessages.collectionIsNotStatic} values={{ shows: collection.is_static }} />}
             </p>
           </Col>
         </Row>

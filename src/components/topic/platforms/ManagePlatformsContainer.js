@@ -11,6 +11,7 @@ import ConfirmationDialog from '../../common/ConfirmationDialog';
 import { deleteTopicPlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, selectPlatform, fetchTopicSummary } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import IncompletePlatformWarning from './IncompletePlatformWarning';
+import PlatformSizeNotice from './PlatformSizeNotice';
 import VersionComparisonContainer from '../versions/VersionComparisonContainer';
 import { filteredLinkTo } from '../../util/location';
 import { MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
@@ -101,6 +102,7 @@ class ManagePlatformsContainer extends React.Component {
     return (
       <div>
         <IncompletePlatformWarning />
+        <PlatformSizeNotice />
         <div className="manage-platforms">
           <Grid>
             <Row>

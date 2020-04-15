@@ -278,7 +278,8 @@ def _collection_source_story_split_historical_counts(collection_id):
     jobs = [{'media': m} for m in media_list]
     # fetch in parallel to make things faster
     #return [_source_story_split_count_job(j) for j in jobs]
-    return _source_story_split_count_job.map(jobs)
+    # make sure to execute the generator so what is returned is real data
+    return [d for d in _source_story_split_count_job.map(jobs)]
 
 
 @app.route('/api/collections/<collection_id>/story-split/count')

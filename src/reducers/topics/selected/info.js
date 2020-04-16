@@ -1,6 +1,6 @@
 import { resolve } from 'redux-simple-promise';
 import { FETCH_TOPIC_SUMMARY, UPDATE_TOPIC_SEED_QUERY, UPDATE_TOPIC_SETTINGS, SET_TOPIC_FAVORITE,
-  TOPIC_START_SPIDER, TOPIC_GENERATE_SNAPSHOT, TOPIC_CREATE_SNAPSHOT } from '../../../actions/topicActions';
+  TOPIC_START_SPIDER, TOPIC_CREATE_SNAPSHOT } from '../../../actions/topicActions';
 import { createAsyncReducer } from '../../../lib/reduxHelpers';
 import { snapshotIsUsable, latestSnapshotByDate, TOPIC_SNAPSHOT_STATE_COMPLETED, TOPIC_SNAPSHOT_STATE_RUNNING } from './snapshots';
 import { PLATFORM_OPEN_WEB, MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
@@ -158,7 +158,6 @@ const info = createAsyncReducer({
   [resolve(UPDATE_TOPIC_SEED_QUERY)]: payload => ({ ...addUsefulDetailsToTopic(payload) }),
   [resolve(UPDATE_TOPIC_SETTINGS)]: payload => ({ ...addUsefulDetailsToTopic(payload) }),
   [resolve(TOPIC_START_SPIDER)]: payload => ({ ...addUsefulDetailsToTopic(payload) }),
-  [resolve(TOPIC_GENERATE_SNAPSHOT)]: payload => ({ ...addUsefulDetailsToTopic(payload) }),
   [resolve(TOPIC_CREATE_SNAPSHOT)]: payload => ({ ...addUsefulDetailsToTopic(payload) }),
   [resolve(SET_TOPIC_FAVORITE)]: payload => ({ ...addUsefulDetailsToTopic(payload) }),
 });

@@ -105,9 +105,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  updateQueryFilter: (newQueryFilter) => {
-    dispatch(filterByQuery(newQueryFilter));
-  },
+  updateQueryFilter: (newQueryFilter) => dispatch(filterByQuery(newQueryFilter)),
 });
 
 const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicEntitiesOrgs(props.topicId, props.filters));

@@ -1,10 +1,10 @@
 import flask_login
-from flask import jsonify, request
+from flask import jsonify
 import logging
 from mediacloud.error import MCException
 
 from server import app
-from server.auth import is_user_logged_in, user_mediacloud_client, user_mediacloud_key, user_admin_mediacloud_client
+from server.auth import user_mediacloud_client, user_mediacloud_key
 from server.util import tags as tag_util
 from server.util.request import api_error_handler
 from server.views.topics import apicache as apicache
@@ -17,13 +17,9 @@ logger = logging.getLogger(__name__)
 @flask_login.login_required
 @api_error_handler
 def story(topics_id, stories_id):
-    if is_user_logged_in():
-        local_mc = user_mediacloud_client()
-        story_topic_info = apicache.topic_story_list(user_mediacloud_key(), topics_id, stories_id=stories_id)
-        story_topic_info = story_topic_info['stories'][0]
-    else:
-        return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
-
+    local_mc = user_mediacloud_client()
+    story_topic_info = apicache.topic_story_list(user_mediacloud_key(), topics_id, stories_id=stories_id)
+    story_topic_info = story_topic_info['stories'][0]
     try:
         story_info = local_mc.story(stories_id)  # add in other fields from regular call
         for k in story_info.keys():

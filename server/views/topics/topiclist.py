@@ -112,16 +112,6 @@ def topic_set_favorited(topics_id):
     return jsonify({'isFavorite': favorite == 1})
 
 
-def sorted_public_topic_list():
-    # needs to support logged in or not
-    if is_user_logged_in():
-        local_mc = user_mediacloud_client()
-    else:
-        local_mc = mc
-    public_topics = local_mc.topicList(public=True, limit=51)['topics']
-    return sorted(public_topics, key=lambda t: t['name'].lower())
-
-
 def add_user_favorite_flag_to_topics(topics):
     user_favorited = user_db.get_users_lists(user_name(), 'favoriteTopics')
     for t in topics:

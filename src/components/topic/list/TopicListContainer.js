@@ -24,13 +24,9 @@ class TopicListContainer extends React.Component {
     selectedViewIndex: 0,
   };
 
-  UNSAFE_componentWillMount() {
-  }
-
   render() {
     const { handleSetFavorited, user } = this.props;
     const { formatMessage } = this.props.intl;
-
     let viewContent = null;
     switch (this.state.selectedViewIndex) {
       case 0:
@@ -45,8 +41,6 @@ class TopicListContainer extends React.Component {
       default:
         break;
     }
-
-
     return (
       <div className="topic-list-container">
         <Row>

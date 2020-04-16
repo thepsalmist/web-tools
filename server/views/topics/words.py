@@ -97,17 +97,6 @@ def _sentence_fragment_around(keyword, sentence):
         return None
 
 
-# Can't do this yet because topics/media/list doesn't support q as a parameter :-(
-'''
-@app.route('/api/topics/<topics_id>/words/<word>/media', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def topic_word_media(topics_id, word):
-    response = topic_media_list(user_mediacloud_key(), topics_id, q=word)
-    return jsonify(response)
-'''
-
-
 @app.route('/api/topics/<topics_id>/words/<word>/similar', methods=['GET'])
 @flask_login.login_required
 @api_error_handler

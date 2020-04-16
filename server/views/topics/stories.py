@@ -10,17 +10,13 @@ import server.util.tags as tag_util
 import server.views.topics.apicache as apicache
 import server.views.apicache as base_apicache
 from server import app, cliff
-from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
+from server.auth import user_mediacloud_key, user_mediacloud_client
 from server.cache import cache
 from server.util.request import api_error_handler, filters_from_args
 from server.views.topics import concatenate_query_for_solr, _parse_collection_ids, _parse_media_ids
 from server.util.tags import TAG_SPIDERED_STORY
 
 logger = logging.getLogger(__name__)
-
-PRIMARY_ENTITY_TYPES = ['PERSON', 'LOCATION', 'ORGANIZATION']
-
-MEDIA_INFO_POOL_SIZE = 15
 
 
 @cache.cache_on_arguments()
@@ -66,46 +62,6 @@ def _public_safe_topic_story_count(topics_id, q):
     # force a count with just the query
     matching = apicache.topic_story_count(user_mediacloud_key(), topics_id, q=apicache.add_to_user_query(q))
     return jsonify({'counts': {'count': matching['count'], 'total': total['count']}})
-
-
-@app.route('/api/topics/<topics_id>/stories', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def topic_stories(topics_id):
-    query = request.form['keywords'] if 'keywords' in request.form else ''
-    # for preview information in subtopics and platforms - scope by media source info
-    collections = _parse_collection_ids(request.args)
-    sources = _parse_media_ids(request.args)
-    merged_args = {}
-    if (sources not in [None, ''] and len(sources) > 0) or collections not in [None, ''] and len(collections) > 0:
-        query = concatenate_query_for_solr(query, sources, collections)
-        merged_args = {'q': query}
-    stories = apicache.topic_story_list(user_mediacloud_key(), topics_id, **merged_args)
-    return jsonify(stories)
-
-
-@app.route('/api/topics/<topics_id>/stories.csv', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def topic_stories_csv(topics_id):
-    """
-    This is the main handler for downloading a list of stories from the topic summary page. Very important user
-    function, so be careful with any changes you make.
-    :param topics_id:
-    :return: streaming page by page CSV-formatted results
-    """
-    user_mc = user_admin_mediacloud_client()
-    topic = user_mc.topic(topics_id)
-    story_limit = request.args['storyLimit'] if 'storyLimit' in request.args else None
-    story_tags = (request.args['storyTags'] == '1') if 'storyTags' in request.args else False
-    media_metadata = (request.args['mediaMetadata'] == '1') if 'mediaMetadata' in request.args else False
-    include_platform_url_shares = (request.args['platformUrlShares'] == '1') if 'platformUrlShares' in request.args else False
-    include_all_url_shares = (request.args['socialShares'] == '1') if 'socialShares' in request.args else False
-    return stream_story_list_csv(user_mediacloud_key(), "stories", topic,
-                                 story_limit=story_limit,
-                                 story_tags=story_tags,
-                                 media_metadata=media_metadata, include_platform_url_shares=include_platform_url_shares,
-                                 include_all_url_shares=include_all_url_shares)
 
 
 def _platform_csv_column_header_prefix(topic_seed_query):

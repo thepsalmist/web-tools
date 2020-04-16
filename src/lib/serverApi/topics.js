@@ -5,10 +5,6 @@ export function topicsPersonalList(linkId) {
   return createApiPromise('/api/topics/personal', linkId ? { linkId } : undefined);
 }
 
-export function topicsPublicList() {
-  return createApiPromise('/api/topics/public');
-}
-
 export function topicsFavoriteList() {
   return createApiPromise('/api/topics/favorites');
 }

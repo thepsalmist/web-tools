@@ -9,12 +9,10 @@ import { updateFeedback } from '../../../actions/appActions';
 import messages from '../../../resources/messages';
 import FavoriteTopicsContainer from './FavoriteTopicsContainer';
 import PersonalTopicsContainer from './PersonalTopicsContainer';
-import PublicTopicsContainer from './PublicTopicsContainer';
 import AdminAllTopicsContainer from './AdminAllTopicsContainer';
 import { getUserRoles, hasPermissions, PERMISSION_ADMIN } from '../../../lib/auth';
 
 const localMessages = {
-  topicsListPublic: { id: 'topics.list.public', defaultMessage: 'Public Topics' },
   topicsListFavorites: { id: 'topics.list.favorite', defaultMessage: 'Starred Topics' },
   topicsListPersonal: { id: 'topics.list.personal', defaultMessage: 'Personal Topics' },
   topicsListAll: { id: 'topics.list.all', defaultMessage: 'Other Topics (admin)' },
@@ -42,9 +40,6 @@ class TopicListContainer extends React.Component {
         viewContent = <FavoriteTopicsContainer onSetFavorited={handleSetFavorited} />;
         break;
       case 2:
-        viewContent = <PublicTopicsContainer onSetFavorited={handleSetFavorited} />;
-        break;
-      case 3:
         viewContent = <AdminAllTopicsContainer />;
         break;
       default:
@@ -59,7 +54,6 @@ class TopicListContainer extends React.Component {
             tabLabels={[
               formatMessage(localMessages.topicsListPersonal),
               formatMessage(localMessages.topicsListFavorites),
-              formatMessage(localMessages.topicsListPublic),
               hasPermissions(getUserRoles(user), PERMISSION_ADMIN) ? formatMessage(localMessages.topicsListAll) : undefined,
             ]}
             onViewSelected={index => this.setState({ selectedViewIndex: index })}

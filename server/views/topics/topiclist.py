@@ -76,15 +76,6 @@ def does_user_have_a_running_topic():
     return jsonify(queued_and_running_topics)
 
 
-@app.route('/api/topics/public', methods=['GET'])
-@api_error_handler
-def public_topics_list():
-    public_topics = sorted_public_topic_list()
-    if is_user_logged_in():
-        public_topics = add_user_favorite_flag_to_topics(public_topics)
-    return jsonify({"topics": public_topics})
-
-
 def topics_user_owns(topics, user_email):
     # pull out just the topics this user has permissions for (ie. remove public ones)
     user_topics = []

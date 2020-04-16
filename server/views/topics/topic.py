@@ -6,10 +6,9 @@ from operator import itemgetter
 
 import server.views.apicache as shared_apicache
 import server.views.topics.apicache as apicache
-from server import app, mc, executor, TOOL_API_KEY
+from server import app, mc, executor
 from server.auth import user_mediacloud_key, user_mediacloud_client, is_user_logged_in
 from server.util.request import api_error_handler, filters_from_args
-from server.views.topics import access_public_topic
 from server.views.topics import concatenate_solr_dates
 from server.views.media_picker import concatenate_query_for_solr
 from server.views.topics.topiclist import add_user_favorite_flag_to_topics
@@ -22,12 +21,8 @@ ARRAY_BASE_ONE = 1
 
 def _topic_seed_story_count(topic):
     try:
-        if access_public_topic(topic['topics_id']):
-            api_key = TOOL_API_KEY
-        else:
-            api_key = user_mediacloud_key()
         seed_query_count = shared_apicache.story_count(
-            api_key,
+            user_mediacloud_key(),
             q=concatenate_query_for_solr(solr_seed_query=topic['solr_seed_query'],
                                          media_ids=[m['media_id'] for m in topic['media'] if 'media_id' in m],
                                          tags_ids=[t['tags_id'] for t in topic['media_tags'] if 'tags_id' in t]),
@@ -73,14 +68,8 @@ def _add_snapshot_foci_count(api_key, topics_id, snapshots):
 
 
 def _topic_snapshot_list(topic):
-    if access_public_topic(topic['topics_id']):
-        local_mc = mc
-        api_key = TOOL_API_KEY
-    elif is_user_logged_in():
-        local_mc = user_mediacloud_client()
-        api_key = user_mediacloud_key()
-    else:
-        return {}  # prob something smarter we can do here
+    local_mc = user_mediacloud_client()
+    api_key = user_mediacloud_key()
     snapshots = local_mc.topicSnapshotList(topic['topics_id'])
     snapshots = sorted(snapshots, key=itemgetter('snapshots_id'))
     # add in any missing version numbers
@@ -114,12 +103,7 @@ def _topic_snapshot_list(topic):
 
 
 def _topic_summary(topics_id):
-    if access_public_topic(topics_id):
-        local_mc = mc
-    elif is_user_logged_in():
-        local_mc = user_mediacloud_client()
-    else:
-        return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
+    local_mc = user_mediacloud_client()
     topic = local_mc.topic(topics_id)
     # add in snapshot list (with version numbers, by date)
     topic['snapshots'] = _topic_snapshot_list(topic)
@@ -159,7 +143,6 @@ def topic_update_settings(topics_id):
     args = {
         'name': _safe_member_of_dict('name', request.form),
         'description': _safe_member_of_dict('description', request.form),
-        'is_public': _safe_member_of_dict('is_public', request.form),
         'is_logogram': _safe_member_of_dict('is_logogram', request.form),
         'start_date': _safe_member_of_dict('start_date', request.form),
         'end_date': _safe_member_of_dict('end_date', request.form),

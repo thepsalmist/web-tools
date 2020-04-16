@@ -12,8 +12,6 @@ import withSummary from '../../common/hocs/SummarizedVizualization';
 import MediaTableContainer from '../MediaTableContainer';
 import messages from '../../../resources/messages';
 import { fetchTopicTopMedia, sortTopicTopMedia } from '../../../actions/topicActions';
-import Permissioned from '../../common/Permissioned';
-import { getUserRoles, hasPermissions, PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { DownloadButton } from '../../common/IconButton';
 import { urlWithFilters, filtersAsUrlParams } from '../../util/location';
 import { HELP_SOURCES_CSV_COLUMNS } from '../../../lib/helpConstants';
@@ -50,34 +48,31 @@ class MediaSummaryContainer extends React.Component {
   }
 
   render() {
-    const { media, sort, user } = this.props;
-    const isLoggedIn = hasPermissions(getUserRoles(user), PERMISSION_LOGGED_IN);
+    const { media, sort } = this.props;
     return (
       <>
         <MediaTableContainer
           media={media}
-          onChangeSort={isLoggedIn ? this.onChangeSort : null}
+          onChangeSort={this.onChangeSort}
           sortedBy={sort}
           includeMetadata={false}
         />
-        <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-          <ActionMenu actionTextMsg={messages.downloadOptions}>
-            <MenuItem
-              className="action-icon-menu-item"
-              onClick={this.downloadCsv}
-            >
-              <ListItemText><FormattedMessage {...localMessages.downloadCSV} /></ListItemText>
-              <ListItemIcon><DownloadButton /></ListItemIcon>
-            </MenuItem>
-            <MenuItem
-              className="action-icon-menu-item"
-              onClick={this.downloadLinkCsv}
-            >
-              <ListItemText><FormattedMessage {...localMessages.downloadLinkCsv} /></ListItemText>
-              <ListItemIcon><DownloadButton /></ListItemIcon>
-            </MenuItem>
-          </ActionMenu>
-        </Permissioned>
+        <ActionMenu actionTextMsg={messages.downloadOptions}>
+          <MenuItem
+            className="action-icon-menu-item"
+            onClick={this.downloadCsv}
+          >
+            <ListItemText><FormattedMessage {...localMessages.downloadCSV} /></ListItemText>
+            <ListItemIcon><DownloadButton /></ListItemIcon>
+          </MenuItem>
+          <MenuItem
+            className="action-icon-menu-item"
+            onClick={this.downloadLinkCsv}
+          >
+            <ListItemText><FormattedMessage {...localMessages.downloadLinkCsv} /></ListItemText>
+            <ListItemIcon><DownloadButton /></ListItemIcon>
+          </MenuItem>
+        </ActionMenu>
       </>
     );
   }
@@ -97,14 +92,12 @@ MediaSummaryContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   sort: PropTypes.string.isRequired,
   media: PropTypes.array,
-  user: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.summary.topMedia.fetchStatus,
   sort: state.topics.selected.summary.topMedia.sort,
   media: state.topics.selected.summary.topMedia.media,
-  user: state.user,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

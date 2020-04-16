@@ -8,9 +8,9 @@ from server.views import WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_UI_NUM_WORDS
 from server.cache import cache
 from server.util.tags import STORY_UNDATEABLE_TAG, is_bad_theme
 import server.util.wordembeddings as wordembeddings
-from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_mediacloud_key, is_user_logged_in
+from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_mediacloud_key
 from server.util.request import filters_from_args
-from server.views.topics import validated_sort, access_public_topic
+from server.views.topics import validated_sort
 from server.util.api_helper import add_missing_dates_to_split_story_counts
 from server.views.topics.foci.focalsets import is_url_sharing_focal_set
 
@@ -342,14 +342,8 @@ def topic_tag_coverage(topics_id, tags_id):
     # respect any query filter the user has set
     query_with_tag = add_to_user_query("tags_id_stories:{}".format(tags_id_str))
     # now get the counts
-    if access_public_topic(topics_id):
-        total = topic_story_count(TOOL_API_KEY, topics_id)
-        tagged = topic_story_count(TOOL_API_KEY, topics_id, q=query_with_tag)  # force a count with just the query
-    elif is_user_logged_in():
-        total = topic_story_count(user_mediacloud_key(), topics_id)
-        tagged = topic_story_count(user_mediacloud_key(), topics_id, q=query_with_tag)  # force a count with just the query
-    else:
-        return None
+    total = topic_story_count(user_mediacloud_key(), topics_id)
+    tagged = topic_story_count(user_mediacloud_key(), topics_id, q=query_with_tag)  # force a count with just the query
     return {'counts': {'count': tagged['count'], 'total': total['count']}}
 
 

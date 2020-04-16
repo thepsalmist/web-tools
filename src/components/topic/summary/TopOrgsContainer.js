@@ -8,8 +8,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import { fetchTopicEntitiesOrgs, filterByQuery } from '../../../actions/topicActions';
-import Permissioned from '../../common/Permissioned';
-import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import EntitiesTable from '../../common/EntitiesTable';
 import { filtersAsUrlParams } from '../../util/location';
@@ -66,19 +64,17 @@ class TopOrgsContainer extends React.Component {
     return (
       <>
         {content}
-        <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-          <div className="actions">
-            <ActionMenu actionTextMsg={messages.downloadOptions}>
-              <MenuItem
-                className="action-icon-menu-item"
-                onClick={this.downloadCsv}
-              >
-                <ListItemText><FormattedMessage {...localMessages.downloadCSV} values={{ NUMBER_TO_SHOW }} /></ListItemText>
-                <ListItemIcon><DownloadButton /></ListItemIcon>
-              </MenuItem>
-            </ActionMenu>
-          </div>
-        </Permissioned>
+        <div className="actions">
+          <ActionMenu actionTextMsg={messages.downloadOptions}>
+            <MenuItem
+              className="action-icon-menu-item"
+              onClick={this.downloadCsv}
+            >
+              <ListItemText><FormattedMessage {...localMessages.downloadCSV} values={{ NUMBER_TO_SHOW }} /></ListItemText>
+              <ListItemIcon><DownloadButton /></ListItemIcon>
+            </MenuItem>
+          </ActionMenu>
+        </div>
       </>
     );
   }

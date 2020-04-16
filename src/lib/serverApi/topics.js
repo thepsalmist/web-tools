@@ -141,7 +141,7 @@ export function fetchWordsByQuery(params) {
 }
 
 export function updateTopicSettings(topicId, params) {
-  const acceptedParams = acceptParams(params, ['name', 'description', 'is_public', 'is_logogram', 'start_date', 'end_date', 'max_iterations', 'max_topic_stories']);
+  const acceptedParams = acceptParams(params, ['name', 'description', 'is_logogram', 'start_date', 'end_date', 'max_iterations', 'max_topic_stories']);
   return createPostingApiPromise(`/api/topics/${topicId}/update-settings`, acceptedParams, 'put');
 }
 
@@ -283,7 +283,7 @@ export function topicSnapshotStoryCounts(topicId) {
   return createApiPromise(`/api/topics/${topicId}/stories/counts-by-snapshot`);
 }
 
-const topicCreateOrUpdateParams = ['name', 'description', 'solr_seed_query', 'is_public',
+const topicCreateOrUpdateParams = ['name', 'description', 'solr_seed_query',
   'max_stories', 'max_iterations', 'ch_monitor_id', 'start_date', 'end_date', 'spidered',
   'sources[]', 'collections[]', 'searches[]', 'is_logogram', 'startSpidering'];
 

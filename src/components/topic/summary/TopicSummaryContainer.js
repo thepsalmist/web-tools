@@ -16,8 +16,6 @@ import DownloadMapFilesContainer from './export/DownloadMapFilesContainer';
 import DownloadTimespanFilesConatainer from './export/DownloadTimespanFilesContainer';
 import NytLabelSummaryContainer from './NytLabelSummaryContainer';
 import GeoTagSummaryContainer from './GeoTagSummaryContainer';
-import Permissioned from '../../common/Permissioned';
-import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { SummarizedVizualization } from '../../common/hocs/SummarizedVizualization';
 import TopicStoryMetadataStatsContainer from './TopicStoryMetadataStatsContainer';
 import FociStoryCountComparisonContainer from './FociStoryCountComparisonContainer';
@@ -125,13 +123,11 @@ class TopicSummaryContainer extends React.Component {
                   <TopicWordSpaceContainer topicId={topic.topics_id} topicName={topic.name} filters={filters} uid="topic" />
                 </Col>
               </Row>
-              <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-                <Row>
-                  <Col lg={12}>
-                    <NytLabelSummaryContainer topicId={topic.topics_id} filters={filters} topicName={topic.name} location={location} />
-                  </Col>
-                </Row>
-              </Permissioned>
+              <Row>
+                <Col lg={12}>
+                  <NytLabelSummaryContainer topicId={topic.topics_id} filters={filters} topicName={topic.name} location={location} />
+                </Col>
+              </Row>
             </>
           );
           break;
@@ -149,13 +145,11 @@ class TopicSummaryContainer extends React.Component {
                   <TopOrgsContainer topicId={topic.topics_id} filters={filters} location={location} />
                 </Col>
               </Row>
-              <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-                <Row>
-                  <Col lg={12}>
-                    <GeoTagSummaryContainer topicId={topic.topics_id} filters={filters} />
-                  </Col>
-                </Row>
-              </Permissioned>
+              <Row>
+                <Col lg={12}>
+                  <GeoTagSummaryContainer topicId={topic.topics_id} filters={filters} />
+                </Col>
+              </Row>
             </>
           );
           break;
@@ -163,23 +157,21 @@ class TopicSummaryContainer extends React.Component {
           // stats
           viewContent = (
             <>
-              <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-                <Row>
-                  <Col lg={12}>
-                    <TopicStoryMetadataStatsContainer topicId={topic.topics_id} filters={filters} timespan={selectedTimespan} />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col lg={12}>
-                    <FociStoryCountComparisonContainer topicId={topic.topics_id} filters={filters} />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col lg={6}>
-                    <SeedQuerySummary topic={topic} snapshot={selectedSnapshot} />
-                  </Col>
-                </Row>
-              </Permissioned>
+              <Row>
+                <Col lg={12}>
+                  <TopicStoryMetadataStatsContainer topicId={topic.topics_id} filters={filters} timespan={selectedTimespan} />
+                </Col>
+              </Row>
+              <Row>
+                <Col lg={12}>
+                  <FociStoryCountComparisonContainer topicId={topic.topics_id} filters={filters} />
+                </Col>
+              </Row>
+              <Row>
+                <Col lg={6}>
+                  <SeedQuerySummary topic={topic} snapshot={selectedSnapshot} />
+                </Col>
+              </Row>
             </>
           );
           break;
@@ -188,18 +180,16 @@ class TopicSummaryContainer extends React.Component {
           // stats
           viewContent = (
             <>
-              <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-                <Row>
-                  <Col lg={12}>
-                    <DownloadMapFilesContainer topicId={topic.topics_id} filters={filters} />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col lg={12}>
-                    <DownloadTimespanFilesConatainer topicId={topic.topics_id} filters={filters} />
-                  </Col>
-                </Row>
-              </Permissioned>
+              <Row>
+                <Col lg={12}>
+                  <DownloadMapFilesContainer topicId={topic.topics_id} filters={filters} />
+                </Col>
+              </Row>
+              <Row>
+                <Col lg={12}>
+                  <DownloadTimespanFilesConatainer topicId={topic.topics_id} filters={filters} />
+                </Col>
+              </Row>
             </>
           );
           break;

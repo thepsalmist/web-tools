@@ -32,19 +32,6 @@ def validated_sort(desired_sort, default_sort=SORT_FACEBOOK):
     return desired_sort
 
 
-def topic_is_public(topics_id):
-    topic = mc.topic(topics_id)
-    is_public = topic['is_public']
-    return int(is_public) == 1
-
-
-def access_public_topic(topics_id):
-    # check whether logged in here since it is a requirement for public access
-    if (not is_user_logged_in()) and (topic_is_public(topics_id)):
-        return True
-    return False
-
-
 def _parse_media_ids(args):
     media_ids = []
     if 'sources[]' in args:

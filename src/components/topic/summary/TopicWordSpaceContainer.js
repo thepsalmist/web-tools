@@ -9,8 +9,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import WordSpace from '../../vis/WordSpace';
-import Permissioned from '../../common/Permissioned';
-import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import messages from '../../../resources/messages';
 import { DownloadButton } from '../../common/IconButton';
@@ -40,19 +38,17 @@ const TopicWordSpaceContainer = (props) => {
         noDataMsg={localMessages.noTopicW2VData}
       />
       <div className="actions">
-        <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-          <div className="actions">
-            <ActionMenu actionTextMsg={messages.downloadOptions}>
-              <MenuItem
-                className="action-icon-menu-item"
-                onClick={() => downloadSvg(`${topicDownloadFilename(topicName, filters)}-sampled-word-space`, WORD_SPACE_DOM_ID)}
-              >
-                <ListItemText><FormattedMessage {...localMessages.downloadSVG} /></ListItemText>
-                <ListItemIcon><DownloadButton /></ListItemIcon>
-              </MenuItem>
-            </ActionMenu>
-          </div>
-        </Permissioned>
+        <div className="actions">
+          <ActionMenu actionTextMsg={messages.downloadOptions}>
+            <MenuItem
+              className="action-icon-menu-item"
+              onClick={() => downloadSvg(`${topicDownloadFilename(topicName, filters)}-sampled-word-space`, WORD_SPACE_DOM_ID)}
+            >
+              <ListItemText><FormattedMessage {...localMessages.downloadSVG} /></ListItemText>
+              <ListItemIcon><DownloadButton /></ListItemIcon>
+            </MenuItem>
+          </ActionMenu>
+        </div>
       </div>
     </>
   );

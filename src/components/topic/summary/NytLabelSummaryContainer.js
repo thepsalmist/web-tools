@@ -9,8 +9,6 @@ import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import BubbleRowChart from '../../vis/BubbleRowChart';
 import { downloadSvg } from '../../util/svg';
-import Permissioned from '../../common/Permissioned';
-import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import messages from '../../../resources/messages';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 import { filtersAsUrlParams } from '../../util/location';
@@ -98,20 +96,18 @@ class NytLabelSummaryContainer extends React.Component {
             onBubbleClick={this.handleBubbleClick}
             minCutoffValue={0.05}
           />
-          <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
-            <div className="actions">
-              <ActionMenu actionTextMsg={messages.downloadOptions}>
-                <SVGAndCSVMenu
-                  downloadCsv={this.downloadCsv}
-                  downloadSvg={() => downloadSvg(
-                    `${topicDownloadFilename(topicName, filters)}-top-NYT-themes`,
-                    BUBBLE_CHART_DOM_ID
-                  )}
-                  label={formatMessage(localMessages.all)}
-                />
-              </ActionMenu>
-            </div>
-          </Permissioned>
+          <div className="actions">
+            <ActionMenu actionTextMsg={messages.downloadOptions}>
+              <SVGAndCSVMenu
+                downloadCsv={this.downloadCsv}
+                downloadSvg={() => downloadSvg(
+                  `${topicDownloadFilename(topicName, filters)}-top-NYT-themes`,
+                  BUBBLE_CHART_DOM_ID
+                )}
+                label={formatMessage(localMessages.all)}
+              />
+            </ActionMenu>
+          </div>
         </>
       );
     } else {

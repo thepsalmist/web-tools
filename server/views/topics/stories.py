@@ -9,11 +9,11 @@ import server.util.csv as csv
 import server.util.tags as tag_util
 import server.views.topics.apicache as apicache
 import server.views.apicache as base_apicache
-from server import app, cliff, TOOL_API_KEY
-from server.auth import is_user_logged_in, user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
+from server import app, cliff
+from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
 from server.cache import cache
 from server.util.request import api_error_handler, filters_from_args
-from server.views.topics import access_public_topic, concatenate_query_for_solr, _parse_collection_ids, _parse_media_ids
+from server.views.topics import concatenate_query_for_solr, _parse_collection_ids, _parse_media_ids
 from server.util.tags import TAG_SPIDERED_STORY
 
 logger = logging.getLogger(__name__)
@@ -32,12 +32,6 @@ def _cached_geoname(geonames_id):
 @flask_login.login_required
 @api_error_handler
 def story_counts(topics_id):
-    if access_public_topic(topics_id):
-        local_key = TOOL_API_KEY
-    elif is_user_logged_in():
-        local_key = user_mediacloud_key()
-    else:
-        return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
     query = request.form['keywords'] if 'keywords' in request.form else ''
     #for preview information in subtopics and platforms - scope by media source info
     collections = _parse_collection_ids(request.args)
@@ -46,8 +40,8 @@ def story_counts(topics_id):
     if ((sources not in [None, ''] and len(sources) > 0) or collections not in [None, ''] and len(collections) > 0):
         query = concatenate_query_for_solr(query, sources, collections)
         merged_args = {'q': query }
-    filtered = apicache.topic_story_count(local_key, topics_id, **merged_args)
-    total = apicache.topic_story_count(local_key, topics_id, timespans_id=None, snapshots_id=None, foci_id=None, q=None)
+    filtered = apicache.topic_story_count(user_mediacloud_key(), topics_id, **merged_args)
+    total = apicache.topic_story_count(user_mediacloud_key(), topics_id, timespans_id=None, snapshots_id=None, foci_id=None, q=None)
     return jsonify({'counts': {'count': filtered['count'], 'total': total['count']}})
 
 
@@ -68,43 +62,31 @@ def story_english_counts(topics_id):
 
 
 def _public_safe_topic_story_count(topics_id, q):
-    if access_public_topic(topics_id):
-        total = apicache.topic_story_count(TOOL_API_KEY, topics_id, q=apicache.add_to_user_query(None))
-        # force a count with just the query
-        matching = apicache.topic_story_count(TOOL_API_KEY, topics_id, q=apicache.add_to_user_query(q))
-    elif is_user_logged_in():
-        total = apicache.topic_story_count(user_mediacloud_key(), topics_id, q=apicache.add_to_user_query(None))
-        # force a count with just the query
-        matching = apicache.topic_story_count(user_mediacloud_key(), topics_id, q=apicache.add_to_user_query(q))
-    else:
-        return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
+    total = apicache.topic_story_count(user_mediacloud_key(), topics_id, q=apicache.add_to_user_query(None))
+    # force a count with just the query
+    matching = apicache.topic_story_count(user_mediacloud_key(), topics_id, q=apicache.add_to_user_query(q))
     return jsonify({'counts': {'count': matching['count'], 'total': total['count']}})
 
 
 @app.route('/api/topics/<topics_id>/stories', methods=['GET'])
+@flask_login.login_required
 @api_error_handler
 def topic_stories(topics_id):
-    if access_public_topic(topics_id):
-        stories = apicache.topic_story_list(TOOL_API_KEY, topics_id, snapshots_id=None, timespans_id=None,
-                                            foci_id=None, q=None)
-    elif is_user_logged_in():
-        query = request.form['keywords'] if 'keywords' in request.form else ''
-        # for preview information in subtopics and platforms - scope by media source info
-        collections = _parse_collection_ids(request.args)
-        sources = _parse_media_ids(request.args)
-        merged_args = {}
-        if (sources not in [None, ''] and len(sources) > 0) or collections not in [None, ''] and len(collections) > 0:
-            query = concatenate_query_for_solr(query, sources, collections)
-            merged_args = {'q': query}
-        stories = apicache.topic_story_list(user_mediacloud_key(), topics_id, **merged_args)
-    else:
-        return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
-
+    query = request.form['keywords'] if 'keywords' in request.form else ''
+    # for preview information in subtopics and platforms - scope by media source info
+    collections = _parse_collection_ids(request.args)
+    sources = _parse_media_ids(request.args)
+    merged_args = {}
+    if (sources not in [None, ''] and len(sources) > 0) or collections not in [None, ''] and len(collections) > 0:
+        query = concatenate_query_for_solr(query, sources, collections)
+        merged_args = {'q': query}
+    stories = apicache.topic_story_list(user_mediacloud_key(), topics_id, **merged_args)
     return jsonify(stories)
 
 
 @app.route('/api/topics/<topics_id>/stories.csv', methods=['GET'])
 @flask_login.login_required
+@api_error_handler
 def topic_stories_csv(topics_id):
     """
     This is the main handler for downloading a list of stories from the topic summary page. Very important user

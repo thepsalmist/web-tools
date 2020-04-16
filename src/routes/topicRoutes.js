@@ -9,7 +9,6 @@ import TopicVersionListContainer from '../components/topic/versions/TopicVersion
 import TopicNewVersionContainer from '../components/topic/versions/TopicNewVersionContainer';
 import TopicSummaryContainer from '../components/topic/summary/TopicSummaryContainer';
 import TopicVersionContainer from '../components/topic/versions/TopicVersionContainer';
-import PublicTopicSummaryContainer from '../components/topic/summary/PublicTopicSummaryContainer';
 import InfluentialMediaContainer from '../components/topic/media/InfluentialMediaContainer';
 import BrowseStoriesContainer from '../components/topic/stories/BrowseStoriesContainer';
 import StoryContainer from '../components/topic/stories/StoryContainer';
@@ -94,10 +93,6 @@ const topicRoutes = (
         <Route path=":platformId/edit" component={EditPlatformContainer} onEnter={requireAuth} />
       </Route>
 
-    </Route>
-
-    <Route path="/topics/public/:topicId" component={TopicContainer}>
-      <Route path="/topics/public/:topicId/summary" component={PublicTopicSummaryContainer} />
     </Route>
 
     {systemRoutes}

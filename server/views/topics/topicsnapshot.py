@@ -23,7 +23,6 @@ def topic_update(topics_id):
         'solr_seed_query': request.form['solr_seed_query'] if 'solr_seed_query' in request.form else None,
         'start_date': request.form['start_date'] if 'start_date' in request.form else None,
         'end_date': request.form['end_date'] if 'end_date' in request.form else None,
-        'is_public': request.form['is_public'] if 'is_public' in request.form else None,
         'is_logogram': request.form['is_logogram'] if 'is_logogram' in request.form else None,
         'ch_monitor_id': request.form['ch_monitor_id'] if 'ch_monitor_id' in request.form
                                                           and request.form['ch_monitor_id'] is not None

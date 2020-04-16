@@ -9,23 +9,16 @@ from server.views.topics import validated_sort, TOPIC_MEDIA_CSV_PROPS
 import server.views.topics.apicache as apicache
 import server.views.apicache as base_apicache
 from server.util.request import filters_from_args, api_error_handler
-from server.views.topics import access_public_topic
 
 
 logger = logging.getLogger(__name__)
 
 
 @app.route('/api/topics/<topics_id>/media', methods=['GET'])
+@flask_login.login_required
 @api_error_handler
 def topic_media(topics_id):
-    if access_public_topic(topics_id):
-        media_list = apicache.topic_media_list(TOOL_API_KEY, topics_id, snapshots_id=None, timespans_id=None,
-                                               foci_id=None, sort=None, limit=None, link_id=None)
-    elif is_user_logged_in():
-        media_list = apicache.topic_media_list(user_mediacloud_key(), topics_id)
-    else:
-        return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
-
+    media_list = apicache.topic_media_list(user_mediacloud_key(), topics_id)
     return jsonify(media_list)
 
 

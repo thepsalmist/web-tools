@@ -82,7 +82,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       solr_seed_query: null, // we don't create it here anymore values.solr_seed_query,
       max_iterations: values.max_iterations,
       ch_monitor_id: values.ch_monitor_id === undefined ? '' : values.ch_monitor_id,
-      is_public: values.is_public ? 1 : 0,
       is_logogram: values.is_logogram ? 1 : 0,
       max_stories: values.max_topic_stories,
     };

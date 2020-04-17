@@ -155,11 +155,6 @@ export function fetchTopicWithNameExists(searchStr, topicId) {
   return createApiPromise('/api/topics/name-exists', { searchStr, topicId });
 }
 
-export function topicNytTaggedStoryCounts(topicId, params) {
-  const acceptedParams = acceptParams(params, ['timespanId', 'q']);
-  return createApiPromise(`/api/topics/${topicId}/nyt-tags/counts`, acceptedParams);
-}
-
 export function topicGeocodedStoryCounts(topicId, params) {
   const acceptedParams = acceptParams(params, ['timespanId', 'q']);
   return createApiPromise(`/api/topics/${topicId}/geo-tags/counts`, acceptedParams);
@@ -234,16 +229,6 @@ export function topicWord2Vec(topicId) {
 export function topicWord2VecTimespans(topicId, params) {
   const acceptedParams = acceptParams(params, ['snapshotId', 'focusId', 'q']);
   return createApiPromise(`/api/topics/${topicId}/word2vec-timespans`, acceptedParams);
-}
-
-export function topicTopPeople(topicId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'sort', 'limit', 'q', 'linkId']);
-  return createApiPromise(`/api/topics/${topicId}/entities/people`, acceptedParams);
-}
-
-export function topicTopOrgs(topicId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'sort', 'limit', 'q', 'linkId']);
-  return createApiPromise(`/api/topics/${topicId}/entities/organizations`, acceptedParams);
 }
 
 export function topicSimilarWords(topicId, theWord, params) {

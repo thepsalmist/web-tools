@@ -12,7 +12,6 @@ import focalSets from './focalSets/focalSets';
 import permissions from './permissions';
 import attention from './attention';
 import word from './word/word';
-import nytlabels from './nytlabels';
 import geotags from './geotags';
 import snapshotStoryCounts from './snapshotStoryCounts';
 import platforms from './platforms/platforms';
@@ -70,7 +69,6 @@ const selected = combineReducers({
   permissions,
   attention,
   word,
-  nytlabels,
   geotags,
   snapshotStoryCounts,
   platforms,

@@ -6,29 +6,32 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ActionMenu from '../../common/ActionMenu';
+import DataCard from '../../common/DataCard';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
-import { fetchTopicEntitiesPeople, filterByQuery } from '../../../actions/topicActions';
-import withSummary from '../../common/hocs/SummarizedVizualization';
+import { fetchTopicProviderTagUse, filterByQuery } from '../../../actions/topicActions';
 import EntitiesTable from '../../common/EntitiesTable';
-import { filtersAsUrlParams } from '../../util/location';
+import { filtersAsUrlParams, formatAsUrlParams } from '../../util/location';
 import { DownloadButton } from '../../common/IconButton';
 import messages from '../../../resources/messages';
+import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
 const COVERAGE_REQUIRED = 0.7;
 const NUMBER_TO_SHOW = 10;
 
 const localMessages = {
-  title: { id: 'topic.snapshot.topPeople.title', defaultMessage: `Top ${NUMBER_TO_SHOW} People` },
-  notEnoughData: { id: 'topic.snapshot.topPeople.notEnoughData',
-    defaultMessage: '<i>Sorry, but only {pct} of the stories have been processed to add the people they mention.  We can\'t gaurantee the accuracy of partial results, so we don\'t show a table of results here.  If you are really curious, you can download the CSV using the link in the top-right of this box, but don\'t trust those numbers as fully accurate. Email us if you want us to process this topic to add the people mentioned.</i>',
+  notEnoughData: { id: 'topic.snapshot.topOrgs.notEnoughData',
+    defaultMessage: '<i>Sorry, but only {pct} of the stories have been processed to add the organizations they mention.  We can\'t gaurantee the accuracy of partial results, so we don\'t show a table of results here.  If you are really curious, you can download the CSV using the link in the top-right of this box, but don\'t trust those numbers as fully accurate. Email us if you want us to process this topic to add the organizations mentioned.</i>',
   },
-  downloadCSV: { id: 'topic.snapshot.topPeople.downloadCSV', defaultMessage: `Download Top ${NUMBER_TO_SHOW} People CSV` },
+  downloadCSV: { id: 'topic.snapshot.topOrgs.downloadCSV', defaultMessage: 'Download CSV' },
 };
 
-class TopPeopleContainer extends React.Component {
-  downloadCsv = () => {
-    const { topicId, filters } = this.props;
-    const url = `/api/topics/${topicId}/entities/people/entities.csv?${filtersAsUrlParams(filters)}`;
+class TopicTagUseContainer extends React.Component {
+  downloadCsv = (evt) => {
+    const { topicId, filters, tagSetsId, tagsId } = this.props;
+    if (evt.preventDefault) {
+      evt.preventDefault();
+    }
+    const url = `/api/topics/${topicId}/provider/tag-use.csv?${filtersAsUrlParams(filters)}&${formatAsUrlParams({ tagSetsId, tagsId })}`;
     window.location = url;
   }
 
@@ -43,12 +46,12 @@ class TopPeopleContainer extends React.Component {
   }
 
   render() {
-    const { coverage, entities } = this.props;
+    const { coverage, data, border } = this.props;
     const { formatNumber } = this.props.intl;
     let content = null;
     const coverageRatio = coverage.count / coverage.total;
-    if (coverageRatio > COVERAGE_REQUIRED) {
-      content = <EntitiesTable entities={entities.slice(0, NUMBER_TO_SHOW)} onClick={(...args) => this.handleEntityClick(args)} />;
+    if (coverageRatio >= COVERAGE_REQUIRED) {
+      content = <EntitiesTable entities={data.slice(0, NUMBER_TO_SHOW)} onClick={(...args) => this.handleEntityClick(args)} />;
     } else {
       content = (
         <p>
@@ -62,7 +65,7 @@ class TopPeopleContainer extends React.Component {
       );
     }
     return (
-      <>
+      <DataCard border={border}>
         {content}
         <div className="actions">
           <ActionMenu actionTextMsg={messages.downloadOptions}>
@@ -75,44 +78,52 @@ class TopPeopleContainer extends React.Component {
             </MenuItem>
           </ActionMenu>
         </div>
-      </>
+      </DataCard>
     );
   }
 }
 
-TopPeopleContainer.propTypes = {
+TopicTagUseContainer.propTypes = {
   // from compositional chain
-  location: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
+  uid: PropTypes.string.isRequired,
+  tagSetsId: PropTypes.number,
+  tagsId: PropTypes.oneOfType([PropTypes.number, PropTypes.array]).isRequired,
+  border: PropTypes.bool,
   // from state
   coverage: PropTypes.object.isRequired,
-  entities: PropTypes.array.isRequired,
+  data: PropTypes.array.isRequired,
   fetchStatus: PropTypes.string.isRequired,
+  // from dispatch
   updateQueryFilter: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
-  fetchStatus: state.topics.selected.summary.topEntitiesPeople.fetchStatus,
-  coverage: state.topics.selected.summary.topEntitiesPeople.coverage,
-  entities: state.topics.selected.summary.topEntitiesPeople.entities,
+const mapStateToProps = (state, ownProps) => ({
+  fetchStatus: state.topics.selected.provider.tagUse.fetchStatuses[ownProps.uid] || FETCH_INVALID,
+  data: state.topics.selected.provider.tagUse.results[ownProps.uid] ? state.topics.selected.provider.tagUse.results[ownProps.uid].list : [],
+  coverage: state.topics.selected.provider.tagUse.results[ownProps.uid] ? state.topics.selected.provider.tagUse.results[ownProps.uid].coverage : {},
 });
 
 const mapDispatchToProps = dispatch => ({
   updateQueryFilter: (newQueryFilter) => dispatch(filterByQuery(newQueryFilter)),
 });
 
-const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicEntitiesPeople(props.topicId, props.filters));
+
+const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicProviderTagUse(props.topicId, {
+  ...props.filters,
+  uid: props.uid,
+  tagSetsId: props.tagSetsId,
+  tagsId: props.tagsId,
+}));
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withSummary(localMessages.title, messages.entityHelpContent)(
-      withFilteredAsyncData(fetchAsyncData)(
-        TopPeopleContainer
-      )
+    withFilteredAsyncData(fetchAsyncData)(
+      TopicTagUseContainer
     )
   )
 );

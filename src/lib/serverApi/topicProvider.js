@@ -38,3 +38,11 @@ export function topicProviderCount(topicId, params) {
   const acceptedParams = acceptParams(params, [...TOPIC_FILTER_PARAMS, ...reducerParams, ...optionalApiParams]);
   return createApiPromise(`/api/topics/${topicId}/provider/count`, acceptedParams);
 }
+
+export function topicProviderTagUse(topicId, params) {
+  // this is needed to help the reducer figure out where to put results (the value should be unique on the page being loaded)
+  const reducerParams = ['uid'];
+  const optionalApiParams = ['tagsId', 'tagSetsId'];
+  const acceptedParams = acceptParams(params, [...TOPIC_FILTER_PARAMS, ...reducerParams, ...optionalApiParams]);
+  return createApiPromise(`/api/topics/${topicId}/provider/tag-use`, acceptedParams);
+}

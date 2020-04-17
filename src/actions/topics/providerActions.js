@@ -12,3 +12,6 @@ export const fetchTopicProviderCountOverTime = createAsyncAction(FETCH_TOPIC_PRO
 
 export const FETCH_TOPIC_PROVIDER_COUNT = 'FETCH_TOPIC_PROVIDER_COUNT';
 export const fetchTopicProviderCount = createAsyncAction(FETCH_TOPIC_PROVIDER_COUNT, api.topicProviderCount);
+
+export const FETCH_TOPIC_PROVIDER_TAG_USE = 'FETCH_TOPIC_PROVIDER_TAG_USE';
+export const fetchTopicProviderTagUse = createAsyncAction(FETCH_TOPIC_PROVIDER_TAG_USE, api.topicProviderTagUse);

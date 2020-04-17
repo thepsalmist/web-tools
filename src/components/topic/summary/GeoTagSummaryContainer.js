@@ -5,15 +5,19 @@ import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import getCountryISO2 from 'country-iso-3-to-2'; // ISO 3166-1 lookup, from alpha3 to alpha2
 import ActionMenu from '../../common/ActionMenu';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import GeoChart from '../../vis/GeoChart';
-import { filtersAsUrlParams } from '../../util/location';
+import { filtersAsUrlParams, formatAsUrlParams } from '../../util/location';
 import messages from '../../../resources/messages';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import { DownloadButton } from '../../common/IconButton';
 import { getBrandLightColor } from '../../../styles/colors';
-import { fetchTopicGeocodedStoryCounts, filterByQuery } from '../../../actions/topicActions';
+import { fetchTopicProviderTagUse, filterByQuery } from '../../../actions/topicActions';
+import { TAG_SET_GEOGRAPHIC_PLACES, CLIFF_VERSION_TAG_LIST } from '../../../lib/tagUtil';
+import { GEONAMES_ID_TO_APLHA3 } from '../../../lib/mapUtil';
+import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
 const localMessages = {
   title: { id: 'topic.summary.geo.title', defaultMessage: 'Geographic Attention' },
@@ -29,7 +33,10 @@ const COVERAGE_REQUIRED = 0.7; // need > this many of the stories tagged to show
 class GeoTagSummaryContainer extends React.Component {
   downloadCsv = () => {
     const { topicId, filters } = this.props;
-    const url = `/api/topics/${topicId}/geo-tags/counts.csv?${filtersAsUrlParams(filters)}`;
+    const url = `/api/topics/${topicId}/provider/tag-use.csv?${filtersAsUrlParams(filters)}&${formatAsUrlParams({
+      tagSetsId: TAG_SET_GEOGRAPHIC_PLACES,
+      tagsId: CLIFF_VERSION_TAG_LIST,
+    })}`;
     window.location = url;
   }
 
@@ -49,9 +56,17 @@ class GeoTagSummaryContainer extends React.Component {
     const coverageRatio = coverage.count / coverage.total;
     let content;
     if (coverageRatio > COVERAGE_REQUIRED) {
+      // add in some properties so the map can be rendered correctly
+      const geoData = data
+        .filter(t => t.tag.split('_')[1] in GEONAMES_ID_TO_APLHA3)
+        .map(t => ({
+          ...t,
+          'iso-a2': getCountryISO2(GEONAMES_ID_TO_APLHA3[parseInt(t.tag.split('_')[1], 10)]),
+          value: t.count,
+        }));
       content = (
         <GeoChart
-          data={data}
+          data={geoData}
           countryMaxColorScale={getBrandLightColor()}
           backgroundColor="#f5f5f5"
           onCountryClick={this.handleEntityClick}
@@ -101,16 +116,21 @@ GeoTagSummaryContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.selected.geotags.fetchStatus,
-  data: state.topics.selected.geotags.entities,
-  coverage: state.topics.selected.geotags.coverage,
+  fetchStatus: state.topics.selected.provider.tagUse.fetchStatuses.places || FETCH_INVALID,
+  data: state.topics.selected.provider.tagUse.results.places ? state.topics.selected.provider.tagUse.results.places.list : [],
+  coverage: state.topics.selected.provider.tagUse.results.places ? state.topics.selected.provider.tagUse.results.places.coverage : {},
 });
 
 const mapDispatchToProps = (dispatch) => ({
   updateQueryFilter: (newQueryFilter) => dispatch(filterByQuery(newQueryFilter)),
 });
 
-const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicGeocodedStoryCounts(props.topicId, props.filters));
+const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicProviderTagUse(props.topicId, {
+  ...props.filters,
+  uid: 'places',
+  tagSetsId: TAG_SET_GEOGRAPHIC_PLACES,
+  tagsId: CLIFF_VERSION_TAG_LIST,
+}));
 
 export default
 injectIntl(

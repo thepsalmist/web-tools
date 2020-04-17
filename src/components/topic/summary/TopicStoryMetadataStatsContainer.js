@@ -52,7 +52,7 @@ TopicStoryMetadataStatsContainer.propTypes = {
   // from composition chain
   intl: PropTypes.object.isRequired,
   // from state
-  fetchStatus: PropTypes.arrayOf(PropTypes.string).isRequired,
+  fetchStatus: PropTypes.string.isRequired,
   entityCoverage: PropTypes.object,
   englishCounts: PropTypes.object,
   nytThemeCoverage: PropTypes.object,

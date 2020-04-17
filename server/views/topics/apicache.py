@@ -353,7 +353,6 @@ def topic_tag_counts(user_mc_key, topics_id, tag_sets_id):
      This supports just timespan_id and q from the request, because it has to use sentenceFieldCount,
      not a topicSentenceFieldCount method that takes filters (which doesn't exit)
     """
-    # return [] # SUPER HACK!
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     timespan_query = "timespans_id:{}".format(timespans_id)
     if (q is None) or (len(q) == 0):
@@ -365,14 +364,13 @@ def topic_tag_counts(user_mc_key, topics_id, tag_sets_id):
 
 @cache.cache_on_arguments()
 def _cached_topic_tag_counts(user_mc_key, topics_id, tag_sets_id, query):
-    user_mc = user_mediacloud_client()
+    user_mc = user_mediacloud_client(user_mc_key)
     # we don't need ot use topics_id here because the timespans_id is in the query argument
     tag_counts = user_mc.storyTagCount(query, tag_sets_id=tag_sets_id)
     # add in the pct so we can show relative values within the sample
     for t in tag_counts:
         if is_bad_theme(t['tags_id']):
             tag_counts.remove(t)
-
     return tag_counts
 
 

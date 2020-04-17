@@ -5,10 +5,7 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { urlWithFilters } from '../../util/location';
-import TopPeopleContainer from './TopPeopleContainer';
-import TopOrgsContainer from './TopOrgsContainer';
 import MediaSummaryContainer from './MediaSummaryContainer';
-import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
 import CountOverTimeSummaryContainer from './CountOverTimeSummaryContainer';
 import TopicStoryStatsContainer from './TopicStoryStatsContainer';
 import StoryTotalsSummaryContainer from './StoryTotalsSummaryContainer';
@@ -23,7 +20,10 @@ import TopicWordSpaceContainer from './TopicWordSpaceContainer';
 import TabSelector from '../../common/TabSelector';
 import messages from '../../../resources/messages';
 import SeedQuerySummary from '../versions/SeedQuerySummary';
+import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
 import TopicStoriesContainer from '../provider/TopicStoriesContainer';
+import TopicTagUseContainer from '../provider/TopicTagUseContainer';
+import { CLIFF_VERSION_TAG_LIST, TAG_SET_CLIFF_PEOPLE, TAG_SET_CLIFF_ORGS } from '../../../lib/tagUtil';
 
 const localMessages = {
   title: { id: 'topic.summary.summary.title', defaultMessage: 'Topic: {name}' },
@@ -35,6 +35,8 @@ const localMessages = {
   topStories: { id: 'topic.summary.stories.title', defaultMessage: 'Top Stories' },
   storiesDescriptionIntro: { id: 'topic.summary.stories.help.title', defaultMessage: '<p>The top stories within this topic can suggest the main ways it is talked about.  Sort by different measures to get a better picture of a story\'s influence.</p>' },
   countOverTimeDescriptionIntro: { id: 'topic.summary.splitStoryCount.help.title', defaultMessage: '<p>Analyze attention to this topic over time to understand how it is covered. This chart shows the total number of stories that matched your topic query. Spikes in attention can reveal key events.  Plateaus can reveal stable, "normal", attention levels. <b>Click a point to label it with the top inlinked story in that week.</b></p>' },
+  topPeople: { id: 'topic.summary.people.title', defaultMessage: 'Top People' },
+  topOrgs: { id: 'topic.summary.orgs.title', defaultMessage: 'Top Organizations' },
 };
 
 class TopicSummaryContainer extends React.Component {
@@ -132,17 +134,41 @@ class TopicSummaryContainer extends React.Component {
           );
           break;
         case 3:
-          // representation
+          // entities
           viewContent = (
             <>
               <Row>
                 <Col lg={12}>
-                  <TopPeopleContainer topicId={topic.topics_id} filters={filters} location={location} />
+                  <SummarizedVizualization
+                    titleMessage={localMessages.topPeople}
+                    introMessage={messages.entityHelpContent}
+                  >
+                    <TopicTagUseContainer
+                      topicId={topic.topics_id}
+                      filters={filters}
+                      uid="people"
+                      tagSetsId={TAG_SET_CLIFF_PEOPLE}
+                      tagsId={CLIFF_VERSION_TAG_LIST}
+                      border={false}
+                    />
+                  </SummarizedVizualization>
                 </Col>
               </Row>
               <Row>
                 <Col lg={12}>
-                  <TopOrgsContainer topicId={topic.topics_id} filters={filters} location={location} />
+                  <SummarizedVizualization
+                    titleMessage={localMessages.topOrgs}
+                    introMessage={messages.entityHelpContent}
+                  >
+                    <TopicTagUseContainer
+                      topicId={topic.topics_id}
+                      filters={filters}
+                      uid="orgs"
+                      tagSetsId={TAG_SET_CLIFF_ORGS}
+                      tagsId={CLIFF_VERSION_TAG_LIST}
+                      border={false}
+                    />
+                  </SummarizedVizualization>
                 </Col>
               </Row>
               <Row>

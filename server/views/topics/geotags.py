@@ -8,19 +8,10 @@ from server.util.csv import stream_response
 from server.util.request import api_error_handler, arguments_required
 import server.util.tags as tag_util
 from server.util.geo import COUNTRY_GEONAMES_ID_TO_APLHA3, HIGHCHARTS_KEYS
-from server.views.topics.apicache import topic_tag_coverage, topic_tag_counts
+from server.views.topics.apicache import topic_tag_counts
 from server.views.topics.entities import process_tags_for_coverage
 
 logger = logging.getLogger(__name__)
-
-
-@app.route('/api/topics/<topics_id>/geo-tags/coverage', methods=['GET'])
-@api_error_handler
-def topic_geo_tag_coverage(topics_id):
-    coverage = topic_tag_coverage(topics_id, tag_util.processed_for_entities_tag_ids())   # this will respect filters
-    if coverage is None:
-        return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
-    return jsonify(coverage)
 
 
 @app.route('/api/topics/<topics_id>/geo-tags/counts.csv', methods=['GET'])

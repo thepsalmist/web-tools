@@ -41,22 +41,6 @@ def story_counts(topics_id):
     return jsonify({'counts': {'count': filtered['count'], 'total': total['count']}})
 
 
-@app.route('/api/topics/<topics_id>/stories/undateable-counts', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def story_undateable_count(topics_id):
-    q = "tags_id_stories:{}".format(tag_util.STORY_UNDATEABLE_TAG)
-    return _public_safe_topic_story_count(topics_id, q)
-
-
-@app.route('/api/topics/<topics_id>/stories/english-counts', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def story_english_counts(topics_id):
-    q = "language:en"
-    return _public_safe_topic_story_count(topics_id, q)
-
-
 def _public_safe_topic_story_count(topics_id, q):
     total = apicache.topic_story_count(user_mediacloud_key(), topics_id, q=apicache.add_to_user_query(None))
     # force a count with just the query

@@ -30,3 +30,11 @@ export function topicProviderCountOverTime(topicId, params) {
   const acceptedParams = acceptParams(params, [...TOPIC_FILTER_PARAMS, ...reducerParams]);
   return createApiPromise(`/api/topics/${topicId}/provider/count-over-time`, acceptedParams);
 }
+
+export function topicProviderCount(topicId, params) {
+  // this is needed to help the reducer figure out where to put results (the value should be unique on the page being loaded)
+  const reducerParams = ['uid'];
+  const optionalApiParams = ['subQuery'];
+  const acceptedParams = acceptParams(params, [...TOPIC_FILTER_PARAMS, ...reducerParams, ...optionalApiParams]);
+  return createApiPromise(`/api/topics/${topicId}/provider/count`, acceptedParams);
+}

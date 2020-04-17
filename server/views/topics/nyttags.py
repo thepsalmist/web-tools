@@ -13,15 +13,6 @@ from server.views.topics.entities import process_tags_for_coverage
 logger = logging.getLogger(__name__)
 
 
-@app.route('/api/topics/<topics_id>/nyt-tags/coverage', methods=['GET'])
-@api_error_handler
-def topic_nyt_tag_coverage(topics_id):
-    coverage = topic_tag_coverage(topics_id, tags_util.NYT_LABELER_1_0_0_TAG_ID)    # this will respect filters
-    if coverage is None:
-        return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
-    return jsonify(coverage)
-
-
 @app.route('/api/topics/<topics_id>/nyt-tags/counts.csv', methods=['GET'])
 @arguments_required("timespanId")
 @flask_login.login_required

@@ -68,8 +68,6 @@ def _parse_stories_optional_arguments():
     :return: a dict that can be spread as arguments to a call to topic_story_list
     """
     return _parse_optional_args(
-        # these ones are supported by the low-level call to `topicsStoryList`
-        apicache.TOPIC_STORY_LIST_API_PARAMS +
         # these ones are options to the story CSV download helper
         ['storyLimit', 'storyTags', 'mediaMetadata', 'platformUrlShares', 'socialShares']
     )
@@ -95,32 +93,18 @@ def topic_provider_stories_csv(topics_id):
     return stream_story_list_csv(user_mediacloud_key(), 'stories', topic, **optional_args)
 
 
-def _parse_count_over_time_optional_arguments():
-    """
-    The user can override some of the defaults that govern any request for a count over time within the topic. This
-    method centralizes the parsing of those optional overrides from the request made.
-    :return: a dict that can be spread as arguments to a call to topic_split_story_counts
-    """
-    return _parse_optional_args(
-        # these ones are supported by the low-level call
-        ['snapshots_id', 'timespans_id', 'foci_id', 'q']
-    )
-
-
 @app.route('/api/topics/<topics_id>/provider/count-over-time', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
 def topic_provider_count_over_time(topics_id):
-    optional_args = _parse_count_over_time_optional_arguments()
-    results = apicache.topic_split_story_counts(user_mediacloud_key(), topics_id, **optional_args)
+    results = apicache.topic_split_story_counts(user_mediacloud_key(), topics_id)
     return jsonify(results)
 
 
 @app.route('/api/topics/<topics_id>/provider/count-over-time.csv', methods=['GET'])
 @flask_login.login_required
 def topic_provider_count_over_time_csv(topics_id):
-    optional_args = _parse_count_over_time_optional_arguments()
-    results = apicache.topic_split_story_counts(user_mediacloud_key(), topics_id, **optional_args)
+    results = apicache.topic_split_story_counts(user_mediacloud_key(), topics_id)
     return _stream_topic_split_story_counts_csv(results)
 
 
@@ -130,4 +114,29 @@ def _stream_topic_split_story_counts_csv(user_mc_key, filename, topics_id, **kwa
     sorted_results = sorted(clean_results, key=itemgetter('date'))
     props = ['date', 'stories']
     return csv.stream_response(sorted_results, props, filename)
+
+
+def _parse_count_optional_arguments():
+    """
+    The user can override some of the defaults that govern any request for a story list within the topic. This method
+    centralizes the parsing of those optional overrides from the request made.
+    :return: a dict that can be spread as arguments to a call to topic_story_list
+    """
+    return _parse_optional_args(
+        # these ones are options to the story CSV download helper
+        ['subQuery']
+    )
+
+
+@flask_login.login_required
+@api_error_handler
+@app.route('/api/topics/<topics_id>/provider/count', methods=['GET'])
+def topic_provider_count(topics_id):
+    optional_args = _parse_count_optional_arguments()
+    total = apicache.topic_story_count(user_mediacloud_key(), topics_id)
+    sub_query_clause  = None
+    if ('sub_query' in optional_args) and (optional_args['sub_query'] is not None):
+        sub_query_clause = apicache.add_to_user_query(optional_args['sub_query'])
+    sub_query = apicache.topic_story_count(user_mediacloud_key(), topics_id, q=sub_query_clause)
+    return {'count': sub_query['count'], 'total': total['count']}
 

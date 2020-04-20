@@ -2,12 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
+import withFilteredAsyncData from '../../../../FilteredAsyncDataContainer';
 import withHelp from '../../../../../common/hocs/HelpfulContainer';
-import { fetchCreateFocusKeywordStoryCounts } from '../../../../../../actions/topicActions';
+import { fetchTopicProviderCount } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
 import BubbleRowChart from '../../../../../vis/BubbleRowChart';
 import { getBrandDarkColor } from '../../../../../../styles/colors';
+import { FETCH_INVALID } from '../../../../../../lib/fetchConstants';
 
 const BUBBLE_CHART_DOM_ID = 'bubble-chart-keyword-preview-story-total';
 
@@ -73,17 +74,25 @@ KeywordStoryCountPreviewContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.selected.focalSets.create.matchingStoryCounts.fetchStatus,
-  counts: state.topics.selected.focalSets.create.matchingStoryCounts.counts,
+  fetchStatus: state.topics.selected.provider.count.fetchStatuses.focusBuilder || FETCH_INVALID,
+  counts: state.topics.selected.provider.count.results.focusBuilder || {},
 });
 
-const fetchAsyncData = (dispatch, { topicId, keywords }) => dispatch(fetchCreateFocusKeywordStoryCounts(topicId, { q: keywords }));
+const fetchAsyncData = (dispatch, { topicId, filters, keywords }) => dispatch(fetchTopicProviderCount(topicId, {
+  uid: 'focusBuilder',
+  subQuery: keywords,
+  // subtopics work at the snapshot level, make sure to search the whole snapshot (not the timespan the user might have selected)
+  snapshotId: filters.snapshotId,
+  timespanId: null,
+  focusId: null,
+  q: null,
+}));
 
 export default
 injectIntl(
   connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, localMessages.helpText)(
-      withAsyncData(fetchAsyncData, ['keywords'])(
+      withFilteredAsyncData(fetchAsyncData, ['keywords'])(
         KeywordStoryCountPreviewContainer
       )
     )

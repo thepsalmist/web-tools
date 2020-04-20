@@ -2,12 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
+import withFilteredAsyncData from '../../../../FilteredAsyncDataContainer';
 import withHelp from '../../../../../common/hocs/HelpfulContainer';
-import { fetchCreateFocusKeywordStories } from '../../../../../../actions/topicActions';
+import { fetchTopicProviderStories } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
 import TopicStoryTableContainer from '../../../../TopicStoryTableContainer';
 import messages from '../../../../../../resources/messages';
+import { FETCH_INVALID } from '../../../../../../lib/fetchConstants';
 
 const NUM_TO_SHOW = 20;
 
@@ -42,17 +43,24 @@ KeywordStoryPreviewContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.topics.selected.focalSets.create.matchingStories.fetchStatus,
-  stories: state.topics.selected.focalSets.create.matchingStories.stories,
+  fetchStatus: state.topics.selected.provider.stories.fetchStatuses.focusBuilder || FETCH_INVALID,
+  stories: state.topics.selected.provider.stories.results.focusBuilder ? state.topics.selected.provider.stories.results.focusBuilder.stories : {},
 });
 
-const fetchAsyncData = (dispatch, { topicId, keywords }) => dispatch(fetchCreateFocusKeywordStories(topicId, { q: keywords, limit: NUM_TO_SHOW }));
+const fetchAsyncData = (dispatch, { topicId, filters, keywords }) => dispatch(fetchTopicProviderStories(topicId, {
+  uid: 'focusBuilder',
+  // subtopics work at the snapshot level, make sure to search the whole snapshot (not the timespan the user might have selected)
+  snapshotId: filters.snapshotId,
+  timespanId: null,
+  focusId: null,
+  q: keywords,
+}));
 
 export default
 injectIntl(
   connect(mapStateToProps)(
     withHelp(localMessages.helpTitle, messages.storiesTableHelpText)(
-      withAsyncData(fetchAsyncData, ['keywords'])(
+      withFilteredAsyncData(fetchAsyncData, ['keywords'])(
         KeywordStoryPreviewContainer
       )
     )

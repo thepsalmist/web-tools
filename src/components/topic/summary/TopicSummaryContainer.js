@@ -7,7 +7,7 @@ import LoadingSpinner from '../../common/LoadingSpinner';
 import { urlWithFilters } from '../../util/location';
 import MediaSummaryContainer from './MediaSummaryContainer';
 import CountOverTimeSummaryContainer from './CountOverTimeSummaryContainer';
-import TopicStoryStatsContainer from './TopicStoryStatsContainer';
+import TopicStoryStats from './TopicStoryStats';
 import StoryTotalsSummaryContainer from './StoryTotalsSummaryContainer';
 import DownloadMapFilesContainer from './export/DownloadMapFilesContainer';
 import DownloadTimespanFilesConatainer from './export/DownloadTimespanFilesContainer';
@@ -232,7 +232,7 @@ class TopicSummaryContainer extends React.Component {
             </Row>
             <Row>
               <Col lg={12}>
-                <TopicStoryStatsContainer topicId={topic.topics_id} filters={filters} timespan={selectedTimespan} />
+                <TopicStoryStats topicId={topic.topics_id} filters={filters} timespan={selectedTimespan} />
               </Col>
             </Row>
             <Row>

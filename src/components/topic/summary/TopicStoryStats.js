@@ -15,7 +15,7 @@ const localMessages = {
   mediumLinkCountHelp: { id: 'topic.summary.timespanInfo.mediumLinkCount.help', defaultMessage: 'The number of links between media sources with stories within this timespan that match the filters you have in place. A media link is when one media source links any number of times to another media source. For example, if there was only one Chicago Tribune story linked to and it was linked to by 3 New York times stories and 2 Boston Globe stories, then the story links count would be 2 (because only two unqiue media sources linked to the Chicago Tribune story). If you are filtering by a search query we can\'t easily compute this number.' },
 };
 
-const TopicStoryStatsContainer = (props) => {
+const TopicStoryStats = (props) => {
   const { timespan, filters } = props;
   const { formatNumber, formatMessage } = props.intl;
   if ((timespan === null) || (timespan === undefined)) {
@@ -48,7 +48,7 @@ const TopicStoryStatsContainer = (props) => {
   );
 };
 
-TopicStoryStatsContainer.propTypes = {
+TopicStoryStats.propTypes = {
   // from parent
   timespan: PropTypes.object,
   topicId: PropTypes.number.isRequired,
@@ -57,4 +57,4 @@ TopicStoryStatsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default injectIntl(TopicStoryStatsContainer);
+export default injectIntl(TopicStoryStats);

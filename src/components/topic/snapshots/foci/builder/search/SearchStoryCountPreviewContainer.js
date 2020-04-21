@@ -10,7 +10,25 @@ import BubbleRowChart from '../../../../../vis/BubbleRowChart';
 import { getBrandDarkColor } from '../../../../../../styles/colors';
 import { FETCH_INVALID } from '../../../../../../lib/fetchConstants';
 
-const BUBBLE_CHART_DOM_ID = 'bubble-chart-keyword-preview-story-total';
+export const searchValuesToQuery = (searchValues) => {
+  const queryClauses = [];
+  if (searchValues.media) { // check for any media / collections
+    const collections = searchValues.media.filter(obj => obj.tags_id).map(s => s.tags_id);
+    if (collections.length > 0) {
+      queryClauses.push(`(tags_id_media:(${collections.join(' ')}))`);
+    }
+    const sources = searchValues.media.filter(obj => obj.media_id).map(s => s.media_id);
+    if (sources.length > 0) {
+      queryClauses.push(`(media_id:(${sources.join(' ')}))`);
+    }
+  }
+  if (searchValues.keywords) { // check for any keywords
+    queryClauses.push(`(${searchValues.keywords})`);
+  }
+  // combine keywords and media/collections into a single query
+  const query = queryClauses.join(' AND ');
+  return query;
+};
 
 const localMessages = {
   title: { id: 'topic.snapshot.keywords.storyCount.title', defaultMessage: 'Story Counts' },
@@ -44,7 +62,6 @@ const SearchStoryCountPreviewContainer = (props) => {
     content = (
       <BubbleRowChart
         data={data}
-        domId={BUBBLE_CHART_DOM_ID}
         width={400}
         padding={30}
       />
@@ -67,7 +84,7 @@ SearchStoryCountPreviewContainer.propTypes = {
   helpButton: PropTypes.node.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
-  searchValues: PropTypes.array.isRequired,
+  searchValues: PropTypes.object.isRequired,
   // from state
   counts: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
@@ -78,27 +95,15 @@ const mapStateToProps = state => ({
   counts: state.topics.selected.provider.count.results.focusBuilder || {},
 });
 
-const fetchAsyncData = (dispatch, { topicId, searchValues, filters }) => {
-  const queryClauses = [];
-  const collections = searchValues.filter(obj => obj.tags_id).map(s => s.tags_id);
-  if (collections.length > 0) {
-    queryClauses.push(`tags_id_media:(${collections.join(' ')})`);
-  }
-  const sources = searchValues.filter(obj => obj.media_id).map(s => s.media_id);
-  if (sources.length > 0) {
-    queryClauses.push(`media_id:(${sources.join(' ')})`);
-  }
-  const query = queryClauses.join(' AND ');
-  return dispatch(fetchTopicProviderCount(topicId, {
-    uid: 'focusBuilder',
-    subQuery: query,
-    // subtopics work at the snapshot level, make sure to search the whole snapshot (not the timespan the user might have selected)
-    snapshotId: filters.snapshotId,
-    timespanId: null,
-    focusId: null,
-    q: null,
-  }));
-};
+const fetchAsyncData = (dispatch, { topicId, searchValues, filters }) => dispatch(fetchTopicProviderCount(topicId, {
+  uid: 'focusBuilder',
+  subQuery: searchValuesToQuery(searchValues),
+  // subtopics work at the snapshot level, make sure to search the whole snapshot (not the timespan the user might have selected)
+  snapshotId: filters.snapshotId,
+  timespanId: null,
+  focusId: null,
+  q: null,
+}));
 
 export default
 injectIntl(

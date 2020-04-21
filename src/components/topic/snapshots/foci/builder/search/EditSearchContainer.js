@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { reduxForm, formValueSelector } from 'redux-form';
+import { Field, reduxForm, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
@@ -28,17 +28,16 @@ class EditSearchContainer extends React.Component {
     // We can't read out of the form state becase we need to know when they click "search",
     // but that is updated live as they type.
     super(props);
-    this.state = { values: null, searchButtonDisabled: true };
+    this.state = { values: null };
   }
 
   updateSearchValues = () => {
     const { currentSearchValues } = this.props;
-    this.setState({ values: currentSearchValues });
+    this.setState({ values: { media: currentSearchValues.media, keywords: currentSearchValues.keywords } });
   }
 
   updateAndMediaChange = (values) => {
     const { handleMediaChange } = this.props;
-    this.setState({ searchButtonDisabled: false });
     handleMediaChange(values);
   }
 
@@ -54,15 +53,15 @@ class EditSearchContainer extends React.Component {
   }
 
   render() {
-    const { topicId, initialValues, currentFocalTechnique, handleSubmit, onPreviousStep, finishStep, location } = this.props;
+    const { topicId, initialValues, currentFocalTechnique, handleSubmit, onPreviousStep, finishStep, renderTextField } = this.props;
     const { formatMessage } = this.props.intl;
     let previewContent = null;
     let nextButtonDisabled = true;
-    if ((this.state.values !== null) && (this.state.values !== undefined) && (this.state.values.length > 0)) {
+    if (this.state.values) {
       nextButtonDisabled = false;
       previewContent = (
         <div>
-          <SearchPreview topicId={topicId} searchValues={this.state.values} location={location} />
+          <SearchPreview topicId={topicId} searchValues={this.state.values} />
         </div>
       );
     }
@@ -78,6 +77,15 @@ class EditSearchContainer extends React.Component {
             </Col>
           </Row>
           <Row>
+            <Col lg={4}>
+              <Field
+                name="keywords"
+                component={renderTextField}
+                label={messages.searchByKeywords}
+                fullWidth
+                onKeyDown={this.handleKeyDown}
+              />
+            </Col>
             <Col lg={8}>
               <OpenWebMediaFieldArray
                 className="query-field"
@@ -100,7 +108,6 @@ class EditSearchContainer extends React.Component {
                 id="keyword-search-preview-button"
                 label={formatMessage(messages.search)}
                 onClick={this.updateSearchValues}
-                disabled={this.state.searchButtonDisabled}
               />
             </Col>
           </Row>
@@ -128,12 +135,11 @@ EditSearchContainer.propTypes = {
   handleMediaChange: PropTypes.func.isRequired,
   // from state
   formData: PropTypes.object,
-  currentSearchValues: PropTypes.array,
+  currentSearchValues: PropTypes.object,
   currentFocalTechnique: PropTypes.string,
   // from dispatch
   finishStep: PropTypes.func.isRequired,
   // from compositional helper
-  location: PropTypes.object.isRequired,
   intl: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   renderTextField: PropTypes.func.isRequired,
@@ -141,7 +147,7 @@ EditSearchContainer.propTypes = {
 
 const mapStateToProps = state => ({
   formData: state.form.snapshotFocus,
-  currentSearchValues: formSelector(state, 'media'),
+  currentSearchValues: formSelector(state, 'media', 'keywords'),
   currentFocalTechnique: formSelector(state, 'focalTechnique'),
 });
 

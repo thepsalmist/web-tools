@@ -9,6 +9,7 @@ import DataCard from '../../../../../common/DataCard';
 import TopicStoryTableContainer from '../../../../TopicStoryTableContainer';
 import messages from '../../../../../../resources/messages';
 import { FETCH_INVALID } from '../../../../../../lib/fetchConstants';
+import { searchValuesToQuery } from './SearchStoryCountPreviewContainer';
 
 const NUM_TO_SHOW = 20;
 
@@ -36,7 +37,7 @@ SearchStoryPreviewContainer.propTypes = {
   helpButton: PropTypes.node.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
-  searchValues: PropTypes.array.isRequired,
+  searchValues: PropTypes.object.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   stories: PropTypes.array,
@@ -47,26 +48,14 @@ const mapStateToProps = state => ({
   stories: state.topics.selected.provider.stories.results.focusBuilder ? state.topics.selected.provider.stories.results.focusBuilder.stories : {},
 });
 
-const fetchAsyncData = (dispatch, { topicId, searchValues, filters }) => {
-  const queryClauses = [];
-  const collections = searchValues.filter(obj => obj.tags_id).map(s => s.tags_id);
-  if (collections.length > 0) {
-    queryClauses.push(`tags_id_media:(${collections.join(' ')})`);
-  }
-  const sources = searchValues.filter(obj => obj.media_id).map(s => s.media_id);
-  if (sources.length > 0) {
-    queryClauses.push(`media_id:(${sources.join(' ')})`);
-  }
-  const query = queryClauses.join(' AND ');
-  return dispatch(fetchTopicProviderStories(topicId, {
-    uid: 'focusBuilder',
-    // subtopics work at the snapshot level, make sure to search the whole snapshot (not the timespan the user might have selected)
-    snapshotId: filters.snapshotId,
-    timespanId: null,
-    focusId: null,
-    q: query,
-  }));
-};
+const fetchAsyncData = (dispatch, { topicId, searchValues, filters }) => dispatch(fetchTopicProviderStories(topicId, {
+  uid: 'focusBuilder',
+  // subtopics work at the snapshot level, make sure to search the whole snapshot (not the timespan the user might have selected)
+  snapshotId: filters.snapshotId,
+  timespanId: null,
+  focusId: null,
+  q: searchValuesToQuery(searchValues),
+}));
 
 export default
 injectIntl(

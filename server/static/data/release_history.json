@@ -1,6 +1,16 @@
 {
   "releases": [
     {
+      "date": "2020-03-21",
+      "version": "v3.13.13",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Very long queries now work in Explorer"
+        }
+      ]
+    },{
       "date": "2020-03-26",
       "version": "v3.13.12",
       "notes": [

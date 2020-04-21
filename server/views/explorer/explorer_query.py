@@ -167,11 +167,3 @@ def _tag_set_with_private_collections(tag_sets_id):
 
 def _tag_set_with_public_collections(tag_sets_id):
     return _tag_set_with_collections(tag_sets_id, True)
-
-
-@app.route('/api/explorer/themes', methods=['POST'])
-@flask_login.login_required
-@form_fields_required('q')
-@api_error_handler
-def api_explorer_themes():
-    return jsonify()

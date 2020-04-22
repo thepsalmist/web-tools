@@ -1,7 +1,7 @@
 {
   "releases": [
     {
-      "date": "2020-04-06",
+      "date": "2020-04-21",
       "version": "v3.14.0",
       "notes": [
         {
@@ -40,8 +40,17 @@
           "note": "Top words for a media source in a topic work again"
         }
       ]
-    },
-    {
+    },{
+      "date": "2020-03-21",
+      "version": "v3.13.13",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Very long queries now work in Explorer"
+        }
+      ]
+    },{
       "date": "2020-03-26",
       "version": "v3.13.12",
       "notes": [

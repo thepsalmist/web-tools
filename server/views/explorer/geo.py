@@ -14,15 +14,15 @@ import server.views.explorer.apicache as apicache
 logger = logging.getLogger(__name__)
 
 
-@app.route('/api/explorer/geo-tags/counts', methods=['GET'])
+@app.route('/api/explorer/geo-tags/counts', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
 def api_explorer_geotag_count():
-    search_id = int(request.args['search_id']) if 'search_id' in request.args else None
+    search_id = int(request.form['search_id']) if 'search_id' in request.form else None
     if search_id not in [None, -1]:
-        solr_q, solr_fq = parse_as_sample(search_id, request.args['index'])
+        solr_q, solr_fq = parse_as_sample(search_id, request.form['index'])
     else:
-        solr_q, solr_fq = parse_query_with_keywords(request.args)
+        solr_q, solr_fq = parse_query_with_keywords(request.form)
     data = apicache.top_tags_with_coverage(solr_q, solr_fq, tags.GEO_TAG_SET)
     data['results'] = _filter_for_countries(data['results'])
     return jsonify(data)

@@ -101,7 +101,7 @@ def tag_set_coverage(total_q, subset_q, fq):
         'totals': _cached_total_story_count(api_key, total_q, fq)['count'],
         'counts': _cached_total_story_count(api_key, subset_q, fq)['count'],
     }
-    coverage['coverage_percentage'] = 0 if coverage['totals'] is 0 else float(coverage['counts'])/float(coverage['totals'])
+    coverage['coverage_percentage'] = 0 if coverage['totals'] == 0 else float(coverage['counts'])/float(coverage['totals'])
     return coverage
 
 

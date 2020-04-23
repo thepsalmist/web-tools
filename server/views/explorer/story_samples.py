@@ -118,7 +118,7 @@ def _story_list_by_page(api_key, q, fq, stories_per_page, sort, page_limit=None)
         if (page_limit is not None) and (page_count >= page_limit):
             break
         story_page = apicache.story_list_page(api_key, q, fq, last_processed_stories_id, stories_per_page, sort)
-        if len(story_page) is 0:  # this is the last page so bail out
+        if len(story_page) == 0:  # this is the last page so bail out
             break
         for s in story_page:
             if INCLUDE_MEDIA_METADATA_IN_CSV:

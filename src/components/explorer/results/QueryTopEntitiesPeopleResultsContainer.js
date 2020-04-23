@@ -18,7 +18,7 @@ import { TAG_SET_CLIFF_PEOPLE } from '../../../lib/tagUtil';
 const localMessages = {
   title: { id: 'explorer.entities.title', defaultMessage: 'Top People' },
   person: { id: 'explorer.entities.person', defaultMessage: 'Person' },
-  helpIntro: { id: 'explorer.entities.help.title', defaultMessage: '<p>Looking at <i>who</i> is being talked about can give you a sense of how the media is focusing on the issue you are investigating. This is a list of the people menntioned most often in a sampling of stories. Click on a name to add it to all your queries. Click the menu on the bottom right to download a CSV of the people mentioned in all the stories matching your query.</p>' },
+  helpIntro: { id: 'explorer.entities.help.title', defaultMessage: '<p>Looking at <i>who</i> is being talked about can give you a sense of how the media is focusing on the issue you are investigating. This is a list of the people mentioned most often in a sampling of stories. Click on a name to add it to all your queries. Click the menu on the bottom right to download a CSV of the people mentioned in all the stories matching your query.</p>' },
   downloadCsv: { id: 'explorer.entities.downloadCsv', defaultMessage: 'Download { name } all people CSV' },
 };
 

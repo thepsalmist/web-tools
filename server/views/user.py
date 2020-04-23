@@ -27,7 +27,7 @@ def _create_user_session(user_results):
 
     # HACK: the API used to return this as true/false, but not returns it as 1 or 0, so we change it to
     # boolean here so we don't have to change front-end JS logic
-    user_results['profile']['has_consented'] = (user_results['profile']['has_consented'] is 1) or \
+    user_results['profile']['has_consented'] = (user_results['profile']['has_consented'] == 1) or \
                                                (user_results['profile']['has_consented'] is True)
 
     merged_user_info = user_results['profile'].copy()  # start with x's keys and values
@@ -85,7 +85,7 @@ def activation_confirm():
     logger.debug("activation request from %s", request.args['email'])
     try:
         results = mc.authActivate(request.args['email'], request.args['activation_token'])
-        if results['success'] is 1:
+        if results['success'] == 1:
             redirect_to_return = redirect(AUTH_MANAGEMENT_DOMAIN + '/#/user/activated?success=1')
         else:
             redirect_to_return = redirect(AUTH_MANAGEMENT_DOMAIN + '/#/user/activated?success=0&msg=' +
@@ -187,7 +187,7 @@ def api_user_delete():
         # delete them from the back-end system
         results = mc.userDelete(user.profile['auth_users_id'])  # need to do this with the tool's admin account
         try:
-            if ('success' in results) and (results['success'] is 1):
+            if ('success' in results) and (results['success'] == 1):
                 return logout()
             else:
                 return json_error_response("We failed to delete your account, sorry!", 400)

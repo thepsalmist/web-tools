@@ -152,7 +152,7 @@ def _tag_set_with_collections(tag_sets_id, show_only_public_collections):
             last_tags_id = tags[-1]['tags_id']
         more_tags = len(tags) != 0
     # double check the show_on_media because that controls public or not
-    collection_list = [t for t in all_tags if t['show_on_media'] is 1]
+    collection_list = [t for t in all_tags if t['show_on_media'] == 1]
     collection_list = sorted(collection_list, key=itemgetter('label'))
     return {
         'name': tag_set['label'],

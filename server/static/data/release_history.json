@@ -8,6 +8,11 @@
           "apps": [ "topics" ],
           "type": "New",
           "note": "Added Topic 'export' tab for quick batch downloads"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "More work on long queries in Explorer"
         }
       ]
     },{

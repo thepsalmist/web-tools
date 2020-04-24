@@ -9,17 +9,22 @@ export const TAG_SET_EXTRACTOR_VERSION = 1354;
 export const TAG_SET_GEOCODER_VERSION = 1937;
 // tags for each geonames place
 export const TAG_SET_GEOGRAPHIC_PLACES = 1011;
-
 // tags indicating which version of the nyt theme engine the story was processed with
 export const TAG_SET_NYT_THEMES_VERSION = 1964;
 // tags for each nyt theme
 export const TAG_SET_NYT_THEMES = 1963;
+export const TAG_NYT_LABELER_1_0_0 = 9360669; // the tag that indicates a story was tagged by the NYT labeller version 1
 
 // tags indicating what media type a source is
 export const TAG_SET_MEDIA_TYPE = 1972;
 
 export const TAG_SET_CLIFF_ORGS = 2388;
 export const TAG_SET_CLIFF_PEOPLE = 2389;
+
+const TAG_ID_CLIFF_CLAVIN_2_3_0 = 9353691; // the tag that indicates a story was tagged by the CLIFF version 2.3.0
+const TAG_ID_CLIFF_CLAVIN_2_4_1 = 9696677; // the tag that indicates a story was tagged by the CLIFF version 2.4.1
+const TAG_ID_CLIFF_CLAVIN_2_6_0 = 189462640; // the tag that indicates a story was tagged by the CLIFF version 2.6.0
+export const CLIFF_VERSION_TAG_LIST = [TAG_ID_CLIFF_CLAVIN_2_3_0, TAG_ID_CLIFF_CLAVIN_2_4_1, TAG_ID_CLIFF_CLAVIN_2_6_0];
 
 // tag sets that hold collections we want to show to the user
 export const TAG_SET_MC_ID = 5;
@@ -47,6 +52,9 @@ export const PUB_STATE_TAG_NAME = 'pub_state';
 export const PRIMARY_LANGUAGE_TAG_NAME = 'primary_language';
 export const COUNTRY_OF_FOCUS_TAG_NAME = 'subject_country';
 export const MEDIA_TYPE_TAG_NAME = 'media_format';
+
+export const TAG_STORY_UNDATEABLE = 8877812; // if a story has this tag, that means it was undateable
+
 
 /**
  * Call this to verify a tag set id is one of the metadata options for a media source

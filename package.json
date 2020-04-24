@@ -34,6 +34,7 @@
     "airbnb-js-shims": "^2.2.1",
     "codemirror": "^5.50.2",
     "core-js": "^3.6.1",
+    "country-iso-3-to-2": "^1.1.0",
     "crossfilter2": "^1.5.2",
     "d3": "^5.15.0",
     "d3-cloud": "1.2.5",

@@ -1,27 +1,18 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { VIEW_1K } from '../EditableWordCloudDataCard';
 
 /**
- * Wrap any component that wants to display an EditableWordCloud. This passes
- * a `fetchData` helper to the child component,.
+ * Wrap any component that wants to display an EditableWordCloud. This manages the sampleSize parameter.
+ * Your child should accept a `sampleSize` property, and call the supplied `onViewSampleSizeClick` when the sampled
+ * size is changed. If your component is a `withFilteredAsyncData` one, it should make sure to include `sampleSize`
+ * in it's `propsToRefetchOn`.
  */
-const withSampleSize = (ChildComponent, onSampleSizeChange) => {
+const withSampleSize = (ChildComponent) => {
   class SampleSize extends React.Component {
     state = {
       sampleSize: VIEW_1K,
     };
-
-    setSampleSize = (nextSize) => {
-      const { fetchData, filters, dispatch } = this.props;
-      this.setState({ sampleSize: nextSize });
-      if (onSampleSizeChange) {
-        onSampleSizeChange(dispatch, this.props, nextSize);
-      } else {
-        fetchData({ filters, sample_size: nextSize });
-      }
-    }
 
     render() {
       const { sampleSize } = this.state; // must instantiate here and pass as props to child component - this.state.sampleSize doesn't work
@@ -29,18 +20,14 @@ const withSampleSize = (ChildComponent, onSampleSizeChange) => {
         <div className="sample-size">
           <ChildComponent
             {...this.props}
-            initSampleSize={sampleSize}
-            onViewSampleSizeClick={ss => this.setSampleSize(ss)}
+            sampleSize={sampleSize}
+            onViewSampleSizeClick={newSampleSize => this.setState({ sampleSize: newSampleSize })}
           />
         </div>
       );
     }
   }
   SampleSize.propTypes = {
-    // from compositional chain
-    fetchData: PropTypes.func,
-    filters: PropTypes.object,
-    dispatch: PropTypes.func.isRequired,
   };
   return connect()(SampleSize);
 };

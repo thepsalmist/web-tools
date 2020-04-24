@@ -26,9 +26,9 @@ def filters_from_args(request_args):
     """
     Helper to centralize reading filters from url params
     """
-    timespans_id = request_args['timespanId'] if 'timespanId' in request_args else None
-    snapshots_id = request_args['snapshotId'] if 'snapshotId' in request_args else None
-    foci_id = request_args['focusId'] if 'focusId' in request_args else None
+    timespans_id = safely_read_arg('timespanId')
+    snapshots_id = safely_read_arg('snapshotId')
+    foci_id = safely_read_arg('focusId')
     q = request_args['q'] if ('q' in request_args) and (request_args['q'] != 'undefined') else None
     return snapshots_id, timespans_id, foci_id, q
 
@@ -83,3 +83,7 @@ def api_error_handler(func):
             logger.exception(e)
             return json_error_response(e.message, e.status_code)
     return wrapper
+
+
+def safely_read_arg(arg_name, default=None):
+    return request.args[arg_name] if arg_name in request.args else default

@@ -14,7 +14,7 @@ import server.views.explorer.apicache as apicache
 logger = logging.getLogger(__name__)
 
 
-@app.route('/api/explorer/words/count', methods=['GET'])
+@app.route('/api/explorer/words/count', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
 def api_explorer_words():
@@ -28,12 +28,12 @@ def api_explorer_demo_words():
 
 
 def _get_word_count():
-    search_id = int(request.args['search_id']) if 'search_id' in request.args else None
-    sample_size = int(request.args['sampleSize']) if 'sampleSize' in request.args else WORD_COUNT_SAMPLE_SIZE
+    search_id = int(request.form['search_id']) if 'search_id' in request.form else None
+    sample_size = int(request.form['sampleSize']) if 'sampleSize' in request.form else WORD_COUNT_SAMPLE_SIZE
     if search_id not in [None, -1]:
-        solr_q, solr_fq = parse_as_sample(search_id, request.args['index'])
+        solr_q, solr_fq = parse_as_sample(search_id, request.form['index'])
     else:
-        solr_q, solr_fq = parse_query_with_keywords(request.args)
+        solr_q, solr_fq = parse_query_with_keywords(request.form)
     word_data = query_wordcount(solr_q, solr_fq, sample_size=sample_size)
     # return combined data
     return jsonify({"results": word_data, "sample_size": str(sample_size)})
@@ -57,7 +57,7 @@ def explorer_wordcount_csv():
     return stream_wordcount_csv(filename, solr_q, solr_fq, ngram_size, sample_size)
 
 
-@app.route('/api/explorer/words/compare/count', methods=['GET'])
+@app.route('/api/explorer/words/compare/count', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
 def api_explorer_compare_words():

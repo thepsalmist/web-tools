@@ -5,7 +5,6 @@ from flask import jsonify, request
 from server import app
 import server.util.file as file_util
 import server.views.topics.apicache as apicache
-from server.auth import user_admin_mediacloud_client
 from server.util.request import arguments_required, filters_from_args, api_error_handler
 
 logger = logging.getLogger(__name__)

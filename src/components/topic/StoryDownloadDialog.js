@@ -14,24 +14,20 @@ import messages from '../../resources/messages';
 
 const localMessages = {
   title: { id: 'topic.story.download.title', defaultMessage: 'Download Story List' },
-  intro: { id: 'topic.story.download.intro', defaultMessage: 'A list of top stories is a CSV including basic information like the story URL, publication date, language, media source, and title. Use the form below to pick any additional data you want to download in addition to this.' },
+  intro: { id: 'topic.story.download.intro', defaultMessage: 'A list of top stories is a CSV including basic information like the story URL, publication date, language, media source, and title. Use the form below to pick any additional data you want to download in addition to this. To download all the stories, visit the "Export" tab of the Topic summary.' },
   storyCount: { id: 'topic.story.download.storyCount', defaultMessage: 'Download' },
   storyTags: { id: 'topic.story.download.storyTags', defaultMessage: 'Include themes and subtopics?' },
   platformUrlShares: { id: 'topic.story.download.platformUrlShares', defaultMessage: 'Include this subtopic\'s post, channel, author counts?' },
   socialShares: { id: 'topic.story.download.socialShares', defaultMessage: 'Include share counts for each URL Sharing subtopic?' },
-  facebookDates: { id: 'topic.story.download.facebookDates', defaultMessage: 'Include the date we collected Facebook share data?' },
-  redditData: { id: 'topic.story.download.redditData', defaultMessage: 'Include live Reddit submission counts?' },
   mediaMetadata: { id: 'topic.story.download.mediaMetadata', defaultMessage: 'Include metadata about the media sources?' },
   options: { id: 'topic.story.download.options', defaultMessage: 'Options' },
   optionsDetails: { id: 'topic.story.download.optionsDetails', defaultMessage: 'Select any additional data you want to innclude in your download (beyond the basic story info).  Each item you add will make the download slower.' },
 };
 
-export const FIELD_STORY_COUNT = 'storyCount';
+export const FIELD_STORY_LIMIT = 'storyLimit';
 export const FIELD_SORT = 'sort';
-export const FIELD_STORY_TAGS = 'includeStoryTags';
-export const FIELD_FACEBOOK_DATES = 'includeFacebookDates';
-export const FIELD_REDDIT_DATA = 'includeRedditData';
-export const FIELD_MEDIA_METADATA = 'includeMediaMetadata';
+export const FIELD_STORY_TAGS = 'storyTags';
+export const FIELD_MEDIA_METADATA = 'mediaMetadata';
 export const FIELD_PLATFORM_URL_SHARES = 'platformUrlShares';
 export const FIELD_SOCIAL_SHARES = 'socialShares';
 
@@ -42,9 +38,6 @@ const DOWNLOAD_SIZE_OPTIONS = {
   '1,000 stories': 1000,
   '5,000 stories': 5000,
   '10,000 stories': 10000,
-  '50,000 stories': 50000,
-  '100,000 stories': 100000,
-  'all stories': 0,
 };
 
 // TODO: figure out how to intl these
@@ -77,7 +70,7 @@ const StoryDownloadDialog = (props) => {
             <Col lg={12}>
               <h4><FormattedMessage {...localMessages.storyCount} /></h4>
               <Field
-                name={FIELD_STORY_COUNT}
+                name={FIELD_STORY_LIMIT}
                 component={renderSelect}
                 type="inline"
                 fullWidth
@@ -164,17 +157,6 @@ const StoryDownloadDialog = (props) => {
                 type="inline"
                 fullWidth
                 label={localMessages.mediaMetadata}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={12}>
-              <Field
-                name={FIELD_FACEBOOK_DATES}
-                component={renderCheckbox}
-                type="inline"
-                fullWidth
-                label={localMessages.facebookDates}
               />
             </Col>
           </Row>

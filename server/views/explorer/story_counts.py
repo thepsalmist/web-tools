@@ -51,28 +51,28 @@ def explorer_story_count_csv():
     return csv.stream_response(story_count_results, props, filename)
 
 
-@app.route('/api/explorer/stories/split-count', methods=['GET'])
+@app.route('/api/explorer/stories/split-count', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
 def api_explorer_story_split_count():
-    search_id = int(request.args['search_id']) if 'search_id' in request.args else None
-    start_date, end_date = parse_query_dates(request.args)
-    if only_queries_reddit(request.args):
+    search_id = int(request.form['search_id']) if 'search_id' in request.form else None
+    start_date, end_date = parse_query_dates(request.form)
+    if only_queries_reddit(request.form):
         provider = RedditPushshiftProvider()
-        results = provider.normalized_count_over_time(query=request.args['q'],
+        results = provider.normalized_count_over_time(query=request.form['q'],
                                                       start_date=start_date, end_date=end_date,
                                                       subreddits=NEWS_SUBREDDITS)
     else:
         # get specific stories by keyword
         if isinstance(search_id, int) and search_id not in [None, -1]:
-            solr_q, solr_fq = parse_as_sample(search_id, request.args['index'])
+            solr_q, solr_fq = parse_as_sample(search_id, request.form['index'])
         else:
-            solr_q, solr_fq = parse_query_with_keywords(request.args)
+            solr_q, solr_fq = parse_query_with_keywords(request.form)
         # get all the stories (no keyword) so we can support normalization
         solr_open_query = concatenate_query_for_solr(solr_seed_query='*',
-                                                     media_ids=request.args['sources'],
-                                                     tags_ids=request.args['collections'],
-                                                     custom_ids=request.args['searches'])
+                                                     media_ids=request.form['sources'],
+                                                     tags_ids=request.form['collections'],
+                                                     custom_ids=request.form['searches'])
         results = apicache.normalized_and_story_split_count(solr_q, solr_open_query, start_date, end_date)
     return jsonify({'results': results})
 

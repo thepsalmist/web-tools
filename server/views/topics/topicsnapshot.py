@@ -38,7 +38,7 @@ def topic_update(topics_id):
     tag_ids_to_add = ids_from_comma_separated_str(request.form['collections[]']
                                                   if 'collections[]' in request.form else '')
     # hack to support twitter-only topics
-    if (len(media_ids_to_add) is 0) and (len(tag_ids_to_add) is 0):
+    if (len(media_ids_to_add) == 0) and (len(tag_ids_to_add) == 0):
         media_ids_to_add = None
         tag_ids_to_add = None
     # update the seed query (the client will start the spider themselves

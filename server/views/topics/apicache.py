@@ -417,7 +417,7 @@ def topic_timespan(topics_id, snapshots_id, foci_id, timespans_id):
     """
     timespans_list = cached_topic_timespan_list(user_mediacloud_key(), topics_id, snapshots_id, foci_id)
     matching_timespans = [t for t in timespans_list if t['timespans_id'] == int(timespans_id)]
-    if len(matching_timespans) is 0:
+    if len(matching_timespans) == 0:
         raise ValueError("Unknown timespans_id {}".format(timespans_id))
     # set up a date query clase we can use in other places
     timespan = matching_timespans[0]

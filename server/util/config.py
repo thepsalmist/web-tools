@@ -13,7 +13,7 @@ def _variables_from_file(filepath):
     try:
         f = codecs.open(filepath, 'r', 'utf-8')
         for line in f:
-            if len(line.strip()) is 0:
+            if len(line.strip()) == 0:
                 continue
             if line.strip()[0] == COMMENT_CHAR:
                 continue

@@ -35,7 +35,7 @@ def normalized_and_story_split_count(q, open_q, start_date, end_date):
 @cache.cache_on_arguments()
 def cached_story_split_count(mc_api_key, q, fq):
     local_mc = base_cache.mc_client()
-    results = local_mc.storyCount(q, fq, split=True)
+    results = local_mc.storyCount(q, fq, split=True, http_method='POST')
     return results
 
 
@@ -52,7 +52,7 @@ def _cached_sentence_list(mc_api_key, q, fq, rows, include_stories=True):
     stories_id_list = [str(s['stories_id']) for s in sentences]
     if (len(stories_id_list) > 0) and include_stories:
         # this is the fastest way to get a list of stories by id
-        stories = user_mediacloud_client().storyList("stories_id:({})".format(" ".join(stories_id_list)))
+        stories = user_mediacloud_client().storyList("stories_id:({})".format(" ".join(stories_id_list)), http_method='POST')
         stories_by_id = {s['stories_id']: s for s in stories}  # build a quick lookup table by stories_id
         for s in sentences:
             s['story'] = stories_by_id[s['stories_id']]
@@ -110,7 +110,7 @@ def _cached_most_used_tags(api_key, q, fq, tag_sets_id, sample_size=None):
     # top tags used in stories matching query
     # api_key used for caching at the user level
     local_mc = base_cache.mc_client()
-    return local_mc.storyTagCount(q, fq, tag_sets_id=tag_sets_id, limit=sample_size)
+    return local_mc.storyTagCount(q, fq, tag_sets_id=tag_sets_id, limit=sample_size, http_method='POST')
 
 
 def story_count(q, fq):
@@ -122,7 +122,7 @@ def story_count(q, fq):
 def _cached_total_story_count(api_key, q, fq):
     # api_key is included to keep the cache at the user-level
     local_mc = base_cache.mc_client()
-    count = local_mc.storyCount(q, fq)
+    count = local_mc.storyCount(q, fq, http_method='POST')
     return count
 
 
@@ -140,7 +140,7 @@ def _cached_story_list_page(api_key, q, fq, last_processed_stories_id, stories_p
     # api_key passed in just to make this a user-level cache
     local_client = user_mediacloud_client(api_key)
     return local_client.storyList(q, fq, last_processed_stories_id=last_processed_stories_id, rows=stories_per_page,
-                                  sort=sort)
+                                  sort=sort, http_method='POST')
 
 
 def word_count(q, fq, ngram_size, num_words, sample_size):
@@ -151,7 +151,8 @@ def word_count(q, fq, ngram_size, num_words, sample_size):
 @cache.cache_on_arguments()
 def _cached_word_count(api_key, q, fq, ngram_size, num_words, sample_size):
     local_mc = base_cache.mc_client()
-    return local_mc.wordCount(q, fq, ngram_size=ngram_size, num_words=num_words, sample_size=sample_size)
+    return local_mc.wordCount(q, fq, ngram_size=ngram_size, num_words=num_words, sample_size=sample_size,
+                              http_method='POST')
 
 
 def word2vec_google_2d(words):

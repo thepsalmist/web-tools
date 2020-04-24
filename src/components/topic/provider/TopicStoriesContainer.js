@@ -6,7 +6,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { DownloadButton } from '../../common/IconButton';
-import withSampleSize from '../../common/hocs/SampleSize';
 import withSorting from '../../common/hocs/Sorted';
 import withCsvDownloadNotifyContainer from '../../common/hocs/CsvDownloadNotifyContainer';
 import { combineQueryParams } from '../../util/location';
@@ -99,13 +98,11 @@ const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicProviderStories(p
 export default
 injectIntl(
   connect(mapStateToProps)(
-    withSampleSize(
-      withSorting(
-        withCsvDownloadNotifyContainer(
-          withTopicStoryDownload()(
-            withFilteredAsyncData(fetchAsyncData, ['sort', 'linkId'])(
-              TopicStoriesContainer,
-            )
+    withSorting(
+      withCsvDownloadNotifyContainer(
+        withTopicStoryDownload()(
+          withFilteredAsyncData(fetchAsyncData, ['sort', 'linkId'])(
+            TopicStoriesContainer,
           )
         )
       )

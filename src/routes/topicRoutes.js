@@ -9,7 +9,7 @@ import TopicVersionListContainer from '../components/topic/versions/TopicVersion
 import TopicNewVersionContainer from '../components/topic/versions/TopicNewVersionContainer';
 import TopicSummaryContainer from '../components/topic/summary/TopicSummaryContainer';
 import TopicVersionContainer from '../components/topic/versions/TopicVersionContainer';
-import InfluentialMediaContainer from '../components/topic/media/InfluentialMediaContainer';
+import BrowseMediaContainer from '../components/topic/media/BrowseMediaContainer';
 import BrowseStoriesContainer from '../components/topic/stories/BrowseStoriesContainer';
 import StoryContainer from '../components/topic/stories/StoryContainer';
 import StoryUpdateContainer from '../components/topic/stories/StoryUpdateContainer';
@@ -66,7 +66,7 @@ const topicRoutes = (
       <Route path="/topics/:topicId/versions" component={TopicVersionContainer} onEnter={requireAuth}>
         <Route component={TopicVersionReadyStatusContainer} onEnter={requireAuth}>
           <Route path="/topics/:topicId/summary" component={TopicSummaryContainer} onEnter={requireAuth} />
-          <Route path="/topics/:topicId/media" component={InfluentialMediaContainer} onEnter={requireAuth} />
+          <Route path="/topics/:topicId/media" component={BrowseMediaContainer} onEnter={requireAuth} />
           <Route path="/topics/:topicId/media/:mediaId" component={MediaContainer} onEnter={requireAuth} />
           <Route path="/topics/:topicId/stories" component={BrowseStoriesContainer} onEnter={requireAuth} />
           <Route path="/topics/:topicId/stories/:storiesId/update" component={StoryUpdateContainer} onEnter={requireAuth} />

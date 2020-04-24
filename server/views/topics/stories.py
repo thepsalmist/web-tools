@@ -48,7 +48,7 @@ def _public_safe_topic_story_count(topics_id, q):
     return jsonify({'counts': {'count': matching['count'], 'total': total['count']}})
 
 
-def _platform_csv_column_header_prefix(topic_seed_query):
+def platform_csv_column_header_prefix(topic_seed_query):
     return "{}_{}_".format(topic_seed_query['platform'], topic_seed_query['source'])
 
 
@@ -94,7 +94,7 @@ def stream_story_list_csv(user_key, filename, topic, **kwargs):
         topic_seed_queries = topic['topic_seed_queries']
         extra_columns = []
         for tsq in topic_seed_queries:
-            prefix = _platform_csv_column_header_prefix(tsq)
+            prefix = platform_csv_column_header_prefix(tsq)
             extra_columns += [prefix+'post_count', prefix+'channel_count', prefix+'author_count']
         props += extra_columns
         params['topic_seed_queries'] = topic_seed_queries
@@ -136,7 +136,7 @@ def _topic_story_list_by_page_as_csv_row(user_key, topics_id, props, **kwargs):
                 # add in each header col
                 for item in s['url_sharing_counts']:
                     seed_query = [tsq for tsq in topic_seed_queries if tsq['topic_seed_queries_id'] == item['topic_seed_queries_id']][0]
-                    prefix = _platform_csv_column_header_prefix(seed_query)
+                    prefix = platform_csv_column_header_prefix(seed_query)
                     s[prefix + "post_count"] = item['post_count']
                     s[prefix + "channel_count"] = item['channel_count']
                     s[prefix + "author_count"] = item['author_count']

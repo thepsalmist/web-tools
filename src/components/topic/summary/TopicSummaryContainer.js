@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import LoadingSpinner from '../../common/LoadingSpinner';
 import { urlWithFilters } from '../../util/location';
-import MediaSummaryContainer from './MediaSummaryContainer';
 import CountOverTimeSummaryContainer from './CountOverTimeSummaryContainer';
 import TopicStoryStats from './TopicStoryStats';
 import StoryTotalsSummaryContainer from './StoryTotalsSummaryContainer';
@@ -23,6 +22,7 @@ import SeedQuerySummary from '../versions/SeedQuerySummary';
 import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
 import TopicStoriesContainer from '../provider/TopicStoriesContainer';
 import TopicTagUseContainer from '../provider/TopicTagUseContainer';
+import TopicMediaContainer from '../provider/TopicMediaContainer';
 import { CLIFF_VERSION_TAG_LIST, TAG_SET_CLIFF_PEOPLE, TAG_SET_CLIFF_ORGS } from '../../../lib/tagUtil';
 
 const localMessages = {
@@ -37,6 +37,11 @@ const localMessages = {
   countOverTimeDescriptionIntro: { id: 'topic.summary.splitStoryCount.help.title', defaultMessage: '<p>Analyze attention to this topic over time to understand how it is covered. This chart shows the total number of stories that matched your topic query. Spikes in attention can reveal key events.  Plateaus can reveal stable, "normal", attention levels. <b>Click a point to label it with the top inlinked story in that week.</b></p>' },
   topPeople: { id: 'topic.summary.people.title', defaultMessage: 'Top People' },
   topOrgs: { id: 'topic.summary.orgs.title', defaultMessage: 'Top Organizations' },
+  topMedia: { id: 'topic.summary.topMedia.title', defaultMessage: 'Top Media' },
+  mediaDescriptionIntro: { id: 'topic.summary.stories.help.title', defaultMessage: '<p>The top media sources within this topic can show which sources had control of the main narratives. Sort by different measures to get a better picture of a media source\'s influence.</p>' },
+  mediaDescription: { id: 'topic.summary.topMedia.help.text',
+    defaultMessage: '<p>This table shows you the media that wrote about this Topic the most.</p><p>This table has one row for each Media Source.  The column currently being used to sort the results has a little down arrow next to it.  Click one of the green column headers to change how it is sorted.  Here is a summary of the columns:</p><ul><li>Name: the name of the Media Source; click to see details about this source\'s content within this Topic</li><li>Media Inlinks: how many unique other Media Sources have links to this content from this Media Source in the Topic</li><li>Outlinks: the number of links in this Media Source to other stories</li><li>Facebook Shares: the number of times stories from this Media Source were shared on Facebook</li></ul><p>Click the download button in the top right to download a CSV of the full list of stories</p>',
+  },
 };
 
 class TopicSummaryContainer extends React.Component {
@@ -89,7 +94,15 @@ class TopicSummaryContainer extends React.Component {
               </Row>
               <Row>
                 <Col lg={12}>
-                  <MediaSummaryContainer topicId={topic.topics_id} filters={filters} location={location} />
+                  <SummarizedVizualization
+                    titleMessage={localMessages.topMedia}
+                    introMessage={localMessages.mediaDescriptionIntro}
+                    detailedMessage={localMessages.mediaDescription}
+                    handleExplore={urlWithFilters(`/topics/${topic.topics_id}/media`, filters)}
+                    wide
+                  >
+                    <TopicMediaContainer uid="topic" border={false} />
+                  </SummarizedVizualization>
                 </Col>
               </Row>
             </>

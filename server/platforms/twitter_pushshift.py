@@ -105,7 +105,7 @@ class TwitterPushshiftProvider(ContentProvider):
         q = collections.defaultdict()
         if 'sort' in kwargs:
             q['sort'] = {'created_at': kwargs['sort']}
-        if 'limit' is kwargs:
+        if 'limit' in kwargs:
             q['size'] = kwargs['limit']
         q['query'] = {}
         if (start_date is not None) and (end_date is not None):

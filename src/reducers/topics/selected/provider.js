@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { FETCH_TOPIC_PROVIDER_WORDS, FETCH_TOPIC_PROVIDER_STORIES, FETCH_TOPIC_PROVIDER_COUNT_OVER_TIME,
-  FETCH_TOPIC_PROVIDER_COUNT, FETCH_TOPIC_PROVIDER_TAG_USE } from '../../../actions/topicActions';
+  FETCH_TOPIC_PROVIDER_COUNT, FETCH_TOPIC_PROVIDER_TAG_USE, FETCH_TOPIC_PROVIDER_MEDIA } from '../../../actions/topicActions';
 import { createIndexedAsyncReducer } from '../../../lib/reduxHelpers';
 import { cleanDateCounts } from '../../../lib/dateUtil';
 
@@ -22,6 +22,8 @@ const providerReducer = combineReducers({
   count: createIndexedAsyncReducer({ action: FETCH_TOPIC_PROVIDER_COUNT }),
 
   tagUse: createIndexedAsyncReducer({ action: FETCH_TOPIC_PROVIDER_TAG_USE }),
+
+  media: createIndexedAsyncReducer({ action: FETCH_TOPIC_PROVIDER_MEDIA }),
 
 });
 

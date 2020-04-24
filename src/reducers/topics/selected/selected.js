@@ -5,14 +5,12 @@ import timespans from './timespans';
 import summary from './summary/summary';
 import filters from './filters';
 import info from './info';
-import media from './media';
 import mediaSource from './mediaSource/mediaSource';
 import story from './story/story';
 import focalSets from './focalSets/focalSets';
 import permissions from './permissions';
 import attention from './attention';
 import word from './word/word';
-import geotags from './geotags';
 import snapshotStoryCounts from './snapshotStoryCounts';
 import platforms from './platforms/platforms';
 import provider from './provider';
@@ -62,14 +60,12 @@ const selected = combineReducers({
   timespans,
   filters,
   provider,
-  media,
   mediaSource,
   story,
   focalSets,
   permissions,
   attention,
   word,
-  geotags,
   snapshotStoryCounts,
   platforms,
 });

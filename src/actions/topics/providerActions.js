@@ -15,3 +15,6 @@ export const fetchTopicProviderCount = createAsyncAction(FETCH_TOPIC_PROVIDER_CO
 
 export const FETCH_TOPIC_PROVIDER_TAG_USE = 'FETCH_TOPIC_PROVIDER_TAG_USE';
 export const fetchTopicProviderTagUse = createAsyncAction(FETCH_TOPIC_PROVIDER_TAG_USE, api.topicProviderTagUse);
+
+export const FETCH_TOPIC_PROVIDER_MEDIA = 'FETCH_TOPIC_PROVIDER_MEDIA';
+export const fetchTopicProviderMedia = createAsyncAction(FETCH_TOPIC_PROVIDER_MEDIA, api.topicProviderMedia);

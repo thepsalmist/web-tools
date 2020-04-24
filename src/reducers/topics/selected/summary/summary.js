@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-import topMedia from './topMedia';
 import storyTotals from './storyTotals';
 import mapFiles from './mapFiles';
 import timespanFiles from './timespanFiles';
@@ -8,7 +7,6 @@ import word2vecTimespans from './word2vecTimespans';
 import attentionDrillDownStories from './attentionDrillDownStories';
 
 const summaryReducer = combineReducers({
-  topMedia,
   storyTotals,
   mapFiles,
   timespanFiles,

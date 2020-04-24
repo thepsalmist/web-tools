@@ -17,16 +17,6 @@ export function topicSummary(topicId) {
   return createApiPromise(`/api/topics/${topicId}/summary`);
 }
 
-export function topicTopStories(topicId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'sort', 'limit', 'q', 'linkId', 'sources[]', 'collections[]']);
-  return createApiPromise(`/api/topics/${topicId}/stories`, acceptedParams);
-}
-
-export function topicTopMedia(topicId, params) {
-  const acceptedParams = acceptParams(params, ['snapshotId', 'timespanId', 'focusId', 'q', 'sort', 'limit', 'linkId']);
-  return createApiPromise(`/api/topics/${topicId}/media`, acceptedParams);
-}
-
 export function topicTimespansList(topicId, snapshotId, params) {
   const acceptedParams = acceptParams(params, ['focusId']);
   return createApiPromise(`/api/topics/${topicId}/snapshots/${snapshotId}/timespans/list`, acceptedParams);
@@ -153,11 +143,6 @@ export function fetchTopicSearchResults(searchStr, params) {
 
 export function fetchTopicWithNameExists(searchStr, topicId) {
   return createApiPromise('/api/topics/name-exists', { searchStr, topicId });
-}
-
-export function topicGeocodedStoryCounts(topicId, params) {
-  const acceptedParams = acceptParams(params, ['timespanId', 'q']);
-  return createApiPromise(`/api/topics/${topicId}/geo-tags/counts`, acceptedParams);
 }
 
 export function userQueuedAndRunningTopics() {

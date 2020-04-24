@@ -12,7 +12,7 @@ from server.auth import user_mediacloud_key, user_mediacloud_client
 from server.views.topics.stories import stream_story_list_csv
 import server.views.topics.apicache as apicache
 from server.util.stringutil import camel_to_snake, trim_solr_date
-
+from server.views.topics.media import stream_media_list_csv
 
 logger = logging.getLogger(__name__)
 
@@ -196,3 +196,34 @@ def topic_provider_tag_use_csv(topics_id):
     return csv.stream_response(data['list'],
                                ['tags_id', 'label', 'count', 'pct'],
                                'topic-{}-tag-use'.format(topics_id))
+
+
+def _parse_media_optional_arguments():
+    """
+    The user can override some of the defaults that govern any request for a story list within the topic. This method
+    centralizes the parsing of those optional overrides from the request made.
+    :return: a dict that can be spread as arguments to a call to story_tag_count
+    """
+    args = _parse_optional_args([
+        'mediaMetadata',
+        'includePlatformUrlShares',
+        'includeAllUrlShares',
+    ])
+    return args
+
+
+@app.route('/api/topics/<topics_id>/provider/media', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def topic_provider_media(topics_id):
+    media_list = apicache.topic_media_list(user_mediacloud_key(), topics_id)
+    return jsonify(media_list)
+
+
+@app.route('/api/topics/<topics_id>/provider/media.csv', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def topic_provider_media_csv(topics_id):
+    user_mc = user_mediacloud_client()
+    topic = user_mc.topic(topics_id)
+    return stream_media_list_csv(user_mediacloud_key(), topic, 'media')

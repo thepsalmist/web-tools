@@ -4,22 +4,22 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import TopicMediaContainer from '../provider/TopicMediaContainer';
 import { pagedAndSortedLocation } from '../../util/location';
 import withPaging from '../../common/hocs/PagedContainer';
 import TopicPageTitle from '../TopicPageTitle';
-import TopicStoriesContainer from '../provider/TopicStoriesContainer';
 
 const localMessages = {
-  title: { id: 'topic.influentialStories.title', defaultMessage: 'Browse Stories' },
+  title: { id: 'topic.influentialMedia.title', defaultMessage: 'Browse Media' },
 };
 
-const BrowseStoriesContainer = ({ previousButton, nextButton, linkId }) => (
+const BrowseMediaContainer = ({ previousButton, nextButton, linkId }) => (
   <Grid>
     <Row>
       <Col lg={12}>
         <TopicPageTitle value={localMessages.title} />
         <h1><FormattedMessage {...localMessages.title} /></h1>
-        <TopicStoriesContainer
+        <TopicMediaContainer
           border={false}
           uid="browse"
           extraArgs={{ limit: 100 }}
@@ -32,7 +32,7 @@ const BrowseStoriesContainer = ({ previousButton, nextButton, linkId }) => (
   </Grid>
 );
 
-BrowseStoriesContainer.propTypes = {
+BrowseMediaContainer.propTypes = {
   // from the composition chain
   intl: PropTypes.object.isRequired,
   // from state
@@ -44,7 +44,7 @@ BrowseStoriesContainer.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  links: state.topics.selected.provider.stories.results.browse ? state.topics.selected.provider.stories.results.browse.link_ids : {},
+  links: state.topics.selected.provider.media.results.browse ? state.topics.selected.provider.media.results.browse.link_ids : {},
   linkId: ownProps.location.query.linkId,
 });
 
@@ -62,7 +62,7 @@ export default
 injectIntl(
   connect(mapStateToProps)(
     withPaging(handlePageChange)(
-      BrowseStoriesContainer
+      BrowseMediaContainer
     )
   )
 );

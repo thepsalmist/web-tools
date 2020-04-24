@@ -39,7 +39,6 @@ const messages = {
   topicValidationProp: { id: 'topic.prop.validationPattern', defaultMessage: 'Validation Pattern' },
   topicIterationsProp: { id: 'topic.prop.iteration', defaultMessage: 'Iterations' },
   toicSkipSolrQueryProp: { id: 'topic.prop.public', defaultMessage: 'Skip SOLR Query' },
-  topicPublicProp: { id: 'topic.prop.public', defaultMessage: 'Public' },
   searchByRedditChannel: { id: 'topic.prop.reddit.channel', defaultMessage: 'Search By Subreddit (comma separated list)' },
   searchByTwitterChannel: { id: 'topic.prop.twitter.source', defaultMessage: 'Search By Twitter Source' },
 
@@ -84,6 +83,7 @@ const messages = {
   collectionNameProp: { id: 'collection.prop.name', defaultMessage: 'Name' },
   collectionDescriptionProp: { id: 'collection.prop.description', defaultMessage: 'Description' },
 
+  stories: { id: 'common.stories', defaultMessage: 'Stories' },
   inlinks: { id: 'common.inlinks', defaultMessage: 'Inlinks' },
   sortByMediaInlinks: { id: 'common.sortByMediaInlinks', defaultMessage: 'sort by media inlinks' },
   mediaInlinks: { id: 'common.mediaInlinks', defaultMessage: 'Media Inlinks' },

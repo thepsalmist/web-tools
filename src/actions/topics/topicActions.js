@@ -5,9 +5,6 @@ import * as api from '../../lib/serverApi/topics';
 export const FETCH_PERSONAL_TOPIC_LIST = 'FETCH_PERSONAL_TOPIC_LIST';
 export const fetchPersonalTopicsList = createAsyncAction(FETCH_PERSONAL_TOPIC_LIST, api.topicsPersonalList, linkId => linkId);
 
-export const FETCH_PUBLIC_TOPICS_LIST = 'FETCH_PUBLIC_TOPICS_LIST';
-export const fetchPublicTopicsList = createAsyncAction(FETCH_PUBLIC_TOPICS_LIST, api.topicsPublicList);
-
 export const FETCH_FAVORITE_TOPICS_LIST = 'FETCH_FAVORITE_TOPICS_LIST';
 export const fetchFavoriteTopicsList = createAsyncAction(FETCH_FAVORITE_TOPICS_LIST, api.topicsFavoriteList);
 

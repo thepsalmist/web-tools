@@ -222,7 +222,6 @@ if (server_app == SERVER_APP_SOURCES) or is_dev_mode():
     import server.views.sources.geocount
 if (server_app == SERVER_APP_TOPICS) or is_dev_mode():
     import server.views.topics.media
-    import server.views.topics.attention
     import server.views.topics.story
     import server.views.topics.stories
     import server.views.topics.topic
@@ -240,9 +239,7 @@ if (server_app == SERVER_APP_TOPICS) or is_dev_mode():
     import server.views.topics.foci.mediatype
     import server.views.topics.permissions
     import server.views.topics.files
-    import server.views.topics.nyttags
-    import server.views.topics.entities
-    import server.views.topics.geotags
+    import server.views.topics.provider
 if (server_app == SERVER_APP_EXPLORER) or is_dev_mode():
     import server.views.explorer.explorer_query
     import server.views.explorer.sentences

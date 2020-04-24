@@ -50,16 +50,6 @@ const TopicSettingsForm = (props) => {
       <Row>
         <Col lg={8}>
           <Field
-            name="is_public"
-            component={renderCheckbox}
-            fullWidth
-            label={formatMessage(localMessages.public)}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={8}>
-          <Field
             name="is_logogram"
             component={renderCheckbox}
             fullWidth

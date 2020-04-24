@@ -9,7 +9,7 @@ import newspaper
 from flask import request
 from server.platforms.reddit_pushshift import RedditPushshiftProvider
 from server import app, cliff, NYT_THEME_LABELLER_URL, mc, TOOL_API_KEY
-from server.auth import user_mediacloud_key
+from server.auth import user_mediacloud_key, user_admin_mediacloud_client
 from server.util.request import api_error_handler
 import server.util.csv as csv
 from server.cache import cache
@@ -234,3 +234,22 @@ def story_quotes(stories_id):
     story = apicache.story(user_mediacloud_key(), stories_id, text=True)
     quotes = corenlp.quotes_from_text(story['story_text'])
     return jsonify({'all': quotes})
+
+
+@app.route('/api/stories/<stories_id>/story-update', methods=['POST'])
+@flask_login.login_required
+@api_error_handler
+def topic_story_update(stories_id):
+    user_mc = user_admin_mediacloud_client()
+    optional_args = {
+        'title': request.form['title'] if 'title' in request.form else None,
+        'description': request.form['description'] if 'description' in request.form else '',
+        'guid': request.form['guid'] if 'guid' in request.form else 'guid',
+        'url': request.form['url'] if 'url' in request.form else 'url',
+        'language': request.form['language'] if 'language' in request.form else 'en',
+        'publish_date': request.form['publish_date'] if 'publish_date' in request.form else None,
+        'undateable': bool(request.form['undateable'] == 'true') if 'active' in request.form else False,
+    }
+    stories = user_mc.storyUpdate(stories_id, **optional_args)
+
+    return jsonify(stories)

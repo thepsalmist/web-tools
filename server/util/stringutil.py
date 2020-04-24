@@ -1,5 +1,6 @@
 import logging
 import dateutil
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -13,3 +14,11 @@ def ids_from_comma_separated_str(comma_separated_string):
 
 def trim_solr_date(date_str):
     return dateutil.parser.parse(date_str).strftime("%Y-%m-%d")
+
+
+pattern = re.compile(r'(?<!^)(?=[A-Z])')
+
+
+def camel_to_snake(camel_case: str) -> str:
+    return pattern.sub('_', camel_case).lower()
+

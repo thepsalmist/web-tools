@@ -45,7 +45,10 @@ export function combineQueryParams(filterQ, query) {
   if (filterQ) {
     return `${filterQ} AND ${query}`;
   }
-  return query;
+  if (query) {
+    return query;
+  }
+  return undefined;
 }
 
 export function formatAsUrlParams(params) {

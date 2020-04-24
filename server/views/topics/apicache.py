@@ -8,15 +8,21 @@ from server.views import WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_UI_NUM_WORDS
 from server.cache import cache
 from server.util.tags import STORY_UNDATEABLE_TAG, is_bad_theme
 import server.util.wordembeddings as wordembeddings
-from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_mediacloud_key, is_user_logged_in
+from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_mediacloud_key
 from server.util.request import filters_from_args
-from server.views.topics import validated_sort, access_public_topic
+from server.views.topics import validated_sort
 from server.util.api_helper import add_missing_dates_to_split_story_counts
 from server.views.topics.foci.focalsets import is_url_sharing_focal_set
 
 logger = logging.getLogger(__name__)
 
 WORD_COUNT_DOWNLOAD_COLUMNS = ['term', 'stem', 'count', 'sample_size', 'ratio']
+
+# the parameters actually accepted by the lower-level topicStoryList API call
+TOPIC_STORY_LIST_API_PARAMS = [
+    'snapshots_id', 'timespans_id', 'foci_id', 'q', 'sort', 'limit', 'linkId',
+    'linkToMediaId', 'linkFromMediaId', 'linkToStoriesId', 'linkFromStoriesId'
+]
 
 
 def topic_media_list_page(user_mc_key, topics_id, **kwargs):
@@ -104,6 +110,7 @@ def _cached_story_list(user_mc_key, q, rows):
 def topic_story_list(user_mc_key, topics_id, **kwargs):
     # Return sorted story list based on filters.
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    # these are the arguments support by the low-level API method
     merged_args = {
         'snapshots_id': snapshots_id,
         'timespans_id': timespans_id,
@@ -113,10 +120,12 @@ def topic_story_list(user_mc_key, topics_id, **kwargs):
         'limit': request.args.get('limit'),
         'link_id': request.args.get('linkId'),
     }
-
-    merged_args.update(kwargs)    # passed in args override anything pulled form the request.args
+    # make sure not to add in other parameters from kwargs that aren't supported by the API method
+    for k in TOPIC_STORY_LIST_API_PARAMS:
+        if (k in merged_args) and (k in kwargs):
+            merged_args[k] = kwargs[k]
     results = _cached_topic_story_list(user_mc_key, topics_id, **merged_args)
-    if merged_args['limit']:    # TODO: remove this (force limit as workaround to back-end bug)
+    if merged_args['limit']:    # TODO: remove this (this enforces the limit as a workaround to a back-end bug)
         results['stories'] = results['stories'][:int(merged_args['limit'])]
     return results
 
@@ -165,10 +174,10 @@ def _cached_topic_media_link_list_page(user_mc_key, topics_id, link_id, **kwargs
     return local_mc.topicMediaLinks(topics_id, link_id=link_id, **kwargs)
 
 
-def topic_ngram_counts(user_mc_key, topics_id, ngram_size, q, num_words=WORD_COUNT_UI_NUM_WORDS,
-                       sample_size=WORD_COUNT_SAMPLE_SIZE):
+def topic_ngram_counts(user_mc_key, topics_id, ngram_size=1,
+                       num_words=WORD_COUNT_UI_NUM_WORDS, sample_size=WORD_COUNT_SAMPLE_SIZE):
     word_counts = topic_word_counts(user_mc_key, topics_id,
-                                    q=q, ngram_size=ngram_size, num_words=num_words, sample_size=sample_size)
+                                    ngram_size=ngram_size, num_words=num_words, sample_size=sample_size)
     for w in word_counts:
         w['sample_size'] = sample_size
         w['ratio'] = min(float(1), float(w['count']) / float(w['sample_size']))  # term could appear in more than one story
@@ -253,7 +262,6 @@ def topic_split_story_counts(user_mc_key, topics_id, **kwargs):
         'timespans_id': timespans_id,
         'foci_id': foci_id,
         'q': q,
-        'fq': timespan['fq']
     }
     merged_args.update(kwargs)    # passed in args override anything pulled form the request.args
     # and make sure to ignore undateable stories
@@ -275,15 +283,12 @@ def _cached_topic_split_story_counts(user_mc_key, topics_id, **kwargs):
     Internal helper - don't call this; call topic_split_story_counts instead. This needs user_mc_key in the
     function signature to make sure the caching is keyed correctly.
     """
-    local_mc = None
     if user_mc_key == TOOL_API_KEY:
         local_mc = mc
     else:
         local_mc = user_mediacloud_client()
 
-    results = local_mc.topicStoryCount(topics_id,
-        split=True,
-        **kwargs)
+    results = local_mc.topicStoryCount(topics_id, split=True, **kwargs)
     total_stories = 0
     for c in results['counts']:
         total_stories += c['count']
@@ -337,14 +342,8 @@ def topic_tag_coverage(topics_id, tags_id):
     # respect any query filter the user has set
     query_with_tag = add_to_user_query("tags_id_stories:{}".format(tags_id_str))
     # now get the counts
-    if access_public_topic(topics_id):
-        total = topic_story_count(TOOL_API_KEY, topics_id)
-        tagged = topic_story_count(TOOL_API_KEY, topics_id, q=query_with_tag)  # force a count with just the query
-    elif is_user_logged_in():
-        total = topic_story_count(user_mediacloud_key(), topics_id)
-        tagged = topic_story_count(user_mediacloud_key(), topics_id, q=query_with_tag)  # force a count with just the query
-    else:
-        return None
+    total = topic_story_count(user_mediacloud_key(), topics_id)
+    tagged = topic_story_count(user_mediacloud_key(), topics_id, q=query_with_tag)  # force a count with just the query
     return {'counts': {'count': tagged['count'], 'total': total['count']}}
 
 
@@ -354,7 +353,6 @@ def topic_tag_counts(user_mc_key, topics_id, tag_sets_id):
      This supports just timespan_id and q from the request, because it has to use sentenceFieldCount,
      not a topicSentenceFieldCount method that takes filters (which doesn't exit)
     """
-    # return [] # SUPER HACK!
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     timespan_query = "timespans_id:{}".format(timespans_id)
     if (q is None) or (len(q) == 0):
@@ -366,14 +364,13 @@ def topic_tag_counts(user_mc_key, topics_id, tag_sets_id):
 
 @cache.cache_on_arguments()
 def _cached_topic_tag_counts(user_mc_key, topics_id, tag_sets_id, query):
-    user_mc = user_mediacloud_client()
+    user_mc = user_mediacloud_client(user_mc_key)
     # we don't need ot use topics_id here because the timespans_id is in the query argument
     tag_counts = user_mc.storyTagCount(query, tag_sets_id=tag_sets_id)
     # add in the pct so we can show relative values within the sample
     for t in tag_counts:
         if is_bad_theme(t['tags_id']):
             tag_counts.remove(t)
-
     return tag_counts
 
 

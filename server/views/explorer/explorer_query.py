@@ -4,7 +4,7 @@ import flask_login
 import random
 from server import app, mc
 from server.auth import user_admin_mediacloud_client, user_has_auth_role, is_user_logged_in, ROLE_MEDIA_EDIT
-from server.util.request import form_fields_required, api_error_handler, arguments_required
+from server.util.request import api_error_handler, arguments_required
 from server.views.explorer import read_sample_searches
 from server.views.media_picker import ALL_MEDIA
 from operator import itemgetter

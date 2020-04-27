@@ -33,18 +33,19 @@ class QueryGeoResultsContainer extends React.Component {
   }
 
   render() {
-    const { results, intl, queries, handleCountryClick, selectedTabIndex, tabSelector } = this.props;
+    const { results, intl, selectedQuery, handleCountryClick, tabSelector } = this.props;
     const { formatNumber } = intl;
     let content;
-    const coverageRatio = results[selectedTabIndex] ? results[selectedTabIndex].coverage_percentage : 0;
+    const selectedResults = results[selectedQuery.uid];
+    const coverageRatio = selectedResults.coverage_percentage;
     if (coverageRatio > COVERAGE_REQUIRED) {
-      const data = results[selectedTabIndex].results.map(item => ({ ...item, value: item.pct }));
+      const data = selectedResults.results.map(item => ({ ...item, value: item.pct }));
       content = (
         <div>
-          {results[selectedTabIndex] && (
+          {selectedResults && (
             <GeoChart
               data={data}
-              countryMaxColorScale={queries[selectedTabIndex].color}
+              countryMaxColorScale={selectedQuery.color}
               hideLegend
               onCountryClick={handleCountryClick}
               backgroundColor="#f5f5f5"
@@ -70,10 +71,10 @@ class QueryGeoResultsContainer extends React.Component {
           <ActionMenu actionTextMsg={messages.downloadOptions}>
             <MenuItem
               className="action-icon-menu-item"
-              onClick={() => this.downloadCsv(queries[selectedTabIndex])}
+              onClick={() => this.downloadCsv(selectedQuery)}
             >
               <ListItemText>
-                <FormattedMessage {...localMessages.downloadCsv} values={{ name: queries[selectedTabIndex].label }} />
+                <FormattedMessage {...localMessages.downloadCsv} values={{ name: selectedQuery.label }} />
               </ListItemText>
               <ListItemIcon>
                 <DownloadButton />
@@ -81,10 +82,10 @@ class QueryGeoResultsContainer extends React.Component {
             </MenuItem>
             <MenuItem
               className="action-icon-menu-item"
-              onClick={() => this.downloadTopPlacesCsv(queries[selectedTabIndex])}
+              onClick={() => this.downloadTopPlacesCsv(selectedQuery)}
             >
               <ListItemText>
-                <FormattedMessage {...localMessages.downloadTopPlacesCsv} values={{ name: queries[selectedTabIndex].label }} />
+                <FormattedMessage {...localMessages.downloadTopPlacesCsv} values={{ name: selectedQuery.label }} />
               </ListItemText>
               <ListItemIcon>
                 <DownloadButton />
@@ -100,18 +101,17 @@ class QueryGeoResultsContainer extends React.Component {
 QueryGeoResultsContainer.propTypes = {
   // from parent
   lastSearchTime: PropTypes.number.isRequired,
-  queries: PropTypes.array.isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
   onQueryModificationRequested: PropTypes.func.isRequired,
+  selectedQuery: PropTypes.object.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
   // from dispatch
-  results: PropTypes.array.isRequired,
+  results: PropTypes.object.isRequired,
   handleCountryClick: PropTypes.func.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
   tabSelector: PropTypes.object.isRequired,
-  selectedTabIndex: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({

@@ -234,7 +234,6 @@ export function createIndexedAsyncReducer(handlers) {
     results: {},
     fetchStatus: fetchConstants.FETCH_INVALID,
     fetchStatuses: {}, // array of fetchStatus
-    fetchUids: {}, // array of unique ids for each fetch in the list
     ...desiredInitialState,
   };
   // set up any async reducer handlers the user passed in
@@ -251,7 +250,6 @@ export function createIndexedAsyncReducer(handlers) {
       return { ...state,
         fetchStatus: fetchConstants.combineFetchStatuses(updatedFetchStatuses),
         fetchStatuses: updatedFetchStatuses,
-        fetchUids: state.fetchUids,
         // NOT a good idea to set `results: null|[]|{}` here, because in case of a failure at least the last results will be there
       };
     },

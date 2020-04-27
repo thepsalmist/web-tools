@@ -34,7 +34,7 @@ def normalized_and_story_split_count(q, open_q, start_date, end_date):
 
 @cache.cache_on_arguments()
 def cached_story_split_count(mc_api_key, q, fq):
-    local_mc = base_cache.mc_client(mc_api_key)
+    local_mc = base_cache.user_mediacloud_client(mc_api_key)
     results = local_mc.storyCount(q, fq, split=True, http_method='POST')
     return results
 
@@ -109,7 +109,7 @@ def tag_set_coverage(total_q, subset_q, fq):
 def _cached_most_used_tags(mc_api_key, q, fq, tag_sets_id, sample_size=None):
     # top tags used in stories matching query
     # api_key used for caching at the user level
-    local_mc = base_cache.mc_client(mc_api_key)
+    local_mc = base_cache.user_mediacloud_client(mc_api_key)
     return local_mc.storyTagCount(q, fq, tag_sets_id=tag_sets_id, limit=sample_size, http_method='POST')
 
 
@@ -121,7 +121,7 @@ def story_count(q, fq):
 @cache.cache_on_arguments()
 def _cached_total_story_count(mc_api_key, q, fq):
     # api_key is included to keep the cache at the user-level
-    local_mc = base_cache.mc_client(mc_api_key)
+    local_mc = base_cache.user_mediacloud_client(mc_api_key)
     count = local_mc.storyCount(q, fq, http_method='POST')
     return count
 
@@ -150,7 +150,7 @@ def word_count(q, fq, ngram_size, num_words, sample_size):
 
 @cache.cache_on_arguments()
 def _cached_word_count(mc_api_key, q, fq, ngram_size, num_words, sample_size):
-    local_mc = base_cache.mc_client(mc_api_key)
+    local_mc = base_cache.user_mediacloud_client(mc_api_key)
     return local_mc.wordCount(q, fq, ngram_size=ngram_size, num_words=num_words, sample_size=sample_size,
                               http_method='POST')
 

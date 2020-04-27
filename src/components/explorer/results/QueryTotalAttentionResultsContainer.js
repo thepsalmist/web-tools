@@ -163,7 +163,7 @@ QueryTotalAttentionResultsContainer.propTypes = {
   // from composition
   intl: PropTypes.object.isRequired,
   // from dispatch
-  results: PropTypes.array.isRequired,
+  results: PropTypes.object.isRequired,
   // from state
   fetchStatus: PropTypes.string.isRequired,
 };

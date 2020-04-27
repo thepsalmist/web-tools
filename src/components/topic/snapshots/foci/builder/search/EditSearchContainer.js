@@ -28,7 +28,7 @@ class EditSearchContainer extends React.Component {
     // We can't read out of the form state becase we need to know when they click "search",
     // but that is updated live as they type.
     super(props);
-    this.state = { values: null };
+    this.state = { values: null, enableSearch: false };
   }
 
   updateSearchValues = () => {
@@ -38,7 +38,12 @@ class EditSearchContainer extends React.Component {
 
   updateAndMediaChange = (values) => {
     const { handleMediaChange } = this.props;
+    this.setState({ enableSearch: true });
     handleMediaChange(values);
+  }
+
+  enableSearch = () => {
+    this.setState({ enableSearch: true });
   }
 
   handleKeyDown = (event) => {
@@ -83,6 +88,7 @@ class EditSearchContainer extends React.Component {
                 component={renderTextField}
                 label={messages.searchByKeywords}
                 fullWidth
+                onChange={this.enableSearch}
                 onKeyDown={this.handleKeyDown}
               />
             </Col>
@@ -108,6 +114,7 @@ class EditSearchContainer extends React.Component {
                 id="keyword-search-preview-button"
                 label={formatMessage(messages.search)}
                 onClick={this.updateSearchValues}
+                disabled={!this.state.enableSearch}
               />
             </Col>
           </Row>

@@ -57,7 +57,7 @@ MediaTypeStoryCountsPreviewContainer.propTypes = {
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.focalSets.create.mediaTypeStoryCounts.fetchStatus,
-  counts: state.topics.selected.focalSets.create.mediaTypeStoryCounts.counts,
+  counts: state.topics.selected.focalSets.create.mediaTypeStoryCounts.story_counts,
 });
 
 const fetchAsyncData = (dispatch, { topicId }) => dispatch(fetchCreateFocusMediaTypeStoryCounts(topicId));

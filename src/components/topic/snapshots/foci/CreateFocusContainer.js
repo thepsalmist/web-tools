@@ -9,6 +9,7 @@ import { FOCAL_TECHNIQUE_BOOLEAN_QUERY, FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP, FO
 import { submitFocusUpdateOrCreate, setTopicNeedsNewSnapshot, createRetweetFocalSet, createTopCountriesFocalSet, createNytThemeFocalSet, createMediaTypeFocalSet } from '../../../../actions/topicActions';
 import { LEVEL_ERROR } from '../../../common/Notice';
 import { updateFeedback, addNotice } from '../../../../actions/appActions';
+import { NEW_FOCAL_SET_PLACEHOLDER_ID } from './builder/FocusDescriptionForm';
 
 const DEFAULT_SELECTED_NUMBER = 5;
 
@@ -33,7 +34,9 @@ const CreateFocusContainer = (props) => {
     initialValues.focalTechnique = FOCAL_TECHNIQUE_BOOLEAN_QUERY;
   }
   // if there aren't any focal set defs, the user should have to create a new one
-  if (focalSetDefId !== undefined) {
+  if (focalSetDefId === null || focalSetDefId === undefined) {
+    initialValues.focalSetDefinitionId = NEW_FOCAL_SET_PLACEHOLDER_ID;
+  } else {
     initialValues.focalSetDefinitionId = parseInt(focalSetDefId, 10);
   }
   return (

@@ -58,7 +58,7 @@ NytThemeStoryCountsPreviewContainer.propTypes = {
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.focalSets.create.nytThemeStoryCounts.fetchStatus,
-  counts: state.topics.selected.focalSets.create.nytThemeStoryCounts.story_counts,
+  counts: state.topics.selected.focalSets.create.nytThemeStoryCounts.counts,
 });
 
 const fetchAsycData = (dispatch, { topicId, numThemes }) => dispatch(fetchCreateFocusNytThemeStoryCounts(topicId, { numThemes }));

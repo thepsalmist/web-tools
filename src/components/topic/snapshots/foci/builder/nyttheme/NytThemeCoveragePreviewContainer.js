@@ -50,7 +50,7 @@ NytThemeCoveragePreviewContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   numThemes: PropTypes.number.isRequired,
   // from state
-  counts: PropTypes.object,
+  counts: PropTypes.array,
   fetchStatus: PropTypes.string.isRequired,
 };
 

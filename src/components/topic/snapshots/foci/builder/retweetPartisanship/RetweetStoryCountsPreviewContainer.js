@@ -73,7 +73,7 @@ RetweetStoryCountsPreviewContainer.propTypes = {
 
 const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.focalSets.create.retweetStoryCounts.fetchStatus,
-  counts: state.topics.selected.focalSets.create.retweetStoryCounts.story_counts,
+  counts: state.topics.selected.focalSets.create.retweetStoryCounts.counts,
 });
 
 const fetchAsyncData = (dispatch, { topicId }) => dispatch(fetchCreateFocusRetweetStoryCounts(topicId));

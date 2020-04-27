@@ -42,13 +42,17 @@ export function filteredLinkTo(to, filters, baseQuery) {
 }
 
 export function combineQueryParams(filterQ, query) {
+  const parts = [];
   if (filterQ) {
-    return `${filterQ} AND ${query}`;
+    parts.push(filterQ);
   }
   if (query) {
-    return query;
+    parts.push(query);
   }
-  return undefined;
+  if (parts.length === 0) {
+    return undefined;
+  }
+  return parts.join(' AND ');
 }
 
 export function formatAsUrlParams(params) {

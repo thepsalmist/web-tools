@@ -19,7 +19,7 @@ const NytThemeCoveragePreviewContainer = (props) => {
   const { counts, numThemes } = props;
   const { formatMessage } = props.intl;
   let content = null;
-  if (counts !== null) {
+  if (counts !== null && counts !== undefined) {
     content = (
       <PieChart
         title={formatMessage(localMessages.title)}

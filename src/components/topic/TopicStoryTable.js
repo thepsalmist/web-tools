@@ -154,9 +154,9 @@ class TopicStoryTable extends React.Component {
                     <>
                       <td className="numeric"><SafelyFormattedNumber value={story.media_inlink_count} /></td>
                       <td className="numeric"><SafelyFormattedNumber value={story.outlink_count} /></td>
+                      <td className="numeric"><SafelyFormattedNumber value={story.facebook_share_count} /></td>
                     </>
                   )}
-                  <td className="numeric"><SafelyFormattedNumber value={story.facebook_share_count} /></td>
                   { usingUrlSharingSubtopic && (
                     <>
                       <td className="numeric"><SafelyFormattedNumber value={story.post_count} /></td>

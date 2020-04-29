@@ -76,12 +76,10 @@ class TopicStoryTable extends React.Component {
                 <>
                   <th className="numeric">{this.sortableHeader('inlink', messages.mediaInlinks)}</th>
                   <th className="numeric"><FormattedMessage {...messages.outlinks} /></th>
+                  {this.sortableHeader('facebook', messages.facebookShares)}
+                  <HelpDialog title={messages.facebookShares} content={localMessages.facebookSharesHelp} />
                 </>
               )}
-              <th className="numeric">
-                {this.sortableHeader('facebook', messages.facebookShares)}
-                <HelpDialog title={messages.facebookShares} content={localMessages.facebookSharesHelp} />
-              </th>
               { usingUrlSharingSubtopic && (
                 <>
                   <th className="numeric">

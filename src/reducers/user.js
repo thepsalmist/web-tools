@@ -1,6 +1,6 @@
 import { resolve, reject } from 'redux-simple-promise';
 import Raven from 'raven-js';
-import { LOGIN_WITH_PASSWORD, LOGIN_WITH_COOKIE, RESET_API_KEY, UPDATE_PROFILE } from '../actions/userActions';
+import { LOGIN_WITH_PASSWORD, LOGIN_WITH_COOKIE, RESET_API_KEY, USER_RESET, UPDATE_PROFILE, LOGOUT } from '../actions/userActions';
 import * as fetchConstants from '../lib/fetchConstants';
 
 const INITIAL_STATE = {
@@ -56,6 +56,8 @@ export default function user(state = INITIAL_STATE, action) {
         isLoggedIn: keyLoginWorked,
         isAdmin: keyLoginWorked ? isAdmin(action.payload.profile) : false,
         ...action.payload };
+    case USER_RESET:
+    case resolve(LOGOUT):
     case reject(LOGIN_WITH_COOKIE):
       resetRavenUserContext();
       return { ...state,
@@ -69,6 +71,7 @@ export default function user(state = INITIAL_STATE, action) {
         profile: { ...state.profile, ...action.payload.profile } };
     case resolve(UPDATE_PROFILE):
       return { ...state, profile: { ...state.profile, ...action.payload.profile } };
+
     default:
       return state;
   }

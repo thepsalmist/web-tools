@@ -11,7 +11,7 @@ import routes from './routes/explorerRoutes';
 
 if (!doNotTrack(false)) ReactGA.initialize('UA-60744513-11');
 
-setVersion('3.13.15');
+setVersion('3.13.16');
 
 setAppName(APP_EXPLORER);
 

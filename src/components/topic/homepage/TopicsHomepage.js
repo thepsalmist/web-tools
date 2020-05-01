@@ -70,6 +70,11 @@ const TopicsHomepage = (props) => {
             </Col>
             <Col lg={1} xs={0} />
             <Col lg={5} xs={12}>
+              <br />
+              <WarningNotice>
+                <br />
+                <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
+              </WarningNotice>
               <DataCard>
                 <h2><FormattedMessage {...localMessages.loginTitle} /></h2>
                 <LoginForm redirect="/home" />
@@ -99,12 +104,6 @@ const TopicsHomepage = (props) => {
         descriptionMsg={messages.topicsToolDescription}
         link="https://mediacloud.org/tools/"
       />
-      <div style={{ textAlign: 'center' }}>
-        <WarningNotice>
-          <br />
-          <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
-        </WarningNotice>
-      </div>
       {content}
     </div>
   );

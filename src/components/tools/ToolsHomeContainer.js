@@ -29,6 +29,10 @@ const ToolsHomeContainer = (props) => {
         <Faq />
       </Col>
       <Col lg={4}>
+        <WarningNotice>
+          <br />
+          <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
+        </WarningNotice>
         <DataCard>
           <h2><FormattedMessage {...localMessages.loginTitle} /></h2>
           <LoginForm redirect="/" />
@@ -46,12 +50,6 @@ const ToolsHomeContainer = (props) => {
   const content = (isLoggedIn) ? loggedInContent : notLoggedInContent;
   return (
     <div className="tools-home about-page">
-      <div style={{ textAlign: 'center' }}>
-        <WarningNotice>
-          <br />
-          <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
-        </WarningNotice>
-      </div>
       <PageTitle />
       <Grid>
         <Row>

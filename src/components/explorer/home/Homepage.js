@@ -34,12 +34,6 @@ const Homepage = ({ isLoggedIn, onKeywordSearch, storyCount }) => (
       link="https://mediacloud.org/tools/"
     />
     <div className="search-section">
-      <div style={{ textAlign: 'center' }}>
-        <WarningNotice>
-          <br />
-          <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
-        </WarningNotice>
-      </div>
       <Grid>
         <Row>
           <Col lg={12}>
@@ -59,6 +53,10 @@ const Homepage = ({ isLoggedIn, onKeywordSearch, storyCount }) => (
           </Col>
           <Col lg={1} />
           <Col lg={4}>
+            <WarningNotice>
+              <br />
+              <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
+            </WarningNotice>
             <DataCard leftBorder>
               <h2><FormattedMessage {...localMessages.loginTitle} /></h2>
               <LoginForm />

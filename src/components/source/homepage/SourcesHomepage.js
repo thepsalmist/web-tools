@@ -42,10 +42,17 @@ const SourcesHomepage = (props) => {
     sideBarContent = <FavoriteSourcesAndCollectionsContainer />;
   } else {
     sideBarContent = (
-      <DataCard>
-        <h2><FormattedMessage {...localMessages.loginTitle} /></h2>
-        <LoginForm />
-      </DataCard>
+      <>
+        <br />
+        <WarningNotice>
+          <br />
+          <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
+        </WarningNotice>
+        <DataCard>
+          <h2><FormattedMessage {...localMessages.loginTitle} /></h2>
+          <LoginForm />
+        </DataCard>
+      </>
     );
   }
   return (
@@ -55,12 +62,6 @@ const SourcesHomepage = (props) => {
         descriptionMsg={messages.sourcesToolDescription}
         link="https://mediacloud.org/tools/"
       />
-      <div style={{ textAlign: 'center' }}>
-        <WarningNotice>
-          <br />
-          <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
-        </WarningNotice>
-      </div>
       <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
         <SourceControlBar showSearch>
           <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>

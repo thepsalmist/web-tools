@@ -13,6 +13,7 @@ import DataCard from '../../common/DataCard';
 import { AddButton } from '../../common/IconButton';
 import messages from '../../../resources/messages';
 import Masthead from '../../common/header/Masthead';
+import { WarningNotice } from '../../common/Notice';
 import TopicsMarketingFeatureList from './TopicsMarketingFeatureList';
 import TopicQuickSearchContainer from '../search/TopicQuickSearchContainer';
 
@@ -97,6 +98,12 @@ const TopicsHomepage = (props) => {
         descriptionMsg={messages.topicsToolDescription}
         link="https://mediacloud.org/tools/"
       />
+      <div style={{ textAlign: 'center' }}>
+        <WarningNotice>
+          <br />
+          <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
+        </WarningNotice>
+      </div>
       {content}
     </div>
   );

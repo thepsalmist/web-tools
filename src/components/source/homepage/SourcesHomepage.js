@@ -12,6 +12,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_MEDIA_EDIT, PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { AddButton } from '../../common/IconButton';
 import DataCard from '../../common/DataCard';
+import { WarningNotice } from '../../common/Notice';
 import LoginForm from '../../user/LoginForm';
 import messages from '../../../resources/messages';
 import Masthead from '../../common/header/Masthead';
@@ -53,6 +54,12 @@ const SourcesHomepage = (props) => {
         descriptionMsg={messages.sourcesToolDescription}
         link="https://mediacloud.org/tools/"
       />
+      <div style={{ textAlign: 'center' }}>
+        <WarningNotice>
+          <br />
+          <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
+        </WarningNotice>
+      </div>
       <Permissioned onlyRole={PERMISSION_LOGGED_IN}>
         <SourceControlBar showSearch>
           <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>

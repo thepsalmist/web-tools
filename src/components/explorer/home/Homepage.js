@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { schemeCategory10 } from 'd3';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import { WarningNotice } from '../../common/Notice';
 import DataCard from '../../common/DataCard';
 import LoginForm from '../../user/LoginForm';
 import SearchForm from './SearchForm';
@@ -32,6 +33,12 @@ const Homepage = ({ isLoggedIn, onKeywordSearch, storyCount }) => (
       link="https://mediacloud.org/tools/"
     />
     <div className="search-section">
+      <div style={{ textAlign: 'center' }}>
+        <WarningNotice>
+          <br />
+          <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
+        </WarningNotice>
+      </div>
       <Grid>
         <Row>
           <Col lg={12}>

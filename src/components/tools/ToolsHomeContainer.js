@@ -2,13 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import messages from '../../resources/messages';
 import { urlToExplorer, urlToTopicMapper, urlToSourceManager } from '../../lib/urlUtil';
 import ToolDescription from './ToolDescription';
 import Faq from './faq/ToolsFaq';
 import SystemStatsContainer from '../common/statbar/SystemStatsContainer';
 import LoginForm from '../user/LoginForm';
+import { WarningNotice } from '../common/Notice';
 import DataCard from '../common/DataCard';
 import { assetUrl } from '../../lib/assetUtil';
 import PageTitle from '../common/PageTitle';
@@ -44,6 +45,12 @@ const ToolsHomeContainer = (props) => {
   const content = (isLoggedIn) ? loggedInContent : notLoggedInContent;
   return (
     <div className="tools-home about-page">
+      <div style={{ textAlign: 'center' }}>
+        <WarningNotice>
+          <br />
+          <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
+        </WarningNotice>
+      </div>
       <PageTitle />
       <Grid>
         <Row>

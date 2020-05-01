@@ -32,6 +32,7 @@ const localMessages = {
   loginTitle: { id: 'sources.intro.login.title', defaultMessage: 'Have an Account? Login Now' },
   addCollection: { id: 'source.controlbar.addCollection', defaultMessage: 'Create a Collection' },
   addSource: { id: 'source.controlbar.addSource', defaultMessage: 'Add a Source' },
+  security: { id: 'login.securitynotice', defaultMessage: 'We recently noticed a security problem and reset all passwords. We emailed everyone a link to reset your password. <br />If you can\'t find that email, <a href={link}> reset your password here.</a>' },
 };
 
 const SourcesHomepage = (props) => {

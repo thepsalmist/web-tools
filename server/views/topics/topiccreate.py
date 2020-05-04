@@ -38,16 +38,16 @@ def topic_create():
         topics_id = topic_result['topics_id']
         logger.info("Created new topic \"{}\" as {}".format(name, topics_id))
         # if this includes any of the US-centric collections, add the retweet partisanship subtopic by default
-                # client will either make a empty snapshot, or a spidering one
+        # client will either make a empty snapshot, or a spidering one
         return topic_summary(topics_id)
-    except Exception as e:
-        logging.error("Topic creation failed {}".format(name))
-        logging.exception(e)
-        return json_error_response(str(e), 500)
     except mediacloud.error.MCException as e:
         logging.error("Topic creation failed {}".format(name))
         logging.exception(e)
         return json_error_response(e.message, e.status_code)
+    except Exception as e:
+        logging.error("Topic creation failed {}".format(name))
+        logging.exception(e)
+        return json_error_response(str(e), 500)
 
 
 @app.route('/api/topics/name-exists', methods=['GET'])

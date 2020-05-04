@@ -4,14 +4,14 @@ import flask_login
 import json
 
 from server import app
-from server.util.request import api_error_handler, arguments_required
+from server.util.request import api_error_handler, form_fields_required
 import server.util.dates as date_util
 from server.platforms import provider_for, PLATFORM_REDDIT, PLATFORM_OPEN_WEB, PLATFORM_SOURCE_MEDIA_CLOUD, \
     PLATFORM_TWITTER, PLATFORM_SOURCE_CRIMSON_HEXAGON, PLATFORM_GENERIC, PLATFORM_SOURCE_CSV
 
 logger = logging.getLogger(__name__)
 
-PLATFORM_PREVIEW_ARGS = ['platform_type', 'platform_source', 'platform_channel',
+PLATFORM_PREVIEW_FIELDS = ['platform_type', 'platform_source', 'platform_channel',
                          'platform_query', 'start_date', 'end_date']
 
 
@@ -20,11 +20,11 @@ def _info_from_request():
     Load all the info we need out of the request so we can make every preview method as generic as possible
     :return:
     """
-    platform = request.args['platform_type']
-    source = request.args['platform_source']
+    platform = request.form['platform_type']
+    source = request.form['platform_source']
     provider = provider_for(platform, source)
-    query = request.args['platform_query']
-    channel = request.args['platform_channel'] if 'platform_channel' in request.args else ''
+    query = request.form['platform_query']
+    channel = request.form['platform_channel'] if 'platform_channel' in request.form else ''
     start_date, end_date = _parse_query_dates()
     options = {}
     if platform == PLATFORM_REDDIT:
@@ -45,8 +45,8 @@ def _info_from_request():
     return provider, query, start_date, end_date, options
 
 
-@app.route('/api/platforms/sample', methods=['GET'])
-@arguments_required(*PLATFORM_PREVIEW_ARGS)
+@app.route('/api/platforms/sample', methods=['POST'])
+@form_fields_required(*PLATFORM_PREVIEW_FIELDS)
 @flask_login.login_required
 @api_error_handler
 def api_platforms_preview_sample():
@@ -60,8 +60,8 @@ def api_platforms_preview_sample():
     return jsonify({'list': content_list, 'supported': supported})
 
 
-@app.route('/api/platforms/count', methods=['GET'])
-@arguments_required(*PLATFORM_PREVIEW_ARGS)
+@app.route('/api/platforms/count', methods=['POST'])
+@form_fields_required(*PLATFORM_PREVIEW_FIELDS)
 @flask_login.login_required
 @api_error_handler
 def api_platforms_preview_total_content():
@@ -75,8 +75,8 @@ def api_platforms_preview_total_content():
     return jsonify({'count': content_count, 'supported': supported})
 
 
-@app.route('/api/platforms/count-over-time', methods=['GET'])
-@arguments_required(*PLATFORM_PREVIEW_ARGS)
+@app.route('/api/platforms/count-over-time', methods=['POST'])
+@form_fields_required(*PLATFORM_PREVIEW_FIELDS)
 @flask_login.login_required
 @api_error_handler
 def api_platforms_preview_split_story_count():
@@ -96,8 +96,8 @@ def api_platforms_preview_split_story_count():
     return jsonify({'results': content_count_over_time, 'supported': supported})
 
 
-@app.route('/api/platforms/words', methods=['GET'])
-@arguments_required(*PLATFORM_PREVIEW_ARGS)
+@app.route('/api/platforms/words', methods=['POST'])
+@form_fields_required(*PLATFORM_PREVIEW_FIELDS)
 @flask_login.login_required
 @api_error_handler
 def api_platforms_preview_top_words():
@@ -112,15 +112,15 @@ def api_platforms_preview_top_words():
 
 
 def _parse_query_dates():
-    args = request.args
-    if 'startDate' in args:
-        start_date = date_util.solr_date_to_date(args['startDate'])
-    elif 'start_date' in args:
-        start_date = date_util.solr_date_to_date(args['start_date'])
-    if 'endDate' in args:
-        end_date = date_util.solr_date_to_date(args['endDate'])
-    elif 'end_date' in args:
-        end_date = date_util.solr_date_to_date(args['end_date'])
+    data = request.form
+    if 'startDate' in data:
+        start_date = date_util.solr_date_to_date(data['startDate'])
+    elif 'start_date' in data:
+        start_date = date_util.solr_date_to_date(data['start_date'])
+    if 'endDate' in data:
+        end_date = date_util.solr_date_to_date(data['endDate'])
+    elif 'end_date' in data:
+        end_date = date_util.solr_date_to_date(data['end_date'])
     return start_date, end_date
 
 

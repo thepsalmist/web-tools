@@ -25,4 +25,3 @@ export const selectPlatform = createAsyncAction(SELECT_PLATFORM, id => id);
 
 export const UPLOAD_PLATFORM_GENERIC_CSV_FILE = 'UPLOAD_PLATFORM_GENERIC_CSV_FILE';
 export const uploadPlatformGenericCsvFile = createAsyncAction(UPLOAD_PLATFORM_GENERIC_CSV_FILE, api.uploadPlatformGenericCsvFile);
-

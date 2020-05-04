@@ -79,7 +79,7 @@ class VersionComparisonContainer extends React.Component {
                 label={localMessages.createVersionAndStartSpider}
                 onClick={() => {
                   this.setState({ submittingVersion: true });
-                  handleGenerateVersion(topicId, false, false, currentSnapshotsId);
+                  handleGenerateVersion(topicId, true, false, currentSnapshotsId);
                 }}
                 primary
                 disabled={submitting}

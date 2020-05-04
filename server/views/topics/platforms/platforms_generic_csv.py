@@ -13,26 +13,6 @@ from server.views.sources.collection import allowed_file
 logger = logging.getLogger(__name__)
 
 
-@app.route('/api/topics/<topics_id>/platforms/generic-csv/fetch-from-url', methods=['POST'])
-@form_fields_required('url')
-@flask_login.login_required
-def platform_generic_fetch_url(topics_id):
-    """
-    Handle an uploaded CSV file by saving it from the URL the user pointed at. This saves it locally in temp storage.
-    That temp filename will then be relayed back to the server to support preview operations.
-    :param topics_id:
-    :return:
-    """
-    # download and save URL contents to a temp file
-    remote_url = request.form['url']
-    r = requests.get(remote_url, allow_redirects=True)
-    filename = "{}-{}-{}".format(topics_id, dt.datetime.now().strftime("%Y%m%d%H%M%S"),
-                                 secure_filename("fetched-file"))
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    open(filepath, 'wb').write(r.content)
-    return jsonify({'status': 'Success', 'filename': filename})
-
-
 @app.route('/api/topics/<topics_id>/platforms/generic-csv/upload', methods=['POST'])
 @flask_login.login_required
 def platform_generic_upload_csv(topics_id):

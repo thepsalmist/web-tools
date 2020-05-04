@@ -10,7 +10,8 @@ import { isUrlSharingFocalSet } from '../../../../lib/topicVersionUtil';
 // Return true if there are focal set changes that require a new snapshot
 function pendingFocalSetDefinitions(definitions, focalSets) {
   // differet total number
-  const focalSetsNoAutoSets = focalSets.filter(f => isUrlSharingFocalSet(f.name));
+  // TODO: remove when we no longer have to specifically check for URLSharing subtopics
+  const focalSetsNoAutoSets = focalSets.filter(f => !isUrlSharingFocalSet(f.name));
   if (definitions.length !== focalSetsNoAutoSets.length) {
     return true;
   }

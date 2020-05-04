@@ -1,7 +1,7 @@
 {
   "releases": [
     {
-      "date": "2020-05-01",
+      "date": "2020-05-04",
       "version": "v3.14.0",
       "notes": [
         {
@@ -35,9 +35,43 @@
           "note": "Quickly export CSVs of all the stories or media in a topic"
         },
         {
-          "apps": [ "topics" ],
+          "apps": [
+            "topics"
+          ],
           "type": "Fix",
           "note": "Top words for a media source in a topic work again"
+        }
+      ]
+    },
+    {
+      "date": "2020-05-01",
+      "version": "v3.13.17",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "More work on support for very long queries"
+        }
+      ]
+    },    {
+      "date": "2020-05-01",
+      "version": "v3.13.16",
+      "notes": [
+        {
+          "apps": [ "topics", "explorer","sources","tools" ],
+          "type": "Fixed",
+          "note": "Ensure logged-in users can still request a password reset"
+        }
+      ]
+    },
+    {
+      "date": "2020-05-01",
+      "version": "v3.13.15",
+      "notes": [
+        {
+          "apps": [ "topics", "explorer","sources","tools" ],
+          "type": "Fixed",
+          "note": "Security issue notice"
         }
       ]
     },{

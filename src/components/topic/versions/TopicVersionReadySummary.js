@@ -3,6 +3,7 @@ import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { platformNameMessage, sourceNameMessage } from '../platforms/AvailablePlatform';
 import messages from '../../../resources/messages';
+import { POSTGRES_SOURCE } from '../../../lib/platformTypes';
 
 const localMessages = {
   completedDetails: { id: 'topic.version.completedDetails', defaultMessage: 'Includes {total} stories ({discoveredPct} discovered), {platformCount, plural,\n =0 {no platforms}\n =1 {1 platform}\n other {# platforms}}, and {fociCount, plural,\n =0 {no subtopics}\n =1 {1 subtopic}\n other {# subtopics}}.' },
@@ -72,13 +73,15 @@ class TopicVersionReadySummary extends React.Component {
               <li><FormattedMessage {...localMessages.spidering} values={{ rounds: snapshot.max_iterations || ((snapshot.seed_queries) ? snapshot.seed_queries.topic.max_iterations : null) || topic.max_iterations }} /></li>
               <li><FormattedMessage {...messages.platformHeader} />:
                 <ul>
-                  {seedQueries && seedQueries.map((p, idx) => (
-                    <li key={idx}>
-                      <FormattedMessage {...platformNameMessage(p.platform, p.source)} />
-                      &nbsp;
-                      (<FormattedMessage {...sourceNameMessage(p.source)} />)
-                    </li>
-                  ))}
+                  {seedQueries && seedQueries
+                    .filter(p => p.source !== POSTGRES_SOURCE)
+                    .map((p, idx) => (
+                      <li key={idx}>
+                        <FormattedMessage {...platformNameMessage(p.platform, p.source)} />
+                        &nbsp;
+                        (<FormattedMessage {...sourceNameMessage(p.source)} />)
+                      </li>
+                    ))}
                 </ul>
               </li>
               <li><FormattedMessage {...messages.focusHeader} />:

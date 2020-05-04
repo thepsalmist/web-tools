@@ -30,8 +30,8 @@ const userRoutes = (
     <Route path="resend-activation-success" component={ResendActivationSuccess} onEnter={redirectHomeIfLoggedIn} />
     <Route path="activated" component={Activated} onEnter={redirectHomeIfLoggedIn} />
 
-    <Route path="request-password-reset" component={RequestPasswordReset} onEnter={redirectHomeIfLoggedIn} />
-    <Route path="request-password-reset-success" component={RequestPasswordResetSuccessMessage} onEnter={redirectHomeIfLoggedIn} />
+    <Route path="request-password-reset" component={RequestPasswordReset} />
+    <Route path="request-password-reset-success" component={RequestPasswordResetSuccessMessage} />
     <Route path="reset-password" component={ResetPasswordContainer} onEnter={requiresUrlParams('email', 'password_reset_token')} />
     <Route path="reset-password-success" component={ResetPasswordSuccessMessage} />
 

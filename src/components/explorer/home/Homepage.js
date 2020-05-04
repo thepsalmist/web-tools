@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { schemeCategory10 } from 'd3';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import { WarningNotice } from '../../common/Notice';
 import DataCard from '../../common/DataCard';
 import LoginForm from '../../user/LoginForm';
 import SearchForm from './SearchForm';
@@ -22,6 +23,7 @@ const localMessages = {
   subtitle: { id: 'explorer.intro.subtitle', defaultMessage: 'Explore Online News with Media Cloud' },
   description: { id: 'explorer.intro.description', defaultMessage: 'Use the Media Cloud Explorer to search half a billion stories from more than 50,000 sources. We pull in stories from online news media, blogs, and other sources to let you research media attention to issues you are interested in. Track shifts in media attention, identify competing media narratives, compare coverage in different media sectors - these are all tasks Media Cloud can help you with.' },
   loginTitle: { id: 'explorer.intro.login.title', defaultMessage: 'Have an Account? Login Now' },
+  security: { id: 'login.securitynotice', defaultMessage: 'We recently noticed a security problem and reset all passwords. We emailed everyone a link to reset your password. <br />If you can\'t find that email, <a href={link}> reset your password here.</a>' },
 };
 
 const Homepage = ({ isLoggedIn, onKeywordSearch, storyCount }) => (
@@ -51,6 +53,10 @@ const Homepage = ({ isLoggedIn, onKeywordSearch, storyCount }) => (
           </Col>
           <Col lg={1} />
           <Col lg={4}>
+            <WarningNotice>
+              <br />
+              <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
+            </WarningNotice>
             <DataCard leftBorder>
               <h2><FormattedMessage {...localMessages.loginTitle} /></h2>
               <LoginForm />

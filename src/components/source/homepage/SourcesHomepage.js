@@ -12,6 +12,7 @@ import Permissioned from '../../common/Permissioned';
 import { PERMISSION_MEDIA_EDIT, PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import { AddButton } from '../../common/IconButton';
 import DataCard from '../../common/DataCard';
+import { WarningNotice } from '../../common/Notice';
 import LoginForm from '../../user/LoginForm';
 import messages from '../../../resources/messages';
 import Masthead from '../../common/header/Masthead';
@@ -31,6 +32,7 @@ const localMessages = {
   loginTitle: { id: 'sources.intro.login.title', defaultMessage: 'Have an Account? Login Now' },
   addCollection: { id: 'source.controlbar.addCollection', defaultMessage: 'Create a Collection' },
   addSource: { id: 'source.controlbar.addSource', defaultMessage: 'Add a Source' },
+  security: { id: 'login.securitynotice', defaultMessage: 'We recently noticed a security problem and reset all passwords. We emailed everyone a link to reset your password. <br />If you can\'t find that email, <a href={link}> reset your password here.</a>' },
 };
 
 const SourcesHomepage = (props) => {
@@ -40,10 +42,17 @@ const SourcesHomepage = (props) => {
     sideBarContent = <FavoriteSourcesAndCollectionsContainer />;
   } else {
     sideBarContent = (
-      <DataCard>
-        <h2><FormattedMessage {...localMessages.loginTitle} /></h2>
-        <LoginForm />
-      </DataCard>
+      <>
+        <br />
+        <WarningNotice>
+          <br />
+          <FormattedHTMLMessage {...localMessages.security} values={{ link: '#/user/request-password-reset' }} /><br />
+        </WarningNotice>
+        <DataCard>
+          <h2><FormattedMessage {...localMessages.loginTitle} /></h2>
+          <LoginForm />
+        </DataCard>
+      </>
     );
   }
   return (

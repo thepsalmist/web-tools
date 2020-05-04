@@ -53,3 +53,7 @@ export function updateProfile(profile) {
   const acceptedParams = acceptParams(profile, ['full_name', 'notes', 'has_consented']);
   return createPostingApiPromise('/api/user/update', acceptedParams);
 }
+
+export function logout() {
+  return createApiPromise('/api/user/logout');
+}

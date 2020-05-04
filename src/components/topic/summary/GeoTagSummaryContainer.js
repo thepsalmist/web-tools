@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import getCountryISO2 from 'country-iso-3-to-2'; // ISO 3166-1 lookup, from alpha3 to alpha2
 import ActionMenu from '../../common/ActionMenu';
 import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import GeoChart from '../../vis/GeoChart';
@@ -16,7 +15,6 @@ import { DownloadButton } from '../../common/IconButton';
 import { getBrandLightColor } from '../../../styles/colors';
 import { fetchTopicProviderTagUse, filterByQuery } from '../../../actions/topicActions';
 import { TAG_SET_GEOGRAPHIC_PLACES, CLIFF_VERSION_TAG_LIST } from '../../../lib/tagUtil';
-import { GEONAMES_ID_TO_APLHA3 } from '../../../lib/mapUtil';
 import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
 const localMessages = {
@@ -57,16 +55,9 @@ class GeoTagSummaryContainer extends React.Component {
     let content;
     if (coverageRatio > COVERAGE_REQUIRED) {
       // add in some properties so the map can be rendered correctly
-      const geoData = data
-        .filter(t => t.tag.split('_')[1] in GEONAMES_ID_TO_APLHA3)
-        .map(t => ({
-          ...t,
-          'iso-a2': getCountryISO2(GEONAMES_ID_TO_APLHA3[parseInt(t.tag.split('_')[1], 10)]),
-          value: t.count,
-        }));
       content = (
         <GeoChart
-          data={geoData}
+          data={data}
           countryMaxColorScale={getBrandLightColor()}
           backgroundColor="#f5f5f5"
           onCountryClick={this.handleEntityClick}

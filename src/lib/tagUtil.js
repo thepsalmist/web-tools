@@ -1,3 +1,5 @@
+import getCountryISO2 from 'country-iso-3-to-2'; // ISO 3166-1 lookup, from alpha3 to alpha2
+import { GEONAMES_ID_TO_APLHA3 } from './mapUtil';
 
 // tags indicating how the date on a story was guessed
 export const TAG_SET_DATE_GUESS_METHOD = 508;
@@ -100,3 +102,17 @@ export function mediaSourceMetadataProps(mediaSource) {
     mediaTypeTag: tagForMetadata(TAG_SET_MEDIA_TYPE, mediaSource.media_source_tags),
   };
 }
+
+/**
+ * Geographic country-level tags have the geonames id and country name encoded into the
+ * actual tag string as a hack (because tags can't have arbitraty metadata). This reduxHelpers
+ * uses that to add in any metadata needed to render maps. Returns only the country-level items.
+ */
+export const countryTagsWithAlpha2 = (tagList) => tagList
+  .filter(t => t.tag.split('_')[1] in GEONAMES_ID_TO_APLHA3) // grab only the countries
+  .map(t => ({
+    ...t,
+    // grab alpha3 out of the tag string, convert to alpha2 for highcharts
+    'iso-a2': getCountryISO2(GEONAMES_ID_TO_APLHA3[parseInt(t.tag.split('_')[1], 10)]),
+    value: t.count,
+  }));

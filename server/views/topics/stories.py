@@ -10,7 +10,6 @@ import server.util.tags as tag_util
 import server.views.topics.apicache as apicache
 import server.views.apicache as base_apicache
 import server.util.pushshift as pushshift
-import server.util.dates as dates
 from server import app, cliff, TOOL_API_KEY
 from server.auth import is_user_logged_in, user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client
 from server.cache import cache

@@ -3,7 +3,7 @@ import logging
 from flask import jsonify, request
 
 from server import app, user_db, mc
-from server.auth import user_mediacloud_client, user_name, user_admin_mediacloud_client, is_user_logged_in,\
+from server.auth import user_mediacloud_client, user_name, user_admin_mediacloud_client,\
     user_is_admin
 from server.util.request import form_fields_required, arguments_required, api_error_handler
 

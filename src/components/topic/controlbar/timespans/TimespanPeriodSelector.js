@@ -9,38 +9,36 @@ const localMessages = {
   timespansCustom: { id: 'timespans.overall', defaultMessage: 'Custom' },
 };
 
-class TimespanPeriodSelector extends React.Component {
-  linkToPeriod = (name, msg) => (
-    <a
-      href={`#see-${name}-timespans"`}
-      onClick={(evt) => { evt.preventDefault(); this.selectPeriod(name); }}
-      className={(this.props.selectedPeriod === name) ? 'greyed selected' : 'greyed unselected'}
-    >
-      <FormattedMessage {...msg} />
-    </a>
-  )
-
-  selectPeriod = (period) => {
-    const { onPeriodSelected } = this.props;
-    onPeriodSelected(period);
-  }
-
-  render() {
-    return (
-      <div className="timespan-period-selector">
-        { this.linkToPeriod('overall', localMessages.timespansOverall) }
-        { this.linkToPeriod('monthly', localMessages.timespansMonthly) }
-        { this.linkToPeriod('weekly', localMessages.timespansWeekly) }
-        { this.linkToPeriod('custom', localMessages.timespansCustom) }
-      </div>
-    );
-  }
-}
+const TimespanPeriodSelector = ({ onPeriodSelected, selectedPeriod, validPeriods }) => {
+  const linkToPeriod = (name, msg) => {
+    if (!validPeriods || validPeriods.includes(name)) {
+      return (
+        <a
+          href={`#see-${name}-timespans"`}
+          onClick={(evt) => { evt.preventDefault(); onPeriodSelected(name); }}
+          className={(selectedPeriod === name) ? 'greyed selected' : 'greyed unselected'}
+        >
+          <FormattedMessage {...msg} />
+        </a>
+      );
+    }
+    return null;
+  };
+  return (
+    <div className="timespan-period-selector">
+      { linkToPeriod('overall', localMessages.timespansOverall) }
+      { linkToPeriod('monthly', localMessages.timespansMonthly) }
+      { linkToPeriod('weekly', localMessages.timespansWeekly) }
+      { linkToPeriod('custom', localMessages.timespansCustom) }
+    </div>
+  );
+};
 
 TimespanPeriodSelector.propTypes = {
   // from parent
   selectedPeriod: PropTypes.string.isRequired,
   onPeriodSelected: PropTypes.func.isRequired,
+  validPeriods: PropTypes.array,
 };
 
 export default

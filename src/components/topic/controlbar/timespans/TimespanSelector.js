@@ -21,12 +21,15 @@ function filterByPeriod(timespans, period) {
   return timespans.filter(t => t.period === period);
 }
 
+
 const TimespanSelector = (props) => {
   const { timespans, selectedTimespan, onTimespanSelected, onPeriodSelected,
     isExpanded, setExpanded, selectedPeriod, helpButton } = props;
   const oldestTimespanStart = d3.min(timespans.map(t => t.startDateObj));
   const latestTimespanEnd = d3.max(timespans.map(t => t.endDateObj));
   let expandControl = null;
+  // not every snapshot has automatically generated timespans of each period type, so just grab a list of the periods that exists
+  const validPeriods = [...new Set(timespans.map(t => t.period))];
   if (isExpanded) {
     // we have to set back the selected period to match the selectedTimespan's period when they collapse the UI
     expandControl = (
@@ -69,6 +72,7 @@ const TimespanSelector = (props) => {
                 onPeriodSelected(period, timespans.filter(t => t.period === period)[0]);
                 setExpanded(true);
               }}
+              validPeriods={validPeriods}
             />
           </Col>
           <Col lg={8} sm={8} xs={12} className="center">

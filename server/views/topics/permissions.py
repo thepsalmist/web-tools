@@ -38,7 +38,7 @@ def topic_update_permission(topics_id):
         if permission['permission'] not in ['read', 'write', 'admin', 'none']:
             return json_error_response('Invalid permission value')
         try:
-            user_mc.topicPermissionsUpdate(topics_id, permission['email'], permission['permission'])
+            user_mc.topicPermissionsUpdate(topics_id, permission['email'].strip(), permission['permission'])
         except MCException as e:
             # show a nice error if they type the email wrong
             if 'Unknown email' in e.message:

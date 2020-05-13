@@ -41,7 +41,7 @@ Coming soon
 Configuration
 ------------- 
 
-Copy `config/server.config.template` to `config/server.config` and fill in the required info there.
+Copy `config/test.config.template` to `config/server.config` and fill in the required info there.
 
 Running the Apps
 ----------------

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import messages from '../../resources/messages';
-import { storyPubDateToTimestamp } from '../../lib/dateUtil';
+import { storyPubDateToTimestamp, STORY_PUB_DATE_UNDATEABLE } from '../../lib/dateUtil';
 import { googleFavIconUrl, storyDomainName } from '../../lib/urlUtil';
 import { trimToMaxLength } from '../../lib/stringUtil';
 
@@ -11,9 +11,30 @@ const localMessages = {
   foci: { id: 'story.foci.list', defaultMessage: 'List of Subtopics {list}' },
 };
 
+export const safeStoryDate = (story, intl) => {
+  let dateToShow = null; // need to handle undateable stories
+  let dateStyle = '';
+  if (!story.publish_date) {
+    dateToShow = intl.formatMessage(messages.unknown);
+    dateStyle = 'story-date-undateable';
+  } else if (story.publish_date === STORY_PUB_DATE_UNDATEABLE) {
+    dateToShow = intl.formatMessage(localMessages.undateable);
+    dateStyle = 'story-date-undateable';
+  } else {
+    dateToShow = intl.formatDate(storyPubDateToTimestamp(story.publish_date));
+    dateStyle = (story.date_is_reliable === 0) ? 'story-date-unreliable' : 'story-date-reliable';
+    if (story.date_is_reliable === 0) {
+      dateToShow += '?';
+    }
+  }
+  return {
+    style: dateStyle,
+    text: dateToShow,
+  };
+};
+
 const StoryTable = (props) => {
-  const { stories, maxTitleLength, selectedStory, extraColumns, extraHeaderColumns } = props;
-  const { formatMessage, formatDate } = props.intl;
+  const { stories, maxTitleLength, selectedStory, extraColumns, extraHeaderColumns, intl } = props;
   return (
     <div className="story-table">
       <table>
@@ -26,23 +47,9 @@ const StoryTable = (props) => {
           </tr>
           {stories.map((story, idx) => {
             const domain = storyDomainName(story);
-            let dateToShow = null; // need to handle undateable stories
-            let dateStyle = '';
             const title = maxTitleLength !== undefined ? `${trimToMaxLength(story.title, maxTitleLength)}` : story.title;
             const isSelected = selectedStory === story.stories_id ? ' selected' : ' ';
-            if (!story.publish_date) {
-              dateToShow = formatMessage(messages.unknown);
-              dateStyle = 'story-date-undateable';
-            } else if (story.publish_date === 'undateable') {
-              dateToShow = formatMessage(localMessages.undateable);
-              dateStyle = 'story-date-undateable';
-            } else {
-              dateToShow = formatDate(storyPubDateToTimestamp(story.publish_date));
-              dateStyle = (story.date_is_reliable === 0) ? 'story-date-unreliable' : 'story-date-reliable';
-              if (story.date_is_reliable === 0) {
-                dateToShow += '?';
-              }
-            }
+            const dateDisplay = safeStoryDate(story, intl);
             return (
               <tr key={`${story.stories_id}${idx}`} className={(idx % 2 === 0) ? `even${isSelected}` : `odd${isSelected}`}>
                 <td>
@@ -54,7 +61,7 @@ const StoryTable = (props) => {
                   </a>
                   <a href={story.media_url} rel="noopener noreferrer" target="_blank">{story.media_name}</a>
                 </td>
-                <td><span className={`story-date ${dateStyle}`}>{dateToShow}</span></td>
+                <td><span className={`story-date ${dateDisplay.style}`}>{dateDisplay.text}</span></td>
                 {extraColumns && extraColumns(story, idx)}
               </tr>
             );

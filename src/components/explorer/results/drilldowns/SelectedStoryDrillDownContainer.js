@@ -15,10 +15,10 @@ import messages from '../../../../resources/messages';
 import { urlToSource } from '../../../../lib/urlUtil';
 import { TAG_SET_NYT_THEMES } from '../../../../lib/tagUtil';
 import { trimToMaxLength, extractWordsFromQuery } from '../../../../lib/stringUtil';
-import { storyPubDateToTimestamp } from '../../../../lib/dateUtil';
 import Permissioned from '../../../common/Permissioned';
 import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import StatBar from '../../../common/statbar/StatBar';
+import { safeStoryDate } from '../../../common/StoryTable';
 
 const localMessages = {
   title: { id: 'word.inContext.title', defaultMessage: 'Story Info: ' },
@@ -57,9 +57,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
   }
 
   render() {
-    const { selectedStory, storyInfo, handleClose } = this.props;
-    const { formatDate, formatMessage } = this.props.intl;
-
+    const { selectedStory, storyInfo, handleClose, intl } = this.props;
     let content = null;
     if (selectedStory) {
       content = (
@@ -99,7 +97,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
                       ),
                     },
                     { message: messages.storyDate,
-                      data: storyInfo.publish_date ? formatDate(storyPubDateToTimestamp(storyInfo.publish_date)) : formatMessage(messages.unknown),
+                      data: safeStoryDate(storyInfo, intl).text,
                     },
                     { message: messages.language,
                       data: storyInfo.language ? storyInfo.language : '?',

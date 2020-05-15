@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2020-05-05",
+      "version": "v3.13.18",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "Handle stories with missing dates"
+        }
+      ]
+    },
+    {
       "date": "2020-05-01",
       "version": "v3.13.17",
       "notes": [
@@ -10,7 +21,8 @@
           "note": "More work on support for very long queries"
         }
       ]
-    },    {
+    },
+    {
       "date": "2020-05-01",
       "version": "v3.13.16",
       "notes": [

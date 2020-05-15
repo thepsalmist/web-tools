@@ -5,9 +5,19 @@
       "version": "v3.13.18",
       "notes": [
         {
-          "apps": [ "explorer" ],
+          "apps": [ "explorer", "topics" ],
           "type": "Fixed",
-          "note": "Handle stories with missing dates"
+          "note": "Handle stories with no dates guess"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Hide timespans that don't exist"
+        },
+        {
+          "apps": [ "topics", "explorer", "tools", "sources" ],
+          "type": "Fixed",
+          "note": "Various security updates"
         }
       ]
     },

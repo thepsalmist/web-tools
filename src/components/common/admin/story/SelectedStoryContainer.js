@@ -104,7 +104,7 @@ class SelectedStoryContainer extends React.Component {
                     ),
                   },
                   { message: messages.storyDate,
-                    data: formatDate(storyPubDateToTimestamp(selectedStory.publish_date)),
+                    data: selectedStory.publish_date ? formatDate(storyPubDateToTimestamp(selectedStory.publish_date)) : formatMessage(messages.unknown),
                   },
                   { message: messages.language,
                     data: selectedStory.language ? selectedStory.language : '?',

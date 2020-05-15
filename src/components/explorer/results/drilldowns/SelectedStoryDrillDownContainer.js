@@ -58,7 +58,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
 
   render() {
     const { selectedStory, storyInfo, handleClose } = this.props;
-    const { formatDate } = this.props.intl;
+    const { formatDate, formatMessage } = this.props.intl;
 
     let content = null;
     if (selectedStory) {
@@ -99,7 +99,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
                       ),
                     },
                     { message: messages.storyDate,
-                      data: formatDate(storyPubDateToTimestamp(storyInfo.publish_date)),
+                      data: storyInfo.publish_date ? formatDate(storyPubDateToTimestamp(storyInfo.publish_date)) : formatMessage(messages.unknown),
                     },
                     { message: messages.language,
                       data: storyInfo.language ? storyInfo.language : '?',

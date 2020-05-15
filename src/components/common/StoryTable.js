@@ -7,7 +7,7 @@ import { googleFavIconUrl, storyDomainName } from '../../lib/urlUtil';
 import { trimToMaxLength } from '../../lib/stringUtil';
 
 const localMessages = {
-  undateable: { id: 'story.publishDate.undateable', defaultMessage: 'Undateable' },
+  undateable: { id: 'story.publishDate.undateable', defaultMessage: 'undateable' },
   foci: { id: 'story.foci.list', defaultMessage: 'List of Subtopics {list}' },
 };
 
@@ -30,7 +30,10 @@ const StoryTable = (props) => {
             let dateStyle = '';
             const title = maxTitleLength !== undefined ? `${trimToMaxLength(story.title, maxTitleLength)}` : story.title;
             const isSelected = selectedStory === story.stories_id ? ' selected' : ' ';
-            if (story.publish_date === 'undateable') {
+            if (!story.publish_date) {
+              dateToShow = formatMessage(messages.unknown);
+              dateStyle = 'story-date-undateable';
+            } else if (story.publish_date === 'undateable') {
               dateToShow = formatMessage(localMessages.undateable);
               dateStyle = 'story-date-undateable';
             } else {

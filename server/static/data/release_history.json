@@ -1,7 +1,7 @@
 {
   "releases": [
     {
-      "date": "2020-05-04",
+      "date": "2020-06-01",
       "version": "v3.14.0",
       "notes": [
         {
@@ -40,6 +40,27 @@
           ],
           "type": "Fix",
           "note": "Top words for a media source in a topic work again"
+        }
+      ]
+    },
+    {
+      "date": "2020-05-15",
+      "version": "v3.13.18",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics" ],
+          "type": "Fixed",
+          "note": "Handle stories with no dates guess"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Hide timespans that don't exist"
+        },
+        {
+          "apps": [ "topics", "explorer", "tools", "sources" ],
+          "type": "Fixed",
+          "note": "Various security updates"
         }
       ]
     },

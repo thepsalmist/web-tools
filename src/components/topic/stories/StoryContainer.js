@@ -67,7 +67,7 @@ class StoryContainer extends React.Component {
   render() {
     const { storyInfo, topicStoryInfo, topicId, storiesId, topicPlatforms,
       handleStoryCachedTextClick, handleStoryEditClick, filters, topicSeedQuery, intl } = this.props;
-    const { formatMessage, formatNumber, formatDate } = this.props.intl;
+    const { formatMessage, formatNumber } = this.props.intl;
     const mediaUrl = `/topics/${topicId}/media/${storyInfo.media.media_id}`;
 
     // use tabs to figure out which content to show

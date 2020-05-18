@@ -138,6 +138,9 @@ export function postgresDateToMoment(postgresDataString, strict = true) {
 }
 
 export function storyPubDateToTimestamp(solrDateString, strict = true) {
+  if (!solrDateString) {
+    return null;
+  }
   // important to trim this so we remove fractinoal seconds, which don't parse correctly
   return storyPubDateToMoment(solrDateString.substring(0, 19), strict).valueOf();
 }

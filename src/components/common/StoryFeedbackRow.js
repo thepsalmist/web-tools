@@ -5,6 +5,7 @@ import { Row, Col } from 'react-flexbox-grid/lib';
 import AppButton from './AppButton';
 import { googleFavIconUrl, storyDomainName } from '../../lib/urlUtil';
 import { trimToMaxLength } from '../../lib/stringUtil';
+import { safeStoryDate } from './StoryTable';
 
 const selectionOptions = {
   none: 'none',
@@ -53,8 +54,7 @@ class StoryFeedbackRow extends React.Component {
   }
 
   render() {
-    const { story, maxTitleLength } = this.props;
-    const { formatMessage, formatDate } = this.props.intl;
+    const { story, maxTitleLength, intl } = this.props;
     const storyTitle = maxTitleLength !== undefined ? trimToMaxLength(story.title, maxTitleLength) : story.title;
     const domain = storyDomainName(story);
     return (
@@ -75,7 +75,7 @@ class StoryFeedbackRow extends React.Component {
           </Row>
           <Row>
             <Col lg={12}>
-              { formatDate(story.publish_date, { year: 'numeric', month: 'numeric', day: 'numeric' }) }
+              { safeStoryDate(story, intl).text }
             </Col>
           </Row>
         </Col>
@@ -84,14 +84,14 @@ class StoryFeedbackRow extends React.Component {
             <Col lg={6}>
               <AppButton
                 className={`match-btn${this.state.selection === selectionOptions.match ? '-selected' : ''}`}
-                label={formatMessage(localMessages.yesLabel)}
+                label={intl.formatMessage(localMessages.yesLabel)}
                 onClick={this.handleMatch}
               />
             </Col>
             <Col lg={6}>
               <AppButton
                 className={`not-match-btn${this.state.selection === selectionOptions.notMatch ? '-selected' : ''}`}
-                label={formatMessage(localMessages.noLabel)}
+                label={intl.formatMessage(localMessages.noLabel)}
                 onClick={this.handleNotAMatch}
               />
             </Col>

@@ -28,11 +28,11 @@ import { PERMISSION_STORY_EDIT, PERMISSION_ADMIN } from '../../../lib/auth';
 import StatBar from '../../common/statbar/StatBar';
 import { trimToMaxLength, extractWordsFromQuery } from '../../../lib/stringUtil';
 import { filteredLinkTo, urlWithFilters } from '../../util/location';
-import { storyPubDateToTimestamp } from '../../../lib/dateUtil';
 import TopicPageTitle from '../TopicPageTitle';
 import StoryRedditAttention from '../../common/story/StoryRedditAttention';
 import StoryUrlSharingCounts from './StoryUrlSharingCounts';
 import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
+import { safeStoryDate } from '../../common/StoryTable';
 
 const MAX_STORY_TITLE_LENGTH = 70; // story titles longer than this will be trimmed and ellipses added
 
@@ -66,8 +66,8 @@ class StoryContainer extends React.Component {
 
   render() {
     const { storyInfo, topicStoryInfo, topicId, storiesId, topicPlatforms,
-      handleStoryCachedTextClick, handleStoryEditClick, filters, topicSeedQuery } = this.props;
-    const { formatMessage, formatNumber, formatDate } = this.props.intl;
+      handleStoryCachedTextClick, handleStoryEditClick, filters, topicSeedQuery, intl } = this.props;
+    const { formatMessage, formatNumber } = this.props.intl;
     const mediaUrl = `/topics/${topicId}/media/${storyInfo.media.media_id}`;
 
     // use tabs to figure out which content to show
@@ -85,7 +85,7 @@ class StoryContainer extends React.Component {
                     { message: messages.outlinks, data: formatNumber(topicStoryInfo.outlink_count) },
                     { message: messages.facebookShares, data: formatNumber(topicStoryInfo.facebook_share_count) },
                     { message: messages.language, data: storyInfo.language || formatMessage(localMessages.unknownLanguage) },
-                    { message: messages.storyDate, data: formatDate(storyPubDateToTimestamp(storyInfo.publish_date), { month: '2-digit', day: '2-digit', year: '2-digit' }) },
+                    { message: messages.storyDate, data: safeStoryDate(storyInfo, intl).text },
                   ]}
                   columnWidth={2}
                 />

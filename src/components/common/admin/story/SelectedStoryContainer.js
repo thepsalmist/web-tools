@@ -18,13 +18,13 @@ import messages from '../../../../resources/messages';
 import { urlToSource } from '../../../../lib/urlUtil';
 import { TAG_SET_NYT_THEMES } from '../../../../lib/tagUtil';
 import { trimToMaxLength } from '../../../../lib/stringUtil';
-import { storyPubDateToTimestamp } from '../../../../lib/dateUtil';
 import Permissioned from '../../Permissioned';
 import { PERMISSION_ADMIN } from '../../../../lib/auth';
 import StatBar from '../../statbar/StatBar';
 import StoryRedditAttention from '../../story/StoryRedditAttention';
 import StoryImages from '../../story/StoryImages';
 import StoryQuoteTable from '../../story/StoryQuoteTable';
+import { safeStoryDate } from '../../StoryTable';
 
 const localMessages = {
   title: { id: 'admin.story.title', defaultMessage: 'Admin Story Details: ' },
@@ -50,8 +50,8 @@ class SelectedStoryContainer extends React.Component {
   }
 
   render() {
-    const { selectedStory, selectedStoryId, handleStoryEditClick, handleStoryCachedTextClick } = this.props;
-    const { formatDate, formatMessage } = this.props.intl;
+    const { selectedStory, selectedStoryId, handleStoryEditClick, handleStoryCachedTextClick, intl } = this.props;
+    const { formatMessage } = this.props.intl;
 
     let content = null;
     if (selectedStoryId) {
@@ -104,7 +104,7 @@ class SelectedStoryContainer extends React.Component {
                     ),
                   },
                   { message: messages.storyDate,
-                    data: formatDate(storyPubDateToTimestamp(selectedStory.publish_date)),
+                    data: safeStoryDate(selectedStory, intl).text,
                   },
                   { message: messages.language,
                     data: selectedStory.language ? selectedStory.language : '?',

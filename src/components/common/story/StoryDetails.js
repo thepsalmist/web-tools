@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'react-router/lib/Link';
 import { FormattedMessage, FormattedHTMLMessage, injectIntl } from 'react-intl';
 import DataCard from '../DataCard';
-import { storyPubDateToTimestamp } from '../../../lib/dateUtil';
+import { safeStoryDate } from '../StoryTable';
 import messages from '../../../resources/messages';
 
 const localMessages = {
@@ -24,8 +24,8 @@ const localMessages = {
 };
 
 const StoryDetails = (props) => {
-  const { story, mediaLink } = props;
-  const { formatMessage, formatDate } = props.intl;
+  const { story, mediaLink, intl } = props;
+  const { formatMessage } = props.intl;
   return (
     <DataCard>
       <h2>
@@ -35,7 +35,7 @@ const StoryDetails = (props) => {
         <li>
           <FormattedHTMLMessage
             {...localMessages.publishDate}
-            values={{ date: formatDate(storyPubDateToTimestamp(story.publish_date)) }}
+            values={{ date: safeStoryDate(story, intl).text }}
           />
         </li>
         <li>

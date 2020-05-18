@@ -18,3 +18,4 @@ deco==0.5.2
 Flask-Executor==0.9.3
 newspaper3k==0.2.8
 pytest==5.4.1
+gevent==20.5.0

@@ -1,7 +1,18 @@
 {
   "releases": [
     {
-      "date": "2020-05-05",
+      "date": "2020-05-18",
+      "version": "v3.13.19",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics", "tools", "sources" ],
+          "type": "Fixed",
+          "note": "Various security updates"
+        }
+      ]
+    },
+    {
+      "date": "2020-05-15",
       "version": "v3.13.18",
       "notes": [
         {

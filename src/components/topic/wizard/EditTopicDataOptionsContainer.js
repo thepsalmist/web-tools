@@ -14,6 +14,8 @@ import { PERMISSION_TOPIC_WRITE } from '../../../lib/auth';
 import TopicPageTitle from '../TopicPageTitle';
 import AppButton from '../../common/AppButton';
 import messages from '../../../resources/messages';
+import VersionComparisonContainer from '../versions/VersionComparisonContainer';
+
 
 const localMessages = {
   title: { id: 'topic.edit', defaultMessage: 'Edit Topic Dates / Spidering' },
@@ -22,13 +24,14 @@ const localMessages = {
 };
 
 const EditTopicDataOptionsContainer = (props) => {
-  const { topic, handleSubmit, pristine, submitting, onSubmit } = props;
+  const { topic, handleSubmit, pristine, submitting, onSubmit, datesOrSpideringHaveChanged } = props;
   const initialValues = { ...topic };
   return (
     <div className="topic-edit-form">
       <TopicPageTitle value={localMessages.title} />
       <form name="topicForm" onSubmit={handleSubmit(onSubmit.bind(this))}>
         <Grid>
+          {datesOrSpideringHaveChanged && <VersionComparisonContainer />}
           <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
             <Row>
               <Col lg={12}>
@@ -69,10 +72,12 @@ EditTopicDataOptionsContainer.propTypes = {
   topic: PropTypes.object,
   // from dispatch/merge
   onSubmit: PropTypes.func.isRequired,
+  datesOrSpideringHaveChanged: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
   topic: state.topics.selected.info,
+  datesOrSpideringHaveChanged: state.topics.selected.info.datesOrSpideringHaveChanged,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

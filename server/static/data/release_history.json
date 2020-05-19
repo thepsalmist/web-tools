@@ -35,11 +35,19 @@
           "note": "Quickly export CSVs of all the stories or media in a topic"
         },
         {
-          "apps": [
-            "topics"
-          ],
+          "apps": [ "topics" ],
           "type": "Fix",
           "note": "Top words for a media source in a topic work again"
+        }
+      ]
+    }, {
+      "date": "2020-05-18",
+      "version": "v3.13.19",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics", "tools", "sources" ],
+          "type": "Fixed",
+          "note": "Various security updates"
         }
       ]
     },

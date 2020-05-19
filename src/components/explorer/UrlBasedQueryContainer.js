@@ -11,8 +11,9 @@ import { addNotice } from '../../actions/appActions';
 import { saveParsedQueries, fetchSampleSearches, updateQuerySourceLookupInfo, updateQueryCollectionLookupInfo, updateQuerySearchLookupInfo,
   fetchQuerySourcesByIds, fetchQueryCollectionsByIds, fetchQuerySearchesByIds, demoQuerySourcesByIds, demoQueryCollectionsByIds } from '../../actions/explorerActions';
 import { DEFAULT_COLLECTION_OBJECT_ARRAY, autoMagicQueryLabel, decodeQueryParamString, serializeQueriesForUrl,
-  replaceCurlyQuotes, uniqueQueryId, prepSearches } from '../../lib/explorerUtil';
+  uniqueQueryId, prepSearches } from '../../lib/explorerUtil';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../lib/dateUtil';
+import { replaceCurlyQuotes } from '../../lib/stringUtil';
 import { notEmptyString } from '../../lib/formValidators';
 
 const localMessages = {

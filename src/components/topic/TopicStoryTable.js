@@ -17,6 +17,7 @@ const localMessages = {
   authorCountHelp: { id: 'story.help.authorCount', defaultMessage: '<p>The number of unique users that posted this link to the platform you are looking at.<p>' },
   postCountHelp: { id: 'story.help.postCount', defaultMessage: '<p>The number of posts that included this link on the platform you are looking at.<p>' },
   channelCountHelp: { id: 'story.help.channelCount', defaultMessage: '<p>This varies by platform:</p><ul><li>Twitter: it is identical to the author count</li></ul>' },
+  urlSharingSubtopicDataNames: { id: 'story.urlSharingSubtopicDataNames', defaultMessage: 'post/author/channel' },
 };
 
 const ICON_STYLE = { margin: 0, padding: 0, width: 12, height: 12 };
@@ -59,7 +60,13 @@ class TopicStoryTable extends React.Component {
   }
 
   render() {
-    const { stories, showTweetCounts, onChangeFocusSelection, topicId, maxTitleLength, usingUrlSharingSubtopic, intl } = this.props;
+    const { stories, showTweetCounts, onChangeFocusSelection, topicId, maxTitleLength, usingUrlSharingSubtopic, hasAUrlSharingFocalSet, intl } = this.props;
+    let urlSharingSubtopicNames = null;
+    if (hasAUrlSharingFocalSet && (stories.length > 0)) {
+      // intuit a list of the subtopics from the url sharing counts on the first story
+      // alternatively, we could pass in the subtopics and use those, but this information is already here
+      urlSharingSubtopicNames = stories[0].url_sharing_counts.map(d => d.focus_name);
+    }
     return (
       <div className="story-table">
         <table>
@@ -102,6 +109,7 @@ class TopicStoryTable extends React.Component {
               )}
               <th>{}</th>
               <th><FormattedMessage {...messages.focusHeader} /></th>
+              {hasAUrlSharingFocalSet && urlSharingSubtopicNames.map(name => <th>{name}<br /><FormattedMessage {...localMessages.urlSharingSubtopicDataNames} /></th>)}
             </tr>
             {stories.map((story, idx) => {
               const domain = storyDomainName(story);
@@ -123,6 +131,19 @@ class TopicStoryTable extends React.Component {
                     </span>
                   )));
                 // listOfFoci = intersperse(listOfFoci, ', ');
+              }
+              // we have to construct the columns shwoing url sharing data one by one in order, because not every story is in every subtopic
+              let urlSharingColData = [];
+              if (hasAUrlSharingFocalSet) {
+                urlSharingColData = urlSharingSubtopicNames.map(name => {
+                  const data = story.url_sharing_counts.find(item => item.focus_name === name);
+                  if (data) {
+                    // this story is in this subtopic
+                    return (<td>{data.post_count} / {data.author_count} / {data.channel_count}</td>);
+                  }
+                  // this story is not in this subtopic
+                  return (<td />);
+                });
               }
               return (
                 <tr key={story.stories_id} className={(idx % 2 === 0) ? 'even' : 'odd'}>
@@ -161,6 +182,7 @@ class TopicStoryTable extends React.Component {
                     </a>
                   </td>
                   <td>{listOfFoci}</td>
+                  {urlSharingColData}
                 </tr>
               );
             })}

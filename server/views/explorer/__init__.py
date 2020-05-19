@@ -8,22 +8,12 @@ import datetime
 from slugify import slugify
 
 from server import mc, app, analytics_db
-from server.auth import is_user_logged_in
 from server.util.request import api_error_handler
 from server.views.media_picker import concatenate_query_for_solr
 
 logger = logging.getLogger(__name__)
 
-SORT_SOCIAL = 'social'
-SORT_INLINK = 'inlink'
 DEFAULT_COLLECTION_IDS = [9139487]
-
-
-def validated_sort(desired_sort, default_sort=SORT_SOCIAL):
-    valid_sorts = [SORT_SOCIAL, SORT_INLINK]
-    if (desired_sort is None) or (desired_sort not in valid_sorts):
-        return default_sort
-    return desired_sort
 
 
 def dates_as_filter_query(start_date, end_date):

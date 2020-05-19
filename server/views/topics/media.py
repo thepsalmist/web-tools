@@ -5,7 +5,7 @@ import flask_login
 from server import app
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client
 from server.util import csv
-from server.views.topics import validated_sort, TOPIC_MEDIA_CSV_PROPS
+from server.views.topics import TOPIC_MEDIA_CSV_PROPS
 import server.views.topics.apicache as apicache
 from server.util.request import filters_from_args, api_error_handler
 from server.views.topics.stories import platform_csv_column_header_prefix
@@ -50,7 +50,7 @@ def stream_media_list_csv(user_mc_key, topic, filename, **kwargs):
         'snapshots_id': snapshots_id,
         'foci_id': foci_id,
         'q': q,
-        'sort': validated_sort(request.args.get('sort')) if 'sort' in request.args else None,
+        'sort': request.args.get('sort') if 'sort' in request.args else None,
     }
     params.update(merged_args)
     # do a check to see if the user has added in a real query or not

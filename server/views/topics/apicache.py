@@ -10,7 +10,6 @@ from server.util.tags import STORY_UNDATEABLE_TAG, is_bad_theme
 import server.util.wordembeddings as wordembeddings
 from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_mediacloud_key
 from server.util.request import filters_from_args
-from server.views.topics import validated_sort
 from server.util.api_helper import add_missing_dates_to_split_story_counts
 from server.views.topics.foci.focalsets import is_url_sharing_focal_set
 
@@ -39,7 +38,7 @@ def topic_media_list(user_mc_key, topics_id, **kwargs):
         'timespans_id': timespans_id,
         'foci_id': foci_id,
         'q': q,
-        'sort': validated_sort(request.args.get('sort')),
+        'sort': request.args.get('sort'),
         'limit': request.args.get('limit'),
         'link_id': request.args.get('linkId'),
     }
@@ -116,7 +115,7 @@ def topic_story_list(user_mc_key, topics_id, **kwargs):
         'timespans_id': timespans_id,
         'foci_id': foci_id,
         'q': q,
-        'sort': validated_sort(request.args.get('sort')),
+        'sort': request.args.get('sort'),
         'limit': request.args.get('limit'),
         'link_id': request.args.get('linkId'),
     }

@@ -10,10 +10,6 @@ from server.util.csv import SOURCE_LIST_CSV_METADATA_PROPS
 
 logger = logging.getLogger(__name__)
 
-SORT_FACEBOOK = 'facebook'
-SORT_TWITTER = 'twitter'
-SORT_INLINK = 'inlink'
-
 TOPIC_MEDIA_INFO_PROPS = ['media_id', 'name', 'url']
 
 TOPIC_MEDIA_PROPS = ['story_count', 'media_inlink_count', 'inlink_count', 'outlink_count',
@@ -23,13 +19,6 @@ TOPIC_MEDIA_URL_SHARING_PROPS = ['sum_post_count', 'sum_channel_count', 'sum_aut
 
 TOPIC_MEDIA_CSV_PROPS = TOPIC_MEDIA_INFO_PROPS + TOPIC_MEDIA_PROPS + TOPIC_MEDIA_URL_SHARING_PROPS + \
                         SOURCE_LIST_CSV_METADATA_PROPS
-
-
-def validated_sort(desired_sort, default_sort=SORT_FACEBOOK):
-    valid_sorts = [SORT_FACEBOOK, SORT_TWITTER, SORT_INLINK]
-    if (desired_sort is None) or (desired_sort not in valid_sorts):
-        return default_sort
-    return desired_sort
 
 
 def _parse_media_ids(args):

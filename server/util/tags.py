@@ -168,7 +168,7 @@ def tag_set_with_tags(mc_api_key, tag_sets_id, only_public_tags=False, use_file_
         more_tags = len(tags) != 0
     # double check the show_on_media because that controls public or not
     tag_list = [t for t in all_tags if (only_public_tags is False) or
-                (t['show_on_media'] is 1 or t['show_on_media'] is True)]
+                (t['show_on_media'] == 1 or t['show_on_media'] is True)]
     # sort by label (or tag if no label exists)
     for t in tag_list:
         t['sort_key'] = t['label'].lower() if t['label'] else t['tag'].lower()

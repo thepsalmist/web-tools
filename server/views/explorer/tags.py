@@ -19,20 +19,20 @@ DEFAULT_DISPLAY_AMOUNT = 10
 ENTITY_DOWNLOAD_COLUMNS = ['label', 'count', 'pct', 'sample_size','tags_id']
 
 
-@app.route('/api/explorer/entities/people', methods=['GET'])
+@app.route('/api/explorer/entities/people', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
 def top_entities_people():
-    solr_q, solr_fq = parse_query_with_keywords(request.args)
+    solr_q, solr_fq = parse_query_with_keywords(request.form)
     results = apicache.top_tags_with_coverage(solr_q, solr_fq, CLIFF_PEOPLE)
     return jsonify(results)
 
 
-@app.route('/api/explorer/entities/organizations', methods=['GET'])
+@app.route('/api/explorer/entities/organizations', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
 def top_entities_organizations():
-    solr_q, solr_fq = parse_query_with_keywords(request.args)
+    solr_q, solr_fq = parse_query_with_keywords(request.form)
     results = apicache.top_tags_with_coverage(solr_q, solr_fq, CLIFF_ORGS)
     return jsonify(results)
 
@@ -78,11 +78,11 @@ def explorer_entities_csv(tag_sets_id):
     return csv.stream_response(top_tag_counts, ENTITY_DOWNLOAD_COLUMNS, filename)
 
 
-@app.route('/api/explorer/themes', methods=['GET'])
+@app.route('/api/explorer/themes', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
 def top_themes():
-    solr_q, solr_fq = parse_query_with_keywords(request.args)
+    solr_q, solr_fq = parse_query_with_keywords(request.form)
     results = apicache.top_tags_with_coverage(solr_q, solr_fq, NYT_LABELS_TAG_SET_ID)
 
     return jsonify(results)

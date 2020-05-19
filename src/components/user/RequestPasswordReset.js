@@ -6,13 +6,14 @@ import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { push } from 'react-router-redux';
 import { LEVEL_ERROR } from '../common/Notice';
-import { sendRecoverPasswordRequest } from '../../actions/userActions';
+import { sendRecoverPasswordRequest, userReset, logout } from '../../actions/userActions';
 import { addNotice } from '../../actions/appActions';
 import AppButton from '../common/AppButton';
 import messages from '../../resources/messages';
 import { invalidEmail } from '../../lib/formValidators';
 import withIntlForm from '../common/hocs/IntlForm';
 import PageTitle from '../common/PageTitle';
+import withAsyncData from '../common/hocs/AsyncDataContainer';
 
 const localMessages = {
   title: { id: 'user.forgotPassword.title', defaultMessage: 'Forgot Your Password?' },
@@ -108,12 +109,19 @@ const reduxFormConfig = {
   validate,
 };
 
+const fetchAsyncData = (dispatch) => {
+  dispatch(userReset);
+  return dispatch(logout);
+};
+
 export default
 injectIntl(
   withIntlForm(
     reduxForm(reduxFormConfig)(
       connect(mapStateToProps, mapDispatchToProps)(
-        RequestPasswordReset
+        withAsyncData(fetchAsyncData)(
+          RequestPasswordReset
+        )
       )
     )
   )

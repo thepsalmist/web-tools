@@ -1,6 +1,95 @@
 {
   "releases": [
     {
+      "date": "2020-05-18",
+      "version": "v3.13.19",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics", "tools", "sources" ],
+          "type": "Fixed",
+          "note": "Various security updates"
+        }
+      ]
+    },
+    {
+      "date": "2020-05-15",
+      "version": "v3.13.18",
+      "notes": [
+        {
+          "apps": [ "explorer", "topics" ],
+          "type": "Fixed",
+          "note": "Handle stories with no dates guess"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fixed",
+          "note": "Hide timespans that don't exist"
+        },
+        {
+          "apps": [ "topics", "explorer", "tools", "sources" ],
+          "type": "Fixed",
+          "note": "Various security updates"
+        }
+      ]
+    },
+    {
+      "date": "2020-05-01",
+      "version": "v3.13.17",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fixed",
+          "note": "More work on support for very long queries"
+        }
+      ]
+    },
+    {
+      "date": "2020-05-01",
+      "version": "v3.13.16",
+      "notes": [
+        {
+          "apps": [ "topics", "explorer","sources","tools" ],
+          "type": "Fixed",
+          "note": "Ensure logged-in users can still request a password reset"
+        }
+      ]
+    },
+    {
+      "date": "2020-05-01",
+      "version": "v3.13.15",
+      "notes": [
+        {
+          "apps": [ "topics", "explorer","sources","tools" ],
+          "type": "Fixed",
+          "note": "Security issue notice"
+        }
+      ]
+    },{
+      "date": "2020-04-23",
+      "version": "v3.13.14",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Added Topic 'export' tab for quick batch downloads"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "More work on long queries in Explorer"
+        }
+      ]
+    },{
+      "date": "2020-04-21",
+      "version": "v3.13.13",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Very long queries now work in Explorer"
+        }
+      ]
+    },{
       "date": "2020-03-26",
       "version": "v3.13.12",
       "notes": [

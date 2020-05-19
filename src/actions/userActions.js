@@ -1,3 +1,4 @@
+import { createAction } from 'redux-actions';
 import * as api from '../lib/serverApi/user';
 import { createAsyncAction } from '../lib/reduxHelpers';
 
@@ -34,3 +35,9 @@ export const deleteAccount = createAsyncAction(DELETE_ACCOUNT, api.deleteAccount
 
 export const UPDATE_PROFILE = 'UPDATE_PROFILE';
 export const updateProfile = createAsyncAction(UPDATE_PROFILE, api.updateProfile, profile => profile);
+
+export const LOGOUT = 'LOGOUT';
+export const logout = createAsyncAction(UPDATE_PROFILE, api.logout);
+
+export const USER_RESET = 'USER_RESET';
+export const userReset = createAction(USER_RESET);

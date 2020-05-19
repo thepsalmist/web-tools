@@ -7,6 +7,7 @@ import { selectStory, fetchStory } from '../../../../actions/storyActions';
 import withAsyncData from '../../hocs/AsyncDataContainer';
 import { ReadItNowButton } from '../../IconButton';
 import HighlightedText from '../HighlightedText';
+import { safeStoryDate } from '../../StoryTable';
 
 const localMessages = {
   title: { id: 'story.cached.title', defaultMessage: 'Cached Story' },
@@ -15,10 +16,10 @@ const localMessages = {
   storyText: { id: 'story.cached.text', defaultMessage: 'Story Text' },
 };
 
-const StoryCachedContainer = ({ story, location }) => (
+const StoryCachedContainer = ({ story, location, intl }) => (
   <Grid>
     <h1>{story.title}</h1>
-    <h3><FormattedHTMLMessage {...localMessages.intro} values={{ publishDate: story.publish_date, ref: story.media.url, link: story.media.name, collectDate: story.collect_date }} /></h3>
+    <h3><FormattedHTMLMessage {...localMessages.intro} values={{ publishDate: safeStoryDate(story, intl).text, ref: story.media.url, link: story.media.name, collectDate: story.collect_date }} /></h3>
     <div className="actions">
       <ReadItNowButton onClick={() => window.open(`/api/stories/${story.stories_id}/raw.html`, '_blank')} />
     </div>

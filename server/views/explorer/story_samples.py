@@ -21,17 +21,17 @@ SAMPLE_STORY_COUNT = 10
 INCLUDE_MEDIA_METADATA_IN_CSV = False
 
 
-@app.route('/api/explorer/stories/sample', methods=['GET'])
+@app.route('/api/explorer/stories/sample', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
 def api_explorer_story_sample():
-    if only_queries_reddit(request.args):
-        start_date, end_date = parse_query_dates(request.args)
-        results = pushshift.reddit_top_submissions(query=request.args['q'],
+    if only_queries_reddit(request.form):
+        start_date, end_date = parse_query_dates(request.form)
+        results = pushshift.reddit_top_submissions(query=request.form['q'],
                                                    start_date=start_date, end_date=end_date,
                                                    subreddits=pushshift.NEWS_SUBREDDITS)
     else:
-        solr_q, solr_fq = parse_query_with_keywords(request.args)
+        solr_q, solr_fq = parse_query_with_keywords(request.form)
         results = apicache.random_story_list(solr_q, solr_fq, SAMPLE_STORY_COUNT)
         for story in results:  # add in media info so we can show it to user
             story["media"] = base_cache.media(story["media_id"])
@@ -116,7 +116,7 @@ def _story_list_by_page(api_key, q, fq, stories_per_page, sort, page_limit=None)
         if (page_limit is not None) and (page_count >= page_limit):
             break
         story_page = apicache.story_list_page(api_key, q, fq, last_processed_stories_id, stories_per_page, sort)
-        if len(story_page) is 0:  # this is the last page so bail out
+        if len(story_page) == 0:  # this is the last page so bail out
             break
         for s in story_page:
             if INCLUDE_MEDIA_METADATA_IN_CSV:

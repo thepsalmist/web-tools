@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { FETCH_STORY, SELECT_STORY, RESET_STORY } from '../../actions/storyActions';
 import { createAsyncReducer } from '../../lib/reduxHelpers';
 import { TAG_SET_DATE_GUESS_METHOD, TAG_SET_EXTRACTOR_VERSION, TAG_SET_GEOCODER_VERSION, TAG_SET_NYT_THEMES_VERSION }
@@ -20,7 +19,6 @@ const info = createAsyncReducer({
   action: FETCH_STORY,
   handleSuccess: payload => ({
     ...payload.info,
-    publishDateObj: moment(payload.publish_date).toDate(),
     dateGuessMethod: tagWithTagSetsId(payload.story_tags, TAG_SET_DATE_GUESS_METHOD),
     extractorVersion: tagWithTagSetsId(payload.story_tags, TAG_SET_EXTRACTOR_VERSION),
     geocoderVersion: tagWithTagSetsId(payload.story_tags, TAG_SET_GEOCODER_VERSION),

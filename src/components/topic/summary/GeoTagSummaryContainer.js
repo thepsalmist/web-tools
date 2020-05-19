@@ -15,7 +15,7 @@ import messages from '../../../resources/messages';
 import withSummary from '../../common/hocs/SummarizedVizualization';
 import { DownloadButton } from '../../common/IconButton';
 import { getBrandLightColor } from '../../../styles/colors';
-import { fetchTopicGeocodedStoryCounts } from '../../../actions/topicActions';
+import { fetchTopicGeocodedStoryCounts, filterByQuery } from '../../../actions/topicActions';
 
 const localMessages = {
   title: { id: 'topic.summary.geo.title', defaultMessage: 'Geographic Attention' },
@@ -35,13 +35,30 @@ class GeoTagSummaryContainer extends React.Component {
     window.location = url;
   }
 
+  handleEntityClick = (evt, country) => {
+    const { filters, updateQueryFilter } = this.props;
+    const queryFragment = `tags_id_stories: ${country.tags_id}`;
+    if (filters.q && filters.q.length > 0) {
+      updateQueryFilter(`(${filters.q}) AND (${queryFragment})`);
+    } else {
+      updateQueryFilter(queryFragment);
+    }
+  }
+
   render() {
     const { data, coverage } = this.props;
     const { formatNumber } = this.props.intl;
     const coverageRatio = coverage.count / coverage.total;
     let content;
     if (coverageRatio > COVERAGE_REQUIRED) {
-      content = (<GeoChart data={data} countryMaxColorScale={getBrandLightColor()} backgroundColor="#f5f5f5" />);
+      content = (
+        <GeoChart
+          data={data}
+          countryMaxColorScale={getBrandLightColor()}
+          backgroundColor="#f5f5f5"
+          onCountryClick={this.handleEntityClick}
+        />
+      );
     } else {
       content = (
         <p>
@@ -83,6 +100,8 @@ GeoTagSummaryContainer.propTypes = {
   filters: PropTypes.object.isRequired,
   // from composition
   intl: PropTypes.object.isRequired,
+  // from dispatch
+  updateQueryFilter: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -91,11 +110,15 @@ const mapStateToProps = state => ({
   coverage: state.topics.selected.geotags.coverage,
 });
 
+const mapDispatchToProps = (dispatch) => ({
+  updateQueryFilter: (newQueryFilter) => dispatch(filterByQuery(newQueryFilter)),
+});
+
 const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicGeocodedStoryCounts(props.topicId, props.filters));
 
 export default
 injectIntl(
-  connect(mapStateToProps)(
+  connect(mapStateToProps, mapDispatchToProps)(
     withSummary(localMessages.title, localMessages.helpIntro, messages.heatMapHelpText)(
       withFilteredAsyncData(fetchAsyncData)(
         GeoTagSummaryContainer

@@ -2,6 +2,7 @@ import datetime
 import logging
 import flask_login
 import mediacloud.api
+from flask import session
 
 from server import user_db, login_manager
 
@@ -43,6 +44,7 @@ class User(flask_login.UserMixin):
 
     def create_in_db_if_needed(self):
         if self.exists_in_db():
+            # if they are in the front-end db, then be sure to update their profile at each login
             logger.debug("user %s already in db", self.name)
             user_db.update_user(self.name, {'api_key': self.id, 'profile': self.profile})
             return
@@ -50,6 +52,7 @@ class User(flask_login.UserMixin):
         user_db.add_user(self.name, self.id, self.profile)
 
     def exists_in_db(self):
+        # is this user in the front-end database?
         return user_db.includes_user_named(self.name)
 
     def get_properties(self):
@@ -61,9 +64,20 @@ class User(flask_login.UserMixin):
 
     @classmethod
     def get(cls, userid):
+        """
+        :param userid: This is the user's API key
+        :return: the User object, or null if they aren't authorized
+        """
         try:
-            return User(user_db.find_by_api_key(userid)['profile'])
-            # return User.cached[userid]
+            # check if the session still exists and is valid (in our shared redis cache)
+            # _id seems to only be set if the sessions exists in Redis
+            if ('_id' in session) and (session['_user_id'] == userid):
+                # so we don't have to refetch their profile on every request
+                user_in_db = user_db.find_by_api_key(userid)
+                return User(user_in_db['profile'])
+            else:
+                # the session isn't valid (perhaps we flushed the redis cache?
+                None
         except Exception:
             # be safer here... if anything goes wrong make them login again
             return None

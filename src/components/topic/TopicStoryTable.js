@@ -5,15 +5,10 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import messages from '../../resources/messages';
 import withHelp from '../common/hocs/HelpfulContainer';
 import LinkWithFilters from './LinkWithFilters';
-import { storyPubDateToTimestamp, STORY_PUB_DATE_UNDATEABLE } from '../../lib/dateUtil';
 import { googleFavIconUrl, storyDomainName } from '../../lib/urlUtil';
 import { ReadItNowButton } from '../common/IconButton';
 import SafelyFormattedNumber from '../common/SafelyFormattedNumber';
-
-const localMessages = {
-  undateable: { id: 'story.publishDate.undateable', defaultMessage: 'Undateable' },
-  foci: { id: 'story.foci.list', defaultMessage: 'List of Subtopics {list}' },
-};
+import { safeStoryDate } from '../common/StoryTable';
 
 const ICON_STYLE = { margin: 0, padding: 0, width: 12, height: 12 };
 
@@ -51,8 +46,7 @@ class TopicStoryTable extends React.Component {
   }
 
   render() {
-    const { stories, showTweetCounts, onChangeFocusSelection, topicId, maxTitleLength, helpButton } = this.props;
-    const { formatMessage, formatDate } = this.props.intl;
+    const { stories, showTweetCounts, onChangeFocusSelection, topicId, maxTitleLength, helpButton, intl } = this.props;
     const tweetHeader = showTweetCounts ? <th className="numeric">{this.sortableHeader('twitter', messages.tweetCounts)}</th> : null;
     return (
       <div className="story-table">
@@ -71,20 +65,9 @@ class TopicStoryTable extends React.Component {
             </tr>
             {stories.map((story, idx) => {
               const domain = storyDomainName(story);
-              let dateToShow = null; // need to handle undateable stories
-              let dateStyle = '';
               const title = maxTitleLength !== undefined ? `${story.title.substr(0, maxTitleLength)}...` : story.title;
               const tweetInfo = showTweetCounts ? <td className="numeric"><SafelyFormattedNumber value={story.simple_tweet_count} /></td> : null;
-              if (story.publish_date === STORY_PUB_DATE_UNDATEABLE) {
-                dateToShow = formatMessage(localMessages.undateable);
-                dateStyle = 'story-date-undateable';
-              } else {
-                dateToShow = formatDate(storyPubDateToTimestamp(story.publish_date));
-                dateStyle = (story.date_is_reliable === 0) ? 'story-date-unreliable' : 'story-date-reliable';
-                if (story.date_is_reliable === 0) {
-                  dateToShow += '?';
-                }
-              }
+              const dateDisplay = safeStoryDate(story, intl);
               let listOfFoci = 'none';
               if (story.foci && story.foci.length > 0) {
                 listOfFoci = (
@@ -115,7 +98,7 @@ class TopicStoryTable extends React.Component {
                       {story.media_name}
                     </LinkWithFilters>
                   </td>
-                  <td><span className={`story-date ${dateStyle}`}>{dateToShow}</span></td>
+                  <td><span className={`story-date ${dateDisplay.style}`}>{dateDisplay.text}</span></td>
                   <td className="numeric"><SafelyFormattedNumber value={story.media_inlink_count} /></td>
                   <td className="numeric"><SafelyFormattedNumber value={story.outlink_count} /></td>
                   <td className="numeric"><SafelyFormattedNumber value={story.facebook_share_count} /></td>

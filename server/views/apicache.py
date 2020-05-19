@@ -1,6 +1,7 @@
 from server import mc, TOOL_API_KEY
 from server.cache import cache
-from server.auth import user_mediacloud_client, user_mediacloud_key, is_user_logged_in, user_admin_mediacloud_client
+from server.auth import user_mediacloud_client, user_mediacloud_key, is_user_logged_in, user_admin_mediacloud_client, \
+    user_is_admin
 
 
 def api_key():
@@ -100,5 +101,7 @@ def story(api_key, stories_id, **kwargs):
 
 @cache.cache_on_arguments()
 def _cached_story(api_key, stories_id, **kwargs):
-    local_client = mc_client(admin=True)
+    # important to respect admin here, because admins can see extra story info that is displayed
+    # on the admin->story page
+    local_client = user_admin_mediacloud_client() if user_is_admin() else mc_client()
     return local_client.story(stories_id, **kwargs)

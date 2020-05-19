@@ -13,8 +13,8 @@ const localMessages = {
   activeLabel: { id: 'user.update.active.label', defaultMessage: 'Active?' },
   nameError: { id: 'user.update.name.error', defaultMessage: 'You must have a name for this user.' },
   emailError: { id: 'user.update.url.error', defaultMessage: 'You must have an email for this user.' },
-  maxStoriesLabel: { id: 'user.update.maxStories', defaultMessage: 'Max Stories' },
-  weeklyQuotaLabel: { id: 'user.update.quota', defaultMessage: 'Weekly Quota' },
+  maxStoriesLabel: { id: 'user.update.maxStories', defaultMessage: 'Max Topic Stories' },
+  weeklyQuotaLabel: { id: 'user.update.quota', defaultMessage: 'Weekly Requests Quota' },
   hasConsented: { id: 'user.update.consented', defaultMessage: 'Has Consented' },
 };
 

@@ -46,6 +46,7 @@ Running the Apps
 ----------------
 
 You need to open two terminal windows and run one thing in each (so the hot-reloading can work):
+ * `redis-server` to start redis (if it's not running already)
  * `npm run topics-dev` or `npm run sources-dev`
  * `python run.py`
     - if you get flask errors, run the `pip install -r requirements.txt` line again. On Mac Osx, you may need to run with --ignore-installed

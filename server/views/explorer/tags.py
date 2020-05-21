@@ -38,8 +38,8 @@ def top_entities_organizations():
 
 
 @app.route('/api/explorer/tags/<tag_sets_id>/top-tags.csv', methods=['POST'])
-@api_error_handler
 @flask_login.login_required
+@api_error_handler
 def explorer_entities_csv(tag_sets_id):
     tag_set = apicache.tag_set(tag_sets_id)
     filename = 'sampled-{}'.format(tag_set['label'])
@@ -58,11 +58,4 @@ def top_themes():
     solr_q, solr_fq = parse_query_with_keywords(request.form)
     results = apicache.top_tags_with_coverage(solr_q, solr_fq, NYT_LABELS_TAG_SET_ID)
 
-    return jsonify(results)
-
-
-@app.route('/api/explorer/demo/themes', methods=['GET'])
-@api_error_handler
-def api_explorer_demo_top_themes():
-    results = demo_top_tags_with_coverage(NYT_LABELS_TAG_SET_ID)
     return jsonify(results)

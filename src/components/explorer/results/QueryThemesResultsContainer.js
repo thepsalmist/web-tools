@@ -7,7 +7,7 @@ import withUpdatingQuery from '../../common/hocs/UpdateQueryContainer';
 import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import ActionMenu from '../../common/ActionMenu';
 import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
-import { resetThemes, fetchTopThemes } from '../../../actions/explorerActions';
+import { fetchTopThemes } from '../../../actions/explorerActions';
 import { postToDownloadUrl, downloadExplorerSvg, COVERAGE_REQUIRED } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
@@ -129,7 +129,7 @@ export default
 injectIntl(
   connect(mapStateToProps)(
     withSummary(localMessages.title, localMessages.helpIntro, [localMessages.helpDetail, messages.nytThemeHelpDetails])(
-      withQueryResults(resetThemes, fetchTopThemes)(
+      withQueryResults(fetchTopThemes)(
         withLoginRequired(
           withUpdatingQuery(
             QueryThemesResultsContainer

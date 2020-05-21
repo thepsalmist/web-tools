@@ -8,9 +8,6 @@ export const setQueryWordCountSampleSize = createAction(SET_QUERY_WORD_COUNT_SAM
 export const UPDATE_TIMESTAMP_FOR_QUERIES = 'UPDATE_TIMESTAMP_FOR_QUERIES';
 export const updateTimestampForQueries = createAction(UPDATE_TIMESTAMP_FOR_QUERIES, queries => queries);
 
-export const RESET_WORD_SAMPLE_SENTENCES = 'RESET_WORD_SAMPLE_SENTENCES';
-export const resetWordSampleSentences = createAction(RESET_WORD_SAMPLE_SENTENCES);
-
 export const SAVE_PARSED_QUERIES = 'SAVE_PARSED_QUERIES';
 export const saveParsedQueries = createAction(SAVE_PARSED_QUERIES, searchParams => searchParams);
 
@@ -34,12 +31,6 @@ export const updateQuerySourceLookupInfo = createAction(UPDATE_QUERY_SOURCE_LOOK
 
 export const UPDATE_QUERY_SEARCH_LOOKUP_INFO = 'UPDATE_QUERY_SEARCH_LOOKUP_INFO';
 export const updateQuerySearchLookupInfo = createAction(UPDATE_QUERY_SEARCH_LOOKUP_INFO, query => query);
-
-export const RESET_ENTITIES_PEOPLE = 'RESET_ENTITIES_PEOPLE';
-export const resetEntitiesPeople = createAction(RESET_ENTITIES_PEOPLE);
-
-export const RESET_ENTITIES_ORGS = 'RESET_ENTITIES_ORGS';
-export const resetEntitiesOrgs = createAction(RESET_ENTITIES_ORGS);
 
 export const SELECT_WORD = 'SELECT_WORD';
 export const selectWord = createAction(SELECT_WORD, word => word);
@@ -81,35 +72,11 @@ export const removeNewStatusFromQueries = createAction(REMOVE_NEW_STATUS, params
 export const REMOVE_DELETED_QUERIES = 'REMOVE_DELETED_QUERIES';
 export const removeDeletedQueries = createAction(REMOVE_DELETED_QUERIES);
 
-export const RESET_QUERIES = 'RESET_QUERIES';
-export const resetQueries = createAction(RESET_QUERIES);
-
 export const RESET_SELECTED = 'RESET_SELECTED';
 export const resetSelected = createAction(RESET_SELECTED);
 
-export const RESET_STORY_SPLIT_COUNTS = 'RESET_STORY_SPLIT_COUNTS';
-export const resetSentenceCounts = createAction(RESET_STORY_SPLIT_COUNTS);
-
-export const RESET_QUERY_TOP_WORDS = 'RESET_QUERY_TOP_WORDS';
-export const resetTopWords = createAction(RESET_QUERY_TOP_WORDS);
-
 export const SWAP_SORT_QUERIES = 'SWAP_SORT_QUERIES';
 export const swapSortQueries = createAction(SWAP_SORT_QUERIES, props => props);
-
-export const RESET_QUERY_TOP_WORDS_COMPARISON = 'RESET_QUERY_TOP_WORDS_COMPARISON';
-export const resetTopWordsComparison = createAction(RESET_QUERY_TOP_WORDS_COMPARISON);
-
-export const RESET_SAMPLE_STORIES = 'RESET_SAMPLE_STORIES';
-export const resetSampleStories = createAction(RESET_SAMPLE_STORIES);
-
-export const RESET_STORY_COUNTS = 'RESET_STORY_COUNTS';
-export const resetStoryCounts = createAction(RESET_STORY_COUNTS);
-
-export const RESET_GEO = 'RESET_GEO';
-export const resetGeo = createAction(RESET_GEO);
-
-export const RESET_THEMES = 'RESET_THEMES';
-export const resetThemes = createAction(RESET_THEMES);
 
 export const SELECT_DATA_POINT = 'SELECT_DATA_POINT';
 export const setSentenceDataPoint = createAction(SELECT_DATA_POINT, params => params);

@@ -39,7 +39,7 @@ const Homepage = ({ isLoggedIn, onKeywordSearch, storyCount }) => (
         <Grid>
           <Row>
             <Col lg={12}>
-              <SearchForm onSearch={val => onKeywordSearch(val, isLoggedIn)} storyCount={storyCount} />
+              <SearchForm onSearch={val => onKeywordSearch(val)} storyCount={storyCount} />
             </Col>
           </Row>
         </Grid>
@@ -91,26 +91,19 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onKeywordSearch: (values, isLoggedIn) => {
-    let urlParamString;
+  onKeywordSearch: (values) => {
     const keyword = emptyString(values.keyword) ? '' : values.keyword;
-    if (isLoggedIn) {
-      const defaultDates = getDateRange(PAST_MONTH);
-      const queries = [{
-        q: keyword,
-        startDate: solrFormat(defaultDates.start),
-        endDate: solrFormat(defaultDates.end),
-        color: schemeCategory10[0],
-        collections: [DEFAULT_COLLECTION],
-        sources: [],
-      }];
-      queries[0].label = autoMagicQueryLabel(queries[0]);
-      urlParamString = `search?qs=${serializeQueriesForUrl(queries)}`;
-    } else {
-      const queries = [{ q: keyword }];
-      urlParamString = `demo/search?qs=${serializeQueriesForUrl(queries)}`;
-    }
-    dispatch(push(`/queries/${urlParamString}&auto=true`));
+    const defaultDates = getDateRange(PAST_MONTH);
+    const queries = [{
+      q: keyword,
+      startDate: solrFormat(defaultDates.start),
+      endDate: solrFormat(defaultDates.end),
+      color: schemeCategory10[0],
+      collections: [DEFAULT_COLLECTION],
+      sources: [],
+    }];
+    queries[0].label = autoMagicQueryLabel(queries[0]);
+    dispatch(push(`/queries/search?qs=${serializeQueriesForUrl(queries)}&auto=true`));
   },
 });
 

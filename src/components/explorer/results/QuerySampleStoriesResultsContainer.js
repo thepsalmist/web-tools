@@ -11,7 +11,7 @@ import withLoginRequired from '../../common/hocs/LoginRequiredDialog';
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import StoryTable from '../../common/StoryTable';
-import { fetchQuerySampleStories, fetchDemoQuerySampleStories, resetSampleStories } from '../../../actions/explorerActions';
+import { fetchQuerySampleStories, resetSampleStories } from '../../../actions/explorerActions';
 import { selectStory, resetStory, fetchStory } from '../../../actions/storyActions';
 import { postToDownloadUrl } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
@@ -140,7 +140,7 @@ injectIntl(
   connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withSummary(localMessages.title, localMessages.helpIntro, localMessages.helpDetails)(
       withLoginRequired(
-        withQueryResults([resetStory, resetSampleStories], fetchQuerySampleStories, fetchDemoQuerySampleStories)(
+        withQueryResults([resetStory, resetSampleStories], fetchQuerySampleStories)(
           QuerySampleStoriesResultsContainer
         )
       )

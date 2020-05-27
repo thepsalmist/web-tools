@@ -297,7 +297,7 @@ export function downloadExplorerSvg(queryLabel, type, domIdOrElement) {
 }
 
 export function uniqueQueryId() {
-  return uuidv4();
+  return `${uuidv4()}`;
 }
 
 export const formatQueryForServer = q => ({

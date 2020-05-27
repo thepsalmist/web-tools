@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "date": "2020-05-27",
+      "version": "v3.13.20",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Correctly display stories/day on media pages"
+        }
+      ]
+    },
+    {
       "date": "2020-05-18",
       "version": "v3.13.19",
       "notes": [

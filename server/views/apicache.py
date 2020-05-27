@@ -123,15 +123,14 @@ def _cached_top_tags(q, fq, tag_sets_id, sample_size=None):
 
 
 def story_list(api_key, q, fq, **kwargs):
-    # need to support API key here because we use this in Reponse contexts, where we can't fetch the API key out of the
-    # session
-    # post it so long queries work
-    return _cached_story_list(q, fq, http_method='POST', **kwargs)
+    # Need to support API key here because we use this in Response contexts, where we can't fetch the API key out of the
+    # session. Also post it so long queries work
+    return _cached_story_list(api_key, q, fq, http_method='POST', **kwargs)
 
 
 @cache.cache_on_arguments()
-def _cached_story_list(q, fq, **kwargs):
-    user_mc = user_mediacloud_client()
+def _cached_story_list(api_key, q, fq, **kwargs):
+    user_mc = user_mediacloud_client(api_key)
     return user_mc.storyList(q, fq,  **kwargs)
 
 

@@ -84,35 +84,9 @@ def api_explorer_searches_by_ids():
     return jsonify({"results": searches_results})
 
 
-@app.route('/api/explorer/demo/sources/list', methods=['GET'])
-@arguments_required('sources[]')
-@api_error_handler
-def api_explorer_demo_sources_by_ids():
-    source_list = []
-    source_id_array = request.args['sources[]'].split(',')
-    for media_id in source_id_array:
-        info = mc.media(media_id)
-        info['id'] = int(media_id)
-        source_list.append(info)
-    return jsonify(source_list)
-
-
-@app.route('/api/explorer/demo/collections/list', methods=['GET'])
-@arguments_required('collections[]')
-@api_error_handler
-def api_explorer_demo_collections_by_ids():
-    collection_ids = request.args['collections[]'].split(',')
-    coll_list = []
-    for tags_id in collection_ids:
-        if len(tags_id) > 0:
-            info = mc.tag(tags_id)
-            info['id'] = tags_id
-            coll_list.append(info)
-    return jsonify({"results": coll_list})
-
-
 # TODO use this or the other collection list retrieval?
 @app.route('/api/explorer/set/<tag_sets_id>', methods=['GET'])
+@flask_login.login_required
 @api_error_handler
 def api_explorer_collection_set(tag_sets_id):
     """

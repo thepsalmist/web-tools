@@ -310,12 +310,3 @@ export const formatQueryForServer = q => ({
   collections: q.collections.map(c => c.id),
   searches: serializeSearchTags(q.searches),
 });
-
-export const formatDemoQueryForServer = (q, index) => ({
-  index, // should be same as q.index btw
-  search_id: q.searchId, // may or may not have these
-  query_id: q.id,
-  q: q.q, // only if no query id, means demo user added a keyword
-  uid: q.uid,
-  sortPosition: q.sortPosition,
-});

@@ -4,7 +4,7 @@ import { PLATFORM_OPEN_WEB, MEDIA_CLOUD_SOURCE } from '../platformTypes';
 export const platformQueryParams = [
   'platform_type', 'platform_query', 'platform_channel', 'platform_source',
   'start_date', 'end_date',
-  'sources[]', 'collections[]', 'searches[]',
+  'sources[]', 'collections[]', 'searches[]', // TODO: elimate these and put them under `platform_channel`
 ];
 
 // default to open web / MC from start of project until now
@@ -34,4 +34,9 @@ export function platformWords(params) {
 export function platformSample(params) {
   const acceptedParams = acceptParams(params, platformQueryParams);
   return createPostingApiPromise('/api/platforms/sample', { ...defaultPlatformQueryParams, ...acceptedParams });
+}
+
+export function platformTags(params) {
+  const acceptedParams = acceptParams(params, platformQueryParams);
+  return createPostingApiPromise('/api/platforms/tags', { ...defaultPlatformQueryParams, ...acceptedParams });
 }

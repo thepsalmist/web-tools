@@ -4,7 +4,6 @@ import { createIndexedAsyncReducer } from '../../lib/reduxHelpers';
 const sample = createIndexedAsyncReducer({
   initialState: {
     list: [],
-    links_ids: {},
     supported: true,
   },
   action: FETCH_PLATFORM_SAMPLE,

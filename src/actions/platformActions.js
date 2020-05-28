@@ -12,3 +12,6 @@ export const fetchPlatformCountOverTime = createAsyncAction(FETCH_PLATFORM_COUNT
 
 export const FETCH_PLATFORM_WORDS = 'FETCH_PLATFORM_WORDS';
 export const fetchPlatformWords = createAsyncAction(FETCH_PLATFORM_WORDS, api.platformWords);
+
+export const FETCH_PLATFORM_TAGS = 'FETCH_PLATFORM_TAGS';
+export const fetchPlatformTags = createAsyncAction(FETCH_PLATFORM_TAGS, api.platformTags);

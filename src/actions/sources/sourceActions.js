@@ -26,9 +26,5 @@ export const fetchSourceWithNameExists = createAsyncAction(FETCH_SOURCE_WITH_NAM
 export const FETCH_SOURCE_REVIEW_INFO = 'FETCH_SOURCE_REVIEW_INFO';
 export const fetchSourceReviewInfo = createAsyncAction(FETCH_SOURCE_REVIEW_INFO, api.fetchSourceReviewInfo, id => id);
 
-
-export const FETCH_SOURCE_GEO = 'FETCH_SOURCE_GEO';
-export const fetchSourceGeo = createAsyncAction(FETCH_SOURCE_GEO, api.sourceGeography, id => id);
-
 export const CREATE_NEW_SOURCE = 'CREATE_NEW_SOURCE';
 export const createSource = createAsyncAction(CREATE_NEW_SOURCE, api.createSource);

@@ -9,7 +9,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { getBrandDarkColor } from '../../../styles/colors';
 import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import { fetchSourceSplitStoryCount } from '../../../actions/sourceActions';
+import { fetchPlatformCountOverTime } from '../../../actions/platformActions';
 import DataCard from '../../common/DataCard';
 import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTimeChart';
 import messages from '../../../resources/messages';
@@ -19,7 +19,7 @@ import { DownloadButton } from '../../common/IconButton';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 import { VIEW_REGULARLY_COLLECTED, VIEW_ALL_STORIES } from '../../../lib/mediaUtil';
 import { PAST_WEEK } from '../../../lib/dateUtil';
-
+import { TAG_SPIDERED_STORY } from '../../../lib/tagUtil';
 
 const localMessages = {
   partialTitle: { id: 'source.summary.splitCount.title', defaultMessage: 'Volume of Stories Over Time (regularly collected stories)' },
@@ -103,13 +103,12 @@ class SourceSplitStoryCountContainer extends React.Component {
         <AttentionOverTimeChart
           total={stories.total}
           series={[{
-            ...dataAsSeries(stories.list),
+            ...dataAsSeries(stories.counts),
             id: 0,
             name: sourceName,
             color: getBrandDarkColor(),
             showInLegend: false,
           }]}
-          health={stories.health}
           height={250}
           filename={filename}
           onDataPointClick={this.handleDataPointClick}
@@ -137,12 +136,17 @@ SourceSplitStoryCountContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.sources.sources.selected.splitStoryCount.fetchStatus,
-  allStories: state.sources.sources.selected.splitStoryCount.all_stories,
-  partialStories: state.sources.sources.selected.splitStoryCount.partial_stories,
+  fetchStatus: state.platforms.countOverTime.fetchStatus,
+  allStories: state.platforms.countOverTime.results.sourceTotal,
+  partialStories: state.platforms.countOverTime.results.sourceNonSpidered,
 });
 
-const fetchAsyncData = (dispatch, { sourceId }) => dispatch(fetchSourceSplitStoryCount(sourceId, { separate_spidered: true }));
+const fetchAsyncData = (dispatch, { sourceId }) => {
+  // grab all results
+  dispatch(fetchPlatformCountOverTime({ uid: 'sourceTotal', platform_query: `media_id:${sourceId}` }));
+  // and also grab just the non-spidered stories
+  dispatch(fetchPlatformCountOverTime({ uid: 'sourceNonSpidered', platform_query: `media_id:${sourceId} AND NOT tags_id_stories:${TAG_SPIDERED_STORY}` }));
+};
 
 export default
 injectIntl(

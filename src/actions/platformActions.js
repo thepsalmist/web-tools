@@ -1,7 +1,6 @@
 import { createAsyncAction } from '../lib/reduxHelpers';
 import * as api from '../lib/serverApi/platforms';
 
-
 export const FETCH_PLATFORM_COUNT = 'FETCH_PLATFORM_COUNT';
 export const fetchPlatformCount = createAsyncAction(FETCH_PLATFORM_COUNT, api.platformCount);
 

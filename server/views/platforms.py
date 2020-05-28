@@ -30,10 +30,14 @@ def _info_from_request():
     if platform == PLATFORM_REDDIT:
         options = {'subreddits': json.loads(channel)}
     elif (platform == PLATFORM_OPEN_WEB) and (source == PLATFORM_SOURCE_MEDIA_CLOUD):
-        media = json.loads(channel)
-        sources = media['sources[]'] if 'sources[]' in media and 'sources' not in [None, ''] else ''
-        collections = media['collections[]'] if 'collections[]' in media else ''
-        options = {'sources': sources, 'collections': collections}
+        # the sources and collections might be encoded in the query string, so don't require them separately
+        if channel and len(channel) > 0:
+            media = json.loads(channel)
+            sources = media['sources[]'] if 'sources[]' in media and 'sources' not in [None, ''] else ''
+            collections = media['collections[]'] if 'collections[]' in media else ''
+            options = {'sources': sources, 'collections': collections}
+        else:
+            options = {}
     elif (platform == PLATFORM_TWITTER) and (source == PLATFORM_SOURCE_CRIMSON_HEXAGON):
         options = {'monitor_id': query}
         query = ''

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 from flask import request, jsonify
 import flask_login
@@ -12,7 +11,7 @@ from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_
 from server.util.request import arguments_required, form_fields_required, api_error_handler
 from server.util.tags import TAG_SETS_ID_PUBLICATION_COUNTRY, TAG_SETS_ID_PUBLICATION_STATE, VALID_COLLECTION_TAG_SETS_IDS, \
     TAG_SETS_ID_PRIMARY_LANGUAGE, TAG_SETS_ID_COUNTRY_OF_FOCUS, TAG_SETS_ID_MEDIA_TYPE, TAG_SET_GEOCODER_VERSION, \
-    TAG_SET_NYT_LABELS_VERSION, is_metadata_tag_set, TAG_SPIDERED_STORY
+    TAG_SET_NYT_LABELS_VERSION, is_metadata_tag_set
 from server.views.sources.words import word_count, stream_wordcount_csv
 from server.views.sources.geocount import stream_geo_csv, cached_geotag_count
 from server.views.sources.stories_split_by_time import stream_split_stories_csv
@@ -155,33 +154,6 @@ def api_media_source_scrape_feeds(media_id):
 def source_split_stories_csv(media_id):
     return stream_split_stories_csv(user_mediacloud_key(), 'splitStoryCounts-Source-{}'.format(media_id),
                                     "media_id:{}".format(media_id))
-
-
-@app.route('/api/sources/<media_id>/story-split/count')
-@flask_login.login_required
-@api_error_handler
-def api_media_source_split_stories(media_id):
-    media_query = 'media_id:' + str(media_id)
-    exclude_spidered_stories = " media_id:{} AND NOT tags_id_stories:{}".format(str(media_id), TAG_SPIDERED_STORY)\
-        if 'separate_spidered' in request.args else media_query
-
-    health = _cached_media_source_health(user_mediacloud_key(), media_id)
-
-    all_results = apicache.split_story_count(user_mediacloud_key(), media_query, None)
-    # returns same results if request.args doesn't ask to exclude_spidered
-    non_spidered_results = apicache.split_story_count(user_mediacloud_key(), exclude_spidered_stories, None)
-
-    all_stories = {
-        'total_story_count': all_results['total_story_count'],
-        'health': health,
-        'list': all_results['counts'],
-    }
-    partial_stories = {
-        'total_story_count': non_spidered_results['total_story_count'],
-        'health': health,
-        'list': non_spidered_results['counts'],
-    }
-    return jsonify({'results': {'all_stories': all_stories, 'partial_stories': partial_stories}})
 
 
 @app.route('/api/sources/<media_id>/geography')

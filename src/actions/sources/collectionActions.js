@@ -65,3 +65,6 @@ export const createSourcesByUrl = createAsyncAction(CREATE_SOURCES_FROM_URLS, ap
 export const removeSourcesFromCollection = createAsyncAction(REMOVE_SOURCES_FROM_COLLECTION, api.removeSourcesFromCollection, props => props);
 
 export const fetchCollectionWithNameExists = createAsyncAction(FETCH_COLLECTION_NAME_EXISTS, api.fetchCollectionWithNameExists, id => id);
+
+export const FETCH_GEO_COLLECTIONS_BY_COUNTRY = 'FETCH_GEO_COLLECTIONS_BY_COUNTRY';
+export const fetchGeoCollectionsByCountry = createAsyncAction(FETCH_GEO_COLLECTIONS_BY_COUNTRY, api.fetchGeoCollectionsByCountry);

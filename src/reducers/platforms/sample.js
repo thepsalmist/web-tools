@@ -1,7 +1,7 @@
 import { FETCH_PLATFORM_SAMPLE } from '../../actions/platformActions';
-import { createAsyncReducer } from '../../lib/reduxHelpers';
+import { createIndexedAsyncReducer } from '../../lib/reduxHelpers';
 
-const sample = createAsyncReducer({
+const sample = createIndexedAsyncReducer({
   initialState: {
     list: [],
     links_ids: {},

@@ -60,7 +60,7 @@ def api_explorer_compare_words():
 
 
 def query_wordcount(q, fq, ngram_size=1, num_words=WORD_COUNT_UI_NUM_WORDS, sample_size=WORD_COUNT_SAMPLE_SIZE):
-    word_data = apicache.word_count(q, fq, ngram_size, num_words, sample_size)
+    word_data = base_apicache.word_count(q, fq, ngram_size=ngram_size, num_words=num_words, sample_size=sample_size)
     # add in word2vec results
     words = [w['term'] for w in word_data]
     # and now add in word2vec model position data

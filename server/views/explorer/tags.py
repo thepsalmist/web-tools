@@ -11,6 +11,7 @@ from server.util.request import api_error_handler
 from server.util.tags import CLIFF_PEOPLE, CLIFF_ORGS, NYT_LABELS_TAG_SET_ID
 from server.views.explorer import parse_query_with_keywords, file_name_for_download
 import server.views.explorer.apicache as apicache
+import server.views.apicache as base_apicache
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +42,7 @@ def top_entities_organizations():
 @flask_login.login_required
 @api_error_handler
 def explorer_entities_csv(tag_sets_id):
-    tag_set = apicache.tag_set(tag_sets_id)
+    tag_set = base_apicache.tag_set(tag_sets_id)
     filename = 'sampled-{}'.format(tag_set['label'])
     data = request.form
     query_object = json.loads(data['q'])

@@ -123,13 +123,50 @@ class EditableWordCloudDataCard extends React.Component {
   buildActionMenu = (uniqueDomId) => {
     const { includeTopicWord2Vec, hideGoogleWord2Vec, actionMenuHeaderText, actionsAsLinksUnderneath, svgDownloadPrefix, onViewSampleSizeClick, initSampleSize, extraActionMenu } = this.props;
     const { formatMessage } = this.props.intl;
-    let topicWord2VecMenuItem;
     let wcChoice = <FormattedMessage {...messages.editWordCloud} />;
     if (this.state.editing) {
       wcChoice = <FormattedMessage {...messages.viewWordCloud} />;
     }
-    if (includeTopicWord2Vec === true) {
-      topicWord2VecMenuItem = (
+    const actionMenuSubHeaderContent = actionMenuHeaderText ? <Subheader>{actionMenuHeaderText}</Subheader> : null;
+    const sampleSizeOptions = [
+      <MenuItem
+        className="action-icon-menu-item"
+        disabled={initSampleSize === VIEW_1K}
+        onClick={() => onViewSampleSizeClick(VIEW_1K)}
+      >
+        <FormattedMessage {...localMessages.sampleSize1k} />
+      </MenuItem>,
+      <MenuItem
+        className="action-icon-menu-item"
+        disabled={initSampleSize === VIEW_10K}
+        onClick={() => onViewSampleSizeClick(VIEW_10K)}
+      >
+        <FormattedMessage {...localMessages.sampleSize10k} />
+      </MenuItem>,
+      <Divider />,
+      <MenuItem
+        className="action-icon-menu-item"
+        onClick={this.goToBlog}
+      >
+        <FormattedMessage {...localMessages.learnMore} />
+      </MenuItem>,
+    ];
+    const viewOptions = [
+      <MenuItem
+        className="action-icon-menu-item"
+        disabled={this.state.editing || this.state.view === VIEW_ORDERED}
+        onClick={() => this.setView(VIEW_ORDERED)}
+      >
+        <FormattedMessage {...localMessages.modeOrdered} />
+      </MenuItem>,
+      <MenuItem
+        className="action-icon-menu-item"
+        disabled={this.state.editing || this.state.view === VIEW_CLOUD}
+        onClick={() => this.setView(VIEW_CLOUD)}
+      >
+        <FormattedMessage {...localMessages.modeCloud} />
+      </MenuItem>,
+      includeTopicWord2Vec ? (
         <MenuItem
           className="action-icon-menu-item"
           disabled={this.state.editing || this.state.view === VIEW_TOPIC_W2V}
@@ -137,11 +174,8 @@ class EditableWordCloudDataCard extends React.Component {
         >
           {formatMessage(localMessages.modeTopicW2V)}
         </MenuItem>
-      );
-    }
-    let googleWord2VecMenuItem;
-    if (hideGoogleWord2Vec !== true) {
-      googleWord2VecMenuItem = (
+      ) : null,
+      hideGoogleWord2Vec !== true ? (
         <MenuItem
           className="action-icon-menu-item"
           disabled={this.state.editing || this.state.view === VIEW_GOOGLE_W2V}
@@ -149,114 +183,66 @@ class EditableWordCloudDataCard extends React.Component {
         >
           <FormattedMessage {...localMessages.modeGoogleW2V} />
         </MenuItem>
-      );
-    }
-    const actionMenuSubHeaderContent = actionMenuHeaderText ? <Subheader>{actionMenuHeaderText}</Subheader> : null;
-    const sampleSizeOptions = (
-      <>
-        <MenuItem
-          className="action-icon-menu-item"
-          disabled={initSampleSize === VIEW_1K}
-          onClick={() => onViewSampleSizeClick(VIEW_1K)}
-        >
-          <FormattedMessage {...localMessages.sampleSize1k} />
-        </MenuItem>
-        <MenuItem
-          className="action-icon-menu-item"
-          disabled={initSampleSize === VIEW_10K}
-          onClick={() => onViewSampleSizeClick(VIEW_10K)}
-        >
-          <FormattedMessage {...localMessages.sampleSize10k} />
-        </MenuItem>
-        <Divider />
-        <MenuItem
-          className="action-icon-menu-item"
-          onClick={this.goToBlog}
-        >
-          <FormattedMessage {...localMessages.learnMore} />
-        </MenuItem>
-      </>
-    );
-    const viewOptions = (
-      <>
-        <MenuItem
-          className="action-icon-menu-item"
-          disabled={this.state.editing || this.state.view === VIEW_ORDERED}
-          onClick={() => this.setView(VIEW_ORDERED)}
-        >
-          <FormattedMessage {...localMessages.modeOrdered} />
-        </MenuItem>
-        <MenuItem
-          className="action-icon-menu-item"
-          disabled={this.state.editing || this.state.view === VIEW_CLOUD}
-          onClick={() => this.setView(VIEW_CLOUD)}
-        >
-          <FormattedMessage {...localMessages.modeCloud} />
-        </MenuItem>
-        {topicWord2VecMenuItem}
-        {googleWord2VecMenuItem}
-        <Divider />
-        <MenuItem
-          className="action-icon-menu-item"
-          disabled={this.state.view !== VIEW_ORDERED} // can only edit in ordered mode
-          onClick={this.toggleEditing}
-        >
-          <ListItemText>{wcChoice}</ListItemText>
-          {(this.state.view === VIEW_ORDERED) ? <ListItemIcon><EditButton /></ListItemIcon> : ''}
-        </MenuItem>
-      </>
-    );
-    const downloadOptions = (
-      <>
-        <MenuItem
-          className="action-icon-menu-item"
-          disabled={this.state.editing} // can't download until done editing
-          onClick={() => this.downloadCsv(1)}
-        >
-          <ListItemText><FormattedMessage {...localMessages.downloadWordCSV} /></ListItemText>
-          <ListItemIcon>
-            <DownloadButton />
-          </ListItemIcon>
-        </MenuItem>
-        <MenuItem
-          className="action-icon-menu-item"
-          disabled={this.state.editing} // can't download until done editing
-          onClick={() => this.downloadCsv(2)}
-        >
-          <ListItemText><FormattedMessage {...localMessages.downloadBigramCSV} /></ListItemText>
-          <ListItemIcon>
-            <DownloadButton />
-          </ListItemIcon>
-        </MenuItem>
-        <MenuItem
-          className="action-icon-menu-item"
-          disabled={this.state.editing} // can't download until done editing
-          onClick={() => this.downloadCsv(3)}
-        >
-          <FormattedMessage {...localMessages.downloadTrigramCSV} />
-        </MenuItem>
-        <MenuItem
-          className="action-icon-menu-item"
-          disabled={this.state.editing} // can't download until done editing
-          onClick={() => {
-            let domIdOrElement;
-            if (this.state.ordered) { // tricky to get the correct element to serialize
-              domIdOrElement = uniqueDomId;
-            } else {
-              const svgChild = document.getElementById(uniqueDomId);
-              domIdOrElement = svgChild.firstChild;
-            }
-            const filename = svgDownloadPrefix || 'word-cloud';
-            downloadSvg(filename, domIdOrElement);
-          }}
-        >
-          <ListItemText><FormattedMessage {...messages.downloadSVG} /></ListItemText>
-          <ListItemIcon>
-            <DownloadButton />
-          </ListItemIcon>
-        </MenuItem>
-      </>
-    );
+      ) : null,
+      <Divider />,
+      <MenuItem
+        className="action-icon-menu-item"
+        disabled={this.state.view !== VIEW_ORDERED} // can only edit in ordered mode
+        onClick={this.toggleEditing}
+      >
+        <ListItemText>{wcChoice}</ListItemText>
+        {(this.state.view === VIEW_ORDERED) ? <ListItemIcon><EditButton /></ListItemIcon> : ''}
+      </MenuItem>,
+    ];
+    const downloadOptions = [
+      <MenuItem
+        className="action-icon-menu-item"
+        disabled={this.state.editing} // can't download until done editing
+        onClick={() => this.downloadCsv(1)}
+      >
+        <ListItemText><FormattedMessage {...localMessages.downloadWordCSV} /></ListItemText>
+        <ListItemIcon>
+          <DownloadButton />
+        </ListItemIcon>
+      </MenuItem>,
+      <MenuItem
+        className="action-icon-menu-item"
+        disabled={this.state.editing} // can't download until done editing
+        onClick={() => this.downloadCsv(2)}
+      >
+        <ListItemText><FormattedMessage {...localMessages.downloadBigramCSV} /></ListItemText>
+        <ListItemIcon>
+          <DownloadButton />
+        </ListItemIcon>
+      </MenuItem>,
+      <MenuItem
+        className="action-icon-menu-item"
+        disabled={this.state.editing} // can't download until done editing
+        onClick={() => this.downloadCsv(3)}
+      >
+        <FormattedMessage {...localMessages.downloadTrigramCSV} />
+      </MenuItem>,
+      <MenuItem
+        className="action-icon-menu-item"
+        disabled={this.state.editing} // can't download until done editing
+        onClick={() => {
+          let domIdOrElement;
+          if (this.state.ordered) { // tricky to get the correct element to serialize
+            domIdOrElement = uniqueDomId;
+          } else {
+            const svgChild = document.getElementById(uniqueDomId);
+            domIdOrElement = svgChild.firstChild;
+          }
+          const filename = svgDownloadPrefix || 'word-cloud';
+          downloadSvg(filename, domIdOrElement);
+        }}
+      >
+        <ListItemText><FormattedMessage {...messages.downloadSVG} /></ListItemText>
+        <ListItemIcon>
+          <DownloadButton />
+        </ListItemIcon>
+      </MenuItem>,
+    ];
     // now build the menu options as appropriate
     let actionMenuContent;
     if (actionsAsLinksUnderneath) {

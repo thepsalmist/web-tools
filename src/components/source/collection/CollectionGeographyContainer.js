@@ -5,12 +5,13 @@ import { connect } from 'react-redux';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import GeoChart from '../../vis/GeoChart';
 import DataCard from '../../common/DataCard';
-import { fetchCollectionGeo } from '../../../actions/sourceActions';
+import { fetchPlatformTags } from '../../../actions/platformActions';
 import messages from '../../../resources/messages';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import { DownloadButton } from '../../common/IconButton';
 import { getBrandLightColor } from '../../../styles/colors';
 import { getCurrentDate, oneMonthBefore } from '../../../lib/dateUtil';
+import { TAG_SET_GEOGRAPHIC_PLACES } from '../../../lib/tagUtil';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 
 const localMessages = {
@@ -69,11 +70,15 @@ CollectionGeographyContainer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  fetchStatus: state.sources.collections.selected.collectionGeoTag.fetchStatus,
-  geolist: state.sources.collections.selected.collectionGeoTag.list,
+  fetchStatus: state.platforms.tags.fetchStatus,
+  geolist: state.platforms.tags.results.collection ? state.platforms.tags.results.collection.results : [],
 });
 
-const fetchAsyncData = (dispatch, { collectionId }) => dispatch(fetchCollectionGeo(collectionId));
+const fetchAsyncData = (dispatch, { collectionId }) => dispatch(fetchPlatformTags({
+  uid: 'collection',
+  platform_query: `tags_id_media:${collectionId}`,
+  platform_channel: JSON.stringify({ tags_sets_id: TAG_SET_GEOGRAPHIC_PLACES }),
+}));
 
 export default
 injectIntl(

@@ -121,7 +121,7 @@ class EditableWordCloudDataCard extends React.Component {
   };
 
   buildActionMenu = (uniqueDomId) => {
-    const { includeTopicWord2Vec, hideGoogleWord2Vec, actionMenuHeaderText, actionsAsLinksUnderneath, svgDownloadPrefix, onViewSampleSizeClick, initSampleSize } = this.props;
+    const { includeTopicWord2Vec, hideGoogleWord2Vec, actionMenuHeaderText, actionsAsLinksUnderneath, svgDownloadPrefix, onViewSampleSizeClick, initSampleSize, extraActionMenu } = this.props;
     const { formatMessage } = this.props.intl;
     let topicWord2VecMenuItem;
     let wcChoice = <FormattedMessage {...messages.editWordCloud} />;
@@ -153,7 +153,7 @@ class EditableWordCloudDataCard extends React.Component {
     }
     const actionMenuSubHeaderContent = actionMenuHeaderText ? <Subheader>{actionMenuHeaderText}</Subheader> : null;
     const sampleSizeOptions = (
-      <span>
+      <>
         <MenuItem
           className="action-icon-menu-item"
           disabled={initSampleSize === VIEW_1K}
@@ -175,10 +175,10 @@ class EditableWordCloudDataCard extends React.Component {
         >
           <FormattedMessage {...localMessages.learnMore} />
         </MenuItem>
-      </span>
+      </>
     );
     const viewOptions = (
-      <span>
+      <>
         <MenuItem
           className="action-icon-menu-item"
           disabled={this.state.editing || this.state.view === VIEW_ORDERED}
@@ -204,10 +204,10 @@ class EditableWordCloudDataCard extends React.Component {
           <ListItemText>{wcChoice}</ListItemText>
           {(this.state.view === VIEW_ORDERED) ? <ListItemIcon><EditButton /></ListItemIcon> : ''}
         </MenuItem>
-      </span>
+      </>
     );
     const downloadOptions = (
-      <span>
+      <>
         <MenuItem
           className="action-icon-menu-item"
           disabled={this.state.editing} // can't download until done editing
@@ -255,13 +255,14 @@ class EditableWordCloudDataCard extends React.Component {
             <DownloadButton />
           </ListItemIcon>
         </MenuItem>
-      </span>
+      </>
     );
     // now build the menu options as appropriate
     let actionMenuContent;
     if (actionsAsLinksUnderneath) {
       actionMenuContent = (
         <div className="action-menu-set">
+          {extraActionMenu}
           <ActionMenu actionTextMsg={messages.viewSampleOptions}>
             {actionMenuSubHeaderContent}
             {sampleSizeOptions}
@@ -446,6 +447,7 @@ EditableWordCloudDataCard.propTypes = {
   explore: PropTypes.oneOfType([PropTypes.object, PropTypes.string]), // show an exlore button and link it to this URL
   helpButton: PropTypes.node, // pass in a helpButton to render to the right of the H2 title
   subtitleContent: PropTypes.object, // shows up to the right of the H2 title
+  extraActionMenu: PropTypes.node, // shows up to the left of all the other action menus on the bottom of the datacard
   subHeaderContent: PropTypes.object, // shows up under the H2 title, above the word cloud
   actionMenuHeaderText: PropTypes.string, // text to put as a subheader in the action menu popup
   includeTopicWord2Vec: PropTypes.bool, // show an option to draw a word2vec map basde on w2v_x / w2v_y from topic-specific model

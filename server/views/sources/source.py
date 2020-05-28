@@ -184,20 +184,6 @@ def source_wordcount_csv(media_id):
     return stream_wordcount_csv(user_mediacloud_key(), 'wordcounts-Source-'+media_id, solr_q, solr_fq)
 
 
-@app.route('/api/sources/<media_id>/words')
-@flask_login.login_required
-@api_error_handler
-def media_source_words(media_id):
-    solr_q = 'media_id:'+str(media_id)
-    solr_fq = None
-    if ('q' in request.args) and (len(request.args['q']) > 0):
-        solr_fq = request.args['q']
-    info = {
-        'wordcounts': word_count(user_mediacloud_key(), solr_q, solr_fq)
-    }
-    return jsonify({'results': info})
-
-
 @app.route('/api/sources/create', methods=['POST'])
 @form_fields_required('name', 'url')
 @flask_login.login_required

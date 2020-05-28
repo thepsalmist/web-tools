@@ -8,7 +8,6 @@ import { calculateTimePeriods } from '../../lib/dateUtil';
 const PeriodicEditableWordCloudDataCard = props => (
   <EditableWordCloudDataCard
     words={props.words}
-    subtitleContent={props.timePeriodControls}
     downloadUrl={`${props.downloadUrl}?q=${calculateTimePeriods(props.selectedTimePeriod)}`}
     targetURL={props.targetURL}
     onViewModeClick={props.onViewModeClick}
@@ -16,6 +15,8 @@ const PeriodicEditableWordCloudDataCard = props => (
     width={props.width || 520}
     title={props.title}
     helpButton={props.helpButton}
+    extraActionMenu={props.timePeriodMenu}
+    actionsAsLinksUnderneath
   />
 );
 
@@ -39,7 +40,7 @@ PeriodicEditableWordCloudDataCard.propTypes = {
   onViewModeClick: PropTypes.func.isRequired,
   domId: PropTypes.string.isRequired,
   // from compositional chain
-  timePeriodControls: PropTypes.node.isRequired,
+  timePeriodMenu: PropTypes.node.isRequired,
   intl: PropTypes.object.isRequired,
 };
 

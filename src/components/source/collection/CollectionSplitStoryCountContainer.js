@@ -9,7 +9,7 @@ import Divider from '@material-ui/core/Divider';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchPlatformCountOverTime } from '../../../actions/platformActions';
 import DataCard from '../../common/DataCard';
-import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTimeChart';
+import AttentionOverTimeChart, { dataAsSeries, downloadData } from '../../vis/AttentionOverTimeChart';
 import { getBrandDarkColor } from '../../../styles/colors';
 import messages from '../../../resources/messages';
 import ActionMenu from '../../common/ActionMenu';
@@ -37,17 +37,20 @@ const localMessages = {
 
 class CollectionSplitStoryCountContainer extends React.Component {
   state = {
-    storyCollection: VIEW_REGULARLY_COLLECTED,
+    viewMode: VIEW_REGULARLY_COLLECTED,
   }
 
   onIncludeSpidered = (d) => {
-    this.setState({ storyCollection: d }); // reset this to trigger a re-render
+    this.setState({ viewMode: d }); // reset this to trigger a re-render
   }
 
   downloadCsv = () => {
-    const { collectionId } = this.props;
-    const url = `/api/collections/${collectionId}/story-split/count.csv`;
-    window.location = url;
+    // generate and download client side
+    const { collectionId, allStories, partialStories } = this.props;
+    const data = (this.state.viewMode === VIEW_ALL_STORIES) ? allStories : partialStories;
+    const prefix = (this.state.viewMode === VIEW_ALL_STORIES) ? 'all' : 'regularly-collected';
+    const filename = `collection-${collectionId}-${prefix}-attention.csv`;
+    downloadData(filename, data.counts);
   }
 
   handleDataPointClick = (startDate, endDate) => {
@@ -65,7 +68,7 @@ class CollectionSplitStoryCountContainer extends React.Component {
     const { formatMessage, formatNumber } = intl;
     let stories = partialStories;
     let title = localMessages.partialTitle;
-    if (this.state.storyCollection === VIEW_ALL_STORIES) {
+    if (this.state.viewMode === VIEW_ALL_STORIES) {
       stories = allStories;
       title = localMessages.allTitle;
     }

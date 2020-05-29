@@ -3,6 +3,8 @@ import React from 'react';
 import { injectIntl, FormattedHTMLMessage, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import MenuItem from '@material-ui/core/MenuItem';
+import * as CSV from 'csv-string';
+import { downloadText } from 'download.js';
 import Link from 'react-router/lib/Link';
 import Divider from '@material-ui/core/Divider';
 import Subheader from '@material-ui/core/ListSubheader';
@@ -95,10 +97,10 @@ class EditableWordCloudDataCard extends React.Component {
   };
 
   downloadCsv = (ngramSize) => {
-    const { downloadUrl, onDownload } = this.props;
+    const { downloadUrl, onDownload, words } = this.props;
     const sampleSize = this.props.initSampleSize;
     if (onDownload) {
-      onDownload(ngramSize);
+      onDownload(ngramSize, sampleSize, words);
     } else {
       let url = downloadUrl;
       // be smart about tacking on hte ngram size requested automatically here
@@ -121,7 +123,7 @@ class EditableWordCloudDataCard extends React.Component {
   };
 
   buildActionMenu = (uniqueDomId) => {
-    const { includeTopicWord2Vec, hideGoogleWord2Vec, actionMenuHeaderText, actionsAsLinksUnderneath, svgDownloadPrefix, onViewSampleSizeClick, initSampleSize, extraActionMenu } = this.props;
+    const { onDownload, includeTopicWord2Vec, hideGoogleWord2Vec, actionMenuHeaderText, actionsAsLinksUnderneath, svgDownloadPrefix, onViewSampleSizeClick, initSampleSize, extraActionMenu } = this.props;
     const { formatMessage } = this.props.intl;
     let wcChoice = <FormattedMessage {...messages.editWordCloud} />;
     if (this.state.editing) {
@@ -205,23 +207,27 @@ class EditableWordCloudDataCard extends React.Component {
           <DownloadButton />
         </ListItemIcon>
       </MenuItem>,
-      <MenuItem
-        className="action-icon-menu-item"
-        disabled={this.state.editing} // can't download until done editing
-        onClick={() => this.downloadCsv(2)}
-      >
-        <ListItemText><FormattedMessage {...localMessages.downloadBigramCSV} /></ListItemText>
-        <ListItemIcon>
-          <DownloadButton />
-        </ListItemIcon>
-      </MenuItem>,
-      <MenuItem
-        className="action-icon-menu-item"
-        disabled={this.state.editing} // can't download until done editing
-        onClick={() => this.downloadCsv(3)}
-      >
-        <FormattedMessage {...localMessages.downloadTrigramCSV} />
-      </MenuItem>,
+      !onDownload && (
+        <MenuItem
+          className="action-icon-menu-item"
+          disabled={this.state.editing} // can't download until done editing
+          onClick={() => this.downloadCsv(2)}
+        >
+          <ListItemText><FormattedMessage {...localMessages.downloadBigramCSV} /></ListItemText>
+          <ListItemIcon>
+            <DownloadButton />
+          </ListItemIcon>
+        </MenuItem>
+      ),
+      !onDownload && (
+        <MenuItem
+          className="action-icon-menu-item"
+          disabled={this.state.editing} // can't download until done editing
+          onClick={() => this.downloadCsv(3)}
+        >
+          <FormattedMessage {...localMessages.downloadTrigramCSV} />
+        </MenuItem>
+      ),
       <MenuItem
         className="action-icon-menu-item"
         disabled={this.state.editing} // can't download until done editing
@@ -455,3 +461,10 @@ injectIntl(
     EditableWordCloudDataCard
   )
 );
+
+export const downloadData = (filename, data, sampleSize) => {
+  const headers = ['count', 'term', 'stem', 'sample-size'];
+  const dataAsRows = data.map(item => [item.count, item.term, item.stem, sampleSize || '']);
+  const csvStr = CSV.stringify([headers, ...dataAsRows]);
+  downloadText(filename, csvStr);
+};

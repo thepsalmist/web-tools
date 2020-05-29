@@ -7,6 +7,7 @@ import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
 import PeriodicEditableWordCloudDataCard from '../../common/PeriodicEditableWordCloudDataCard';
+import { downloadData } from '../../common/EditableWordCloudDataCard';
 import { getCurrentDate, oneMonthBefore, getDateRange, PAST_WEEK } from '../../../lib/dateUtil';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 
@@ -36,6 +37,12 @@ class SourceTopWordsContainer extends React.Component {
     fetchAsyncData(dispatch, { source, timePeriod });
   }
 
+  handleDownload = (ngramSize, sampleSize, words) => {
+    const { source } = this.props;
+    const filename = `source-${source.media_id}-ngram-${ngramSize}-words.csv`;
+    downloadData(filename, words, sampleSize);
+  }
+
   defaultOnWordClick = (word) => {
     const { source } = this.props;
     const endDate = getCurrentDate();
@@ -48,14 +55,12 @@ class SourceTopWordsContainer extends React.Component {
   render() {
     const { source, words, helpButton } = this.props;
     const { formatMessage } = this.props.intl;
-    const downloadUrl = `/api/sources/${source.media_id}/words/wordcount.csv`;
     return (
       <PeriodicEditableWordCloudDataCard
         words={words}
         handleTimePeriodClick={this.fetchWordsByTimePeriod}
         selectedTimePeriod={this.state.timePeriod}
-        downloadUrl={downloadUrl}
-        targetURL={`/sources/${source.media_id}`}
+        onDownload={this.handleDownload}
         onViewModeClick={this.defaultOnWordClick}
         title={formatMessage(localMessages.title)}
         domId={`media-source-top-words-${source.media_id}`}

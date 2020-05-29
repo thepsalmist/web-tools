@@ -3,7 +3,7 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import GeoChart from '../../vis/GeoChart';
+import GeoChart, { downloadData } from '../../vis/GeoChart';
 import DataCard from '../../common/DataCard';
 import { fetchPlatformTags } from '../../../actions/platformActions';
 import messages from '../../../resources/messages';
@@ -15,17 +15,17 @@ import { TAG_SET_GEOGRAPHIC_PLACES } from '../../../lib/tagUtil';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 
 const localMessages = {
-  title: { id: 'collection.summary.geo.title', defaultMessage: 'Geographic Attention over the last month' },
+  title: { id: 'collection.summary.geo.title', defaultMessage: 'Geographic Attention' },
   intro: { id: 'collection.summary.geo.info',
     defaultMessage: '<p>Here is a heatmap of countries mentioned in this collection. Darker countried are mentioned more. Click a country to load an Explorer search showing you how the sources in this collection cover it.</p>' },
   helpTitle: { id: 'collection.summary.geo.help.title', defaultMessage: 'About Geographic Attention' },
 };
 
 class CollectionGeographyContainer extends React.Component {
-  downloadCsv = () => {
-    const { collectionId } = this.props;
-    const url = `/api/collections/${collectionId}/geography/geography.csv`;
-    window.location = url;
+  handleDownload = () => {
+    const { collectionId, geolist } = this.props;
+    const filename = `collection-${collectionId}-geo-tags.csv`;
+    downloadData(filename, geolist);
   }
 
   handleCountryClick = (event, geo) => {
@@ -45,7 +45,7 @@ class CollectionGeographyContainer extends React.Component {
     return (
       <DataCard>
         <div className="actions">
-          <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.downloadCsv} />
+          <DownloadButton tooltip={formatMessage(messages.download)} onClick={this.handleDownload} />
         </div>
         <h2>
           <FormattedMessage {...localMessages.title} />

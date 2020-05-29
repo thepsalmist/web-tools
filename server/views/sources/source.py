@@ -12,9 +12,6 @@ from server.util.request import arguments_required, form_fields_required, api_er
 from server.util.tags import TAG_SETS_ID_PUBLICATION_COUNTRY, TAG_SETS_ID_PUBLICATION_STATE, VALID_COLLECTION_TAG_SETS_IDS, \
     TAG_SETS_ID_PRIMARY_LANGUAGE, TAG_SETS_ID_COUNTRY_OF_FOCUS, TAG_SETS_ID_MEDIA_TYPE, TAG_SET_GEOCODER_VERSION, \
     TAG_SET_NYT_LABELS_VERSION, is_metadata_tag_set
-from server.views.sources.words import word_count, stream_wordcount_csv
-from server.views.sources.geocount import stream_geo_csv, cached_geotag_count
-from server.views.sources.stories_split_by_time import stream_split_stories_csv
 import server.views.sources.apicache as apicache
 from server.views.favorites import add_user_favorite_flag_to_sources, add_user_favorite_flag_to_collections
 from server.views.sources.feeds import source_feed_list
@@ -146,42 +143,6 @@ def api_media_source_scrape_feeds(media_id):
     user_mc = user_admin_mediacloud_client()
     results = user_mc.feedsScrape(media_id)
     return jsonify(results)
-
-
-@app.route('/api/sources/<media_id>/story-split/count.csv', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def source_split_stories_csv(media_id):
-    return stream_split_stories_csv(user_mediacloud_key(), 'splitStoryCounts-Source-{}'.format(media_id),
-                                    "media_id:{}".format(media_id))
-
-
-@app.route('/api/sources/<media_id>/geography')
-@flask_login.login_required
-@api_error_handler
-def api_media_source_geography(media_id):
-    info = {
-        'geography': cached_geotag_count(user_mediacloud_key(), 'media_id:'+str(media_id))
-    }
-    return jsonify({'results': info})
-
-
-@app.route('/api/sources/<media_id>/geography/geography.csv')
-@flask_login.login_required
-@api_error_handler
-def source_geo_csv(media_id):
-    return stream_geo_csv(user_mediacloud_key(), 'geography-Source-'+media_id, media_id, "media_id")
-
-
-@app.route('/api/sources/<media_id>/words/wordcount.csv', methods=['GET'])
-@flask_login.login_required
-@api_error_handler
-def source_wordcount_csv(media_id):
-    solr_q = 'media_id:'+str(media_id)
-    solr_fq = None
-    if ('q' in request.args) and (len(request.args['q']) > 0):
-        solr_fq = request.args['q']
-    return stream_wordcount_csv(user_mediacloud_key(), 'wordcounts-Source-'+media_id, solr_q, solr_fq)
 
 
 @app.route('/api/sources/create', methods=['POST'])

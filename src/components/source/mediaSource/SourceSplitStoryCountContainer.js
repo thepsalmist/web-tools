@@ -11,7 +11,7 @@ import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchPlatformCountOverTime } from '../../../actions/platformActions';
 import DataCard from '../../common/DataCard';
-import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTimeChart';
+import AttentionOverTimeChart, { dataAsSeries, downloadData } from '../../vis/AttentionOverTimeChart';
 import messages from '../../../resources/messages';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import ActionMenu from '../../common/ActionMenu';
@@ -34,11 +34,11 @@ const localMessages = {
 
 class SourceSplitStoryCountContainer extends React.Component {
   state = {
-    storyMode: VIEW_REGULARLY_COLLECTED,
+    viewMode: VIEW_REGULARLY_COLLECTED,
   }
 
   onIncludeSpidered = (d) => {
-    this.setState({ storyMode: d }); // reset this to trigger a re-render
+    this.setState({ viewMode: d }); // reset this to trigger a re-render
   }
 
   handleDataPointClick = (startDate, endDate) => {
@@ -50,16 +50,19 @@ class SourceSplitStoryCountContainer extends React.Component {
   }
 
   downloadCsv = () => {
-    const { sourceId } = this.props;
-    const url = `/api/sources/${sourceId}/story-split/count.csv`;
-    window.location = url;
+    // generate and download client side
+    const { sourceId, allStories, partialStories } = this.props;
+    const data = (this.state.viewMode === VIEW_ALL_STORIES) ? allStories : partialStories;
+    const prefix = (this.state.viewMode === VIEW_ALL_STORIES) ? 'all' : 'regularly-collected';
+    const filename = `source-${sourceId}-${prefix}-attention.csv`;
+    downloadData(filename, data.counts);
   }
 
   render() {
     const { allStories, partialStories, filename, helpButton, sourceName, attentionAggregationMenuItems, selectedTimePeriod } = this.props;
     let stories = partialStories;
     let title = localMessages.partialTitle;
-    if (this.state.storyMode === VIEW_ALL_STORIES) {
+    if (this.state.viewMode === VIEW_ALL_STORIES) {
       stories = allStories;
       title = localMessages.allTitle;
     }
@@ -70,14 +73,14 @@ class SourceSplitStoryCountContainer extends React.Component {
             <ActionMenu actionTextMsg={messages.viewOptions}>
               <MenuItem
                 className="action-icon-menu-item"
-                disabled={this.state.storyMode === VIEW_REGULARLY_COLLECTED}
+                disabled={this.state.viewMode === VIEW_REGULARLY_COLLECTED}
                 onClick={() => this.onIncludeSpidered(VIEW_REGULARLY_COLLECTED)}
               >
                 <FormattedMessage {...localMessages.regularlyCollectedStories} />
               </MenuItem>
               <MenuItem
                 className="action-icon-menu-item"
-                disabled={this.state.storyMode === VIEW_ALL_STORIES}
+                disabled={this.state.viewMode === VIEW_ALL_STORIES}
                 onClick={() => this.onIncludeSpidered(VIEW_ALL_STORIES)}
               >
                 <FormattedMessage {...localMessages.allStories} />

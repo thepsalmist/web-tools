@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { fetchPlatformWords } from '../../../actions/platformActions';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import PeriodicEditableWordCloudDataCard from '../../common/PeriodicEditableWordCloudDataCard';
+import { downloadData } from '../../common/EditableWordCloudDataCard';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import messages from '../../../resources/messages';
 import { getCurrentDate, oneMonthBefore, getDateRange, PAST_WEEK } from '../../../lib/dateUtil';
@@ -36,6 +37,12 @@ class CollectionTopWordsContainer extends React.Component {
     fetchAsyncData(dispatch, { collectionId, timePeriod });
   }
 
+  handleDownload = (ngramSize, sampleSize, words) => {
+    const { collectionId } = this.props;
+    const filename = `colletion-${collectionId}-ngram-${ngramSize}-words.csv`;
+    downloadData(filename, words, sampleSize);
+  }
+
   handleWordClick = (word) => {
     const { collectionName, collectionId } = this.props;
     const endDate = getCurrentDate();
@@ -48,14 +55,12 @@ class CollectionTopWordsContainer extends React.Component {
   render() {
     const { collectionId, words, helpButton } = this.props;
     const { formatMessage } = this.props.intl;
-    const downloadUrl = `/api/collections/${collectionId}/words/wordcount.csv`;
     return (
       <PeriodicEditableWordCloudDataCard
         words={words}
         handleTimePeriodClick={this.fetchWordsByTimePeriod}
         selectedTimePeriod={this.state.timePeriod}
-        downloadUrl={downloadUrl}
-        targetURL={`/collections/${collectionId}`}
+        onDownload={this.handleDownload}
         onViewModeClick={this.handleWordClick}
         title={formatMessage(localMessages.title)}
         domId={`collection-top-words-${collectionId}`}

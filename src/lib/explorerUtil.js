@@ -1,5 +1,5 @@
 import slugify from 'slugify';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 import { trimToMaxLength, queryAsString } from './stringUtil';
 import { notEmptyString } from './formValidators';
 import { downloadViaFormPost } from './apiUtil';

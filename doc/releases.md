@@ -36,7 +36,7 @@ Building and Pushing a Release
 see `version-control.md` for more details
 10. Push the tag(s) "git push origin --tags"
 <br/><br/>
-11. Create a PR on GitHub from your banch back to master (so the changes get merged in)
+11. Create a PR on GitHub from your branch back to master (so the changes get merged in)
 
 Bug Fixes and Patches
 ---------------------

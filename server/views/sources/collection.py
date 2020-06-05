@@ -20,11 +20,6 @@ import server.views.sources.apicache as apicache
 logger = logging.getLogger(__name__)
 
 
-def allowed_file(filename):
-    filename, file_extension = os.path.splitext(filename)
-    return file_extension.lower() in ['.csv']
-
-
 @app.route('/api/collections/<collection_id>/metadatacoverage.csv')
 @flask_login.login_required
 @api_error_handler

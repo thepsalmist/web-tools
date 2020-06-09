@@ -1,3 +1,5 @@
-requirements.py:
-	pip install -q -r requirements.txt --exists-action w
+lint.py:
+	pylint server
 
+requirements-local.py:
+	pip install -q -r requirements/local.txt --exists-action w

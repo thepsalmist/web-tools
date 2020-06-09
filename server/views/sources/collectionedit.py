@@ -10,14 +10,14 @@ import csv as pycsv
 from server import app, config, TOOL_API_KEY, executor
 from server.auth import user_admin_mediacloud_client, user_mediacloud_key, user_name
 from server.util.config import ConfigException
-from server.util.mail import send_html_email
-from server.util.request import json_error_response, form_fields_required, api_error_handler
-from server.views.sources.collection import allowed_file
-from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS
-import server.views.sources.apicache as apicache
 from server.util.csv import SOURCE_LIST_CSV_METADATA_PROPS
+from server.util.file import save_file_to_upload_folder
+from server.util.mail import send_html_email
+from server.util.request import csv_required, json_error_response, form_fields_required, api_error_handler
 from server.util.tags import VALID_METADATA_IDS, METADATA_PUB_COUNTRY_NAME, \
     format_name_from_label, tags_in_tag_set, media_with_tag
+from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS
+import server.views.sources.apicache as apicache
 
 logger = logging.getLogger(__name__)
 
@@ -89,27 +89,19 @@ def remove_sources_from_collection(collection_id):
 @app.route('/api/collections/upload-sources', methods=['POST'])
 @flask_login.login_required
 @api_error_handler
+@csv_required
 def upload_file():
     time_start = time.time()
-    # grab and verify the file
-    if 'file' not in request.files:
-        return json_error_response('No file part')
     uploaded_file = request.files['file']
-    if uploaded_file.filename == '':
-        return json_error_response('No selected file')
-    if not(uploaded_file and allowed_file(uploaded_file.filename)):
-        return json_error_response('Invalid file')
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(uploaded_file.filename))
-    # have to save b/c otherwise we can't locate the file path (security restriction)... can delete afterwards
-    uploaded_file.save(filepath)
+    save_file_to_upload_folder(uploaded_file, uploaded_file.filename)
     time_file_saved = time.time()
     # parse all the source data out of the file
-    try: 
+    try:
         sources_to_update, sources_to_create = _parse_sources_from_csv_upload(filepath)
     except Exception as e:
         logger.error("Couldn't process a CSV row: " + str(e))
         return jsonify({'status': 'Error', 'message': str(e)})
-    
+
     all_results = []
     all_errors = []
     if len(sources_to_create) > 300:

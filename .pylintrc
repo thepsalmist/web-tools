@@ -199,7 +199,6 @@ disable=print-statement,
         unused-import,
         missing-final-newline,
         invalid-name,
-        unused-variable,
         duplicate-code,
         cyclic-import,
         undefined-variable

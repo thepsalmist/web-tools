@@ -213,7 +213,7 @@ def api_user_update():
     }
     cached_user = flask_login.current_user
     # need to update user with the tool admin client, because user doesn't have permission to do this themselves
-    results = mc.userUpdate(cached_user.profile['auth_users_id'], **valid_params)
+    mc.userUpdate(cached_user.profile['auth_users_id'], **valid_params)
     user_mc = user_mediacloud_client()
     updated_user = user_mc.userProfile()
     cached_user.profile = updated_user

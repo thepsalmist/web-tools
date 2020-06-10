@@ -77,7 +77,7 @@ class User(flask_login.UserMixin):
                 return User(user_in_db['profile'])
             else:
                 # the session isn't valid (perhaps we flushed the redis cache?
-                None
+                return None
         except Exception:
             # be safer here... if anything goes wrong make them login again
             return None

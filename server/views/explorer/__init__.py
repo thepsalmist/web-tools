@@ -1,7 +1,6 @@
 import logging
 from flask import request, jsonify, send_from_directory
 import os
-import datetime as dt
 import flask_login
 import json
 import datetime
@@ -35,15 +34,15 @@ def _default_query_dates():
 def parse_query_dates(args):
     default_start_date, default_end_date = _default_query_dates()
     if 'startDate' in args:
-        start_date = dt.datetime.strptime(args['startDate'], "%Y-%m-%d")
+        start_date = datetime.datetime.strptime(args['startDate'], "%Y-%m-%d")
     elif 'start_date' in args:
-        start_date = dt.datetime.strptime(args['start_date'], "%Y-%m-%d")
+        start_date = datetime.datetime.strptime(args['start_date'], "%Y-%m-%d")
     else:
         start_date = default_start_date
     if 'endDate' in args:
-        end_date = dt.datetime.strptime(args['endDate'], "%Y-%m-%d")
+        end_date = datetime.datetime.strptime(args['endDate'], "%Y-%m-%d")
     elif 'end_date' in args:
-        end_date = dt.datetime.strptime(args['end_date'], "%Y-%m-%d")
+        end_date = datetime.datetime.strptime(args['end_date'], "%Y-%m-%d")
     else:
         end_date = default_end_date
     return start_date, end_date

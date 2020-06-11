@@ -117,7 +117,7 @@ def _story_list_by_page(api_key, q, fq, stories_per_page, sort, page_limit=None)
             if tag_util.NYT_LABELER_1_0_0_TAG_ID in story_tag_ids:
                         s['themes'] = ", ".join([t['tag'] for t in s['story_tags']
                                                 if t['tag_sets_id'] == tag_util.NYT_LABELS_TAG_SET_ID])
-        if story_page != None:
+        if story_page is not None:
             yield story_page
         last_processed_stories_id = story_page[-1]['processed_stories_id']
         page_count += 1

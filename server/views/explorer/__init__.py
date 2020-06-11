@@ -1,9 +1,9 @@
 import logging
 from flask import request, jsonify, send_from_directory
 import os
+import datetime as dt
 import flask_login
 import json
-import datetime
 from slugify import slugify
 
 from server import mc, app, analytics_db
@@ -18,31 +18,31 @@ DEFAULT_COLLECTION_IDS = [9139487]
 def dates_as_filter_query(start_date, end_date):
     date_query = ""
     if start_date:
-        testa = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
-        testb = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+        testa = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
+        testb = dt.datetime.strptime(end_date, '%Y-%m-%d').date()
         date_query = mc.dates_as_query_clause(testa, testb)
     return date_query
 
 
 def _default_query_dates():
-    one_month_before_now = datetime.datetime.now() - datetime.timedelta(days=30)
+    one_month_before_now = dt.datetime.now() - dt.timedelta(days=30)
     default_start_date = one_month_before_now
-    default_end_date = datetime.datetime.now()
+    default_end_date = dt.datetime.now()
     return default_start_date, default_end_date
 
 
 def parse_query_dates(args):
     default_start_date, default_end_date = _default_query_dates()
     if 'startDate' in args:
-        start_date = datetime.datetime.strptime(args['startDate'], "%Y-%m-%d")
+        start_date = dt.datetime.strptime(args['startDate'], "%Y-%m-%d")
     elif 'start_date' in args:
-        start_date = datetime.datetime.strptime(args['start_date'], "%Y-%m-%d")
+        start_date = dt.datetime.strptime(args['start_date'], "%Y-%m-%d")
     else:
         start_date = default_start_date
     if 'endDate' in args:
-        end_date = datetime.datetime.strptime(args['endDate'], "%Y-%m-%d")
+        end_date = dt.datetime.strptime(args['endDate'], "%Y-%m-%d")
     elif 'end_date' in args:
-        end_date = datetime.datetime.strptime(args['end_date'], "%Y-%m-%d")
+        end_date = dt.datetime.strptime(args['end_date'], "%Y-%m-%d")
     else:
         end_date = default_end_date
     return start_date, end_date

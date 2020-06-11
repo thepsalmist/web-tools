@@ -7,7 +7,7 @@ from server.util.api_helper import combined_split_and_normalized_counts
 MC_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
-class ContentProvider(object):
+class ContentProvider():
     """
     An abstract wrapper to be implemented for each platform we want to preview content from.
     Any unimplemented methods raise an Exception

@@ -36,7 +36,7 @@ class ConfigException(Exception):
         self.status_code = status_code
 
 
-class EnvOrFileBasedConfig(object):
+class EnvOrFileBasedConfig():
     # Simple wrapper around a text config file; lets us load from a text file (dev) or from env-vars (prod)
 
     def __init__(self, absolute_filepath):

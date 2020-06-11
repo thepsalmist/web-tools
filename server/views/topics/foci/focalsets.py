@@ -21,7 +21,7 @@ def is_url_sharing_focal_set(fs):
 @flask_login.login_required
 @api_error_handler
 def topic_focal_set_list(topics_id):
-    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    snapshots_id, _timespans_id, _foci_id, _q = filters_from_args(request.args)
     include_story_counts = request.args.get('includeStoryCounts')
     focal_sets = apicache.topic_focal_sets_list(user_mediacloud_key(), topics_id, snapshots_id)
     # now mark the ones that are the magically added URL sharing platform ones
@@ -60,7 +60,7 @@ def topic_focal_set_definition_delete(topics_id, focal_set_definitions_id):
 
 def base_snapshot_timespan(topics_id):
     # find the timespan matching this one in the base snapshot (ie. with no foci_id)
-    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    snapshots_id, timespans_id, foci_id, _q = filters_from_args(request.args)
     base_snapshot_timespans = apicache.cached_topic_timespan_list(user_mediacloud_key(), topics_id,
                                                                   snapshots_id=snapshots_id, foci_id=None)
     timespan = apicache.topic_timespan(topics_id, snapshots_id, foci_id, timespans_id)  # the selected timespan
@@ -74,7 +74,7 @@ def base_snapshot_timespan(topics_id):
 @flask_login.login_required
 @api_error_handler
 def topic_focal_set_split_stories_compare(topics_id, focal_sets_id):
-    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    snapshots_id, _timespans_id, _foci_id, _q = filters_from_args(request.args)
     # need the timespan info, to find the appropriate timespan with each focus
     try:
         base_timespan = base_snapshot_timespan(topics_id)
@@ -91,7 +91,7 @@ def topic_focal_set_split_stories_compare(topics_id, focal_sets_id):
 
 
 def _add_story_counts_to_foci(topics_id, focal_sets):
-    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    snapshots_id, _timespans_id, _foci_id, q = filters_from_args(request.args)
     # need the timespan info, to find the appropriate timespan with each focus
     try:
         base_timespan = base_snapshot_timespan(topics_id)

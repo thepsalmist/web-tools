@@ -72,7 +72,7 @@ class WebMediaCloudProvider(ContentProvider):
         return top_words
 
     def tags(self, query: str, start_date: dt.datetime, end_date: dt.datetime, **kwargs) -> List[Dict]:
-        q, fq = self._as_query_and_filter_query(query, start_date, end_date, **kwargs)
+        _q, fq = self._as_query_and_filter_query(query, start_date, end_date, **kwargs)
         tags_sets_id = kwargs['tags_sets_id'] if 'tags_sets_id' in kwargs else None
         top_tags = base_apicache.top_tags(query, fq, tags_sets_id)
         return top_tags

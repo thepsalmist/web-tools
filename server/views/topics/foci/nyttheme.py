@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 def get_top_themes_by_story_tag_counts(topics_id, num_themes):
-    user_mc_key = user_mediacloud_key()
     nyt_counts = []
 
     #get overall timespan
@@ -58,8 +57,6 @@ def nyt_theme_story_counts(topics_id):
 @arguments_required('numThemes')
 @api_error_handler
 def nyt_theme_coverage(topics_id):
-    # grab the total stories
-    total_stories = topic_story_count(user_mediacloud_key(), topics_id)['count']
     num_themes = int(request.args['numThemes'])
 
     nyt_top_themes = get_top_themes_by_story_tag_counts(topics_id, num_themes)
@@ -68,7 +65,7 @@ def nyt_theme_coverage(topics_id):
     coverage = topic_tag_coverage(topics_id, query_nyt_tags)   # gets count and total
 
     if coverage is None:
-       return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
+        return jsonify({'status': 'Error', 'message': 'Invalid attempt'})
     return jsonify(coverage)
 
 

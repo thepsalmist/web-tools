@@ -19,7 +19,7 @@ WORD2VEC_TIMESPAN_POOL_PROCESSES = 10
 @arguments_required('focal_sets_id')
 @api_error_handler
 def topic_compare_subtopic_top_words(topics_id):
-    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    snapshots_id, timespans_id, _foci_id, _q = filters_from_args(request.args)
     selected_focal_sets_id = request.args['focal_sets_id']
     word_count = request.args['word_count'] if 'word_count' in request.args else 20
     # first we need to figure out which timespan they are working on
@@ -135,7 +135,7 @@ def _get_all_timespan_embeddings(jobs):
 @flask_login.login_required
 @api_error_handler
 def topic_w2v_timespan_embeddings(topics_id):
-    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    snapshots_id, _timespans_id, foci_id, q = filters_from_args(request.args)
     # Retrieve embeddings for overall topic
     overall_word_counts = apicache.topic_word_counts(user_mediacloud_key(), topics_id, num_words=50,
                                                      snapshots_id=snapshots_id, timespans_id=None, foci_id=foci_id, q=q)

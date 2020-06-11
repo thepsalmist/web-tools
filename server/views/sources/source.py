@@ -53,7 +53,6 @@ def source_set_favorited(media_id):
 @api_error_handler
 def source_stats(media_id):
     username = user_name()
-    user_mc = user_admin_mediacloud_client()
     results = {}
     # story count
     media_query = "(media_id:{})".format(media_id)
@@ -148,7 +147,7 @@ def api_media_source_scrape_feeds(media_id):
 @app.route('/api/sources/create', methods=['POST'])
 @form_fields_required('name', 'url')
 @flask_login.login_required
-@api_error_handler  
+@api_error_handler
 def source_create():
     user_mc = user_admin_mediacloud_client()
     name = request.form['name']
@@ -205,7 +204,7 @@ def source_create_from_urls():
 @app.route('/api/sources/<media_id>/update', methods=['POST'])
 @form_fields_required('name', 'url')
 @flask_login.login_required
-@api_error_handler  
+@api_error_handler
 def source_update(media_id):
     user_mc = user_admin_mediacloud_client()
     # update the basic info

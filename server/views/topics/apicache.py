@@ -220,7 +220,7 @@ def _word2vec_topic_2d_results(topics_id, snapshots_id, words):
 
 def topic_similar_words(topics_id, word):
     # no need for user-specific cache on this
-    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    snapshots_id, _timespans_id, _foci_id, _q = filters_from_args(request.args)
     results = _word2vec_topic_similar_words(topics_id, snapshots_id, [word])
     if len(results):
         return results[0]['results']
@@ -347,7 +347,7 @@ def topic_tag_counts(user_mc_key, topics_id, tag_sets_id):
      This supports just timespan_id and q from the request, because it has to use sentenceFieldCount,
      not a topicSentenceFieldCount method that takes filters (which doesn't exit)
     """
-    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    _snapshots_id, timespans_id, _foci_id, q = filters_from_args(request.args)
     timespan_query = "timespans_id:{}".format(timespans_id)
     if (q is None) or (len(q) == 0):
         query = timespan_query
@@ -430,7 +430,7 @@ def matching_timespans_in_foci(topics_id, timespan_to_match, foci):
     For cross-subtopic analysis within a subtopic set, we need to identify the timespan that has the same date
     range in each subtopic within the set.  This helper does that annoying work for you.
     """
-    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    snapshots_id, _timespans_id, _foci_id, _q = filters_from_args(request.args)
     timespans = []
     for focus in foci:
         # find the matching timespan within this focus

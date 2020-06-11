@@ -60,7 +60,7 @@ def api_explorer_story_split_count():
                                                       subreddits=NEWS_SUBREDDITS)
     else:
         # get specific stories by keyword
-        solr_q, solr_fq = parse_query_with_keywords(request.form)
+        solr_q, _solr_fq = parse_query_with_keywords(request.form)
         # get all the stories (no keyword) so we can support normalization
         solr_open_query = concatenate_query_for_solr(solr_seed_query='*',
                                                      media_ids=request.form['sources'],
@@ -87,7 +87,7 @@ def api_explorer_story_split_count_csv():
                                                            end_date=end_date,
                                                            subreddits=NEWS_SUBREDDITS)
     else:
-        solr_q, solr_fq = parse_query_with_keywords(q)
+        solr_q, _solr_fq = parse_query_with_keywords(q)
         solr_open_query = concatenate_query_for_solr(solr_seed_query='*',
                                                      media_ids=q['sources'],
                                                      tags_ids=q['collections'],
@@ -117,7 +117,7 @@ def api_explorer_combined_story_split_count_csv():
                                                                end_date=end_date,
                                                                subreddits=NEWS_SUBREDDITS)
         else:
-            solr_q, solr_fq = parse_query_with_keywords(q)
+            solr_q, _solr_fq = parse_query_with_keywords(q)
             solr_open_query = concatenate_query_for_solr(solr_seed_query='*', media_ids=q['sources'],
                                                          tags_ids=q['collections'],
                                                      custom_ids=q['searches'])
@@ -135,6 +135,6 @@ def api_explorer_combined_story_split_count_csv():
             row[q['label'] +'-count'] = q['by_date'][idx]['count']
             row[q['label'] +'-total_count'] = q['by_date'][idx]['total_count']
             row[q['label'] +'-ratio'] = q['by_date'][idx]['ratio']
-        data.append(row)    
+        data.append(row)
     props = ['date'] + [q['label']+ '-count' for q in queries] + [q['label']+ '-total_count' for q in queries] + [q['label']+ '-ratio' for q in queries]
     return csv.stream_response(data, props, filename)

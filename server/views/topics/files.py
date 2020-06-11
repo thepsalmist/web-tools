@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 @arguments_required('timespanId')
 @api_error_handler
 def map_files_list(topics_id):
-    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    _snapshots_id, timespans_id, _foci_id, _q = filters_from_args(request.args)
     results = apicache.topic_media_map_list(topics_id, timespans_id)
     return jsonify(results)
 
@@ -23,6 +23,6 @@ def map_files_list(topics_id):
 @arguments_required('timespanId')
 @api_error_handler
 def timespan_files_list(topics_id):
-    snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
+    _snapshots_id, timespans_id, _foci_id, _q = filters_from_args(request.args)
     results = apicache.topic_timespan_files_list(topics_id, timespans_id)
     return jsonify(results)

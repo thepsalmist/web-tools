@@ -78,7 +78,7 @@ class WebMediaCloudProvider(ContentProvider):
         return top_tags
 
     @classmethod
-    def _as_query_and_filter_query(self, query: str, start_date: dt.datetime, end_date: dt.datetime,
+    def _as_query_and_filter_query(cls, query: str, start_date: dt.datetime, end_date: dt.datetime,
                                    **kwargs) -> (str, str):
         """
         Take all the query params and return q and fq suitable for a media cloud solr-syntax query

@@ -5,7 +5,7 @@ import flask_login
 from server import app
 from server.util.request import arguments_required, api_error_handler, filters_from_args, json_error_response
 from server.auth import user_mediacloud_client, user_mediacloud_key
-from server.views.topics import apicache as apicache
+from server.views.topics import apicache
 
 logger = logging.getLogger(__name__)
 

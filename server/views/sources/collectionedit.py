@@ -1,10 +1,8 @@
 import logging
-import os
 import flask_login
 import time
 from flask import request, jsonify, render_template
 from mediacloud.tags import MediaTag, TAG_ACTION_ADD, TAG_ACTION_REMOVE
-from werkzeug.utils import secure_filename
 import csv as pycsv
 
 from server import app, config, TOOL_API_KEY, executor
@@ -13,7 +11,7 @@ from server.util.config import ConfigException
 from server.util.csv import SOURCE_LIST_CSV_METADATA_PROPS
 from server.util.file import save_file_to_upload_folder
 from server.util.mail import send_html_email
-from server.util.request import csv_required, json_error_response, form_fields_required, api_error_handler
+from server.util.request import csv_required, form_fields_required, api_error_handler
 from server.util.tags import VALID_METADATA_IDS, METADATA_PUB_COUNTRY_NAME, \
     format_name_from_label, tags_in_tag_set, media_with_tag
 from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS

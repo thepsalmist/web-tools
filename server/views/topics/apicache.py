@@ -6,7 +6,7 @@ import mediacloud.error
 from server import mc, TOOL_API_KEY
 from server.views import WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_UI_NUM_WORDS
 from server.cache import cache
-from server.util.tags import STORY_UNDATEABLE_TAG, is_bad_theme
+from server.util.tags import STORY_UNDATEABLE_TAG
 import server.util.wordembeddings as wordembeddings
 from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_mediacloud_key
 from server.util.request import filters_from_args

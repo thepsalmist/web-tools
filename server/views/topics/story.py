@@ -8,7 +8,7 @@ from server.auth import user_mediacloud_key
 from server.util import tags as tag_util
 from server.util.request import api_error_handler
 import server.views.apicache as base_apicache
-from server.views.topics import apicache as apicache
+from server.views.topics import apicache
 from server.views.topics.stories import _cached_geoname
 
 logger = logging.getLogger(__name__)

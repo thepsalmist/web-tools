@@ -3,11 +3,9 @@ from flask import jsonify, request
 import flask_login
 import random
 from server import app
-from server.auth import user_has_auth_role, ROLE_MEDIA_EDIT
 from server.util.request import api_error_handler, arguments_required
 from server.views.media_picker import ALL_MEDIA
 import server.views.apicache as base_apicache
-from operator import itemgetter
 import json
 logger = logging.getLogger(__name__)
 

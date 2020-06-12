@@ -8,7 +8,6 @@ from server.views import WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_DOWNLOAD_NUM_WORDS, 
 from server.util.request import api_error_handler
 import server.util.csv as csv
 from server.views.explorer import parse_query_with_keywords, file_name_for_download
-import server.views.explorer.apicache as apicache
 import server.views.apicache as base_apicache
 
 logger = logging.getLogger(__name__)

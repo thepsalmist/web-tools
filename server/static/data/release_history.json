@@ -1,6 +1,37 @@
 {
   "releases": [
     {
+      "date": "2020-06-05",
+      "version": "v3.14.0",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fixed",
+          "note": "Collection content history download"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Removed support for sample queries"
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "New",
+          "note": "System generated feeds marked as such"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Added SVG download for total attention widget"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Removed demo mode"
+        }
+      ]
+    },
+    {
       "date": "2020-05-27",
       "version": "v3.13.20",
       "notes": [

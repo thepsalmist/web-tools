@@ -28,6 +28,7 @@ class User(flask_login.UserMixin):
         self.active = profile['active']
         self.created = datetime.datetime.now()
 
+    @property
     def is_active(self):
         return self.active
 
@@ -35,6 +36,7 @@ class User(flask_login.UserMixin):
     def is_anonymous(self):
         return False
 
+    @property
     def is_authenticated(self):
         return True
 

@@ -218,7 +218,7 @@ def source_update(media_id):
     # now we need to update the collections separately, because they are tags on the media source
     source = user_mc.media(media_id)
     existing_tag_ids = [t['tags_id'] for t in source['media_source_tags']
-                        if (t['tag_sets_id'] in VALID_COLLECTION_TAG_SETS_IDS)]
+                        if t['tag_sets_id'] in VALID_COLLECTION_TAG_SETS_IDS]
     tag_ids_to_add = tag_ids_from_collections_param()
     tag_ids_to_remove = list(set(existing_tag_ids) - set(tag_ids_to_add))
     tags_to_add = [MediaTag(media_id, tags_id=cid, action=TAG_ACTION_ADD)

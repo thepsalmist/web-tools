@@ -72,8 +72,8 @@ def story(stories_id, **kwargs):
 
 
 def story_raw_1st_download(api_key, stories_id):
-    story = _cached_story(api_key, stories_id, raw_1st_download=True)
-    return story['raw_first_download_file']
+    cached_story = _cached_story(api_key, stories_id, raw_1st_download=True)
+    return cached_story['raw_first_download_file']
 
 
 @cache.cache_on_arguments()

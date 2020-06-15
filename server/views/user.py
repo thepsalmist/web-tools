@@ -10,7 +10,7 @@ import io
 import zipfile
 
 from server import app, auth, mc, user_db
-from server.auth import user_mediacloud_client, user_name
+from server.auth import user_mediacloud_client, user_name, user_is_admin
 from server.util.request import api_error_handler, form_fields_required, arguments_required, json_error_response
 from server.views.topics.topiclist import topics_user_can_access
 
@@ -258,7 +258,7 @@ def _save_user_data_dir(u, user_mc):
     # topic-level permissions
     with open(os.path.join(temp_dir, 'topic-permissions.csv'), 'w') as outfile:
         topics = user_mc.topicList(limit=1000)['topics']
-        user_owned_topics = topics_user_can_access(topics, u.profile['email'])
+        user_owned_topics = topics_user_can_access(topics, u.profile['email'], user_is_admin())
         topic_permission_list = [{
             'topics_id': t['topics_id'],
             'topic_name': t['name'],

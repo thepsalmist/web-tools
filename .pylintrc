@@ -140,7 +140,6 @@ disable=print-statement,
         exception-escape,
         comprehension-escape,
         missing-docstring,
-        # TODO: add these back in eventually
         line-too-long,
         trailing-whitespace,
         wrong-import-order,

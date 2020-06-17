@@ -29,7 +29,7 @@ Building and Pushing a Release
    1. Commit those built files
 1. Tag the new build with the appropriate release label (ie. "git tag sources-v2.7.3" or "git tag topics-v2.4.3") -
 see `version-control.md` for more details
-1. Push the tag(s) "git push origin --tags"
+1. Push the tag(s) `git push origin --tags`
 1. Push the tagged release to the appropriate production Dokku server with git (ie.
 `git push prod-explorer explorer-v3.1.x:master`)
 1. Make sure it works on the server

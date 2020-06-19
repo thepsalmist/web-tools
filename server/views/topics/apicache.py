@@ -320,7 +320,7 @@ def topic_focal_set(user_mc_key, topics_id, snapshots_id, focal_sets_id):
     raise ValueError("Unknown subtopic set id of {}".format(focal_sets_id))
 
 
-def cached_topic_timespan_list(user_mc_key, topics_id, snapshots_id=None, foci_id=None):
+def cached_topic_timespan_list(topics_id, snapshots_id=None, foci_id=None):
     # this includes the user_mc_key as a first param so the cache works right
     user_mc = user_mediacloud_client()
     timespans = user_mc.topicTimespanList(topics_id, snapshots_id=snapshots_id, foci_id=foci_id)
@@ -357,15 +357,16 @@ def topic_tag_counts(user_mc_key, topics_id, tag_sets_id):
 
 
 @cache.cache_on_arguments()
-def _cached_topic_tag_counts(user_mc_key, topics_id, tag_sets_id, query):
+def _cached_topic_tag_counts(_user_mc_key, _topics_id, tag_sets_id, query):
     # even though we call base_apicache under the hood here, we want to make sure the cache is keyed by
     # API key, because topics have user-level permissioning
     return base_apicache.top_tags(query, None, tag_sets_id=tag_sets_id)
 
 
-def topic_sentence_sample(user_mc_key, topics_id, sample_size=1000, **kwargs):
+def topic_sentence_sample(user_mc_key, sample_size=1000, **kwargs):
     """
-    Return a sample of sentences based on the filters.
+    Return a sample of sentences based on the filters. A topic ID isn't needed because there is no topicSentenceList
+    endpoint. Random sentence samples are pulled by using the timespans_id with a regular sentenceList call.
     """
     snapshots_id, timespans_id, foci_id, q = filters_from_args(request.args)
     merged_args = {
@@ -404,7 +405,7 @@ def topic_timespan(topics_id, snapshots_id, foci_id, timespans_id):
     :param foci_id:
     :return: info about one timespan as specified
     """
-    timespans_list = cached_topic_timespan_list(user_mediacloud_key(), topics_id, snapshots_id, foci_id)
+    timespans_list = cached_topic_timespan_list(topics_id, snapshots_id, foci_id)
     matching_timespans = [t for t in timespans_list if t['timespans_id'] == int(timespans_id)]
     if len(matching_timespans) == 0:
         raise ValueError("Unknown timespans_id {}".format(timespans_id))
@@ -434,8 +435,7 @@ def matching_timespans_in_foci(topics_id, timespan_to_match, foci):
     timespans = []
     for focus in foci:
         # find the matching timespan within this focus
-        snapshot_timespans = cached_topic_timespan_list(user_mediacloud_key(), topics_id,
-                                                        snapshots_id=snapshots_id, foci_id=focus['foci_id'])
+        snapshot_timespans = cached_topic_timespan_list(topics_id, snapshots_id=snapshots_id, foci_id=focus['foci_id'])
         timespan = _matching_timespan(timespan_to_match, snapshot_timespans)
         timespans.append(timespan)
 #        if timespan is None:

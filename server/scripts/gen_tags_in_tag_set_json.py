@@ -33,7 +33,7 @@ def write_tags_in_set_to_json(tag_sets_id_list, only_public_tags=True, filepath=
         logger.info("  {}".format(tag_set['label']))
         tags_list = apicache.tags_in_tag_set(TOOL_API_KEY, tag_sets_id, only_public_tags)
         output_filepath = auto_file_path if filepath is None else filepath
-        with open(output_filepath, 'wb') as f:
+        with open(output_filepath, 'w') as f:
             json.dump(tags_list, f, ensure_ascii=False)
         logger.info("    wrote {} collections to {}".format(len(tags_list['tags']), auto_file_path))
     logger.info("Done")

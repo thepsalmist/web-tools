@@ -24,7 +24,7 @@ path = tag_set_json_file_path(tag_util.TAG_SET_ABYZ_GEO_COLLECTIONS)
 geo_collections = json.load(open(path))
 
 # use the national collection naming convention to identify country names
-national = [t for t in geo_collections['tags'] if t.get('label', '').endswith(' - National')]
+national = [t for t in geo_collections['tags'] if t['label'] is not None and t['label'].endswith(' - National')]
 countries = [{'name': t['label'][:-11], 'alpha3': t['tag'][-3:], 'tagsId': t['tags_id']} for t in national]
 logger.info("Identified {} country 'national' collections".format(len(countries)))
 

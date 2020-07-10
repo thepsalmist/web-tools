@@ -156,7 +156,7 @@ def tag_set_with_tags(mc_api_key, tag_sets_id, only_public_tags=False, use_file_
     all_tags = []
     last_tags_id = 0
     while more_tags:
-        tags = _cached_tag_page(mc_api_key, tag_set['tag_sets_id'], last_tags_id, 100, only_public_tags)
+        tags = _cached_tag_page(mc_api_key, tag_set['tag_sets_id'], last_tags_id, 500, only_public_tags)
         all_tags = all_tags + tags
         if len(tags) > 0:
             last_tags_id = tags[-1]['tags_id']

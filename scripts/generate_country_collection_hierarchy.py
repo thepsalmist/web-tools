@@ -8,7 +8,7 @@ import os
 import logging
 
 from server import base_dir
-from server.scripts.gen_tags_in_tag_set_json import write_tags_in_set_to_json
+from server.scripts.gen_tags_in_tag_set_json import write_tags_in_set_to_json, tag_set_json_file_path
 import server.util.tags as tag_util
 
 logger = logging.getLogger(__name__)
@@ -19,14 +19,14 @@ logger.info("Building local cache of all geo collections...")
 write_tags_in_set_to_json([tag_util.TAG_SET_ABYZ_GEO_COLLECTIONS], only_public_tags=False)
 logger.info(" done")
 
-# load up this cache of the collections
-path = os.path.join(base_dir, 'server', 'static', 'data', 'tags_in_15765102.json')
+# load up this cache of the collections we just made
+path = tag_set_json_file_path(tag_util.TAG_SET_ABYZ_GEO_COLLECTIONS)
 geo_collections = json.load(open(path))
 
 # use the national collection naming convention to identify country names
-national = [t for t in geo_collections['tags'] if t['label'] and t['label'].endswith(' - National')]
+national = [t for t in geo_collections['tags'] if t.get('label', '').endswith(' - National')]
 countries = [{'name': t['label'][:-11], 'alpha3': t['tag'][-3:], 'tagsId': t['tags_id']} for t in national]
-logger.info("Idenfitied {} country 'national' collections".format(len(countries)))
+logger.info("Identified {} country 'national' collections".format(len(countries)))
 
 # build a list of countries identified to a list of the collections that are part of it
 country2collections = []

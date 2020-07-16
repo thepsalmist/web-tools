@@ -241,7 +241,7 @@ class ManageSourcesContainer extends React.Component {
                         color="secondary"
                         variant="outlined"
                         className="source-remove-feeds-button"
-                        label={formatMessage(localMessages.remove)}
+                        label={formatMessage(localMessages.remove, { count: '' })}
                         onClick={() => removeSource(collectionId, [source])}
                       />
                     );

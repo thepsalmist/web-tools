@@ -5,10 +5,8 @@ import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import Modal from '@material-ui/core/Modal';
 import DialogContent from '@material-ui/core/DialogContent';
-import messages from '../../../resources/messages';
-import PickedMediaContainer from './PickedMediaContainer';
-import MediaPickerResultsContainer from './MediaPickerResultsContainer';
-import { initializePreviouslySelectedMedia, clearSelectedMedia, resetMetadataShortlist } from '../../../actions/systemActions';
+import MediaPickerComponentContainer from './MediaPickerComponentContainer';
+import { initializePreviouslySelectedMedia, clearSelectedMedia, resetMetadataShortlist, resetMediaPickerSources, resetMediaPickerCollections, resetMediaPickerQueryArgs } from '../../../actions/systemActions';
 import AppButton from '../AppButton';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
@@ -93,7 +91,7 @@ class MediaPickerDialog extends React.Component {
   };
 
   render() {
-    const { initMedia, selectedMedia } = this.props;
+    const { initMedia } = this.props;
     const { formatMessage } = this.props.intl;
     let modalContent = null;
     const containingEl = document.getElementById('mediaPicker') ? document.getElementById('mediaPicker') : document.getElementById('app');
@@ -106,31 +104,7 @@ class MediaPickerDialog extends React.Component {
             onClose={() => this.handleRemoveDialogClose(false)}
           >
             <DialogContent className="select-media-dialog-wrapper">
-              <div className="select-media-dialog-inner">
-                <div className="select-media-sidebar">
-                  <PickedMediaContainer
-                    selectedMedia={selectedMedia}
-                  />
-                  <AppButton
-                    className="select-media-ok-button"
-                    label={formatMessage(messages.ok)}
-                    onClick={() => this.handleRemoveDialogClose(true)}
-                    type="submit"
-                    primary
-                  />
-                  <AppButton
-                    className="select-media-cancel-button"
-                    label={formatMessage(messages.cancel)}
-                    onClick={() => this.handleRemoveDialogClose(false)}
-                    type="submit"
-                  />
-                </div>
-                <div className="select-media-content">
-                  <MediaPickerResultsContainer
-                    selectedMedia={selectedMedia}
-                  />
-                </div>
-              </div>
+              <MediaPickerComponentContainer onConfirmSelection={(okOrCancel) => this.handleRemoveDialogClose(okOrCancel)} />
             </DialogContent>
           </Modal>
         </div>
@@ -177,7 +151,10 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   reset: () => {
     dispatch(clearSelectedMedia());
+    dispatch(resetMediaPickerQueryArgs());
     dispatch(resetMetadataShortlist());
+    dispatch(resetMediaPickerSources());
+    dispatch(resetMediaPickerCollections());
   },
   handleInitialSelectionOfMedia: (prevSelectedMedia) => {
     if (prevSelectedMedia) {

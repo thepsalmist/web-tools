@@ -1,12 +1,10 @@
 import logging
-from flask import request, jsonify, send_from_directory
-import os
+from flask import request, jsonify
 import datetime as dt
 import flask_login
-import json
 from slugify import slugify
-
-from server import mc, app, analytics_db
+from mediacloud.api import MediaCloud
+from server import app, analytics_db
 from server.util.request import api_error_handler
 from server.views.media_picker import concatenate_query_for_solr
 
@@ -20,7 +18,7 @@ def dates_as_filter_query(start_date, end_date):
     if start_date:
         testa = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
         testb = dt.datetime.strptime(end_date, '%Y-%m-%d').date()
-        date_query = mc.dates_as_query_clause(testa, testb)
+        date_query = MediaCloud.dates_as_query_clause(testa, testb)
     return date_query
 
 
@@ -86,8 +84,6 @@ def only_queries_reddit(args):
 def parse_query_with_keywords(args):
     solr_q = ''
     solr_fq = None
-    # should I break this out into just a parse_query_with_keywords routine where we add in the start/end date without relying that the
-    # try statement will fail?
     try:    # if user arguments are present and allowed by the client endpoint, use them, otherwise use defaults
         current_query = args['q']
         if current_query == '':
@@ -99,7 +95,7 @@ def parse_query_with_keywords(args):
         solr_q = concatenate_query_for_solr(solr_seed_query=current_query,
                                             media_ids=media_ids,
                                             tags_ids=collections,
-                                            custom_ids=searches)
+                                            custom_collection=searches)
         solr_fq = dates_as_filter_query(start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
     # otherwise, default
     except Exception as e:

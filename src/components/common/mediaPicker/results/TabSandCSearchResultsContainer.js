@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Grid, Row } from 'react-flexbox-grid/lib';
 import CollectionSearchResultsContainer from './CollectionSearchResultsContainer';
 import SourceSearchResultsContainer from './SourceSearchResultsContainer';
+import { resetMediaPickerSources, resetMediaPickerCollections } from '../../../../actions/systemActions';
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
 import LoadingSpinner from '../../LoadingSpinner';
 import TabSelector from '../../TabSelector';
@@ -23,7 +24,7 @@ class TabSandCSearchResultsContainer extends React.Component {
   };
 
   render() {
-    const { queryResults, onToggleSelected, handleMediaConcurrency, updateMediaQuerySelection, fetchStatus, whichTagSet, selectedMediaQueryKeyword } = this.props;
+    const { queryResults, onToggleSelected, handleMediaConcurrency, updateMediaQuerySelection, fetchStatus, whichTagSet, selectedMediaQueryKeyword, viewOnly, clearPreviousQueries } = this.props;
     const { formatMessage } = this.props.intl;
     const tabs = (
       <div className="media-picker-results-container">
@@ -34,7 +35,10 @@ class TabSandCSearchResultsContainer extends React.Component {
                 formatMessage(localMessages.sources),
                 formatMessage(localMessages.collections),
               ]}
-              onViewSelected={index => this.setState({ selectedViewIndex: index })}
+              onViewSelected={(index) => {
+                this.setState({ selectedViewIndex: index });
+                clearPreviousQueries();
+              }}
             />
           </Row>
         </Grid>
@@ -52,10 +56,10 @@ class TabSandCSearchResultsContainer extends React.Component {
             fetchStatus={fetchStatus}
             onToggleSelected={onToggleSelected}
             whichTagSet={whichTagSet}
-            selectedMediaQueryKeyword={selectedMediaQueryKeyword}
             initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword, tags: {} } }}
             hintTextMsg={localMessages.hintText}
             handleMediaConcurrency={handleMediaConcurrency}
+            viewOnly={viewOnly}
           />
         </div>
       );
@@ -64,10 +68,11 @@ class TabSandCSearchResultsContainer extends React.Component {
       tabContent = (
         <div className="media-picker-tabbed-content-wrapper">
           <SourceSearchResultsContainer
-            initValues={{ storedKeyword: { mediaKeyword: selectedMediaQueryKeyword, tags: {} } }} // empty
+            initValues={{ searchKeyword: selectedMediaQueryKeyword, tags: {} }} // empty
             onToggleSelected={onToggleSelected}
             handleMediaConcurrency={handleMediaConcurrency}
             updateMediaQuerySelection={updateMediaQuerySelection}
+            viewOnly={viewOnly}
           />
         </div>
       );
@@ -103,11 +108,20 @@ TabSandCSearchResultsContainer.propTypes = {
     PropTypes.string,
     PropTypes.array,
   ]).isRequired,
+  viewOnly: PropTypes.bool,
+  clearPreviousQueries: PropTypes.func,
 };
+
+const mapDispatchToProps = dispatch => ({
+  clearPreviousQueries: () => {
+    dispatch(resetMediaPickerSources());
+    dispatch(resetMediaPickerCollections()); // clear prev results
+  },
+});
 
 export default
 injectIntl(
-  connect()(
+  connect(null, mapDispatchToProps)(
     TabSandCSearchResultsContainer
   )
 );

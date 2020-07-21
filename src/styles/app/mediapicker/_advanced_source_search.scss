@@ -72,3 +72,18 @@
   }
 
 }
+
+.media-picker-search-results {
+  .icon-button-help {
+      float: right;
+      margin-top: -25px;
+      margin-left: 25px;
+  }
+
+  .source-search-keys {
+    font-weight: bold !important;
+  }
+  h2 {
+    font-weight: normal !important;
+  }
+}

@@ -15,7 +15,7 @@ const localMessages = {
 const INCLUDE_SOURCE_COUNTS = false;
 
 const CollectionResultsTable = (props) => {
-  const { title, collections, onToggleSelected } = props;
+  const { title, collections, onToggleSelected, viewOnly } = props;
   let content = null;
   let mediaCountHeader;
   if (INCLUDE_SOURCE_COUNTS) {
@@ -41,11 +41,11 @@ const CollectionResultsTable = (props) => {
             }
             return (
               <tr key={`${c.tags_id}`} className={(idx % 2 === 0) ? 'even' : 'odd'}>
-                <td><a href={urlToCollection(c.tags_id)} target="new">{c.name}</a></td>
+                <td><a href={urlToCollection(c.tags_id)} target="new">{c.name !== 'undefined' ? c.name : c.label}</a></td>
                 <td>{c.tag_set_label}</td>
                 <td>{c.description}</td>
                 {mediaCountValue}
-                <td>{actionContent}</td>
+                <td>{ !viewOnly && actionContent}</td>
               </tr>
             );
           })}
@@ -70,6 +70,7 @@ CollectionResultsTable.propTypes = {
   title: PropTypes.string,
   collections: PropTypes.array,
   onToggleSelected: PropTypes.func,
+  viewOnly: PropTypes.bool,
 };
 
 export default

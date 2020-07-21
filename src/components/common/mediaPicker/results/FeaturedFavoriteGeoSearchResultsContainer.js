@@ -3,9 +3,10 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import withAsyncData from '../../hocs/AsyncDataContainer';
-import { selectMediaPickerQueryArgs, fetchMediaPickerFeaturedCollections, fetchFavoriteCollections, fetchFavoriteSources, fetchMediaPickerCountryCollections } from '../../../../actions/systemActions';
+import { selectMediaPickerQueryArgs, fetchMediaPickerFeaturedCollections, fetchFavoriteCollections, fetchFavoriteSources, fetchMediaPickerCollections } from '../../../../actions/systemActions';
 import TabSearchResultsContainer from './TabSearchResultsContainer';
 import { TAG_SET_ABYZ_GEO_COLLECTIONS, TAG_SET_MC_ID } from '../../../../lib/tagUtil';
+import { MEDIAPICKER_FEATURED_QUERY_SETTING } from '../../../../lib/mediaUtil';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.collections.title', defaultMessage: 'Collections matching "{name}"' },
@@ -44,7 +45,7 @@ class FeaturedFavoriteGeoSearchResultsContainer extends React.Component {
     whichList = whichList.concat(whichProps.featured.list);
 
     // if selected media has changed, update current results
-    if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0
+    if (whichProps.selectedMedia
       // we can't be sure we have received results yet
       && whichList && whichList.length > 0) {
       // sync up selectedMedia and push to result sets.
@@ -58,7 +59,6 @@ class FeaturedFavoriteGeoSearchResultsContainer extends React.Component {
         return m;
       });
     }
-    return 0;
   }
 
   updateMediaQuery(values) {
@@ -69,7 +69,7 @@ class FeaturedFavoriteGeoSearchResultsContainer extends React.Component {
 
   render() {
     const { selectedMediaQueryType, featured, favoritedCollections, favoritedSources,
-      onToggleSelected, fetchStatus } = this.props;
+      onToggleSelected, fetchStatus, viewOnly } = this.props;
     const queryResults = {
       featured: featured.list,
       favoritedCollections: favoritedCollections.list,
@@ -83,10 +83,11 @@ class FeaturedFavoriteGeoSearchResultsContainer extends React.Component {
           onToggleSelected={onToggleSelected}
           selectedMediaQueryType={selectedMediaQueryType}
           queryResults={queryResults}
-          initValues={{ storedKeyword: { mediaKeyword: '' } }}
+          initValues={{ mediaKeyword: '' }}
           onSearch={val => this.updateMediaQuery(val)}
           hintTextMsg={localMessages.hintText}
           handleMediaConcurrency={this.props.handleMediaConcurrency}
+          viewOnly={viewOnly}
         />
       </div>
     );
@@ -110,6 +111,7 @@ FeaturedFavoriteGeoSearchResultsContainer.propTypes = {
   favoritedSources: PropTypes.object,
   fetchStatus: PropTypes.array.isRequired,
   displayResults: PropTypes.bool,
+  viewOnly: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
@@ -123,7 +125,7 @@ const mapStateToProps = state => ({
   featured: state.system.mediaPicker.featured ? state.system.mediaPicker.featured : null,
   favoritedCollections: state.system.mediaPicker.favoritedCollections ? state.system.mediaPicker.favoritedCollections : null,
   favoritedSources: state.system.mediaPicker.favoritedSources ? state.system.mediaPicker.favoritedSources : null,
-  collectionResults: state.system.mediaPicker.countryCollectionQueryResults,
+  collectionResults: state.system.mediaPicker.collectionQueryResults,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -133,17 +135,17 @@ const mapDispatchToProps = dispatch => ({
       dispatch(fetchMediaPickerFeaturedCollections(TAG_SET_MC_ID));
       dispatch(fetchFavoriteCollections());
       dispatch(fetchFavoriteSources());
-      dispatch(fetchMediaPickerCountryCollections());
+      dispatch(fetchMediaPickerCollections());
     }
   },
 });
 
 const fetchAsyncData = (dispatch) => {
-  dispatch(selectMediaPickerQueryArgs({ type: 0 }));
+  dispatch(selectMediaPickerQueryArgs({ type: MEDIAPICKER_FEATURED_QUERY_SETTING }));
   dispatch(fetchMediaPickerFeaturedCollections(TAG_SET_MC_ID));
   dispatch(fetchFavoriteCollections());
   dispatch(fetchFavoriteSources());
-  dispatch(fetchMediaPickerCountryCollections({ media_keyword: '', which_set: TAG_SET_ABYZ_GEO_COLLECTIONS }));
+  dispatch(fetchMediaPickerCollections({ media_keyword: '', which_set: TAG_SET_ABYZ_GEO_COLLECTIONS }));
 };
 
 export default

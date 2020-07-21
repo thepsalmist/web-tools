@@ -2,9 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import { formValueSelector } from 'redux-form';
-import { Col } from 'react-flexbox-grid/lib';
-import { selectMediaPickerQueryArgs, fetchMediaPickerSources, selectMediaCustomColl } from '../../../../actions/systemActions';
+import { Row, Col } from 'react-flexbox-grid/lib';
+import { selectMediaPickerQueryArgs, fetchMediaPickerSources, selectMediaCustomColl, resetMediaPickerSources } from '../../../../actions/systemActions';
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
 import withHelp from '../../hocs/HelpfulContainer';
 import SourceResultsTable from './SourceResultsTable';
@@ -13,11 +14,14 @@ import LoadingSpinner from '../../LoadingSpinner';
 import AppButton from '../../AppButton';
 import { metadataQueryFields, stringifyTags } from '../../../../lib/explorerUtil';
 import { notEmptyString } from '../../../../lib/formValidators';
+import { decodeQueryParamString } from '../../../../lib/mediaUtil';
+import messages from '../../../../resources/messages';
 
 const localMessages = {
-  fullTitle: { id: 'system.mediaPicker.sources.combinedTitle', defaultMessage: 'Top Sources matching<br /> "{keyword}" and {tags}' },
-  mTitle: { id: 'system.mediaPicker.sources.mediaTitle', defaultMessage: 'Top Sources matching<br />"{keyword}"' },
-  tTitle: { id: 'system.mediaPicker.sources.tagsTitle', defaultMessage: 'Top Sources matching<br />{tags}' },
+  prefixTitle: { id: 'system.mediaPicker.sources.prefixTitle', defaultMessage: '{numResults} Sources matching ' },
+  ktTitle: { id: 'system.mediaPicker.sources.combinedKeywordAndTags', defaultMessage: '"{keyword}" and {tags}' },
+  mTitle: { id: 'system.mediaPicker.sources.mediaTitle', defaultMessage: '"{keyword}"' },
+  tTitle: { id: 'system.mediaPicker.sources.tagsTitle', defaultMessage: '{tags}' },
   hintText: { id: 'system.mediaPicker.sources.hint', defaultMessage: 'Search sources by name or url' },
   noResults: { id: 'system.mediaPicker.sources.noResults', defaultMessage: 'No results. Try searching for the name or URL of a specific source to see if we cover it, like Washington Post, Hindustan Times, or guardian.co.uk.' },
   showAdvancedOptions: { id: 'system.mediaPicker.sources.showAdvancedOptions', defaultMessage: 'Show Advanced Options' },
@@ -31,21 +35,28 @@ const localMessages = {
 const formSelector = formValueSelector('advanced-media-picker-search');
 
 class SourceSearchResultsContainer extends React.Component {
-  UNSAFE_componentWillMount() {
-    const { selectedMediaQueryType, updateMediaQuerySelection } = this.props;
-    this.correlateSelection(this.props);
-    updateMediaQuerySelection({ type: selectedMediaQueryType, tags: {} }); // clear out previous selections
-  }
+  componentDidMount() {
+    /* if we are viewOnly, (eg non-modal use for Source Manager)
+     we may have urlParameters to ingest. In particular, a search parameter
+     or tags from a custom collection reference coming from Explorer or Topic Mapper
+    */
+    const { viewOnly, updateMediaQuerySelection, location, selectedMediaQueryKeyword, selectedMediaQueryTags, selectedMediaQueryAllTags, selectedMediaQueryType } = this.props;
+    if (viewOnly && location && location.query) {
+      const urlParams = decodeQueryParamString(location);
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedMedia !== this.props.selectedMedia
-      // if the results have changed from a keyword entry, we need to update the UI
-      || (nextProps.sourceResults && nextProps.sourceResults.lastFetchSuccess !== this.props.sourceResults.lastFetchSuccess)) {
-      this.correlateSelection(nextProps);
+      // we must provide all parameters when updating state
+      // minimally, the type which selects the tabular setting
+      updateMediaQuerySelection({
+        type: selectedMediaQueryType,
+        mediaKeyword: selectedMediaQueryKeyword,
+        advancedSearchQueryString: selectedMediaQueryKeyword,
+        tags: selectedMediaQueryTags,
+        allMedia: selectedMediaQueryAllTags,
+        ...urlParams,
+      });
     }
   }
 
-  // values may contain mediaKeyword, tags, allMedia, customColl
   processQuery = (values) => {
     const { formQuery, selectedMediaQueryType, selectedMediaQueryKeyword, selectedMediaQueryTags, selectedMediaQueryAllTags } = this.props;
     // essentially reselect all values that are currently selected, plus the newly clicked/entered ones
@@ -116,42 +127,30 @@ class SourceSearchResultsContainer extends React.Component {
     const { handleSelectMediaCustomColl } = this.props;
     // get current selected tags and current selected media
     const updatedQueryObj = this.processQuery(values);
-
+    // remove unselected metadata tags
     handleSelectMediaCustomColl(updatedQueryObj);
   }
 
   updateAndSearchWithSelection = (values) => {
-    const { handleUpdateAndSearchWithSelection } = this.props;
+    const { clearPreviousSources, handleUpdateAndSearchWithSelection } = this.props;
     const updatedQueryObj = this.processQuery(values);
+    clearPreviousSources(); // do this here and not for paging
     handleUpdateAndSearchWithSelection(updatedQueryObj);
   }
 
-  correlateSelection(whichProps) {
-    const whichList = whichProps.sourceResults.list;
-
-    // if selected media has changed, update current results
-    if (whichProps.selectedMedia && whichProps.selectedMedia.length > 0
-      // we can't be sure we have received results yet
-      && whichList && whichList.length > 0) {
-      // sync up selectedMedia and push to result sets.
-      whichList.map((m) => {
-        const mediaIndex = whichProps.selectedMedia.findIndex(q => q.id === m.id);
-        if (mediaIndex < 0) {
-          this.props.handleMediaConcurrency(m, false);
-        } else if (mediaIndex >= 0) {
-          this.props.handleMediaConcurrency(m, true);
-        }
-        return m;
-      });
-    }
-    return 0;
+  updateAndSearchWithPaging = (values) => {
+    const { pageThroughSources } = this.props;
+    const updatedQueryObj = this.processQuery(values);
+    pageThroughSources(updatedQueryObj); // mergeProps for paging
   }
 
   render() {
-    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags, selectedMediaQueryAllTags, helpButton } = this.props;
+    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags, selectedMediaQueryAllTags, helpButton, viewOnly, links } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     let resultContent = null;
+    let getMoreResultsContent = null;
+
     content = (
       <div>
         <AdvancedMediaPickerSearchForm
@@ -159,7 +158,6 @@ class SourceSearchResultsContainer extends React.Component {
           onQueryUpdateSelection={(metadataType, values) => this.updateQuerySelection(metadataType, values)}
           onSearch={val => this.updateAndSearchWithSelection(val)}
           hintText={formatMessage(localMessages.hintText)}
-          keepDirtyOnReinitialize
         />
       </div>
     );
@@ -167,11 +165,17 @@ class SourceSearchResultsContainer extends React.Component {
       <Col lg={12}>
         { helpButton }
         <AppButton
-          style={{ marginTop: -30, float: 'right' }}
+          style={{ float: 'right' }}
           label={formatMessage(localMessages.customColl)}
           onClick={() => this.addCustomSelection({ customColl: true })}
           color="primary"
-          disabled={!selectedMediaQueryTags || Object.keys(selectedMediaQueryTags).length === 0 || sourceResults === undefined || sourceResults.list.length === 0}
+          disabled={!selectedMediaQueryTags
+            || Object.values(selectedMediaQueryTags)
+              .filter((t) => t.length > 0 && t !== 'search') // values greater than 0
+              .map((p,) => p.filter((e) => e.selected).length) // for each element eg "US" in metadata category array
+              .filter((e) => e > 0).length < 1
+            || sourceResults === undefined
+            || sourceResults.list.length === 0}
         />
       </Col>
     );
@@ -197,20 +201,38 @@ class SourceSearchResultsContainer extends React.Component {
       if (tagNames.length > 0) {
         stringifiedTags = stringifyTags(previouslySearchedTags, formatMessage);
       }
+      const prefixTitle = <FormattedHTMLMessage {...localMessages.prefixTitle} values={{ numResults: sourceResults.list.length }} />;
+
       if (notEmptyString(selectedMediaQueryKeyword) && stringifiedTags) {
-        conditionalTitle = <FormattedHTMLMessage {...localMessages.fullTitle} values={{ keyword: selectedMediaQueryKeyword, tags: stringifiedTags }} />;
+        conditionalTitle = <FormattedHTMLMessage {...localMessages.ktTitle} values={{ keyword: selectedMediaQueryKeyword, tags: stringifiedTags }} />;
       } else if (notEmptyString(selectedMediaQueryKeyword)) {
         conditionalTitle = <FormattedHTMLMessage {...localMessages.mTitle} values={{ keyword: selectedMediaQueryKeyword }} />;
       } else {
         conditionalTitle = <FormattedHTMLMessage {...localMessages.tTitle} values={{ tags: stringifiedTags }} />;
       }
+      getMoreResultsContent = (
+        <Row>
+          <Col lg={12}>
+            <AppButton
+              className="select-media-button"
+              label={formatMessage(messages.getMoreResults)}
+              onClick={val => this.updateAndSearchWithPaging(val)}
+              type="submit"
+              disabled={links.next <= 0}
+            />
+          </Col>
+        </Row>
+      );
+
       resultContent = (
-        <div className="source-search-results">
-          <h2>{ conditionalTitle }</h2>
-          { addCustomButton }
+        <div className="media-picker-search-results">
+          <h2><span className="source-search-keys">{prefixTitle}</span>{ conditionalTitle }</h2>
+          { !viewOnly && addCustomButton }
+          { getMoreResultsContent }
           <SourceResultsTable
             sources={sourceResults.list}
             onToggleSelected={onToggleSelected}
+            viewOnly={viewOnly}
           />
         </div>
       );
@@ -221,6 +243,7 @@ class SourceSearchResultsContainer extends React.Component {
       <div>
         {content}
         {resultContent}
+        { getMoreResultsContent }
       </div>
     );
   }
@@ -228,6 +251,8 @@ class SourceSearchResultsContainer extends React.Component {
 
 SourceSearchResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
+  params: PropTypes.object, // params from router
+  location: PropTypes.object,
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
   handleMediaConcurrency: PropTypes.func.isRequired,
@@ -246,10 +271,13 @@ SourceSearchResultsContainer.propTypes = {
   formQuery: PropTypes.object,
   mediaQuery: PropTypes.array,
   helpButton: PropTypes.node.isRequired,
+  links: PropTypes.object,
   // from dispatch
-  // updateAdvancedMediaQuerySelection: PropTypes.func.isRequired,
   handleUpdateAndSearchWithSelection: PropTypes.func.isRequired,
   handleSelectMediaCustomColl: PropTypes.func.isRequired,
+  clearPreviousSources: PropTypes.func.isRequired,
+  viewOnly: PropTypes.bool,
+  pageThroughSources: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -270,19 +298,23 @@ const mapStateToProps = state => ({
     'allMedia',
     'advancedSearchQueryString',
   ),
+  links: state.system.mediaPicker.sourceQueryResults.linkId,
 });
 
 // tags holds metadata search tags
 const mapDispatchToProps = (dispatch, ownProps) => ({
   updateMediaQuerySelection: (values) => {
     if (values && values.tags) {
+      dispatch(resetMediaPickerSources()); // clear prev results
       if (values.allMedia) { // handle the "all media" placeholder selection
-        ownProps.updateMediaQuerySelection({ media_keyword: values.mediaKeyword, type: values.type, allMedia: true });
+        ownProps.updateMediaQuerySelection({ media_keyword: values.mediaKeyword || '*', type: values.type, allMedia: true });
       } else {
-        dispatch(selectMediaPickerQueryArgs({ media_keyword: values.mediaKeyword, type: values.type, tags: { ...values.tags } }));
+        dispatch(selectMediaPickerQueryArgs({ media_keyword: values.mediaKeyword || '*', type: values.type, tags: { ...values.tags }, allMedia: false }));
       }
     }
   },
+  clearPreviousSources: () => dispatch(resetMediaPickerSources()), // clear prev results
+
   handleUpdateAndSearchWithSelection: (values) => {
     if (values.mediaKeyword || values.tags) {
       let tags = null;
@@ -298,7 +330,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         });
         tags = selectedTags.filter(t => t.length > 0).join(',');
       }
-      dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: (values.allMedia ? -1 : tags) }));
+      dispatch(fetchMediaPickerSources({ media_keyword: values.mediaKeyword || '*', tags: (values.allMedia ? -1 : tags), type: values.type, linkId: values.linkId }));
     }
   },
   handleSelectMediaCustomColl: (values) => {
@@ -306,11 +338,25 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
 });
 
+function mergeProps(stateProps, dispatchProps, ownProps) {
+  return { ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
+    pageThroughSources: (values) => {
+      if (stateProps.links !== undefined) {
+        dispatchProps.handleUpdateAndSearchWithSelection({ ...values, linkId: stateProps.links.next });
+      } else {
+        dispatchProps.handleUpdateAndSearchWithSelection({ ...values, linkId: 0 });
+      }
+    },
+  };
+}
+
 export default
 injectIntl(
-  connect(mapStateToProps, mapDispatchToProps)(
+  connect(mapStateToProps, mapDispatchToProps, mergeProps)(
     withHelp(localMessages.customCollTitle, localMessages.customCollDef)(
-      SourceSearchResultsContainer
+      withRouter(SourceSearchResultsContainer)
     )
   )
 );

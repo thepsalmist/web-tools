@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import { selectMediaPickerQueryArgs, selectMedia, unselectMedia, clearSelectedMedia } from '../../../actions/systemActions';
+import { selectMediaPickerQueryArgs, selectMedia, unselectMedia, clearSelectedMedia, resetMetadataShortlist, resetMediaPickerSources, resetMediaPickerCollections } from '../../../actions/systemActions';
 import { PICK_SOURCE_AND_COLLECTION, PICK_FEATURED } from '../../../lib/explorerUtil';
 import OpenWebMediaItem from '../OpenWebMediaItem';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
@@ -45,7 +45,7 @@ class PickedMediaContainer extends React.Component {
   };
 
   render() {
-    const { selectedMediaQueryType, selectedMedia, handleUnselectMedia, handleClearAll } = this.props;
+    const { selectedMediaQueryType, selectedMedia, handleUnselectMedia, handleClearAll, viewOnly } = this.props;
     const options = [
       { label: localMessages.pickFeatured, value: PICK_FEATURED },
       { label: localMessages.pickSAndC, value: PICK_SOURCE_AND_COLLECTION },
@@ -67,13 +67,29 @@ class PickedMediaContainer extends React.Component {
       </Menu>
     );
     let warningInfo = null;
-    if (selectedMedia.length === 0) {
+    let selectedMediaContent = null;
+    if (!selectedMedia || (selectedMedia && selectedMedia.length === 0)) {
       warningInfo = (
         <div className="media-picker-no-media-warning">
           <FormattedMessage {...messages.noMedia} />
         </div>
       );
     }
+    selectedMediaContent = (
+      <div className="select-media-selected-list">
+        <FormattedMessage {...localMessages.selectedMedia} />
+        <IconButton className="select-media-options" onClick={this.handleClick} aria-haspopup="true" aria-owns="logged-in-header-menu"><MoreVertIcon /></IconButton>
+        { allMedia }
+        {selectedMedia && selectedMedia.length > 0 && selectedMedia.map(obj => (
+          <OpenWebMediaItem
+            key={obj.id || obj.tags_id || obj.media_id || obj.tag_sets_id || obj.tags.name}
+            object={obj}
+            onDelete={() => handleUnselectMedia(obj)}
+          />
+        ))}
+        { warningInfo }
+      </div>
+    );
 
     return (
       <div>
@@ -96,19 +112,7 @@ class PickedMediaContainer extends React.Component {
             </a>
           ))}
         </div>
-        <div className="select-media-selected-list">
-          <FormattedMessage {...localMessages.selectedMedia} />
-          <IconButton className="select-media-options" onClick={this.handleClick} aria-haspopup="true" aria-owns="logged-in-header-menu"><MoreVertIcon /></IconButton>
-          { allMedia }
-          {selectedMedia.map(obj => (
-            <OpenWebMediaItem
-              key={obj.id || obj.tags_id || obj.media_id || obj.tag_sets_id || obj.tags.name}
-              object={obj}
-              onDelete={() => handleUnselectMedia(obj)}
-            />
-          ))}
-          { warningInfo }
-        </div>
+        { !viewOnly && selectedMediaContent }
       </div>
     );
   }
@@ -124,6 +128,7 @@ PickedMediaContainer.propTypes = {
   updateMediaQueryArgsSelection: PropTypes.func.isRequired,
   handleUnselectMedia: PropTypes.func.isRequired,
   handleClearAll: PropTypes.func.isRequired,
+  viewOnly: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
@@ -140,12 +145,15 @@ const mapDispatchToProps = dispatch => ({
     if (values.type >= 0) {
       dispatch(selectMediaPickerQueryArgs(values.type));
     }
+    dispatch(resetMediaPickerSources());
+    dispatch(resetMediaPickerCollections());
+    dispatch(resetMetadataShortlist());
     if (values.allMedia) { // handle the "all media" placeholder selection
       dispatch(selectMediaPickerQueryArgs({ media_keyword: values.mediaKeyword, type: values.type, allMedia: true }));
       dispatch(clearSelectedMedia());
       dispatch(selectMedia({ label: values.label, id: ALL_MEDIA }));
     } else {
-      dispatch(selectMediaPickerQueryArgs({ media_keyword: values.mediaKeyword, type: values.type, tags: { ...values.tags } }));
+      dispatch(selectMediaPickerQueryArgs({ media_keyword: values.mediaKeyword, type: values.type, tags: { ...values.tags }, allMedia: false }));
     }
   },
   handleUnselectMedia: (selectedMedia) => {
@@ -163,6 +171,7 @@ const mapDispatchToProps = dispatch => ({
   },
   handleClearAll: () => {
     dispatch(clearSelectedMedia());
+    dispatch(resetMetadataShortlist());
   },
 });
 

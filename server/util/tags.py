@@ -35,10 +35,11 @@ CLIFF_PEOPLE = 2389  # there is a tag set that has one tag for each person we fi
 
 # Source collection tags sets
 TAG_SETS_ID_COLLECTIONS = 5  # holds all the Media Cloud collections
-TAG_SET_ID_PARTISAN_RETWEETS = 1959  # holds the partisan retweet quintiles
 TAG_SET_ABYZ_GEO_COLLECTIONS = 15765102  # for geographic collections we are importing from ABYZ
-VALID_COLLECTION_TAG_SETS_IDS = [TAG_SETS_ID_COLLECTIONS, TAG_SET_ID_PARTISAN_RETWEETS,
-                                 TAG_SET_ABYZ_GEO_COLLECTIONS]
+TAG_SETS_ID_RETWEET_PARTISANSHIP_2020 = 15765109
+TAG_SETS_ID_RETWEET_PARTISANSHIP_2016 = 1959
+VALID_COLLECTION_TAG_SETS_IDS = [TAG_SETS_ID_COLLECTIONS, TAG_SETS_ID_RETWEET_PARTISANSHIP_2020,
+                                 TAG_SETS_ID_RETWEET_PARTISANSHIP_2016, TAG_SET_ABYZ_GEO_COLLECTIONS]
 
 US_COLLECTIONS = [58722749,  # top online 2017
                   57078150,  # pew 2016 digital
@@ -51,8 +52,6 @@ TAG_SETS_ID_PUBLICATION_STATE = 1962  # holds the state of publication of a sour
 TAG_SETS_ID_PRIMARY_LANGUAGE = 1969  # holds the primary language of a source
 TAG_SETS_ID_COUNTRY_OF_FOCUS = 1970  # holds the primary focus on what country for a source
 TAG_SETS_ID_MEDIA_TYPE = 1972
-
-TAG_SETS_ID_RETWEET_PARTISANSHIP_2016 = 1959
 
 METADATA_PUB_COUNTRY_NAME = 'pub_country'
 METADATA_PUB_STATE_NAME = 'pub_state'

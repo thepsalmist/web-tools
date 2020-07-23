@@ -21,9 +21,9 @@ FEATURED_COLLECTION_LIST = [
     34412476,  # UK National
     34412202,  # Ghana National
     38381372,  # US Massachusetts State/Local
-    9360520,   # US Partisan sets
-    9360521,
-    9360522,
-    9360523,
-    9360524
+    200363048,  # US 2020 Partisan sets
+    200363049,
+    200363050,
+    200363061,
+    200363062,
 ]

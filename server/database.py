@@ -86,7 +86,7 @@ class AnalyticsDatabase(AppDatabase):
         # type - media | collection
         # id - media_id | tags_id
         # action - explorer-query | sources-view | topics-usage
-        if (the_id is not None) and (len(the_id) > 0):  # some extra validation
+        if the_id not in [None, '', 'undefined'] and int(the_id) > 0:  # some extra validation
             return self._conn.analytics.update_one(
                 {'type': the_type, 'id': int(the_id)},
                 {'$inc': {the_action: amount}},

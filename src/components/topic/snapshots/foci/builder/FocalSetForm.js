@@ -3,7 +3,7 @@ import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import withIntlForm from '../../../../common/hocs/IntlForm';
-import { FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP, FOCAL_TECHNIQUE_TOP_COUNTRIES, FOCAL_TECHNIQUE_NYT_THEME, FOCAL_TECHNIQUE_MEDIA_TYPE } from '../../../../../lib/focalTechniques';
+import { FOCAL_TECHNIQUE_TWEET_PARTISANSHIP_2019, FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP_2016, FOCAL_TECHNIQUE_TOP_COUNTRIES, FOCAL_TECHNIQUE_NYT_THEME, FOCAL_TECHNIQUE_MEDIA_TYPE } from '../../../../../lib/focalTechniques';
 import { notEmptyString } from '../../../../../lib/formValidators';
 
 const localMessages = {
@@ -14,10 +14,11 @@ const localMessages = {
   errorNoDescription: { id: 'focalSet.description.error', defaultMessage: 'You need a description.' },
   defaultSetName: { id: 'focalSet.default.setName', defaultMessage: 'Conversations' },
   defaultSetDescription: { id: 'focalSet.default.setDescription', defaultMessage: 'A set of different conversations within this topic.' },
-  defaultSetNameRetweet: { id: 'focalSet.default.setName.retweet', defaultMessage: 'Retweet Partisanship' },
-  defaultSetDescriptionRetweet: { id: 'focalSet.default.setDescription.retweet', defaultMessage: 'Subtopics driven by our analysis of Twitter followers of Trump and Clinton during the 2016 election season.  Each media soure is scored based on the ratio of retweets of their stories in those two groups.' },
+  defaultSetNamePartisanship: { id: 'focalSet.default.setName.partisanship', defaultMessage: '{analysis} Partisanship {year}' },
+  defaultSetDescriptionPartisanship2019: { id: 'focalSet.default.setDescription.partisanship2019', defaultMessage: 'Subtopics driven by our analysis driven by our analysis of the urls shared by partisan users on Twitter during 2019. Each media source is scored based on the average partisanship of the users who share urls belonging to that media source.' },
+  defaultSetDescriptionPartisanship2016: { id: 'focalSet.default.setDescription.partisanship2016', defaultMessage: 'Subtopics driven by our analysis of Twitter followers of Trump and Clinton during the 2016 election season.  Each media source is scored based on the ratio of retweets of their stories in those two groups.' },
   defaultSetNameTopCountries: { id: 'focalSet.default.setName.retweet', defaultMessage: 'Top Countries' },
-  defaultSetDescriptionTopCountries: { id: 'focalSet.default.setDescription.retweet', defaultMessage: 'Subtopics for the countries stories are most often about.' },
+  defaultSetDescriptionTopCountries: { id: 'focalSet.default.setDescription.countries', defaultMessage: 'Subtopics for the countries stories are most often about.' },
   defaultSetNameNytTheme: { id: 'focalSet.default.setName.nyt', defaultMessage: 'Nyt Theme' },
   defaultSetDescriptionNytTheme: { id: 'focalSet.default.setDescription.nyt', defaultMessage: 'Subtopics for the themes stories are most often related to.' },
   defaultSetNameMediaType: { id: 'focalSet.default.setName.mediaType', defaultMessage: 'Media Type' },
@@ -32,9 +33,13 @@ class FocalSetForm extends React.Component {
     let setName;
     let setDescription;
     switch (focalTechnique) {
-      case FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP:
-        setName = formatMessage(localMessages.defaultSetNameRetweet);
-        setDescription = formatMessage(localMessages.defaultSetDescriptionRetweet);
+      case FOCAL_TECHNIQUE_TWEET_PARTISANSHIP_2019:
+        setName = formatMessage(localMessages.defaultSetNamePartisanship, { analysis: 'Tweet', year: 2019 });
+        setDescription = formatMessage(localMessages.defaultSetDescriptionPartisanship2019);
+        break;
+      case FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP_2016:
+        setName = formatMessage(localMessages.defaultSetNamePartisanship, { analysis: 'Retweet', year: 2016 });
+        setDescription = formatMessage(localMessages.defaultSetDescriptionPartisanship2016);
         break;
       case FOCAL_TECHNIQUE_TOP_COUNTRIES:
         setName = formatMessage(localMessages.defaultSetNameTopCountries);

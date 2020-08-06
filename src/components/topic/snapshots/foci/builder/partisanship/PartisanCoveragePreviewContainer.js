@@ -10,13 +10,14 @@ import { getBrandDarkColor } from '../../../../../../styles/colors';
 
 const localMessages = {
   title: { id: 'topic.snapshot.retweet.coverage.title', defaultMessage: 'Story Coverage' },
-  intro: { id: 'topic.snapshot.retweet.coverage.intro', defaultMessage: 'Our categorization of media sources by how much Trump and Clinton followers retweeted them in 2016 only covers the top 1000 sources from our 2016 US election topic.  This pie chart shows you how many stories form those media appear in this topic, versus how many don\'t.  If the coverage in this topic isn\'t high, you might not want to use this subtopic creation technique.' },
+  intro2016: { id: 'topic.snapshot.retweet.coverage.intro2016', defaultMessage: 'Our categorization of media sources by how much Trump and Clinton followers retweeted them in 2016 only covers about 1000 sources from our 2016 US election topic. This pie chart shows you how many stories from those media appear in this topic, versus how many don\'t. If the coverage in this topic isn\'t high, you might not want to use this subtopic creation technique.' },
+  intro2019: { id: 'topic.snapshot.retweet.coverage.intro2019', defaultMessage: 'We have categorized over thirteen thousand media sources. This pie chart shows the breakdown of stories within your topic that have been categorized by source partisanship score according to the method described above. If the coverage in this topic isn\'t high, you might not want to use this subtopic creation technique.' },
   included: { id: 'topic.snapshot.keywords.coverage.matching', defaultMessage: 'Stories with partisanship info' },
   notIncluded: { id: 'topic.snapshot.keywords.coverage.total', defaultMessage: 'Stories without partisanship info' },
 };
 
-const RetweetCoveragePreviewContainer = (props) => {
-  const { counts } = props;
+const PartisanCoveragePreviewContainer = (props) => {
+  const { counts, year } = props;
   const { formatMessage } = props.intl;
   let content = null;
   if (counts !== null && counts !== undefined) {
@@ -37,17 +38,18 @@ const RetweetCoveragePreviewContainer = (props) => {
       <h2>
         <FormattedMessage {...localMessages.title} />
       </h2>
-      <p><FormattedMessage {...localMessages.intro} /></p>
+      <p><FormattedMessage {...localMessages[`intro${year}`]} /></p>
       {content}
     </DataCard>
   );
 };
 
-RetweetCoveragePreviewContainer.propTypes = {
+PartisanCoveragePreviewContainer.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
+  year: PropTypes.number.isRequired,
   // from state
   counts: PropTypes.object,
   fetchStatus: PropTypes.string.isRequired,
@@ -58,13 +60,13 @@ const mapStateToProps = state => ({
   counts: state.topics.selected.focalSets.create.retweetCoverage.counts,
 });
 
-const fetchAsycData = (dispatch, { topicId }) => dispatch(fetchCreateFocusRetweetCoverage(topicId));
+const fetchAsycData = (dispatch, { topicId, year }) => dispatch(fetchCreateFocusRetweetCoverage(topicId, year));
 
 export default
 injectIntl(
   connect(mapStateToProps)(
     withAsyncData(fetchAsycData)(
-      RetweetCoveragePreviewContainer
+      PartisanCoveragePreviewContainer
     )
   )
 );

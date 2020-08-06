@@ -6,28 +6,30 @@ import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import KeywordSearchIcon from '../../../../common/icons/KeywordSearchIcon';
 import FocalTechniqueDescription from './FocalTechniqueDescription';
-import { FOCAL_TECHNIQUE_BOOLEAN_QUERY, FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP, FOCAL_TECHNIQUE_TOP_COUNTRIES, FOCAL_TECHNIQUE_NYT_THEME, FOCAL_TECHNIQUE_MEDIA_TYPE }
+import { FOCAL_TECHNIQUE_BOOLEAN_QUERY, FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP_2016, FOCAL_TECHNIQUE_TWEET_PARTISANSHIP_2019, FOCAL_TECHNIQUE_TOP_COUNTRIES, FOCAL_TECHNIQUE_NYT_THEME, FOCAL_TECHNIQUE_MEDIA_TYPE }
   from '../../../../../lib/focalTechniques';
-// import { assetUrl } from '../../../../../lib/assetUtil';
 
 const localMessages = {
   about: { id: 'focus.techniquePicker.about',
     defaultMessage: 'You can build a Subtopic using a variety of Techniques; pick the one that best matches your awareness of the content and goals. You can\'t change this later.' },
   searchByKeywordName: { id: 'focus.technique.keyword.name', defaultMessage: 'Search' },
   searchByKeywordDescription: { id: 'focus.technique.keyword.description',
-    defaultMessage: 'When you know a lot about the coverage, or have some hypotheses to test, you can define a Subtopic by specifying a boolean query.' },
-  retweetName: { id: 'focus.technique.retweet.name', defaultMessage: 'US Audience Partisanship' },
-  retweetDescription: { id: 'focus.technique.retweet.description',
-    defaultMessage: 'When you want to slice your topic by U.S. audience partisanship, as determined by each media source\'s ratio of twitter shares by liberal vs. conservative tweeters.' },
+    defaultMessage: 'Define a Subtopic by specifying a boolean query.' },
+  partisanshipName2016: { id: 'focus.technique.partisanship.2016.name', defaultMessage: 'US Audience Partisanship 2016' },
+  partisanshipDescription2016: { id: 'focus.technique.partisanship.2016.description',
+    defaultMessage: 'Slice your topic by U.S. audience partisanship, as determined by each media source\'s ratio of twitter shares by liberal vs. conservative tweeters during 2016.' },
+  partisanshipName2019: { id: 'focus.technique.partisanship.2019.name', defaultMessage: 'US Audience Partisanship 2019' },
+  partisanshipDescription2019: { id: 'focus.technique.partisanship.2019.description',
+    defaultMessage: 'Slice your topic by U.S. audience partisanship, as determined by each media source\'s ratio of twitter shares by liberal vs. conservative tweeters during 2019.' },
   mediaTypeName: { id: 'focus.technique.mediaType.name', defaultMessage: 'Media Type' },
-  mediaTypeDescription: { id: 'focus.technique.mediaType.description', defaultMessage: 'When you want to compare coverage of your topic by different types of media sources (broadcast, online, etc).' },
+  mediaTypeDescription: { id: 'focus.technique.mediaType.description', defaultMessage: 'Compare coverage of your topic by different types of media sources (broadcast, online, etc).' },
   topCountriesName: { id: 'focus.technique.topCountries.name', defaultMessage: 'Top Countries' },
-  topCountriesDescription: { id: 'focus.technique.topCountries.description', defaultMessage: 'When you want to compare coverage of different countries within your Topic.' },
+  topCountriesDescription: { id: 'focus.technique.topCountries.description', defaultMessage: 'Compare coverage of different countries within your Topic.' },
   themeName: { id: 'focus.technique.theme.name', defaultMessage: 'Top Themes' },
-  themeDescription: { id: 'focus.technique.theme.description', defaultMessage: 'When you want to compare coverage of different themes within your Topic, as labelled by our theme detector.' },
+  themeDescription: { id: 'focus.technique.theme.description', defaultMessage: 'Compare coverage of different themes within your Topic, as labelled by our theme detector.' },
   referenceName: { id: 'focus.technique.reference.name', defaultMessage: 'Upload Representative Articles' },
   referenceDescription: { id: 'focus.technique.reference.description',
-    defaultMessage: 'When you have a list of stories that you think define a Subtopic, you can upload that list and we\'ll use it to identify similar articles within this Subtopic.' },
+    defaultMessage: 'Upload a list of stories that you think define a Subtopic and we\'ll use it to identify similar articles within this Subtopic.' },
   automagicName: { id: 'focus.technique.automagic.name', defaultMessage: 'Auto-Magic' },
   automagicDescription: { id: 'focus.technique.automagic.description',
     defaultMessage: 'When you aren\'t sure what is going on, we can use an algorithm to detect communities of sub-conversations within the Topic for you, creating a Subtopic for each.' },
@@ -58,14 +60,29 @@ class FocalTechniqueSelector extends React.Component {
           </Col>
           <Col lg={3}>
             <FocalTechniqueDescription
-              onClick={() => this.handleSelection(FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP)}
-              selected={currentFocalTechnique === FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP}
-              id="Retweet Partisanship"
+              onClick={() => this.handleSelection(FOCAL_TECHNIQUE_TWEET_PARTISANSHIP_2019)}
+              selected={currentFocalTechnique === FOCAL_TECHNIQUE_TWEET_PARTISANSHIP_2019}
+              id="partisanship-2019"
               icon={KeywordSearchIcon}
-              nameMsg={localMessages.retweetName}
-              descriptionMsg={localMessages.retweetDescription}
+              nameMsg={localMessages.partisanshipName2019}
+              descriptionMsg={localMessages.partisanshipDescription2019}
             />
           </Col>
+          <Col lg={3}>
+            <FocalTechniqueDescription
+              onClick={() => this.handleSelection(FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP_2016)}
+              selected={currentFocalTechnique === FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP_2016}
+              id="partisanship-2016"
+              icon={KeywordSearchIcon}
+              nameMsg={localMessages.partisanshipName2016}
+              descriptionMsg={localMessages.partisanshipDescription2016}
+            />
+          </Col>
+          <Col lg={3}>
+            <p className="light"><i><FormattedMessage {...localMessages.about} /></i></p>
+          </Col>
+        </Row>
+        <Row>
           <Col lg={3}>
             <FocalTechniqueDescription
               onClick={() => this.handleSelection(FOCAL_TECHNIQUE_TOP_COUNTRIES)}
@@ -76,11 +93,6 @@ class FocalTechniqueSelector extends React.Component {
               descriptionMsg={localMessages.topCountriesDescription}
             />
           </Col>
-          <Col lg={3}>
-            <p className="light"><i><FormattedMessage {...localMessages.about} /></i></p>
-          </Col>
-        </Row>
-        <Row>
           <Col lg={3}>
             <FocalTechniqueDescription
               onClick={() => this.handleSelection(FOCAL_TECHNIQUE_NYT_THEME)}

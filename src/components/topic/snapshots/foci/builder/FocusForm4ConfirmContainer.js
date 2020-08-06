@@ -5,12 +5,13 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../../../common/hocs/IntlForm';
-import RetweetPartisanshipSummary from './retweetPartisanship/RetweetPartisanshipSummary';
+import PartisanshipSummary from './partisanship/PartisanshipSummary';
 import TopCountriesSummary from './topCountries/TopCountriesSummary';
 import NytThemeSummary from './nyttheme/NytThemeSummary';
 import MediaTypeSummary from './mediaType/MediaTypeSummary';
 import SearchSummary from './search/SearchSummary';
-import { FOCAL_TECHNIQUE_BOOLEAN_QUERY, FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP, FOCAL_TECHNIQUE_TOP_COUNTRIES, FOCAL_TECHNIQUE_NYT_THEME, FOCAL_TECHNIQUE_MEDIA_TYPE } from '../../../../../lib/focalTechniques';
+import { FOCAL_TECHNIQUE_BOOLEAN_QUERY, FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP_2016, FOCAL_TECHNIQUE_TWEET_PARTISANSHIP_2019, FOCAL_TECHNIQUE_PARTISANSHIP_TO_YEAR,
+  FOCAL_TECHNIQUE_TOP_COUNTRIES, FOCAL_TECHNIQUE_NYT_THEME, FOCAL_TECHNIQUE_MEDIA_TYPE } from '../../../../../lib/focalTechniques';
 import AppButton from '../../../../common/AppButton';
 import messages from '../../../../../resources/messages';
 import { goToCreateFocusStep } from '../../../../../actions/topicActions';
@@ -35,9 +36,11 @@ const FocusForm4ConfirmContainer = (props) => {
         <SearchSummary topicId={topicId} formValues={formValues} initialValues={initialValues} />
       );
       break;
-    case FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP:
+    // both 2016 and 2019 use the same container
+    case FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP_2016:
+    case FOCAL_TECHNIQUE_TWEET_PARTISANSHIP_2019:
       content = (
-        <RetweetPartisanshipSummary topicId={topicId} formValues={formValues} initialValues={initialValues} />
+        <PartisanshipSummary year={FOCAL_TECHNIQUE_PARTISANSHIP_TO_YEAR[formValues.focalTechnique]} topicId={topicId} formValues={formValues} initialValues={initialValues} />
       );
       break;
     case FOCAL_TECHNIQUE_TOP_COUNTRIES:

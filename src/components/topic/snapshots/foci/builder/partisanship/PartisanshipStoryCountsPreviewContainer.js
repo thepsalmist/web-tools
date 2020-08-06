@@ -24,10 +24,10 @@ const BUBBLE_CHART_DOM_ID = 'focalSetCreatePreviewRetweetPartisanshipCounts';
 
 const localMessages = {
   title: { id: 'topic.snapshot.retweet.storyCount.title', defaultMessage: 'Stories By Partisanship' },
-  intro: { id: 'topic.snapshot.retweet.storyCount.intro', defaultMessage: 'This is based on the 1000 media sources with the most retweets during the US 2016 election season. That means each of the quintiles below is NOT evenly distribted.  For instance, while the "center" has just 91 sources, the "right" has 496. Each bubble below shows the percentage of stories that fall into each of the quintiles.' },
+  intro: { id: 'topic.snapshot.retweet.storyCount.intro', defaultMessage: 'This is based on the media sources categorized using the method described above. That means each of the quintiles below is NOT evenly distributed. For instance, while the "center" has just 91 sources, the "right" has 496. Each bubble below shows the percentage of stories that fall into each of the quintiles.' },
 };
 
-const RetweetStoryCountsPreviewContainer = (props) => {
+const PartisanshipStoryCountsPreviewContainer = (props) => {
   const { counts } = props;
   const { formatNumber } = props.intl;
   let content = null;
@@ -61,11 +61,12 @@ const RetweetStoryCountsPreviewContainer = (props) => {
   );
 };
 
-RetweetStoryCountsPreviewContainer.propTypes = {
+PartisanshipStoryCountsPreviewContainer.propTypes = {
   // from compositional chain
   intl: PropTypes.object.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
+  year: PropTypes.number.isRequired,
   // from state
   counts: PropTypes.array,
   fetchStatus: PropTypes.string.isRequired,
@@ -76,13 +77,13 @@ const mapStateToProps = state => ({
   counts: state.topics.selected.focalSets.create.retweetStoryCounts.story_counts,
 });
 
-const fetchAsyncData = (dispatch, { topicId }) => dispatch(fetchCreateFocusRetweetStoryCounts(topicId));
+const fetchAsyncData = (dispatch, { topicId, year }) => dispatch(fetchCreateFocusRetweetStoryCounts(topicId, year));
 
 export default
 injectIntl(
   connect(mapStateToProps)(
     withAsyncData(fetchAsyncData)(
-      RetweetStoryCountsPreviewContainer
+      PartisanshipStoryCountsPreviewContainer
     )
   )
 );

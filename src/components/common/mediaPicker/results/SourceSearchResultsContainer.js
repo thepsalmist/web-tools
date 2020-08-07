@@ -20,8 +20,6 @@ import messages from '../../../../resources/messages';
 const localMessages = {
   prefixTitle: { id: 'system.mediaPicker.sources.prefixTitle', defaultMessage: '{numResults} Sources matching ' },
   ktTitle: { id: 'system.mediaPicker.sources.combinedKeywordAndTags', defaultMessage: '"{keyword}" and {tags}' },
-  mTitle: { id: 'system.mediaPicker.sources.mediaTitle', defaultMessage: '"{keyword}"' },
-  tTitle: { id: 'system.mediaPicker.sources.tagsTitle', defaultMessage: '{tags}' },
   hintText: { id: 'system.mediaPicker.sources.hint', defaultMessage: 'Search sources by name or url' },
   noResults: { id: 'system.mediaPicker.sources.noResults', defaultMessage: 'No results. Try searching for the name or URL of a specific source to see if we cover it, like Washington Post, Hindustan Times, or guardian.co.uk.' },
   showAdvancedOptions: { id: 'system.mediaPicker.sources.showAdvancedOptions', defaultMessage: 'Show Advanced Options' },
@@ -147,11 +145,8 @@ class SourceSearchResultsContainer extends React.Component {
   render() {
     const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags, selectedMediaQueryAllTags, helpButton, viewOnly, links } = this.props;
     const { formatMessage } = this.props.intl;
-    let content = null;
-    let resultContent = null;
-    let getMoreResultsContent = null;
 
-    content = (
+    const content = (
       <div>
         <AdvancedMediaPickerSearchForm
           initialValues={{ mediaKeyword: selectedMediaQueryKeyword, advancedSearchQueryString: selectedMediaQueryKeyword, tags: selectedMediaQueryTags, allMedia: selectedMediaQueryAllTags }}
@@ -180,6 +175,8 @@ class SourceSearchResultsContainer extends React.Component {
       </Col>
     );
 
+    let resultContent;
+    let getMoreResultsContent;
     if (fetchStatus === FETCH_ONGOING) {
       resultContent = <LoadingSpinner />;
     } else if (sourceResults && (sourceResults.list && (sourceResults.list.length > 0 || (sourceResults.args && sourceResults.args.media_keyword) || (sourceResults.args && sourceResults.args.tags)))) {
@@ -187,29 +184,33 @@ class SourceSearchResultsContainer extends React.Component {
       const tagNames = Object.keys(selectedMediaQueryTags)
         .filter(t => metadataQueryFields.has(t) > 0 && Array.isArray(selectedMediaQueryTags[t]) && selectedMediaQueryTags[t].length > 0)
         .map((i) => {
-          const obj = selectedMediaQueryTags[i];
+          const tag = selectedMediaQueryTags[i];
           if (sourceResults.args.tags) { // correlate searched tag ids with objects so we can display the labels
-            if (!previouslySearchedTags[i]) previouslySearchedTags[i] = [];
-            previouslySearchedTags[i] = obj.map(t => ( // if in tags, it is selected, so reflect this
-              sourceResults.args.tags.indexOf(t.tags_id) > -1 ? ({ ...t, selected: true }) : ''
-            ));
+            if (!previouslySearchedTags[i]) {
+              previouslySearchedTags[i] = [];
+            }
+            previouslySearchedTags[i] = tag
+              .filter(t => sourceResults.args.tags.indexOf(t.tags_id) > -1)
+              .map(t => (
+                // if in tags, it is selected, so reflect this
+                { ...t, selected: true }
+              ));
           }
-          return obj.map(a => a.tag_set_name).reduce(l => l);
+          return tag.map(a => a.tag_set_name).reduce(l => l);
         });
-      let conditionalTitle = '';
       let stringifiedTags = '';
       if (tagNames.length > 0) {
         stringifiedTags = stringifyTags(previouslySearchedTags, formatMessage);
       }
       const prefixTitle = <FormattedHTMLMessage {...localMessages.prefixTitle} values={{ numResults: sourceResults.list.length }} />;
-
-      if (notEmptyString(selectedMediaQueryKeyword) && stringifiedTags) {
+      const hasMediaQueryKeywords = notEmptyString(selectedMediaQueryKeyword);
+      let conditionalTitle = '';
+      if (hasMediaQueryKeywords && stringifiedTags) {
         conditionalTitle = <FormattedHTMLMessage {...localMessages.ktTitle} values={{ keyword: selectedMediaQueryKeyword, tags: stringifiedTags }} />;
-      } else if (notEmptyString(selectedMediaQueryKeyword)) {
-        conditionalTitle = <FormattedHTMLMessage {...localMessages.mTitle} values={{ keyword: selectedMediaQueryKeyword }} />;
       } else {
-        conditionalTitle = <FormattedHTMLMessage {...localMessages.tTitle} values={{ tags: stringifiedTags }} />;
+        conditionalTitle = hasMediaQueryKeywords ? selectedMediaQueryKeyword : stringifiedTags;
       }
+
       getMoreResultsContent = (
         <Row>
           <Col lg={12}>

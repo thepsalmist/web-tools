@@ -6,7 +6,7 @@ from server import app
 from server.util.request import api_error_handler, json_error_response, form_fields_required, arguments_required
 from server.views.topics.apicache import topic_story_count
 from server.auth import user_mediacloud_key, user_mediacloud_client
-from server.views.topics.apicache import topic_tag_coverage, _cached_topic_tag_counts, cached_topic_timespan_list
+from server.views.topics.apicache import topic_tag_coverage, _cached_topic_tag_counts, topic_timespan_list
 from server.views.topics.foci import FOCAL_TECHNIQUE_BOOLEAN_QUERY
 from server.util.geo import COUNTRY_GEONAMES_ID_TO_APLHA3
 from server.util.tags import GEO_TAG_SET
@@ -21,7 +21,7 @@ def get_top_countries_by_story_tag_counts(topics_id, num_countries):
     total_stories = topic_story_count(user_mediacloud_key(), topics_id)['count']
 
     # get the top countries by the story tag counts iwth overall timespan
-    timespans = cached_topic_timespan_list(topics_id)
+    timespans = topic_timespan_list(topics_id)
     overall_timespan = [t for t in timespans if t['period'] == "overall"]
     overall_timespan = next(iter(overall_timespan))
     timespan_query = "timespans_id:{}".format(overall_timespan['timespans_id'])

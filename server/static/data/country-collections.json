@@ -1572,19 +1572,6 @@
         "tags_id": 38002017
       },
       {
-        "description": "Media is largely about Chittagong, Bangladesh - State & Local",
-        "is_static": false,
-        "label": "Chittagong, Bangladesh - State & Local",
-        "show_on_media": true,
-        "show_on_stories": false,
-        "tag": "geo_BD-10",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 38379164
-      },
-      {
         "description": "Media is largely about Dhaka, Bangladesh - State & Local",
         "is_static": false,
         "label": "Dhaka, Bangladesh - State & Local",
@@ -1596,19 +1583,6 @@
         "tag_set_name": "geographic_collection",
         "tag_sets_id": 15765102,
         "tags_id": 38002019
-      },
-      {
-        "description": "Media is largely about Dhaka, Bangladesh - State & Local",
-        "is_static": false,
-        "label": "Dhaka, Bangladesh - State & Local",
-        "show_on_media": true,
-        "show_on_stories": false,
-        "tag": "geo_BD-C",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 38004328
       },
       {
         "description": "Media is largely about Khulna, Bangladesh - State & Local",
@@ -8212,19 +8186,6 @@
         "tags_id": 38380043
       },
       {
-        "description": "Media is largely about Papua, Indonesia - State & Local",
-        "is_static": false,
-        "label": "Papua, Indonesia - State & Local",
-        "show_on_media": true,
-        "show_on_stories": false,
-        "tag": "geo_ID-PA",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 38382010
-      },
-      {
         "description": "Media is largely about Riau, Indonesia - State & Local",
         "is_static": false,
         "label": "Riau, Indonesia - State & Local",
@@ -13123,28 +13084,6 @@
   {
     "collections": [
       {
-        "description": "Media is largely about Papua New Guinea",
-        "is_static": false,
-        "label": "Papua New Guinea - National",
-        "show_on_media": true,
-        "show_on_stories": null,
-        "tag": "geo_PNG",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 34412399
-      }
-    ],
-    "country": {
-      "alpha3": "PNG",
-      "name": "Papua New Guinea",
-      "tagsId": 34412399
-    }
-  },
-  {
-    "collections": [
-      {
         "description": "Media is largely about Central, Paraguay - State & Local",
         "is_static": false,
         "label": "Central, Paraguay - State & Local",
@@ -14048,8 +13987,8 @@
         "is_static": false,
         "label": "Puerto Rico - National",
         "show_on_media": true,
-        "show_on_stories": null,
-        "tag": "geo_PRI",
+        "show_on_stories": false,
+        "tag": "Puerto_Rico___National",
         "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
         "tag_set_label": "Geographic Collections",
         "tag_set_name": "geographic_collection",
@@ -14058,7 +13997,7 @@
       }
     ],
     "country": {
-      "alpha3": "PRI",
+      "alpha3": "nal",
       "name": "Puerto Rico",
       "tagsId": 34412297
     }
@@ -15969,54 +15908,6 @@
   {
     "collections": [
       {
-        "description": "Media is largely about Central Equatoria, South Sudan - State & Local",
-        "is_static": false,
-        "label": "Central Equatoria, South Sudan - State & Local",
-        "show_on_media": true,
-        "show_on_stories": false,
-        "tag": "geo_SS-EC",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 38380902
-      },
-      {
-        "description": "Media is largely about South Sudan",
-        "is_static": false,
-        "label": "South Sudan - National",
-        "show_on_media": true,
-        "show_on_stories": null,
-        "tag": "geo_SSD",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 34412439
-      },
-      {
-        "description": "Media is largely about South Sudan - State & Local",
-        "is_static": false,
-        "label": "South Sudan - State & Local",
-        "show_on_media": true,
-        "show_on_stories": false,
-        "tag": "geo_SSD_state",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 38380901
-      }
-    ],
-    "country": {
-      "alpha3": "SSD",
-      "name": "South Sudan",
-      "tagsId": 34412439
-    }
-  },
-  {
-    "collections": [
-      {
         "description": "Media is largely about Andaluc\u00eda, Spain - State & Local",
         "is_static": false,
         "label": "Andaluc\u00eda, Spain - State & Local",
@@ -16080,19 +15971,6 @@
         "tag_set_name": "geographic_collection",
         "tag_sets_id": 15765102,
         "tags_id": 38002053
-      },
-      {
-        "description": "Media is largely about Cantabria, Spain - State & Local",
-        "is_static": false,
-        "label": "Cantabria, Spain - State & Local",
-        "show_on_media": true,
-        "show_on_stories": false,
-        "tag": "geo_ES-CB",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 38004343
       },
       {
         "description": "Media is largely about Castilla y Le\u00f3n, Spain - State & Local",
@@ -16197,19 +16075,6 @@
         "tag_set_name": "geographic_collection",
         "tag_sets_id": 15765102,
         "tags_id": 38002067
-      },
-      {
-        "description": "Media is largely about La Rioja, Spain - State & Local",
-        "is_static": false,
-        "label": "La Rioja, Spain - State & Local",
-        "show_on_media": true,
-        "show_on_stories": false,
-        "tag": "geo_ES-RI",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 38005162
       },
       {
         "description": "Media is largely about Madrid, Spain - State & Local",
@@ -16349,19 +16214,6 @@
         "tag_set_name": "geographic_collection",
         "tag_sets_id": 15765102,
         "tags_id": 34412439
-      },
-      {
-        "description": "Media is largely about South Sudan - State & Local",
-        "is_static": false,
-        "label": "South Sudan - State & Local",
-        "show_on_media": true,
-        "show_on_stories": false,
-        "tag": "geo_SSD_state",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 38380901
       },
       {
         "description": "Media is largely about Sudan",
@@ -17176,80 +17028,6 @@
       "alpha3": "SYR",
       "name": "Syrian Arab Republic",
       "tagsId": 34412453
-    }
-  },
-  {
-    "collections": [
-      {
-        "description": "Media is largely about Taiwan, Province of China",
-        "is_static": false,
-        "label": "Taiwan, Province of China - National",
-        "show_on_media": true,
-        "show_on_stories": null,
-        "tag": "geo_TWN",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 34412361
-      },
-      {
-        "description": "Media is largely about Hualien, Taiwan - State & Local",
-        "is_static": false,
-        "label": "Hualien, Taiwan - State & Local",
-        "show_on_media": true,
-        "show_on_stories": false,
-        "tag": "geo_TW-HUA",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 38381007
-      },
-      {
-        "description": "Media is largely about Penghu, Taiwan - State & Local",
-        "is_static": false,
-        "label": "Penghu, Taiwan - State & Local",
-        "show_on_media": true,
-        "show_on_stories": false,
-        "tag": "geo_TW-PEN",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 38381009
-      },
-      {
-        "description": "Media is largely about Taipei, Taiwan - State & Local",
-        "is_static": false,
-        "label": "Taipei, Taiwan - State & Local",
-        "show_on_media": true,
-        "show_on_stories": false,
-        "tag": "geo_TW-TPQ",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 38381005
-      },
-      {
-        "description": "Media is largely about Taiwan - State & Local",
-        "is_static": false,
-        "label": "Taiwan - State & Local",
-        "show_on_media": true,
-        "show_on_stories": false,
-        "tag": "geo_TWN_state",
-        "tag_set_description": "Tags in this set indicate that the media source covers a certain geographic area",
-        "tag_set_label": "Geographic Collections",
-        "tag_set_name": "geographic_collection",
-        "tag_sets_id": 15765102,
-        "tags_id": 38381004
-      }
-    ],
-    "country": {
-      "alpha3": "TWN",
-      "name": "Taiwan, Province of China",
-      "tagsId": 34412361
     }
   },
   {

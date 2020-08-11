@@ -63,7 +63,7 @@ def source_stats(media_id):
     info = _media_source_details(media_id)
     user_can_see_private_collections = user_has_auth_role(ROLE_MEDIA_EDIT)
     visible_collections = [c for c in info['media_source_tags']
-                           if ((c['tag_sets_id'] in TagSetDiscoverer().collection_sets) and
+                           if ((c['tag_sets_id'] in TagSetDiscoverer().collection_sets()) and
                                ((c['show_on_media'] == 1) or user_can_see_private_collections))]
     results['collection_count'] = len(visible_collections)
     # geography tags

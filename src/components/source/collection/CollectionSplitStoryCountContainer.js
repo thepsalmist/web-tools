@@ -154,7 +154,7 @@ const mapStateToProps = state => ({
   isSpideredStoryTag: state.system.staticTags.tags.isSpideredStoryTag,
 });
 
-const fetchAsyncData = (dispatch, { collectionId, isSpideredStoryTagId }) => {
+const fetchAsyncData = (dispatch, { collectionId, isSpideredStoryTag }) => {
   // grab all results
   dispatch(fetchPlatformCountOverTime({ uid: 'collectionTotal', platform_query: `tags_id_media:${collectionId}` }));
   // and also grab just the non-spidered stories

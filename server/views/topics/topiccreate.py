@@ -5,7 +5,7 @@ import mediacloud.error
 
 from server import app, mc
 from server.auth import user_mediacloud_client
-from server.util.tags import COLLECTION_US_TOP_ONLINE
+from server.util.tags import TagDiscoverer
 from server.util.request import form_fields_required, api_error_handler, json_error_response, arguments_required
 
 from server.views.topics.topic import topic_summary
@@ -32,7 +32,7 @@ def topic_create():
     try:
         topic_result = user_mc.topicCreate(name=name, description=description, solr_seed_query=solr_seed_query,
                                            start_date=start_date, end_date=end_date,
-                                           media_tags_ids=[COLLECTION_US_TOP_ONLINE],  # HACK: can't save without one of these in place (for now)
+                                           media_tags_ids=[TagDiscoverer().default_collection_tag],  # HACK: can't save without one of these in place (for now)
                                            **optional_args,
                                            )['topics'][0]
         topics_id = topic_result['topics_id']

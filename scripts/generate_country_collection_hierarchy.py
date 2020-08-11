@@ -16,11 +16,11 @@ logger.setLevel(logging.INFO)
 
 # first cache the list of all the geo collections locally
 logger.info("Building local cache of all geo collections...")
-write_tags_in_set_to_json([tag_util.TAG_SET_ABYZ_GEO_COLLECTIONS], only_public_tags=False)
+write_tags_in_set_to_json([tag_util.TagSetDiscoverer().geo_collections_set], only_public_tags=False)
 logger.info(" done")
 
 # load up this cache of the collections we just made
-path = tag_set_json_file_path(tag_util.TAG_SET_ABYZ_GEO_COLLECTIONS)
+path = tag_set_json_file_path(tag_util.TagSetDiscoverer().geo_collections_set)
 geo_collections = json.load(open(path))
 
 # use the national collection naming convention to identify country names

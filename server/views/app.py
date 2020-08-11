@@ -6,6 +6,7 @@ import json
 from server import app, data_dir
 import server.views.apicache as base_apicache
 from server.util.request import api_error_handler
+from server.util.tags import TagSetDiscoverer, TagDiscoverer
 
 logger = logging.getLogger(__name__)
 
@@ -22,3 +23,13 @@ def release_notes():
     # needed to put this behind an endpoint so browser doesn't cache it
     release_history = json.load(open(os.path.join(data_dir, 'release_history.json'), 'r'))
     return jsonify(release_history)
+
+
+@app.route('/api/static-tags', methods=['GET'])
+@api_error_handler
+def tags():
+    info = {
+        'tags': TagDiscoverer().as_dict(),
+        'tagSets': TagSetDiscoverer().as_dict()
+    }
+    return jsonify(info)

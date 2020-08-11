@@ -5,7 +5,7 @@ from mediacloud.error import MCException
 
 from server import app
 from server.auth import user_mediacloud_key
-from server.util import tags as tag_util
+from server.util.tags import TagSetDiscoverer
 from server.util.request import api_error_handler
 import server.views.apicache as base_apicache
 from server.views.topics import apicache
@@ -25,7 +25,7 @@ def story(topics_id, stories_id):
         for k in story_info.keys():
             story_topic_info[k] = story_info[k]
         for tag in story_topic_info['story_tags']:
-            if tag['tag_sets_id'] == tag_util.GEO_TAG_SET:
+            if tag['tag_sets_id'] == TagSetDiscoverer().cliff_places_set:
                 geonames_id = int(tag['tag'][9:])
                 try:
                     tag['geoname'] = _cached_geoname(geonames_id)

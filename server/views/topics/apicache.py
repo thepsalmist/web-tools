@@ -6,7 +6,7 @@ import mediacloud.error
 from server import mc, TOOL_API_KEY
 from server.views import WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_UI_NUM_WORDS
 from server.cache import cache
-from server.util.tags import STORY_UNDATEABLE_TAG
+from server.util.tags import TagDiscoverer
 import server.util.wordembeddings as wordembeddings
 from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_mediacloud_key
 from server.util.request import filters_from_args
@@ -259,7 +259,7 @@ def topic_split_story_counts(user_mc_key, topics_id, **kwargs):
     }
     merged_args.update(kwargs)    # passed in args override anything pulled form the request.args
     # and make sure to ignore undateable stories
-    undateable_query_part = "-(tags_id_stories:{})".format(STORY_UNDATEABLE_TAG)   # doesn't work if the query includes parens!!!
+    undateable_query_part = "-(tags_id_stories:{})".format(TagDiscoverer().is_undateable_story_tag)   # doesn't work if the query includes parens!!!
     if (merged_args['q'] is not None) and (len(merged_args['q']) > 0):
         merged_args['q'] = "(({}) AND {})".format(merged_args['q'], undateable_query_part)
     else:

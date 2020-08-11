@@ -6,6 +6,7 @@ import recentNews from './recentNews';
 import sourceSearch from './sourceSearch';
 import users from './users/users';
 import analytics from './analytics/analytics';
+import staticTags from './staticTags';
 
 const system = combineReducers({
   stats,
@@ -15,6 +16,7 @@ const system = combineReducers({
   sourceSearch,
   users,
   analytics,
+  staticTags,
 });
 
 export default system;

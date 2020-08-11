@@ -14,7 +14,6 @@ from server.auth import user_mediacloud_key, user_mediacloud_client
 from server.cache import cache
 from server.util.request import api_error_handler, filters_from_args
 from server.views.topics import concatenate_query_for_solr, _parse_collection_ids, _parse_media_ids
-from server.util.tags import TAG_SPIDERED_STORY
 
 logger = logging.getLogger(__name__)
 
@@ -198,9 +197,13 @@ def _topic_story_page_with_media(user_key, topics_id, link_id, **kwargs):
                         s['subtopics'] = ", ".join(foci_names)
                         s['themes'] = ''
                         story_tag_ids = [t['tags_id'] for t in s['story_tags']]
-                        if tag_util.NYT_LABELER_1_0_0_TAG_ID in story_tag_ids:
+                        has_themes = False
+                        for t in tag_util.TagDiscoverer().nyt_themes_version_tags:
+                            if t in story_tag_ids:
+                                has_themes = True
+                        if has_themes:
                             story_tag_ids = [t['tag'] for t in s['story_tags']
-                                             if t['tag_sets_id'] == tag_util.NYT_LABELS_TAG_SET_ID]
+                                             if t['tag_sets_id'] == tag_util.TagSetDiscoverer().nyt_themes_set]
                             s['themes'] = ", ".join(story_tag_ids)
     return story_page
 
@@ -227,7 +230,8 @@ def story_counts_by_snapshot(topics_id):
             spidered = apicache.topic_story_count(user_mediacloud_key(), topics_id,
                                                   snapshots_id=s['snapshots_id'], foci_id=None,
                                                   timespans_id=timespans[0]['timespans_id'],
-                                                  q="* AND tags_id_stories:{}".format(TAG_SPIDERED_STORY))['count']
+                                                  q="* AND tags_id_stories:{}".format(
+                                                      tag_util.TagDiscoverer.is_spidered_story_tag))['count']
         except mediacloud.error.MCException:
             spidered = 0
         except IndexError:  # this doesn't have any snapshots (ie. it failed to generate correctly)

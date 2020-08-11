@@ -6,7 +6,7 @@ import json
 from server import app
 import server.util.csv as csv
 from server.util.request import api_error_handler
-import server.util.tags as tags
+from server.util.tags import TagSetDiscoverer
 from server.views.explorer import parse_query_with_keywords, file_name_for_download
 import server.views.explorer.apicache as apicache
 
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 @api_error_handler
 def api_explorer_geotag_count():
     solr_q, solr_fq = parse_query_with_keywords(request.form)
-    data = apicache.top_tags_with_coverage(solr_q, solr_fq, tags.GEO_TAG_SET)
+    data = apicache.top_tags_with_coverage(solr_q, solr_fq, TagSetDiscoverer().cliff_places_set)
     return jsonify(data)
 
 
@@ -30,6 +30,6 @@ def explorer_geo_csv():
     query_object = json.loads(data['q'])
     solr_q, solr_fq = parse_query_with_keywords(query_object)
     filename = file_name_for_download(query_object['label'], filename)
-    data = apicache.top_tags_with_coverage(solr_q, solr_fq, tags.GEO_TAG_SET)
+    data = apicache.top_tags_with_coverage(solr_q, solr_fq, TagSetDiscoverer().cliff_places_set)
     props = ['tags_id', 'label', 'count', 'pct']
     return csv.stream_response(data['results'], props, filename)

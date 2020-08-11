@@ -5,7 +5,7 @@ from server.views.media_search import media_search, collection_search
 
 from server import app
 from server.util.request import api_error_handler, arguments_required
-from server.util.tags import VALID_COLLECTION_TAG_SETS_IDS
+from server.util.tags import TagSetDiscoverer
 from server.auth import user_has_auth_role, ROLE_MEDIA_EDIT, user_mediacloud_client
 from server.views.favorites import add_user_favorite_flag_to_sources, add_user_favorite_flag_to_collections
 
@@ -36,7 +36,7 @@ def api_media_search(search_str):
 @api_error_handler
 def api_collection_search(search_str):
     public_only = False if user_has_auth_role(ROLE_MEDIA_EDIT) else True
-    results = collection_search(search_str, public_only, VALID_COLLECTION_TAG_SETS_IDS)
+    results = collection_search(search_str, public_only, TagSetDiscoverer().collection_sets)
     trim_count = MAX_COLLECTIONS if len(results) > 20 else len(results)
     trimmed = results[:trim_count]
     add_user_favorite_flag_to_collections(trimmed)
@@ -78,7 +78,7 @@ def api_collections_name_exists():
     """
     search_str = request.args['searchStr']
     tags_id = int(request.args['id']) if 'id' in request.args else None
-    matching_collections = collection_search(search_str, False, VALID_COLLECTION_TAG_SETS_IDS)[:MAX_SOURCES]
+    matching_collections = collection_search(search_str, False, TagSetDiscoverer().collection_sets)[:MAX_SOURCES]
     if tags_id:
         matching_collections_names = [s['label'].lower().strip() for s in matching_collections
                                       if s['tags_id'] != tags_id]

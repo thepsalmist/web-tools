@@ -14,8 +14,7 @@ from server.cache import cache
 from server.views import WILDCARD_ASTERISK
 import server.views.apicache as base_api_cache
 from server.auth import user_has_auth_role, ROLE_MEDIA_EDIT
-from server.util.tags import VALID_COLLECTION_TAG_SETS_IDS
-from server.views.sources import FEATURED_COLLECTION_LIST
+from server.util.tags import TagSetDiscoverer, TagDiscoverer
 from server.views.media_search import collection_search_with_page, media_search_with_page
 from server.util.request import api_error_handler, arguments_required
 from server.util.tags import cached_media_with_tag_page
@@ -23,7 +22,7 @@ from server.util.tags import cached_media_with_tag_page
 logger = logging.getLogger(__name__)
 
 MAX_COLLECTIONS = 20
-MEDIA_SEARCH_POOL_SIZE = len(VALID_COLLECTION_TAG_SETS_IDS)
+MEDIA_SEARCH_POOL_SIZE = 5
 STORY_COUNT_POOL_SIZE = 20  # number of parallel processes to use while fetching historical story counts for sources
 ALL_MEDIA = '-1'
 
@@ -43,7 +42,7 @@ def api_mediapicker_source_search():
     except ValueError:
         # ie. request.args['tags'] is not an int (ie. it is a list of collections like a normal query)
         querying_all_media = False
-    tags_fq = "media_source_tags: {tag_sets_id: " + str(VALID_COLLECTION_TAG_SETS_IDS) + "}"
+    tags_fq = "media_source_tags: {tag_sets_id: " + str(TagSetDiscoverer().collection_sets) + "}"
 
     if querying_all_media:
         tags = [{'tags_id': ALL_MEDIA, 'id': ALL_MEDIA, 'label': "All Media", 'tag_sets_id': ALL_MEDIA}]
@@ -127,7 +126,7 @@ def api_mediapicker_collection_search():
 @flask_login.login_required
 @api_error_handler
 def api_explorer_featured_collections():
-    featured_collections = _cached_featured_collection_list(FEATURED_COLLECTION_LIST)
+    featured_collections = _cached_featured_collection_list(TagDiscoverer().featured_collection_tags)
     return jsonify({'list': featured_collections})
 
 

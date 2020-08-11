@@ -14,6 +14,8 @@ import { getVersion } from '../config';
 import { ErrorNotice } from './common/Notice';
 import { assetUrl } from '../lib/assetUtil';
 import AppNoticesContainer from './common/header/AppNoticesContainer';
+import { fetchStaticTags } from '../actions/systemActions';
+import withAsyncData from './common/hocs/AsyncDataContainer';
 
 const localMessages = {
   privacyPolicy: { id: 'app.privacyPolicy', defaultMessage: 'Read our privacy policy.' },
@@ -130,13 +132,20 @@ AppContainer.contextTypes = {
 };
 
 const mapStateToProps = state => ({
+  fetchStatus: state.system.staticTags.fetchStatus,
   feedback: state.app.feedback,
 });
+
+const fetchAsyncData = (dispatch, props) => {
+  dispatch(fetchStaticTags());
+};
 
 export default
 // hot(
 injectIntl(
   connect(mapStateToProps)(
-    AppContainer
+    withAsyncData(fetchAsyncData)(
+      AppContainer
+    )
   )
 );

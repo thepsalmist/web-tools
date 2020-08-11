@@ -76,3 +76,7 @@ export function fetchTopAnalyticsResults(params) {
   const acceptedParams = acceptParams(params, ['type', 'action']);
   return createApiPromise(`api/admin/analytics/top-${acceptedParams.type}/${acceptedParams.action}`);
 }
+
+export function fetchStaticTags() {
+  return createApiPromise('api/static-tags');
+}

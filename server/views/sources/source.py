@@ -9,9 +9,7 @@ from server import app, user_db, analytics_db
 from server.cache import cache
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_name, user_has_auth_role, ROLE_MEDIA_EDIT
 from server.util.request import arguments_required, form_fields_required, api_error_handler
-from server.util.tags import TAG_SETS_ID_PUBLICATION_COUNTRY, TAG_SETS_ID_PUBLICATION_STATE, VALID_COLLECTION_TAG_SETS_IDS, \
-    TAG_SETS_ID_PRIMARY_LANGUAGE, TAG_SETS_ID_COUNTRY_OF_FOCUS, TAG_SETS_ID_MEDIA_TYPE, TAG_SET_GEOCODER_VERSION, \
-    TAG_SET_NYT_LABELS_VERSION, is_metadata_tag_set
+from server.util.tags import TagSetDiscoverer, is_metadata_tag_set
 import server.views.sources.apicache as apicache
 from server.views.favorites import add_user_favorite_flag_to_sources, add_user_favorite_flag_to_collections
 from server.views.sources.feeds import source_feed_list
@@ -65,13 +63,13 @@ def source_stats(media_id):
     info = _media_source_details(media_id)
     user_can_see_private_collections = user_has_auth_role(ROLE_MEDIA_EDIT)
     visible_collections = [c for c in info['media_source_tags']
-                           if ((c['tag_sets_id'] in VALID_COLLECTION_TAG_SETS_IDS) and
+                           if ((c['tag_sets_id'] in TagSetDiscoverer().collection_sets) and
                                ((c['show_on_media'] == 1) or user_can_see_private_collections))]
     results['collection_count'] = len(visible_collections)
     # geography tags
-    results['geoPct'] = apicache.tag_coverage_pct(media_query, TAG_SET_GEOCODER_VERSION)
+    results['geoPct'] = apicache.tag_coverage_pct(media_query, TagSetDiscoverer().cliff_versions_set)
     # nyt theme
-    results['nytPct'] = apicache.tag_coverage_pct(media_query, TAG_SET_NYT_LABELS_VERSION)
+    results['nytPct'] = apicache.tag_coverage_pct(media_query, TagSetDiscoverer().nyt_themes_versions_set)
     return jsonify(results)
 
 
@@ -144,6 +142,17 @@ def api_media_source_scrape_feeds(media_id):
     return jsonify(results)
 
 
+def _valid_metadata():
+    valid_metadata = [
+        {'form_key': 'publicationCountry', 'tag_sets_id': TagSetDiscoverer().media_pub_country_set},
+        {'form_key': 'publicationState', 'tag_sets_id': TagSetDiscoverer().media_pub_state_set},
+        {'form_key': 'primaryLanguageg', 'tag_sets_id': TagSetDiscoverer().media_primary_language_set},
+        {'form_key': 'countryOfFocus', 'tag_sets_id': TagSetDiscoverer().media_subject_country_set},
+        {'form_key': 'mediaType', 'tag_sets_id': TagSetDiscoverer().media_type_set},
+    ]
+    return valid_metadata
+
+
 @app.route('/api/sources/create', methods=['POST'])
 @form_fields_required('name', 'url')
 @flask_login.login_required
@@ -157,14 +166,6 @@ def source_create():
     monitored = request.form['monitored'] if 'monitored' in request.form else None
     # parse out any tag to add (ie. collections and metadata)
     tag_ids_to_add = tag_ids_from_collections_param()
-    valid_metadata = [
-        {'form_key': 'publicationCountry', 'tag_sets_id': TAG_SETS_ID_PUBLICATION_COUNTRY},
-        {'form_key': 'publicationState', 'tag_sets_id': TAG_SETS_ID_PUBLICATION_STATE},
-        {'form_key': 'primaryLanguageg', 'tag_sets_id': TAG_SETS_ID_PRIMARY_LANGUAGE},
-        {'form_key': 'countryOfFocus', 'tag_sets_id': TAG_SETS_ID_COUNTRY_OF_FOCUS},
-        {'form_key': 'mediaType', 'tag_sets_id': TAG_SETS_ID_MEDIA_TYPE}
-
-    ]
     source_to_create = {
         'name': name if (name != 'null' and len(name) > 0) else url,
         'url': url,
@@ -176,7 +177,7 @@ def source_create():
     result = user_mc.mediaCreate([source_to_create])[0]  # need just the first entry, since we only create one
     if result['status'] != "error":
         # if it worked, update any metadata, because we need to remove the other tags in each set
-        for metadata_item in valid_metadata:
+        for metadata_item in _valid_metadata():
             metadata_tag_id = request.form[metadata_item['form_key']] if metadata_item['form_key'] in request.form else None  # this is optional
             if metadata_tag_id:
                 user_mc.tagMedia(
@@ -218,7 +219,7 @@ def source_update(media_id):
     # now we need to update the collections separately, because they are tags on the media source
     source = user_mc.media(media_id)
     existing_tag_ids = [t['tags_id'] for t in source['media_source_tags']
-                        if t['tag_sets_id'] in VALID_COLLECTION_TAG_SETS_IDS]
+                        if t['tag_sets_id'] in TagSetDiscoverer().collection_sets]
     tag_ids_to_add = tag_ids_from_collections_param()
     tag_ids_to_remove = list(set(existing_tag_ids) - set(tag_ids_to_add))
     tags_to_add = [MediaTag(media_id, tags_id=cid, action=TAG_ACTION_ADD)
@@ -228,14 +229,7 @@ def source_update(media_id):
     if len(tags) > 0:   # don't make extraneous calls
         user_mc.tagMedia(tags=tags)
     # now update the metadata too
-    valid_metadata = [
-        {'form_key': 'publicationCountry', 'tag_sets_id': TAG_SETS_ID_PUBLICATION_COUNTRY},
-        {'form_key': 'publicationState', 'tag_sets_id': TAG_SETS_ID_PUBLICATION_STATE},
-        {'form_key': 'primaryLanguage', 'tag_sets_id': TAG_SETS_ID_PRIMARY_LANGUAGE},
-        {'form_key': 'countryOfFocus', 'tag_sets_id': TAG_SETS_ID_COUNTRY_OF_FOCUS},
-        {'form_key': 'mediaType', 'tag_sets_id': TAG_SETS_ID_MEDIA_TYPE}
-    ]
-    for metadata_item in valid_metadata:
+    for metadata_item in _valid_metadata():
         metadata_tag_id = request.form[metadata_item['form_key']] if metadata_item['form_key'] in request.form else None # this is optional
         existing_tag_ids = [t for t in source['media_source_tags'] if is_metadata_tag_set(t['tag_sets_id'])]
         # form field check

@@ -12,8 +12,7 @@ from server.util.csv import SOURCE_LIST_CSV_METADATA_PROPS
 from server.util.file import save_file_to_upload_folder
 from server.util.mail import send_html_email
 from server.util.request import csv_required, form_fields_required, api_error_handler
-from server.util.tags import VALID_METADATA_IDS, METADATA_PUB_COUNTRY_NAME, \
-    tags_in_tag_set, media_with_tag
+from server.util.tags import TagSetDiscoverer, tags_in_tag_set, media_with_tag
 from server.util.stringutil import as_tag_name
 from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS
 import server.views.sources.apicache as apicache
@@ -318,16 +317,22 @@ def _tag_media_job(tags):
 # this only adds/replaces metadata with values (does not remove)
 def update_metadata_for_sources(source_list):
     tags = []
-    for m in VALID_METADATA_IDS:
-        mid = list(m.values())[0]
-        mkey = list(m.keys())[0]
-        tag_codes = tags_in_tag_set(TOOL_API_KEY, mid)
+    tag_sets_id_2_name_lookup = {
+        TagSetDiscoverer().media_pub_country_set: 'pub_country',
+        TagSetDiscoverer().media_pub_state_set: 'pub_state',
+        TagSetDiscoverer().media_primary_language_set: 'primary_language',
+        TagSetDiscoverer().media_subject_country_set: 'subject_country',
+        TagSetDiscoverer().media_type_set: 'media_type',
+    }
+    for tags_id in TagSetDiscoverer().media_metadata_sets:
+        col_name = tag_sets_id_2_name_lookup[tags_id]
+        tag_codes = tags_in_tag_set(TOOL_API_KEY, tags_id)
         for source in source_list:
-            if mkey in source:
-                metadata_tag_name = source[mkey]
+            if col_name in source:
+                metadata_tag_name = source[col_name]
                 if metadata_tag_name not in ['', None]:
                     # hack until we have a better match check
-                    if mkey == METADATA_PUB_COUNTRY_NAME:  # template pub_###
+                    if col_name == 'pub_country':  # template pub_###
                         matching = [t for t in tag_codes if t['tag'] == 'pub_' + metadata_tag_name]
                     else:
                         matching = [t for t in tag_codes if t['tag'] == metadata_tag_name]

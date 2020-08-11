@@ -5,70 +5,232 @@ from operator import itemgetter
 import json
 import codecs
 
-from server import base_dir
+from server import base_dir, mc, TOOL_API_KEY
 from server.auth import user_mediacloud_client
 from server.cache import cache
+from server.util.stringutil import snake_to_camel
 
 logger = logging.getLogger(__name__)
 
-STORY_UNDATEABLE_TAG = 8877812  # if a story has this tag, that means it was undateable
-
 # constants related to NYT labels (ie. tags on stories indicating what they are about)
-NYT_LABELER_1_0_0_TAG_ID = 9360669  # the tag that indicates a story was tagged by the NYT labeller version 1
-NYT_LABELS_TAG_SET_ID = 1963  # the tag set all the descriptor tags are in
 NYT_LABELS_SAMPLE_SIZE = 10000  # the sample size to use for looking at NYT descriptor tags
-BAD_THEMES = [9360842, 9360856]
-
-# constants for versioning of geo-tagged stories
-TAG_SET_GEOCODER_VERSION = 1937
-TAG_SET_NYT_LABELS_VERSION = 1964
+BAD_NYT_THEME_TAGS = ['no index terms from nytimes', 'recordings (audio)']
 
 # constants related to the CLIFF-based geotagging (ie. tags on stories indicating places they are about)
-# each story processed for entities by CLIFF is tagged with the specific version of CLIFF it was processed with
-CLIFF_CLAVIN_2_3_0_TAG_ID = 9353691  # the tag that indicates a story was tagged by the CLIFF version 2.3.0
-CLIFF_CLAVIN_2_4_1_TAG_ID = 9696677  # the tag that indicates a story was tagged by the CLIFF version 2.4.1
-CLIFF_CLAVIN_2_6_0_TAG_ID = 189462640  # the tag that indicates a story was tagged by the CLIFF version 2.6.0
-GEO_TAG_SET = 1011  # there is one giant tag set that all the geo tags are in (disambiguated results from CLIFF, with geonames ids)
 GEO_SAMPLE_SIZE = 10000  # the sample size to use for looking at geo tags
-CLIFF_ORGS = 2388  # there is a tag set that has one tag for each organization we find (not disambiguated)
-CLIFF_PEOPLE = 2389  # there is a tag set that has one tag for each person we find (not disambiguated)
 
 # Source collection tags sets
-TAG_SETS_ID_COLLECTIONS = 5  # holds all the Media Cloud collections
-TAG_SET_ABYZ_GEO_COLLECTIONS = 15765102  # for geographic collections we are importing from ABYZ
-TAG_SETS_ID_PARTISANSHIP_2019 = 15765109
-TAG_SETS_ID_PARTISANSHIP_2016 = 1959
-VALID_COLLECTION_TAG_SETS_IDS = [TAG_SETS_ID_COLLECTIONS, TAG_SETS_ID_PARTISANSHIP_2019,
-                                 TAG_SETS_ID_PARTISANSHIP_2016, TAG_SET_ABYZ_GEO_COLLECTIONS]
-
-COLLECTION_US_TOP_ONLINE = 58722749
-COLLECTION_SET_PEW_2018 = [186572515, 186572435, 186572516, ]
 COLLECTION_SET_PARTISANSHIP_QUINTILES_2016 = [9360520, 9360521, 9360522, 9360523, 9360524, ]
 COLLECTION_SET_PARTISANSHIP_QUINTILES_2019 = [200363048, 200363049, 200363050, 200363061, 200363062, ]
 
-# Source metadata tag sets
-TAG_SETS_ID_PUBLICATION_COUNTRY = 1935  # holds the country of publication of a source
-TAG_SETS_ID_PUBLICATION_STATE = 1962  # holds the state of publication of a source (only US and India right now)
-TAG_SETS_ID_PRIMARY_LANGUAGE = 1969  # holds the primary language of a source
-TAG_SETS_ID_COUNTRY_OF_FOCUS = 1970  # holds the primary focus on what country for a source
-TAG_SETS_ID_MEDIA_TYPE = 1972
 
-METADATA_PUB_COUNTRY_NAME = 'pub_country'
-METADATA_PUB_STATE_NAME = 'pub_state'
-METADATA_PRIMARY_LANGUAGE_NAME = 'primary_language'
-METADATA_PRIMARY_COUNTRY_OF_FOCUS_NAME = 'subject_country'
-METADATA_MEDIA_TYPE = 'media_type'
+def _load_media_collection_config():
+    """
+    To allow for per-instance configuration, the specific collections to show in various places are stored
+    in this static file.
+    """
+    with open(os.path.join(base_dir, 'server', 'static', 'data', 'media-collection-tag-sets.json')) as f:
+        return json.load(f)
 
-# map from metadata category name, to metadata tag set id
-VALID_METADATA_IDS = [
-    {METADATA_PUB_COUNTRY_NAME: TAG_SETS_ID_PUBLICATION_COUNTRY},
-    {METADATA_PUB_STATE_NAME: TAG_SETS_ID_PUBLICATION_STATE},
-    {METADATA_PRIMARY_LANGUAGE_NAME: TAG_SETS_ID_PRIMARY_LANGUAGE},
-    {METADATA_PRIMARY_COUNTRY_OF_FOCUS_NAME: TAG_SETS_ID_COUNTRY_OF_FOCUS},
-    {METADATA_MEDIA_TYPE: TAG_SETS_ID_MEDIA_TYPE},
-]
 
-TAG_SPIDERED_STORY = 8875452
+class TagSetDiscoverer:
+    class __TagSetDiscoverer:
+        def __init__(self):
+            self._discover()
+
+        def as_dict(self):
+            current_state = {}
+            for prop, value in vars(self).items():
+                current_state[snake_to_camel(prop[1:])] = value
+            current_state['mediaMetadataSets'] = self.media_metadata_sets()
+            current_state['collectionSets'] = self.collection_sets()
+            return current_state
+
+        def _discover_by_name(self, tag_sets, tag_set_name):
+            tag_set = [ts for ts in tag_sets if ts['name'] == tag_set_name][0]
+            return tag_set['tag_sets_id']
+
+        def _discover(self):
+            try:
+                tag_sets = mc.tagSetList(rows=500)
+                self._nyt_themes_set = self._discover_by_name(tag_sets, 'nyt_labels')
+                self._nyt_themes_versions_set = self._discover_by_name(tag_sets, 'nyt_labels_version')
+                self._cliff_versions_set = self._discover_by_name(tag_sets, 'geocoder_version')
+                self._cliff_places_set = self._discover_by_name(tag_sets, 'mc-geocoder@media.mit.edu')
+                self._cliff_people_set = self._discover_by_name(tag_sets, 'cliff_people')
+                self._cliff_orgs_set = self._discover_by_name(tag_sets, 'cliff_organizations')
+                self._media_pub_country_set = self._discover_by_name(tag_sets, 'pub_country')
+                self._media_pub_state_set = self._discover_by_name(tag_sets, 'pub_state')
+                self._media_primary_language_set = self._discover_by_name(tag_sets, 'primary_language')
+                self._media_subject_country_set = self._discover_by_name(tag_sets, 'subject_country')
+                self._media_type_set = self._discover_by_name(tag_sets, 'media_format')
+                self._collections_set = self._discover_by_name(tag_sets, 'collection')
+                self._geo_collections_set = self._discover_by_name(tag_sets, 'geographic_collection')
+                self._partisan_2019_collections_set = self._discover_by_name(tag_sets, 'twitter_partisanship')
+                self._partisan_2016_collections_set = self._discover_by_name(tag_sets, 'retweet_partisanship_2016_count_10')
+            except Exception as e:
+                logger.error("Couldn't find a required tag set. See /doc/required-tags.md for more info on all the "
+                             "tag-sets the back-end should expose")
+                logger.exception(e)
+
+        @property
+        def nyt_themes_set(self):
+            return self._nyt_themes_set
+
+        @property
+        def nyt_themes_versions_set(self):
+            return self._nyt_themes_versions_set
+
+        @property
+        def cliff_versions_set(self):
+            return self._cliff_versions_set
+
+        @property
+        def cliff_places_set(self):
+            return self._cliff_places_set
+
+        @property
+        def cliff_people_set(self):
+            return self._cliff_people_set
+
+        @property
+        def cliff_orgs_set(self):
+            return self._cliff_orgs_set
+
+        @property
+        def media_pub_country_set(self):
+            return self._media_pub_country_set
+
+        @property
+        def media_pub_state_set(self):
+            return self._media_pub_state_set
+
+        @property
+        def media_primary_language_set(self):
+            return self._media_primary_language_set
+
+        @property
+        def media_subject_country_set(self):
+            return self._media_subject_country_set
+
+        @property
+        def media_type_set(self):
+            return self._media_type_set
+
+        def media_metadata_sets(self):
+            return [
+                self.media_pub_country_set,
+                self.media_pub_state_set,
+                self.media_primary_language_set,
+                self.media_subject_country_set,
+                self.media_type_set
+            ]
+
+        @property
+        def collections_set(self):
+            return self._collections_set
+
+        @property
+        def geo_collections_set(self):
+            return self._geo_collections_set
+
+        @property
+        def partisan_2019_collections_set(self):
+            return self._partisan_2019_collections_set
+
+        @property
+        def partisan_2016_collections_set(self):
+            return self._partisan_2016_collections_set
+
+        def collection_sets(self):
+            return [
+                self.collections_set,
+                self.geo_collections_set,
+                self.partisan_2019_collections_set,
+                self.partisan_2016_collections_set
+            ]
+
+    instance = None
+
+    def __init__(self):
+        if not TagSetDiscoverer.instance:
+            TagSetDiscoverer.instance = TagSetDiscoverer.__TagSetDiscoverer()
+
+    def __getattr__(self, name):
+        return getattr(self.instance, name)
+
+
+class TagDiscoverer:
+    class __TagDiscoverer:
+        def __init__(self):
+            self._discover()
+
+        def as_dict(self):
+            current_state = {}
+            for prop, value in vars(self).items():
+                current_state[snake_to_camel(prop[1:])] = value
+            return current_state
+
+        def _from_tag_and_set_names(self, tag_sets, tag_set_name, tag_name):
+            tag_set = [ts for ts in tag_sets if ts['name'] == tag_set_name][0]
+            tags_in_set = mc.tagList(tag_sets_id=tag_set['tag_sets_id'])
+            tag = [t for t in tags_in_set if t['tag'] == tag_name][0]
+            return tag['tags_id']
+
+        def _all_from_set_name(self, tag_sets, tag_set_name):
+            tag_set = [ts for ts in tag_sets if ts['name'] == tag_set_name][0]
+            tags = tags_in_tag_set(TOOL_API_KEY, tag_set['tag_sets_id'])
+            return [t['tags_id'] for t in tags]
+
+        def _discover(self):
+            try:
+                tag_sets = mc.tagSetList(rows=500)
+                self._is_spidered_story_tag = self._from_tag_and_set_names(tag_sets, 'spidered', 'spidered')
+                self._is_undateable_story_tag = self._from_tag_and_set_names(tag_sets, 'date_invalid', 'undateable')
+                self._nyt_themes_version_tags = self._all_from_set_name(tag_sets, 'nyt_labels_version')
+                self._cliff_version_tags = self._all_from_set_name(tag_sets, 'geocoder_version')
+                # load up the list of tag sets that should be treated as ones that hold collections of media sources
+                collection_config = _load_media_collection_config()
+                self._default_collection_tag = collection_config['defaultCollection']['tagsId']
+                featured_tag_lists = [t['tags'] for t in collection_config['featuredCollections']['entries']]
+                self._featured_collection_tags = [t for t_list in featured_tag_lists for t in t_list]
+            except Exception as e:
+                logger.error("Couldn't find a required tag. See /doc/required-tags.md for more info on all the tags "
+                             "the back-end should expose")
+                logger.exception(e)
+
+        @property
+        def is_spidered_story_tag(self):
+            return self._is_spidered_story_tag
+
+        @property
+        def is_undateable_story_tag(self):
+            return self._is_undateable_story_tag
+
+        @property
+        def nyt_themes_version_tags(self):
+            return self._nyt_themes_version_tags
+
+        @property
+        def cliff_version_tags(self):
+            return self._cliff_version_tags
+
+        @property
+        def default_collection_tag(self):
+            return self._default_collection_tag
+
+        @property
+        def featured_collection_tags(self):
+            return self._featured_collection_tags
+
+    instance = None
+
+    def __init__(self):
+        if not TagDiscoverer.instance:
+            TagDiscoverer.instance = TagDiscoverer.__TagDiscoverer()
+
+    def __getattr__(self, name):
+        return getattr(self.instance, name)
 
 
 def processed_for_themes_query_clause():
@@ -76,7 +238,7 @@ def processed_for_themes_query_clause():
     :return: A solr query clause you can use to filter for stories that have been tagged by any version
      of our CLIFF geotagging engine (ie. tagged with people, places, and organizations)
     """
-    return "(tags_id_stories:{})".format(NYT_LABELER_1_0_0_TAG_ID)
+    return "(tags_id_stories:({}))".format(" ".join([str(t) for t in TagDiscoverer().nyt_themes_version_tags]))
 
 
 def processed_for_entities_query_clause():
@@ -84,15 +246,7 @@ def processed_for_entities_query_clause():
     :return: A solr query clause you can use to filter for stories that have been tagged by any version
      of our CLIFF geotagging engine (ie. tagged with people, places, and organizations)
     """
-    return "(tags_id_stories:({}))".format(" ".join([str(t) for t in processed_for_entities_tag_ids()]))
-
-
-def processed_for_entities_tag_ids():
-    """
-    :return: A list of the tags that mean a story has been processed by some version of CLIFF (ie. the story
-     has been tagged with people, places, and organizations)
-    """
-    return [CLIFF_CLAVIN_2_3_0_TAG_ID, CLIFF_CLAVIN_2_4_1_TAG_ID, CLIFF_CLAVIN_2_6_0_TAG_ID]
+    return "(tags_id_stories:({}))".format(" ".join([str(t) for t in TagSetDiscoverer().cliff_version_tags]))
 
 
 def is_metadata_tag_set(tag_sets_id):
@@ -101,35 +255,30 @@ def is_metadata_tag_set(tag_sets_id):
     :param tag_sets_id: the id of tag set
     :return: True if it is a valid metadata tag set, False if it is not
     """
-    for name_to_tags_sets_id in VALID_METADATA_IDS:
-        if int(tag_sets_id) in list(name_to_tags_sets_id.values()):
-            return True
-    return False
+    return int(tag_sets_id) in TagSetDiscoverer().media_metadata_sets()
 
 
-def is_bad_theme(tag_id):
+def is_bad_theme(tag_text: str):
     """
     Find out if a tag set is one used to hold metadata on a Source.
-    :param tag_id: the id of tag set
+    :param tag_text: the test of the tag (so it isn't hard-coded to our intsall)
     :return: True if it is a valid metadata tag set, False if it is not
     """
-    if int(tag_id) in BAD_THEMES:
-        return True
-    return False
+    return tag_text in BAD_NYT_THEME_TAGS
 
 
 def label_for_metadata_tag(tag):
     label = None
     tag_sets_id = tag['tag_sets_id']
-    if tag_sets_id == TAG_SETS_ID_PUBLICATION_COUNTRY:
+    if tag_sets_id == TagSetDiscoverer().media_pub_country_set:
         label = tag['tag'][-3:]
-    elif tag_sets_id == TAG_SETS_ID_PUBLICATION_STATE:
+    elif tag_sets_id == TagSetDiscoverer().media_pub_state_set:
         label = tag['tag'][4:]
-    elif tag_sets_id == TAG_SETS_ID_PRIMARY_LANGUAGE:
+    elif tag_sets_id == TagSetDiscoverer().media_primary_language_set:
         label = tag['tag']
-    elif tag_sets_id == TAG_SETS_ID_COUNTRY_OF_FOCUS:
+    elif tag_sets_id == TagSetDiscoverer().media_subject_country_set:
         label = tag['tag']
-    elif tag_sets_id == TAG_SETS_ID_MEDIA_TYPE:
+    elif tag_sets_id == TagSetDiscoverer().media_type_set:
         label = tag['tag']
     return label
 

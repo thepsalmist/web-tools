@@ -37,6 +37,7 @@ const CreateSourceContainer = (props) => {
           <SourceForm
             buttonLabel={formatMessage(localMessages.addButton)}
             onSave={handleSave}
+            mediaMetadataSetsByName={mediaMetadataSetsByName}
           />
         </Grid>
       </Permissioned>
@@ -49,9 +50,11 @@ CreateSourceContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from dispatch
   handleSave: PropTypes.func.isRequired,
+  mediaMetadataSetsByName: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = () => ({
+  mediaMetadataSetsByName: state.system.staticTags.tagSets.mediaMetadataSetsByName,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

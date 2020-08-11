@@ -5,11 +5,10 @@ from mediacloud.error import MCException
 
 from server import app
 from server.auth import user_mediacloud_key
-from server.util.tags import TagSetDiscoverer
 from server.util.request import api_error_handler
 import server.views.apicache as base_apicache
 from server.views.topics import apicache
-from server.views.topics.stories import _cached_geoname
+from server.views.stories import add_convenience_tags_to_story
 
 logger = logging.getLogger(__name__)
 
@@ -24,15 +23,7 @@ def story(topics_id, stories_id):
         story_info = base_apicache.story(stories_id)  # add in other fields from regular call
         for k in story_info.keys():
             story_topic_info[k] = story_info[k]
-        for tag in story_topic_info['story_tags']:
-            if tag['tag_sets_id'] == TagSetDiscoverer().cliff_places_set:
-                geonames_id = int(tag['tag'][9:])
-                try:
-                    tag['geoname'] = _cached_geoname(geonames_id)
-                except Exception as e:
-                    # query to CLIFF failed :-( handle it gracefully
-                    logger.exception(e)
-                    tag['geoname'] = {}
+        story_topic_info = add_convenience_tags_to_story(story_topic_info)
     except MCException:
         logger.warning("Story {} wasn't found in a regular story API call, but is it topic {}".format(
             stories_id, topics_id

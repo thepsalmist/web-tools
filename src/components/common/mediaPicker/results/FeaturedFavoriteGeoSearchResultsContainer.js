@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import withAsyncData from '../../hocs/AsyncDataContainer';
 import { selectMediaPickerQueryArgs, fetchMediaPickerFeaturedCollections, fetchFavoriteCollections, fetchFavoriteSources, fetchMediaPickerCollections } from '../../../../actions/systemActions';
 import TabSearchResultsContainer from './TabSearchResultsContainer';
-import { TAG_SET_ABYZ_GEO_COLLECTIONS, TAG_SET_MC_ID } from '../../../../lib/tagUtil';
 import { MEDIAPICKER_FEATURED_QUERY_SETTING } from '../../../../lib/mediaUtil';
 
 const localMessages = {
@@ -62,14 +61,14 @@ class FeaturedFavoriteGeoSearchResultsContainer extends React.Component {
   }
 
   updateMediaQuery(values) {
-    const { updateMediaQuerySelection, selectedMediaQueryType } = this.props;
+    const { updateMediaQuerySelection, selectedMediaQueryType, collectionsSet } = this.props;
     const updatedQueryObj = { ...values, type: selectedMediaQueryType };
-    updateMediaQuerySelection(updatedQueryObj);
+    updateMediaQuerySelection(updatedQueryObj, collectionsSet);
   }
 
   render() {
     const { selectedMediaQueryType, featured, favoritedCollections, favoritedSources,
-      onToggleSelected, fetchStatus, viewOnly } = this.props;
+      onToggleSelected, fetchStatus, viewOnly, geoCollectionsSet } = this.props;
     const queryResults = {
       featured: featured.list,
       favoritedCollections: favoritedCollections.list,
@@ -88,6 +87,7 @@ class FeaturedFavoriteGeoSearchResultsContainer extends React.Component {
           hintTextMsg={localMessages.hintText}
           handleMediaConcurrency={this.props.handleMediaConcurrency}
           viewOnly={viewOnly}
+          geoCollectionsSet={geoCollectionsSet}
         />
       </div>
     );
@@ -112,6 +112,8 @@ FeaturedFavoriteGeoSearchResultsContainer.propTypes = {
   fetchStatus: PropTypes.array.isRequired,
   displayResults: PropTypes.bool,
   viewOnly: PropTypes.bool,
+  geoCollectionsSet: PropTypes.number.isRequired,
+  collectionsSet: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -126,13 +128,15 @@ const mapStateToProps = state => ({
   favoritedCollections: state.system.mediaPicker.favoritedCollections ? state.system.mediaPicker.favoritedCollections : null,
   favoritedSources: state.system.mediaPicker.favoritedSources ? state.system.mediaPicker.favoritedSources : null,
   collectionResults: state.system.mediaPicker.collectionQueryResults,
+  geoCollectionsSet: state.system.staticTags.tagSets.geoCollectionsSet,
+  collectionsSet: state.system.staticTags.tagSets.collectionsSet,
 });
 
 const mapDispatchToProps = dispatch => ({
-  updateMediaQuerySelection: (values) => {
+  updateMediaQuerySelection: (values, collectionsSet) => {
     if (values) {
       dispatch(selectMediaPickerQueryArgs(values));
-      dispatch(fetchMediaPickerFeaturedCollections(TAG_SET_MC_ID));
+      dispatch(fetchMediaPickerFeaturedCollections(collectionsSet));
       dispatch(fetchFavoriteCollections());
       dispatch(fetchFavoriteSources());
       dispatch(fetchMediaPickerCollections());
@@ -140,12 +144,12 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-const fetchAsyncData = (dispatch) => {
+const fetchAsyncData = (dispatch, { geoCollectionsSet, collectionsSet }) => {
   dispatch(selectMediaPickerQueryArgs({ type: MEDIAPICKER_FEATURED_QUERY_SETTING }));
-  dispatch(fetchMediaPickerFeaturedCollections(TAG_SET_MC_ID));
+  dispatch(fetchMediaPickerFeaturedCollections(collectionsSet));
   dispatch(fetchFavoriteCollections());
   dispatch(fetchFavoriteSources());
-  dispatch(fetchMediaPickerCollections({ media_keyword: '', which_set: TAG_SET_ABYZ_GEO_COLLECTIONS }));
+  dispatch(fetchMediaPickerCollections({ media_keyword: '', which_set: geoCollectionsSet }));
 };
 
 export default

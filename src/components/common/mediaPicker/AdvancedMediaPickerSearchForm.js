@@ -8,7 +8,7 @@ import MediaPickerMetadataContainer from '../MediaPickerMetadataContainer';
 import MediaTypesFieldArray from '../MediaTypesFieldArray';
 import AppButton from '../AppButton';
 import messages from '../../../resources/messages';
-import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE, PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE } from '../../../lib/tagUtil';
+import { PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE } from '../../../lib/tagUtil';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 
 const localMessages = {
@@ -25,7 +25,7 @@ const localMessages = {
 
 class AdvancedMediaPickerSearchForm extends React.Component {
   state = {
-    mode: TAG_SET_PUBLICATION_COUNTRY, // default
+    mode: 1935, // HACK: (pub country) how do we default component state from the store?
   }
 
   componentDidMount() {
@@ -78,12 +78,12 @@ class AdvancedMediaPickerSearchForm extends React.Component {
   }
 
   render() {
-    const { initialValues, renderTextField } = this.props;
+    const { initialValues, renderTextField, mediaMetadataSetsByName } = this.props;
     const { formatMessage } = this.props.intl;
     const backgroundColorStyle = mode => (mode === this.state.mode ? 'lightgray' : 'white');
-    const mediaType = this.state.mode === TAG_SET_MEDIA_TYPE ? (
+    const mediaType = this.state.mode === mediaMetadataSetsByName.mediaTypeSet ? (
       <MediaTypesFieldArray
-        id={TAG_SET_MEDIA_TYPE}
+        id={mediaMetadataSetsByName.mediaTypeSet}
         name={MEDIA_TYPE}
         form="advanced-media-picker-search"
         label={formatMessage(messages.mediaTypeShort)}
@@ -91,9 +91,9 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         previouslySelected={initialValues.tags}
       />
     ) : null;
-    const pubCountry = this.state.mode === TAG_SET_PUBLICATION_COUNTRY ? (
+    const pubCountry = this.state.mode === mediaMetadataSetsByName.mediaPubCountrySet ? (
       <MediaPickerMetadataContainer
-        id={TAG_SET_PUBLICATION_COUNTRY}
+        id={mediaMetadataSetsByName.mediaPubCountrySet}
         type={PUBLICATION_COUNTRY}
         form="advanced-media-picker-search"
         label={formatMessage(messages.pubCountryShort)}
@@ -103,9 +103,9 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         className="media-picker-pub-in"
       />
     ) : null;
-    const pubState = this.state.mode === TAG_SET_PUBLICATION_STATE ? (
+    const pubState = this.state.mode === mediaMetadataSetsByName.mediaPubStateSet ? (
       <MediaPickerMetadataContainer
-        id={TAG_SET_PUBLICATION_STATE}
+        id={mediaMetadataSetsByName.mediaPubStateSet}
         type={PUBLICATION_STATE}
         form="advanced-media-picker-search"
         label={formatMessage(messages.pubStateShort)}
@@ -115,9 +115,9 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         className="media-picker-pub-in"
       />
     ) : null;
-    const language = this.state.mode === TAG_SET_PRIMARY_LANGUAGE ? (
+    const language = this.state.mode === mediaMetadataSetsByName.mediaPrimaryLanguageSet ? (
       <MediaPickerMetadataContainer
-        id={TAG_SET_PRIMARY_LANGUAGE}
+        id={mediaMetadataSetsByName.mediaPrimaryLanguageSet}
         type={PRIMARY_LANGUAGE}
         form="advanced-media-picker-search"
         label={formatMessage(messages.languageShort)}
@@ -127,9 +127,9 @@ class AdvancedMediaPickerSearchForm extends React.Component {
         className="media-picker-pub-in"
       />
     ) : null;
-    const countryOfFocus = this.state.mode === TAG_SET_COUNTRY_OF_FOCUS ? (
+    const countryOfFocus = this.state.mode === mediaMetadataSetsByName.mediaSubjectCountrySet ? (
       <MediaPickerMetadataContainer
-        id={TAG_SET_COUNTRY_OF_FOCUS}
+        id={mediaMetadataSetsByName.mediaSubjectCountrySet}
         type={COUNTRY_OF_FOCUS}
         form="advanced-media-picker-search"
         label={formatMessage(messages.countryShort)}
@@ -165,33 +165,33 @@ class AdvancedMediaPickerSearchForm extends React.Component {
             <Col lg={11}>
               <div className="filter-options">
                 <AppButton
-                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_COUNTRY) }}
+                  style={{ backgroundColor: backgroundColorStyle(mediaMetadataSetsByName.mediaPubCountrySet) }}
                   label={formatMessage(localMessages.pubCountrySuggestion, { count: this.getTagsPerMetadata(initialValues, PUBLICATION_COUNTRY) })}
-                  onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_COUNTRY)}
+                  onClick={() => this.setMetaClick(mediaMetadataSetsByName.mediaPubCountrySet)}
                   disabled={this.state.mode === ALL_MEDIA}
                 />
                 <AppButton
-                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_PRIMARY_LANGUAGE) }}
+                  style={{ backgroundColor: backgroundColorStyle(mediaMetadataSetsByName.mediaPrimaryLanguageSet) }}
                   label={formatMessage(localMessages.pLanguageSuggestion, { count: this.getTagsPerMetadata(initialValues, PRIMARY_LANGUAGE) })}
-                  onClick={() => this.setMetaClick(TAG_SET_PRIMARY_LANGUAGE)}
+                  onClick={() => this.setMetaClick(mediaMetadataSetsByName.mediaPrimaryLanguageSet)}
                   disabled={this.state.mode === ALL_MEDIA}
                 />
                 <AppButton
-                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_PUBLICATION_STATE) }}
+                  style={{ backgroundColor: backgroundColorStyle(mediaMetadataSetsByName.mediaPubStateSet) }}
                   label={formatMessage(localMessages.pubStateSuggestion, { count: this.getTagsPerMetadata(initialValues, PUBLICATION_STATE) })}
-                  onClick={() => this.setMetaClick(TAG_SET_PUBLICATION_STATE)}
+                  onClick={() => this.setMetaClick(mediaMetadataSetsByName.mediaPubStateSet)}
                   disabled={this.state.mode === ALL_MEDIA}
                 />
                 <AppButton
-                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_COUNTRY_OF_FOCUS) }}
+                  style={{ backgroundColor: backgroundColorStyle(mediaMetadataSetsByName.mediaSubjectCountrySet) }}
                   label={formatMessage(localMessages.pCountryOfFocusSuggestion, { count: this.getTagsPerMetadata(initialValues, COUNTRY_OF_FOCUS) })}
-                  onClick={() => this.setMetaClick(TAG_SET_COUNTRY_OF_FOCUS)}
+                  onClick={() => this.setMetaClick(mediaMetadataSetsByName.mediaSubjectCountrySet)}
                   disabled={this.state.mode === ALL_MEDIA}
                 />
                 <AppButton
-                  style={{ backgroundColor: backgroundColorStyle(TAG_SET_MEDIA_TYPE) }}
+                  style={{ backgroundColor: backgroundColorStyle(mediaMetadataSetsByName.mediaTypeSet) }}
                   label={formatMessage(localMessages.pMediaType, { count: this.getTagsPerMetadata(initialValues, MEDIA_TYPE) })}
-                  onClick={() => this.setMetaClick(TAG_SET_MEDIA_TYPE)}
+                  onClick={() => this.setMetaClick(mediaMetadataSetsByName.mediaTypeSet)}
                   disabled={this.state.mode === ALL_MEDIA}
                 />
               </div>
@@ -239,6 +239,7 @@ AdvancedMediaPickerSearchForm.propTypes = {
   onQueryUpdateSelection: PropTypes.func,
   onSelectMediaType: PropTypes.func,
   searchString: PropTypes.string,
+  mediaMetadataSetsByName: PropTypes.object.isRequired,
 };
 
 const reduxFormConfig = {

@@ -7,7 +7,6 @@ import { PICK_SOURCE_AND_COLLECTION, PICK_FEATURED } from '../../../lib/explorer
 import * as fetchConstants from '../../../lib/fetchConstants';
 import AllMediaSearchResultsContainer from './results/AllMediaSearchResultsContainer';
 import FeaturedFavoriteGeoSearchResultsContainer from './results/FeaturedFavoriteGeoSearchResultsContainer';
-import { VALID_COLLECTION_IDS } from '../../../lib/tagUtil';
 
 class MediaPickerResultsContainer extends React.Component {
   UNSAFE_componentWillMount() {
@@ -63,7 +62,7 @@ class MediaPickerResultsContainer extends React.Component {
   }
 
   render() {
-    const { viewOnly, selectedMediaQueryType, toggleConcurrency, updateMediaQuerySelection, handleToggleSelected } = this.props;
+    const { viewOnly, selectedMediaQueryType, toggleConcurrency, updateMediaQuerySelection, handleToggleSelected, collectionSets } = this.props;
     let content = null;
     const whichMedia = {};
     whichMedia.fetchStatus = null;
@@ -71,7 +70,7 @@ class MediaPickerResultsContainer extends React.Component {
       case PICK_SOURCE_AND_COLLECTION:
         content = (
           <AllMediaSearchResultsContainer
-            whichTagSet={VALID_COLLECTION_IDS}
+            whichTagSet={collectionSets}
             onToggleSelected={handleToggleSelected}
             handleMediaConcurrency={toggleConcurrency}
             updateMediaQuerySelection={updateMediaQuerySelection}
@@ -82,7 +81,7 @@ class MediaPickerResultsContainer extends React.Component {
       case PICK_FEATURED:
         content = (
           <FeaturedFavoriteGeoSearchResultsContainer
-            whichTagSet={VALID_COLLECTION_IDS}
+            whichTagSet={collectionSets}
             handleMediaConcurrency={toggleConcurrency}
             onToggleSelected={handleToggleSelected}
             viewOnly={viewOnly}
@@ -115,6 +114,7 @@ MediaPickerResultsContainer.propTypes = {
   sourceResults: PropTypes.object,
   selectedMedia: PropTypes.array,
   viewOnly: PropTypes.bool,
+  collectionSets: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -127,6 +127,7 @@ const mapStateToProps = state => ({
   sourceResults: state.system.mediaPicker.sourceQueryResults,
   favoritedCollections: state.system.mediaPicker.favoritedCollections ? state.system.mediaPicker.favoritedCollections : null,
   favoritedSources: state.system.mediaPicker.favoritedSources ? state.system.mediaPicker.favoritedSources : null,
+  collectionSets: state.system.staticTags.tagSets.collectionSets,
 });
 
 const mapDispatchToProps = dispatch => ({

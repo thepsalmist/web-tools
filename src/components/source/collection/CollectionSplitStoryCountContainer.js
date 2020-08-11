@@ -19,7 +19,6 @@ import { DownloadButton } from '../../common/IconButton';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 import { VIEW_REGULARLY_COLLECTED, VIEW_ALL_STORIES } from '../../../lib/mediaUtil';
 import { PAST_WEEK } from '../../../lib/dateUtil';
-import { TAG_SPIDERED_STORY } from '../../../lib/tagUtil';
 
 const localMessages = {
   partialTitle: { id: 'sentenceCount.title', defaultMessage: 'Last Year of Coverage (regularly collected stories)' },
@@ -136,6 +135,7 @@ CollectionSplitStoryCountContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   allStories: PropTypes.object,
   partialStories: PropTypes.object,
+  isSpideredStoryTag: PropTypes.number.isRequired,
   // from parent
   collectionId: PropTypes.number.isRequired,
   collectionName: PropTypes.string.isRequired,
@@ -151,13 +151,14 @@ const mapStateToProps = state => ({
   fetchStatus: state.platforms.countOverTime.fetchStatus,
   allStories: state.platforms.countOverTime.results.collectionTotal,
   partialStories: state.platforms.countOverTime.results.collectionNonSpidered,
+  isSpideredStoryTag: state.system.staticTags.tags.isSpideredStoryTag,
 });
 
-const fetchAsyncData = (dispatch, { collectionId }) => {
+const fetchAsyncData = (dispatch, { collectionId, isSpideredStoryTagId }) => {
   // grab all results
   dispatch(fetchPlatformCountOverTime({ uid: 'collectionTotal', platform_query: `tags_id_media:${collectionId}` }));
   // and also grab just the non-spidered stories
-  dispatch(fetchPlatformCountOverTime({ uid: 'collectionNonSpidered', platform_query: `tags_id_media:${collectionId} AND NOT tags_id_stories:${TAG_SPIDERED_STORY}` }));
+  dispatch(fetchPlatformCountOverTime({ uid: 'collectionNonSpidered', platform_query: `tags_id_media:${collectionId} AND NOT tags_id_stories:${isSpideredStoryTag}` }));
 };
 
 export default

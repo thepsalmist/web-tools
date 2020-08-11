@@ -13,7 +13,6 @@ import StoryEntitiesContainer from '../../../common/story/StoryEntitiesContainer
 import StoryNytThemesContainer from '../../../common/story/StoryNytThemesContainer';
 import messages from '../../../../resources/messages';
 import { urlToSource } from '../../../../lib/urlUtil';
-import { TAG_SET_NYT_THEMES } from '../../../../lib/tagUtil';
 import { trimToMaxLength, extractWordsFromQuery } from '../../../../lib/stringUtil';
 import Permissioned from '../../../common/Permissioned';
 import { PERMISSION_ADMIN } from '../../../../lib/auth';
@@ -123,7 +122,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
               <Col lg={3}>
                 <StoryNytThemesContainer
                   storyId={selectedStory}
-                  tags={storyInfo.story_tags ? storyInfo.story_tags.filter(t => t.tag_sets_id === TAG_SET_NYT_THEMES) : []}
+                  tags={storyInfo.story_tags ? storyInfo.story_tags.filter(t => t.tag_sets_id === nytThemesSet) : []}
                   hideFullListOption
                 />
               </Col>
@@ -144,6 +143,7 @@ SelectedStoryDrillDownContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   storyInfo: PropTypes.object,
   selectedStory: PropTypes.number,
+  nytThemesSet: PropTypes.number.isRequired,
   // from dispatch
   handleClose: PropTypes.func.isRequired,
   // from context
@@ -155,6 +155,7 @@ const mapStateToProps = state => ({
   fetchStatus: state.explorer.stories.fetchStatus,
   storyInfo: state.story.info,
   selectedStory: state.story.info.stories_id,
+  nytThemesSet: state.system.staticTags.tagSets.nytThemesSet,
 });
 
 const mapDispatchToProps = dispatch => ({

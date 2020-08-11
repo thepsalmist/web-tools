@@ -7,7 +7,6 @@ import { FETCH_SUCCEEDED } from '../../lib/fetchConstants';
 import withIntlForm from './hocs/IntlForm';
 import withAsyncData from './hocs/AsyncDataContainer';
 import { fetchMetadataValuesForCountry, fetchMetadataValuesForState, fetchMetadataValuesForPrimaryLanguage, fetchMetadataValuesForCountryOfFocus } from '../../actions/systemActions';
-import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS } from '../../lib/tagUtil';
 import messages from '../../resources/messages';
 
 const localMessages = {
@@ -119,12 +118,14 @@ MetadataCheckboxFieldArray.propTypes = {
     PropTypes.array,
   ]),
   onChange: PropTypes.func,
+  mediaMetadataSetsByName: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   fetchStatus: state.system.metadata[ownProps.type].fetchStatus,
   label: state.system.metadata[ownProps.type].label,
   initialValues: { shortList: state.system.metadata[ownProps.type].shortList },
+  mediaMetadataSetsByName: state.system.staticTags.tagSets.mediaMetadataSetsByName,
 });
 
 const fetchAsyncData = (dispatch, props) => {
@@ -132,19 +133,19 @@ const fetchAsyncData = (dispatch, props) => {
   if (!alreadyLoadedTags) {
     let fetcher;
     switch (props.id) {
-      case TAG_SET_PUBLICATION_COUNTRY:
+      case props.mediaMetadataSetsByName.mediaPubCountrySet:
         fetcher = fetchMetadataValuesForCountry;
         break;
-      case TAG_SET_PUBLICATION_STATE:
+      case props.mediaMetadataSetsByName.mediaPubStateSet:
         fetcher = fetchMetadataValuesForState;
         break;
-      case TAG_SET_PRIMARY_LANGUAGE:
+      case props.mediaMetadataSetsByName.mediaPrimaryLanguageSet:
         fetcher = fetchMetadataValuesForPrimaryLanguage;
         break;
-      case TAG_SET_COUNTRY_OF_FOCUS:
+      case props.mediaMetadataSetsByName.mediaSubjectCountrySet:
         fetcher = fetchMetadataValuesForCountryOfFocus;
         break;
-      // case TAG_SET_MEDIA_TYPE:
+      // case props.mediaMetadataSetsByName.mediaTypeSet:
         // fetcher = fetchMetadataValuesForMediaType;
         // break;
       default:

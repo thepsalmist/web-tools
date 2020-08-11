@@ -23,7 +23,6 @@ import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
 import TopicStoriesContainer from '../provider/TopicStoriesContainer';
 import TopicTagUseContainer from '../provider/TopicTagUseContainer';
 import TopicMediaContainer from '../provider/TopicMediaContainer';
-import { CLIFF_VERSION_TAG_LIST, TAG_SET_CLIFF_PEOPLE, TAG_SET_CLIFF_ORGS } from '../../../lib/tagUtil';
 
 const localMessages = {
   title: { id: 'topic.summary.summary.title', defaultMessage: 'Topic: {name}' },
@@ -55,7 +54,7 @@ class TopicSummaryContainer extends React.Component {
   }
 
   render() {
-    const { filters, topic, selectedTimespan, user, location, selectedSnapshot, timespans } = this.props;
+    const { filters, topic, selectedTimespan, user, location, selectedSnapshot, timespans, cliffVersionTags, cliffOrgsSet } = this.props;
     const { formatMessage } = this.props.intl;
     let content = <div />;
     let intro = null;
@@ -160,8 +159,8 @@ class TopicSummaryContainer extends React.Component {
                       topicId={topic.topics_id}
                       filters={filters}
                       uid="people"
-                      tagSetsId={TAG_SET_CLIFF_PEOPLE}
-                      tagsId={CLIFF_VERSION_TAG_LIST}
+                      tagSetsId={cliffPeopleSet}
+                      tagsId={cliffVersionTags}
                       border={false}
                     />
                   </SummarizedVizualization>
@@ -177,8 +176,8 @@ class TopicSummaryContainer extends React.Component {
                       topicId={topic.topics_id}
                       filters={filters}
                       uid="orgs"
-                      tagSetsId={TAG_SET_CLIFF_ORGS}
-                      tagsId={CLIFF_VERSION_TAG_LIST}
+                      tagSetsId={cliffOrgsSet}
+                      tagsId={cliffVersionTags}
                       border={false}
                     />
                   </SummarizedVizualization>
@@ -285,6 +284,7 @@ TopicSummaryContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   params: PropTypes.object,
   location: PropTypes.object,
+  cliffVersionTags: PropTypes.array.isRequired,
   // from state
   filters: PropTypes.object.isRequired,
   topic: PropTypes.object.isRequired,
@@ -292,6 +292,8 @@ TopicSummaryContainer.propTypes = {
   timespans: PropTypes.array.isRequired,
   selectedSnapshot: PropTypes.object,
   user: PropTypes.object.isRequired,
+  cliffOrgsSet: PropTypes.number.isRequired,
+  cliffPeopleSet: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -301,6 +303,9 @@ const mapStateToProps = state => ({
   selectedSnapshot: state.topics.selected.snapshots.selected,
   timespans: state.topics.selected.timespans.list,
   user: state.user,
+  cliffVersionTags: state.system.staticTags.tags.cliffVersionTags,
+  cliffOrgsSet: state.system.staticTags.tagSets.cliffOrgsSet,
+  cliffPeopleSet: state.system.staticTags.tagSets.cliffPeopleSet,
 });
 
 export default

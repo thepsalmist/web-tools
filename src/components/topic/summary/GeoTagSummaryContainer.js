@@ -14,7 +14,6 @@ import withSummary from '../../common/hocs/SummarizedVizualization';
 import { DownloadButton } from '../../common/IconButton';
 import { getBrandLightColor } from '../../../styles/colors';
 import { fetchTopicProviderTagUse, filterByQuery } from '../../../actions/topicActions';
-import { TAG_SET_GEOGRAPHIC_PLACES, CLIFF_VERSION_TAG_LIST } from '../../../lib/tagUtil';
 import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
 const localMessages = {
@@ -30,10 +29,10 @@ const COVERAGE_REQUIRED = 0.7; // need > this many of the stories tagged to show
 
 class GeoTagSummaryContainer extends React.Component {
   downloadCsv = () => {
-    const { topicId, filters } = this.props;
+    const { topicId, filters, cliffVersionTags, cliffPlacesSet } = this.props;
     const url = `/api/topics/${topicId}/provider/tag-use.csv?${filtersAsUrlParams(filters)}&${formatAsUrlParams({
-      tagSetsId: TAG_SET_GEOGRAPHIC_PLACES,
-      tagsId: CLIFF_VERSION_TAG_LIST,
+      tagSetsId: cliffPlacesSet,
+      tagsId: cliffVersionTags,
     })}`;
     window.location = url;
   }
@@ -97,6 +96,8 @@ GeoTagSummaryContainer.propTypes = {
   data: PropTypes.array.isRequired,
   coverage: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string,
+  cliffVersionTags: PropTypes.array.isRequired,
+  cliffPlacesSet: PropTypes.number.isRequired,
   // from parent
   topicId: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
@@ -110,17 +111,19 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.provider.tagUse.fetchStatuses.places || FETCH_INVALID,
   data: state.topics.selected.provider.tagUse.results.places ? state.topics.selected.provider.tagUse.results.places.list : [],
   coverage: state.topics.selected.provider.tagUse.results.places ? state.topics.selected.provider.tagUse.results.places.coverage : {},
+  cliffVersionTags: state.system.staticTags.tags.cliffVersionTags,
+  cliffPlacesSet: state.system.staticTags.tagSets.cliffPlacesSet,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   updateQueryFilter: (newQueryFilter) => dispatch(filterByQuery(newQueryFilter)),
 });
 
-const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicProviderTagUse(props.topicId, {
-  ...props.filters,
+const fetchAsyncData = (dispatch, { topicId, filters, cliffVersionTags, cliffPlacesSet }) => dispatch(fetchTopicProviderTagUse(topicId, {
+  ...filters,
   uid: 'places',
-  tagSetsId: TAG_SET_GEOGRAPHIC_PLACES,
-  tagsId: CLIFF_VERSION_TAG_LIST,
+  tagSetsId: cliffPlacesSet,
+  tagsId: cliffVersionTags,
 }));
 
 export default

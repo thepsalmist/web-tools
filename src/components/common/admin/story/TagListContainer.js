@@ -3,7 +3,6 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import messages from '../../../../resources/messages';
 import DataCard from '../../DataCard';
-import { TAG_SET_NYT_THEMES, TAG_SET_CLIFF_ORGS, TAG_SET_CLIFF_PEOPLE } from '../../../../lib/tagUtil';
 import { DownloadButton } from '../../IconButton';
 import TagsAndTagSetsTable from '../TagsAndTagSetsTable';
 
@@ -13,7 +12,7 @@ const localMessages = {
 };
 
 const TagListContainer = (props) => {
-  const { story } = props;
+  const { story, tagToShow } = props;
   const { formatMessage } = props.intl;
   return (
     <DataCard className="other-tags">
@@ -28,7 +27,7 @@ const TagListContainer = (props) => {
       <h2>
         <FormattedMessage {...localMessages.otherStoryTagTitle} />
       </h2>
-      <TagsAndTagSetsTable storyTags={story.story_tags ? story.story_tags.filter(t => t.tag_sets_id !== TAG_SET_NYT_THEMES && t.tag_sets_id !== TAG_SET_CLIFF_ORGS && t.tag_sets_id !== TAG_SET_CLIFF_PEOPLE) : []} />
+      <TagsAndTagSetsTable storyTags={story.story_tags ? story.story_tags.filter(t => tagToShow(t)) : []} />
     </DataCard>
   );
 };
@@ -38,6 +37,7 @@ TagListContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   story: PropTypes.object,
+  tagToShow: PropTypes.func.isRequired,
 };
 
 export default

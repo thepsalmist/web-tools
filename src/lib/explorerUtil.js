@@ -4,14 +4,9 @@ import { trimToMaxLength, queryAsString } from './stringUtil';
 import { notEmptyString } from './formValidators';
 import { downloadViaFormPost } from './apiUtil';
 import { downloadSvg } from '../components/util/svg';
-import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE, PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE, PUB_COUNTRY_TAG_NAME, PUB_STATE_TAG_NAME, PRIMARY_LANGUAGE_TAG_NAME, COUNTRY_OF_FOCUS_TAG_NAME, MEDIA_TYPE_TAG_NAME } from './tagUtil';
+import { PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE,
+  PUB_COUNTRY_TAG_NAME, PUB_STATE_TAG_NAME, PRIMARY_LANGUAGE_TAG_NAME, COUNTRY_OF_FOCUS_TAG_NAME, MEDIA_TYPE_TAG_NAME } from './tagUtil';
 import messages from '../resources/messages';
-
-export const DEFAULT_SOURCES = '';
-
-export const DEFAULT_COLLECTION = 58722749;
-
-export const DEFAULT_COLLECTION_OBJECT_ARRAY = [{ id: DEFAULT_COLLECTION, tags_id: DEFAULT_COLLECTION, label: 'U.S. Top Online News 2017' }];
 
 export const PICK_FEATURED = 0;
 export const PICK_SOURCE_AND_COLLECTION = 1;
@@ -110,24 +105,6 @@ export function generateQueryParamObject(query, skipEncoding) {
     collections: query.collections && query.collections.length > 0 ? query.collections.map(c => (c.id ? c.id : c)).filter(c => c > 0) : [],
     searches: query.searches && query.searches.length > 0 ? serializeSearchTags(query.searches) : [],
   };
-}
-
-
-export function lookupReadableMetadataName(tagSetsId) {
-  switch (tagSetsId) {
-    case TAG_SET_PUBLICATION_COUNTRY:
-      return PUBLICATION_COUNTRY;
-    case TAG_SET_PUBLICATION_STATE:
-      return PUBLICATION_STATE;
-    case TAG_SET_PRIMARY_LANGUAGE:
-      return PRIMARY_LANGUAGE;
-    case TAG_SET_COUNTRY_OF_FOCUS:
-      return COUNTRY_OF_FOCUS;
-    case TAG_SET_MEDIA_TYPE:
-      return MEDIA_TYPE;
-    default:
-      return null;
-  }
 }
 
 

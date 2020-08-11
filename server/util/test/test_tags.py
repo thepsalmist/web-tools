@@ -21,6 +21,8 @@ TAG_SETS_ID_COLLECTIONS = 5
 TAG_SET_ABYZ_GEO_COLLECTIONS = 15765102
 TAG_SETS_ID_PARTISANSHIP_2019 = 15765109
 TAG_SETS_ID_PARTISANSHIP_2016 = 1959
+TAG_SET_EXTRACTOR_VERSION = 1354
+TAG_SET_DATE_GUESS_METHOD = 508;
 
 
 class TagDiscovererTest(unittest.TestCase):
@@ -55,6 +57,8 @@ class TagSetDiscovererTest(unittest.TestCase):
         assert discoverer.geo_collections_set == TAG_SET_ABYZ_GEO_COLLECTIONS
         assert discoverer.partisan_2019_collections_set == TAG_SETS_ID_PARTISANSHIP_2019
         assert discoverer.partisan_2016_collections_set == TAG_SETS_ID_PARTISANSHIP_2016
+        assert discoverer.extractor_versions_set == TAG_SET_EXTRACTOR_VERSION
+        assert discoverer.date_guess_methods_set == TAG_SET_DATE_GUESS_METHOD
 
 
 if __name__ == "__main__":

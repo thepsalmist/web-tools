@@ -10,8 +10,6 @@ import messages from '../../../resources/messages';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import { DownloadButton } from '../../common/IconButton';
 import MetadataCoverageItem from './MetadataCoverageItem';
-import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS,
-  TAG_SET_MEDIA_TYPE } from '../../../lib/tagUtil';
 
 const localMessages = {
   chartTitle: { id: 'collection.summary.metadatacoverage.chart.title', defaultMessage: 'Metadata' },
@@ -46,7 +44,7 @@ class CollectionMetadataCoverageSummaryContainer extends React.Component {
   }
 
   render() {
-    const { helpButton, sources } = this.props;
+    const { helpButton, sources, mediaMetadataSetsByName } = this.props;
     const { formatMessage } = this.props.intl;
     let content = null;
     if (sources.length === 0) {
@@ -58,7 +56,7 @@ class CollectionMetadataCoverageSummaryContainer extends React.Component {
             <MetadataCoverageItem
               title={formatMessage(localMessages.pubCountryTitle)}
               sources={sources}
-              metadataId={TAG_SET_PUBLICATION_COUNTRY}
+              metadataId={mediaMetadataSetsByName.mediaPubCountrySet}
               taggedText={formatMessage(localMessages.pubCountryTagged)}
               notTaggedText={formatMessage(localMessages.pubCountryNotTagged)}
             />
@@ -67,7 +65,7 @@ class CollectionMetadataCoverageSummaryContainer extends React.Component {
             <MetadataCoverageItem
               title={formatMessage(localMessages.pubStateTitle)}
               sources={sources}
-              metadataId={TAG_SET_PUBLICATION_STATE}
+              metadataId={mediaMetadataSetsByName.mediaPubStateSet}
               taggedText={formatMessage(localMessages.pubStateTagged)}
               notTaggedText={formatMessage(localMessages.pubStateNotTagged)}
             />
@@ -76,7 +74,7 @@ class CollectionMetadataCoverageSummaryContainer extends React.Component {
             <MetadataCoverageItem
               title={formatMessage(localMessages.pLanguageTitle)}
               sources={sources}
-              metadataId={TAG_SET_PRIMARY_LANGUAGE}
+              metadataId={mediaMetadataSetsByName.mediaPrimaryLanguageSet}
               taggedText={formatMessage(localMessages.pLanguageTagged)}
               notTaggedText={formatMessage(localMessages.pLanguageNotTagged)}
             />
@@ -85,7 +83,7 @@ class CollectionMetadataCoverageSummaryContainer extends React.Component {
             <MetadataCoverageItem
               title={formatMessage(localMessages.pCountryOfFocusTitle)}
               sources={sources}
-              metadataId={TAG_SET_COUNTRY_OF_FOCUS}
+              metadataId={mediaMetadataSetsByName.mediaSubjectCountrySet}
               taggedText={formatMessage(localMessages.pCountryOfFocusTagged)}
               notTaggedText={formatMessage(localMessages.pCountryOfFocusNotTagged)}
             />
@@ -94,7 +92,7 @@ class CollectionMetadataCoverageSummaryContainer extends React.Component {
             <MetadataCoverageItem
               title={formatMessage(localMessages.mediaTypeTitle)}
               sources={sources}
-              metadataId={TAG_SET_MEDIA_TYPE}
+              metadataId={mediaMetadataSetsByName.mediaTypeSet}
               taggedText={formatMessage(localMessages.mediaTypeTagged)}
               notTaggedText={formatMessage(localMessages.mediaTypeNotTagged)}
             />
@@ -124,6 +122,7 @@ class CollectionMetadataCoverageSummaryContainer extends React.Component {
 CollectionMetadataCoverageSummaryContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
+  mediaMetadataSetsByName: PropTypes.object.isRequired,
   // from parent
   collection: PropTypes.object.isRequired,
   sources: PropTypes.array,
@@ -136,6 +135,7 @@ CollectionMetadataCoverageSummaryContainer.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: state.sources.collections.selected.collectionSourceList.fetchStatus,
   sources: state.sources.collections.selected.collectionSourceList.sources,
+  mediaMetadataSetsByName: state.system.staticTags.tagSets.mediaMetadataSetsByName,
 });
 
 const mapDispatchToProps = dispatch => ({

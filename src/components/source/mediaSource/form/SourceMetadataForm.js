@@ -3,7 +3,6 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Row, Col } from 'react-flexbox-grid/lib';
 import MetadataPickerContainer from '../../../common/MetadataPickerContainer';
-import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE } from '../../../../lib/tagUtil';
 import messages from '../../../../resources/messages';
 
 const localMessages = {
@@ -20,7 +19,7 @@ const SourceMetadataForm = props => (
     <Row>
       <Col lg={4} xs={12}>
         <MetadataPickerContainer
-          id={TAG_SET_PUBLICATION_COUNTRY}
+          id={props.mediaMetadataSetsByName.mediaPubCountrySet}
           name="publicationCountry"
           form="sourceForm"
           initialValues={props.initialValues.metadata ? props.initialValues.metadata.pub_country : null}
@@ -30,7 +29,7 @@ const SourceMetadataForm = props => (
       </Col>
       <Col lg={4} xs={12}>
         <MetadataPickerContainer
-          id={TAG_SET_PUBLICATION_STATE}
+          id={props.mediaMetadataSetsByName.mediaPubStateSet}
           name="publicationState"
           form="sourceForm"
           initialValues={props.initialValues.metadata ? props.initialValues.metadata.pub_state : null}
@@ -40,7 +39,7 @@ const SourceMetadataForm = props => (
       </Col>
       <Col lg={4} xs={12}>
         <MetadataPickerContainer
-          id={TAG_SET_MEDIA_TYPE}
+          id={props.mediaMetadataSetsByName.mediaTypeSet}
           name="mediaType"
           form="sourceForm"
           showDescription
@@ -52,7 +51,7 @@ const SourceMetadataForm = props => (
     <Row>
       <Col lg={4} xs={12}>
         <MetadataPickerContainer
-          id={TAG_SET_COUNTRY_OF_FOCUS}
+          id={props.mediaMetadataSetsByName.mediaSubjectCountrySet}
           name="countryOfFocus"
           form="sourceForm"
           disabled
@@ -63,7 +62,7 @@ const SourceMetadataForm = props => (
       </Col>
       <Col lg={4} xs={12}>
         <MetadataPickerContainer
-          id={TAG_SET_PRIMARY_LANGUAGE}
+          id={props.mediaMetadataSetsByName.mediaPrimaryLanguageSet}
           name="primaryLanguage"
           form="sourceForm"
           disabled
@@ -79,6 +78,7 @@ SourceMetadataForm.propTypes = {
   // from compositional chain
   initialValues: PropTypes.object,
   intl: PropTypes.object.isRequired,
+  mediaMetadataSetsByName: PropTypes.object.isRequired,
 };
 
 export default

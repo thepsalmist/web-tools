@@ -11,7 +11,6 @@ import { fetchTopThemes } from '../../../actions/explorerActions';
 import { postToDownloadUrl, downloadExplorerSvg, COVERAGE_REQUIRED } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
-import { TAG_SET_NYT_THEMES } from '../../../lib/tagUtil';
 import mapD3Top10Colors from '../../../lib/colorUtil';
 import BubbleRowChart from '../../vis/BubbleRowChart';
 
@@ -37,7 +36,8 @@ class QueryThemesResultsContainer extends React.Component {
   }
 
   downloadCsv = (query) => {
-    postToDownloadUrl(`/api/explorer/tags/${TAG_SET_NYT_THEMES}/top-tags.csv`, query);
+    const { nytThemesSet } = this.props;
+    postToDownloadUrl(`/api/explorer/tags/${nytThemesSet}/top-tags.csv`, query);
   }
 
 
@@ -118,11 +118,13 @@ QueryThemesResultsContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
   results: PropTypes.object.isRequired,
+  nytThemesSet: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.explorer.topThemes.fetchStatus,
   results: state.explorer.topThemes.results,
+  nytThemesSet: state.system.staticTags.tagSets.nytThemesSet,
 });
 
 export default

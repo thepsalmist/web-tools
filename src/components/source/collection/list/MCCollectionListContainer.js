@@ -7,7 +7,6 @@ import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import { fetchCollectionList } from '../../../../actions/sourceActions';
 import CollectionTable from '../../../common/CollectionTable';
 import TabSelector from '../../../common/TabSelector';
-import { TAG_SET_MC_ID, isCollectionTagSet } from '../../../../lib/tagUtil';
 import { PERMISSION_MEDIA_EDIT, getUserRoles, hasPermissions } from '../../../../lib/auth';
 import Permissioned from '../../../common/Permissioned';
 import PageTitle from '../../../common/PageTitle';
@@ -23,11 +22,11 @@ class MCCollectionListContainer extends React.Component {
   };
 
   render() {
-    const { name, collections, linkToFullUrl, user } = this.props;
+    const { name, collections, linkToFullUrl, user, collectionSets } = this.props;
     const { formatMessage } = this.props.intl;
     const canSeePrivateCollections = hasPermissions(getUserRoles(user), PERMISSION_MEDIA_EDIT);
-    const privateColl = collections.filter(t => (isCollectionTagSet(t.tag_sets_id) && (!t.show_on_media || canSeePrivateCollections)));
-    const allOtherCollections = collections.filter(t => (isCollectionTagSet(t.tag_sets_id) && (t.show_on_media)));
+    const privateColl = collections.filter(t => (collectionSets.includes(t.tag_sets_id) && (!t.show_on_media || canSeePrivateCollections)));
+    const allOtherCollections = collections.filter(t => (collectionSets.includes(t.tag_sets_id) && (t.show_on_media)));
 
     let selectedTabCollections = allOtherCollections;
     if (this.state.selectedViewIndex === 0) {
@@ -70,6 +69,8 @@ MCCollectionListContainer.propTypes = {
   description: PropTypes.string,
   user: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string.isRequired,
+  collectionSets: PropTypes.array.isRequired,
+  collectionsSet: PropTypes.number.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
   linkToFullUrl: PropTypes.bool,
@@ -81,9 +82,11 @@ const mapStateToProps = state => ({
   description: state.sources.collections.all.description,
   collections: state.sources.collections.all.collections,
   user: state.user,
+  collectionsSets: state.system.staticTags.tagSets.collectionSets,
+  collectionsSet: state.system.staticTags.tagSets.collectionsSet,
 });
 
-const fetchAsyncData = dispatch => dispatch(fetchCollectionList(TAG_SET_MC_ID));
+const fetchAsyncData = (dispatch, { collectionsSet }) => dispatch(fetchCollectionList(collectionsSet));
 
 export default
 injectIntl(

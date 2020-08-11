@@ -10,7 +10,7 @@ import DataCard from '../../common/DataCard';
 import LoginForm from '../../user/LoginForm';
 import SearchForm from './SearchForm';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
-import { DEFAULT_COLLECTION, autoMagicQueryLabel, serializeQueriesForUrl } from '../../../lib/explorerUtil';
+import { autoMagicQueryLabel, serializeQueriesForUrl } from '../../../lib/explorerUtil';
 import { emptyString } from '../../../lib/formValidators';
 import ExplorerMarketingFeatureList from './ExplorerMarketingFeatureList';
 import SystemStatsContainer from '../../common/statbar/SystemStatsContainer';
@@ -26,7 +26,7 @@ const localMessages = {
   loginTitle: { id: 'explorer.intro.login.title', defaultMessage: 'Have an Account? Login Now' },
 };
 
-const Homepage = ({ isLoggedIn, onKeywordSearch, storyCount }) => (
+const Homepage = ({ isLoggedIn, onKeywordSearch, storyCount, defaultCollectionTag }) => (
   <div className="homepage">
     <Masthead
       nameMsg={messages.explorerToolName}
@@ -38,7 +38,7 @@ const Homepage = ({ isLoggedIn, onKeywordSearch, storyCount }) => (
         <Grid>
           <Row>
             <Col lg={12}>
-              <SearchForm onSearch={val => onKeywordSearch(val)} storyCount={storyCount} />
+              <SearchForm onSearch={val => onKeywordSearch(val, defaultCollectionTag)} storyCount={storyCount} />
             </Col>
           </Row>
         </Grid>
@@ -78,15 +78,17 @@ Homepage.propTypes = {
   // from state
   isLoggedIn: PropTypes.bool.isRequired,
   storyCount: PropTypes.number,
+  defaultCollectionTag: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({
   isLoggedIn: state.user.isLoggedIn,
   storyCount: state.system.stats.stats.total_stories,
+  defaultCollectionTag: state.system.staticTags.tags.defaultCollectionTag,
 });
 
 const mapDispatchToProps = dispatch => ({
-  onKeywordSearch: (values) => {
+  onKeywordSearch: (values, defaultCollectionTag) => {
     const keyword = emptyString(values.keyword) ? '' : values.keyword;
     const defaultDates = getDateRange(PAST_MONTH);
     const queries = [{
@@ -94,7 +96,7 @@ const mapDispatchToProps = dispatch => ({
       startDate: solrFormat(defaultDates.start),
       endDate: solrFormat(defaultDates.end),
       color: schemeCategory10[0],
-      collections: [DEFAULT_COLLECTION],
+      collections: [defaultCollectionTag],
       sources: [],
     }];
     queries[0].label = autoMagicQueryLabel(queries[0]);

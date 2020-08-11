@@ -6,7 +6,6 @@ import withAsyncData from '../../hocs/AsyncDataContainer';
 import { fetchMediaPickerFeaturedCollections } from '../../../../actions/systemActions';
 import CollectionResultsTable from './CollectionResultsTable';
 import * as fetchConstants from '../../../../lib/fetchConstants';
-import { TAG_SET_MC_ID } from '../../../../lib/tagUtil';
 import LoadingSpinner from '../../LoadingSpinner';
 
 const localMessages = {
@@ -39,15 +38,17 @@ FeaturedCollectionsContainer.propTypes = {
   fetchStatus: PropTypes.string,
   collections: PropTypes.array,
   viewOnly: PropTypes.bool,
+  collectionsSet: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.system.mediaPicker.featured.fetchStatus,
   selectedMediaQueryType: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.type : 0,
   collections: state.system.mediaPicker.featured ? state.system.mediaPicker.featured.list : null,
+  collectionsSet: state.system.staticTags.tagSets.collectionsSet,
 });
 
-const fetchAsyncData = dispatch => dispatch(fetchMediaPickerFeaturedCollections(TAG_SET_MC_ID));
+const fetchAsyncData = (dispatch, { collectionsSet }) => dispatch(fetchMediaPickerFeaturedCollections(collectionsSet));
 
 export default
 injectIntl(

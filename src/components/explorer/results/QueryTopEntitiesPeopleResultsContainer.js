@@ -13,7 +13,6 @@ import { fetchTopEntitiesPeople } from '../../../actions/explorerActions';
 import { postToDownloadUrl, COVERAGE_REQUIRED, ENTITY_DISPLAY_TOP_TEN } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
-import { TAG_SET_CLIFF_PEOPLE } from '../../../lib/tagUtil';
 
 const localMessages = {
   title: { id: 'explorer.entities.title', defaultMessage: 'Top People' },
@@ -24,7 +23,8 @@ const localMessages = {
 
 class QueryTopEntitiesPeopleResultsContainer extends React.Component {
   downloadCsv = (query) => {
-    postToDownloadUrl(`/api/explorer/tags/${TAG_SET_CLIFF_PEOPLE}/top-tags.csv`, query);
+    const { cliffPeopleSet } = this.props;
+    postToDownloadUrl(`/api/explorer/tags/${cliffPeopleSet}/top-tags.csv`, query);
   }
 
   render() {
@@ -96,6 +96,7 @@ QueryTopEntitiesPeopleResultsContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string.isRequired,
   results: PropTypes.object.isRequired,
+  cliffPeopleSet: PropTypes.number.isRequired,
   // from dispatch
   handleEntitySelection: PropTypes.func.isRequired,
 };
@@ -103,6 +104,7 @@ QueryTopEntitiesPeopleResultsContainer.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: state.explorer.topEntitiesPeople.fetchStatus,
   results: state.explorer.topEntitiesPeople.results,
+  cliffPeopleSet: state.system.staticTags.tagSets.cliffPeopleSet,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

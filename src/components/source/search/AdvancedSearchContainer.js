@@ -32,6 +32,7 @@ class AdvancedSearchContainer extends React.Component {
   }
 
   render() {
+    const { mediaMetadataSetsByName } = this.props;
     const { formatMessage } = this.props.intl;
     let resultsContent = null;
     if ((this.state.queryStr) || (this.state.tags.length > 0)) {
@@ -49,6 +50,7 @@ class AdvancedSearchContainer extends React.Component {
           <AdvancedSearchForm
             initialValues={{ advancedSearchQueryString: this.state.queryStr }}
             buttonLabel={formatMessage(localMessages.addButton)}
+            mediaMetadataSetsByName={mediaMetadataSetsByName}
             onSearch={(values) => {
               const info = {
                 queryStr: values.advancedSearchQueryString,
@@ -89,10 +91,13 @@ AdvancedSearchContainer.propTypes = {
   // from dispatch
   // from url
   urlQueryString: PropTypes.string,
+  // from state
+  mediaMetadataSetsByName: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   urlQueryString: ownProps.location.query.search,
+  mediaMetadataSetsByName: state.system.staticTags.tagSets.mediaMetadataSetsByName,
 });
 
 export default

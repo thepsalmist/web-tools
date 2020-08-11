@@ -24,7 +24,9 @@ A tag-set holds a bunch of tags. Here are the ones the front-end needs.
  * geographic_collection - Holds our maintained geographic collections
  * twitter_partisanship - Berkman Klein Twitter Partisanship quintiles from 2019
  * retweet_partisanship_2016_count_10 - Berkman Klein Twitter Partisanship quintiles from 2016
-      
+ * extractor_version - Holds tags for each version of the content extrator we use (each story is tagged with one of those tags)
+ * date_guess_method - Holds one tag for each method we use to guess date of a story (each story is tagged with one of those tags)
+       
 Tags
 ----
 

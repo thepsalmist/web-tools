@@ -43,6 +43,13 @@ class TagSetDiscoverer:
             for prop, value in vars(self).items():
                 current_state[snake_to_camel(prop[1:])] = value
             current_state['mediaMetadataSets'] = self.media_metadata_sets()
+            current_state['mediaMetadataSetsByName'] = {
+                'mediaPrimaryLanguageSet': self.media_primary_language_set,
+                'mediaPubCountrySet': self.media_pub_country_set,
+                'mediaPubStateSet': self.media_pub_state_set,
+                'mediaSubjectCountrySet': self.media_subject_country_set,
+                'mediaTypeSet': self.media_type_set,
+            }
             current_state['collectionSets'] = self.collection_sets()
             return current_state
 
@@ -68,6 +75,8 @@ class TagSetDiscoverer:
                 self._geo_collections_set = self._discover_by_name(tag_sets, 'geographic_collection')
                 self._partisan_2019_collections_set = self._discover_by_name(tag_sets, 'twitter_partisanship')
                 self._partisan_2016_collections_set = self._discover_by_name(tag_sets, 'retweet_partisanship_2016_count_10')
+                self._extractor_versions_set = self._discover_by_name(tag_sets, 'extractor_version')
+                self._date_guess_methods_set = self._discover_by_name(tag_sets, 'date_guess_method')
             except Exception as e:
                 logger.error("Couldn't find a required tag set. See /doc/required-tags.md for more info on all the "
                              "tag-sets the back-end should expose")
@@ -149,6 +158,14 @@ class TagSetDiscoverer:
                 self.partisan_2019_collections_set,
                 self.partisan_2016_collections_set
             ]
+
+        @property
+        def extractor_versions_set(self):
+            return self._extractor_versions_set
+
+        @property
+        def date_guess_methods_set(self):
+            return self._date_guess_methods_set
 
     instance = None
 

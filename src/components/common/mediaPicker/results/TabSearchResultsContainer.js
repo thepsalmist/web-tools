@@ -9,7 +9,6 @@ import CountryCollectionSearchResultsContainer from './CountryCollectionSearchRe
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
 import LoadingSpinner from '../../LoadingSpinner';
 import TabSelector from '../../TabSelector';
-import { TAG_SET_ABYZ_GEO_COLLECTIONS } from '../../../../lib/tagUtil';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.collections.title', defaultMessage: 'Collections matching "{name}"' },
@@ -29,7 +28,7 @@ class TabSearchResultsContainer extends React.Component {
   };
 
   render() {
-    const { queryResults, onToggleSelected, fetchStatus, viewOnly } = this.props;
+    const { queryResults, onToggleSelected, fetchStatus, viewOnly, geoCollectionsSet } = this.props;
     const { formatMessage } = this.props.intl;
     const tabs = (
       <div className="media-picker-results-container">
@@ -80,7 +79,7 @@ class TabSearchResultsContainer extends React.Component {
       tabContent = (
         <div className="media-picker-tabbed-content-wrapper">
           <CountryCollectionSearchResultsContainer
-            whichTagSet={TAG_SET_ABYZ_GEO_COLLECTIONS}
+            whichTagSet={geoCollectionsSet}
             title={formatMessage(localMessages.featured)}
             collections={queryResults.featured}
             onToggleSelected={onToggleSelected}
@@ -111,10 +110,9 @@ TabSearchResultsContainer.propTypes = {
   handleMediaConcurrency: PropTypes.func.isRequired,
   hintTextMsg: PropTypes.object,
   onSearch: PropTypes.func.isRequired,
+  geoCollectionsSet: PropTypes.number.isRequired,
   // from state
-  selectedMediaQueryType: PropTypes.number,
   queryResults: PropTypes.object,
-  initItems: PropTypes.object,
   fetchStatus: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.array,

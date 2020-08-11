@@ -14,7 +14,7 @@ const localMessages = {
   description: { id: 'sources.collections.geo.description', defaultMessage: 'We have curated a set of collections by geography.  For each country below we have a national collection, which includes media sources that report about the whole country.  For many countries we also have state- or province-level collections, for media sources that are published in and focus on that part of the country.' },
 };
 
-const CountryCollectionListContainer = ({ collectionsByCountry, user }) => (
+const CountryCollectionListContainer = ({ collectionsByCountry, user, collectionSets }) => (
   <>
     <PageTitle value={localMessages.title} />
     <Grid>
@@ -32,6 +32,7 @@ const CountryCollectionListContainer = ({ collectionsByCountry, user }) => (
           <Col lg={10}>
             <div>
               <CollectionList
+                collectionSets={collectionSets}
                 collections={countryInfo.collections}
                 title={countryInfo.country && countryInfo.country.name ? countryInfo.country.name : ''}
                 user={user}
@@ -50,6 +51,7 @@ CountryCollectionListContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   user: PropTypes.object.isRequired,
   collectionsByCountry: PropTypes.array.isRequired,
+  collectionSets: PropTypes.array.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
 };
@@ -58,6 +60,7 @@ const mapStateToProps = state => ({
   fetchStatus: state.sources.collections.geo.fetchStatus,
   user: state.user,
   collectionsByCountry: state.sources.collections.geo.list,
+  collectionSets: state.system.staticTags.tagSets.collectionSets,
 });
 
 const fetchAsyncData = dispatch => dispatch(fetchGeoCollectionsByCountry());

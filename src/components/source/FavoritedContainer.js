@@ -19,7 +19,7 @@ const localMessages = {
 };
 
 const FavoritedContainer = (props) => {
-  const { favoritedSources, favoritedCollections } = props;
+  const { favoritedSources, favoritedCollections, collectionSets } = props;
   const { formatMessage } = props.intl;
   return (
     <Grid>
@@ -42,6 +42,7 @@ const FavoritedContainer = (props) => {
             title={formatMessage(localMessages.favoritedCollectionsTitle)}
             intro={formatMessage(localMessages.favoritedCollectionsIntro)}
             collections={favoritedCollections}
+            collectionSets={collectionSets}
           />
         </Col>
       </Row>
@@ -53,6 +54,7 @@ FavoritedContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.array,
   total: PropTypes.number,
+  collectionSets: PropTypes.array.isRequired,
   // from parent
   favoritedSources: PropTypes.array.isRequired,
   favoritedCollections: PropTypes.array.isRequired,
@@ -64,6 +66,7 @@ export const mapStateToProps = state => ({
   fetchStatus: [state.sources.collections.favorited.fetchStatus, state.sources.sources.favorited.fetchStatus],
   favoritedSources: state.sources.sources.favorited.list,
   favoritedCollections: state.sources.collections.favorited.list,
+  collectionSets: state.system.staticTags.tagSets.collectionSets,
 });
 
 export const fetchAsyncData = (dispatch) => {

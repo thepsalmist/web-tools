@@ -10,7 +10,6 @@ import { selectMediaPickerQueryArgs, fetchMediaPickerCollections, resetMediaPick
 import { FETCH_ONGOING } from '../../../../lib/fetchConstants';
 import LoadingSpinner from '../../LoadingSpinner';
 import { notEmptyString } from '../../../../lib/formValidators';
-import { TAG_SET_MC_ID } from '../../../../lib/tagUtil';
 import messages from '../../../../resources/messages';
 
 const localMessages = {
@@ -20,7 +19,7 @@ const localMessages = {
 };
 
 const CollectionSearchResultsContainer = props => {
-  const { selectedMediaQueryKeyword, selectedMediaQueryType, initCollections, collectionResults, resetAndUpdateMediaQuerySelection, onToggleSelected, fetchStatus, hintTextMsg, viewOnly, pageThroughCollections, links } = props;
+  const { selectedMediaQueryKeyword, selectedMediaQueryType, initCollections, collectionResults, resetAndUpdateMediaQuerySelection, onToggleSelected, fetchStatus, hintTextMsg, viewOnly, pageThroughCollections, links, collectionsSet } = props;
   const { formatMessage } = props.intl;
   let content = null;
   let getMoreResultsContent = null;
@@ -57,7 +56,7 @@ const CollectionSearchResultsContainer = props => {
     <div className="media-picker-search-results">
       <MediaPickerSearchForm
         initValues={{ mediaKeyword: selectedMediaQueryKeyword }}
-        onSearch={val => resetAndUpdateMediaQuerySelection({ ...val, type: selectedMediaQueryType })}
+        onSearch={val => resetAndUpdateMediaQuerySelection({ which_set: collectionsSet, ...val, type: selectedMediaQueryType })}
         hintText={formatMessage(hintTextMsg || localMessages.hintText)}
       />
       <h2><span className="source-search-keys"><FormattedMessage {...localMessages.title} values={{ name: selectedMediaQueryKeyword, numResults: collectionResults.list.length }} /></span></h2>
@@ -92,6 +91,7 @@ CollectionSearchResultsContainer.propTypes = {
   viewOnly: PropTypes.bool,
   pageThroughCollections: PropTypes.func.isRequired,
   resetAndUpdateMediaQuerySelection: PropTypes.func.isRequired,
+  collectionsSet: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -101,20 +101,31 @@ const mapStateToProps = state => ({
   selectedMediaQueryKeyword: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.mediaKeyword : null,
   collectionResults: state.system.mediaPicker.collectionQueryResults,
   links: state.system.mediaPicker.collectionQueryResults.linkId,
+  collectionsSet: state.system.staticTags.tagSets.collectionsSet,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = (dispatch) => ({
   resetAndUpdateMediaQuerySelection: (values) => { // reset collections and requery
     if (values && notEmptyString(values.mediaKeyword)) {
       dispatch(resetMediaPickerCollections());
       dispatch(selectMediaPickerQueryArgs(values));
-      dispatch(fetchMediaPickerCollections({ media_keyword: (values.mediaKeyword || '*'), which_set: ownProps.whichTagSet || TAG_SET_MC_ID, type: values.type, linkId: values.linkId }));
+      dispatch(fetchMediaPickerCollections({
+        media_keyword: (values.mediaKeyword || '*'),
+        which_set: values.which_set,
+        type: values.type,
+        linkId: values.linkId,
+      }));
     }
   },
   updateMediaQuerySelection: (values) => {
     if (values && notEmptyString(values.mediaKeyword)) {
       dispatch(selectMediaPickerQueryArgs(values)); // don't reset collections, pass any link id
-      dispatch(fetchMediaPickerCollections({ media_keyword: (values.mediaKeyword || '*'), which_set: ownProps.whichTagSet || TAG_SET_MC_ID, type: values.type, linkId: values.linkId }));
+      dispatch(fetchMediaPickerCollections({
+        media_keyword: (values.mediaKeyword || '*'),
+        which_set: values.which_set,
+        type: values.type,
+        linkId: values.linkId,
+      }));
     }
   },
 });
@@ -125,9 +136,19 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
     ...ownProps,
     pageThroughCollections: () => {
       if (stateProps.links !== undefined) {
-        dispatchProps.updateMediaQuerySelection({ mediaKeyword: stateProps.selectedMediaQueryKeyword, which_set: ownProps.whichTagSet || TAG_SET_MC_ID, type: stateProps.selectedMediaQueryType, linkId: stateProps.links.next });
+        dispatchProps.updateMediaQuerySelection({
+          mediaKeyword: stateProps.selectedMediaQueryKeyword,
+          which_set: ownProps.whichTagSet || stateProps.collectionsSet,
+          type: stateProps.selectedMediaQueryType,
+          linkId: stateProps.links.next,
+        });
       } else {
-        dispatchProps.updateMediaQuerySelection({ mediaKeyword: stateProps.selectedMediaQueryKeyword, which_set: ownProps.whichTagSet || TAG_SET_MC_ID, type: stateProps.selectedMediaQueryType, linkId: 0 });
+        dispatchProps.updateMediaQuerySelection({
+          mediaKeyword: stateProps.selectedMediaQueryKeyword,
+          which_set: ownProps.whichTagSet || stateProps.collectionsSet,
+          type: stateProps.selectedMediaQueryType,
+          linkId: 0,
+        });
       }
     },
   };

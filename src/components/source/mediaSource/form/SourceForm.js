@@ -19,7 +19,7 @@ const localMessages = {
 };
 
 const SourceForm = (props) => {
-  const { initialValues, buttonLabel, pristine, submitting, handleSubmit, onSave } = props;
+  const { initialValues, buttonLabel, pristine, submitting, handleSubmit, onSave, mediaMetadataSetsByName } = props;
   // need to init initialValues a bit on the way in to make lower-level logic work right
   const cleanedInitialValues = initialValues ? { ...initialValues } : {};
   if (cleanedInitialValues.disabled === undefined) {
@@ -28,7 +28,7 @@ const SourceForm = (props) => {
   return (
     <form className="app-form source-form" name="sourceForm" onSubmit={handleSubmit(onSave.bind(this))}>
       <SourceDetailsForm initialValues={cleanedInitialValues} />
-      <SourceMetadataForm initialValues={cleanedInitialValues} />
+      <SourceMetadataForm initialValues={cleanedInitialValues} mediaMetadataSetsByName={mediaMetadataSetsByName} />
       <PickCollectionsForm initialValues={cleanedInitialValues} form="sourceForm" />
       <Row>
         <Col lg={12}>
@@ -50,6 +50,7 @@ SourceForm.propTypes = {
   onSave: PropTypes.func.isRequired,
   buttonLabel: PropTypes.string.isRequired,
   initialValues: PropTypes.object,
+  mediaMetadataSetsByName: PropTypes.object.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
   renderTextField: PropTypes.func.isRequired,

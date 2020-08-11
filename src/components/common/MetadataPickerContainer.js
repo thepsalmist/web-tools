@@ -8,7 +8,6 @@ import { fetchMetadataValuesForCountry, fetchMetadataValuesForState, fetchMetada
   fetchMetadataValuesForCountryOfFocus, fetchMetadataValuesForMediaType, searchMetadataValues }
   from '../../actions/systemActions';
 import withIntlForm from './hocs/IntlForm';
-import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE } from '../../lib/tagUtil';
 
 const MAX_SUGGESTIONS = 15;
 
@@ -77,6 +76,7 @@ MetadataPickerContainer.propTypes = {
   fetchStatus: PropTypes.string,
   tags: PropTypes.array,
   label: PropTypes.string,
+  mediaMetadataSetsByName: PropTypes.object.isRequired,
   // from dispatch
   handleLoadOptions: PropTypes.func.isRequired,
 };
@@ -85,6 +85,7 @@ const mapStateToProps = (state, ownProps) => ({
   fetchStatus: state.system.metadata[ownProps.name].fetchStatus,
   label: state.system.metadata[ownProps.name].label,
   tags: state.system.metadata[ownProps.name].tags,
+  mediaMetadataSetsByName: state.system.staticTags.tagSets.mediaMetadataSetsByName,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -104,19 +105,19 @@ const fetchAsyncData = (dispatch, props) => {
   if (!alreadyLoadedTags) {
     let fetcher;
     switch (props.id) {
-      case TAG_SET_PUBLICATION_COUNTRY:
+      case props.mediaMetadataSetsByName.mediaPubCountrySet:
         fetcher = fetchMetadataValuesForCountry;
         break;
-      case TAG_SET_PUBLICATION_STATE:
+      case props.mediaMetadataSetsByName.mediaPubStateSet:
         fetcher = fetchMetadataValuesForState;
         break;
-      case TAG_SET_PRIMARY_LANGUAGE:
+      case props.mediaMetadataSetsByName.mediaPrimaryLanguageSet:
         fetcher = fetchMetadataValuesForPrimaryLanguage;
         break;
-      case TAG_SET_COUNTRY_OF_FOCUS:
+      case props.mediaMetadataSetsByName.mediaSubjectCountrySet:
         fetcher = fetchMetadataValuesForCountryOfFocus;
         break;
-      case TAG_SET_MEDIA_TYPE:
+      case props.mediaMetadataSetsByName.mediaTypeSet:
         fetcher = fetchMetadataValuesForMediaType;
         break;
       default:

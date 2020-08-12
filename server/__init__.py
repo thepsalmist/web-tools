@@ -199,9 +199,9 @@ def index():
         maintenance_mode = config.get('MAINTENANCE_MODE')
     except ConfigException:
         maintenance_mode = 0
-
     try:
         system_warning = config.get('SYSTEM_WARNING')
+        system_warning = "" if system_warning == '""' else system_warning
     except ConfigException:
         system_warning = ""
 

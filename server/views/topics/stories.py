@@ -231,7 +231,7 @@ def story_counts_by_snapshot(topics_id):
                                                   snapshots_id=s['snapshots_id'], foci_id=None,
                                                   timespans_id=timespans[0]['timespans_id'],
                                                   q="* AND tags_id_stories:{}".format(
-                                                      tag_util.TagDiscoverer.is_spidered_story_tag))['count']
+                                                      tag_util.TagDiscoverer().is_spidered_story_tag))['count']
         except mediacloud.error.MCException:
             spidered = 0
         except IndexError:  # this doesn't have any snapshots (ie. it failed to generate correctly)

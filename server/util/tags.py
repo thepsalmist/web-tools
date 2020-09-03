@@ -1,3 +1,5 @@
+# pylint: disable=too-many-instance-attributes
+
 import logging
 import os
 from mediacloud.api import MediaCloud

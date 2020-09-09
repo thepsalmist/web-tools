@@ -68,7 +68,7 @@ class FeaturedFavoriteGeoSearchResultsContainer extends React.Component {
 
   render() {
     const { selectedMediaQueryType, featured, favoritedCollections, favoritedSources,
-      onToggleSelected, fetchStatus, viewOnly, geoCollectionsSet } = this.props;
+      onToggleSelected, fetchStatus, viewOnly } = this.props;
     const queryResults = {
       featured: featured.list,
       favoritedCollections: favoritedCollections.list,
@@ -87,7 +87,6 @@ class FeaturedFavoriteGeoSearchResultsContainer extends React.Component {
           hintTextMsg={localMessages.hintText}
           handleMediaConcurrency={this.props.handleMediaConcurrency}
           viewOnly={viewOnly}
-          geoCollectionsSet={geoCollectionsSet}
         />
       </div>
     );

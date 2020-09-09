@@ -2,9 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { selectMediaPickerQueryArgs, fetchMediaPickerCollections, resetMediaPickerCollections } from '../../../../actions/systemActions';
+import { resetMediaPickerCollections } from '../../../../actions/systemActions';
 import CollectionSearchResultsContainer from './CollectionSearchResultsContainer';
-import { notEmptyString } from '../../../../lib/formValidators';
 
 const localMessages = {
   title: { id: 'system.mediaPicker.collections.title', defaultMessage: 'Collections matching "{name}"' },
@@ -18,12 +17,6 @@ class CountryCollectionSearchResultsContainer extends React.Component {
     clearPreviousCollections();
   }
 
-  updateMediaQuery(values) {
-    const { updateMediaQuerySelection, selectedMediaQueryType } = this.props;
-    const updatedQueryObj = { ...values, type: selectedMediaQueryType };
-    updateMediaQuerySelection(updatedQueryObj);
-  }
-
   render() {
     const { selectedMediaQueryType, selectedMediaQueryKeyword, onToggleSelected, fetchStatus, viewOnly, geoCollectionsSet } = this.props;
     return (
@@ -34,7 +27,6 @@ class CountryCollectionSearchResultsContainer extends React.Component {
         selectedMediaQueryType={selectedMediaQueryType}
         selectedMediaQueryKeyword={selectedMediaQueryKeyword}
         initValues={{ mediaKeyword: selectedMediaQueryKeyword }}
-        onSearch={val => this.updateMediaQuery(val)}
         hintTextMsg={localMessages.countrySearchHintText}
         handleMediaConcurrency={this.props.handleMediaConcurrency}
         viewOnly={viewOnly}
@@ -48,10 +40,8 @@ CountryCollectionSearchResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
-  whichTagSet: PropTypes.number,
   handleMediaConcurrency: PropTypes.func.isRequired,
   // from dispatch
-  updateMediaQuerySelection: PropTypes.func.isRequired,
   clearPreviousCollections: PropTypes.func.isRequired,
   // from state
   selectedMediaQueryKeyword: PropTypes.string,
@@ -70,14 +60,7 @@ const mapStateToProps = state => ({
   geoCollectionsSet: state.system.staticTags.tagSets.geoCollectionsSet,
 });
 
-const mapDispatchToProps = (dispatch, props) => ({
-  updateMediaQuerySelection: (values) => {
-    if (values && notEmptyString(values.mediaKeyword)) {
-      dispatch(resetMediaPickerCollections());
-      dispatch(selectMediaPickerQueryArgs(values));
-      dispatch(fetchMediaPickerCollections({ media_keyword: values.mediaKeyword, which_set: props.geoCollectionsSet }));
-    }
-  },
+const mapDispatchToProps = (dispatch) => ({
   clearPreviousCollections: () => dispatch(resetMediaPickerCollections()), // clear prev results
 });
 

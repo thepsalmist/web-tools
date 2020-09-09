@@ -19,7 +19,9 @@ const localMessages = {
 };
 
 const CollectionSearchResultsContainer = props => {
-  const { selectedMediaQueryKeyword, selectedMediaQueryType, initCollections, collectionResults, resetAndUpdateMediaQuerySelection, onToggleSelected, fetchStatus, hintTextMsg, viewOnly, pageThroughCollections, links, collectionsSet } = props;
+  const { selectedMediaQueryKeyword, selectedMediaQueryType, initCollections, collectionResults, whichTagSet,
+    resetAndUpdateMediaQuerySelection, onToggleSelected, fetchStatus, hintTextMsg, viewOnly, pageThroughCollections,
+    links } = props;
   const { formatMessage } = props.intl;
   let content = null;
   let getMoreResultsContent = null;
@@ -56,7 +58,7 @@ const CollectionSearchResultsContainer = props => {
     <div className="media-picker-search-results">
       <MediaPickerSearchForm
         initValues={{ mediaKeyword: selectedMediaQueryKeyword }}
-        onSearch={val => resetAndUpdateMediaQuerySelection({ which_set: collectionsSet, ...val, type: selectedMediaQueryType })}
+        onSearch={val => resetAndUpdateMediaQuerySelection({ which_set: whichTagSet, ...val, type: selectedMediaQueryType })}
         hintText={formatMessage(hintTextMsg || localMessages.hintText)}
       />
       <h2><span className="source-search-keys"><FormattedMessage {...localMessages.title} values={{ name: selectedMediaQueryKeyword, numResults: collectionResults.list.length }} /></span></h2>
@@ -91,7 +93,6 @@ CollectionSearchResultsContainer.propTypes = {
   viewOnly: PropTypes.bool,
   pageThroughCollections: PropTypes.func.isRequired,
   resetAndUpdateMediaQuerySelection: PropTypes.func.isRequired,
-  collectionsSet: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -101,17 +102,16 @@ const mapStateToProps = state => ({
   selectedMediaQueryKeyword: state.system.mediaPicker.selectMediaQuery ? state.system.mediaPicker.selectMediaQuery.args.mediaKeyword : null,
   collectionResults: state.system.mediaPicker.collectionQueryResults,
   links: state.system.mediaPicker.collectionQueryResults.linkId,
-  collectionsSet: state.system.staticTags.tagSets.collectionsSet,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   resetAndUpdateMediaQuerySelection: (values) => { // reset collections and requery
     if (values && notEmptyString(values.mediaKeyword)) {
       dispatch(resetMediaPickerCollections());
       dispatch(selectMediaPickerQueryArgs(values));
       dispatch(fetchMediaPickerCollections({
         media_keyword: (values.mediaKeyword || '*'),
-        which_set: values.which_set,
+        which_set: ownProps.whichTagSet,
         type: values.type,
         linkId: values.linkId,
       }));
@@ -122,7 +122,7 @@ const mapDispatchToProps = (dispatch) => ({
       dispatch(selectMediaPickerQueryArgs(values)); // don't reset collections, pass any link id
       dispatch(fetchMediaPickerCollections({
         media_keyword: (values.mediaKeyword || '*'),
-        which_set: values.which_set,
+        which_set: ownProps.whichTagSet,
         type: values.type,
         linkId: values.linkId,
       }));
@@ -135,21 +135,12 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
     ...dispatchProps,
     ...ownProps,
     pageThroughCollections: () => {
-      if (stateProps.links !== undefined) {
-        dispatchProps.updateMediaQuerySelection({
-          mediaKeyword: stateProps.selectedMediaQueryKeyword,
-          which_set: ownProps.whichTagSet || stateProps.collectionsSet,
-          type: stateProps.selectedMediaQueryType,
-          linkId: stateProps.links.next,
-        });
-      } else {
-        dispatchProps.updateMediaQuerySelection({
-          mediaKeyword: stateProps.selectedMediaQueryKeyword,
-          which_set: ownProps.whichTagSet || stateProps.collectionsSet,
-          type: stateProps.selectedMediaQueryType,
-          linkId: 0,
-        });
-      }
+      dispatchProps.updateMediaQuerySelection({
+        mediaKeyword: stateProps.selectedMediaQueryKeyword,
+        which_set: ownProps.whichTagSet,
+        type: stateProps.selectedMediaQueryType,
+        linkId: (stateProps.links !== undefined) ? stateProps.links.next : 0,
+      });
     },
   };
 }

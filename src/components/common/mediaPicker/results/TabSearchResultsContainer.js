@@ -28,7 +28,7 @@ class TabSearchResultsContainer extends React.Component {
   };
 
   render() {
-    const { queryResults, onToggleSelected, fetchStatus, viewOnly, geoCollectionsSet } = this.props;
+    const { queryResults, onToggleSelected, fetchStatus, viewOnly } = this.props;
     const { formatMessage } = this.props.intl;
     const tabs = (
       <div className="media-picker-results-container">
@@ -79,7 +79,6 @@ class TabSearchResultsContainer extends React.Component {
       tabContent = (
         <div className="media-picker-tabbed-content-wrapper">
           <CountryCollectionSearchResultsContainer
-            whichTagSet={geoCollectionsSet}
             title={formatMessage(localMessages.featured)}
             collections={queryResults.featured}
             onToggleSelected={onToggleSelected}
@@ -106,11 +105,9 @@ TabSearchResultsContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   // from parent
   onToggleSelected: PropTypes.func.isRequired,
-  whichTagSet: PropTypes.number,
   handleMediaConcurrency: PropTypes.func.isRequired,
   hintTextMsg: PropTypes.object,
   onSearch: PropTypes.func.isRequired,
-  geoCollectionsSet: PropTypes.number.isRequired,
   // from state
   queryResults: PropTypes.object,
   fetchStatus: PropTypes.oneOfType([

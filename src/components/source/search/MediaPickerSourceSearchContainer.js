@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Grid } from 'react-flexbox-grid/lib';
+import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { PICK_SOURCE_AND_COLLECTION } from '../../../lib/explorerUtil';
@@ -10,14 +10,20 @@ import MediaPickerResultsContainer from '../../common/mediaPicker/MediaPickerRes
 
 const MediaPickerSourceSearchContainer = () => (
   <Grid>
-    <div className="select-media-sources">
-      <div className="select-media-sidebar-sources">
-        <PickedMediaContainer viewOnly selectedMediaQueryType={PICK_SOURCE_AND_COLLECTION} />
-      </div>
-      <div className="select-media-content-sources">
-        <MediaPickerResultsContainer viewOnly selectedMediaQueryType={PICK_SOURCE_AND_COLLECTION} />
-      </div>
-    </div>
+    <Row>
+      <Col md={4}>
+        <div className="select-media-sources">
+          <div className="select-media-sidebar-sources">
+            <PickedMediaContainer viewOnly selectedMediaQueryType={PICK_SOURCE_AND_COLLECTION} />
+          </div>
+        </div>
+      </Col>
+      <Col md={8}>
+        <div className="select-media-content-sources">
+          <MediaPickerResultsContainer viewOnly selectedMediaQueryType={PICK_SOURCE_AND_COLLECTION} />
+        </div>
+      </Col>
+    </Row>
   </Grid>
 );
 

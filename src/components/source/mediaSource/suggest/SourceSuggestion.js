@@ -13,6 +13,7 @@ import AppButton from '../../../common/AppButton';
 
 const localMessages = {
   info: { id: 'source.suggestion.info', defaultMessage: 'Suggested as "{name}" by {user} on {date} because "{reason}".' },
+  suggestedCollections: { id: 'source.suggestion.collections', defaultMessage: 'Suggested for collections: "{collections}".' },
   markSummary: { id: 'source.suggestion.markSummary', defaultMessage: 'Marked as {status} by {user} on {date} because "{reason}".' },
   notMarked: { id: 'source.suggestion.notMarked', defaultMessage: 'Not reviewed yet.' },
   reject: { id: 'source.suggestion.reject', defaultMessage: 'Reject' },
@@ -141,10 +142,18 @@ class SourceSuggestion extends React.Component {
           {actions}
           <h2>{suggestion.url}</h2>
           <p>
-            <b>{suggestion.status}</b>
-            &nbsp;
-            <small><FormattedDate value={suggestion.dateMarked} /></small>
+            <b>{suggestion.status}</b> | <small><FormattedDate value={suggestion.dateMarked} /></small>
           </p>
+          {(suggestion.tags_ids && suggestion.tags_ids.length > 0) &&
+             <p>
+               <FormattedMessage
+                 {...localMessages.suggestedCollections}
+                 values={{
+                   collections: suggestion.tags_ids.map(tagId => tagId.label).join(", "),
+                 }}
+               />
+             </p>
+          }
           <p>
             <FormattedMessage
               {...localMessages.info}

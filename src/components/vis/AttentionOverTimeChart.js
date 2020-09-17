@@ -7,7 +7,7 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import initHighcharts from './initHighcharts';
 import { getBrandDarkColor } from '../../styles/colors';
-import { getVisDate, PAST_DAY, PAST_WEEK, PAST_MONTH, groupDatesByWeek, groupDatesByMonth, getDateFromTimestamp } from '../../lib/dateUtil';
+import { getVisDate, PAST_DAY, PAST_WEEK, PAST_MONTH, groupDatesByWeek, groupDatesByMonth, getDateFromTimestamp, oneDayLater, isTomorrow } from '../../lib/dateUtil';
 import { STACKED_VIEW } from '../../lib/visUtil';
 import messages from '../../resources/messages';
 
@@ -59,6 +59,34 @@ export function dataAsSeries(data, fieldName = 'count') {
   const values = data.map(d => d[fieldName] / intervalDays);
   return { data: values, pointInterval: intervalMs, pointStart: dates[0] };
 }
+
+/**
+ * Fill gaps between days.
+ */
+export function fillDayGaps(data) {
+  const filledData = [];
+  let mostRecent = data[0];
+  data.forEach(d => {
+    if (d.date !== mostRecent.date && !isTomorrow(mostRecent.date, d.date)) {
+      let tomorrow = oneDayLater(mostRecent.date);
+      filledData.push({
+        count: 0,
+        date: tomorrow,
+      });
+      while(!isTomorrow(tomorrow, d.date)) {
+        tomorrow = oneDayLater(tomorrow);
+        filledData.push({
+          count: 0,
+          date: tomorrow,
+        });
+      }
+    }
+    filledData.push(d);
+    mostRecent = d;
+  });
+  return filledData;
+}
+
 
 /**
  * Pass in "data" if you are using one series, otherwise configure them yourself and pass in "series".

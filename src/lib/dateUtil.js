@@ -76,6 +76,13 @@ export function isADayDifference(date0, date1) {
   return oneDayAfter.isAfter(moment(date1));
 }
 
+export function isTomorrow(date0, date1) {
+  const firstDate = moment(date0);
+  const oneDayAfter = firstDate.add(1, 'days');
+  return oneDayAfter.isSame(moment(date1));
+
+}
+
 export function parseSolrShortDate(dateStr) {
   return moment(dateStr, SHORT_SOLR_DATE_FORMAT).toDate();
 }

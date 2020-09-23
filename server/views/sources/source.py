@@ -160,7 +160,7 @@ def source_create():
     valid_metadata = [
         {'form_key': 'publicationCountry', 'tag_sets_id': TAG_SETS_ID_PUBLICATION_COUNTRY},
         {'form_key': 'publicationState', 'tag_sets_id': TAG_SETS_ID_PUBLICATION_STATE},
-        {'form_key': 'primaryLanguageg', 'tag_sets_id': TAG_SETS_ID_PRIMARY_LANGUAGE},
+        {'form_key': 'primaryLanguage', 'tag_sets_id': TAG_SETS_ID_PRIMARY_LANGUAGE},
         {'form_key': 'countryOfFocus', 'tag_sets_id': TAG_SETS_ID_COUNTRY_OF_FOCUS},
         {'form_key': 'mediaType', 'tag_sets_id': TAG_SETS_ID_MEDIA_TYPE}
 

@@ -42,7 +42,7 @@ def api_mediapicker_source_search():
     except ValueError:
         # ie. request.args['tags'] is not an int (ie. it is a list of collections like a normal query)
         querying_all_media = False
-    tags_fq = "media_source_tags: {tag_sets_id: " + str(TagSetDiscoverer().collection_sets) + "}"
+    tags_fq = "media_source_tags: {tag_sets_id: " + str(TagSetDiscoverer().collection_sets()) + "}"
 
     if querying_all_media:
         tags = [{'tags_id': ALL_MEDIA, 'id': ALL_MEDIA, 'label': "All Media", 'tag_sets_id': ALL_MEDIA}]

@@ -154,6 +154,7 @@ class TagSetDiscoverer:
             return self._partisan_2016_collections_set
 
         def collection_sets(self):
+            # a list of all the tag sets that count as ones that hold collections (for searching and listing purposes)
             return [
                 self.collections_set,
                 self.geo_collections_set,

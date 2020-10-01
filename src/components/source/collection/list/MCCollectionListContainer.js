@@ -82,7 +82,7 @@ const mapStateToProps = state => ({
   description: state.sources.collections.all.description,
   collections: state.sources.collections.all.collections,
   user: state.user,
-  collectionsSets: state.system.staticTags.tagSets.collectionSets,
+  collectionSets: state.system.staticTags.tagSets.collectionSets,
   collectionsSet: state.system.staticTags.tagSets.collectionsSet,
 });
 

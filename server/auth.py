@@ -48,10 +48,13 @@ class User(flask_login.UserMixin):
         if self.exists_in_db():
             # if they are in the front-end db, then be sure to update their profile at each login
             logger.debug("user %s already in db", self.name)
-            user_db.update_user(self.name, {'api_key': self.id, 'profile': self.profile})
+            self.update_profile(self.profile)
             return
         logger.debug("user %s created in db", self.name)
-        user_db.add_user(self.name, self.id, self.profile)
+        user_db.add_user(self.name, self.profile['api_key'], self.profile)
+
+    def update_profile(self, profile):
+        user_db.update_user(self.name, {'api_key': profile['api_key'], 'profile': profile})
 
     def exists_in_db(self):
         # is this user in the front-end database?
@@ -60,7 +63,7 @@ class User(flask_login.UserMixin):
     def get_properties(self):
         return {
             'email': self.name,
-            'key': self.id,
+            'key': self.profile['api_key'],
             'profile': self.profile
         }
 

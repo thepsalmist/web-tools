@@ -8,7 +8,7 @@ const StatBar = props => (
   <div className="stat-bar">
     <Row>
       {props.stats.map((stat, idx) => (
-        <Col lg={props.columnWidth || 4} key={idx}>
+        <Col lg={props.columnWidth || 4} md={6} key={idx}>
           <Stat {...stat} />
         </Col>
       ))}

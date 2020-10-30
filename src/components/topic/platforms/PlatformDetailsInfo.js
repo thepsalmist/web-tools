@@ -9,9 +9,13 @@ const localMessages = {
   crimsonHexagonId: { id: 'crimsonHexagonId', defaultMessage: 'Crimson Hexagon Id' },
 };
 
-const PlatformDetailsInfo = ({ platform }) => {
+const PlatformDetailsInfo = ({ platform, media_tags }) => {
   let content = null;
   let channelContent = null;
+
+  // TODO: set the channels here...
+  const channels = media_tags || (platform.channel || []);
+
   switch (platform.platform) {
     case PLATFORM_OPEN_WEB:
       content = (
@@ -26,7 +30,7 @@ const PlatformDetailsInfo = ({ platform }) => {
         channelContent = (
           <>
             <FormattedMessage {...messages.topicSourceCollectionsProp} />: &nbsp;
-            {platform.channel && platform.channel.map(m => <OpenWebMediaItem justText key={m.media_id || m.tags_id} object={m} />)}
+            {channels.map(m => <OpenWebMediaItem justText key={m.media_id || m.tags_id} object={m} />)}
           </>
         );
       }
@@ -38,7 +42,7 @@ const PlatformDetailsInfo = ({ platform }) => {
           &nbsp;
           <code>{platform.query}</code>
           <br />
-          <p>{platform.channel}</p>
+          <p>{channels}</p>
         </>
       );
       break;
@@ -75,6 +79,7 @@ const PlatformDetailsInfo = ({ platform }) => {
 PlatformDetailsInfo.propTypes = {
   // from parent
   platform: PropTypes.object.isRequired,
+  media_tags: PropTypes.array,
   // form context
   intl: PropTypes.object.isRequired,
 };

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import Box from '@material-ui/core/Box';
 import DataCard from '../DataCard';
 import withHelp from '../hocs/HelpfulContainer';
 
@@ -23,10 +24,10 @@ class Stat extends React.Component {
       contentToShow = content;
     } else {
       contentToShow = (
-        <div>
+        <Box textAlign="center">
           <small><FormattedMessage {...message} /> { helpDisplayContent }</small>
-          <em>{data || '?'}</em>
-        </div>
+          <em>{data || 'n/a'}</em>
+        </Box>
       );
     }
     return (

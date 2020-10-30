@@ -2,8 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { platformNameMessage, sourceNameMessage } from '../platforms/AvailablePlatform';
+import PlatformDetailsInfo from '../platforms/PlatformDetailsInfo';
+
 import messages from '../../../resources/messages';
-import { POSTGRES_SOURCE } from '../../../lib/platformTypes';
+import { POSTGRES_SOURCE, PLATFORM_OPEN_WEB, MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
 
 const localMessages = {
   completedDetails: { id: 'topic.version.completedDetails', defaultMessage: 'Includes {total} stories ({discoveredPct} discovered), {platformCount, plural,\n =0 {no platforms}\n =1 {1 platform}\n other {# platforms}}, and {fociCount, plural,\n =0 {no subtopics}\n =1 {1 subtopic}\n other {# subtopics}}.' },
@@ -80,6 +82,10 @@ class TopicVersionReadySummary extends React.Component {
                         <FormattedMessage {...platformNameMessage(p.platform, p.source)} />
                         &nbsp;
                         (<FormattedMessage {...sourceNameMessage(p.source)} />)
+                        <PlatformDetailsInfo
+                          platform={p}
+                          media_tags={p.platform === PLATFORM_OPEN_WEB && p.source === MEDIA_CLOUD_SOURCE ? topic.media_tags : null}
+                        />
                       </li>
                     ))}
                 </ul>

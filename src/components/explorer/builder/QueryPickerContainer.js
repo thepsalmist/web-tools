@@ -2,6 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import { push } from 'react-router-redux';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import { formValueSelector } from 'redux-form';
 import { Grid } from 'react-flexbox-grid/lib';
 import * as d3 from 'd3';
@@ -9,13 +14,20 @@ import QueryForm from './QueryForm';
 import ItemSlider from '../../common/ItemSlider';
 import QueryPickerItem from './QueryPickerItem';
 import { QUERY_COLORS } from '../../common/ColorPicker';
+import ConfirmationDialog from '../../common/ConfirmationDialog';
 import { updateFeedback } from '../../../actions/appActions';
 import { selectQuery, updateQuery, addCustomQuery, loadUserSearches, saveUserSearch, deleteUserSearch, markAsDeletedQuery, copyAndReplaceQueryField, swapSortQueries } from '../../../actions/explorerActions';
 import { AddQueryButton } from '../../common/IconButton';
 import { getDateRange, solrFormat, PAST_MONTH } from '../../../lib/dateUtil';
-import { KEYWORD, DATES, MEDIA, uniqueQueryId, LEFT, prepSearches, getQFromCodeMirror } from '../../../lib/explorerUtil';
+import { KEYWORD, DATES, MEDIA, uniqueQueryId, LEFT, prepSearches, getQFromCodeMirror, serializeQueriesForUrl } from '../../../lib/explorerUtil';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 import { queryAsString, replaceCurlyQuotes } from '../../../lib/stringUtil';
+import messages from '../../../resources/messages';
+import { PARTISANSHIP_COLORS } from '../../../lib/colorUtil';
+
+// helpers for the quick query comparison shortcut
+const COMPARE_US_PARTISANSHIP = "COMPARE_US_PARTISANSHIP";
+const COMPARE_BY_YEAR = "COMPARE_BY_YEAR";
 
 const localMessages = {
   mainTitle: { id: 'explorer.querypicker.mainTitle', defaultMessage: 'Query List' },
@@ -24,11 +36,23 @@ const localMessages = {
   querySearch: { id: 'explorer.queryBuilder.advanced', defaultMessage: 'Search' },
   searchHint: { id: 'explorer.queryBuilder.hint', defaultMessage: 'Search' },
   deleteFailed: { id: 'explorer.queryBuilder.hint', defaultMessage: 'Sorry, deleting your search failed for some reason.' },
+  quickCompareTitle: { id: 'explorer.queryBuilder.quickCompareTitle', defaultMessage: 'Replace Your Queries?' },
+  quickComparePartisanship: { id: 'explorer.queryBuilder.quickCompareText.partisanship',
+    defaultMessage: 'This will replace your queries with a set that lets you compare coverage in media sources across the US political spectrum. Your search terms and dates will be kept, but we will create 5 quries - one each for the left, center left, center, center-right, and right.' },
+  quickCompareYearly: { id: 'explorer.queryBuilder.quickCompareText.year',
+    defaultMessage: 'This will replace your queries with a set to compare coverage across the last 5 years. Your search terms and media will be maintaned, but we will make 5 queries, one for each year.' },
 };
 
 const formSelector = formValueSelector('queryForm');
 
 class QueryPickerContainer extends React.Component {
+  state = {
+    quickCompareMenuOpen: false,
+    quickCompareMenuAnchorEl: null,
+    quickCompareConfirmOpen: false,
+    quickCompareSelectedType: null,
+  };
+
   getAllActiveQueries = queries => (queries.filter(q => q.deleted !== true));
 
   handleColorChange = (newColorInfo) => {
@@ -174,6 +198,21 @@ class QueryPickerContainer extends React.Component {
     updateCurrentQuery(updatedQuery, propertyName);
   }
 
+  handleQuickCompareRequest = (type) => {
+    this.setState({quickCompareMenuAnchorEl: null, quickCompareMenuOpen: false,
+      quickCompareSelectedType: type, quickCompareConfirmOpen: true});
+  }
+
+  handleQuickCompareConfirm = () => {
+    const { handleReplaceQueries, selected } = this.props;
+    this.setState({quickCompareConfirmOpen: false});
+    handleReplaceQueries(selected, this.state.quickCompareSelectedType);
+  }
+
+  handleQuickCompareCancel = () => {
+    this.setState({quickCompareConfirmOpen: false, quickCompareSelectedType: null});
+  }
+
   render() {
     const { selected, queries, addAQuery, handleLoadUserSearches, formQuery,
       handleDeleteUserSearch, savedSearches, handleCopyAll, handleDuplicateQuery, handleMoveAndSwap } = this.props;
@@ -236,6 +275,40 @@ class QueryPickerContainer extends React.Component {
               >
                 <FormattedMessage {...localMessages.addQuery} />
               </a>
+              <IconButton
+                aria-label="more"
+                aria-controls="long-menu"
+                aria-haspopup="true"
+                onClick={(evt) => this.setState({ quickCompareMenuAnchorEl: evt.currentTarget, quickCompareMenuOpen: true}) }
+              >
+                <MoreVertIcon />
+              </IconButton>
+              {this.state.quickCompareMenuOpen && (
+                <>
+                  <Menu
+                    id="simple-menu"
+                    anchorEl={this.state.quickCompareMenuAnchorEl}
+                    keepMounted
+                    open={this.state.quickCompareMenuOpen}
+                    onClose={(evt) => this.setState({ quickCompareMenuAnchorEl: null, quickCompareMenuOpen: false})}
+                  >
+                    <MenuItem onClick={() => this.handleQuickCompareRequest(COMPARE_US_PARTISANSHIP)}>Compare across US partisanship</MenuItem>
+                    <MenuItem onClick={() => this.handleQuickCompareRequest(COMPARE_BY_YEAR)}>Compare across years</MenuItem>
+                  </Menu>
+                </>
+              )}
+              <ConfirmationDialog
+                open={this.state.quickCompareConfirmOpen}
+                title={formatMessage(localMessages.quickCompareTitle)}
+                okText={formatMessage(messages.ok)}
+                onOk={this.handleQuickCompareConfirm}
+                onCancel={this.handleQuickCompareCancel}
+              >
+                {this.state.quickCompareSelectedType === 'COMPARE_US_PARTISANSHIP' &&
+                  <FormattedMessage {...localMessages.quickComparePartisanship} />}
+                {this.state.quickCompareSelectedType === 'COMPARE_BY_YEAR' &&
+                  <FormattedMessage {...localMessages.quickCompareYearly} />}
+              </ConfirmationDialog>
             </div>
           </div>
         </div>
@@ -306,6 +379,7 @@ QueryPickerContainer.propTypes = {
   handleCopyAll: PropTypes.func.isRequired,
   updateOneQuery: PropTypes.func.isRequired,
   handleMoveAndSwap: PropTypes.func.isRequired,
+  handleReplaceQueries: PropTypes.func.isRequired,
   // from parent
   isDeletable: PropTypes.func,
   onSearch: PropTypes.func.isRequired,
@@ -319,6 +393,42 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
+  handleReplaceQueries: (selectedQuery, type) => {
+    console.log(selectedQuery);
+    const newQueries = [];
+    if (type === COMPARE_US_PARTISANSHIP) {
+      const { q, startDate, endDate } = selectedQuery;
+      // TODO: replace this with data from the store once the branch with that code is integreated
+      const quintiles = [200363048, 200363049, 200363050, 200363061, 200363062];
+      const quintileNames = ['left', 'center left', 'center', 'center right', 'right'];
+      const newQueries = quintiles.map((collectionId, idx) => ({
+        q, startDate, endDate,
+        collections: [collectionId],
+        sources: [],
+        color: PARTISANSHIP_COLORS[idx],
+        label: quintileNames[idx],
+      }));
+      dispatch(push(`/queries/search?qs=${serializeQueriesForUrl(newQueries)}&auto=false`));
+      location.reload();
+    } else if (type === COMPARE_BY_YEAR) {
+      const { q } = selectedQuery;
+      const colors = ['#0c2c84', '#225ea8', '#1d91c0', '#41b6c4', '#7fcdbb']; // top 5 from colorbrewer2 sequential 7-class YlGnBu
+      const years = [0,1,2,3,4].map(distance => new Date().getFullYear() - distance)
+      const collectionIds = selectedQuery.collections.map(c => c.tags_id);
+      const mediaIds = selectedQuery.sources.map(m => m.media_id);
+      const newQueries = years.map((year, idx) => ({
+        q,
+        startDate: `${year}-01-01`,
+        endDate: `${year}-12-31`,
+        collections: collectionIds,
+        sources: mediaIds,
+        color: colors[idx],
+        label: `${year}`,
+      }));
+      dispatch(push(`/queries/search?qs=${serializeQueriesForUrl(newQueries)}&auto=false`));
+      location.reload();
+    }
+  },
   handleQuerySelected: (query) => {
     dispatch(selectQuery(query));
   },

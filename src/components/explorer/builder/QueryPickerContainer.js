@@ -37,8 +37,10 @@ const localMessages = {
   searchHint: { id: 'explorer.queryBuilder.hint', defaultMessage: 'Search' },
   deleteFailed: { id: 'explorer.queryBuilder.hint', defaultMessage: 'Sorry, deleting your search failed for some reason.' },
   quickCompareTitle: { id: 'explorer.queryBuilder.quickCompareTitle', defaultMessage: 'Replace Your Queries?' },
+  quickComparePartisnashipShort: { id: 'explorer.queryBuilder.quickCompare.partisanship', defaultMessage: 'Compare across U.S. partisanship' },
+  quickCompareYearlyShort: { id: 'explorer.queryBuilder.quickCompare.yearly', defaultMessage: 'Compare across years' },
   quickComparePartisanship: { id: 'explorer.queryBuilder.quickCompareText.partisanship',
-    defaultMessage: 'This will replace your queries with a set that lets you compare coverage in media sources across the US political spectrum. Your search terms and dates will be kept, but we will create 5 quries - one each for the left, center left, center, center-right, and right.' },
+    defaultMessage: 'This will replace your queries with a set that lets you compare coverage in media sources across the U.S. political spectrum. Your search terms and dates will be kept, but we will create 5 queries - one each for the left, center-left, center, center-right, and right.' },
   quickCompareYearly: { id: 'explorer.queryBuilder.quickCompareText.year',
     defaultMessage: 'This will replace your queries with a set to compare coverage across the last 5 years. Your search terms and media will be maintaned, but we will make 5 queries, one for each year.' },
 };
@@ -286,14 +288,13 @@ class QueryPickerContainer extends React.Component {
               {this.state.quickCompareMenuOpen && (
                 <>
                   <Menu
-                    id="simple-menu"
                     anchorEl={this.state.quickCompareMenuAnchorEl}
                     keepMounted
                     open={this.state.quickCompareMenuOpen}
                     onClose={(evt) => this.setState({ quickCompareMenuAnchorEl: null, quickCompareMenuOpen: false})}
                   >
-                    <MenuItem onClick={() => this.handleQuickCompareRequest(COMPARE_US_PARTISANSHIP)}>Compare across US partisanship</MenuItem>
-                    <MenuItem onClick={() => this.handleQuickCompareRequest(COMPARE_BY_YEAR)}>Compare across years</MenuItem>
+                    <MenuItem onClick={() => this.handleQuickCompareRequest(COMPARE_US_PARTISANSHIP)}><FormattedMessage {...localMessages.quickComparePartisnashipShort} /></MenuItem>
+                    <MenuItem onClick={() => this.handleQuickCompareRequest(COMPARE_BY_YEAR)}><FormattedMessage {...localMessages.quickCompareYearlyShort} /></MenuItem>
                   </Menu>
                 </>
               )}
@@ -394,29 +395,27 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handleReplaceQueries: (selectedQuery, type) => {
-    console.log(selectedQuery);
-    const newQueries = [];
+    let newQueries;
+    // based on the user selection create a set of queries for them
     if (type === COMPARE_US_PARTISANSHIP) {
       const { q, startDate, endDate } = selectedQuery;
       // TODO: replace this with data from the store once the branch with that code is integreated
       const quintiles = [200363048, 200363049, 200363050, 200363061, 200363062];
       const quintileNames = ['left', 'center left', 'center', 'center right', 'right'];
-      const newQueries = quintiles.map((collectionId, idx) => ({
+      newQueries = quintiles.map((collectionId, idx) => ({
         q, startDate, endDate,
         collections: [collectionId],
         sources: [],
         color: PARTISANSHIP_COLORS[idx],
         label: quintileNames[idx],
       }));
-      dispatch(push(`/queries/search?qs=${serializeQueriesForUrl(newQueries)}&auto=false`));
-      location.reload();
     } else if (type === COMPARE_BY_YEAR) {
       const { q } = selectedQuery;
-      const colors = ['#0c2c84', '#225ea8', '#1d91c0', '#41b6c4', '#7fcdbb']; // top 5 from colorbrewer2 sequential 7-class YlGnBu
-      const years = [0,1,2,3,4].map(distance => new Date().getFullYear() - distance)
+      const colors = ['#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#0c2c84']; // top 5 from colorbrewer2 sequential 7-class YlGnBu
+      const years = [4,3,2,1,0].map(distance => new Date().getFullYear() - distance)
       const collectionIds = selectedQuery.collections.map(c => c.tags_id);
       const mediaIds = selectedQuery.sources.map(m => m.media_id);
-      const newQueries = years.map((year, idx) => ({
+      newQueries = years.map((year, idx) => ({
         q,
         startDate: `${year}-01-01`,
         endDate: `${year}-12-31`,
@@ -425,6 +424,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         color: colors[idx],
         label: `${year}`,
       }));
+    }
+    // if the type was valid, then push the new queries to the location
+    if (newQueries) {
       dispatch(push(`/queries/search?qs=${serializeQueriesForUrl(newQueries)}&auto=false`));
       location.reload();
     }

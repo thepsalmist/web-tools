@@ -6,7 +6,7 @@ import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
 import { fetchCreateFocusNytThemeStoryCounts } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
 import PackedBubbleChart from '../../../../../vis/PackedBubbleChart';
-import mapD3Top10Colors from '../../../../../../lib/colorUtil';
+import { mapD3Top10Colors } from '../../../../../../lib/colorUtil';
 
 const BUBBLE_CHART_DOM_ID = 'focalSetCreatePreviewNytThemesCounts';
 

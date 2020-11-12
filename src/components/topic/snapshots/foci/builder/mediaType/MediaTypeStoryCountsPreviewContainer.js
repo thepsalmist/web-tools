@@ -6,7 +6,7 @@ import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
 import { fetchCreateFocusMediaTypeStoryCounts } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
 import BubbleRowChart from '../../../../../vis/BubbleRowChart';
-import mapD3Top10Colors from '../../../../../../lib/colorUtil';
+import { mapD3Top10Colors } from '../../../../../../lib/colorUtil';
 
 const BUBBLE_CHART_DOM_ID = 'focalSetCreatePreviewTopCountriesStoriesCounts';
 

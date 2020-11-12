@@ -12,7 +12,7 @@ import { postToDownloadUrl, downloadExplorerSvg, COVERAGE_REQUIRED } from '../..
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
 import { TAG_SET_NYT_THEMES } from '../../../lib/tagUtil';
-import mapD3Top10Colors from '../../../lib/colorUtil';
+import { mapD3Top10Colors } from '../../../lib/colorUtil';
 import BubbleRowChart from '../../vis/BubbleRowChart';
 
 const BUBBLE_CHART_DOM_ID = 'explorer-nyt-theme-chart';

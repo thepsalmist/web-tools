@@ -2,11 +2,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import OpenWebMediaItem from '../../common/OpenWebMediaItem';
-import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER, CRIMSON_HEXAGON_SOURCE, MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_TWITTER, CRIMSON_HEXAGON_SOURCE,
+  BRANDWATCH_SOURCE, MEDIA_CLOUD_SOURCE } from '../../../lib/platformTypes';
 import messages from '../../../resources/messages';
+import { parseQueryProjectId } from '../../util/topicUtil';
 
 const localMessages = {
   crimsonHexagonId: { id: 'crimsonHexagonId', defaultMessage: 'Crimson Hexagon Id' },
+  brandwatchProjectId: { id: 'brandwatchProjectId', defaultMessage: 'BrandWatch Project ID' },
+  brandwatchQueryId: { id: 'brandwatchQueryId', defaultMessage: 'BrandWatch Query ID' },
 };
 
 const PlatformDetailsInfo = ({ platform, media_tags }) => {
@@ -53,6 +57,23 @@ const PlatformDetailsInfo = ({ platform, media_tags }) => {
             <FormattedMessage {...localMessages.crimsonHexagonId} />:
             &nbsp;
             <code>{typeof platform.query === 'object' ? platform.query.getValue() : platform.query}</code>
+          </>
+        );
+      } else if (platform.source === BRANDWATCH_SOURCE) {
+        const fullQuery = typeof platform.query === 'object' ? platform.query.getValue() : platform.query;
+        const parsedIds = parseQueryProjectId(platform.platform, platform.source, fullQuery);
+        content = (
+          <>
+            <div>
+              <FormattedMessage {...localMessages.brandwatchProjectId} />:
+              &nbsp;
+              <code>{parsedIds.project ? parsedIds.project : platform.project}</code>
+            </div>
+            <div>
+              <FormattedMessage {...localMessages.brandwatchQueryId} />:
+              &nbsp;
+              <code>{parsedIds.query}</code>
+            </div>
           </>
         );
       } else {

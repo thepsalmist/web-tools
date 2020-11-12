@@ -13,7 +13,7 @@ import { PLATFORM_OPEN_WEB } from '../../../../lib/platformTypes';
 
 
 const localMessages = {
-  title: { id: 'platform.create.confirm.title', defaultMessage: 'Step 4: Confirm Your {name} Platform Changes' },
+  title: { id: 'platform.create.confirm.title', defaultMessage: 'Final Step: Confirm Your {name} Platform Changes' },
   addAnotherPlatform: { id: 'platform.create.new', defaultMessage: 'Save' },
   platform: { id: 'platform.create', defaultMessage: 'Platform' },
 };
@@ -42,7 +42,6 @@ const Platform3ConfirmContainer = (props) => {
         </Row>
         <Row>
           <Col lg={12}>
-            <br /><br />
             <AppButton variant="outlined" color="secondary" label={formatMessage(messages.previous)} onClick={handlePreviousStep} />
             &nbsp; &nbsp;
             <AppButton
@@ -82,7 +81,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   handlePreviousStep: () => {
-    dispatch(goToCreatePlatformStep(1));
+    dispatch(goToCreatePlatformStep(ownProps.currentStep - 1));
   },
   savePlatform: (topicId, values) => ownProps.onDone(topicId, values),
 });

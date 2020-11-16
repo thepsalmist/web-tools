@@ -68,8 +68,8 @@ TOOL_API_KEY = config.get('MEDIA_CLOUD_API_KEY')
 mc = mediacloud.api.AdminMediaCloud(TOOL_API_KEY)
 try:
     mc.V2_API_URL = config.get('MEDIA_CLOUD_API_URL')
-except KeyError:
-    pass # just use the default API url because a custom one is not defined
+except ConfigException:
+    pass  # just use the default API url because a custom one is not defined
 logger.info("Connected to mediacloud")
 
 # Connect to CLIFF if the settings are there

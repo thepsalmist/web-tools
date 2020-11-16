@@ -5,7 +5,7 @@ import mediacloud.api
 from flask import session
 
 from server import user_db, login_manager
-from server.util.config import get_default_config
+from server.util.config import get_default_config, ConfigException
 
 logger = logging.getLogger(__name__)
 
@@ -148,8 +148,8 @@ def user_admin_mediacloud_client(user_mc_key=None):
     user_mc = mediacloud.api.AdminMediaCloud(mc_key_to_use)
     try:
         user_mc.V2_API_URL = config.get('MEDIA_CLOUD_API_URL')
-    except KeyError:
-        pass # just use the default API url because a custom one is not defined
+    except ConfigException:
+        pass  # just use the default API url because a custom one is not defined
     return user_mc
 
 
@@ -162,6 +162,6 @@ def user_mediacloud_client(user_mc_key=None):
     user_mc = mediacloud.api.MediaCloud(mc_key_to_use)
     try:
         user_mc.V2_API_URL = config.get('MEDIA_CLOUD_API_URL')
-    except KeyError:
-        pass # just use the default API url because a custom one is not defined
+    except ConfigException:
+        pass  # just use the default API url because a custom one is not defined
     return user_mc

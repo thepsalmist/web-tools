@@ -15,7 +15,7 @@ import Permissioned from '../Permissioned';
 import { PERMISSION_ADMIN } from '../../../lib/auth';
 import { getAppName, APP_TOOLS } from '../../../config';
 
-const BLOG_URL = 'https://mediacloud.org/news/';
+const BLOG_URL = 'https://mediacloud.org/blog/';
 const SUPPORT_URL = 'https://mediacloud.org/support/';
 
 const localMessages = {

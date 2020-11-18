@@ -19,7 +19,7 @@ class TopicVersionReadySummary extends React.Component {
     super(props);
     // yes, we init state with props here, but this is the exception to the anti-pattern
     // we are just seeding the state here; this coponent is in control from now on
-    // this just lets us re-use this component in multiple places 
+    // this just lets us re-use this component in multiple places
     this.state = {
       showDetails: props.startWithDetailsShowing || false,
     };
@@ -72,7 +72,7 @@ class TopicVersionReadySummary extends React.Component {
                   }}
                 />
               </li>
-              <li><FormattedMessage {...localMessages.spidering} values={{ rounds: snapshot.max_iterations || ((snapshot.seed_queries) ? snapshot.seed_queries.topic.max_iterations : null) || topic.max_iterations || 0}} /></li>
+              <li><FormattedMessage {...localMessages.spidering} values={{ rounds: snapshot.max_iterations || ((snapshot.seed_queries) ? snapshot.seed_queries.topic.max_iterations : null) || topic.max_iterations || 0 }} /></li>
               <li><FormattedMessage {...messages.platformHeader} />:
                 <ul>
                   {seedQueries && seedQueries

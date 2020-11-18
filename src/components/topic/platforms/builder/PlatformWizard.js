@@ -40,16 +40,16 @@ class PlatformWizard extends React.Component {
 
     const parseIds = {
       ...parseQueryProjectId(initialValues.selectedPlatform.platform, initialValues.selectedPlatform.source, topicInfo.solr_seed_query),
-      ...parseQueryProjectId(initialValues.selectedPlatform.platform, initialValues.selectedPlatform.source, initialValues.selectedPlatform.query)
+      ...parseQueryProjectId(initialValues.selectedPlatform.platform, initialValues.selectedPlatform.source, initialValues.selectedPlatform.query),
     };
 
     const initAndTopicInfoValues = {
       ...initialValues,
       ...topicInfo,
-      ...parseIds
+      ...parseIds,
     };
 
-    let steps = [Platform1ConfigureContainer];
+    const steps = [Platform1ConfigureContainer];
     if (!hidePreview) {
       steps.push(Platform2ValidateContainer);
     }

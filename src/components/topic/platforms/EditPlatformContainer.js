@@ -19,7 +19,7 @@ class EditPlatformContainer extends React.Component {
     const { topicId, selectedPlatform } = this.props;
     return {
       topicId,
-      selectedPlatform
+      selectedPlatform,
     };
   }
 

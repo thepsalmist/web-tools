@@ -144,16 +144,17 @@ class SourceSuggestion extends React.Component {
           <p>
             <b>{suggestion.status}</b> | <small><FormattedDate value={suggestion.dateMarked} /></small>
           </p>
-          {(suggestion.tags_ids && suggestion.tags_ids.length > 0) &&
+          {(suggestion.tags_ids && suggestion.tags_ids.length > 0)
+             && (
              <p>
                <FormattedMessage
                  {...localMessages.suggestedCollections}
                  values={{
-                   collections: suggestion.tags_ids.map(tagId => tagId.label).join(", "),
+                   collections: suggestion.tags_ids.map(tagId => tagId.label).join(', '),
                  }}
                />
              </p>
-          }
+)}
           <p>
             <FormattedMessage
               {...localMessages.info}

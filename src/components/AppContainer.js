@@ -63,13 +63,14 @@ class AppContainer extends React.Component {
         </header>
         <ErrorBoundary>
           <div id="content">
-            { document.appConfig.systemWarning &&
+            { document.appConfig.systemWarning
+              && (
               <div style={{ textAlign: 'center' }}>
                 <WarningNotice>
                   {document.appConfig.systemWarning}
                 </WarningNotice>
               </div>
-            }
+)}
             {content}
           </div>
         </ErrorBoundary>

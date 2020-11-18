@@ -80,7 +80,6 @@ export function isTomorrow(date0, date1) {
   const firstDate = moment(date0);
   const oneDayAfter = firstDate.add(1, 'days');
   return oneDayAfter.isSame(moment(date1));
-
 }
 
 export function parseSolrShortDate(dateStr) {

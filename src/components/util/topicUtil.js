@@ -96,7 +96,7 @@ export const platformChannelDataFormatter = (platform) => {
     case PLATFORM_TWITTER:
     default:
       // return a function that returns the values without changing the format
-      return function (formValues) { return formValues; };
+      return (formValues) => formValues;
   }
 };
 

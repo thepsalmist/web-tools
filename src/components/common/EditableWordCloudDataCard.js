@@ -201,7 +201,7 @@ class EditableWordCloudDataCard extends React.Component {
         <MenuItem
           className="action-icon-menu-item"
           disabled={this.state.editing} // can't download until done editing
-          onClick={() => this.downloadCsv(i+1)}
+          onClick={() => this.downloadCsv(i + 1)}
         >
           <ListItemText><FormattedMessage {...msg} /></ListItemText>
           <ListItemIcon>

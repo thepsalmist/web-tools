@@ -3,13 +3,14 @@
     "airbnb",
     "plugin:jsx-a11y/recommended"
   ],
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "env": {
     "browser": true,
     "es6": true,
     "commonjs": true
   },
   "plugins": [
+    "@babel",
     "react"
   ],
   "rules": {
@@ -46,7 +47,9 @@
     "jsx-a11y/label-has-for": 0,
     "jsx-a11y/anchor-is-valid": 0,
     "jsx-a11y/no-noninteractive-element-to-interactive-role": 0,
-    "jsx-a11y/label-has-associated-control": 0
+    "jsx-a11y/label-has-associated-control": 0,
 
+    "template-curly-spacing" : "off",
+    "indent": "off"
  }
 }

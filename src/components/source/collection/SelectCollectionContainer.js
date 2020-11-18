@@ -23,7 +23,6 @@ const localMessages = {
 };
 
 class SelectCollectionContainer extends React.Component {
-
   searchInExplorer = (evt) => {
     const { collection } = this.props;
     const endDate = getCurrentDate();

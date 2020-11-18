@@ -8,13 +8,12 @@ import PlatformWizard from './builder/PlatformWizard';
 import { topicCreatePlatform, setTopicNeedsNewSnapshot, fetchPlatformsInTopicList, fetchTopicSummary } from '../../../actions/topicActions';
 import { updateFeedback } from '../../../actions/appActions';
 import { platformChannelDataFormatter, formatQueryData, hidePreview } from '../../util/topicUtil';
-import { BRANDWATCH_SOURCE } from '../../../lib/platformTypes';
 
 const DEFAULT_SELECTED_NUMBER = 5;
 
 const localMessages = {
   platformNotSaved: { id: 'platform.create.notSaved', defaultMessage: 'That didn\'t work for some reason!' },
-  platformSaved: { id: 'platform.create.saved', defaultMessage: 'That worked!' }
+  platformSaved: { id: 'platform.create.saved', defaultMessage: 'That worked!' },
 };
 
 

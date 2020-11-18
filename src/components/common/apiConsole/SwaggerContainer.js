@@ -6,8 +6,6 @@ import 'swagger-ui-react/swagger-ui.css';
 
 class SwaggerContainer extends Component {
   componentDidMount() {
-    const { user } = this.props;
-    console.log(user.key);
     /*
     const swaggerUi = SwaggerUi({
       dom_id: '#swagger-wrapper',

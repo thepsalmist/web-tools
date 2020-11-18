@@ -26,8 +26,8 @@ import messages from '../../../resources/messages';
 import { PARTISANSHIP_COLORS } from '../../../lib/colorUtil';
 
 // helpers for the quick query comparison shortcut
-const COMPARE_US_PARTISANSHIP = "COMPARE_US_PARTISANSHIP";
-const COMPARE_BY_YEAR = "COMPARE_BY_YEAR";
+const COMPARE_US_PARTISANSHIP = 'COMPARE_US_PARTISANSHIP';
+const COMPARE_BY_YEAR = 'COMPARE_BY_YEAR';
 
 const localMessages = {
   mainTitle: { id: 'explorer.querypicker.mainTitle', defaultMessage: 'Query List' },
@@ -201,18 +201,20 @@ class QueryPickerContainer extends React.Component {
   }
 
   handleQuickCompareRequest = (type) => {
-    this.setState({quickCompareMenuAnchorEl: null, quickCompareMenuOpen: false,
-      quickCompareSelectedType: type, quickCompareConfirmOpen: true});
+    this.setState({ quickCompareMenuAnchorEl: null,
+quickCompareMenuOpen: false,
+      quickCompareSelectedType: type,
+quickCompareConfirmOpen: true });
   }
 
   handleQuickCompareConfirm = () => {
     const { handleReplaceQueries, selected } = this.props;
-    this.setState({quickCompareConfirmOpen: false});
+    this.setState({ quickCompareConfirmOpen: false });
     handleReplaceQueries(selected, this.state.quickCompareSelectedType);
   }
 
   handleQuickCompareCancel = () => {
-    this.setState({quickCompareConfirmOpen: false, quickCompareSelectedType: null});
+    this.setState({ quickCompareConfirmOpen: false, quickCompareSelectedType: null });
   }
 
   render() {
@@ -281,7 +283,7 @@ class QueryPickerContainer extends React.Component {
                 aria-label="more"
                 aria-controls="long-menu"
                 aria-haspopup="true"
-                onClick={(evt) => this.setState({ quickCompareMenuAnchorEl: evt.currentTarget, quickCompareMenuOpen: true}) }
+                onClick={(evt) => this.setState({ quickCompareMenuAnchorEl: evt.currentTarget, quickCompareMenuOpen: true })}
               >
                 <MoreVertIcon />
               </IconButton>
@@ -291,7 +293,7 @@ class QueryPickerContainer extends React.Component {
                     anchorEl={this.state.quickCompareMenuAnchorEl}
                     keepMounted
                     open={this.state.quickCompareMenuOpen}
-                    onClose={(evt) => this.setState({ quickCompareMenuAnchorEl: null, quickCompareMenuOpen: false})}
+                    onClose={() => this.setState({ quickCompareMenuAnchorEl: null, quickCompareMenuOpen: false })}
                   >
                     <MenuItem onClick={() => this.handleQuickCompareRequest(COMPARE_US_PARTISANSHIP)}><FormattedMessage {...localMessages.quickComparePartisnashipShort} /></MenuItem>
                     <MenuItem onClick={() => this.handleQuickCompareRequest(COMPARE_BY_YEAR)}><FormattedMessage {...localMessages.quickCompareYearlyShort} /></MenuItem>
@@ -305,10 +307,10 @@ class QueryPickerContainer extends React.Component {
                 onOk={this.handleQuickCompareConfirm}
                 onCancel={this.handleQuickCompareCancel}
               >
-                {this.state.quickCompareSelectedType === 'COMPARE_US_PARTISANSHIP' &&
-                  <FormattedMessage {...localMessages.quickComparePartisanship} />}
-                {this.state.quickCompareSelectedType === 'COMPARE_BY_YEAR' &&
-                  <FormattedMessage {...localMessages.quickCompareYearly} />}
+                {this.state.quickCompareSelectedType === 'COMPARE_US_PARTISANSHIP'
+                  && <FormattedMessage {...localMessages.quickComparePartisanship} />}
+                {this.state.quickCompareSelectedType === 'COMPARE_BY_YEAR'
+                  && <FormattedMessage {...localMessages.quickCompareYearly} />}
               </ConfirmationDialog>
             </div>
           </div>
@@ -403,7 +405,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       const quintiles = [200363048, 200363049, 200363050, 200363061, 200363062];
       const quintileNames = ['left', 'center left', 'center', 'center right', 'right'];
       newQueries = quintiles.map((collectionId, idx) => ({
-        q, startDate, endDate,
+        q,
+startDate,
+endDate,
         collections: [collectionId],
         sources: [],
         color: PARTISANSHIP_COLORS[idx],
@@ -412,7 +416,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     } else if (type === COMPARE_BY_YEAR) {
       const { q } = selectedQuery;
       const colors = ['#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#0c2c84']; // top 5 from colorbrewer2 sequential 7-class YlGnBu
-      const years = [4,3,2,1,0].map(distance => new Date().getFullYear() - distance)
+      const years = [4, 3, 2, 1, 0].map(distance => new Date().getFullYear() - distance);
       const collectionIds = selectedQuery.collections.map(c => c.tags_id);
       const mediaIds = selectedQuery.sources.map(m => m.media_id);
       newQueries = years.map((year, idx) => ({
@@ -428,6 +432,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     // if the type was valid, then push the new queries to the location
     if (newQueries) {
       dispatch(push(`/queries/search?qs=${serializeQueriesForUrl(newQueries)}&auto=false`));
+      /* eslint-disable no-restricted-globals */
       location.reload();
     }
   },

@@ -73,7 +73,7 @@ export function fillDayGaps(data) {
         count: 0,
         date: tomorrow,
       });
-      while(!isTomorrow(tomorrow, d.date)) {
+      while (!isTomorrow(tomorrow, d.date)) {
         tomorrow = oneDayLater(tomorrow);
         filledData.push({
           count: 0,

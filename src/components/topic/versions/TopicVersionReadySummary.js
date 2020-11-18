@@ -11,7 +11,7 @@ const localMessages = {
   completedDetails: { id: 'topic.version.completedDetails', defaultMessage: 'Includes {total} stories ({discoveredPct} discovered), {platformCount, plural,\n =0 {no platforms}\n =1 {1 platform}\n other {# platforms}}, and {fociCount, plural,\n =0 {no subtopics}\n =1 {1 subtopic}\n other {# subtopics}}.' },
   snapshotDetails: { id: 'topic.version.snapshotDetails', defaultMessage: 'details' },
   dates: { id: 'topic.version.dates', defaultMessage: 'Stories between {start} and {end}' },
-  spidering: { id: 'topic.version.spidering', defaultMessage: '{rounds} rounds of spidering' },
+  spidering: { id: 'topic.version.spidering', defaultMessage: '{rounds } rounds of spidering' },
 };
 
 class TopicVersionReadySummary extends React.Component {
@@ -19,7 +19,7 @@ class TopicVersionReadySummary extends React.Component {
     super(props);
     // yes, we init state with props here, but this is the exception to the anti-pattern
     // we are just seeding the state here; this coponent is in control from now on
-    // this just lets us re-use this component in multiple places
+    // this just lets us re-use this component in multiple places 
     this.state = {
       showDetails: props.startWithDetailsShowing || false,
     };
@@ -72,7 +72,7 @@ class TopicVersionReadySummary extends React.Component {
                   }}
                 />
               </li>
-              <li><FormattedMessage {...localMessages.spidering} values={{ rounds: snapshot.max_iterations || ((snapshot.seed_queries) ? snapshot.seed_queries.topic.max_iterations : null) || topic.max_iterations }} /></li>
+              <li><FormattedMessage {...localMessages.spidering} values={{ rounds: snapshot.max_iterations || ((snapshot.seed_queries) ? snapshot.seed_queries.topic.max_iterations : null) || topic.max_iterations || 0}} /></li>
               <li><FormattedMessage {...messages.platformHeader} />:
                 <ul>
                   {seedQueries && seedQueries

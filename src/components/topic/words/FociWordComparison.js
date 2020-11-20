@@ -36,6 +36,7 @@ class FociWordComparison extends React.Component {
             window.location = url;
           }}
           label={messages.download}
+          disabled={this.state.focalSetId === undefined || this.state.focalSetId === 0}
         />
       </DataCard>
     );

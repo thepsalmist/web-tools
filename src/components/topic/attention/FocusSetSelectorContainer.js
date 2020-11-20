@@ -18,26 +18,24 @@ const FocusSetSelectorContainer = (props) => {
 
   const linkToNewFoci = `/topics/${topicId}/snapshot/foci`;
   let noneOption = null;
-  if (hideNoneOption !== true) {
+  if (!hideNoneOption) {
     noneOption = (<MenuItem value={NO_FOCAL_SET_SELECTED}><FormattedMessage {...localMessages.noFocalSet} /></MenuItem>);
   }
   let content = null;
   if (focalSets.length > 0) {
     content = (
-      <>
-        <Select
-          value={selectedFocalSetId !== NO_FOCAL_SET_SELECTED ? selectedFocalSetId : focalSets[0].focal_sets_id}
-          onChange={onFocalSetSelected}
-          fullWidth
-          inputProps={{
-            name: 'Selected Media',
-            id: 'select-media-options',
-          }}
-        >
-          {focalSets.map(fs => <MenuItem key={fs.focal_sets_id} value={fs.focal_sets_id}>{fs.name}</MenuItem>)}
-          {noneOption}
-        </Select>
-      </>
+      <Select
+        value={selectedFocalSetId === NO_FOCAL_SET_SELECTED ? focalSets[0].focal_sets_id : selectedFocalSetId }
+        onChange={onFocalSetSelected}
+        fullWidth
+        inputProps={{
+          name: 'Selected Media',
+          id: 'select-media-options',
+        }}
+      >
+        {focalSets.map(fs => <MenuItem key={fs.focal_sets_id} value={fs.focal_sets_id}>{fs.name}</MenuItem>)}
+        {noneOption}
+      </Select>
     );
   } else {
     content = (

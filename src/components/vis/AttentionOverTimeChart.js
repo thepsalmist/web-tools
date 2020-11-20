@@ -29,7 +29,7 @@ const localMessages = {
   storiesPerWeek: { id: 'chart.storiesOverTime.seriesTitle.week', defaultMessage: 'stories/week' },
   storiesPerMonth: { id: 'chart.storiesOverTime.seriesTitle.month', defaultMessage: 'stories/month' },
   totalCount: { id: 'chart.storiesOverTime.totalCount',
-    defaultMessage: 'We have collected {total, plural, =0 {No stories} one {One story} other {{formattedTotal} stories}}.',
+    defaultMessage: 'We have collected {total, plural, =0 {No stories} one {One story} other {{formattedTotal} dated stories}}.',
   },
   yAxisNormalizedTitle: { id: 'chart.storiesOverTime.series.yaxis', defaultMessage: 'percentage of stories' },
   clickForDetails: { id: 'chart.storiesOverTime.clickForDetails', defaultMessage: 'Click for details' },

@@ -31,7 +31,7 @@ Building and Pushing a Release
 see `version-control.md` for more details
 1. Push the tag(s) `git push origin --tags`
 1. Push the tagged release to the appropriate production Dokku server with git (ie.
-`git push prod-explorer explorer-v3.1.x:master`)
+`git push prod-explorer explorer-v3.1.x:main`)
 1. Make sure it works on the server
 1. Create a PR on GitHub from your branch back to master (so the changes get merged in)
 

@@ -6,7 +6,6 @@ from server.platforms.provider import ContentProvider
 from server.platforms.reddit_pushshift import RedditPushshiftProvider
 from server.platforms.twitter_pushshift import TwitterPushshiftProvider
 from server.platforms.web_mediacloud import WebMediaCloudProvider
-from server.platforms.twitter_crimson_hexagon import TwitterCrimsonHexagonProvider
 from server.platforms.twitter_brandwatch import TwitterBrandwatchProvider
 from server.platforms.generic_csv import GenericCsvProvider
 from server.platforms.web_google import WebGoogleProvider
@@ -23,7 +22,6 @@ PLATFORM_FACEBOOK = 'facebook'  # coming soon
 PLATFORM_YOUTUBE = 'youtube'  # coming soon
 
 # static list matching topics/info results
-PLATFORM_SOURCE_CRIMSON_HEXAGON = 'crimson_hexagon'
 PLATFORM_SOURCE_BRANDWATCH = 'brandwatch'
 PLATFORM_SOURCE_CSV = 'csv'
 PLATFORM_SOURCE_POSTGRES = 'postgres'
@@ -49,8 +47,6 @@ def provider_for(platform: str, source: str) -> ContentProvider:
         platform_provider = TwitterPushshiftProvider()
     elif (platform == PLATFORM_REDDIT) and (source == PLATFORM_SOURCE_PUSHSHIFT):
         platform_provider = RedditPushshiftProvider()
-    elif (platform == PLATFORM_TWITTER) and (source == PLATFORM_SOURCE_CRIMSON_HEXAGON):
-        platform_provider = TwitterCrimsonHexagonProvider(config.get('CRIMSON_HEXAGON_API_KEY'))
     elif (platform == PLATFORM_TWITTER) and (source == PLATFORM_SOURCE_BRANDWATCH):
         platform_provider = TwitterBrandwatchProvider()
     elif (platform == PLATFORM_GENERIC) and (source == PLATFORM_SOURCE_CSV):

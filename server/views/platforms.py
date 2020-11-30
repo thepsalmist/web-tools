@@ -7,7 +7,7 @@ from server import app
 from server.util.request import api_error_handler, form_fields_required
 import server.util.dates as date_util
 from server.platforms import provider_for, PLATFORM_REDDIT, PLATFORM_OPEN_WEB, PLATFORM_SOURCE_MEDIA_CLOUD, \
-    PLATFORM_TWITTER, PLATFORM_SOURCE_CRIMSON_HEXAGON, PLATFORM_GENERIC, PLATFORM_SOURCE_CSV
+    PLATFORM_GENERIC, PLATFORM_SOURCE_CSV
 
 logger = logging.getLogger(__name__)
 
@@ -41,9 +41,6 @@ def _info_from_request():
                 options['tags_sets_id'] = channel_options['tags_sets_id']
         else:
             options = {}
-    elif (platform == PLATFORM_TWITTER) and (source == PLATFORM_SOURCE_CRIMSON_HEXAGON):
-        options = {'monitor_id': query}
-        query = ''
     elif (platform == PLATFORM_GENERIC) and (source == PLATFORM_SOURCE_CSV):
         # in this case, the temp server filename is stored in the query field
         options = {}

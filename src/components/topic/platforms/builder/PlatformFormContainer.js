@@ -9,7 +9,7 @@ import withIntlForm from '../../../common/hocs/IntlForm';
 import messages from '../../../../resources/messages';
 import PlatformPreview from './preview/PlatformPreview';
 import { platformChannelDataFormatter } from '../../../util/topicUtil';
-import { PLATFORM_OPEN_WEB, PLATFORM_TWITTER, PLATFORM_GENERIC, MEDIA_CLOUD_SOURCE, CSV_SOURCE, CRIMSON_HEXAGON_SOURCE, BRANDWATCH_SOURCE } from '../../../../lib/platformTypes';
+import { PLATFORM_OPEN_WEB, PLATFORM_TWITTER, PLATFORM_GENERIC, MEDIA_CLOUD_SOURCE, CSV_SOURCE, BRANDWATCH_SOURCE } from '../../../../lib/platformTypes';
 import { emptyString } from '../../../../lib/formValidators';
 import { queryAsString } from '../../../../lib/stringUtil';
 import EditOpenWebForm from './forms/EditOpenWebForm';
@@ -193,9 +193,6 @@ function validate(values, props) {
   if (values.platform === PLATFORM_TWITTER && values.source === BRANDWATCH_SOURCE) {
     errors.query = validateString('query', values, localMessages.noQueryIdSpecified, formatMessage);
     errors.project = validateString('project', values, localMessages.noProjectIdSpecified, formatMessage);
-  }
-  if (values.platform === PLATFORM_TWITTER && values.source === CRIMSON_HEXAGON_SOURCE) {
-    errors.query = validateString('query', values, localMessages.noMonitorSpecified, formatMessage);
   }
   return errors;
 }

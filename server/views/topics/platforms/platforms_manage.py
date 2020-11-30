@@ -87,7 +87,7 @@ def topic_add_platform(topics_id):
     else:
         # TODO do we need to add dates?
         # TODO format channel properly for reddit (subreddit)
-        # if twitter crimson_hexagon, id is in query field
+        # if twitter brandwatch, id is in query field
         result = user_mc.topicAddSeedQuery(topics_id=topics_id, platform=platform, source=source, query=query)
         result.update({
             'success': 1 if 'topic_seed_query' in result else 0,

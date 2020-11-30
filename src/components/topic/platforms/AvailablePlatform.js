@@ -14,7 +14,6 @@ const localMessages = {
   // platforms names
   'reddit.pushshift-name': { id: 'rd.ps.name', defaultMessage: 'Links Submitted to Reddit' },
   'twitter.pushshift-name': { id: 'tw.ps.name', defaultMessage: 'Links Shared in Verified Tweets' },
-  'twitter.crimson_hexagon-name': { id: 'tw.ch.name', defaultMessage: 'Links Shared in Sampled Tweets' },
   'twitter.brandwatch-name': { id: 'tw.bw.name', defaultMessage: 'Links Shared in Sampled Tweets' },
   'facebook.crowd_tangle-name': { id: 'fb.ct.name', defaultMessage: 'Links Posted in Large Public Facebook Groups' },
   'web.mediacloud-name': { id: 'web.shim.name', defaultMessage: 'News on the Open Web' },
@@ -23,7 +22,6 @@ const localMessages = {
   // source names
   'crowd_tangle-name': { id: 'crowdTangle.name', defaultMessage: 'via Crowd Tangle' },
   'pushshift-name': { id: 'rd.ps.name', defaultMessage: 'via Pushshift.io' },
-  'crimson_hexagon-name': { id: 'crimson_hexagon.name', defaultMessage: 'via Crimson Hexagon' },
   'brandwatch-name': { id: 'brandwatch.name', defaultMessage: 'via Brandwatch' },
   'mediacloud-name': { id: 'mediaCloud.name', defaultMessage: 'via Media Cloud (required)' },
   'google-name': { id: 'mediaCloud.name', defaultMessage: 'via Google' },
@@ -31,7 +29,6 @@ const localMessages = {
   // combos
   'reddit.pushshift-about': { id: 'rd.ps.about', defaultMessage: 'Discover links shared on the historical Reddit archive hosted by PushShift.io. Specify keywords. Any submissions matching the keywords on reddit will be checked for links. Any links found will be added into the topic.' },
   'twitter.pushshift-about': { id: 'tw.ps.about', defaultMessage: 'Discover links shared by validated Twitter accounts since mid 2019 in the archive hosted by PushShift.io. Specify keywords to focus on. Any tweets matching the keywords will be checked for links. Any links found will be add into the topic.' },
-  'twitter.crimson_hexagon-about': { id: 'tw.ch.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in tweets from a Crimson Hexagon Monitor you have already created. <b>You need to enter the id of that monitor.</b> A random sample of up to 10,000 tweets per day matching the keywords on your Media Cloud platform query will be downloaded. Any links found in the tweets will be add into the topic' },
   'twitter.brandwatch-about': { id: 'tw.bw.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in tweets from a Brandwatch Twitter query you have already created. <b>You need to enter the id of the project and query.</b> A random sample of up to 10,000 tweets per day matching the keywords on your Media Cloud platform query will be downloaded. Any links found in the tweets will be add into the topic.' },
   'facebook.crowd_tangle-about': { id: 'fb.ct.about', defaultMessage: '(<b>Admin Only</b>) Discover links shared in Facebook posts via Crowd Tangle. Specify keywords to match. Any posts from large public groups matching the keywords will be checked for links. Any links found will be add into the topic' },
   'web.mediacloud-about': { id: 'web.mediaCloud.about', defaultMessage: '<b>This platform is required.</b> Find matching stories in the Media Cloud archive. Specify media sources or collections. Any news matching those keywords from those sources will be added into the topic.' },

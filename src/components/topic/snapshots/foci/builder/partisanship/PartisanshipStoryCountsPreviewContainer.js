@@ -6,9 +6,7 @@ import withAsyncData from '../../../../../common/hocs/AsyncDataContainer';
 import { fetchCreateFocusRetweetStoryCounts } from '../../../../../../actions/topicActions';
 import DataCard from '../../../../../common/DataCard';
 import BubbleRowChart from '../../../../../vis/BubbleRowChart';
-
-// @see http://colorbrewer2.org/#type=diverging&scheme=RdBu&n=5
-const PARTISANSHIP_COLORS = ['#0571b0', '#92c5de', '#666666', '#f4a582', '#ca0020'];
+import { PARTISANSHIP_COLORS } from '../../../../../../lib/colorUtil';
 
 export function usPartisanshipColorFor(name) {
   if (name.toLowerCase() === 'left') return PARTISANSHIP_COLORS[0];

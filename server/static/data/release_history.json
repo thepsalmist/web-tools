@@ -1,6 +1,119 @@
 {
   "releases": [
     {
+      "date": "2020-11-17",
+      "version": "v3.18.1",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Download CSV of all Media should include metadata"
+        }
+      ]
+    },
+    {
+      "date": "2020-11-16",
+      "version": "v3.18.0",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Topic details available on stats tab"
+        },
+        {
+          "apps": [ "explorer" ],
+          "type": "New",
+          "note": "Shortcuts for quick query comparisons"
+        }
+      ]
+    },
+    {
+      "date": "2020-08-26",
+      "version": "v3.16.5",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Modify sources"
+        }
+      ]
+    },
+    {
+      "date": "2020-08-25",
+      "version": "v3.16.4",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Word sample usage"
+        }
+      ]
+    },
+    {
+      "date": "2020-08-24",
+      "version": "v3.16.3",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Filter top stories by link when drilling into specific story"
+        }
+      ]
+    },
+    {
+      "date": "2020-08-21",
+      "version": "v3.16.2",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Display time filtered top stories when clicking on attention chart"
+        }
+      ]
+    },
+    {
+      "date": "2020-08-20",
+      "version": "v3.16.1",
+      "notes": [
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Top stories CSV download"
+        }
+      ]
+    },
+    {
+      "date": "2020-08-12",
+      "version": "v3.16.0",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Removed duplicate sources from geographic collections page"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "Fix",
+          "note": "Updated featured collections in media picker"
+        },
+        {
+          "apps": [ "topics", "sources", "explorer" ],
+          "type": "New",
+          "note": "Updated featured partisan collections to 2019 versions"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Added 2019 Partisan subtopic creation"
+        },
+        {
+          "apps": [ "topics", "sources", "explorer" ],
+          "type": "Fix",
+          "note": "Forward to destination after login"
+        }
+      ]
+    },
+    {
       "date": "2020-07-30",
       "version": "v3.15.3",
       "notes": [

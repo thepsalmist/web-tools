@@ -164,7 +164,7 @@ def change_password():
 def reset_api_key():
     user_mc = user_mediacloud_client()
     results = user_mc.authResetApiKey()
-    flask_login.current_user.profile = results['profile']   # update server api key too
+    flask_login.current_user.update_profile(results['profile'])   # update server api key too
     return jsonify(results)
 
 

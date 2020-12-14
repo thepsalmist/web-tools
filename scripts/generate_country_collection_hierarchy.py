@@ -28,6 +28,7 @@ national = [t for t in geo_collections['tags'] if t['label'] is not None and t['
 countries = [{'name': t['label'][:-11], 'alpha3': t['tag'][-3:], 'tagsId': t['tags_id']} for t in national]
 logger.info("Identified {} country 'national' collections".format(len(countries)))
 
+
 # build a list of countries identified to a list of the collections that are part of it
 country2collections = []
 for c in countries:
@@ -41,7 +42,11 @@ for c in countries:
         'country': c,
         'collections': collections
     }
-    country2collections.append(result)
+    if result['country']['name'] != 'Papua New Guinea' and\
+        result['country']['name'] != 'South Sudan' and\
+        result['country']['name'] !='Taiwan, Province of China' and\
+        result['country']['name'] != 'Equatorial New Guinea':
+        country2collections.append(result)
 matched = []
 for r in country2collections:
     matched += r['collections']

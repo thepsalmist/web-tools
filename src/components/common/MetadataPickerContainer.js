@@ -40,6 +40,7 @@ const MetadataPickerContainer = (props) => {
       options: tags.map(t => ({ ...t, value: t.tags_id, label: t.label })),
     };
   }
+
   return (
     <div className={`metadata-picker metadata-picker-${name}`}>
       <>
@@ -83,7 +84,7 @@ MetadataPickerContainer.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   fetchStatus: state.system.metadata[ownProps.name].fetchStatus,
-  label: state.system.metadata[ownProps.name].label,
+  label: ownProps.label ? ownProps.label : state.system.metadata[ownProps.name].label,
   tags: state.system.metadata[ownProps.name].tags,
   mediaMetadataSetsByName: state.system.staticTags.tagSets.mediaMetadataSetsByName,
 });

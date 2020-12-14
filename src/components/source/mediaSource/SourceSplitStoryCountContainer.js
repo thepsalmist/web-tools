@@ -11,7 +11,7 @@ import withAttentionAggregation from '../../common/hocs/AttentionAggregation';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchPlatformCountOverTime } from '../../../actions/platformActions';
 import DataCard from '../../common/DataCard';
-import AttentionOverTimeChart, { dataAsSeries, downloadData } from '../../vis/AttentionOverTimeChart';
+import AttentionOverTimeChart, { dataAsSeries, fillDayGaps, downloadData } from '../../vis/AttentionOverTimeChart';
 import messages from '../../../resources/messages';
 import withHelp from '../../common/hocs/HelpfulContainer';
 import ActionMenu from '../../common/ActionMenu';
@@ -105,7 +105,7 @@ class SourceSplitStoryCountContainer extends React.Component {
         <AttentionOverTimeChart
           total={stories.total}
           series={[{
-            ...dataAsSeries(stories.counts),
+            ...dataAsSeries(fillDayGaps(stories.counts)),
             id: 0,
             name: sourceName,
             color: getBrandDarkColor(),

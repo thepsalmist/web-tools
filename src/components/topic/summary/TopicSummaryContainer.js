@@ -206,7 +206,7 @@ class TopicSummaryContainer extends React.Component {
                 </Col>
               </Row>
               <Row>
-                <Col lg={6}>
+                <Col lg={12}>
                   <SeedQuerySummary topic={topic} snapshot={selectedSnapshot} />
                 </Col>
               </Row>

@@ -5,6 +5,7 @@ import mediacloud.api
 from flask import session
 
 from server import user_db, login_manager
+from server.util.config import get_default_config, ConfigException
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +17,9 @@ ROLE_TM = 'tm'                              # Topic mapper; includes media and s
 ROLE_STORIES_API = 'stories-api'            # Access to the stories api
 ROLE_SEARCH = 'search'                      # Access to the /search pages
 ROLE_TM_READ_ONLY = 'tm-readonly'           # Topic mapper; excludes media and story editing
+
+# load the config helper
+config = get_default_config()
 
 
 # User class
@@ -48,10 +52,13 @@ class User(flask_login.UserMixin):
         if self.exists_in_db():
             # if they are in the front-end db, then be sure to update their profile at each login
             logger.debug("user %s already in db", self.name)
-            user_db.update_user(self.name, {'api_key': self.id, 'profile': self.profile})
+            self.update_profile(self.profile)
             return
         logger.debug("user %s created in db", self.name)
-        user_db.add_user(self.name, self.id, self.profile)
+        user_db.add_user(self.name, self.profile['api_key'], self.profile)
+
+    def update_profile(self, profile):
+        user_db.update_user(self.name, {'api_key': profile['api_key'], 'profile': profile})
 
     def exists_in_db(self):
         # is this user in the front-end database?
@@ -60,7 +67,7 @@ class User(flask_login.UserMixin):
     def get_properties(self):
         return {
             'email': self.name,
-            'key': self.id,
+            'key': self.profile['api_key'],
             'profile': self.profile
         }
 
@@ -139,6 +146,10 @@ def user_admin_mediacloud_client(user_mc_key=None):
     if mc_key_to_use is None:
         mc_key_to_use = user_mediacloud_key()
     user_mc = mediacloud.api.AdminMediaCloud(mc_key_to_use)
+    try:
+        user_mc.V2_API_URL = config.get('MEDIA_CLOUD_API_URL')
+    except ConfigException:
+        pass  # just use the default API url because a custom one is not defined
     return user_mc
 
 
@@ -149,4 +160,8 @@ def user_mediacloud_client(user_mc_key=None):
     if mc_key_to_use is None:
         mc_key_to_use = user_mediacloud_key()
     user_mc = mediacloud.api.MediaCloud(mc_key_to_use)
+    try:
+        user_mc.V2_API_URL = config.get('MEDIA_CLOUD_API_URL')
+    except ConfigException:
+        pass  # just use the default API url because a custom one is not defined
     return user_mc

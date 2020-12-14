@@ -11,7 +11,7 @@ import { fetchTopThemes } from '../../../actions/explorerActions';
 import { postToDownloadUrl, downloadExplorerSvg, COVERAGE_REQUIRED } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
-import mapD3Top10Colors from '../../../lib/colorUtil';
+import { mapD3Top10Colors } from '../../../lib/colorUtil';
 import BubbleRowChart from '../../vis/BubbleRowChart';
 
 const BUBBLE_CHART_DOM_ID = 'explorer-nyt-theme-chart';

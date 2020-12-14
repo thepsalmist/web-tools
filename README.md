@@ -78,3 +78,12 @@ We use PyCharm and run linting on the flying using the
 After installing it, enable real-time inspection:
 * Preferences > Editor > Inspections > Pylint
 * Check "Pylint real-time scan"
+
+
+A pre-commit hooks will run JavaScript linting (e.g. when you commit, linting will be run). You can try to automatically fix JavaScript linting errors by running:
+
+```shell
+$ npm run lint_fix
+```
+
+Not all errors can be fixed this way and for more details about the linting error see [eslint](https://eslint.org).

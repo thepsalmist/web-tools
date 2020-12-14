@@ -57,6 +57,7 @@ class FocusSelector extends React.Component {
           className="focus-selector"
           value={selectedId || ''}
           fullWidth
+          displayEmpty
           onChange={this.handleFocusChange}
         >
           {foci.map(focus => (

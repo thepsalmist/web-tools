@@ -67,7 +67,7 @@ const SourceMetadataForm = props => (
           form="sourceForm"
           disabled
           initialValues={props.initialValues.metadata ? props.initialValues.metadata.language : null}
-          label={props.intl.formatMessage(messages.language)}
+          label={props.intl.formatMessage(messages.primaryLanguage)}
         />
       </Col>
     </Row>

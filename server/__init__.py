@@ -66,6 +66,10 @@ except ConfigException as e:
 TOOL_API_KEY = config.get('MEDIA_CLOUD_API_KEY')
 
 mc = mediacloud.api.AdminMediaCloud(TOOL_API_KEY)
+try:
+    mc.V2_API_URL = config.get('MEDIA_CLOUD_API_URL')
+except ConfigException:
+    pass  # just use the default API url because a custom one is not defined
 logger.info("Connected to mediacloud")
 
 # Connect to CLIFF if the settings are there
@@ -199,9 +203,17 @@ def index():
         maintenance_mode = config.get('MAINTENANCE_MODE')
     except ConfigException:
         maintenance_mode = 0
+    try:
+        system_warning = config.get('SYSTEM_WARNING')
+        system_warning = "" if system_warning == '""' else system_warning
+    except ConfigException:
+        system_warning = ""
+
     return render_template('index.html',
                            cookie_domain=config.get('COOKIE_DOMAIN'),
-                           maintenance_mode=maintenance_mode)
+                           maintenance_mode=maintenance_mode,
+                           system_warning=system_warning,
+                           )
 
 
 # now load in the appropriate view endpoints, after the app has been initialized

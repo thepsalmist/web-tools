@@ -7,7 +7,7 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import initHighcharts from './initHighcharts';
 import { getBrandDarkColor } from '../../styles/colors';
-import { getVisDate, PAST_DAY, PAST_WEEK, PAST_MONTH, groupDatesByWeek, groupDatesByMonth, getDateFromTimestamp } from '../../lib/dateUtil';
+import { getVisDate, PAST_DAY, PAST_WEEK, PAST_MONTH, groupDatesByWeek, groupDatesByMonth, getDateFromTimestamp, oneDayLater, isTomorrow } from '../../lib/dateUtil';
 import { STACKED_VIEW } from '../../lib/visUtil';
 import messages from '../../resources/messages';
 
@@ -29,7 +29,7 @@ const localMessages = {
   storiesPerWeek: { id: 'chart.storiesOverTime.seriesTitle.week', defaultMessage: 'stories/week' },
   storiesPerMonth: { id: 'chart.storiesOverTime.seriesTitle.month', defaultMessage: 'stories/month' },
   totalCount: { id: 'chart.storiesOverTime.totalCount',
-    defaultMessage: 'We have collected {total, plural, =0 {No stories} one {One story} other {{formattedTotal} stories}}.',
+    defaultMessage: 'We have collected {total, plural, =0 {No stories} one {One story} other {{formattedTotal} dated stories}}.',
   },
   yAxisNormalizedTitle: { id: 'chart.storiesOverTime.series.yaxis', defaultMessage: 'percentage of stories' },
   clickForDetails: { id: 'chart.storiesOverTime.clickForDetails', defaultMessage: 'Click for details' },
@@ -59,6 +59,34 @@ export function dataAsSeries(data, fieldName = 'count') {
   const values = data.map(d => d[fieldName] / intervalDays);
   return { data: values, pointInterval: intervalMs, pointStart: dates[0] };
 }
+
+/**
+ * Fill gaps between days.
+ */
+export function fillDayGaps(data) {
+  const filledData = [];
+  let mostRecent = data[0];
+  data.forEach(d => {
+    if (d.date !== mostRecent.date && !isTomorrow(mostRecent.date, d.date)) {
+      let tomorrow = oneDayLater(mostRecent.date);
+      filledData.push({
+        count: 0,
+        date: tomorrow,
+      });
+      while (!isTomorrow(tomorrow, d.date)) {
+        tomorrow = oneDayLater(tomorrow);
+        filledData.push({
+          count: 0,
+          date: tomorrow,
+        });
+      }
+    }
+    filledData.push(d);
+    mostRecent = d;
+  });
+  return filledData;
+}
+
 
 /**
  * Pass in "data" if you are using one series, otherwise configure them yourself and pass in "series".

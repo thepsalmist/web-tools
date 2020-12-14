@@ -39,6 +39,7 @@ class EditGenericCsvForm extends React.Component {
             <input
               name="csvFile"
               type="file"
+              accept=".csv"
               ref={this.csvFileRef}
             />
             {validateButton}

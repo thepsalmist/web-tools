@@ -128,7 +128,7 @@ function composeUrlBasedQueryContainer() {
       }
 
       updateQueriesFromString(queriesFromUrl, autoNaming) {
-        const { saveQueriesFromParsedUrl } = this.props;
+        const { saveQueriesFromParsedUrl, mediaMetadataSetsByName } = this.props;
         let extraDefaults = {};
         extraDefaults = { autoNaming };
         const cleanedQueries = queriesFromUrl.map((query, index) => ({
@@ -144,7 +144,7 @@ function composeUrlBasedQueryContainer() {
           ...extraDefaults, // for demo mode
         }));
         // push the queries in to the store
-        saveQueriesFromParsedUrl(cleanedQueries);
+        saveQueriesFromParsedUrl(cleanedQueries, mediaMetadataSetsByName);
       }
 
       isAllMediaDetailsReady() {
@@ -187,6 +187,7 @@ function composeUrlBasedQueryContainer() {
       // from store
       queries: PropTypes.array,
       lastSearchTime: PropTypes.number,
+      mediaMetadataSetsByName: PropTypes.object.isRequired,
       // from dispatch
       saveQueriesFromParsedUrl: PropTypes.func.isRequired,
       addAppNotice: PropTypes.func.isRequired,
@@ -196,6 +197,7 @@ function composeUrlBasedQueryContainer() {
     const mapStateToProps = state => ({
       queries: state.explorer.queries.queries,
       lastSearchTime: state.explorer.lastSearchTime.time,
+      mediaMetadataSetsByName: state.system.staticTags.tagSets.mediaMetadataSetsByName,
     });
 
     // push any updates (including selected) into queries in state, will trigger async load in sub sections
@@ -203,7 +205,7 @@ function composeUrlBasedQueryContainer() {
       addAppNotice: (info) => {
         dispatch(addNotice(info));
       },
-      saveQueriesFromParsedUrl: (queriesToUse) => {
+      saveQueriesFromParsedUrl: (queriesToUse, metadataLookup) => {
         dispatch(saveParsedQueries(queriesToUse)); // load query data into the store
         // lookup ancillary data eg collection and source info for display purposes in QueryForm
         queriesToUse.forEach((q) => {
@@ -228,8 +230,15 @@ function composeUrlBasedQueryContainer() {
                 dispatch(updateQueryCollectionLookupInfo(queryInfo)); // updates the query and the selected query
               });
           }
+          const metadataSetToReadableName = {};
+          metadataSetToReadableName[metadataLookup.mediaPubCountrySet] = PUBLICATION_COUNTRY;
+          metadataSetToReadableName[metadataLookup.mediaPubStateSet] = PUBLICATION_STATE;
+          metadataSetToReadableName[metadataLookup.mediaPrimaryLanguageSet] = PRIMARY_LANGUAGE;
+          metadataSetToReadableName[metadataLookup.mediaSubjectCountrySet] = COUNTRY_OF_FOCUS;
+          metadataSetToReadableName[metadataLookup.mediaTypeSet] = MEDIA_TYPE;
           if (q.searches && q.searches !== undefined && Object.values(q.searches).length > 0) {
             queryInfo.searches = JSON.stringify(q.searches); // back to string
+            queryInfo.metadataSetToReadableName = metadataSetToReadableName;
             dispatch(fetchQuerySearchesByIds(queryInfo))
               .then((results) => {
                 queryInfo.searches = results;

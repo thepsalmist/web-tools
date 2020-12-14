@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { Grid, Row, Col } from 'react-flexbox-grid/lib';
@@ -6,7 +7,6 @@ import ExplorerMarketingFeatureList from './home/ExplorerMarketingFeatureList';
 import messages from '../../resources/messages';
 import AppButton from '../common/AppButton';
 import { urlToExplorerQuery } from '../../lib/urlUtil';
-import { DEFAULT_COLLECTION } from '../../lib/explorerUtil';
 import PageTitle from '../common/PageTitle';
 
 const localMessages = {
@@ -15,7 +15,7 @@ const localMessages = {
   aboutText: { id: 'about.text', defaultMessage: 'Explore our media tools!' },
 };
 
-const About = () => (
+const About = ({ defaultCollectionTag }) => (
   <div className="about">
     <Grid>
       <PageTitle value={localMessages.pageTitle} />
@@ -41,9 +41,9 @@ const About = () => (
                 'election news',
                 'election*',
                 [],
-                [DEFAULT_COLLECTION],
-                '2019-01-01',
+                [defaultCollectionTag],
                 '2020-01-01',
+                '2021-01-01',
               );
             }}
           >
@@ -59,6 +59,17 @@ const About = () => (
 About.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
+  // from store
+  defaultCollectionTag: PropTypes.number.isRequired,
 };
 
-export default injectIntl(About);
+const mapStateToProps = state => ({
+  defaultCollectionTag: state.system.staticTags.tags.defaultCollectionTag,
+});
+
+export default
+injectIntl(
+  connect(mapStateToProps)(
+    About
+  )
+);

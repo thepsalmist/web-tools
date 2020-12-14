@@ -13,7 +13,6 @@ import { fetchTopEntitiesOrgs } from '../../../actions/explorerActions';
 import { postToDownloadUrl, COVERAGE_REQUIRED, ENTITY_DISPLAY_TOP_TEN } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
-import { TAG_SET_CLIFF_ORGS } from '../../../lib/tagUtil';
 
 // const NUM_TO_SHOW = 20;
 
@@ -26,7 +25,8 @@ const localMessages = {
 
 class QueryTopEntitiesOrgsResultsContainer extends React.Component {
   downloadCsv = (query) => {
-    postToDownloadUrl(`/api/explorer/tags/${TAG_SET_CLIFF_ORGS}/top-tags.csv`, query);
+    const { cliffOrgsSet } = this.props;
+    postToDownloadUrl(`/api/explorer/tags/${cliffOrgsSet}/top-tags.csv`, query);
   }
 
   render() {
@@ -100,11 +100,13 @@ QueryTopEntitiesOrgsResultsContainer.propTypes = {
   // from state
   results: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string.isRequired,
+  cliffOrgsSet: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.explorer.topEntitiesOrgs.fetchStatus,
   results: state.explorer.topEntitiesOrgs.results,
+  cliffOrgsSet: state.system.staticTags.tagSets.cliffOrgsSet,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

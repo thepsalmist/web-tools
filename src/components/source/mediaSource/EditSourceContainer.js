@@ -7,7 +7,6 @@ import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import { updateSource, fetchSourceDetails } from '../../../actions/sourceActions';
 import { updateFeedback } from '../../../actions/appActions';
 import SourceForm from './form/SourceForm';
-import { isCollectionTagSet } from '../../../lib/tagUtil';
 import { getUserRoles, hasPermissions, PERMISSION_MEDIA_EDIT } from '../../../lib/auth';
 import Permissioned from '../../common/Permissioned';
 import { nullOrUndefined } from '../../../lib/formValidators';
@@ -21,7 +20,7 @@ const localMessages = {
 };
 
 const EditSourceContainer = (props) => {
-  const { handleSave, source, user } = props;
+  const { handleSave, source, user, collectionSets, mediaMetadataSetsByName } = props;
   const { formatMessage } = props.intl;
   const canSeePrivateCollections = hasPermissions(getUserRoles(user), PERMISSION_MEDIA_EDIT);
   const intialValues = {
@@ -29,7 +28,7 @@ const EditSourceContainer = (props) => {
     // if user cannot edit media, disabled=true
     collections: source.media_source_tags
       .map(t => ({ ...t, name: t.label }))
-      .filter(t => (isCollectionTagSet(t.tag_sets_id) && (t.show_on_media || canSeePrivateCollections))),
+      .filter(t => (collectionSets.includes(t.tag_sets_id) && (t.show_on_media || canSeePrivateCollections))),
     publicationCountry: source.metadata.pub_country,
     publicationState: source.metadata.pub_state,
     primaryLanguage: source.metadata.language,
@@ -50,6 +49,7 @@ const EditSourceContainer = (props) => {
             initialValues={intialValues}
             onSave={handleSave}
             buttonLabel={formatMessage(localMessages.addButton)}
+            mediaMetadataSetsByName={mediaMetadataSetsByName}
           />
         </Grid>
       </Permissioned>
@@ -67,6 +67,8 @@ EditSourceContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   source: PropTypes.object,
   user: PropTypes.object,
+  collectionSets: PropTypes.array.isRequired,
+  mediaMetadataSetsByName: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -74,6 +76,8 @@ const mapStateToProps = (state, ownProps) => ({
   fetchStatus: state.sources.sources.selected.sourceDetails.fetchStatus,
   source: state.sources.sources.selected.sourceDetails,
   user: state.user,
+  collectionSets: state.system.staticTags.tagSets.collectionSets,
+  mediaMetadataSetsByName: state.system.staticTags.tagSets.mediaMetadataSetsByName,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

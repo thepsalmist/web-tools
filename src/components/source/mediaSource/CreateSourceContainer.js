@@ -21,37 +21,36 @@ const localMessages = {
   saveFailed: { id: 'source.add.feedback.error', defaultMessage: 'Sorry, your request failed for some reason' },
 };
 
-const CreateSourceContainer = (props) => {
-  const { handleSave } = props;
-  const { formatMessage } = props.intl;
-  return (
-    <div className="create-source">
-      <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
-        <PageTitle value={localMessages.mainTitle} />
-        <Grid>
-          <Row>
-            <Col lg={12}>
-              <h1><FormattedMessage {...localMessages.mainTitle} /></h1>
-            </Col>
-          </Row>
-          <SourceForm
-            buttonLabel={formatMessage(localMessages.addButton)}
-            onSave={handleSave}
-          />
-        </Grid>
-      </Permissioned>
-    </div>
-  );
-};
+const CreateSourceContainer = ({handleSave, mediaMetadataSetsByName, intl}) => (
+  <div className="create-source">
+    <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
+      <PageTitle value={localMessages.mainTitle} />
+      <Grid>
+        <Row>
+          <Col lg={12}>
+            <h1><FormattedMessage {...localMessages.mainTitle} /></h1>
+          </Col>
+        </Row>
+        <SourceForm
+          buttonLabel={intl.formatMessage(localMessages.addButton)}
+          onSave={handleSave}
+          mediaMetadataSetsByName={mediaMetadataSetsByName}
+        />
+      </Grid>
+    </Permissioned>
+  </div>
+);
 
 CreateSourceContainer.propTypes = {
   // from context
   intl: PropTypes.object.isRequired,
   // from dispatch
   handleSave: PropTypes.func.isRequired,
+  mediaMetadataSetsByName: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = () => ({
+const mapStateToProps = (state) => ({
+  mediaMetadataSetsByName: state.system.staticTags.tagSets.mediaMetadataSetsByName,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

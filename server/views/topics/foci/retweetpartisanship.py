@@ -8,8 +8,8 @@ from server.util.request import api_error_handler, argument_is_valid, arguments_
     form_fields_required
 from server.views.topics.apicache import topic_story_count
 from server.auth import user_mediacloud_key, user_mediacloud_client
-from server.util.tags import tags_in_tag_set, TAG_SETS_ID_PARTISANSHIP_2016, \
-    TAG_SETS_ID_PARTISANSHIP_2019, COLLECTION_SET_PARTISANSHIP_QUINTILES_2016, \
+from server.util.tags import tags_in_tag_set, TagSetDiscoverer, \
+    COLLECTION_SET_PARTISANSHIP_QUINTILES_2016, \
     COLLECTION_SET_PARTISANSHIP_QUINTILES_2019
 from server.views.topics.foci import FOCAL_TECHNIQUE_BOOLEAN_QUERY
 
@@ -89,8 +89,8 @@ def retweet_partisanship_coverage(topics_id):
 
 def _get_tag_sets_id(year):
     return {
-        YEAR_2016: TAG_SETS_ID_PARTISANSHIP_2016,
-        YEAR_2019: TAG_SETS_ID_PARTISANSHIP_2019,
+        YEAR_2016: TagSetDiscoverer().partisan_2016_collections_set,
+        YEAR_2019: TagSetDiscoverer().partisan_2019_collections_set,
     }.get(year, None)
 
 

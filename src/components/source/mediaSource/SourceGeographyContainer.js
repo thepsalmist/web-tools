@@ -11,7 +11,6 @@ import withHelp from '../../common/hocs/HelpfulContainer';
 import { DownloadButton } from '../../common/IconButton';
 import { getBrandLightColor } from '../../../styles/colors';
 import { getCurrentDate, oneMonthBefore } from '../../../lib/dateUtil';
-import { TAG_SET_GEOGRAPHIC_PLACES } from '../../../lib/tagUtil';
 import { urlToExplorerQuery } from '../../../lib/urlUtil';
 
 const localMessages = {
@@ -64,6 +63,7 @@ SourceGeographyContainer.propTypes = {
   // from state
   fetchStatus: PropTypes.string,
   geolist: PropTypes.array.isRequired,
+  cliffPlacesSet: PropTypes.number.isRequired,
   // from parent
   intro: PropTypes.string,
   // from composition
@@ -74,12 +74,13 @@ SourceGeographyContainer.propTypes = {
 const mapStateToProps = state => ({
   fetchStatus: state.platforms.tags.fetchStatus,
   geolist: state.platforms.tags.results.mediaSource ? state.platforms.tags.results.mediaSource.results : [],
+  cliffPlacesSet: state.system.staticTags.tagSets.cliffPlacesSet,
 });
 
-const fetchAsyncData = (dispatch, { source }) => dispatch(fetchPlatformTags({
+const fetchAsyncData = (dispatch, { source, cliffPlacesSet }) => dispatch(fetchPlatformTags({
   uid: 'mediaSource',
   platform_query: `media_id:${source.media_id}`,
-  platform_channel: JSON.stringify({ tags_sets_id: TAG_SET_GEOGRAPHIC_PLACES }),
+  platform_channel: JSON.stringify({ tags_sets_id: cliffPlacesSet }),
 }));
 
 export default

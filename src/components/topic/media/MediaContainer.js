@@ -158,6 +158,7 @@ class MediaContainer extends React.Component {
                 intro={formatMessage(localMessages.collectionIntro)}
                 collections={media.media_source_tags}
                 linkToFullUrl
+                collectionSets={collectionSets}
               />
             </Col>
             <Col lg={6} xs={12}>
@@ -179,6 +180,7 @@ MediaContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   media: PropTypes.object.isRequired,
   mediaId: PropTypes.number.isRequired,
+  collectionSets: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -186,6 +188,7 @@ const mapStateToProps = (state, ownProps) => ({
   topicId: state.topics.selected.id,
   media: state.topics.selected.mediaSource.info,
   mediaId: parseInt(ownProps.params.mediaId, 10),
+  collectionSets: state.system.staticTags.tagSets.collectionSets,
 });
 
 const fetchAsyncData = (dispatch, props) => {

@@ -14,7 +14,7 @@ const localMessages = {
 };
 
 const CollectionSimilarContainer = (props) => {
-  const { similarCollections, user, helpButton } = props;
+  const { similarCollections, user, helpButton, collectionSets } = props;
   const { formatMessage } = props.intl;
   return (
     <div className="similar-collections">
@@ -23,6 +23,7 @@ const CollectionSimilarContainer = (props) => {
         collections={similarCollections}
         user={user}
         helpButton={helpButton}
+        collectionSets={collectionSets}
       />
     </div>
   );
@@ -33,6 +34,7 @@ CollectionSimilarContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   total: PropTypes.number,
   user: PropTypes.object.isRequired,
+  collectionSets: PropTypes.array.isRequired,
   // from parent
   collectionId: PropTypes.number.isRequired,
   similarCollections: PropTypes.array,
@@ -45,6 +47,7 @@ const mapStateToProps = state => ({
   fetchStatus: state.sources.collections.selected.collectionSimilar.fetchStatus,
   similarCollections: state.sources.collections.selected.collectionSimilar.list,
   user: state.user,
+  collectionSets: state.system.staticTags.tagSets.collectionSets,
 });
 
 const fetchAsyncData = (dispatch, { collectionId }) => dispatch(fetchSimilarCollections(collectionId));

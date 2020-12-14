@@ -9,7 +9,6 @@ import { selectStory, fetchStory, updateStory } from '../../../actions/storyActi
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import StoryDetailForm from '../../common/admin/form/StoryDetailForm';
 import { updateFeedback } from '../../../actions/appActions';
-import { TAG_SET_PRIMARY_LANGUAGE } from '../../../lib/tagUtil';
 
 const localMessages = {
   title: { id: 'story.details.edit.title', defaultMessage: 'Edit Story Details' },
@@ -77,6 +76,7 @@ StoryUpdateContainer.propTypes = {
   topicId: PropTypes.number.isRequired,
   fetchStatus: PropTypes.string.isRequired,
   tags: PropTypes.array,
+  mediaPrimaryLanguageSet: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -85,13 +85,14 @@ const mapStateToProps = (state, ownProps) => ({
   topicId: parseInt(ownProps.params.topicId, 10),
   story: state.story.info,
   tags: state.system.metadata.primaryLanguage.tags,
+  mediaPrimaryLanguageSet: state.system.staticTags.tagSets.mediaPrimaryLanguageSet,
 });
 
 
 const fetchAsyncData = (dispatch, props) => {
   dispatch(selectStory({ id: props.storiesId }));
   dispatch(fetchStory(props.topicId, props.storiesId));
-  dispatch(fetchMetadataValuesForPrimaryLanguage(TAG_SET_PRIMARY_LANGUAGE));
+  dispatch(fetchMetadataValuesForPrimaryLanguage(props.mediaPrimaryLanguageSet));
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

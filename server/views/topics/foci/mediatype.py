@@ -7,7 +7,7 @@ from server.util.request import api_error_handler, json_error_response, form_fie
 from server.views.topics.apicache import topic_story_count
 from server.auth import user_mediacloud_key, user_mediacloud_client
 from server.views.topics.foci import FOCAL_TECHNIQUE_BOOLEAN_QUERY
-from server.util.tags import tags_in_tag_set, TAG_SETS_ID_MEDIA_TYPE
+from server.util.tags import tags_in_tag_set, TagSetDiscoverer
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 @api_error_handler
 def media_type_story_counts(topics_id):
     tag_story_counts = []
-    media_type_tags = tags_in_tag_set(TOOL_API_KEY, TAG_SETS_ID_MEDIA_TYPE)
+    media_type_tags = tags_in_tag_set(TOOL_API_KEY, TagSetDiscoverer().media_type_set)
     # grab the total stories
     total_stories = topic_story_count(user_mediacloud_key(), topics_id)['count']
     # make a count for each tag based on media_id
@@ -38,7 +38,7 @@ def media_type_story_counts(topics_id):
 @flask_login.login_required
 @api_error_handler
 def media_type_coverage(topics_id):
-    media_type_tags = tags_in_tag_set(TOOL_API_KEY, TAG_SETS_ID_MEDIA_TYPE)
+    media_type_tags = tags_in_tag_set(TOOL_API_KEY, TagSetDiscoverer().media_type_set)
     # grab the total stories
     total_stories = topic_story_count(user_mediacloud_key(), topics_id)['count']
     # count the stories in any media in tagged as media_type
@@ -56,7 +56,7 @@ def create_media_type_focal_set(topics_id):
     # grab the focalSetName and focalSetDescription and then make one
     focal_set_name = request.form['focalSetName']
     focal_set_description = request.form['focalSetDescription']
-    media_type_tags = tags_in_tag_set(TOOL_API_KEY, TAG_SETS_ID_MEDIA_TYPE)
+    media_type_tags = tags_in_tag_set(TOOL_API_KEY, TagSetDiscoverer().media_type_set)
     focal_technique = FOCAL_TECHNIQUE_BOOLEAN_QUERY
     new_focal_set = user_mc.topicFocalSetDefinitionCreate(topics_id, focal_set_name, focal_set_description, focal_technique)
     if 'focal_set_definitions_id' not in new_focal_set:
@@ -74,8 +74,9 @@ def create_media_type_focal_set(topics_id):
         focus_def_results.append(result)
     return {'success': True}
 
+
 @app.route('/api/media-types/list', methods=['GET'])
 @flask_login.login_required
 def get_media_types():
-    media_type_tags = tags_in_tag_set(TOOL_API_KEY, TAG_SETS_ID_MEDIA_TYPE)
+    media_type_tags = tags_in_tag_set(TOOL_API_KEY, TagSetDiscoverer().media_type_set)
     return jsonify({'list': media_type_tags})

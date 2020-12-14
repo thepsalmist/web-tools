@@ -15,6 +15,8 @@ from server.cache import cache
 import server.views.apicache as apicache
 import server.util.corenlp as corenlp
 import server.util.news_labels as news_labels
+from server.util.tags import TagSetDiscoverer
+from server.views.topics.stories import _cached_geoname
 
 
 QUERY_LAST_FEW_DAYS = "publish_date:[NOW-3DAY TO NOW]"
@@ -27,6 +29,31 @@ QUERY_ENGLISH_LANGUAGE = "language:en"
 logger = logging.getLogger(__name__)
 
 
+def add_convenience_tags_to_story(story):
+    """
+    Be helpful to the client by pulling out the tags to find ones we intend to show as new properties on the story
+    """
+    for tag in story['story_tags']:
+        if tag['tag_sets_id'] == TagSetDiscoverer().cliff_places_set:
+            # add in the info about hte place this geo tag refers to (by querying CLIFF with the geonames_id)
+            geonames_id = int(tag['tag'][9:])
+            try:
+                tag['geoname'] = _cached_geoname(geonames_id)
+            except Exception as e:
+                # query to CLIFF failed :-( handle it gracefully
+                logger.exception(e)
+                tag['geoname'] = {}
+        elif tag['tag_sets_id'] == TagSetDiscoverer().extractor_versions_set:
+            story['extractorVersion'] = tag
+        elif tag['tag_sets_id'] == TagSetDiscoverer().date_guess_methods_set:
+            story['dateGuessMethod'] = tag
+        elif tag['tag_sets_id'] == TagSetDiscoverer().cliff_versions_set:
+            story['geocoderVersion'] = tag
+        elif tag['tag_sets_id'] == TagSetDiscoverer().nyt_themes_versions_set:
+            story['nytThemesVersion'] = tag
+    return story
+
+
 @app.route('/api/stories/<stories_id>', methods=['GET'])
 @flask_login.login_required
 @api_error_handler
@@ -35,8 +62,9 @@ def story_info(stories_id):
         story = apicache.story(stories_id, text=True)
     else:
         story = apicache.story(stories_id)
+    story = add_convenience_tags_to_story(story)
     story["media"] = apicache.media(story["media_id"])
-    return jsonify({'info': story})
+    return jsonify(story)
 
 
 @app.route('/api/stories/<stories_id>/raw.html', methods=['GET'])

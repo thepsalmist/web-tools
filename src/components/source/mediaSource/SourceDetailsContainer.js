@@ -9,7 +9,6 @@ import SourceStatInfo from './SourceStatInfo';
 import SourceSplitStoryCountContainer from './SourceSplitStoryCountContainer';
 import SourceTopWordsContainer from './SourceTopWordsContainer';
 import SourceGeographyContainer from './SourceGeographyContainer';
-import { anyCollectionTagSets } from '../../../lib/tagUtil';
 import { SOURCE_SCRAPE_STATE_QUEUED, SOURCE_SCRAPE_STATE_RUNNING, SOURCE_SCRAPE_STATE_COMPLETED, SOURCE_SCRAPE_STATE_ERROR } from '../../../reducers/sources/sources/selected/sourceDetails';
 import { InfoNotice, ErrorNotice, WarningNotice } from '../../common/Notice';
 import { jobStatusDateToMoment } from '../../../lib/dateUtil';
@@ -50,9 +49,10 @@ class SourceDetailsContainer extends React.Component {
   };
 
   render() {
-    const { source } = this.props;
+    const { source, collectionSets } = this.props;
     const { formatMessage, formatDate } = this.props.intl;
     const filename = `StoriesOverTime-Source-${source.media_id}`;
+    const anyCollectionTagSets = (tagSetIdList) => tagSetIdList.reduce((any, tagSetId) => collectionSets.includes(tagSetId) || any, false);
     // check if source is not suitable for general queries
     let unhealthySourceWarning;
     if ((source.is_healthy === 0) && (source.media_source_tags.length > 0 && !anyCollectionTagSets(source.media_source_tags.map(m => m.tag_sets_id)))) {
@@ -102,6 +102,7 @@ class SourceDetailsContainer extends React.Component {
                     name: source.name,
                   })}
                   collections={source.media_source_tags}
+                  collectionSets={collectionSets}
                 />
               </Col>
             </Row>
@@ -185,11 +186,13 @@ SourceDetailsContainer.propTypes = {
   sourceId: PropTypes.number.isRequired,
   // from state
   source: PropTypes.object,
+  collectionSets: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   sourceId: parseInt(ownProps.params.sourceId, 10),
   source: state.sources.sources.selected.sourceDetails,
+  collectionSets: state.system.staticTags.tagSets.collectionSets,
 });
 
 export default

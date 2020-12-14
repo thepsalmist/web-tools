@@ -7,7 +7,6 @@ import withIntlForm from './hocs/IntlForm';
 import withAsyncData from './hocs/AsyncDataContainer';
 import DataCard from './DataCard';
 import { fetchMetadataValuesForMediaType } from '../../actions/systemActions';
-import { TAG_SET_MEDIA_TYPE } from '../../lib/tagUtil';
 import messages from '../../resources/messages';
 
 const localMessages = {
@@ -102,15 +101,17 @@ MediaTypesFieldArray.propTypes = {
     PropTypes.array,
   ]),
   onChange: PropTypes.func,
+  mediaTypeSet: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({
   fetchStatus: state.system.metadata.mediaType.fetchStatus,
   initialValues: { mediaType: state.system.metadata.mediaType.tags.length ? state.system.metadata.mediaType.tags : null },
   // initialValues: { mediaType: state.system.metadata.mediaType.tags },
+  mediaTypeSet: state.system.staticTags.tagSets.mediaTypeSet,
 });
 
-const fetchAsyncData = dispatch => dispatch(fetchMetadataValuesForMediaType(TAG_SET_MEDIA_TYPE));
+const fetchAsyncData = (dispatch, { mediaTypeSet }) => dispatch(fetchMetadataValuesForMediaType(mediaTypeSet));
 
 
 export default

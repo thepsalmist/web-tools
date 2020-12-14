@@ -12,6 +12,7 @@ import SourceResultsTable from './SourceResultsTable';
 import AdvancedMediaPickerSearchForm from '../AdvancedMediaPickerSearchForm';
 import LoadingSpinner from '../../LoadingSpinner';
 import AppButton from '../../AppButton';
+import { PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE } from '../../../../lib/tagUtil';
 import { metadataQueryFields, stringifyTags } from '../../../../lib/explorerUtil';
 import { notEmptyString } from '../../../../lib/formValidators';
 import { decodeQueryParamString } from '../../../../lib/mediaUtil';
@@ -38,9 +39,28 @@ class SourceSearchResultsContainer extends React.Component {
      we may have urlParameters to ingest. In particular, a search parameter
      or tags from a custom collection reference coming from Explorer or Topic Mapper
     */
-    const { viewOnly, updateMediaQuerySelection, location, selectedMediaQueryKeyword, selectedMediaQueryTags, selectedMediaQueryAllTags, selectedMediaQueryType } = this.props;
+    const { viewOnly, updateMediaQuerySelection, location, selectedMediaQueryKeyword, selectedMediaQueryTags,
+      selectedMediaQueryAllTags, selectedMediaQueryType, mediaMetadataSetsByName } = this.props;
+
+    const lookupReadableMetadataName = (tagSetsId) => {
+      switch (tagSetsId) {
+        case mediaMetadataSetsByName.mediaPubCountrySet:
+          return PUBLICATION_COUNTRY;
+        case mediaMetadataSetsByName.mediaPubStateSet:
+          return PUBLICATION_STATE;
+        case mediaMetadataSetsByName.mediaPrimaryLanguageSet:
+          return PRIMARY_LANGUAGE;
+        case mediaMetadataSetsByName.mediaSubjectCountrySet:
+          return COUNTRY_OF_FOCUS;
+        case mediaMetadataSetsByName.mediaTypeSet:
+          return MEDIA_TYPE;
+        default:
+          return null;
+      }
+    };
+
     if (viewOnly && location && location.query) {
-      const urlParams = decodeQueryParamString(location);
+      const urlParams = decodeQueryParamString(location, lookupReadableMetadataName);
 
       // we must provide all parameters when updating state
       // minimally, the type which selects the tabular setting
@@ -143,7 +163,8 @@ class SourceSearchResultsContainer extends React.Component {
   }
 
   render() {
-    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags, selectedMediaQueryAllTags, helpButton, viewOnly, links } = this.props;
+    const { fetchStatus, selectedMediaQueryKeyword, sourceResults, onToggleSelected, selectedMediaQueryTags,
+      selectedMediaQueryAllTags, helpButton, viewOnly, links, mediaMetadataSetsByName } = this.props;
     const { formatMessage } = this.props.intl;
 
     const content = (
@@ -153,6 +174,7 @@ class SourceSearchResultsContainer extends React.Component {
           onQueryUpdateSelection={(metadataType, values) => this.updateQuerySelection(metadataType, values)}
           onSearch={val => this.updateAndSearchWithSelection(val)}
           hintText={formatMessage(localMessages.hintText)}
+          mediaMetadataSetsByName={mediaMetadataSetsByName}
         />
       </div>
     );
@@ -273,6 +295,7 @@ SourceSearchResultsContainer.propTypes = {
   mediaQuery: PropTypes.array,
   helpButton: PropTypes.node.isRequired,
   links: PropTypes.object,
+  mediaMetadataSetsByName: PropTypes.object.isRequired,
   // from dispatch
   handleUpdateAndSearchWithSelection: PropTypes.func.isRequired,
   handleSelectMediaCustomColl: PropTypes.func.isRequired,
@@ -300,6 +323,7 @@ const mapStateToProps = state => ({
     'advancedSearchQueryString',
   ),
   links: state.system.mediaPicker.sourceQueryResults.linkId,
+  mediaMetadataSetsByName: state.system.staticTags.tagSets.mediaMetadataSetsByName,
 });
 
 // tags holds metadata search tags

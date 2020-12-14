@@ -16,7 +16,6 @@ import StoryEntitiesContainer from '../../story/StoryEntitiesContainer';
 import StoryNytThemesContainer from '../../story/StoryNytThemesContainer';
 import messages from '../../../../resources/messages';
 import { urlToSource } from '../../../../lib/urlUtil';
-import { TAG_SET_NYT_THEMES } from '../../../../lib/tagUtil';
 import { trimToMaxLength } from '../../../../lib/stringUtil';
 import Permissioned from '../../Permissioned';
 import { PERMISSION_ADMIN } from '../../../../lib/auth';
@@ -50,7 +49,7 @@ class SelectedStoryContainer extends React.Component {
   }
 
   render() {
-    const { selectedStory, selectedStoryId, handleStoryEditClick, handleStoryCachedTextClick, intl } = this.props;
+    const { selectedStory, selectedStoryId, handleStoryEditClick, handleStoryCachedTextClick, intl, nytThemesSet } = this.props;
     const { formatMessage } = this.props.intl;
 
     let content = null;
@@ -130,14 +129,17 @@ class SelectedStoryContainer extends React.Component {
             <Col lg={3}>
               <StoryNytThemesContainer
                 storyId={selectedStoryId}
-                tags={selectedStory.story_tags ? selectedStory.story_tags.filter(t => t.tag_sets_id === TAG_SET_NYT_THEMES) : []}
+                tags={selectedStory.story_tags ? selectedStory.story_tags.filter(t => t.tag_sets_id === nytThemesSet) : []}
                 hideFullListOption
               />
             </Col>
           </Row>
           <Row>
             <Col lg={6}>
-              <TagListContainer story={selectedStory} />
+              <TagListContainer
+                story={selectedStory}
+                tagToShow={(t) => t.tag_sets_id !== nytThemesSet && t.tag_sets_id !== cliffOrgsSet && t.tag_sets_id !== cliffPeopleSet}
+              />
             </Col>
           </Row>
           <Row>
@@ -173,6 +175,9 @@ SelectedStoryContainer.propTypes = {
   fetchStatus: PropTypes.string.isRequired,
   selectedStory: PropTypes.object.isRequired,
   selectedStoryId: PropTypes.number,
+  nytThemesSet: PropTypes.number.isRequired,
+  cliffOrgsSet: PropTypes.number.isRequired,
+  cliffPeopleSet: PropTypes.number.isRequired,
   // from context
   intl: PropTypes.object.isRequired,
   handleStoryCachedTextClick: PropTypes.func.isRequired,
@@ -183,6 +188,9 @@ const mapStateToProps = state => ({
   fetchStatus: state.story.info.fetchStatus,
   selectedStory: state.story.info,
   selectedStoryId: state.story.info.stories_id,
+  nytThemesSet: state.system.staticTags.tagSets.nytThemesSet,
+  cliffOrgsSet: state.system.staticTags.tagSets.cliffOrgsSet,
+  cliffPeopleSet: state.system.staticTags.tagSets.cliffPeopleSet,
 });
 
 const mapDispatchToProps = dispatch => ({

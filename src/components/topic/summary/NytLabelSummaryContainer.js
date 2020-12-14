@@ -14,7 +14,6 @@ import SVGAndCSVMenu from '../../common/SVGAndCSVMenu';
 import { filtersAsUrlParams, formatAsUrlParams } from '../../util/location';
 import { WarningNotice } from '../../common/Notice';
 import { topicDownloadFilename } from '../../util/topicUtil';
-import { TAG_SET_NYT_THEMES, TAG_NYT_LABELER_1_0_0 } from '../../../lib/tagUtil';
 import { FETCH_INVALID } from '../../../lib/fetchConstants';
 
 const BUBBLE_CHART_DOM_ID = 'nyt-tag-representation-bubble-chart';
@@ -37,13 +36,13 @@ const localMessages = {
 
 class NytLabelSummaryContainer extends React.Component {
   downloadCsv = (evt) => {
-    const { topicId, filters } = this.props;
+    const { topicId, filters, nytThemesVersionTags } = this.props;
     if (evt.preventDefault) {
       evt.preventDefault();
     }
     const url = `/api/topics/${topicId}/provider/tag-use.csv?${filtersAsUrlParams(filters)}&${formatAsUrlParams({
-      tagSetsId: TAG_SET_NYT_THEMES,
-      tagsId: TAG_NYT_LABELER_1_0_0,
+      tagSetsId: nytThemesSet,
+      tagsId: nytThemesVersionTags[0],
     })}`;
     window.location = url;
   }
@@ -137,6 +136,8 @@ NytLabelSummaryContainer.propTypes = {
   filters: PropTypes.object.isRequired,
   topicId: PropTypes.number.isRequired,
   topicName: PropTypes.string.isRequired,
+  nytThemesVersionTags: PropTypes.array.isRequired,
+  nytThemesSet: PropTypes.number.isRequired,
   // from composition chain
   intl: PropTypes.object.isRequired,
   // from state
@@ -153,6 +154,8 @@ const mapStateToProps = state => ({
   fetchStatus: state.topics.selected.provider.tagUse.fetchStatuses.nytThemes || FETCH_INVALID,
   data: state.topics.selected.provider.tagUse.results.nytThemes ? state.topics.selected.provider.tagUse.results.nytThemes.list : [],
   coverage: state.topics.selected.provider.tagUse.results.nytThemes ? state.topics.selected.provider.tagUse.results.nytThemes.coverage : {},
+  nytThemesVersionTags: state.system.staticTags.tags.nytThemesVersionTags,
+  nytThemesSet: state.system.staticTags.tagSets.nytThemesSet,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -161,11 +164,11 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-const fetchAsyncData = (dispatch, props) => dispatch(fetchTopicProviderTagUse(props.topicId, {
-  ...props.filters,
+const fetchAsyncData = (dispatch, { topicId, filters, nytThemesVersionTags, nytThemesSet }) => dispatch(fetchTopicProviderTagUse(topicId, {
+  ...filters,
   uid: 'nytThemes',
-  tagSetsId: TAG_SET_NYT_THEMES,
-  tagsId: TAG_NYT_LABELER_1_0_0,
+  tagSetsId: nytThemesSet,
+  tagsId: nytThemesVersionTags[0], // TODO: make this support an array of valid versions
 }));
 
 export default

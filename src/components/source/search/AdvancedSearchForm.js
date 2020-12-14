@@ -6,7 +6,6 @@ import { Row, Col } from 'react-flexbox-grid/lib';
 import withIntlForm from '../../common/hocs/IntlForm';
 import MetadataPickerContainer from '../../common/MetadataPickerContainer';
 import AppButton from '../../common/AppButton';
-import { TAG_SET_PUBLICATION_COUNTRY, TAG_SET_PUBLICATION_STATE, TAG_SET_PRIMARY_LANGUAGE, TAG_SET_COUNTRY_OF_FOCUS, TAG_SET_MEDIA_TYPE } from '../../../lib/tagUtil';
 
 const localMessages = {
   searchSuggestion: { id: 'search.advanced.searchTip', defaultMessage: 'match these words' },
@@ -17,7 +16,7 @@ const localMessages = {
   pMediaType: { id: 'search.advanced.pMediaType', defaultMessage: 'media type' },
 };
 const AdvancedSearchForm = (props) => {
-  const { initialValues, renderTextField, handleSubmit, buttonLabel, pristine, submitting, onSearch } = props;
+  const { initialValues, renderTextField, handleSubmit, buttonLabel, pristine, submitting, onSearch, mediaMetadataSetsByName } = props;
   const { formatMessage } = props.intl;
   return (
     <form className="advanced-search-form" onSubmit={handleSubmit(onSearch.bind(this))}>
@@ -36,7 +35,7 @@ const AdvancedSearchForm = (props) => {
         <Col lg={6}>
           <MetadataPickerContainer
             autocomplete
-            id={TAG_SET_PUBLICATION_COUNTRY}
+            id={mediaMetadataSetsByName.mediaPubCountrySet}
             name="publicationCountry"
             form="advancedQueryForm"
             label={formatMessage(localMessages.pubCountrySuggestion)}
@@ -46,7 +45,7 @@ const AdvancedSearchForm = (props) => {
         <Col lg={6}>
           <MetadataPickerContainer
             autocomplete
-            id={TAG_SET_PUBLICATION_STATE}
+            id={mediaMetadataSetsByName.mediaPubStateSet}
             name="publicationState"
             form="advancedQueryForm"
             label={formatMessage(localMessages.pubStateSuggestion)}
@@ -56,7 +55,7 @@ const AdvancedSearchForm = (props) => {
         <Col lg={6}>
           <MetadataPickerContainer
             autocomplete
-            id={TAG_SET_PRIMARY_LANGUAGE}
+            id={mediaMetadataSetsByName.mediaPrimaryLanguageSet}
             name="primaryLanguage"
             form="advancedQueryForm"
             label={formatMessage(localMessages.pLanguageSuggestion)}
@@ -65,7 +64,7 @@ const AdvancedSearchForm = (props) => {
         <Col lg={6}>
           <MetadataPickerContainer
             autocomplete
-            id={TAG_SET_COUNTRY_OF_FOCUS}
+            id={mediaMetadataSetsByName.mediaSubjectCountrySet}
             name="countryOfFocus"
             form="advancedQueryForm"
             label={formatMessage(localMessages.pCountryOfFocusSuggestion)}
@@ -75,7 +74,7 @@ const AdvancedSearchForm = (props) => {
         <Col lg={6}>
           <MetadataPickerContainer
             autocomplete
-            id={TAG_SET_MEDIA_TYPE}
+            id={mediaMetadataSetsByName.mediaTypeSet}
             showDescription
             name="mediaType"
             form="advancedQueryForm"
@@ -111,6 +110,7 @@ AdvancedSearchForm.propTypes = {
   // from parent
   onSearch: PropTypes.func.isRequired,
   searchString: PropTypes.string,
+  mediaMetadataSetsByName: PropTypes.object.isRequired,
 };
 
 const reduxFormConfig = {

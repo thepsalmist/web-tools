@@ -5,13 +5,8 @@ caching in memory.
 """
 
 from server.scripts.gen_tags_in_tag_set_json import write_tags_in_set_to_json
-import server.util.tags as tag_util
+from server.util.tags import TagSetDiscoverer
 
-tag_sets_to_cache = [tag_util.TAG_SETS_ID_PUBLICATION_COUNTRY,
-                     tag_util.TAG_SETS_ID_PUBLICATION_STATE,
-                     tag_util.TAG_SETS_ID_PRIMARY_LANGUAGE,
-                     tag_util.TAG_SETS_ID_COUNTRY_OF_FOCUS,
-                     tag_util.TAG_SETS_ID_MEDIA_TYPE
-                     ]
+tag_sets_to_cache = TagSetDiscoverer().media_metadata_sets()
 
 write_tags_in_set_to_json(tag_sets_to_cache, only_public_tags=False)

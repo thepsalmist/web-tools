@@ -6,7 +6,6 @@ from server import mc
 from server.auth import user_mediacloud_client
 from server.cache import cache
 from server.util.api_helper import add_missing_dates_to_split_story_counts
-from server.views.sources import FEATURED_COLLECTION_LIST
 from server.views.stories import QUERY_LAST_MONTH
 
 
@@ -28,7 +27,7 @@ def featured_collections():
 
 @cache.cache_on_arguments()
 def _cached_featured_collection_list():
-    return [mc.tag(tags_id) for tags_id in FEATURED_COLLECTION_LIST]
+    return [mc.tag(tags_id) for tags_id in tags.TagDiscoverer().featured_collection_tags]
 
 
 def collection_source_representation(mc_api_key, collection_id, sample_size, fq):

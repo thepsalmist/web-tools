@@ -8,7 +8,7 @@ import server.util.csv as csv
 from server import app
 from server.views import TAG_COUNT_DOWNLOAD_LENGTH
 from server.util.request import api_error_handler
-from server.util.tags import CLIFF_PEOPLE, CLIFF_ORGS, NYT_LABELS_TAG_SET_ID
+from server.util.tags import TagSetDiscoverer
 from server.views.explorer import parse_query_with_keywords, file_name_for_download
 import server.views.explorer.apicache as apicache
 import server.views.apicache as base_apicache
@@ -25,7 +25,7 @@ ENTITY_DOWNLOAD_COLUMNS = ['label', 'count', 'pct', 'sample_size','tags_id']
 @api_error_handler
 def top_entities_people():
     solr_q, solr_fq = parse_query_with_keywords(request.form)
-    results = apicache.top_tags_with_coverage(solr_q, solr_fq, CLIFF_PEOPLE)
+    results = apicache.top_tags_with_coverage(solr_q, solr_fq, TagSetDiscoverer().cliff_people_set)
     return jsonify(results)
 
 
@@ -34,7 +34,7 @@ def top_entities_people():
 @api_error_handler
 def top_entities_organizations():
     solr_q, solr_fq = parse_query_with_keywords(request.form)
-    results = apicache.top_tags_with_coverage(solr_q, solr_fq, CLIFF_ORGS)
+    results = apicache.top_tags_with_coverage(solr_q, solr_fq, TagSetDiscoverer().cliff_orgs_set)
     return jsonify(results)
 
 
@@ -57,6 +57,6 @@ def explorer_entities_csv(tag_sets_id):
 @api_error_handler
 def top_themes():
     solr_q, solr_fq = parse_query_with_keywords(request.form)
-    results = apicache.top_tags_with_coverage(solr_q, solr_fq, NYT_LABELS_TAG_SET_ID)
+    results = apicache.top_tags_with_coverage(solr_q, solr_fq, TagSetDiscoverer().nyt_themes_set)
 
     return jsonify(results)

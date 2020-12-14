@@ -17,7 +17,6 @@ import TabSelector from '../../common/TabSelector';
 import StoryEntitiesContainer from '../../common/story/StoryEntitiesContainer';
 import StoryNytThemesContainer from '../../common/story/StoryNytThemesContainer';
 import StoryImages from '../../common/story/StoryImages';
-import { TAG_SET_GEOGRAPHIC_PLACES, TAG_SET_NYT_THEMES } from '../../../lib/tagUtil';
 import StoryDetails from '../../common/story/StoryDetails';
 import StoryPlaces from './StoryPlaces';
 import messages from '../../../resources/messages';
@@ -65,7 +64,7 @@ class StoryContainer extends React.Component {
   }
 
   render() {
-    const { storyInfo, topicStoryInfo, topicId, storiesId, topicPlatforms,
+    const { storyInfo, topicStoryInfo, topicId, storiesId, topicPlatforms, nytThemesSet, cliffPlacesSet,
       handleStoryCachedTextClick, handleStoryEditClick, filters, topicSeedQuery, intl } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
     const mediaUrl = `/topics/${topicId}/media/${storyInfo.media.media_id}`;
@@ -133,7 +132,7 @@ class StoryContainer extends React.Component {
               <Col lg={6}>
                 <StoryNytThemesContainer
                   storyId={storiesId}
-                  tags={storyInfo.story_tags ? storyInfo.story_tags.filter(t => t.tag_sets_id === TAG_SET_NYT_THEMES) : []}
+                  tags={storyInfo.story_tags ? storyInfo.story_tags.filter(t => t.tag_sets_id === nytThemesSet) : []}
                 />
               </Col>
             </Row>
@@ -151,7 +150,7 @@ class StoryContainer extends React.Component {
             <Row>
               <Col lg={6}>
                 <StoryPlaces
-                  tags={storyInfo.story_tags ? storyInfo.story_tags.filter(t => t.tag_sets_id === TAG_SET_GEOGRAPHIC_PLACES) : []}
+                  tags={storyInfo.story_tags ? storyInfo.story_tags.filter(t => t.tag_sets_id === cliffPlacesSet) : []}
                   geocoderVersion={storyInfo.geocoderVersion}
                 />
               </Col>
@@ -269,6 +268,8 @@ StoryContainer.propTypes = {
   filters: PropTypes.object.isRequired,
   topicSeedQuery: PropTypes.string.isRequired,
   topicPlatforms: PropTypes.array,
+  nytThemesSet: PropTypes.number.isRequired,
+  cliffPlacesSet: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -281,6 +282,8 @@ const mapStateToProps = (state, ownProps) => ({
   topicStoryInfo: state.topics.selected.story.info,
   storyInfo: state.story.info,
   topicPlatforms: state.topics.selected.snapshots.selected.platform_seed_queries,
+  nytThemesSet: state.system.staticTags.tagSets.nytThemesSet,
+  cliffPlacesSet: state.system.staticTags.tagSets.cliffPlacesSet,
 });
 
 const fetchAsyncData = (dispatch, props) => {

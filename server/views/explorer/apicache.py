@@ -4,7 +4,7 @@ from server.auth import user_admin_mediacloud_client
 from server.views.explorer import dates_as_filter_query
 from server.util.api_helper import combined_split_and_normalized_counts, add_missing_dates_to_split_story_counts
 from server.util.tags import processed_for_entities_query_clause, processed_for_themes_query_clause, \
-    NYT_LABELS_TAG_SET_ID, CLIFF_ORGS, CLIFF_PEOPLE, GEO_TAG_SET
+    TagSetDiscoverer
 import server.views.apicache as base_apicache
 from server.views import TAG_SAMPLE_SIZE, TAG_COUNT_SAMPLE_SIZE
 
@@ -51,9 +51,9 @@ def _cached_sentence_list(mc_api_key, q, fq, rows, include_stories=True):
 
 def top_tags_with_coverage(q, fq, tag_sets_id, limit=TAG_SAMPLE_SIZE):
     tag_counts = base_apicache.top_tags(q, fq, tag_sets_id, sample_size=TAG_COUNT_SAMPLE_SIZE)
-    if int(tag_sets_id) in [GEO_TAG_SET, CLIFF_ORGS, CLIFF_PEOPLE]:
+    if int(tag_sets_id) in [TagSetDiscoverer().cliff_places_set, TagSetDiscoverer().cliff_orgs_set, TagSetDiscoverer().cliff_people_set]:
         coverage = base_apicache.tag_set_coverage(q, '({}) AND {}'.format(q, processed_for_entities_query_clause()), fq)
-    elif int(tag_sets_id) == NYT_LABELS_TAG_SET_ID:
+    elif int(tag_sets_id) == TagSetDiscoverer().nyt_themes_set:
         coverage = base_apicache.tag_set_coverage(q, '({}) AND {}'.format(q, processed_for_themes_query_clause()), fq)
     else:
         raise RuntimeError("Unknown tag_sets_id for computing coverage: {}".format(tag_sets_id))

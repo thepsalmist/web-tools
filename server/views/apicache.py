@@ -8,7 +8,7 @@ from server import TOOL_API_KEY
 from server.cache import cache
 import server.util.wordembeddings as wordembeddings
 from server.auth import user_mediacloud_client, user_admin_mediacloud_client, user_is_admin
-from server.util.tags import is_bad_theme, NYT_LABELS_TAG_SET_ID
+from server.util.tags import is_bad_theme, TagSetDiscoverer
 
 
 def media(media_id):
@@ -108,9 +108,9 @@ def top_tags(q, fq, tag_sets_id, sample_size=None):
     # top tags used in stories matching query (pass in None for no limit)
     tags = _cached_top_tags(q, fq, tag_sets_id, sample_size)
     # extract bogus NYT tags that we created in the wrong set a long time ago
-    if tag_sets_id == NYT_LABELS_TAG_SET_ID:
+    if tag_sets_id == TagSetDiscoverer().nyt_themes_set:
         for t in tags:
-            if is_bad_theme(t['tags_id']):
+            if is_bad_theme(t['tag']):
                 tags.remove(t)
     return tags
 

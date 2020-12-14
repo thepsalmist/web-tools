@@ -1,5 +1,5 @@
 import { UPDATE_QUERY, UPDATE_QUERY_COLLECTION_LOOKUP_INFO, UPDATE_QUERY_SOURCE_LOOKUP_INFO, UPDATE_QUERY_SEARCH_LOOKUP_INFO, ADD_CUSTOM_QUERY, SAVE_PARSED_QUERIES, MARK_AS_DELETED_QUERY, REMOVE_DELETED_QUERIES, COPY_AND_REPLACE_QUERY_FIELD, REMOVE_NEW_STATUS, SWAP_SORT_QUERIES } from '../../../actions/explorerActions';
-import { autoMagicQueryLabel, lookupReadableMetadataName } from '../../../lib/explorerUtil';
+import { autoMagicQueryLabel } from '../../../lib/explorerUtil';
 
 const INITIAL_STATE = [];
 
@@ -108,7 +108,7 @@ function queries(state = INITIAL_STATE, action) {
               const vals = Object.values(searchObj.tags[m]).map(a => a.tags_id);
               if (vals && vals.length > 0) {
                 const tagSet = Object.values(searchObj.tags[m]).map(a => a.tag_sets_id).reduce(ts => ts);
-                const readableName = lookupReadableMetadataName(tagSet);
+                const readableName = action.payload.metadataSetToReadableName[tagSet];
                 updatedCustonObj.tags[readableName] = Object.values(searchObj.tags[m]).map(a => ({ ...a, selected: true }));
               }
               return null;

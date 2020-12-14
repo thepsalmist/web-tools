@@ -6,7 +6,6 @@ import withFilteredAsyncData from '../FilteredAsyncDataContainer';
 import { fetchTopicProviderCount } from '../../../actions/topicActions';
 import StatBar from '../../common/statbar/StatBar';
 import messages from '../../../resources/messages';
-import { TAG_NYT_LABELER_1_0_0, CLIFF_VERSION_TAG_LIST, TAG_STORY_UNDATEABLE } from '../../../lib/tagUtil';
 
 const localMessages = {
   themedCount: { id: 'topic.summary.storystats.themedCount', defaultMessage: 'Stories Checked for Themes' },
@@ -57,6 +56,9 @@ TopicStoryMetadataStatsContainer.propTypes = {
   englishCounts: PropTypes.object,
   nytThemeCoverage: PropTypes.object,
   undateableCount: PropTypes.object,
+  isUndateableStoryTag: PropTypes.int,
+  cliffVersionTags: PropTypes.array.isRequired,
+  nytThemesVersionTags: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -66,6 +68,9 @@ const mapStateToProps = state => ({
   nytThemeCoverage: state.topics.selected.provider.count.results.nytThemes || null,
   englishCounts: state.topics.selected.provider.count.results.englishLanguage || null,
   filters: state.topics.selected.filters,
+  isUndateableStoryTag: state.system.staticTags.tags.isUndateableStoryTag,
+  cliffVersionTags: state.system.staticTags.tags.cliffVersionTags,
+  nytThemesVersionTags: state.system.staticTags.tags.nytThemesVersionTags,
 });
 
 const fetchAsyncData = (dispatch, props) => {
@@ -77,17 +82,17 @@ const fetchAsyncData = (dispatch, props) => {
   dispatch(fetchTopicProviderCount(props.topicId, {
     uid: 'entities',
     ...props.filters,
-    subQuery: `tags_id_stories:(${CLIFF_VERSION_TAG_LIST.join(' ')})`,
+    subQuery: `tags_id_stories:(${props.cliffVersionTags.join(' ')})`,
   }));
   dispatch(fetchTopicProviderCount(props.topicId, {
     uid: 'undateable',
     ...props.filters,
-    subQuery: `tags_id_stories:(${TAG_STORY_UNDATEABLE})`,
+    subQuery: `tags_id_stories:(${props.isUndateableStoryTag})`,
   }));
   dispatch(fetchTopicProviderCount(props.topicId, {
     ...props.filters,
     uid: 'nytThemes',
-    subQuery: `tags_id_stories:(${TAG_NYT_LABELER_1_0_0})`,
+    subQuery: `tags_id_stories:(${props.nytThemesVersionTags[0]})`,
   }));
 };
 

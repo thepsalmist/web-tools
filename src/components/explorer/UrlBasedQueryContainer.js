@@ -12,6 +12,7 @@ import { saveParsedQueries, updateQuerySourceLookupInfo, updateQueryCollectionLo
 import { autoMagicQueryLabel, decodeQueryParamString, serializeQueriesForUrl, uniqueQueryId, prepSearches } from '../../lib/explorerUtil';
 import { replaceCurlyQuotes } from '../../lib/stringUtil';
 import { notEmptyString } from '../../lib/formValidators';
+import { PUBLICATION_COUNTRY, PUBLICATION_STATE, COUNTRY_OF_FOCUS, PRIMARY_LANGUAGE, MEDIA_TYPE } from '../../lib/tagUtil';
 
 const localMessages = {
   errorInURLParams: { id: 'explorer.queryBuilder.urlParams',

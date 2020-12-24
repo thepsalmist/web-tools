@@ -48,7 +48,7 @@ class MediaContainer extends React.Component {
   };
 
   render() {
-    const { media, mediaId, filters } = this.props;
+    const { media, mediaId, filters, collectionSets } = this.props;
     const { formatMessage, formatNumber } = this.props.intl;
     const dialogActions = [
       <Button

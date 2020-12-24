@@ -49,7 +49,8 @@ class SelectedStoryContainer extends React.Component {
   }
 
   render() {
-    const { selectedStory, selectedStoryId, handleStoryEditClick, handleStoryCachedTextClick, intl, nytThemesSet } = this.props;
+    const { selectedStory, selectedStoryId, handleStoryEditClick, handleStoryCachedTextClick, intl, nytThemesSet,
+      cliffOrgsSet, cliffPeopleSet } = this.props;
     const { formatMessage } = this.props.intl;
 
     let content = null;

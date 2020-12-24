@@ -56,7 +56,7 @@ class SelectedStoryDrillDownContainer extends React.Component {
   }
 
   render() {
-    const { selectedStory, storyInfo, handleClose, intl } = this.props;
+    const { selectedStory, storyInfo, handleClose, nytThemesSet, intl } = this.props;
     let content = null;
     if (selectedStory) {
       content = (

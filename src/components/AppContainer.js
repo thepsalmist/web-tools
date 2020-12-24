@@ -132,7 +132,7 @@ const mapStateToProps = state => ({
   feedback: state.app.feedback,
 });
 
-const fetchAsyncData = (dispatch, props) => {
+const fetchAsyncData = (dispatch) => {
   dispatch(fetchStaticTags());
 };
 

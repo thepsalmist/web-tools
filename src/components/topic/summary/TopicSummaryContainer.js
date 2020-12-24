@@ -54,7 +54,8 @@ class TopicSummaryContainer extends React.Component {
   }
 
   render() {
-    const { filters, topic, selectedTimespan, user, location, selectedSnapshot, timespans, cliffVersionTags, cliffOrgsSet } = this.props;
+    const { filters, topic, selectedTimespan, user, location, selectedSnapshot, timespans, cliffPeopleSet,
+      cliffVersionTags, cliffOrgsSet } = this.props;
     const { formatMessage } = this.props.intl;
     let content = <div />;
     let intro = null;

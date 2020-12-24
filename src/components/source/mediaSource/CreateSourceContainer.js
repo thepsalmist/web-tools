@@ -21,7 +21,7 @@ const localMessages = {
   saveFailed: { id: 'source.add.feedback.error', defaultMessage: 'Sorry, your request failed for some reason' },
 };
 
-const CreateSourceContainer = ({handleSave, mediaMetadataSetsByName, intl}) => (
+const CreateSourceContainer = ({ handleSave, mediaMetadataSetsByName, intl }) => (
   <div className="create-source">
     <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
       <PageTitle value={localMessages.mainTitle} />

@@ -56,7 +56,7 @@ TopicStoryMetadataStatsContainer.propTypes = {
   englishCounts: PropTypes.object,
   nytThemeCoverage: PropTypes.object,
   undateableCount: PropTypes.object,
-  isUndateableStoryTag: PropTypes.int,
+  isUndateableStoryTag: PropTypes.number,
   cliffVersionTags: PropTypes.array.isRequired,
   nytThemesVersionTags: PropTypes.array.isRequired,
 };

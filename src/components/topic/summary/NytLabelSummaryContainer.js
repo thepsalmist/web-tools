@@ -36,7 +36,7 @@ const localMessages = {
 
 class NytLabelSummaryContainer extends React.Component {
   downloadCsv = (evt) => {
-    const { topicId, filters, nytThemesVersionTags } = this.props;
+    const { topicId, filters, nytThemesVersionTags, nytThemesSet } = this.props;
     if (evt.preventDefault) {
       evt.preventDefault();
     }

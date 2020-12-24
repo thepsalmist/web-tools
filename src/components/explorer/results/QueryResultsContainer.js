@@ -22,6 +22,8 @@ import { updateQuery } from '../../../actions/explorerActions';
 import messages from '../../../resources/messages';
 import { PERMISSION_LOGGED_IN } from '../../../lib/auth';
 import Permissioned from '../../common/Permissioned';
+import TrackingEvent, { CLICK_ACTION, EXPLORER_RESULTS_TAB_ATTENTION, EXPLORER_RESULTS_TAB_LANGUAGE,
+  EXPLORER_RESULTS_TAB_ENTITIES } from '../../../lib/tracking';
 
 class QueryResultsContainer extends React.Component {
   state = {
@@ -175,7 +177,12 @@ class QueryResultsContainer extends React.Component {
                 formatMessage(messages.language),
                 formatMessage(messages.representation),
               ]}
-              onViewSelected={index => this.setState({ selectedViewIndex: index })}
+              onViewSelected={index => {
+                this.setState({ selectedViewIndex: index });
+                const categories = [EXPLORER_RESULTS_TAB_ATTENTION, EXPLORER_RESULTS_TAB_LANGUAGE,
+                  EXPLORER_RESULTS_TAB_ENTITIES];
+                TrackingEvent(categories[index], CLICK_ACTION);
+              }}
             />
           </Row>
         </Grid>

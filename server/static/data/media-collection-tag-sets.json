@@ -1,7 +1,7 @@
 {
   "_comment": "This file lists useful tag-sets. You should edit it to change the ids to match your system.",
   "defaultCollection": {
-    "tagsId": 58722749,
+    "tagsId": 34412234,
     "_comment": "This collection id (ie. `tags_id`) is used in various places as the default collection for searches"
   },
   "featuredCollections": {

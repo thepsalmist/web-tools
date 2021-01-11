@@ -7,26 +7,24 @@ import { Row, Col } from 'react-flexbox-grid/lib';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import withAsyncData from '../../hocs/AsyncDataContainer';
-import ActionMenu from '../../ActionMenu';
-import { EditButton, ReadItNowButton, DownloadButton } from '../../IconButton';
-import { fetchStory } from '../../../../actions/storyActions';
-import TagListContainer from './TagListContainer';
-import StoryEntitiesContainer from '../../story/StoryEntitiesContainer';
-import StoryNytThemesContainer from '../../story/StoryNytThemesContainer';
-import messages from '../../../../resources/messages';
-import { urlToSource } from '../../../../lib/urlUtil';
-import { trimToMaxLength } from '../../../../lib/stringUtil';
-import Permissioned from '../../Permissioned';
-import { PERMISSION_ADMIN } from '../../../../lib/auth';
-import StatBar from '../../statbar/StatBar';
-import StoryRedditAttention from '../../story/StoryRedditAttention';
-import StoryImages from '../../story/StoryImages';
-import StoryQuoteTable from '../../story/StoryQuoteTable';
-import { safeStoryDate } from '../../StoryTable';
+import withAsyncData from '../hocs/AsyncDataContainer';
+import ActionMenu from '../ActionMenu';
+import { EditButton, ReadItNowButton, DownloadButton } from '../IconButton';
+import { fetchStory } from '../../../actions/storyActions';
+import TagListContainer from '../admin/story/TagListContainer';
+import StoryEntitiesContainer from './StoryEntitiesContainer';
+import StoryNytThemesContainer from './StoryNytThemesContainer';
+import messages from '../../../resources/messages';
+import { urlToSource } from '../../../lib/urlUtil';
+import { trimToMaxLength } from '../../../lib/stringUtil';
+import StatBar from '../statbar/StatBar';
+import StoryRedditAttention from './StoryRedditAttention';
+import StoryImages from './StoryImages';
+import StoryQuoteTable from './StoryQuoteTable';
+import { safeStoryDate } from '../StoryTable';
 
 const localMessages = {
-  title: { id: 'admin.story.title', defaultMessage: 'Admin Story Details: ' },
+  options: { id: 'details.story.options', defaultMessage: 'Admin Options' },
   close: { id: 'admin.story.inContext.close', defaultMessage: 'Close' },
   readThisStory: { id: 'admin.story.readThisStory', defaultMessage: 'Read This Story' },
   editThisStory: { id: 'admin.story.editThisStory', defaultMessage: 'Edit This Story' },
@@ -40,17 +38,13 @@ const localMessages = {
 };
 
 class SelectedStoryContainer extends React.Component {
-  goToUpdateUrl = (storyId) => {
-    window.location = `admin/story/${storyId}/update`;
-  }
-
   downloadCsv = (storyId) => {
     window.location = `/api/admin/story/${storyId}/storytags.csv`;
   }
 
   render() {
     const { selectedStory, selectedStoryId, handleStoryEditClick, handleStoryCachedTextClick, intl, nytThemesSet,
-      cliffOrgsSet, cliffPeopleSet } = this.props;
+      cliffOrgsSet, cliffPeopleSet, isAdmin } = this.props;
     const { formatMessage } = this.props.intl;
 
     let content = null;
@@ -59,12 +53,13 @@ class SelectedStoryContainer extends React.Component {
         <>
           <Row>
             <Col lg={12}>
-              <ActionMenu actionTextMsg={messages.options}>
-                <MenuItem onClick={() => window.open(selectedStory.url, '_blank')}>
-                  <ListItemText><FormattedMessage {...localMessages.readThisStory} /></ListItemText>
-                  <ListItemIcon><ReadItNowButton /></ListItemIcon>
-                </MenuItem>
-                <Permissioned onlyRole={PERMISSION_ADMIN}>
+              {isAdmin
+                && (
+                <ActionMenu actionTextMsg={localMessages.options}>
+                  <MenuItem onClick={() => window.open(selectedStory.url, '_blank')}>
+                    <ListItemText><FormattedMessage {...localMessages.readThisStory} /></ListItemText>
+                    <ListItemIcon><ReadItNowButton /></ListItemIcon>
+                  </MenuItem>
                   <MenuItem onClick={() => handleStoryCachedTextClick(selectedStoryId)}>
                     <ListItemText><FormattedMessage {...localMessages.readCachedCopy} /></ListItemText>
                   </MenuItem>
@@ -83,10 +78,9 @@ class SelectedStoryContainer extends React.Component {
                       <DownloadButton />
                     </ListItemIcon>
                   </MenuItem>
-                </Permissioned>
-              </ActionMenu>
+                </ActionMenu>
+)}
               <h2>
-                <FormattedMessage {...localMessages.title} />
                 <a href={selectedStory.url} target="_blank" rel="noopener noreferrer">{trimToMaxLength(selectedStory.title, 80)}</a>
               </h2>
             </Col>
@@ -135,35 +129,40 @@ class SelectedStoryContainer extends React.Component {
               />
             </Col>
           </Row>
-          <Row>
-            <Col lg={6}>
-              <TagListContainer
-                story={selectedStory}
-                tagToShow={(t) => t.tag_sets_id !== nytThemesSet && t.tag_sets_id !== cliffOrgsSet && t.tag_sets_id !== cliffPeopleSet}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={6}>
-              <h1><FormattedMessage {...localMessages.storyExtrasTitle} /></h1>
-              <p><FormattedMessage {...localMessages.storyExtrasDetails} /></p>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={12}>
-              <StoryRedditAttention storyId={selectedStory.stories_id} />
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={12}>
-              <StoryImages storyId={selectedStory.stories_id} />
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={12}>
-              <StoryQuoteTable storyId={selectedStory.stories_id} />
-            </Col>
-          </Row>
+          {isAdmin
+            && (
+            <>
+              <Row>
+                <Col lg={6}>
+                  <TagListContainer
+                    story={selectedStory}
+                    tagToShow={(t) => t.tag_sets_id !== nytThemesSet && t.tag_sets_id !== cliffOrgsSet && t.tag_sets_id !== cliffPeopleSet}
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col lg={6}>
+                  <h1><FormattedMessage {...localMessages.storyExtrasTitle} /></h1>
+                  <p><FormattedMessage {...localMessages.storyExtrasDetails} /></p>
+                </Col>
+              </Row>
+              <Row>
+                <Col lg={12}>
+                  <StoryRedditAttention storyId={selectedStory.stories_id} />
+                </Col>
+              </Row>
+              <Row>
+                <Col lg={12}>
+                  <StoryImages storyId={selectedStory.stories_id} />
+                </Col>
+              </Row>
+              <Row>
+                <Col lg={12}>
+                  <StoryQuoteTable storyId={selectedStory.stories_id} />
+                </Col>
+              </Row>
+            </>
+)}
         </>
       );
     }
@@ -183,6 +182,7 @@ SelectedStoryContainer.propTypes = {
   intl: PropTypes.object.isRequired,
   handleStoryCachedTextClick: PropTypes.func.isRequired,
   handleStoryEditClick: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
@@ -203,12 +203,12 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-const fetchAsyncData = (dispatch, { id }) => dispatch(fetchStory(id, { text: true }));
+const fetchAsyncData = (dispatch, { id, isAdmin }) => dispatch(fetchStory(id, { text: isAdmin }));
 
 export default
 injectIntl(
   connect(mapStateToProps, mapDispatchToProps)(
-    withAsyncData(fetchAsyncData, ['id'])(
+    withAsyncData(fetchAsyncData, ['id', 'isAdmin'])(
       SelectedStoryContainer
     )
   )

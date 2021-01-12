@@ -33,7 +33,7 @@ const PlatformDetailsInfo = ({ platform, media_tags }) => {
         channelContent = (
           <>
             <FormattedMessage {...messages.topicSourceCollectionsProp} />: &nbsp;
-            {channels.map(m => <OpenWebMediaItem justText key={m.media_id || m.tags_id} object={m} />)}
+            {channels.map((m, i) => <> <OpenWebMediaItem justText key={m.media_id || m.tags_id} object={m} /> {i === channels.length - 1 ? ' ' : ','}</>)}
           </>
         );
       }

@@ -2,7 +2,7 @@ import React from 'react';
 import Route from 'react-router/lib/Route';
 import ManageUsersContainer from '../components/common/admin/users/ManageUsersContainer';
 import UpdateUserContainer from '../components/common/admin/users/UpdateUserContainer';
-import StoryDetailsContainer from '../components/common/admin/story/StoryDetailsContainer';
+import StoryDetailsContainer from '../components/common/story/StoryDetailsContainer';
 import UpdateStoryContainer from '../components/common/admin/story/UpdateStoryContainer';
 import StoryCachedContainer from '../components/common/admin/story/StoryCachedContainer';
 import AdminWrapper from '../components/common/admin/AdminWrapper';

@@ -24,8 +24,8 @@ const localMessages = {
   lineChartTitle: { id: 'explorer.attention.lineChart.title', defaultMessage: 'Attention Over Time' },
   descriptionIntro: { id: 'explorer.attention.lineChart.intro', defaultMessage: '<p>Compare the attention paid to your queries over time to understand how they are covered. This chart shows the number of stories that match each of your queries. Spikes in attention can reveal key events. Plateaus can reveal stable, "normal", attention levels. Click a point to see words and headlines for those dates. Use the "view options" menu to switch between story counts and a percentage.</p>' },
   descriptionDetail: { id: 'explorer.attention.lineChart.detail', defaultMessage: '<p>This chart includes one line for each query in your search. Each line charts the number of stories that matched your query per day in the sources and collections you have specified.</p><p>Roll over the line chart to see the stories per day in that period of time. Click the download button in the top right to download the raw counts in a CSV spreadsheet. Click the three lines in the top right of the chart to export the chart as an image file.</p>' },
-  withKeywords: { id: 'explorer.attention.mode.withkeywords', defaultMessage: 'View Story Count (default)' },
-  withoutKeywords: { id: 'explorer.attention.mode.withoutkeywords', defaultMessage: 'View Normalized Story Percentage' },
+  withKeywords: { id: 'explorer.attention.mode.withkeywords', defaultMessage: 'View Story Count' },
+  withoutKeywords: { id: 'explorer.attention.mode.withoutkeywords', defaultMessage: 'View Normalized Story Percentage (default)' },
   downloadCsv: { id: 'explorer.attention.downloadCsv', defaultMessage: 'Download { name } story count over time CSV' },
   downloadAllCsv: { id: 'explorer.attention.downloadAllCsv', defaultMessage: 'Download all story counts over time CSV' },
 };
@@ -35,7 +35,7 @@ const VIEW_REGULAR = 'VIEW_REGULAR';
 
 class QueryAttentionOverTimeResultsContainer extends React.Component {
   state = {
-    view: VIEW_REGULAR, // which view to show (see view constants above)
+    view: VIEW_NORMALIZED, // which view to show (see view constants above)
   }
 
   setView = (nextView) => {
@@ -142,24 +142,18 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
               </MenuItem>
             </ActionMenu>
             <ActionMenu actionTextMsg={messages.viewOptions}>
-              <MenuItem
-                className={ACTION_MENU_ITEM_CLASS}
-                disabled={this.state.view === VIEW_REGULAR}
-                onClick={() => this.setView(VIEW_REGULAR)}
-              >
-                <ListItemText>
-                  <FormattedMessage {...localMessages.withKeywords} />
-                </ListItemText>
-              </MenuItem>
-              <MenuItem
-                className={ACTION_MENU_ITEM_CLASS}
-                disabled={this.state.view === VIEW_NORMALIZED}
-                onClick={() => this.setView(VIEW_NORMALIZED)}
-              >
-                <ListItemText>
-                  <FormattedMessage {...localMessages.withoutKeywords} />
-                </ListItemText>
-              </MenuItem>
+              {[{ view: VIEW_NORMALIZED, msg: 'withoutKeywords' }, { view: VIEW_REGULAR, msg: 'withKeywords' }].map(options => (
+                <MenuItem
+                  key={options.view}
+                  className={ACTION_MENU_ITEM_CLASS}
+                  disabled={this.state.view === options.view}
+                  onClick={() => this.setView(options.view)}
+                >
+                  <ListItemText>
+                    <FormattedMessage {...localMessages[options.msg]} />
+                  </ListItemText>
+                </MenuItem>
+              ))}
               <Divider />
               {this.props.attentionAggregationMenuItems}
             </ActionMenu>

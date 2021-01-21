@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import Snackbar from '@material-ui/core/Snackbar';
 import intl from 'intl';  // eslint-disable-line
 import intlEn from 'intl/locale-data/jsonp/en.js';  // eslint-disable-line
-import { Row } from 'react-flexbox-grid/lib';
+import { Col, Row } from 'react-flexbox-grid/lib';
 import NavToolbar from './common/header/NavToolbar';
 import ErrorBoundary from './common/ErrorBoundary';
 import messages from '../resources/messages';
@@ -77,24 +77,32 @@ class AppContainer extends React.Component {
           </div>
         </ErrorBoundary>
         <footer>
-          <p>
-            <small>
-              {'Created by the '}
-              <a href="https://civic.mit.edu/">
-                <FormattedMessage {...messages.c4cmName} />
-              </a>
-              {' and the '}
-              <a href="https://cyber.law.harvard.edu">
-                <FormattedMessage {...messages.berkmanName} />
-              </a>.
-              <br />
-              <FormattedHTMLMessage {...messages.supportOptions} />
-              <br />
-              <a href="https://mediacloud.org/privacy-policy"><FormattedHTMLMessage {...localMessages.privacyPolicy} /></a>
-              <br />
-              v{getVersion()}
-            </small>
-          </p>
+          <Row center="md">
+            <Col lg={6} md={8}>
+              <p>
+                <small>
+                  Media Cloud is a consortium research project across multiple institutions, including the {' '}
+                  <a href="https://www.umass.edu/">
+                    University of Massachusetts at Amherst
+                  </a>
+                  , {' '}
+                  <a href="https://www.northeastern.edu/">
+                    Northeastern University
+                  </a>
+                  , and {' '}
+                  <a href="https://cyber.law.harvard.edu">
+                    the Berkman Klein Center for Internet & Society at Harvard University
+                  </a>.
+                  <br />
+                  <FormattedHTMLMessage {...messages.supportOptions} />
+                  <br />
+                  <a href="https://mediacloud.org/privacy-policy"><FormattedHTMLMessage {...localMessages.privacyPolicy} /></a>
+                  <br />
+                  v{getVersion()}
+                </small>
+              </p>
+            </Col>
+          </Row>
         </footer>
         <Snackbar
           className={feedback.classes ? feedback.classes : 'info_notice'}

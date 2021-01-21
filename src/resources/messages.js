@@ -15,8 +15,6 @@ const messages = {
   explorerToolDescription: { id: 'app.explorer.description', defaultMessage: 'Get a quick overview of how your topic of interest is covered by digital news media by exploring attention, language, and entities.' },
   readGuide: { id: 'app.readGuide', defaultMessage: 'Visit Our Support Page' },
 
-  c4cmName: { id: 'c4cm.name', defaultMessage: 'MIT Center for Civic Media' },
-  berkmanName: { id: 'berkman.name', defaultMessage: 'Berkman Klein Center for Internet and Society at Harvard University' },
   userLogin: { id: 'user.login', defaultMessage: 'Login' },
   userLogout: { id: 'user.logout', defaultMessage: 'Logout' },
   unlimited: { id: 'user.unlimited', defaultMessage: 'Unlimited' },

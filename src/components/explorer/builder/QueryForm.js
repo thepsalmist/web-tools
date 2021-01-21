@@ -21,6 +21,7 @@ import { isStartDateAfterEndDate, isValidSolrDate } from '../../../lib/dateUtil'
 import { KEYWORD, MEDIA, DATES, getQFromCodeMirror } from '../../../lib/explorerUtil';
 import { ALL_MEDIA } from '../../../lib/mediaUtil';
 import messages from '../../../resources/messages';
+import TrackingEvent, { CLICK_ACTION, EXPLORER_SEARCH_CATEGORY } from '../../../lib/tracking';
 
 const formSelector = formValueSelector('queryForm');
 
@@ -82,8 +83,16 @@ class QueryForm extends React.Component {
     return anyQueriesNoMedia || thisCurrentQueryFormNoMedia;
   }
 
+  onSubmitClick = (e) => {
+    const { onWillSearch } = this.props;
+    if (onWillSearch) {
+      onWillSearch(e);
+    }
+    TrackingEvent(EXPLORER_SEARCH_CATEGORY, CLICK_ACTION);
+  }
+
   render() {
-    const { initialValues, onWillSearch, selected, buttonLabel, onMediaDelete, onDateChange,
+    const { initialValues, selected, buttonLabel, onMediaDelete, onDateChange,
       onDeleteSearch, onLoadSearches, savedSearches, searchNickname, onSaveSearch,
       submitting, handleSubmit, onSave, onMediaChange, renderSolrTextField, renderTextField, /* renderTextFieldWithFocus, */
       onCopyAll } = this.props;
@@ -269,7 +278,7 @@ class QueryForm extends React.Component {
                     type="submit"
                     label={buttonLabel}
                     disabled={(queriesMissingMedia > 0) || submitting}
-                    onClick={onWillSearch}
+                    onClick={(e) => this.onSubmitClick(e)}
                     primary
                   />
                 </div>

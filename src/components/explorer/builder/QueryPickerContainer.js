@@ -24,6 +24,8 @@ import { ALL_MEDIA } from '../../../lib/mediaUtil';
 import { queryAsString, replaceCurlyQuotes } from '../../../lib/stringUtil';
 import messages from '../../../resources/messages';
 import { PARTISANSHIP_COLORS } from '../../../lib/colorUtil';
+import TrackingEvent, { CLICK_ACTION, EXPLORER_SEARCH_LOAD, EXPLORER_SEARCH_SAVE } from '../../../lib/tracking';
+
 
 // helpers for the quick query comparison shortcut
 const COMPARE_US_PARTISANSHIP = 'COMPARE_US_PARTISANSHIP';
@@ -138,6 +140,7 @@ class QueryPickerContainer extends React.Component {
       queries: JSON.stringify(queriesToSave),
     };
     sendAndSaveUserSearch(userSearch);
+    TrackingEvent(EXPLORER_SEARCH_SAVE, CLICK_ACTION);
   }
 
   handleSelectedQueryChange = (nextSelectedQuery) => {
@@ -483,6 +486,7 @@ endDate,
   },
   handleLoadUserSearches: () => {
     dispatch(loadUserSearches());
+    TrackingEvent(EXPLORER_SEARCH_LOAD, CLICK_ACTION);
   },
   handleDeleteUserSearch: (selectedSearch) => {
     if (selectedSearch && selectedSearch.queryName) {

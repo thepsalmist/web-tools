@@ -81,7 +81,7 @@ class SummarizedVizualizationInternal extends React.Component {
     return (
       <div className={`summarized-viz ${wide ? 'wide' : ''}`}>
         <Row>
-          <Col lg={wide ? 3 : 4}>
+          <Col lg={wide ? 12 : 4}>
             <div className="summary">
               { titleMessage && <h2><FormattedHTMLMessage {...titleMessage} /></h2> }
               { detailsExploreContent }
@@ -93,7 +93,7 @@ class SummarizedVizualizationInternal extends React.Component {
             </div>
           </Col>
           {!wide && <Col lg={1} />}
-          <Col lg={wide ? 9 : 7}>
+          <Col lg={wide ? 12 : 7}>
             <div className="content">
               {children}
             </div>

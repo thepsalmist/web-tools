@@ -88,7 +88,7 @@ class TopicSummaryContainer extends React.Component {
                     handleExplore={urlWithFilters(`/topics/${topic.topics_id}/stories`, filters)}
                     wide
                   >
-                    <TopicStoriesContainer uid="topic" border={false} />
+                    <TopicStoriesContainer uid="topic" border />
                   </SummarizedVizualization>
                 </Col>
               </Row>
@@ -101,7 +101,7 @@ class TopicSummaryContainer extends React.Component {
                     handleExplore={urlWithFilters(`/topics/${topic.topics_id}/media`, filters)}
                     wide
                   >
-                    <TopicMediaContainer uid="topic" border={false} />
+                    <TopicMediaContainer uid="topic" border />
                   </SummarizedVizualization>
                 </Col>
               </Row>
@@ -162,7 +162,7 @@ class TopicSummaryContainer extends React.Component {
                       uid="people"
                       tagSetsId={cliffPeopleSet}
                       tagsId={cliffVersionTags}
-                      border={false}
+                      border
                     />
                   </SummarizedVizualization>
                 </Col>
@@ -179,7 +179,7 @@ class TopicSummaryContainer extends React.Component {
                       uid="orgs"
                       tagSetsId={cliffOrgsSet}
                       tagsId={cliffVersionTags}
-                      border={false}
+                      border
                     />
                   </SummarizedVizualization>
                 </Col>

@@ -23,6 +23,9 @@ import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
 import TopicStoriesContainer from '../provider/TopicStoriesContainer';
 import TopicTagUseContainer from '../provider/TopicTagUseContainer';
 import TopicMediaContainer from '../provider/TopicMediaContainer';
+import TrackingEvent, { CLICK_ACTION, TOPICS_SUMMARY_TAB_INFLUENCE, TOPICS_SUMMARY_TAB_ATTENTION,
+  TOPICS_SUMMARY_TAB_LANGUAGE, TOPICS_SUMMARY_TAB_ENTITIES, TOPICS_SUMMARY_TAB_STATS,
+  TOPICS_SUMMARY_TAB_EXPORT } from '../../../lib/tracking';
 
 const localMessages = {
   title: { id: 'topic.summary.summary.title', defaultMessage: 'Topic: {name}' },
@@ -48,9 +51,17 @@ class TopicSummaryContainer extends React.Component {
     selectedTab: 0,
   };
 
-  filtersAreSet() {
+  filtersAreSet = () => {
     const { filters, topic } = this.props;
     return (topic.topics_id && filters.snapshotId && filters.timespanId);
+  }
+
+  onViewSelected = (index) => {
+    const categories = [TOPICS_SUMMARY_TAB_INFLUENCE, TOPICS_SUMMARY_TAB_ATTENTION,
+      TOPICS_SUMMARY_TAB_LANGUAGE, TOPICS_SUMMARY_TAB_ENTITIES, TOPICS_SUMMARY_TAB_STATS,
+      TOPICS_SUMMARY_TAB_EXPORT];
+    TrackingEvent(categories[index], CLICK_ACTION);
+    this.setState({ selectedTab: index });
   }
 
   render() {
@@ -258,7 +269,7 @@ class TopicSummaryContainer extends React.Component {
                   formatMessage(localMessages.statsTabTitle),
                   formatMessage(localMessages.exportTabTitle),
                 ]}
-                onViewSelected={index => this.setState({ selectedTab: index })}
+                onViewSelected={index => this.onViewSelected(index)}
               />
             </Row>
           </Grid>

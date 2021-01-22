@@ -8,6 +8,9 @@ import { PlayButton, PauseButton, NextButton, PreviousButton } from '../common/I
 import { getBrandDarkColor } from '../../styles/colors';
 import TimespanDateRange from '../topic/TimespanDateRange';
 import TimespanPeriodSelector from '../topic/controlbar/timespans/TimespanPeriodSelector';
+import TrackingEvent, { CLICK_ACTION, TOPICS_WORD2VEC_TIMESPAN_PLAYER_PAUSE, TOPICS_WORD2VEC_TIMESPAN_PLAYER_PLAY,
+  TOPICS_WORD2VEC_TIMESPAN_PLAYER_PREVIOUS, TOPICS_WORD2VEC_TIMESPAN_PLAYER_NEXT } from '../../lib/tracking';
+
 
 const DEFAULT_SLIDESHOW_SPEED = 2000;
 const DEFAULT_ENTER_TIMEOUT = 1000;
@@ -54,6 +57,7 @@ class Word2VecTimespanPlayer extends React.Component {
     if (!this.state.isPlaying) {
       this.setState(() => ({ isPlaying: true }));
       this.interval = setInterval(this.tick, speed);
+      TrackingEvent(TOPICS_WORD2VEC_TIMESPAN_PLAYER_PLAY, CLICK_ACTION);
     }
   }
 
@@ -61,6 +65,7 @@ class Word2VecTimespanPlayer extends React.Component {
     if (this.state.isPlaying) {
       clearInterval(this.interval);
       this.setState(() => ({ isPlaying: false }));
+      TrackingEvent(TOPICS_WORD2VEC_TIMESPAN_PLAYER_PAUSE, CLICK_ACTION);
     }
   }
 
@@ -68,6 +73,7 @@ class Word2VecTimespanPlayer extends React.Component {
     this.pauseSlideShow();
     if (this.state.currentTimespanIndex > 0) {
       this.setState(prevState => ({ currentTimespanIndex: prevState.currentTimespanIndex - 1 }));
+      TrackingEvent(TOPICS_WORD2VEC_TIMESPAN_PLAYER_PREVIOUS, CLICK_ACTION);
     }
   }
 
@@ -75,6 +81,7 @@ class Word2VecTimespanPlayer extends React.Component {
     this.pauseSlideShow();
     if (this.state.currentTimespanIndex < this.state.currentPeriodList.length - 1) {
       this.setState(prevState => ({ currentTimespanIndex: prevState.currentTimespanIndex + 1 }));
+      TrackingEvent(TOPICS_WORD2VEC_TIMESPAN_PLAYER_NEXT, CLICK_ACTION);
     }
   }
 

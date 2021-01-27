@@ -108,7 +108,7 @@ class ManageSourcesContainer extends React.Component {
             <Col lg={11}>
               <p><FormattedMessage {...localMessages.reviewDesc} /></p>
             </Col>
-            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.review, { count: '' }))} />
+            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv('review')} />
           </Row>
         );
         break;
@@ -129,7 +129,7 @@ class ManageSourcesContainer extends React.Component {
               <Col lg={11}>
                 <p><FormattedMessage {...localMessages.reviewDesc} /></p>
               </Col>
-              <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.remove, { count: '' }))} />
+              <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv('remove')} />
             </Row>
             <Row>
               {removeAllButton}
@@ -144,7 +144,7 @@ class ManageSourcesContainer extends React.Component {
             <Col lg={11}>
               <p><FormattedMessage {...localMessages.unscrapeableDesc} /></p>
             </Col>
-            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.unscrapeable, { count: '' }))} />
+            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv('unscrapeable')} />
           </Row>
         );
         break;
@@ -155,7 +155,7 @@ class ManageSourcesContainer extends React.Component {
             <Col lg={11}>
               <p><FormattedMessage {...localMessages.workingDesc} /></p>
             </Col>
-            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.working, { count: '' }))} />
+            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv('working')} />
           </Row>
         );
         break;
@@ -164,7 +164,7 @@ class ManageSourcesContainer extends React.Component {
         viewDesc = (
           <Row>
             <Col lg={11} />
-            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv(formatMessage(localMessages.all, { count: '' }))} />
+            <DownloadButton tooltip={formatMessage(messages.download)} onClick={() => this.downloadCsv('all')} />
           </Row>
         );
         break;

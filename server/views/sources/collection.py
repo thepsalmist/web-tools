@@ -197,7 +197,7 @@ def api_collection_sources_feed_status_csv(collection_id, source_type):
         filtered_media = [m for m in media_info_in_collection
                           if m['active_feed_count'] > 0 and m['num_stories_last_year'] > 0]
     else:
-        filtered_media = media_info_in_collection
+        filtered_media = [m for m in media_info_in_collection]
     file_prefix = "Collection {} ({}) - sources feed {}".format(collection_id, collection['tag'], source_type)
     properties_to_include = SOURCE_FEED_LIST_CSV_PROPS
     return csv.download_media_csv(filtered_media, file_prefix, properties_to_include)

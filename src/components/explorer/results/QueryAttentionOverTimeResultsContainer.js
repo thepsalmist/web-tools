@@ -15,6 +15,7 @@ import AttentionOverTimeChart, { dataAsSeries } from '../../vis/AttentionOverTim
 import { DownloadButton } from '../../common/IconButton';
 import ActionMenu from '../../common/ActionMenu';
 import { oneDayLater, solrFormat } from '../../../lib/dateUtil';
+import TrackingEvent, { CLICK_ACTION, EXPLORER_ATTENTION_TIME_DETAILS } from '../../../lib/tracking';
 import { postToDownloadUrl, postToCombinedDownloadUrl, ACTION_MENU_ITEM_CLASS, ensureSafeResults, serializeSearchTags } from '../../../lib/explorerUtil';
 import messages from '../../../resources/messages';
 import { FETCH_INVALID } from '../../../lib/fetchConstants';
@@ -60,6 +61,7 @@ class QueryAttentionOverTimeResultsContainer extends React.Component {
       };
       dataPoint.end_date = solrFormat(oneDayLater(endDate), true);
       selectDataPoint({ dataPoint, point0x, pointValue });
+      TrackingEvent(EXPLORER_ATTENTION_TIME_DETAILS, CLICK_ACTION);
     } else {
       onShowLoginDialog();
     }

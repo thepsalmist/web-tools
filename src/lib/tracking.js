@@ -12,6 +12,9 @@ export const EXPLORER_RESULTS_TAB_ATTENTION = 'mc.bi.explorer.results.tab.attent
 export const EXPLORER_RESULTS_TAB_LANGUAGE = 'mc.bi.explorer.results.tab.language';
 export const EXPLORER_RESULTS_TAB_ENTITIES = 'mc.bi.explorer.results.tab.entities';
 
+export const EXPLORER_ATTENTION_TIME_DETAILS = 'mc.bi.explorer.attention.time.details';
+export const EXPLORER_ATTENTION_SAMPLE_DETAILS = 'mc.bi.explorer.attention.sample.details';
+
 // categories - topics
 export const TOPICS_SUMMARY_TAB_INFLUENCE = 'mc.bi.topics.summary.tab.influence';
 export const TOPICS_SUMMARY_TAB_ATTENTION = 'mc.bi.topics.summary.tab.attention';

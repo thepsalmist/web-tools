@@ -14,6 +14,7 @@ import StoryTable from '../../common/StoryTable';
 import { fetchQuerySampleStories } from '../../../actions/explorerActions';
 import { selectStory, fetchStory } from '../../../actions/storyActions';
 import { postToDownloadUrl } from '../../../lib/explorerUtil';
+import TrackingEvent, { CLICK_ACTION, EXPLORER_ATTENTION_SAMPLE_DETAILS } from '../../../lib/tracking';
 import messages from '../../../resources/messages';
 import withQueryResults from './QueryResultsSelector';
 
@@ -41,13 +42,18 @@ class QuerySampleStoriesResultsContainer extends React.Component {
     postToDownloadUrl('/api/explorer/stories/all-story-urls.csv', query);
   }
 
+  handleSelectStory = (story) => {
+    this.onStorySelection(story);
+    TrackingEvent(EXPLORER_ATTENTION_SAMPLE_DETAILS, CLICK_ACTION);
+  }
+
   render() {
     const { results, selectedQuery, tabSelector, internalItemSelected } = this.props;
     const showMoreInfoColHdr = <th />;
     const showMoreInfoCol = story => (
       <td>
         <AppButton
-          onClick={() => this.onStorySelection(story)}
+          onClick={() => this.handleSelectStory(story)}
           label={localMessages.showMetadata}
         />
       </td>

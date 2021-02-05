@@ -24,7 +24,7 @@ import { ALL_MEDIA } from '../../../lib/mediaUtil';
 import { queryAsString, replaceCurlyQuotes } from '../../../lib/stringUtil';
 import messages from '../../../resources/messages';
 import { PARTISANSHIP_COLORS } from '../../../lib/colorUtil';
-import TrackingEvent, { CLICK_ACTION, EXPLORER_SEARCH_LOAD, EXPLORER_SEARCH_SAVE } from '../../../lib/tracking';
+import TrackingEvent, { CLICK_ACTION, EXPLORER_SEARCH_LOAD, EXPLORER_SEARCH_SAVE, EXPLORER_SHORTCUT_COMPARE } from '../../../lib/tracking';
 
 
 // helpers for the quick query comparison shortcut
@@ -213,6 +213,7 @@ quickCompareConfirmOpen: true });
   handleQuickCompareConfirm = () => {
     const { handleReplaceQueries, selected } = this.props;
     this.setState({ quickCompareConfirmOpen: false });
+    TrackingEvent(EXPLORER_SHORTCUT_COMPARE, CLICK_ACTION, this.state.quickCompareSelectedType);
     handleReplaceQueries(selected, this.state.quickCompareSelectedType);
   }
 

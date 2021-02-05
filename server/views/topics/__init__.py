@@ -107,4 +107,6 @@ def stories_args_from_request(request_args):
         'link_id': request_args.get('linkId'),
         'link_to_stories_id': request_args.get('linkToStoriesId'),
         'link_from_stories_id': request_args.get('linkFromStoriesId'),
+        'link_to_media_id': request_args.get('linkToMediaId'),
+        'link_from_media_id': request_args.get('linkFromMediaId'),
     }

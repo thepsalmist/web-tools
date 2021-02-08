@@ -25,13 +25,7 @@ Building and Pushing a Release
 1. Update the version number in `./package.json`.
 1. Update release notes in `server/static/data/release_history.json`
    1. Commit these files
-1. Build the release version of the JS and CSS: `npm run topics-release`, or `npm run sources-release`, etc.
-   1. Commit those built files
-1. Tag the new build with the appropriate release label (ie. "git tag sources-v2.7.3" or "git tag topics-v2.4.3") -
-see `version-control.md` for more details
-1. Push the tag(s) `git push origin --tags`
-1. Push the tagged release to the appropriate production Dokku server with git (ie.
-`git push prod-explorer explorer-v3.1.x:main`)
+1. Build and release the new version using `make deploy-app version=[VERSION] app=[topics|explorer|sources|tools]`
 1. Make sure it works on the server
 1. Create a PR on GitHub from your branch back to master (so the changes get merged in)
 

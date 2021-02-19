@@ -1,7 +1,7 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 const path = require('path');
 const merge = require('webpack-merge');
-// const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const ManifestRevisionPlugin = require('manifest-revision-webpack-plugin');
 const baseConfig = require('./webpack.base.config');
@@ -34,14 +34,9 @@ const prodConfig = {
   mode: 'production',
   // do some code optimization for production builds
   optimization: {
+    minimize: true,
     minimizer: [
-      // do some standard obfuscatino
-      /*
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-      }),
-      */
+      new TerserPlugin(),
       new OptimizeCSSAssetsPlugin({
         cssProcessorOptions: { discardComments: { removeAll: true } },
       }),

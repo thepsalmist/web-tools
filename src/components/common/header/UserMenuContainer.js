@@ -5,7 +5,6 @@ import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
 import Divider from '@material-ui/core/Divider';
-// import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import { PERMISSION_LOGGED_IN, logout } from '../../../lib/auth';
@@ -13,21 +12,6 @@ import Permissioned from '../Permissioned';
 import messages from '../../../resources/messages';
 import { PersonButton } from '../IconButton';
 import { defaultMenuOriginProps } from '../../util/uiUtil';
-
-/*
-const styles = {
-  root: {
-    borderColor: 'white',
-  },
-  label: {
-    color: 'white',
-  },
-};
-*/
-
-const localMessages = {
-  apiConsole: { id: 'userMenu.apiConsole', defaultMessage: 'Api Console' },
-};
 
 // A permissioned menu of user-related activities, for display on a nav bar or something.
 class UserMenuContainer extends React.Component {
@@ -63,10 +47,6 @@ class UserMenuContainer extends React.Component {
             </MenuItem>
             <MenuItem onClick={() => { this.handleClose(); routeToUrl('/user/change-password'); }}>
               <FormattedMessage {...messages.userChangePassword} />
-            </MenuItem>
-            <Divider />
-            <MenuItem onClick={() => { this.handleClose(); routeToUrl('/api-console'); }}>
-              <FormattedMessage {...localMessages.apiConsole} />
             </MenuItem>
             <Divider />
             <MenuItem id="user-logout" onClick={logout}>

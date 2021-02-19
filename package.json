@@ -75,7 +75,6 @@
     "sigma": "^1.2.1",
     "simple-assign": "^0.1.0",
     "slugify": "^1.4.0",
-    "swagger-ui-react": "^3.25.4",
     "uuid": "^8.1.0"
   },
   "devDependencies": {

@@ -109,7 +109,7 @@ class TopicStoryTable extends React.Component {
               )}
               <th>{}</th>
               <th><FormattedMessage {...messages.focusHeader} /></th>
-              {hasAUrlSharingFocalSet && urlSharingSubtopicNames.map(name => <th>{name}<br /><FormattedMessage {...localMessages.urlSharingSubtopicDataNames} /></th>)}
+              {hasAUrlSharingFocalSet && urlSharingSubtopicNames && urlSharingSubtopicNames.map(name => <th>{name}<br /><FormattedMessage {...localMessages.urlSharingSubtopicDataNames} /></th>)}
             </tr>
             {stories.map((story, idx) => {
               const domain = storyDomainName(story);

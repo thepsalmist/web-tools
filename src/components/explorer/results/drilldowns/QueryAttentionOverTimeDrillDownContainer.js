@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Col } from 'react-flexbox-grid/lib';
+import { Grid, Container } from '@material-ui/core';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { fetchQueryPerDateTopWords, fetchQueryPerDateSampleStories,
@@ -52,20 +52,22 @@ class QueryAttentionOverTimeDrillDownContainer extends React.Component {
       content = (
         <div className="drill-down" ref={this.rootRef}>
           <CloseableDataCard title={dateTitle} onClose={handleClose}>
-            <>
-              { sentences && (
-                <Col lg={6}>
-                  <h3 style={{ rgbColor }}><FormattedMessage {...localMessages.sampleSentences} /></h3>
-                  <StorySentencePreview sentences={sentences.slice(0, 8)} />
-                </Col>
-              )}
-              { words && (
-                <Col lg={6}>
-                  <h3 style={{ rgbColor }}><FormattedMessage {...localMessages.topWords} /></h3>
-                  <OrderedWordCloud words={words} textColor={`rgb(${rgbColor[0]}, ${rgbColor[1]}, ${rgbColor[2]})`} />
-                </Col>
-              )}
-            </>
+            <Container>
+              <Grid container spacing={3}>
+                { sentences && (
+                  <Grid item lg={6} md={3} sm={12}>
+                    <h3 style={{ rgbColor }}><FormattedMessage {...localMessages.sampleSentences} /></h3>
+                    <StorySentencePreview sentences={sentences.slice(0, 8)} />
+                  </Grid>
+                )}
+                { words && (
+                  <Grid item lg={6} md={9} sm={12}>
+                    <h3 style={{ rgbColor }}><FormattedMessage {...localMessages.topWords} /></h3>
+                    <OrderedWordCloud words={words} textColor={`rgb(${rgbColor.join(',')}`} />
+                  </Grid>
+                )}
+              </Grid>
+            </Container>
           </CloseableDataCard>
         </div>
       );

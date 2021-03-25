@@ -190,8 +190,9 @@ def _update_source_job(source_info):
     user_mc = user_admin_mediacloud_client()
     media_id = source_info['media_id']
     logger.debug("Updating media {}".format(media_id))
+    status_fields = ['status', 'status_message']
     source_no_metadata_no_id = {k: v for k, v in list(source_info.items()) if k != 'media_id'
-                                and k not in SOURCE_LIST_CSV_METADATA_PROPS}
+                                and k not in [SOURCE_LIST_CSV_METADATA_PROPS + status_fields]}
     response = user_mc.mediaUpdate(media_id, source_no_metadata_no_id)
     source_info['response'] = response
     return source_info
@@ -230,7 +231,7 @@ def _create_or_update_sources(source_list_from_csv, create_new):
         chunk_size = 5  # @ 10, each call takes over a minute; @ 5 each takes around ~40 secs
         media_to_create_batches = [sources_to_create_no_metadata[x:x + chunk_size]
                                    for x in range(0, len(sources_to_create_no_metadata), chunk_size)]
-        creation_batched_responses = _create_media_job.map(media_to_create_batches)
+        creation_batched_responses = _create_media_job.map(media_to_create_batches, chunksize=chunk_size)
         creation_responses = []
         for responses in creation_batched_responses:
             creation_responses = creation_responses + responses
@@ -324,7 +325,7 @@ def update_metadata_for_sources(source_list):
         TagSetDiscoverer().media_subject_country_set: 'subject_country',
         TagSetDiscoverer().media_type_set: 'media_type',
     }
-    for tags_id in TagSetDiscoverer().media_metadata_sets:
+    for tags_id in TagSetDiscoverer().media_metadata_sets():
         col_name = tag_sets_id_2_name_lookup[tags_id]
         tag_codes = tags_in_tag_set(TOOL_API_KEY, tags_id)
         for source in source_list:

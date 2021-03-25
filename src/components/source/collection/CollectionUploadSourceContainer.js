@@ -85,7 +85,7 @@ class CollectionUploadSourceContainer extends React.Component {
         <br />
         <br />
         <b><FormattedMessage {...messages.upload} />:</b> &nbsp;
-        <input type="file" onChange={this.uploadCSV} ref={(input) => { this.textInput = input; }} disabled={this.state && this.state.confirmTemplate} />
+        <input type="file" onChange={this.uploadCSV} accept=".csv" ref={(input) => { this.textInput = input; }} disabled={this.state && this.state.confirmTemplate} />
         { confirmContent }
       </div>
     );

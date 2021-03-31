@@ -27,7 +27,7 @@ Building and Pushing a Release
    1. Commit these files
 1. Build and release the new version using `make deploy-app version=[VERSION] app=[topics|explorer|sources|tools]`
 1. Make sure it works on the server
-1. Create a PR on GitHub from your branch back to master (so the changes get merged in)
+1. Cherry-pick commits from the branch back to main (so the changes get merged in)
 
 Bug Fixes and Patches
 ---------------------

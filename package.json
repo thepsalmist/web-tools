@@ -6,18 +6,18 @@
     "node": ">=12.14.0"
   },
   "scripts": {
-    "explorer-dev": "MC_APP_NAME=explorer webpack-dev-server --config config/webpack.config.js",
-    "explorer-release": "NODE_ENV=production MC_APP_NAME=explorer webpack --config config/webpack.config.js",
-    "sources-dev": "MC_APP_NAME=sources webpack-dev-server --config config/webpack.config.js",
-    "sources-release": "NODE_ENV=production MC_APP_NAME=sources webpack --config config/webpack.config.js",
-    "topics-dev": "MC_APP_NAME=topics webpack-dev-server --config config/webpack.config.js",
-    "topics-release": "NODE_ENV=production MC_APP_NAME=topics webpack --config config/webpack.config.js",
-    "tools-dev": "MC_APP_NAME=tools webpack-dev-server --config config/webpack.config.js",
-    "tools-release": "NODE_ENV=production MC_APP_NAME=tools webpack --config config/webpack.config.js",
-    "requirements-check": "node scripts/check-version.js",
-    "postinstall": "npm run requirements-check",
-    "lint": "npx eslint src/",
-    "lint_fix": "eslint --fix --ext .js --ext .jsx ./src/"
+    "explorer-dev": "cross-env MC_APP_NAME=explorer webpack-dev-server --config config/webpack.config.js",
+    "explorer-release": "cross-env NODE_ENV=production MC_APP_NAME=explorer webpack --config config/webpack.config.js",
+    "sources-dev": "cross-env MC_APP_NAME=sources webpack-dev-server --config config/webpack.config.js",
+    "sources-release": "cross-env NODE_ENV=production MC_APP_NAME=sources webpack --config config/webpack.config.js",
+    "topics-dev": "cross-env MC_APP_NAME=topics webpack-dev-server --config config/webpack.config.js",
+    "topics-release": "cross-env NODE_ENV=production MC_APP_NAME=topics webpack --config config/webpack.config.js",
+    "tools-dev": "cross-env MC_APP_NAME=tools webpack-dev-server --config config/webpack.config.js",
+    "tools-release": "cross-env NODE_ENV=production MC_APP_NAME=tools webpack --config config/webpack.config.js",
+    "requirements-check": "cross-env node scripts/check-version.js",
+    "postinstall": "cross-env npm run requirements-check",
+    "lint": "cross-env npx eslint src/",
+    "lint_fix": "cross-env eslint --fix --ext .js --ext .jsx ./src/"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.1",
@@ -99,6 +99,7 @@
     "cache-loader": "^4.1.0",
     "case-sensitive-paths-webpack-plugin": "^2.3.0",
     "clean-webpack-plugin": "^3.0.0",
+    "cross-env": "^7.0.3",
     "css-loader": "^3.5.3",
     "eslint": "^7.13.0",
     "eslint-config-airbnb": "^18.1.0",

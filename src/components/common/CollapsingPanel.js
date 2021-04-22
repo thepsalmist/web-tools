@@ -1,9 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { Row, Col } from 'react-flexbox-grid/lib';
+
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
 class CollapsingPanel extends React.Component {
   state = {
@@ -18,16 +21,18 @@ class CollapsingPanel extends React.Component {
   render() {
     const { titleMsg, children } = this.props;
     return (
-      <div className={`collapsing-panel ${this.state.open ? 'open' : 'closed'}`}>
-        <Row>
-          <Col lg={11}><h3><FormattedMessage {...titleMsg} /></h3></Col>
-          <Col lg={1}>
-            {!this.state.open && (<ExpandMoreIcon onClick={this.handleToggle} />)}
-            {this.state.open && (<ExpandLessIcon onClick={this.handleToggle} />)}
-          </Col>
-        </Row>
-        {this.state.open && children}
-      </div>
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <h3><FormattedMessage {...titleMsg} /></h3>
+        </AccordionSummary>
+        <AccordionDetails>
+          {children}
+        </AccordionDetails>
+      </Accordion>
     );
   }
 }

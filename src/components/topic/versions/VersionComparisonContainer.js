@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import { Box, Grid } from '@material-ui/core';
 import { push } from 'react-router-redux';
 import AppButton from '../../common/AppButton';
 import { topicSnapshotGenerate } from '../../../actions/topicActions';
@@ -10,12 +10,13 @@ import { updateFeedback } from '../../../actions/appActions';
 import TopicVersionReadySummary from './TopicVersionReadySummary';
 import GenerateVersionAdminDialog, { FIELD_NEW_VERSION, FIELD_SPIDER } from './GenerateVersionAdminDialog';
 import Permissioned from '../../common/Permissioned';
+import DataCard from '../../common/DataCard';
 import { PERMISSION_ADMIN } from '../../../lib/auth';
 
 const localMessages = {
   title: { id: 'versions.comparison.title', defaultMessage: 'Version {versionNumber}: Summary' },
-  createVersionAndStartSpider: { id: 'versions.comparison.generate', defaultMessage: 'Generate New Version' },
-  versionDiffTitle: { id: 'versions.comparison.versionDiffTitle', defaultMessage: 'You\'ve Made Changes' },
+  createVersionAndStartSpider: { id: 'versions.comparison.generate', defaultMessage: 'Finish: Generate New Version' },
+  versionDiffTitle: { id: 'versions.comparison.versionDiffTitle', defaultMessage: 'Finish: Confirm Your Changes' },
   applyChanges: { id: 'versions.comparison.applyChanges', defaultMessage: 'apply your changes' },
   failed: { id: 'versions.comparison.failed', defaultMessage: 'Sorry, something went wrong!' },
   worked: { id: 'versions.comparison.worked', defaultMessage: 'We started generating the version' },
@@ -41,32 +42,30 @@ class VersionComparisonContainer extends React.Component {
     const submitting = this.state.submittingVersion;
     const currentSnapshotsId = current ? current.snapshots_id : null;
     return (
-      <div className="version-comparison">
-        <Grid>
-          <Row>
-            <Col lg={12}>
-              <h2><FormattedMessage {...localMessages.versionDiffTitle} /></h2>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={5}>
-              <div className="topic-info-sidebar faded">
-                {current && (
-                  <>
-                    <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current ? current.note : 1 }} /></h2>
-                    <TopicVersionReadySummary topic={topic} snapshot={current} startWithDetailsShowing />
-                  </>
-                )}
-                {(current === null) && (
-                  <h2><FormattedMessage {...localMessages.noPrevious} /></h2>
-                )}
-              </div>
-            </Col>
-            <Col lg={2}>
-              <span style={{ display: 'block', fontSize: '56px', marginTop: '120px', textAlign: 'center' }}>➡</span>
-            </Col>
-            <Col lg={5}>
-              <div className="topic-info-sidebar">
+      <Box pb={5}>
+        <Grid container spacing={1}>
+          <Grid item xs={12}>
+            <h2><FormattedMessage {...localMessages.versionDiffTitle} /></h2>
+          </Grid>
+          <Grid item md={5}>
+            <DataCard className="topic-info-sidebar faded">
+              {current && (
+                <>
+                  <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current ? current.note : 1 }} /></h2>
+                  <TopicVersionReadySummary topic={topic} snapshot={current} startWithDetailsShowing />
+                </>
+              )}
+              {(current === null) && (
+                <h2><FormattedMessage {...localMessages.noPrevious} /></h2>
+              )}
+            </DataCard>
+          </Grid>
+          <Grid item lg={2}>
+            <span style={{ display: 'block', fontSize: '56px', marginTop: '120px', textAlign: 'center' }}>➡</span>
+          </Grid>
+          <Grid item md={5}>
+            <Box pb={1}>
+              <DataCard className="topic-info-sidebar">
                 <h2><FormattedMessage {...localMessages.title} values={{ versionNumber: current ? current.note + 1 : 1 }} /></h2>
                 <TopicVersionReadySummary
                   snapshot={next}
@@ -74,32 +73,32 @@ class VersionComparisonContainer extends React.Component {
                   focalSets={focalSetDefinitions}
                   startWithDetailsShowing
                 />
-              </div>
-              <AppButton
-                label={localMessages.createVersionAndStartSpider}
-                onClick={() => {
+              </DataCard>
+            </Box>
+            <Permissioned onlyRole={PERMISSION_ADMIN}>
+              <GenerateVersionAdminDialog
+                onGenerate={(values) => {
                   this.setState({ submittingVersion: true });
-                  handleGenerateVersion(topicId, true, true, currentSnapshotsId);
+                  handleGenerateVersion(topicId, values[FIELD_NEW_VERSION] === 1, values[FIELD_SPIDER] === 1, currentSnapshotsId);
                 }}
-                primary
-                disabled={submitting}
+                initialValues={{
+                  [FIELD_NEW_VERSION]: 1,
+                  [FIELD_SPIDER]: 1,
+                }}
               />
-              <Permissioned onlyRole={PERMISSION_ADMIN}>
-                <GenerateVersionAdminDialog
-                  onGenerate={(values) => {
-                    this.setState({ submittingVersion: true });
-                    handleGenerateVersion(topicId, values[FIELD_NEW_VERSION] === 1, values[FIELD_SPIDER] === 1, currentSnapshotsId);
-                  }}
-                  initialValues={{
-                    [FIELD_NEW_VERSION]: 1,
-                    [FIELD_SPIDER]: 1,
-                  }}
-                />
-              </Permissioned>
-            </Col>
-          </Row>
+            </Permissioned>
+            <AppButton
+              label={localMessages.createVersionAndStartSpider}
+              onClick={() => {
+                this.setState({ submittingVersion: true });
+                handleGenerateVersion(topicId, true, true, currentSnapshotsId);
+              }}
+              primary
+              disabled={submitting}
+            />
+          </Grid>
         </Grid>
-      </div>
+      </Box>
     );
   }
 }

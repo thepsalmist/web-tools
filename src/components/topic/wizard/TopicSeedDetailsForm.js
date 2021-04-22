@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { reduxForm, Field, propTypes } from 'redux-form';
-import { Row, Col } from 'react-flexbox-grid/lib';
+import { Grid } from '@material-ui/core';
 import withIntlForm from '../../common/hocs/IntlForm';
 import TopicAdvancedForm from './TopicAdvancedForm';
 
@@ -15,35 +15,33 @@ const TopicSeedDetailsForm = (props) => {
   const { renderTextField, initialValues } = props;
   const { formatMessage } = props.intl;
   return (
-    <div>
-      <Row>
-        <Col lg={6}>
-          <Field
-            name="start_date"
-            component={renderTextField}
-            type="inline"
-            fullWidth
-            label={formatMessage(localMessages.startDate)}
-          />
-        </Col>
-        <Col lg={6}>
-          <Field
-            name="end_date"
-            component={renderTextField}
-            type="inline"
-            fullWidth
-            label={formatMessage(localMessages.endDate)}
-            helpertext={formatMessage(localMessages.endDate)}
-          />
-        </Col>
-      </Row>
+    <Grid container spacing={3}>
+      <Grid item sm={6} xs={12}>
+        <Field
+          name="start_date"
+          component={renderTextField}
+          type="inline"
+          fullWidth
+          label={formatMessage(localMessages.startDate)}
+        />
+      </Grid>
+      <Grid item sm={6} xs={12}>
+        <Field
+          name="end_date"
+          component={renderTextField}
+          type="inline"
+          fullWidth
+          label={formatMessage(localMessages.endDate)}
+          helpertext={formatMessage(localMessages.endDate)}
+        />
+      </Grid>
       <TopicAdvancedForm
         initialValues={initialValues}
         destroyOnUnmount={false}
         form="topicForm"
         forceUnregisterOnUnmount
       />
-    </div>
+    </Grid>
   );
 };
 

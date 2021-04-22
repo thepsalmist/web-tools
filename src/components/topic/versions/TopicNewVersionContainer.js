@@ -3,7 +3,8 @@ import React from 'react';
 import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
-import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import { Container, Grid, Box } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import { fetchUserQueuedAndRunningTopics } from '../../../actions/topicActions';
 import PageTitle from '../../common/PageTitle';
@@ -11,6 +12,7 @@ import AppButton from '../../common/AppButton';
 import BackLinkingControlBar from '../BackLinkingControlBar';
 import messages from '../../../resources/messages';
 import { WarningNotice } from '../../common/Notice';
+import DataCard from '../../common/DataCard';
 import LinkWithFilters from '../LinkWithFilters';
 import { needsNewVersion } from './NeedsNewVersionWarning';
 import VersionComparisonContainer from './VersionComparisonContainer';
@@ -18,77 +20,91 @@ import VersionComparisonContainer from './VersionComparisonContainer';
 const localMessages = {
   title: { id: 'topics.adminList.title', defaultMessage: 'Make a New Version' },
   youMadeChanges: { id: 'topics.youMadeChanges', defaultMessage: 'You made changes' },
-  changeDatesSpdering: { id: 'topics.changeDatesSpdering', defaultMessage: 'Change Dates / Spidering' },
+  changeDatesSpdering: { id: 'topics.changeDatesSpdering', defaultMessage: 'Expand Dates / Spidering' },
   changeDatesSpderingDesc: { id: 'topics.changeDatesSpdering.desc', defaultMessage: 'Change the dates or advanced settings such as how many rounds of spidering to do. Once you save your changes, we start building a new version with stories that match your new dates and follow new links to discover more stories.' },
   addNewSubtopics: { id: 'topics.addNewSubtopics', defaultMessage: 'Add or Modify Subtopics' },
   addNewSubtopicsDesc: { id: 'topics.addNewSubtopics.desc', defaultMessage: 'Slice and dice your topic into subtopics to support comparative analysis. You can create subtopics with a growing list of techniques; allowing you to group stories by simple boolean queries, the country of focus, the themes included, and more.' },
   cannotUpdateTopic: { id: 'topic.modify.cannotUpdate', defaultMessage: 'Another topic of yours is generating. You can only run one at a time, so you can\'t change this topic until that one finished.' },
   addNewPlatform: { id: 'topics.addNewPlatform', defaultMessage: 'Add or Modify Platforms' },
   addNewPlatformDesc: { id: 'topics.addNewPlatform.desc', defaultMessage: 'Media about your topic is shared across the web and social media. Set up queries for various platforms to find news links on the open-web, those shared on twitter, on reddit, and other platforms. This lets you discover what news links are being shared on different platforms.' },
+  changeTopicHeading: { id: 'topics.changeTopic.heading', defaultMessage: 'Step 1: Change Your Topic' },
 };
 
 const TopicNewVersionContainer = ({ topic, allowedToRun, intl, newDefinitions, datesOrSpideringHaveChanged, usingLatest,
   platformsHaveChanged, latestVersionRunning }) => (
-    <div className="topic-container topic-new-version-container">
+    <>
       <BackLinkingControlBar message={messages.backToTopic} linkTo={`/topics/${topic.topics_id}/summary`} />
-      <Grid>
-        <PageTitle value={localMessages.title} />
+      <Container maxWidth="lg">
+        <Grid container spacing={1}>
+          <Grid item xs={12}>
+            <PageTitle value={localMessages.title} />
 
-        <h1><FormattedMessage {...localMessages.title} /></h1>
-        {!allowedToRun && (
-          <WarningNotice><FormattedHTMLMessage {...localMessages.cannotUpdateTopic} /></WarningNotice>
-        )}
-
-        {needsNewVersion(usingLatest, newDefinitions, platformsHaveChanged, datesOrSpideringHaveChanged, latestVersionRunning) && (
-          <VersionComparisonContainer />
-        )}
-
-        <Row>
-          <Col lg={4}>
-            <h2><FormattedMessage {...localMessages.changeDatesSpdering} /></h2>
-            {datesOrSpideringHaveChanged && (
-              <WarningNotice><FormattedHTMLMessage {...localMessages.youMadeChanges} /></WarningNotice>
+            <h1><FormattedMessage {...localMessages.title} /></h1>
+            {!allowedToRun && (
+              <WarningNotice><FormattedHTMLMessage {...localMessages.cannotUpdateTopic} /></WarningNotice>
             )}
-            <p><FormattedMessage {...localMessages.changeDatesSpderingDesc} /></p>
-            <LinkWithFilters to={`/topics/${topic.topics_id}/data-options`}>
-              <AppButton
-                label={intl.formatMessage(localMessages.changeDatesSpdering)}
-                primary
-                disabled={!allowedToRun}
-              />
-            </LinkWithFilters>
-          </Col>
-          <Col lg={4}>
-            <h2><FormattedMessage {...localMessages.addNewSubtopics} /></h2>
-            {newDefinitions && (
-              <WarningNotice><FormattedHTMLMessage {...localMessages.youMadeChanges} /></WarningNotice>
-            )}
-            <p><FormattedMessage {...localMessages.addNewSubtopicsDesc} /></p>
-            <LinkWithFilters to={`/topics/${topic.topics_id}/snapshot/foci`}>
-              <AppButton
-                label={intl.formatMessage(localMessages.addNewSubtopics)}
-                primary
-                disabled={!allowedToRun}
-              />
-            </LinkWithFilters>
-          </Col>
-          <Col lg={4}>
-            <h2><FormattedMessage {...localMessages.addNewPlatform} /></h2>
-            {platformsHaveChanged && (
-              <WarningNotice><FormattedHTMLMessage {...localMessages.youMadeChanges} /></WarningNotice>
-            )}
-            <p><FormattedMessage {...localMessages.addNewPlatformDesc} /></p>
-            <LinkWithFilters to={`/topics/${topic.topics_id}/platforms/manage`}>
-              <AppButton
-                label={intl.formatMessage(localMessages.addNewPlatform)}
-                primary
-                disabled={!allowedToRun}
-              />
-            </LinkWithFilters>
-          </Col>
-        </Row>
-      </Grid>
-    </div>
+          </Grid>
+          <Box mb={5}>
+            <Grid item xs={12}>
+              <h2><FormattedHTMLMessage {...localMessages.changeTopicHeading} /></h2>
+            </Grid>
+            <Grid container item spacing={3}>
+              <Grid item md={4}>
+                <DataCard>
+                  <h2><FormattedMessage {...localMessages.changeDatesSpdering} /></h2>
+                  {datesOrSpideringHaveChanged && (
+                    <Alert severity="success"><FormattedHTMLMessage {...localMessages.youMadeChanges} /></Alert>
+                  )}
+                  <p><FormattedMessage {...localMessages.changeDatesSpderingDesc} /></p>
+                  <LinkWithFilters to={`/topics/${topic.topics_id}/data-options`}>
+                    <AppButton
+                      label={intl.formatMessage(localMessages.changeDatesSpdering)}
+                      primary
+                      disabled={!allowedToRun}
+                    />
+                  </LinkWithFilters>
+                </DataCard>
+              </Grid>
+              <Grid item md={4}>
+                <DataCard>
+                  <h2><FormattedMessage {...localMessages.addNewSubtopics} /></h2>
+                  {newDefinitions && (
+                    <Alert severity="success"><FormattedHTMLMessage {...localMessages.youMadeChanges} /></Alert>
+                  )}
+                  <p><FormattedMessage {...localMessages.addNewSubtopicsDesc} /></p>
+                  <LinkWithFilters to={`/topics/${topic.topics_id}/snapshot/foci`}>
+                    <AppButton
+                      label={intl.formatMessage(localMessages.addNewSubtopics)}
+                      primary
+                      disabled={!allowedToRun}
+                    />
+                  </LinkWithFilters>
+                </DataCard>
+              </Grid>
+              <Grid item md={4}>
+                <DataCard>
+                  <h2><FormattedMessage {...localMessages.addNewPlatform} /></h2>
+                  {platformsHaveChanged && (
+                    <Alert severity="success"><FormattedHTMLMessage {...localMessages.youMadeChanges} /></Alert>
+                  )}
+                  <p><FormattedMessage {...localMessages.addNewPlatformDesc} /></p>
+                  <LinkWithFilters to={`/topics/${topic.topics_id}/platforms/manage`}>
+                    <AppButton
+                      label={intl.formatMessage(localMessages.addNewPlatform)}
+                      primary
+                      disabled={!allowedToRun}
+                    />
+                  </LinkWithFilters>
+                </DataCard>
+              </Grid>
+            </Grid>
+          </Box>
+          {needsNewVersion(usingLatest, newDefinitions, platformsHaveChanged, datesOrSpideringHaveChanged, latestVersionRunning) && (
+            <VersionComparisonContainer />
+          )}
+        </Grid>
+      </Container>
+    </>
 );
 
 TopicNewVersionContainer.propTypes = {

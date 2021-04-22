@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { reduxForm, Field, propTypes, formValueSelector } from 'redux-form';
 import { FormattedHTMLMessage } from 'react-intl';
-import { Row, Col } from 'react-flexbox-grid/lib';
+import { Grid } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import withIntlForm from '../../common/hocs/IntlForm';
 import Permissioned from '../../common/Permissioned';
@@ -28,9 +28,9 @@ const TopicAdvancedForm = (props) => {
   const iterations = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
   return (
     <CollapsingPanel titleMsg={localMessages.advancedSettings}>
-      <Permissioned onlyRole={PERMISSION_ADMIN}>
-        <Row>
-          <Col lg={3}>
+      <Grid container spacing={3}>
+        <Permissioned onlyRole={PERMISSION_ADMIN}>
+          <Grid item md={6} sm={12}>
             <Field
               name="max_topic_stories"
               component={renderTextField}
@@ -40,16 +40,10 @@ const TopicAdvancedForm = (props) => {
               label={formatMessage(localMessages.maxStories)}
               helpertext={ADMIN_MAX_RECOMMENDED_STORIES}
             />
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={8}>
             <small><FormattedHTMLMessage {...localMessages.maxSeedStoriesHelp} /></small>
-          </Col>
-        </Row>
-      </Permissioned>
-      <Row>
-        <Col lg={3}>
+          </Grid>
+        </Permissioned>
+        <Grid item md={6} sm={12}>
           <Field
             name="max_iterations"
             disabled={topicMode !== 'web'}
@@ -60,13 +54,9 @@ const TopicAdvancedForm = (props) => {
           >
             {iterations.map(t => <MenuItem key={t} value={t}>{t === 0 ? `${t} - no spidering` : t}</MenuItem>)}
           </Field>
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={8}>
           <small><FormattedHTMLMessage {...localMessages.maxIterationsHelp} /></small>
-        </Col>
-      </Row>
+        </Grid>
+      </Grid>
     </CollapsingPanel>
   );
 };

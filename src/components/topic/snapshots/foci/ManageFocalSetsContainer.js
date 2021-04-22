@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
-import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import { Box, Container, Grid } from '@material-ui/core';
 import withAsyncData from '../../../common/hocs/AsyncDataContainer';
 import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
@@ -60,55 +60,45 @@ class ManageFocalSetsContainer extends React.Component {
     const { topicId, focalSetDefinitions, filters, newDefinitions } = this.props;
     const { formatMessage } = this.props.intl;
     return (
-      <>
+      <Container>
         <BackLinkingControlBar
           message={localMessages.backToTopic}
           linkTo={filteredLinkTo(`/topics/${topicId}/summary`, filters)}
         />
-        <div className="manage-focal-sets">
-          <Grid>
-            <Row>
-              <Col lg={12}>
-                <h1><FocusIcon /><FormattedMessage {...messages.manageFoci} /></h1>
-              </Col>
-            </Row>
-            <Row>
-              <Col lg={10} xs={12}>
-                <p>
-                  <FormattedMessage {...localMessages.focalSetsManageAbout} />
-                </p>
-              </Col>
-            </Row>
-            {newDefinitions && <VersionComparisonContainer />}
-            {(focalSetDefinitions.length > 0) && (
-              <Row>
-                <Col lg={10} xs={12}>
-                  <div className="focal-set-definition-list">
-                    <h2><FormattedMessage {...localMessages.listTitle} /></h2>
-                    {focalSetDefinitions.map((focalSetDef, idx) => (
-                      <FocalSetDefinitionDetails
-                        key={idx}
-                        focalSetDefinition={focalSetDef}
-                        onDelete={this.handleDelete}
-                        onFocusDefinitionDelete={this.onFocusDefinitionDelete}
-                        topicId={topicId}
-                        filters={filters}
-                      />
-                    ))}
-                  </div>
-                </Col>
-              </Row>
-            )}
-            <Row>
-              <Col lg={6}>
-                <div id="create-foci-button">
-                  <LinkWithFilters to={`/topics/${topicId}/snapshot/foci/create`}>
-                    <AppButton primary label={messages.addFocus} />
-                  </LinkWithFilters>
-                </div>
-              </Col>
-            </Row>
+        <Grid container className="manage-focal-sets">
+          <Grid item xs={12}>
+            <h1><FocusIcon /><FormattedMessage {...messages.manageFoci} /></h1>
+            <p>
+              <FormattedMessage {...localMessages.focalSetsManageAbout} />
+            </p>
           </Grid>
+          {(focalSetDefinitions.length > 0) && (
+            <Grid item xs={12}>
+              <div className="focal-set-definition-list">
+                <h2><FormattedMessage {...localMessages.listTitle} /></h2>
+                {focalSetDefinitions.map((focalSetDef, idx) => (
+                  <FocalSetDefinitionDetails
+                    key={idx}
+                    focalSetDefinition={focalSetDef}
+                    onDelete={this.handleDelete}
+                    onFocusDefinitionDelete={this.onFocusDefinitionDelete}
+                    topicId={topicId}
+                    filters={filters}
+                  />
+                ))}
+              </div>
+            </Grid>
+          )}
+          <Grid item xs={12}>
+            <Box pb={3}>
+              <div id="create-foci-button">
+                <LinkWithFilters to={`/topics/${topicId}/snapshot/foci/create`}>
+                  <AppButton primary label={messages.addFocus} />
+                </LinkWithFilters>
+              </div>
+            </Box>
+          </Grid>
+          {newDefinitions && <VersionComparisonContainer />}
           <ConfirmationDialog
             open={this.state.removeDialogOpen}
             title={formatMessage(localMessages.removeFocalSetTitle)}
@@ -118,8 +108,8 @@ class ManageFocalSetsContainer extends React.Component {
           >
             <FormattedHTMLMessage {...localMessages.removeFocalSetAbout} />
           </ConfirmationDialog>
-        </div>
-      </>
+        </Grid>
+      </Container>
     );
   }
 }

@@ -21,7 +21,7 @@ const localMessages = {
   generationFailed: { id: 'topic.created.generationFailed', defaultMessage: 'Sorry, but we weren\'t able to start generating this version.' },
   runningSubtitle: { id: 'version.running.title', defaultMessage: 'Still Generating' },
   almostDoneSubtitle: { id: 'version.cancel', defaultMessage: 'Cancel This Version' },
-  setupPlatforms: { id: 'version.setupPlatforms', defaultMessage: 'Step 2: Setup Platforms' },
+  setupPlatforms: { id: 'version.setupPlatforms', defaultMessage: 'Setup Platforms' },
 };
 
 /**

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, FormattedHTMLMessage } from 'react-intl';
-import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import { Container, Grid } from '@material-ui/core';
 import { push } from 'react-router-redux';
 import withAsyncData from '../../common/hocs/AsyncDataContainer';
 import AvailablePlatformList from './AvailablePlatformList';
@@ -25,6 +25,7 @@ const localMessages = {
   removePlatformSucceeded: { id: 'platform.manage.remove.succeeded', defaultMessage: 'Removed the Platform' },
   removePlatformFailed: { id: 'platform.manage.remove.failed', defaultMessage: 'Sorry, but removing the platform failed :-(' },
   backToTopic: { id: 'backToTopic', defaultMessage: 'back to the topic' },
+  updatePlatform: { id: 'platform.manage.update', defaultMessage: 'Update Platforms' },
 };
 
 class ManagePlatformsContainer extends React.Component {
@@ -100,19 +101,17 @@ class ManagePlatformsContainer extends React.Component {
     });
     const h1Msg = titleMsg || messages.managePlatforms;
     return (
-      <div>
+      <Container>
         <IncompletePlatformWarning />
         <PlatformSizeNotice />
         <div className="manage-platforms">
-          <Grid>
-            <Row>
-              <Col lg={10} xs={12}>
-                <h1>
-                  <FormattedMessage {...h1Msg} />
-                </h1>
-              </Col>
-            </Row>
-            {platformsHaveChanged && <VersionComparisonContainer />}
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <h1>
+                <FormattedMessage {...h1Msg} />
+              </h1>
+              <h2><FormattedMessage {...localMessages.updatePlatform} /></h2>
+            </Grid>
             <AvailablePlatformList
               platforms={filteredPlatforms}
               onEdit={this.onEditPlatform}
@@ -120,6 +119,7 @@ class ManagePlatformsContainer extends React.Component {
               onDelete={this.handleDelete}
               preventAdditions={preventAdditions}
             />
+            {platformsHaveChanged && <VersionComparisonContainer />}
           </Grid>
           <ConfirmationDialog
             open={this.state.removeDialogOpen}
@@ -131,7 +131,7 @@ class ManagePlatformsContainer extends React.Component {
             <FormattedHTMLMessage {...localMessages.removePlatform} />
           </ConfirmationDialog>
         </div>
-      </div>
+      </Container>
     );
   }
 }

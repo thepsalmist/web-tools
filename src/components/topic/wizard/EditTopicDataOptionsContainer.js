@@ -3,7 +3,7 @@ import React from 'react';
 import { push } from 'react-router-redux';
 import { reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
-import { Grid, Row, Col } from 'react-flexbox-grid/lib';
+import { Container, Grid, Box } from '@material-ui/core';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { filteredLinkTo } from '../../util/location';
 import TopicSeedDetailsForm from './TopicSeedDetailsForm';
@@ -27,23 +27,22 @@ const EditTopicDataOptionsContainer = (props) => {
   const { topic, handleSubmit, pristine, submitting, onSubmit, datesOrSpideringHaveChanged } = props;
   const initialValues = { ...topic };
   return (
-    <div className="topic-edit-form">
-      <TopicPageTitle value={localMessages.title} />
-      <form name="topicForm" onSubmit={handleSubmit(onSubmit.bind(this))}>
-        <Grid>
-          {datesOrSpideringHaveChanged && <VersionComparisonContainer />}
-          <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
-            <Row>
-              <Col lg={12}>
+    <Container>
+      <Grid container spacing={1} className="topic-edit-form">
+        <Grid item xs={12}>
+          <TopicPageTitle value={localMessages.title} />
+        </Grid>
+        <form name="topicForm" onSubmit={handleSubmit(onSubmit.bind(this))}>
+          <Box pb={5}>
+            <Permissioned onlyTopic={PERMISSION_TOPIC_WRITE}>
+              <Grid item xs={12}>
                 <h1><FormattedMessage {...localMessages.title} /></h1>
-              </Col>
-            </Row>
-            <TopicSeedDetailsForm
-              initialValues={initialValues}
-              form="topicForm"
-            />
-            <Row>
-              <Col lg={12}>
+              </Grid>
+              <TopicSeedDetailsForm
+                initialValues={initialValues}
+                form="topicForm"
+              />
+              <Grid item xs={12}>
                 <AppButton
                   style={{ marginTop: 30 }}
                   type="submit"
@@ -51,12 +50,13 @@ const EditTopicDataOptionsContainer = (props) => {
                   label={messages.save}
                   primary
                 />
-              </Col>
-            </Row>
-          </Permissioned>
-        </Grid>
-      </form>
-    </div>
+              </Grid>
+            </Permissioned>
+          </Box>
+          {datesOrSpideringHaveChanged && <VersionComparisonContainer />}
+        </form>
+      </Grid>
+    </Container>
   );
 };
 

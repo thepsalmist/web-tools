@@ -5,6 +5,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
+import { Box } from '@material-ui/core';
 import { DeleteButton, EditButton } from '../../../common/IconButton';
 import AppButton from '../../../common/AppButton';
 import messages from '../../../../resources/messages';
@@ -53,34 +54,36 @@ class FocusDefinition extends React.Component {
     ];
     return (
       <div className="focus-definition" data-focus-definitions-id={focusDefinition.focus_definitions_id}>
-        <h3>
-          {focusDefinition.name}
-          <div className="controls">
-            <EditButton linkTo={filteredLinkTo(`/topics/${topicId}/snapshot/foci/${focusDefinition.focus_definitions_id}/edit`, filters)} />
-            <DeleteButton onClick={this.showDeleteDialog} tooltip={formatMessage(localMessages.focusDelete)} />
-          </div>
-        </h3>
-        <p>
-          {focusDefinition.description}
-        </p>
-        <p>
-          <FormattedMessage {...messages.query} />: <code>{focusDefinition.query}</code>
-        </p>
-        <Dialog
-          open={this.state.deleteConfirmationOpen}
-          onClose={this.handleDeleteCancel}
-          className="app-dialog"
-        >
-          <DialogTitle>
-            {formatMessage(localMessages.deleteConfirmTitle)}
-          </DialogTitle>
-          <DialogContent>
-            <FormattedMessage {...localMessages.deleteConfirmDescription} />
-          </DialogContent>
-          <DialogActions>
-            {dialogActions}
-          </DialogActions>
-        </Dialog>
+        <Box pb={2}>
+          <h3>
+            {focusDefinition.name}
+            <div className="controls">
+              <EditButton linkTo={filteredLinkTo(`/topics/${topicId}/snapshot/foci/${focusDefinition.focus_definitions_id}/edit`, filters)} />
+              <DeleteButton onClick={this.showDeleteDialog} tooltip={formatMessage(localMessages.focusDelete)} />
+            </div>
+          </h3>
+          <p>
+            {focusDefinition.description}
+          </p>
+          <p>
+            <FormattedMessage {...messages.query} />: <code>{focusDefinition.query}</code>
+          </p>
+          <Dialog
+            open={this.state.deleteConfirmationOpen}
+            onClose={this.handleDeleteCancel}
+            className="app-dialog"
+          >
+            <DialogTitle>
+              {formatMessage(localMessages.deleteConfirmTitle)}
+            </DialogTitle>
+            <DialogContent>
+              <FormattedMessage {...localMessages.deleteConfirmDescription} />
+            </DialogContent>
+            <DialogActions>
+              {dialogActions}
+            </DialogActions>
+          </Dialog>
+        </Box>
       </div>
     );
   }

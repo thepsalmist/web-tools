@@ -17,6 +17,7 @@ import QueryWordsResultsContainer from './QueryWordsResultsContainer';
 import QueryWordSpaceResultsContainer from './QueryWordSpaceResultsContainer';
 import TabSelector from '../../common/TabSelector';
 import ErrorBoundary from '../../common/ErrorBoundary';
+import { WarningNotice } from '../../common/Notice';
 import QueryThemesResultsContainer from './QueryThemesResultsContainer';
 import { updateQuery } from '../../../actions/explorerActions';
 import messages from '../../../resources/messages';
@@ -78,6 +79,11 @@ class QueryResultsContainer extends React.Component {
     );
     const languageSection = (
       <Row>
+        <Col xs={12}>
+          <WarningNotice>
+            We have implemented an important fix to our stop word lists. <a href="https://mediacloud.org/news/2021/4/8/an-important-fix-to-our-top-words-analysis">Read more</a> about how it affects results.
+          </WarningNotice>
+        </Col>
         <Col lg={12} xs={12}>
           <QueryWordsResultsContainer
             lastSearchTime={lastSearchTime}

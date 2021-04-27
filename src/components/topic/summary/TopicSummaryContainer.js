@@ -18,6 +18,7 @@ import TopicStoryMetadataStatsContainer from './TopicStoryMetadataStatsContainer
 import FociStoryCountComparisonContainer from './FociStoryCountComparisonContainer';
 import TopicWordSpaceContainer from './TopicWordSpaceContainer';
 import TabSelector from '../../common/TabSelector';
+import { WarningNotice } from '../../common/Notice';
 import messages from '../../../resources/messages';
 import SeedQuerySummary from '../versions/SeedQuerySummary';
 import TopicWordCloudContainer from '../provider/TopicWordCloudContainer';
@@ -135,6 +136,13 @@ class TopicSummaryContainer extends React.Component {
           // language
           viewContent = (
             <>
+              <Row>
+                <Col xs={12}>
+                  <WarningNotice>
+                    We have implemented an important fix to our stop word lists. <a href="https://mediacloud.org/news/2021/4/8/an-important-fix-to-our-top-words-analysis">Read more</a> about how it affects results.
+                  </WarningNotice>
+                </Col>
+              </Row>
               <SummarizedVizualization
                 titleMessage={messages.topWords}
                 introMessage={localMessages.wordsDescriptionIntro}

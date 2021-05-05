@@ -1,8 +1,6 @@
 @import '../_constants';
 
 .source-feed-table {
-  margin-top: 20px;
-
   tr {
     &.feed-skipped {
       background-color: $material-grey500;

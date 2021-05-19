@@ -216,6 +216,7 @@ def api_user_update():
     mc.userUpdate(cached_user.profile['auth_users_id'], **valid_params)
     user_mc = user_mediacloud_client()
     updated_user = user_mc.userProfile()
+    # pylint: disable=assigning-non-slot
     cached_user.profile = updated_user
     user = _create_user_session(cached_user)
     return jsonify(user.get_properties())

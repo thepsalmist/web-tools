@@ -1,6 +1,22 @@
 {
   "releases": [
     {
+      "date": "2021-05-19",
+      "version": "v3.25.0",
+      "notes": [
+        {
+          "apps": [ "sources" ],
+          "type": "New",
+          "note": "Display source feeds by type (e.g. feed, podcast)"
+        },
+        {
+          "apps": [ "topics" ],
+          "type": "New",
+          "note": "Increase top words download to 1000 words"
+        }
+      ]
+    },
+    {
       "date": "2021-04-27",
       "version": "v3.24.0",
       "notes": [

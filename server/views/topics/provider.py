@@ -5,7 +5,7 @@ from typing import List, Dict
 from operator import itemgetter
 
 from server import app
-from server.views import WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_UI_NUM_WORDS
+from server.views import WORD_COUNT_SAMPLE_SIZE, WORD_COUNT_UI_NUM_WORDS, WORD_COUNT_DOWNLOAD_NUM_WORDS
 import server.util.csv as csv
 from server.util.request import api_error_handler, safely_read_arg
 from server.auth import user_mediacloud_key, user_mediacloud_client
@@ -57,7 +57,8 @@ def topic_provider_words(topics_id):
 @api_error_handler
 def topic_provider_words_csv(topics_id):
     optional_args = _parse_words_optional_arguments()
-    results = apicache.topic_ngram_counts(user_mediacloud_key(), topics_id, **optional_args)
+    results = apicache.topic_ngram_counts(user_mediacloud_key(), topics_id,
+                                          num_words=WORD_COUNT_DOWNLOAD_NUM_WORDS, **optional_args)
     file_name = 'topic-{}-sampled-ngrams-{}-word'.format(topics_id, optional_args['ngram_size'])
     return csv.stream_response(results, apicache.WORD_COUNT_DOWNLOAD_COLUMNS, file_name)
 

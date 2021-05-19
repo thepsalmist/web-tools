@@ -18,6 +18,7 @@ import { updateFeedback } from '../../../actions/appActions';
 import { SOURCE_SCRAPE_STATE_QUEUED, SOURCE_SCRAPE_STATE_RUNNING } from '../../../reducers/sources/sources/selected/sourceDetails';
 import PageTitle from '../../common/PageTitle';
 import TabSelector from '../../common/TabSelector';
+import SourceSitemapsContainer from './sitemaps/SourceSitemapsContainer';
 
 const localMessages = {
   pageTitle: { id: 'source.feeds.pageTitle', defaultMessage: 'Feeds' },
@@ -47,7 +48,7 @@ class SourceFeedContainer extends React.Component {
     const feedTypes = {
       0: 'syndicated',
       1: 'podcast',
-      2: 'sitemaps',
+      2: 'sitemap',
     };
     return feedTypes[selectedViewIndex];
   }
@@ -56,7 +57,7 @@ class SourceFeedContainer extends React.Component {
     const { feeds } = this.props;
     const sortedFeeds = feeds.sort((a, b) => b.lastNewStoryMoment - a.lastNewStoryMoment);
     const filteredFeedTypes = sortedFeeds.filter(f => f.type === this.getSelectedFeedType());
-    return filteredFeedTypes.filter(f => f.active === isActive);
+    return isActive === undefined ? filteredFeedTypes : filteredFeedTypes.filter(f => f.active === isActive);
   }
 
   render() {
@@ -71,7 +72,7 @@ class SourceFeedContainer extends React.Component {
       formatMessage(localMessages.rssFeeds),
       formatMessage(localMessages.podcasts),
     ];
-    // ungated this feature once sitemaps functionality is released
+    // TODO: ungated this feature once sitemaps functionality is released
     if (hasPermissions(getUserRoles(user), PERMISSION_MEDIA_EDIT)) {
       tabLabels.push(formatMessage(localMessages.sitemaps));
     }
@@ -99,36 +100,45 @@ class SourceFeedContainer extends React.Component {
             onViewSelected={index => this.setState({ selectedViewIndex: index })}
           />
         </Grid>
-        <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
-          <Grid container item spacing={1}>
-            { this.getSelectedFeedType() === 'syndicated' && (
-              <Grid item>
-                <AppButton
-                  className="source-scrape-feeds-button"
-                  label={formatMessage(messages.scrapeForFeeds)}
-                  color="primary"
-                  onClick={scrapeFeeds}
-                />
-              </Grid>
-            )}
-            <Grid item>
-              <AppButton
-                className="source-scrape-feeds-button"
-                label={formatMessage(localMessages.add)}
-                color="primary"
-                onClick={() => { pushToUrl(`/sources/${sourceId}/feeds/create`); }}
-              />
-            </Grid>
+        {this.getSelectedFeedType() === 'sitemap' && (
+          <Grid item xs={12}>
+            <SourceSitemapsContainer sourceId={sourceId} feeds={this.getFeeds()} />
           </Grid>
-        </Permissioned>
-        <Grid item xs={12}>
-          <h2>{formatMessage(localMessages.activeLabel)}</h2>
-          <SourceFeedTable feeds={this.getFeeds(true)} feedStatus="Active" />
-        </Grid>
-        <Grid item xs={12}>
-          <h2>{formatMessage(localMessages.inactiveLabel)}</h2>
-          <SourceFeedTable feeds={this.getFeeds(false)} feedStatus="Inactive" />
-        </Grid>
+        )}
+        {this.getSelectedFeedType() !== 'sitemap' && (
+          <>
+            <Permissioned onlyRole={PERMISSION_MEDIA_EDIT}>
+              <Grid container item spacing={1}>
+                { this.getSelectedFeedType() === 'syndicated' && (
+                  <Grid item>
+                    <AppButton
+                      className="source-scrape-feeds-button"
+                      label={formatMessage(messages.scrapeForFeeds)}
+                      color="primary"
+                      onClick={scrapeFeeds}
+                    />
+                  </Grid>
+                )}
+                <Grid item>
+                  <AppButton
+                    className="source-scrape-feeds-button"
+                    label={formatMessage(localMessages.add)}
+                    color="primary"
+                    onClick={() => { pushToUrl(`/sources/${sourceId}/feeds/create`); }}
+                  />
+                </Grid>
+              </Grid>
+            </Permissioned>
+            <Grid item xs={12}>
+              <h2>{formatMessage(localMessages.activeLabel)}</h2>
+              <SourceFeedTable feeds={this.getFeeds(true)} feedStatus="Active" />
+            </Grid>
+            <Grid item xs={12}>
+              <h2>{formatMessage(localMessages.inactiveLabel)}</h2>
+              <SourceFeedTable feeds={this.getFeeds(false)} feedStatus="Inactive" />
+            </Grid>
+          </>
+        )}
       </Grid>
     );
   }

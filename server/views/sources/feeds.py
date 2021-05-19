@@ -4,7 +4,7 @@ import flask_login
 
 from server import app
 import server.util.csv as csv
-from server.auth import user_admin_mediacloud_client
+from server.auth import user_admin_mediacloud_client, user_has_auth_role, ROLE_MEDIA_EDIT
 from server.util.request import api_error_handler
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,34 @@ logger = logging.getLogger(__name__)
 def api_source_feed(media_id):
     feed_list = source_feed_list(media_id)
     feed_count = len(feed_list)
+
+    # TODO: FOR DEMOING - REMOVE THIS WHEN SITEMAPS DATA IS INCORPORATED
+    if user_has_auth_role(ROLE_MEDIA_EDIT) and feed_list:
+        media_id = feed_list[0]['media_id']
+        statuses = ['preview_success', 'preview_processing', 'preview_failed', 'ingest_success',
+                    'ingest_abandoned']
+        mock_feeds = [_create_sitemap_feed(media_id, feed_count + idx, status) for idx, status in
+                      enumerate(statuses, start=1)]
+        feed_list = feed_list + mock_feeds
+        feed_count = len(feed_list)
+
     return jsonify({'results': feed_list, 'count': feed_count})
+
+
+def _create_sitemap_feed(media_id, feeds_id, status):
+    return {
+        "active": True,
+        "feeds_id": feeds_id,
+        "media_id": media_id,
+        "status": status,
+        "status_details": "This is pure junk!",
+        "created_time": "2021-05-11 18:03:49.054207-04:00",
+        "last_attempted_download_time": "2021-05-18 18:03:49.054207-04:00",
+        "last_new_story_time": "2021-05-01 02:25:33.624136-04:00",
+        "last_successful_download_time": "2021-05-18 18:03:52.999904-04:00",
+        "type": "sitemap",
+        "url": "http://www.mediacloud.org/services/xml/rss/fake-sitemaps.xml",
+    }
 
 
 @app.route('/api/sources/<_media_id>/feeds/<feed_id>/single', methods=['GET'])
@@ -100,3 +127,53 @@ def stream_feed_csv(filename, media_id):
 def cached_feed(media_id):
     res = source_feed_list(media_id)
     return res
+
+
+@app.route('/api/sources/<media_id>/sitemaps/discover', methods=['POST'])
+@flask_login.login_required
+@api_error_handler
+def sitemap_preview_discover(_media_id):
+    return jsonify({'feeds': [], 'status': 'Stub for sitemap discovery'})
+
+
+@app.route('/api/sources/feeds/sitemaps/<feed_id>/preview/abandon', methods=['POST'])
+@flask_login.login_required
+@api_error_handler
+def sitemap_preview_abandon(_feed_id):
+    return jsonify({'feeds': [], 'status': 'Stub for sitemap preview abandon'})
+
+
+@app.route('/api/sources/feeds/sitemaps/<feed_id>/preview/retry', methods=['POST'])
+@flask_login.login_required
+@api_error_handler
+def sitemap_preview_retry(_feed_id):
+    return jsonify({'feeds': [], 'status': 'Stub for sitemap preview retry'})
+
+
+@app.route('/api/sources/feeds/sitemaps/<feed_id>/preview/cancel', methods=['POST'])
+@flask_login.login_required
+@api_error_handler
+def sitemap_preview_cancel(_feed_id):
+    return jsonify({'feeds': [], 'status': 'Stub for sitemap preview cancel'})
+
+
+@app.route('/api/sources/feeds/sitemaps/<feed_id>/preview/approve', methods=['POST'])
+@flask_login.login_required
+@api_error_handler
+def sitemap_preview_approve(_feed_id):
+    return jsonify({'feeds': [], 'status': 'Stub for sitemap preview approve'})
+
+
+@app.route('/api/sources/feeds/sitemaps/<feed_id>/preview/reject', methods=['POST'])
+@flask_login.login_required
+@api_error_handler
+def sitemap_preview_reject(_feed_id):
+    reason = request.form['reason']
+    return jsonify({'feeds': [], 'status': 'Reason for rejecting: "{reason}"'.format(reason=reason)})
+
+
+@app.route('/api/sources/feeds/sitemaps/<feed_id>/preview/download', methods=['GET'])
+@flask_login.login_required
+@api_error_handler
+def sitemap_preview_download(_feed_id):
+    return jsonify({'feeds': [], 'status': 'Stub for sitemap preview download'})

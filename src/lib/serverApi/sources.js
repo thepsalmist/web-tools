@@ -202,3 +202,31 @@ export function fetchGeoCollectionsByCountry() {
 export function sourceFeedRecentStories(feedId) {
   return createApiPromise(`/api/sources/feeds/${feedId}/recent-stories`);
 }
+
+export function discoverSourceSitemaps(mediaId) {
+  return createPostingApiPromise(`/api/sources/${mediaId}/sitemaps/discover`);
+}
+
+export function sourceSitemapsPreviewAbandon(feedId) {
+  return createPostingApiPromise(`/api/sources/feeds/sitemaps/${feedId}/preview/abandon`);
+}
+
+export function sourceSitemapsPreviewRetry(feedId) {
+  return createPostingApiPromise(`/api/sources/feeds/sitemaps/${feedId}/preview/retry`);
+}
+
+export function sourceSitemapsPreviewCancel(feedId) {
+  return createPostingApiPromise(`/api/sources/feeds/sitemaps/${feedId}/preview/cancel`);
+}
+
+export function sourceSitemapsPreviewApprove(feedId) {
+  return createPostingApiPromise(`/api/sources/feeds/sitemaps/${feedId}/preview/approve`);
+}
+
+export function sourceSitemapsPreviewReject(feedId, reason) {
+  return createPostingApiPromise(`/api/sources/feeds/sitemaps/${feedId}/preview/reject`, { reason });
+}
+
+export function sourceSitemapsPreviewDownload(feedId) {
+  return createApiPromise(`/api/sources/feeds/sitemaps/${feedId}/preview/download`);
+}

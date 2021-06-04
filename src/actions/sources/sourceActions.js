@@ -28,3 +28,24 @@ export const fetchSourceReviewInfo = createAsyncAction(FETCH_SOURCE_REVIEW_INFO,
 
 export const CREATE_NEW_SOURCE = 'CREATE_NEW_SOURCE';
 export const createSource = createAsyncAction(CREATE_NEW_SOURCE, api.createSource);
+
+export const DISCOVER_SOURCE_SITEMAPS = 'DISCOVER_SOURCE_SITEMAPS';
+export const discoverSourceSitemaps = createAsyncAction(DISCOVER_SOURCE_SITEMAPS, api.discoverSourceSitemaps);
+
+export const ABANDON_PREVIEW_SOURCE_SITEMAPS = 'ABANDON_PREVIEW_SOURCE_SITEMAPS';
+export const abandonPreviewSourceSitemaps = createAsyncAction(ABANDON_PREVIEW_SOURCE_SITEMAPS, api.sourceSitemapsPreviewAbandon);
+
+export const RETRY_PREVIEW_SOURCE_SITEMAPS = 'RETRY_PREVIEW_SOURCE_SITEMAPS';
+export const retryPreviewSourceSitemaps = createAsyncAction(ABANDON_PREVIEW_SOURCE_SITEMAPS, api.sourceSitemapsPreviewRetry);
+
+export const CANCEL_PREVIEW_SOURCE_SITEMAPS = 'CANCEL_PREVIEW_SOURCE_SITEMAPS';
+export const cancelPreviewSourceSitemaps = createAsyncAction(ABANDON_PREVIEW_SOURCE_SITEMAPS, api.sourceSitemapsPreviewCancel);
+
+export const APPROVE_PREVIEW_SOURCE_SITEMAPS = 'APPROVE_PREVIEW_SOURCE_SITEMAPS';
+export const approvePreviewSourceSitemaps = createAsyncAction(ABANDON_PREVIEW_SOURCE_SITEMAPS, api.sourceSitemapsPreviewApprove);
+
+export const REJECT_PREVIEW_SOURCE_SITEMAPS = 'REJECT_PREVIEW_SOURCE_SITEMAPS';
+export const rejectPreviewSourceSitemaps = createAsyncAction(ABANDON_PREVIEW_SOURCE_SITEMAPS, api.sourceSitemapsPreviewReject);
+
+export const DOWNLOAD_PREVIEW_SOURCE_SITEMAPS = 'DOWNLOAD_PREVIEW_SOURCE_SITEMAPS';
+export const downloadPreviewSourceSitemaps = createAsyncAction(ABANDON_PREVIEW_SOURCE_SITEMAPS, api.sourceSitemapsPreviewDownload);

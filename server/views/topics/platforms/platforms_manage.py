@@ -5,7 +5,7 @@ import os
 
 from server import app
 from server.util.request import api_error_handler
-from server.auth import user_mediacloud_client
+from server.auth import user_mediacloud_client, user_is_admin
 from server.util.request import form_fields_required
 import server.views.topics.apicache as apicache
 from server.views.platforms import parse_open_web_media_from_channel
@@ -14,6 +14,21 @@ from server.platforms import PLATFORM_OPEN_WEB, PLATFORM_REDDIT, PLATFORM_SOURCE
 
 logger = logging.getLogger(__name__)
 
+ADMIN_ONLY_PLATFORM_SOURCES = [dict(platform_name='twitter', source_name='brandwatch')]
+
+
+def _only_permitted_platforms(topic_platforms_source_map, is_admin):
+    # if use is not admin, filter out admin-only platform/source pairs
+    permitted = []
+    if not is_admin:
+        for admin_only in ADMIN_ONLY_PLATFORM_SOURCES:
+            for ps in topic_platforms_source_map:
+                if (ps['platform_name'] != admin_only['platform_name']) or (ps['source_name'] != admin_only['source_name']):
+                    permitted.append(ps)
+    else:
+        permitted = topic_platforms_source_map
+    return permitted
+
 
 def _available_platforms():
     """
@@ -21,12 +36,13 @@ def _available_platforms():
     :return:
     """
     info = apicache.topic_platform_info()
+    platform_sources = _only_permitted_platforms(info['info']['topic_platforms_sources_map'], user_is_admin())
     return [{
         'platform': i['platform_name'],
         'source': i['source_name'],
         'query': '',
         'topic_seed_queries_id': -1,
-    } for i in info['info']['topic_platforms_sources_map'] if i['source_name'] != PLATFORM_SOURCE_POSTGRES]
+    } for i in platform_sources if i['source_name'] != PLATFORM_SOURCE_POSTGRES]
 
 
 @app.route('/api/topics/<topics_id>/platforms/list', methods=['GET'])

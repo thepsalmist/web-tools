@@ -56,7 +56,6 @@ function withQueryResults(fetchResults, extraPropertiesForServer) {
               selectedTabIndex={safeIndex}
               selectedQueryUid={this.state.selectedQueryUid}
               selectedQuery={sortedSafeQueries[safeIndex]}
-
               tabSelector={tabSelector}
             />
           </div>

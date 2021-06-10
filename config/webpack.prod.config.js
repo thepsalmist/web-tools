@@ -1,9 +1,9 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 const path = require('path');
-const merge = require('webpack-merge');
-const TerserPlugin = require("terser-webpack-plugin");
+const { merge } = require('webpack-merge');
+const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const ManifestRevisionPlugin = require('manifest-revision-webpack-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const baseConfig = require('./webpack.base.config');
 
 // helpful for generating path-specific prod configs for tools
@@ -19,12 +19,16 @@ function prodConfigGenerator(basedir, toolName) {
     // build a manifest.json for our Flask server to read, pointing at all the files
     plugins: [
       // Create the manifest file that Flask and other frameworks use.
-      new ManifestRevisionPlugin(
-        path.resolve(basedir, 'server', 'static', 'gen', toolName, 'manifest.json'),
+      new WebpackManifestPlugin({
+        filename: path.resolve(basedir, 'server', 'static', 'gen', toolName, 'manifest.json'),
+        writeToFileEmit: true, // write it to a file so it works with webpack-dev-server
+      }),
+/*      new ManifestRevisionPlugin(
+
         { rootAssetPath: './src', // important that this be relative, not absolute
           ignorePaths: [/.*\.DS_Store/], // need to manually ignore the .DS_Store files generated on OSX
         },
-      ),
+      ),*/
     ],
   };
 }
@@ -46,5 +50,5 @@ const prodConfig = {
 
 module.exports = {
   prodConfigGenerator,
-  prodConfig: merge.smart(baseConfig, prodConfig),
+  prodConfig: merge(baseConfig, prodConfig),
 };

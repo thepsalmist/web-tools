@@ -121,7 +121,7 @@ def create_app():
         logger.warning(ce)
     # set up webpack
     if is_dev_mode():
-        manifest_path = '../build/manifest.json'
+        manifest_path = '../build/public/manifest.json'
     else:
         manifest_path = '../server/static/gen/{}/manifest.json'.format(prod_app_name)
     webpack_config = {

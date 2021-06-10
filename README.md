@@ -20,28 +20,28 @@ Python:
  * Follow the instructions in `doc/python-versions.md` to setup Python the way we do
  * Once you've got Python setup, install the requirements by running `pip install -r requirements.txt`
 
-Node and npm:  
+Node and yarn:
  * On Windows, make sure to create an environment variable: `set NODE_ENV=dev`
  * make sure your node installation is up-to-date (we work with v8.2.1 right now)
- * `npm install` to install all the package dependencies (as specified in the `package.json`)
+ * `yarn install` to install all the package dependencies (as specified in the `package.json`)
 
 MongoDB:
 [Install MongoDb](https://docs.mongodb.com/manual/administration/install-community/):
 * `brew tap mongodb/brew`
 * `brew install mongodb-community@4.2`
-If you get a connection refused error, make sure you've started the server by running `brew services start mongodb-community@4.2` 
+If you get a connection refused error, make sure you've started the server by running `brew services start mongodb-community@4.2`
 
 Redis:
 [Install Redis](http://redis.io/)  We develop on OS X and install via the [HomeBrew package manager](http://brew.sh): `brew install redis`
 
 MemCache:
 On OSX, make sure to run `brew install libmemcached` otherwise you'll get an error about pylibmc failing to install (http://brew.sh)
- 
+
 Multi-platform setup:
 Coming soon
 
 Configuration
-------------- 
+-------------
 
 Copy `config/app.config.template` to `config/app.config` and fill in the required info there.
 
@@ -50,7 +50,7 @@ Running the Apps
 
 You need to open two terminal windows and run one thing in each (so the hot-reloading can work):
  * `redis-server` to start redis (if it's not running already)
- * `npm run topics-dev` or `npm run sources-dev`
+ * `yarn run topics-dev` or `yarn run sources-dev`
  * `python run.py`
     - if you get flask errors, run the `pip install -r requirements.txt` line again. On Mac Osx, you may need to run with --ignore-installed
 
@@ -74,13 +74,13 @@ Python linting rules can be found in `.pylintrc`. To run linting run:
 make lint.py
 ```
 
-To run JS linting rules: 
+To run JS linting rules:
 
 ```
 npx eslint
 ```
 
-We use PyCharm and run linting on the flying using the 
+We use PyCharm and run linting on the flying using the
 [pylint-pycharm](https://github.com/leinardi/pylint-pycharm) plugin.
 After installing it, enable real-time inspection:
 * Preferences > Editor > Inspections > Pylint
@@ -90,7 +90,7 @@ After installing it, enable real-time inspection:
 A pre-commit hooks will run JavaScript linting (e.g. when you commit, linting will be run). You can try to automatically fix JavaScript linting errors by running:
 
 ```shell
-$ npm run lint_fix
+$ yarn run lint_fix
 ```
 
 Not all errors can be fixed this way and for more details about the linting error see [eslint](https://eslint.org).

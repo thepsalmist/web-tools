@@ -1,7 +1,7 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 const path = require('path');
-const merge = require('webpack-merge');
-const ManifestRevisionPlugin = require('manifest-revision-webpack-plugin');
+const { merge } = require('webpack-merge');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 // const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const baseConfig = require('./webpack.base.config');
 
@@ -23,24 +23,27 @@ const devConfig = {
     pathinfo: true,
     filename: '[name].[hash].js',
     chunkFilename: '[id].[hash].js',
-    publicPath: 'http://localhost:'+devServerPort+'/', // needed to get correct path in dev manifest file
+    publicPath: `http://localhost:${devServerPort}/`, // needed to get correct path in dev manifest file
   },
   plugins: [
     // this writes JS files for our Flask server to read
-    new ManifestRevisionPlugin(
-      path.resolve(basedir, 'build', 'manifest.json'), // keep this path in sync with FlaskWebpack config
+    new WebpackManifestPlugin({
+      filename: path.resolve(basedir, 'build', 'manifest.json'), // keep this path in sync with FlaskWebpack config,
+      writeToFileEmit: true, // write it to a file so it works with webpack-dev-server
+    }),
+/*    new ManifestRevisionPlugin(
+
       { rootAssetPath: './src', // important that this be relative, not absolute
         ignorePaths: [/.*\.DS_Store/], // need to manually ignore the .DS_Store files generated on OSX
       },
-    ),
+    ),*/
     // add an intermediate caching step to speed up builds (except the first one)
     // new HardSourceWebpackPlugin(),
   ],
   devServer: {
-    port: devServerPort,   // the server manifest config relies on this port
-    contentBase: buildDir,  // we build the JS to static files, so server them up as Flask expects them
-  },
-  watch: true,  // ← important: webpack and the server will continue to run in watch mode
+    port: devServerPort, // the server manifest config relies on this port
+    contentBase: buildDir, // we build the JS to static files, so server them up as Flask expects them
+  }
 };
 
-module.exports = merge.smart(baseConfig, devConfig);
+module.exports = merge(baseConfig, devConfig);

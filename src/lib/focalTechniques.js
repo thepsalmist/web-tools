@@ -1,4 +1,3 @@
-
 // Implemented
 export const FOCAL_TECHNIQUE_BOOLEAN_QUERY = 'Boolean Query';
 export const FOCAL_TECHNIQUE_RETWEET_PARTISANSHIP_2016 = '2016 Retweet Partisanship';

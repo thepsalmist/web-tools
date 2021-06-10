@@ -1,4 +1,3 @@
-
 export const FETCH_INVALID = 'FETCH_INVALID';
 export const FETCH_ONGOING = 'FETCH_ONGOING';
 export const FETCH_SUCCEEDED = 'FETCH_SUCCEEDED';

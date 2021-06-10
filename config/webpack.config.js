@@ -1,6 +1,6 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 const path = require('path');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const devConfig = require('./webpack.dev.config');
 const { prodConfig, prodConfigGenerator } = require('./webpack.prod.config');
 
@@ -27,7 +27,7 @@ const appConfig = {
 const extraProdConfig = isDevMode ? {} : prodConfigGenerator(basedir, mcAppName);
 
 // combine the appropriate configurations based on dev or prod
-module.exports = merge.smart(
+module.exports = merge(
   isDevMode ? devConfig : prodConfig, // pick dev or prod config file
   appConfig, // add in the app-specific build files
   isDevMode ? {} : extraProdConfig, // and add a little extra for prod mode

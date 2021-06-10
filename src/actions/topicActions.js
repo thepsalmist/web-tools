@@ -1,14 +1,14 @@
 // This is just a lighweight wrapper to make imports easier
 
-export * from './topics/focalSetActions.js';
-export * from './topics/focusActions.js';
-export * from './topics/mediaActions.js';
-export * from './topics/fileActions.js';
-export * from './topics/permissionActions.js';
-export * from './topics/splitStoryActions.js';
-export * from './topics/storyActions.js';
-export * from './topics/topicActions.js';
-export * from './topics/createActions.js';
-export * from './topics/wordActions.js';
-export * from './topics/platformActions.js';
-export * from './topics/providerActions.js';
+export * from './topics/focalSetActions';
+export * from './topics/focusActions';
+export * from './topics/mediaActions';
+export * from './topics/fileActions';
+export * from './topics/permissionActions';
+export * from './topics/splitStoryActions';
+export * from './topics/storyActions';
+export * from './topics/topicActions';
+export * from './topics/createActions';
+export * from './topics/wordActions';
+export * from './topics/platformActions';
+export * from './topics/providerActions';

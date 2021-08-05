@@ -25,7 +25,7 @@ Building and Pushing a Release
 1. Update the version number in `./package.json`.
 1. Update release notes in `server/static/data/release_history.json`
    1. Commit these files
-1. Build and release the new version using `make deploy-app version=[VERSION] app=[topics|explorer|sources|tools]`
+1. Build and release the new version using `make deploy-app version=v[VERSION_TAG] app=[topics|explorer|sources|tools]`
 1. Make sure it works on the server
 1. Cherry-pick commits from the branch back to main (so the changes get merged in)
 

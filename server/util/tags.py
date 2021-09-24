@@ -5,6 +5,7 @@ import os
 from operator import itemgetter
 import json
 import codecs
+from typing import List, Dict
 
 from server import base_dir, mc, TOOL_API_KEY
 from server.auth import user_mediacloud_client
@@ -252,6 +253,7 @@ class TagDiscoverer:
     def __getattr__(self, name):
         return getattr(self.instance, name)
 
+
 # load the config helper
 config = get_default_config()
 
@@ -362,7 +364,24 @@ def cached_tag_set_file(file_path):
         return data
 
 
-def media_with_tag(tags_id, cached=False):
+def paged_media_with_tag(tags_id, user_mc_key, cached=False) -> List[Dict]:
+    more_media = True
+    max_media_id = 0
+    while more_media:
+        logger.debug("last_media_id %s", str(max_media_id))
+        if cached:
+            media_page = cached_media_with_tag_page(tags_id, max_media_id, user_mc_key)
+        else:
+            media_page = _media_with_tag_page(tags_id, max_media_id, user_mc_key)
+        logger.info(len(media_page))
+        media_page = media_page
+        yield media_page
+        if len(media_page) > 0:
+            max_media_id = media_page[-1]['media_id']
+        more_media = len(media_page) == 100
+
+
+def media_with_tag(tags_id, cached=False) -> List[Dict]:
     more_media = True
     all_media = []
     max_media_id = 0
@@ -374,21 +393,22 @@ def media_with_tag(tags_id, cached=False):
             media = _media_with_tag_page(tags_id, max_media_id)
         all_media = all_media + media
         if len(media) > 0:
-            max_media_id = media[len(media) - 1]['media_id']
+            max_media_id = media[-1]['media_id']
         more_media = len(media) == 100
-    return sorted(all_media, key=lambda t: t['name'].lower())
+    sorted_results = sorted(all_media, key=lambda t: t['name'].lower())
+    return sorted_results
 
 
 @cache.cache_on_arguments()
-def cached_media_with_tag_page(tags_id, max_media_id):
+def cached_media_with_tag_page(tags_id, max_media_id, user_mc_key=None) -> List[Dict]:
     """
     We have to do this on the page, not the full list because memcache has a 1MB cache upper limit,
     and some of the collections have TONS of sources
     Ok to be a cross-user cache here
     """
-    return _media_with_tag_page(tags_id, max_media_id)
+    return _media_with_tag_page(tags_id, max_media_id, user_mc_key)
 
 
-def _media_with_tag_page(tags_id, max_media_id):
-    user_mc = user_mediacloud_client()
+def _media_with_tag_page(tags_id, max_media_id, user_mc_key=None) -> List[Dict]:
+    user_mc = user_mediacloud_client(user_mc_key)
     return user_mc.mediaList(tags_id=tags_id, last_media_id=max_media_id, rows=100)

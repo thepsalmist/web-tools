@@ -2,7 +2,7 @@ import logging
 from operator import itemgetter
 import flask_login
 import os
-from flask import jsonify, request
+from flask import jsonify, request, Response
 from mediacloud.tags import MediaTag, TAG_ACTION_ADD
 
 import server.util.csv as csv
@@ -10,7 +10,7 @@ from server import app, mc, user_db, analytics_db, executor
 from server.auth import user_mediacloud_key, user_admin_mediacloud_client, user_mediacloud_client, user_name,\
     user_has_auth_role, ROLE_MEDIA_EDIT
 from server.util.request import arguments_required, form_fields_required, api_error_handler
-from server.util.tags import TagSetDiscoverer, media_with_tag
+import server.util.tags as tags
 from server.util.stringutil import as_tag_name
 from server.views.sources import SOURCE_LIST_CSV_EDIT_PROPS, SOURCE_FEED_LIST_CSV_PROPS
 from server.views.sources.feeds import source_feed_list
@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 @flask_login.login_required
 @api_error_handler
 def api_metadata_download(collection_id):
-    all_media = media_with_tag(collection_id)
+    all_media = tags.media_with_tag(collection_id)
 
     metadata_counts = {}  # from tag_sets_id to info
     for media_source in all_media:
@@ -88,7 +88,7 @@ def api_collections_by_ids():
     collection_ids = request.args['coll[]'].split(',')
     sources_list = []
     for tags_id in collection_ids:
-        all_media = media_with_tag(tags_id)
+        all_media = tags.media_with_tag(tags_id)
         info = [{'media_id': m['media_id'], 'name': m['name'], 'url': m['url'], 'public_notes': m['public_notes']} for m
                 in all_media]
         add_user_favorite_flag_to_sources(info)
@@ -131,7 +131,7 @@ def api_collection_details(collection_id):
     info['id'] = collection_id
     info['tag_set'] = _tag_set_info(info['tag_sets_id'])
     if add_in_sources:
-        media_in_collection = media_with_tag(collection_id)
+        media_in_collection = tags.media_with_tag(collection_id)
         info['sources'] = media_in_collection
     analytics_db.increment_count(analytics_db.TYPE_COLLECTION, collection_id, analytics_db.ACTION_SOURCE_MGR_VIEW)
     return jsonify({'results': info})
@@ -145,7 +145,7 @@ def api_collection_sources(collection_id):
     results = {
         'tags_id': collection_id
     }
-    media_in_collection = media_with_tag(collection_id)
+    media_in_collection = tags.media_with_tag(collection_id)
     add_user_favorite_flag_to_sources(media_in_collection)
     results['sources'] = media_in_collection
     return jsonify(results)
@@ -168,10 +168,21 @@ def api_download_sources_template():
 def api_collection_sources_csv(collection_id):
     user_mc = user_mediacloud_client()
     collection = user_mc.tag(collection_id)    # not cached because props can change often
-    all_media = media_with_tag(collection_id)
     file_prefix = "Collection {} ({}) - sources ".format(collection_id, collection['tag'])
     properties_to_include = SOURCE_LIST_CSV_EDIT_PROPS
-    return csv.download_media_csv(all_media, file_prefix, properties_to_include)
+
+    def _stream_media_with_tag(cid, col_names, user_mc_key) -> str:
+        yield ','.join(col_names) + '\n'
+        for media_page in tags.paged_media_with_tag(cid, user_mc_key):
+            cleaned_media_page = csv.media_list_for_download(media_page, col_names)
+            for m in cleaned_media_page:
+                cleaned_row = csv.dict2row(col_names, m)
+                yield ','.join(cleaned_row) + '\n'
+
+    response = Response(_stream_media_with_tag(collection_id, properties_to_include, user_mediacloud_key()),
+                        mimetype='text/csv')
+    response.headers['Content-Disposition'] = 'attachment; filename='+csv.safe_filename(file_prefix)
+    return response
 
 
 @app.route('/api/collections/<collection_id>/sources/<source_type>.csv')
@@ -181,7 +192,7 @@ def api_collection_sources_feed_status_csv(collection_id, source_type):
     user_mc = user_mediacloud_client()
     collection = user_mc.tag(collection_id)
     list_type = str(source_type).lower()
-    media_in_collection = media_with_tag(collection_id)
+    media_in_collection = tags.media_with_tag(collection_id)
     media_info_in_collection = _media_list_edit_job.map(media_in_collection)
     if list_type == 'review':
         filtered_media = [m for m in media_info_in_collection
@@ -271,7 +282,7 @@ def _source_story_split_count_job(info):
 
 
 def _collection_source_story_split_historical_counts(collection_id):
-    media_list = media_with_tag(collection_id)
+    media_list = tags.media_with_tag(collection_id)
     jobs = [{'media': m} for m in media_list]
     # fetch in parallel to make things faster
     #return [_source_story_split_count_job(j) for j in jobs]
@@ -335,7 +346,7 @@ def collection_create():
 
     formatted_name = as_tag_name(label)
     # first create the collection
-    new_collection = user_mc.createTag(TagSetDiscoverer().collections_set, formatted_name, label, description,
+    new_collection = user_mc.createTag(tags.TagSetDiscoverer().collections_set, formatted_name, label, description,
                                        is_static=(static == 'true'),
                                        show_on_stories=(show_on_stories == 'true'),
                                        show_on_media=(show_on_media == 'true'))

@@ -1,6 +1,7 @@
 import logging
 import datetime
 import flask
+from typing import List
 
 from server.util.tags import label_for_metadata_tag
 
@@ -17,7 +18,7 @@ def safe_filename(name):
     return "{}-{}.csv".format(name, filename_timestamp())
 
 
-def dict2row(keys_to_include, dict_row):
+def dict2row(keys_to_include, dict_row) -> List:
     attributes = []
     for k in keys_to_include:
         try:
@@ -79,8 +80,8 @@ def stream_response(data, dict_keys, filename, column_names=None, as_attachment=
                               mimetype='text/csv; charset=utf-8', headers=headers)
 
 
-def download_media_csv(all_media, file_prefix, column_names):
-    for src in all_media:
+def media_list_for_download(media_list, column_names):
+    for src in media_list:
         if 'editor_notes' in column_names and 'editor_notes' not in src:
             src['editor_notes'] = ''
         if 'is_monitored' in column_names and 'is_monitored' not in src:
@@ -101,5 +102,9 @@ def download_media_csv(all_media, file_prefix, column_names):
         else:
             for name, tag in src['metadata'].items():
                 src[name] = label_for_metadata_tag(tag) if tag is not None else None
+    return media_list
 
-    return stream_response(all_media, column_names, file_prefix, column_names)
+
+def download_media_csv(all_media, file_prefix, column_names):
+    cleaned_data = media_list_for_download(all_media)
+    return stream_response(cleaned_data, column_names, file_prefix, column_names)

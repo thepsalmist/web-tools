@@ -1,6 +1,22 @@
 {
   "releases": [
     {
+      "date": "2021-09-23",
+      "version": "v3.25.2",
+      "notes": [
+        {
+          "apps": [ "explorer" ],
+          "type": "Fix",
+          "note": "Upgrade to latest MediaCloud client library"
+        },
+        {
+          "apps": [ "explorer", "topics" ],
+          "type": "Fix",
+          "note": "Remove out-of-date stop words change warning"
+        }
+      ]
+    },
+    {
       "date": "2021-06-09",
       "version": "v3.25.1",
       "notes": [

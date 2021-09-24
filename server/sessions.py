@@ -62,11 +62,7 @@ class RedisSessionInterface(SessionInterface):
         redis_exp = self.get_redis_expiration_time(app, session)
         cookie_exp = self.get_expiration_time(app, session)
         val = self.serializer.dumps(dict(session))
-        if isinstance(self.redis, Redis):
-            self.redis.setex(self.prefix + session.sid, val, int(self._total_seconds(redis_exp)))
-        else:
-            # StrictRedis has a different arg order than Redis
-            self.redis.setex(self.prefix + session.sid, int(self._total_seconds(redis_exp)), val)
+        self.redis.setex(self.prefix + session.sid, int(self._total_seconds(redis_exp)), val)
         response.set_cookie(app.session_cookie_name, session.sid,
                             expires=cookie_exp, httponly=True,
                             domain=domain)

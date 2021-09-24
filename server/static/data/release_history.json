@@ -13,6 +13,11 @@
           "apps": [ "explorer", "topics" ],
           "type": "Fix",
           "note": "Remove out-of-date stop words change warning"
+        },
+        {
+          "apps": [ "sources" ],
+          "type": "Fix",
+          "note": "Speed up source list CSV download on collection page"
         }
       ]
     },

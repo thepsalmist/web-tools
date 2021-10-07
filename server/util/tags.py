@@ -374,7 +374,6 @@ def paged_media_with_tag(tags_id, user_mc_key, cached=False) -> List[Dict]:
         else:
             media_page = _media_with_tag_page(tags_id, max_media_id, user_mc_key)
         logger.info(len(media_page))
-        media_page = media_page
         yield media_page
         if len(media_page) > 0:
             max_media_id = media_page[-1]['media_id']

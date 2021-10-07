@@ -351,7 +351,7 @@ def collection_create():
                                        show_on_stories=(show_on_stories == 'true'),
                                        show_on_media=(show_on_media == 'true'))
     # then go through and tag all the sources specified with the new collection id
-    tags = [MediaTag(sid, tags_id=new_collection['tag']['tags_id'], action=TAG_ACTION_ADD) for sid in source_ids]
-    if len(tags) > 0:
-        user_mc.tagMedia(tags)
+    tags_to_create = [MediaTag(sid, tags_id=new_collection['tag']['tags_id'], action=TAG_ACTION_ADD) for sid in source_ids]
+    if len(tags_to_create) > 0:
+        user_mc.tagMedia(tags_to_create)
     return jsonify(new_collection['tag'])

@@ -106,5 +106,5 @@ def media_list_for_download(media_list, column_names):
 
 
 def download_media_csv(all_media, file_prefix, column_names):
-    cleaned_data = media_list_for_download(all_media)
-    return stream_response(cleaned_data, column_names, file_prefix, column_names)
+    cleaned_data = media_list_for_download(all_media, column_names)
+    return stream_response(cleaned_data, column_names, file_prefix, column_names=column_names)

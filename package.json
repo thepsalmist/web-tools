@@ -3,7 +3,7 @@
   "version": "3.25.2",
   "private": true,
   "engines": {
-    "node": ">=14.4.0"
+    "node": ">=17.7.2"
   },
   "scripts": {
     "explorer-dev": "cross-env MC_APP_NAME=explorer webpack serve --config config/webpack.config.js",
@@ -42,8 +42,8 @@
     "isomorphic-fetch": "^2.2.1",
     "logic-query-parser": "^0.0.5",
     "moment": "^2.26.0",
-    "node": "^14.3.0",
-    "npm": "^6.14.5",
+    "node-darwin-arm64": "^18.0.0",
+    "npm": "^8.5.5",
     "prop-types": "^15.7.2",
     "raven-for-redux": "^1.4.0",
     "raven-js": "^3.27.2",

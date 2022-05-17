@@ -293,7 +293,7 @@ const messages = {
   attention: { id: 'attention', defaultMessage: 'Attention' },
   storiesPerDay: { id: 'source.storiesPerDay', defaultMessage: 'Stories per Day' },
   sourceStartDate: { id: 'source.startDate', defaultMessage: 'First Story' },
-  representation: { id: 'representation', defaultMessage: 'Entities' },
+  representation: { id: 'representation', defaultMessage: 'Representation' },
   influence: { id: 'influence', defaultMessage: 'Influence' },
 
   countsVsPercentageHelp: { id: 'explorer.countsVsPercentageHelp', defaultMessage: '<p><b>Counts vs. Percentage</b><br />You can view the attention devoted to your issue in terms of absolute counts or as percentages.  Absolute counts suffer from weekly ebbs and flows, and while searching collections don\'t reflect when we add more sources.  You can switch to view percentages in order to see normalized results that you can compare across sources and collections. To generate the normalization we run each query again without the keywords.</p>' },

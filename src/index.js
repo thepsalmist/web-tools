@@ -4,7 +4,7 @@ import 'intl';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactGA from 'react-ga';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import Router from 'react-router/lib/Router';
@@ -32,7 +32,7 @@ function reallyInitializeApp(routes) {
       ReactGA.pageview(window.location.pathname);
     }
   };
-  const muiTheme = createMuiTheme({
+  const muiTheme = createTheme({
     typography: {
       useNextVariants: true,
     },

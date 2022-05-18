@@ -4,9 +4,9 @@ import { push } from 'react-router-redux';
 import { Grid } from 'react-flexbox-grid/lib';
 import { injectIntl, FormattedHTMLMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import { reset, reduxForm } from 'redux-form';
-import withAsyncData from '../../common/hocs/AsyncDataContainer';
-import { fetchUserQueuedAndRunningTopics, createTopic } from '../../../actions/topicActions';
+import { /* reset, */ reduxForm } from 'redux-form';
+// import withAsyncData from '../../common/hocs/AsyncDataContainer';
+import { /* fetchUserQueuedAndRunningTopics, */ createTopic } from '../../../actions/topicActions';
 import { WarningNotice } from '../../common/Notice';
 import { updateFeedback } from '../../../actions/appActions';
 import { FETCH_SUCCEEDED } from '../../../lib/fetchConstants';
@@ -25,10 +25,11 @@ const localMessages = {
   creatingDesc: { id: 'topic.creating.detail', defaultMessage: 'We are creating your topic now.  This can take a minute or so, just to make sure everyting is in order.  Once it is created, you\'ll be shown a page telling you we are gathering the stories.' },
   feedback: { id: 'topic.edit.save.feedback', defaultMessage: 'We created your topic!' },
   failed: { id: 'topic.edit.save.failed', defaultMessage: 'Sorry, that didn\'t work!' },
-
+  notAllowedAnymore: { id: 'topic.create.notAllowedAnymore', defaultMessage: 'As of May 2022 we have disabled Topic creation. We are making substantial changes to our system and can no longer support topics. Email support@mediacloud.org if you have quesions or concerns.' },
 };
 
 const CreateTopicContainer = (props) => {
+  const { isAdmin } = props;
   const endDate = getCurrentDate();
   const startDate = getMomentDateSubtraction(endDate, 3, 'months');
   const initialValues = {
@@ -38,22 +39,33 @@ const CreateTopicContainer = (props) => {
     buttonLabel: props.intl.formatMessage(messages.create),
     max_iterations: 15,
   };
-  return (
-    <Grid>
-      <PageTitle value={localMessages.pageTitle} />
-      {!props.allowedToRun && (
-        <WarningNotice><FormattedHTMLMessage {...localMessages.cannotCreateTopic} /></WarningNotice>
-      )}
-      <TopicForm
-        destroyOnUnmount={false}
-        form="topicForm"
-        forceUnregisterOnUnmount
-        initialValues={initialValues}
-        onSubmit={props.handleCreateEmptyTopic}
-        title={props.intl.formatMessage(localMessages.pageTitle)}
-      />
-    </Grid>
-  );
+  let content;
+  if (!isAdmin) {
+    content = (
+      <Grid>
+        <PageTitle value={localMessages.pageTitle} />
+        <WarningNotice><FormattedHTMLMessage {...localMessages.notAllowedAnymore} /></WarningNotice>
+      </Grid>
+    );
+  } else {
+    content = (
+      <Grid>
+        <PageTitle value={localMessages.pageTitle} />
+        {!props.allowedToRun && (
+          <WarningNotice><FormattedHTMLMessage {...localMessages.cannotCreateTopic} /></WarningNotice>
+        )}
+        <TopicForm
+          destroyOnUnmount={false}
+          form="topicForm"
+          forceUnregisterOnUnmount
+          initialValues={initialValues}
+          onSubmit={props.handleCreateEmptyTopic}
+          title={props.intl.formatMessage(localMessages.pageTitle)}
+        />
+      </Grid>
+    );
+  }
+  return content;
 };
 
 CreateTopicContainer.propTypes = {
@@ -95,6 +107,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
       });
   },
 });
+/*
 const fetchAsyncData = (dispatch, { isAdmin }) => {
   reset(); // reset form
   // non-admin users can only run one topic at a time
@@ -102,7 +115,7 @@ const fetchAsyncData = (dispatch, { isAdmin }) => {
     dispatch(fetchUserQueuedAndRunningTopics());
   }
 };
-
+*/
 const reduxFormConfig = {
   form: 'topicForm',
   // destroyOnUnmount: false, // so the wizard works
@@ -113,9 +126,9 @@ export default
 injectIntl(
   reduxForm(reduxFormConfig)(
     connect(mapStateToProps, mapDispatchToProps)(
-      withAsyncData(fetchAsyncData)(
-        CreateTopicContainer
-      )
+      // withAsyncData(fetchAsyncData)(
+      CreateTopicContainer
+      // )
     )
   )
 );

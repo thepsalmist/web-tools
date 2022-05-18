@@ -7,7 +7,7 @@ import json
 import codecs
 from typing import List, Dict
 
-from server import base_dir, mc, TOOL_API_KEY
+from server import base_dir, TOOL_API_KEY
 from server.auth import user_mediacloud_client
 from server.cache import cache
 from server.util.stringutil import snake_to_camel
@@ -62,7 +62,7 @@ class TagSetDiscoverer:
 
         def _discover(self):
             try:
-                tag_sets = mc.tagSetList(rows=500)
+                tag_sets = _cached_tag_set_list(rows=500)
                 self._nyt_themes_set = self._discover_by_name(tag_sets, 'nyt_labels')
                 self._nyt_themes_versions_set = self._discover_by_name(tag_sets, 'nyt_labels_version')
                 self._cliff_versions_set = self._discover_by_name(tag_sets, 'geocoder_version')
@@ -194,7 +194,7 @@ class TagDiscoverer:
 
         def _from_tag_and_set_names(self, tag_sets, tag_set_name, tag_name):
             tag_set = [ts for ts in tag_sets if ts['name'] == tag_set_name][0]
-            tags_in_set = mc.tagList(tag_sets_id=tag_set['tag_sets_id'])
+            tags_in_set = _cached_tag_list(tag_sets_id=tag_set['tag_sets_id'])
             tag = [t for t in tags_in_set if t['tag'] == tag_name][0]
             return tag['tags_id']
 
@@ -205,7 +205,7 @@ class TagDiscoverer:
 
         def _discover(self):
             try:
-                tag_sets = mc.tagSetList(rows=500)
+                tag_sets = _cached_tag_set_list(rows=500)
                 self._is_spidered_story_tag = self._from_tag_and_set_names(tag_sets, 'spidered', 'spidered')
                 self._is_undateable_story_tag = self._from_tag_and_set_names(tag_sets, 'date_invalid', 'undateable')
                 self._nyt_themes_version_tags = self._all_from_set_name(tag_sets, 'nyt_labels_version')
@@ -323,7 +323,7 @@ def tag_set_with_tags(mc_api_key, tag_sets_id, only_public_tags=False, use_file_
         file_path = os.path.join(static_tag_set_cache_dir, file_name)
         if os.path.isfile(file_path):
             return cached_tag_set_file(file_path)   # more caching!
-    tag_set = local_mc.tagSet(tag_sets_id)
+    tag_set = _cached_tag_set(tag_sets_id)
     # page through tags
     more_tags = True
     all_tags = []
@@ -411,3 +411,21 @@ def cached_media_with_tag_page(tags_id, max_media_id, user_mc_key=None) -> List[
 def _media_with_tag_page(tags_id, max_media_id, user_mc_key=None) -> List[Dict]:
     user_mc = user_mediacloud_client(user_mc_key)
     return user_mc.mediaList(tags_id=tags_id, last_media_id=max_media_id, rows=100)
+
+
+@cache.cache_on_arguments()
+def _cached_tag_list(**kwargs):
+    user_mc = user_mediacloud_client(user_mc_key=TOOL_API_KEY)
+    return user_mc.tagList(**kwargs)
+
+
+@cache.cache_on_arguments()
+def _cached_tag_set_list(**kwargs):
+    user_mc = user_mediacloud_client(user_mc_key=TOOL_API_KEY)
+    return user_mc.tagSetList(**kwargs)
+
+
+@cache.cache_on_arguments()
+def _cached_tag_set(tag_sets_id):
+    user_mc = user_mediacloud_client(user_mc_key=TOOL_API_KEY)
+    return user_mc.tagSet(tag_sets_id)

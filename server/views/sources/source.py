@@ -67,9 +67,11 @@ def source_stats(media_id):
                                ((c['show_on_media'] == 1) or user_can_see_private_collections))]
     results['collection_count'] = len(visible_collections)
     # geography tags
-    results['geoPct'] = apicache.tag_coverage_pct(media_query, TagSetDiscoverer().cliff_versions_set)
+    # Fails with ClassCastException
+    # results['geoPct'] = apicache.tag_coverage_pct(media_query, TagSetDiscoverer().cliff_versions_set)
     # nyt theme
-    results['nytPct'] = apicache.tag_coverage_pct(media_query, TagSetDiscoverer().nyt_themes_versions_set)
+    # Fails with ClassCastException
+    # results['nytPct'] = apicache.tag_coverage_pct(media_query, TagSetDiscoverer().nyt_themes_versions_set)
     return jsonify(results)
 
 

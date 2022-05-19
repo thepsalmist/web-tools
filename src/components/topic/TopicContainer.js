@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { replace } from 'react-router-redux';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import { Grid, Row, Col } from 'react-flexbox-grid/lib';
 import withAsyncData from '../common/hocs/AsyncDataContainer';
 import TopicHeaderContainer from './TopicHeaderContainer';
 import { addNotice } from '../../actions/appActions';
@@ -19,6 +20,11 @@ import LoadingSpinner from '../common/LoadingSpinner';
 import { parseId } from '../../lib/numberUtil';
 import withFilteredUrlMaintenance from './versions/FilteredUrlMaintainer';
 import NeedsNewVersionWarning from './versions/NeedsNewVersionWarning';
+import { WarningNotice } from '../common/Notice';
+
+const localMessages = {
+  topicsReadOnly: { id: 'topic.topicsReadOnly', defaultMessage: 'As of May 2022 we have disabled Topic creation or editing. We are making substantial changes to our system and can no longer support Topic Mapper. It will be shut down on Sept 1, 2022. Use the "download" and "export" features to save any data you need to keep. Email support@mediacloud.org if you have quesions or concerns.' },
+};
 
 const pickDefaultTimespan = (dispatch, timespanList) => {
   // async handler after promise returns - pick the first timespan as the default (this is the overall one)
@@ -151,7 +157,7 @@ class TopicContainer extends React.Component {
   }
 
   render() {
-    const { children, topicInfo, topicId, filters, snapshot } = this.props;
+    const { children, topicInfo, topicId, filters, snapshot, userIsAdmin } = this.props;
     let content = (<LoadingSpinner />);
     if (filters.parsingStatus === FILTER_PARSING_DONE) {
       // pass a handler to all the children so the can set the control bar side content if they need to
@@ -174,6 +180,19 @@ class TopicContainer extends React.Component {
       <div className="topic-container">
         <PageTitle value={topicInfo.name} />
         <TopicHeaderContainer topicId={topicId} topicInfo={topicInfo} currentVersion={snapshot ? snapshot.note : 1} filters={filters} />
+        { !userIsAdmin && (
+          <div className="warning-background">
+            <Grid>
+              <Row>
+                <Col lg={12}>
+                  <WarningNotice>
+                    <FormattedMessage {...localMessages.topicsReadOnly} />
+                  </WarningNotice>
+                </Col>
+              </Row>
+            </Grid>
+          </div>
+        )}
         {content}
       </div>
     );
@@ -194,6 +213,7 @@ TopicContainer.propTypes = {
   filters: PropTypes.object.isRequired,
   fetchStatus: PropTypes.string.isRequired,
   topicInfo: PropTypes.object,
+  userIsAdmin: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -202,6 +222,7 @@ const mapStateToProps = (state, ownProps) => ({
   topicInfo: state.topics.selected.info,
   topicId: parseId(ownProps.params.topicId),
   snapshot: state.topics.selected.snapshots.selected,
+  userIsAdmin: state.user.isAdmin,
 });
 
 const mapDispatchToProps = dispatch => ({

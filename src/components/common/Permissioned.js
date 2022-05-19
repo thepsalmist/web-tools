@@ -21,10 +21,12 @@ const Permissioned = (props) => {
         allowed = [PERMISSION_TOPIC_READ, PERMISSION_TOPIC_WRITE, PERMISSION_TOPIC_ADMIN].includes(userTopicPermission);
         break;
       case PERMISSION_TOPIC_WRITE:
-        allowed = [PERMISSION_TOPIC_WRITE, PERMISSION_TOPIC_ADMIN].includes(userTopicPermission);
+        // allowed = [PERMISSION_TOPIC_WRITE, PERMISSION_TOPIC_ADMIN].includes(userTopicPermission);
+        allowed = user.isAdmin;
         break;
       case PERMISSION_TOPIC_ADMIN:
-        allowed = (PERMISSION_TOPIC_ADMIN === userTopicPermission);
+        // allowed = (PERMISSION_TOPIC_ADMIN === userTopicPermission);
+        allowed = user.isAdmin;
         break;
       default:
         allowed = false;

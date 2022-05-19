@@ -2,13 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Link from 'react-router/lib/Link';
 import Alert from '@material-ui/lab/Alert';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
 import { FormattedMessage, FormattedDate, injectIntl } from 'react-intl';
 import messages from '../../resources/messages';
 import { PERMISSION_MEDIA_EDIT } from '../../lib/auth';
@@ -34,26 +27,26 @@ class SourceFeedTable extends React.Component {
 
     if (!feeds || feeds.length === 0) {
       return (
-        <Alert severity="info"><FormattedMessage {...localMessages.emptyIngest} values={{ feedStatus }} /></Alert>
+        <>
+          <Alert severity="info"><FormattedMessage {...localMessages.emptyIngest} values={{ feedStatus }} /></Alert>
+        </>
       );
     }
 
     return (
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell><FormattedMessage {...messages.feedName} /></TableCell>
-              <TableCell><FormattedMessage {...messages.feedUrl} /></TableCell>
-              <TableCell align="right"><FormattedMessage {...localMessages.lastNewStory} /></TableCell>
-              <TableCell align="right"><FormattedMessage {...localMessages.lastDownloadAttempt} /></TableCell>
-              <TableCell align="right"><FormattedMessage {...localMessages.lastDownloadSuccess} /></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {feeds.map((feed) => (
-              <TableRow key={feed.feeds_id} className={`feed-${(feed.active) ? 'active' : 'disabled'}`}>
-                <TableCell>
+      <div className="source-feed-table">
+        <table width="100%">
+          <tbody>
+            <tr>
+              <th><FormattedMessage {...messages.feedName} /></th>
+              <th><FormattedMessage {...messages.feedUrl} /></th>
+              <th><FormattedMessage {...localMessages.lastNewStory} /></th>
+              <th><FormattedMessage {...localMessages.lastDownloadAttempt} /></th>
+              <th><FormattedMessage {...localMessages.lastDownloadSuccess} /></th>
+            </tr>
+            {feeds.map((feed, idx) => (
+              <tr key={feed.feeds_id} className={`${(idx % 2 === 0) ? 'even' : 'odd'} feed-${(feed.active) ? 'active' : 'disabled'}`}>
+                <td>
                   {this.isSystemGenerated(feed) && <i>System Generated {' '}</i>}
                   {feed.name}
                   {this.isSystemGenerated(feed) && helpButton}
@@ -63,24 +56,24 @@ class SourceFeedTable extends React.Component {
                       edit
                     </Link>
                   </Permissioned>
-                </TableCell>
-                <TableCell>
+                </td>
+                <td>
                   <a href={feed.url}>{feed.url}</a>
-                </TableCell>
-                <TableCell align="right">
+                </td>
+                <td>
                   {feed.lastNewStoryMoment && <FormattedDate value={feed.lastNewStoryMoment} />}
-                </TableCell>
-                <TableCell align="right">
+                </td>
+                <td>
                   {feed.lastDownloadMoment && <FormattedDate value={feed.lastDownloadMoment} />}
-                </TableCell>
-                <TableCell align="right">
+                </td>
+                <td>
                   {feed.lastSuccessfulDownloadMoment && <FormattedDate value={feed.lastSuccessfulDownloadMoment} />}
-                </TableCell>
-              </TableRow>
+                </td>
+              </tr>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          </tbody>
+        </table>
+      </div>
     );
   }
 }

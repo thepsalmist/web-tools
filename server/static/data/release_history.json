@@ -2,7 +2,7 @@
   "releases": [
     {
       "date": "2022-05-18",
-      "version": "v3.25.10",
+      "version": "v3.25.11",
       "notes": [
         {
           "apps": [ "sources", "topics", "tools", "explorer" ],
